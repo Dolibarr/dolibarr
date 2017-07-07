@@ -527,7 +527,7 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     rowid           integer  AUTO_INCREMENT PRIMARY KEY,
     datec           datetime  DEFAULT NULL,
     tms             timestamp,
-    fk_cat          integer DEFAULT 0 NOT NULL,
+    fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
     fk_range        integer DEFAULT 0 NOT NULL,	  	  
     coef            double DEFAULT 0 NOT NULL,  
     offset          double DEFAULT 0 NOT NULL	          
@@ -542,14 +542,14 @@ CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
-    fk_cat      integer DEFAULT 1 NOT NULL,
-    `range`       double DEFAULT 0 NOT NULL,   
+    fk_c_exp_tax_cat integer DEFAULT 1 NOT NULL,
+    range_ik    double DEFAULT 0 NOT NULL,   
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL		          
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
-('EX_KME', 'ExpLabelKm', 0, '625100'),
+('EX_KME', 'ExpLabelKm', 1, '625100'),
 ('EX_FUE', 'ExpLabelFuelCV', 0, '606150'),
 ('EX_HOT', 'ExpLabelHotel', 0, '625160'),
 ('EX_PAR', 'ExpLabelParkingCV', 0, '625160'),
@@ -572,21 +572,21 @@ INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
 ('EX_PAR_VP', 'ExpLabelParkingPV', 0, '625160'),
 ('EX_CAM_VP', 'ExpLabelMaintenanceRepairPV', 0, '615300');
 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (1,4, 1, 0.41, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (2,4, 2, 0.244, 824);
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (3,4, 3, 0.286, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (4,5, 4, 0.493, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (5,5, 5, 0.277, 1082);
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (6,5, 6, 0.332, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (7,6, 7, 0.543, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (8,6, 8, 0.305, 1180); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (9,6, 9, 0.364, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (10,7, 10, 0.568, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (11,7, 11, 0.32, 1244); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (12,7, 12, 0.382, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (13,8, 13, 0.595, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (14,8, 14, 0.337, 1288); 
-INSERT INTO llx_expensereport_ik (rowid,fk_cat, fk_range, coef, offset) values (15,8, 15, 0.401, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (1,4, 1, 0.41, 0);
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (2,4, 2, 0.244, 824);
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (3,4, 3, 0.286, 0);
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (4,5, 4, 0.493, 0);
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (5,5, 5, 0.277, 1082);
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (6,5, 6, 0.332, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (7,6, 7, 0.543, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (8,6, 8, 0.305, 1180); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (9,6, 9, 0.364, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (10,7, 10, 0.568, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (11,7, 11, 0.32, 1244); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (12,7, 12, 0.382, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (13,8, 13, 0.595, 0); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (14,8, 14, 0.337, 1288); 
+INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (15,8, 15, 0.401, 0); 
 
 
 INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (1,'ExpAutoCat', 1, 1);
@@ -619,36 +619,36 @@ INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (27,'ExpMoto
 INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (28,'ExpMoto5PCV', 1, 1);
 
 
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (1,4, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (2,4, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (3,4, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (4,5, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (5,5, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (6,5, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (7,6, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (8,6, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (9,6, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (10,7, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (11,7, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (12,7, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (13,8, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (14,8, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_cat,`range`, entity, active) values (15,8, 20000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (1,4, 0, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (2,4, 5000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (3,4, 20000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (4,5, 0, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (5,5, 5000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (6,5, 20000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (7,6, 0, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (8,6, 5000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (9,6, 20000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (10,7, 0, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (11,7, 5000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (12,7, 20000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (13,8, 0, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (14,8, 5000, 1, 1);
+INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (15,8, 20000, 1, 1);
 
-CREATE TABLE `llx_expensereport_rules` (
-    `rowid` integer AUTO_INCREMENT PRIMARY KEY,
-    `datec` datetime  DEFAULT NULL,
-    `tms` timestamp,
-    `dates` datetime NOT NULL,
-    `datee` datetime NOT NULL,
-    `amount` numeric(24,8) NOT NULL,
-    `restrictive` tinyint(1) NOT NULL,
-    `fk_user` integer DEFAULT NULL,
-    `fk_usergroup` integer DEFAULT NULL,
-    `fk_c_type_fees` integer NOT NULL,
-    `code_expense_rules_type` varchar(50) NOT NULL,
-    `is_for_all` tinyint(1) DEFAULT '0',
-    `entity` integer DEFAULT 1
+CREATE TABLE llx_expensereport_rules (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    datec datetime  DEFAULT NULL,
+    tms timestamp,
+    dates datetime NOT NULL,
+    datee datetime NOT NULL,
+    amount numeric(24,8) NOT NULL,
+    restrictive tinyint NOT NULL,
+    fk_user integer DEFAULT NULL,
+    fk_usergroup integer DEFAULT NULL,
+    fk_c_type_fees integer NOT NULL,
+    code_expense_rules_type varchar(50) NOT NULL,
+    is_for_all tinyint DEFAULT '0',
+    entity integer DEFAULT 1
 );
 
 ALTER TABLE llx_expensereport_det ADD COLUMN rule_warning_message text;

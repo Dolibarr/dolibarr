@@ -47,7 +47,7 @@ $id = GETPOST('id','int');
 $offset = GETPOST('offset','int');
 $coef = GETPOST('coef','int');
 
-$fk_cat = GETPOST('fk_cat');
+$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 $fk_range = GETPOST('fk_range');
 
 if ($action == 'updateik')
@@ -106,7 +106,7 @@ echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 if ($action == 'edit')
 {
 	echo '<input type="hidden" name="id" value="'.$id.'" />';
-	echo '<input type="hidden" name="fk_cat" value="'.$fk_cat.'" />';
+	echo '<input type="hidden" name="fk_c_exp_tax_cat" value="'.$fk_c_exp_tax_cat.'" />';
 	echo '<input type="hidden" name="fk_range" value="'.$fk_range.'" />';
 	echo '<input type="hidden" name="action" value="updateik" />';
 }
@@ -115,7 +115,7 @@ echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
 echo '<table class="noborder" width="100%">';
 
-foreach ($rangesbycateg as $fk_cat => $Tab)
+foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 {
 	$title = ($Tab['active'] == 1) ? $langs->trans($Tab['label']) : $form->textwithpicto($langs->trans($Tab['label']), $langs->trans('expenseReportCatDisabled'), 1, 'help', '', 0, 3);
 	echo '<tr class="liste_titre">';
@@ -132,8 +132,8 @@ foreach ($rangesbycateg as $fk_cat => $Tab)
 	$var = true;
 	foreach ($Tab['ranges'] as $k => $range)
 	{
-		if (isset($Tab['ranges'][$k+1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range, ($Tab['ranges'][$k+1]->range-1));
-		else $label = $langs->trans('expenseReportRangeMoreThan', $range->range);
+		if (isset($Tab['ranges'][$k+1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k+1]->range_ik-1));
+		else $label = $langs->trans('expenseReportRangeMoreThan', $range->range_ik);
 		
 		if ($range->range_active == 0) $label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
 			
@@ -144,12 +144,12 @@ foreach ($rangesbycateg as $fk_cat => $Tab)
 		
 		// Offset
 		echo '<td width="20%">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_cat == $fk_cat) echo '<input type="text" name="offset" value="'.$range->ik->offset.'" />';
+		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" name="offset" value="'.$range->ik->offset.'" />';
 		else echo $range->ik->offset;
 		echo '</td>';
 		// Coef
 		echo '<td width="20%">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_cat == $fk_cat) echo '<input type="text" name="coef" value="'.$range->ik->coef.'" />';
+		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" name="coef" value="'.$range->ik->coef.'" />';
 		else echo ($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
 		echo '</td>';
 		
@@ -160,14 +160,14 @@ foreach ($rangesbycateg as $fk_cat => $Tab)
 		echo '<td align="right">';
 		if ($range->range_active == 1)
 		{
-			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_cat == $fk_cat)
+			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)
 			{
 				echo '<input id="" class="button" name="save" value="'.$langs->trans('Save').'" type="submit" />';
 				echo '<input class="button" value="'.$langs->trans('Cancel').'" onclick="javascript:history.go(-1)" type="button" />';
 			}
 			else
 			{
-				echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_cat='.$range->fk_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
+				echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
 				if (!empty($range->ik->id)) echo '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$range->ik->id.'">'.img_delete().'</a>';
 				// TODO add delete link
 			}

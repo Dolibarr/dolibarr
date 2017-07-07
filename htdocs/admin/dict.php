@@ -205,7 +205,7 @@ $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmar
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 $tabsql[35]= "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
-$tabsql[36]= "SELECT r.rowid, r.fk_cat, r.range, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
+$tabsql[36]= "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -244,7 +244,7 @@ $tabsqlsort[30]="code ASC";
 $tabsqlsort[33]="code ASC";
 $tabsqlsort[34]="code ASC";
 $tabsqlsort[35]="c.label ASC";
-$tabsqlsort[36]="r.fk_cat ASC, r.range ASC";
+$tabsqlsort[36]="r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -281,7 +281,7 @@ $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,
 //$tabfield[31]= "pcg_version,label";
 //$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
 $tabfield[35]= "label";
-$tabfield[36]= "range,fk_cat";
+$tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -320,7 +320,7 @@ $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargi
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
 $tabfieldvalue[35]= "label";
-$tabfieldvalue[36]= "range,fk_cat";
+$tabfieldvalue[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -359,7 +359,7 @@ $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmarg
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
 $tabfieldinsert[35]= "label";
-$tabfieldinsert[36]= "`range`,fk_cat";
+$tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -478,7 +478,7 @@ $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->tran
 $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35]= array();
-$tabhelp[36]= array('range'=>$langs->trans('PrevRangeToThisRange'));
+$tabhelp[36]= array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -1086,6 +1086,8 @@ if ($id)
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
 			if ($fieldlist[$field]=='fk_tva')          { $valuetoshow=$langs->trans("VAT"); }
+			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
+			if ($fieldlist[$field]=='fk_c_exp_tax_cat'){ $valuetoshow=$langs->trans("CarCategory"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1306,6 +1308,8 @@ if ($id)
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
 			if ($fieldlist[$field]=='fk_tva')          { $valuetoshow=$langs->trans("VAT"); }
+			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
+			if ($fieldlist[$field]=='fk_c_exp_tax_cat'){ $valuetoshow=$langs->trans("CarCategory"); }
 
             // Affiche nom du champ
             if ($showfield)
@@ -1534,7 +1538,7 @@ if ($id)
 									}
 								}
 							}
-							elseif (in_array($fieldlist[$field], array('fk_cat', 'fk_exp_tax_cat')))
+							elseif ($fieldlist[$field] == 'fk_c_exp_tax_cat')
 							{
 								$valuetoshow = getDictvalue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
 								$valuetoshow = $langs->trans($valuetoshow);
@@ -1881,10 +1885,10 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print $form->load_tva('fk_tva', $obj->taux, $mysoc, new Societe($db), 0, 0, '', false, -1);
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'fk_cat')
+		elseif ($fieldlist[$field] == 'fk_c_exp_tax_cat')
 		{
 			print '<td>';
-			print $form->selectExpenseCategories($obj->fk_cat);
+			print $form->selectExpenseCategories($obj->fk_c_exp_tax_cat);
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'fk_range')

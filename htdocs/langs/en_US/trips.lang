@@ -138,12 +138,12 @@ ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Range %d
 
-ExpenseReportConstraintViolationError=Contraint violation id [%s]: %s  is superior to %s %s
+ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
 byEX_YEA=by year (limitation to %s)
 byEX_EXP=by line (limitation to %s)
-ExpenseReportConstraintViolationWarning=Contraint violation id [%s]: %s  is superior to %s %s
+ExpenseReportConstraintViolationWarning=Constraint violation id [%s]: %s  is superior to %s %s
 nolimitbyEX_DAY=by day (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
@@ -151,3 +151,4 @@ nolimitbyEX_EXP=by line (no limitation)
 
 CarCategory=Category of car
 ExpenseRangeOffset=Offset amount: %s
+RangeIk=Mileage range

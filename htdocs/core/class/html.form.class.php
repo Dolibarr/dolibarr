@@ -6307,7 +6307,7 @@ class Form
      * @param	array	$params                param to give 
      * @return	string
 	 */
-	function selectExpenseCategories($selected='', $htmlname='fk_cat', $useempty=0, $excludeid=array(), $target='', $default_selected=0, $params=array())
+	function selectExpenseCategories($selected='', $htmlname='fk_c_exp_tax_cat', $useempty=0, $excludeid=array(), $target='', $default_selected=0, $params=array())
 	{
 		global $db,$conf,$langs;
 		
@@ -6335,7 +6335,7 @@ class Form
 				if ($resql)
 				{
 					if ($db->num_rows($resql) > 0)
-					{						dol_buildpath($path);
+					{
 						$obj = $db->fetch_object($resql);
 						$out.= '<script type="text/javascript">
 							$(function() {
@@ -6399,7 +6399,7 @@ class Form
 	{
 		global $db,$conf,$langs;
 		
-		$sql = 'SELECT rowid, `range` FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
+		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
 		$sql.= ' WHERE entity = '.$conf->entity.' AND active = 1';
 		
 		$resql = $db->query($sql);
@@ -6410,7 +6410,7 @@ class Form
 			
 			while ($obj = $db->fetch_object($resql))
 			{
-				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.price($obj->range, 0, $langs, 1, 0).'</option>';
+				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.price($obj->range_ik, 0, $langs, 1, 0).'</option>';
 			}
 			$out.= '</select>';
 		}

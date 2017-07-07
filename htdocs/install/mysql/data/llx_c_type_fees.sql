@@ -37,7 +37,7 @@ insert into llx_c_type_fees (code,label,active) values ('TF_TRIP',     'Transpor
 insert into llx_c_type_fees (code,label,active) values ('TF_LUNCH',    'Lunch',  1);
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
-('EX_KME', 'ExpLabelKm', 0, '625100'),
+('EX_KME', 'ExpLabelKm', 1, '625100'),
 ('EX_FUE', 'ExpLabelFuelCV', 0, '606150'),
 ('EX_HOT', 'ExpLabelHotel', 0, '625160'),
 ('EX_PAR', 'ExpLabelParkingCV', 0, '625160'),
