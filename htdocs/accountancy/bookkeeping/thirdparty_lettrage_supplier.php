@@ -36,11 +36,24 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 
-$page = GETPOST ( "page" );
-$sortorder = GETPOST ( "sortorder" );
+$action=GETPOST('action','aZ09');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if ($sortorder == "") $sortorder = "ASC";
+if ($sortfield == "") $sortfield = "bk.rowid";
+
 $search_year = GETPOST ( "search_year" );
-$sortfield = GETPOST ( "sortfield" );
-$action = GETPOST ( 'action', 'alpha' );
 
 
 // Security check
@@ -50,16 +63,11 @@ $socid = GETPOST("socid",'int');
 $object = new Societe($db);
 $object->id = $socid;
 $object->fetch($socid);
+
 $form = new Form($db);
-
 $BookKeeping = new lettering($db);
-
-if ($sortorder == "") $sortorder = "ASC";
-if ($sortfield == "") $sortfield = "bk.rowid";
-
-$offset = $conf->liste_limit * $page;
-
 $formaccounting = new FormAccounting($db);
+
 
 /*
  * Action
