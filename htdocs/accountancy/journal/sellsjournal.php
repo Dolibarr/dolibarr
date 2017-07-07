@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
@@ -46,7 +46,7 @@ $langs->load("main");
 $langs->load("accountancy");
 
 $id_journal = GETPOST('id_journal', 'int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -246,7 +246,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt < 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
@@ -292,7 +292,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-						$bookkeeping->debit = ($mt < 0) ? $mt : 0;
+						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
@@ -338,7 +338,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]);
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
+					$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
@@ -404,7 +404,7 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'export_csv') {
+if ($action == 'exportcsv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
@@ -529,7 +529,7 @@ if (empty($action) || $action == 'view') {
 	print '
 	<script type="text/javascript">
 		function launch_export() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
