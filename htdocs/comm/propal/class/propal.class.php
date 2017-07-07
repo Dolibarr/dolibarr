@@ -618,9 +618,10 @@ class Propal extends CommonObject
 	 *  @param		array		$array_options		extrafields array
      * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 * 	@param		int			$notrigger			disable line update trigger
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise = 0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise = 0, $notrigger=0)
     {
         global $mysoc;
 
@@ -745,7 +746,7 @@ class Propal extends CommonObject
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
-            $result=$this->line->update();
+            $result=$this->line->update($notrigger);
             if ($result > 0)
             {
                 // Reorder if child line
