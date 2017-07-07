@@ -1508,11 +1508,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
             // Clean
             if (empty($visible)) $visible='0';
-            if (empty($val)) $val='';
+            if (empty($val) && $val != '0') $val='';
 
             $sql = "SELECT count(*)";
             $sql.= " FROM ".MAIN_DB_PREFIX."const";
-            $sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+            $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
             $sql.= " AND entity = ".$entity;
 
             $result=$this->db->query($sql);
@@ -1526,7 +1526,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                     $sql.= " VALUES (";
                     $sql.= $this->db->encrypt($name,1);
                     $sql.= ",'".$type."'";
-                    $sql.= ",".($val?$this->db->encrypt($val,1):"''");
+                    $sql.= ",".(($val != '')?$this->db->encrypt($val,1):"''");
                     $sql.= ",".($note?"'".$this->db->escape($note)."'":"null");
                     $sql.= ",'".$visible."'";
                     $sql.= ",".$entity;

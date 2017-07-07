@@ -45,7 +45,7 @@ class CommandeFournisseur extends CommonOrder
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='order';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -132,9 +132,9 @@ class CommandeFournisseur extends CommonOrder
      * Draft status
      */
     const STATUS_DRAFT = 0;
-    
-    
-    
+
+
+
 	/**
      * 	Constructor
      *
@@ -318,7 +318,7 @@ class CommandeFournisseur extends CommonOrder
                     $line->subprice            = $objp->subprice;
                     $line->pu_ht	           = $objp->subprice;
                     $line->remise_percent      = $objp->remise_percent;
-                    
+
                     $line->vat_src_code        = $objp->vat_src_code;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
@@ -615,7 +615,7 @@ class CommandeFournisseur extends CommonOrder
 
         $picto='order';
         $url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
-            
+
         $linkclose='';
         if (empty($notooltip))
         {
@@ -627,7 +627,7 @@ class CommandeFournisseur extends CommonOrder
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
         }
-        
+
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
@@ -1378,7 +1378,7 @@ class CommandeFournisseur extends CommonOrder
         }
         $desc=trim($desc);
         $ref_supplier=''; // Ref of supplier price when we add line
-        
+
         // Check parameters
         if ($qty < 1 && ! $fk_product)
         {
@@ -1402,7 +1402,7 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $product_type = $prod->type;
                         $label = $prod->label;
-                        
+
                         // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
                         $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
@@ -1422,7 +1422,7 @@ class CommandeFournisseur extends CommonOrder
                             $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
                             $this->db->rollback();
                             dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
-                            //$pu    = $prod->fourn_pu;     // We do not overwrite unit price   
+                            //$pu    = $prod->fourn_pu;     // We do not overwrite unit price
                             //$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
                             return -1;
                         }
@@ -1468,7 +1468,7 @@ class CommandeFournisseur extends CommonOrder
                 $vat_src_code = $reg[1];
                 $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -1487,7 +1487,7 @@ class CommandeFournisseur extends CommonOrder
 			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
-            
+
             $rangmax = $this->line_max();
             $rang = $rangmax + 1;
 
@@ -1513,7 +1513,7 @@ class CommandeFournisseur extends CommonOrder
             $this->line->subprice=$pu_ht;
             $this->line->rang=$this->rang;
             $this->line->info_bits=$info_bits;
-            
+
             $this->line->vat_src_code=$vat_src_code;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
@@ -1553,7 +1553,7 @@ class CommandeFournisseur extends CommonOrder
                 if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
                 // Mise a jour informations denormalisees au niveau de la commande meme
-                $result=$this->update_price(1,'auto');	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                $result=$this->update_price(1,'auto',0,$this->thirdparty);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -2001,7 +2001,7 @@ class CommandeFournisseur extends CommonOrder
                     $old_statut = $this->statut;
                     $this->statut = $statut;
 					$this->actionmsg2 = $comment;
-					
+
                     // Call trigger
                     $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE',$user);
                     if ($result < 0) $error++;
@@ -2334,7 +2334,7 @@ class CommandeFournisseur extends CommonOrder
                 $vat_src_code = $reg[1];
                 $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2819,7 +2819,7 @@ class CommandeFournisseur extends CommonOrder
         return $text;
     }
 
-    
+
     /**
      * Calc status regarding to dispatched stock
      *
@@ -2828,7 +2828,7 @@ class CommandeFournisseur extends CommonOrder
      * @param		string	$comment				Comment
      * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1, $comment='') 
+    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1, $comment='')
     {
     	global $conf, $langs;
 
@@ -2845,14 +2845,14 @@ class CommandeFournisseur extends CommonOrder
     			$filter['t.status']=1;
     		}
     		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
-    		if ($ret<0) 
+    		if ($ret<0)
     		{
     			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
     			return $ret;
-    		} 
-    		else 
+    		}
+    		else
     		{
-    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) 
+    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0)
     			{
     				//Build array with quantity deliverd by product
     				foreach($supplierorderdispatch->lines as $line) {
@@ -2861,12 +2861,12 @@ class CommandeFournisseur extends CommonOrder
     				foreach($this->lines as $line) {
     					$qtywished[$line->fk_product]+=$line->qty;
     				}
-    				
+
     				$date_liv = dol_now();
-    				
+
     				//Compare array
     				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
-			
+
     				if (count($diff_array)==0) //No diff => mean everythings is received
     				{
     					if ($closeopenorder)
@@ -2888,8 +2888,8 @@ class CommandeFournisseur extends CommonOrder
     					    }
     					    return 4;
     					}
-    				} 
-    				else 
+    				}
+    				else
     				{
     					//Diff => received partially
     					$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
@@ -3014,12 +3014,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->date_start       		= $this->db->jdate($objp->date_start);
             $this->date_end         		= $this->db->jdate($objp->date_end);
 	        $this->fk_unit          		= $objp->fk_unit;
-			
+
 			$this->multicurrency_subprice	= $objp->multicurrency_subprice;
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
-			
+
             $this->db->free($result);
             return 1;
         }
@@ -3208,7 +3208,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ", subprice='".price2num($this->subprice)."'";
         //$sql.= ",remise='".price2num($remise)."'";
         $sql.= ", remise_percent='".price2num($this->remise_percent)."'";
-        
+
 		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
         $sql.= ", tva_tx='".price2num($this->tva_tx)."'";
         $sql.= ", localtax1_tx='".price2num($this->total_localtax1)."'";
