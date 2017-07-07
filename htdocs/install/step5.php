@@ -41,11 +41,15 @@ $action=GETPOST('action', 'alpha');
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
-$targetversion=DOL_VERSION;		// It it's last upgrade
+$targetversion=DOL_VERSION;		// If it's latest upgrade
 if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upgrade
 {
     $tmp=explode('_', $action, 2);
-    if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
+    if ($tmp[0]=='upgrade')
+    {
+        //if (! empty($tmp[1])) $targetversion=$tmp[1];
+        $targetversion=$versionto;
+    }
 }
 
 $langs->load("admin");
