@@ -882,8 +882,6 @@ class Societe extends CommonObject
 			$sql .= ', multicurrency_code = \''.$this->db->escape($this->multicurrency_code)."'";
             $sql .= " WHERE rowid = '" . $id ."'";
 
-
-            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -978,11 +976,12 @@ class Societe extends CommonObject
                 {
                     // Doublon
                     $this->error = $langs->trans("ErrorDuplicateField");
-                    $result =  -1;
+                    $result = -1;
                 }
                 else
                 {
-                    $result =  -2;
+                    $this->error = $this->db->lasterror();
+                    $result = -2;
                 }
                 $this->db->rollback();
                 return $result;
