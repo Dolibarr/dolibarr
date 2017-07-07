@@ -134,6 +134,7 @@ $elementList = array();
 			'2' => $langs->trans('AccountingJournalType2'),
 			'3' => $langs->trans('AccountingJournalType3'),
 			'4' => $langs->trans('AccountingJournalType4'),
+			'5' => $langs->trans('AccountingJournalType5'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 
