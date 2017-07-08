@@ -1080,11 +1080,10 @@ if (empty($reshook))
 
     	// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
-    	$object_ligne->vatrate = price2num($vatrate);
 
     	$object_ligne->fk_projet = $fk_projet;
 
-    	if (! GETPOST('fk_c_type_fees') > 0)
+    	if (! (GETPOST('fk_c_type_fees') > 0))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -1949,7 +1948,7 @@ else
 
 				// Fetch Lines of current expense report
 				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-				$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+				$sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -2028,7 +2027,7 @@ else
 								// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
 								print '<td style="text-align:center;">'.($langs->trans(($objp->type_fees_code)) == $objp->type_fees_code ? $objp->type_fees_libelle : $langs->trans(($objp->type_fees_code))).'</td>';
 								print '<td style="text-align:left;">'.$objp->comments.'</td>';
-								print '<td style="text-align:right;">'.vatrate($objp->vatrate,true).'</td>';
+								print '<td style="text-align:right;">'.vatrate($objp->vatrate.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''),true).'</td>';
 								print '<td style="text-align:right;">'.price($objp->value_unit).'</td>';
 								print '<td style="text-align:right;">'.$objp->qty.'</td>';
 
@@ -2082,24 +2081,25 @@ else
 
 									// Add comments
 									print '<td>';
-									print '<textarea name="comments" class="flat_ndf centpercent">'.$objp->comments.'</textarea>';
+									print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($objp->comments).'</textarea>';
 									print '</td>';
 
 									// VAT
 									print '<td style="text-align:right;">';
 									$seller=$mysoc;
 									$buyer=new Societe($db);
-									print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$objp->vatrate), $seller, $buyer, 0, 0, '', false, 1);
+									$selectedvat=(GETPOST("vatrate",'alpha')?GETPOST("vatrate",'alpha'):$objp->vatrate.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
+									print $form->load_tva('vatrate', $selectedvat, $seller, $buyer, 0, 0, '', false, 1);
 									print '</td>';
 
 									// Unit price
 									print '<td style="text-align:right;">';
-									print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.$objp->value_unit.'" />';
+									print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.dol_escape_htmltag($objp->value_unit).'" />';
 									print '</td>';
 
 									// Quantity
 									print '<td style="text-align:right;">';
-									print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.$objp->qty.'" />';
+									print '<input type="text" min="0" class="maxwidth50" name="qty" value="'.$objp->qty.'" />';    // We must be able to enter decimal qty
 									print '</td>';
 
 									if ($action != 'editline')
@@ -2120,13 +2120,6 @@ else
 
 						$db->free($resql);
 					}
-					else
-					{
-					/*	print '<table width="100%">';
-						print '<tr><td><div class="error" style="display:block;">'.$langs->trans("AucuneLigne").'</div></td></tr>';
-						print '</table>';*/
-					}
-					//print '</div>';
 
 					// Add a line
 					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
@@ -2142,7 +2135,6 @@ else
 						print '<td align="right">'.$langs->trans('Qty').'</td>';
 						print '<td colspan="3"></td>';
 						print '</tr>';
-
 
 						print '<tr '.$bc[true].'>';
 
@@ -2180,12 +2172,12 @@ else
 
 						// Unit price
 						print '<td align="right">';
-						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
+						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.(GETPOST('value_unit','alpha')?GETPOST('value_unit','alpha'):dol_escape_htmltag($value_unit)).'">';
 						print '</td>';
 
 						// Quantity
 						print '<td align="right">';
-						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';
+						print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';    // We must be able to enter decimal qty
 						print '</td>';
 
 						if ($action != 'editline')
