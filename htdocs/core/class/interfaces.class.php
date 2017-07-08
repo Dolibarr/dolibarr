@@ -262,6 +262,8 @@ class Interfaces
                 {
                     if (is_readable($newdir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/',$file,$reg))
                     {
+                        if (preg_match('/\.back$/',$file)) continue;
+
 						$part1=$reg[1];
 						$part2=$reg[2];
 						$part3=$reg[3];
