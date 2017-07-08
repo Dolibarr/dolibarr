@@ -110,7 +110,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
 if ($in_bookkeeping == 'yes')
-	$sql .= " AND (f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='supplier_invoice') )";
+	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='supplier_invoice')";
 $sql .= " ORDER BY f.datef";
 
 dol_syslog('accountancy/journal/purchasesjournal.php:: $sql=' . $sql);
@@ -226,7 +226,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 					$bookkeeping->subledger_label = '';    // TODO To complete
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -629,7 +629,7 @@ if (empty($action) || $action == 'view') {
 			}
 			else print $accountoshow;
 			print "</td>";
-			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("subledger_account") . "</td>";
+			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
 			// print "</td><td>" . $langs->trans("ThirdParty");
 			// print ' (' . $companystatic->getNomUrl(0, 'supplier', 16) . ')';
 			// print "</td>";

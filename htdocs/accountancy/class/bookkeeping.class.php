@@ -430,6 +430,9 @@ class BookKeeping extends CommonObject
 		if (empty($this->debit)) $this->debit = 0;
 		if (empty($this->credit)) $this->credit = 0;
 
+		$this->debit = price2num($this->debit, 'MT');
+		$this->credit = price2num($this->credit, 'MT');
+
 		$now = dol_now();
 		if (empty($this->date_create)) {
 		    $this->date_create = $now;
@@ -999,6 +1002,9 @@ class BookKeeping extends CommonObject
 			$this->piece_num = trim($this->piece_num);
 		}
 
+		$this->debit = price2num($this->debit, 'MT');
+		$this->credit = price2num($this->credit, 'MT');
+
 		// Check parameters
 		// Put here code to add a control on parameters values
 
@@ -1069,9 +1075,10 @@ class BookKeeping extends CommonObject
 	public function updateByMvt($piece_num='', $field='', $value='', $mode='') {
 		$this->db->begin();
 		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
-		$sql .= ' SET ab.' . $field . '=' . $value;
+		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$value."'");
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
+
 		if (! $resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
@@ -1576,6 +1583,7 @@ class BookKeeping extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
+		/*
 		$sql = "DELETE FROM ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte";
@@ -1584,6 +1592,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND asy.rowid = " . $pcgver;
 		$sql .= " AND ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " ORDER BY account_number ASC";
+		*/
 	}
 
 	/**

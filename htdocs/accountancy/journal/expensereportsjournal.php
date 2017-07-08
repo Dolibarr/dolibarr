@@ -106,7 +106,7 @@ $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don'
 if ($date_start && $date_end)
 	$sql .= " AND er.date_debut >= '" . $db->idate($date_start) . "' AND er.date_debut <= '" . $db->idate($date_end) . "'";
 if ($in_bookkeeping == 'yes')
-    $sql .= " AND (er.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report') )";
+    $sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
 $sql .= " ORDER BY er.date_debut";
 
 dol_syslog('accountancy/journal/expensereportsjournal.php:: $sql=' . $sql);
@@ -595,7 +595,7 @@ if (empty($action) || $action == 'view') {
 			}
 			else print $accountoshow;
 			print "</td>";
-			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("subledger_account") . "</td>";
+			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
 			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
 			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "</tr>";

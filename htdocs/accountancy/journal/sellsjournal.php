@@ -116,7 +116,7 @@ $sql .= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
 if ($in_bookkeeping == 'yes')
-	$sql .= " AND (f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='customer_invoice') )";
+	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='customer_invoice')";
 $sql .= " ORDER BY f.datef";
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
@@ -243,7 +243,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 					$bookkeeping->subledger_label = '';    // TODO To complete
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -589,7 +589,7 @@ if (empty($action) || $action == 'view') {
 			// print "</td><td>" . $langs->trans("ThirdParty");
 			// print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
 			print '</td>';
-			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("subledger_account") . "</td>";
+			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 			print "</tr>";
