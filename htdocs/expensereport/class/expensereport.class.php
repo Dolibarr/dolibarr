@@ -620,7 +620,7 @@ class ExpenseReport extends CommonObject
         $sql.= " f.tms as date_modification,";
         $sql.= " f.date_valid as datev,";
         $sql.= " f.date_approve as datea,";
-        $sql.= " f.fk_user_author as fk_user_creation,";
+        //$sql.= " f.fk_user_author as fk_user_creation,";      // This is not user of creation but user the expense is for.
         $sql.= " f.fk_user_modif as fk_user_modification,";
         $sql.= " f.fk_user_valid,";
         $sql.= " f.fk_user_approve";
