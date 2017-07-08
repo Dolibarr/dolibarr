@@ -358,6 +358,7 @@ TotalLT1ES=Total RE
 TotalLT2ES=Total IRPF
 HT=Net of tax
 TTC=Inc. tax
+INCT=Inc. all taxes
 VAT=Sales tax
 VATs=Sales taxes
 LT1ES=RE

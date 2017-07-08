@@ -433,7 +433,7 @@ class MyObject extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new MyModuleObject($this->db);
+		$object = new self($this->db);
 
 		$this->db->begin();
 

@@ -75,7 +75,7 @@ $date_endyear = GETPOST('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
 
 $now = dol_now();
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 // Security check
 if ($user->societe_id > 0 && empty($id_journal))
@@ -612,7 +612,7 @@ if (! $error && $action == 'writebookkeeping') {
 }
 
 // Export
-if ($action == 'export_csv') {
+if ($action == 'exportcsv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
@@ -760,7 +760,7 @@ if (empty($action) || $action == 'view') {
 	<script type="text/javascript">
 		function launch_export() {
 			console.log("Set value into form and submit");
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
+			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
 			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
 		}
