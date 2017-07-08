@@ -609,6 +609,7 @@ class BookKeeping extends CommonObject
 		}
 	}
 
+
 	/**
 	 * Load object in memory from the database
 	 *
@@ -1093,7 +1094,6 @@ class BookKeeping extends CommonObject
 	 * @param User $user User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 * @param string $mode Mode
-	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false, $mode='') {

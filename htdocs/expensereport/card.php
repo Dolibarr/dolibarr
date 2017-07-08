@@ -479,6 +479,7 @@ if (empty($reshook))
 				}
 				*/
 
+
     			// PREPARE SEND
     			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
 
@@ -1063,7 +1064,8 @@ if (empty($reshook))
 
     	$object_ligne = new ExpenseReportLine($db);
 
-    	$vatrate = GETPOST('vatrate');
+    	$vatrate = GETPOST('vatrate','alpha');             // May be 8.5* (8.5NPROM)
+
     	$object_ligne->comments = GETPOST('comments');
     	$qty  = GETPOST('qty','int');
     	if (empty($qty)) $qty=1;
@@ -1125,13 +1127,34 @@ if (empty($reshook))
     		$object_ligne->fk_expensereport = $_POST['fk_expensereport'];
 
     		$type = 0;	// TODO What if service ?
-    		$seller = '';  // seller is unknown
-    		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
+            // We don't know seller and buyer for expense reports
+    		$seller = $mysoc;
+            $buyer = new Societe($db);
+
+    		$localtaxes_type=getLocalTaxesFromRate($vatrate,0,$buyer,$seller);
+
+    		// Clean vat code
+    		$vat_src_code='';
+
+    		if (preg_match('/\((.*)\)/', $vatrate, $reg))
+    		{
+    		    $vat_src_code = $reg[1];
+    		    $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+    		}
+    		$vatrate = preg_replace('/\*/','',$vatrate);
+
+    		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+
+    		$object_ligne->vat_src_code = $vat_src_code;
     		$object_ligne->vatrate = price2num($vatrate);
     		$object_ligne->total_ttc = $tmp[2];
     		$object_ligne->total_ht = $tmp[0];
     		$object_ligne->total_tva = $tmp[1];
+    		$object_ligne->localtax1_tx = $localtaxes_type[1];
+    		$object_ligne->localtax2_tx = $localtaxes_type[3];
+    		$object_ligne->localtax1_type = $localtaxes_type[0];
+    		$object_ligne->localtax2_type = $localtaxes_type[2];
 
     		$result = $object_ligne->insert();
     		if ($result > 0)
@@ -1862,7 +1885,8 @@ else
 				    {
 				        $objp = $db->fetch_object($resql);
 
-				        print '<tr class="oddseven"><td>';
+				        print '<tr class="oddseven">';
+				        print '<td>';
 						$paymentexpensereportstatic->id = $objp->rowid;
 						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
 						$paymentexpensereportstatic->ref = $objp->rowid;
@@ -1893,6 +1917,7 @@ else
 							print '</td>';
 						}
 				        print '<td align="right">'.price($objp->amount)."</td>";
+				        print '<td></td>';
 				        print "</tr>";
 				        $totalpaid += $objp->amount;
 				        $i++;
@@ -1900,21 +1925,21 @@ else
 
 				    if ($object->paid == 0)
 				    {
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td></tr>';
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td></tr>';
+				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
+				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
 				        $remaintopay = $object->total_ttc - $totalpaid;
 
 				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
-				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td></tr>';
+				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td><td></td></tr>';
 				    }
-				    print "</table>";
 				    $db->free($resql);
 				}
 				else
 				{
 				    dol_print_error($db);
 				}
+				print "</table>";
 
 				print '</div>';
 				print '</div>';
@@ -2062,7 +2087,9 @@ else
 
 									// VAT
 									print '<td style="text-align:right;">';
-									print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$objp->vatrate), $mysoc, '');
+									$seller=$mysoc;
+									$buyer=new Societe($db);
+									print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$objp->vatrate), $seller, $buyer, 0, 0, '', false, 1);
 									print '</td>';
 
 									// Unit price
@@ -2148,7 +2175,7 @@ else
 						print '<td align="right">';
 						$defaultvat=-1;
 						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
-						print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false);
+						print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
 						print '</td>';
 
 						// Unit price
