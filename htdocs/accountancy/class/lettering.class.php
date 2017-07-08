@@ -31,9 +31,15 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 /**
  * Class lettering
  */
-class lettering extends BookKeeping {
-
-	public function LettrageTiers($socid){
+class lettering extends BookKeeping
+{
+    /**
+     * lettrageTiers
+     *
+     * @param   int   $socid      Thirdparty id
+     * @return  void
+     */
+	public function lettrageTiers($socid) {
 
 		$db = $this->db;
 
