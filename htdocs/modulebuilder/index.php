@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +22,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");
 $langs->load("modulebuilder");
@@ -31,17 +30,20 @@ $langs->load("other");
 
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
+
 $module=GETPOST('module','alpha');
 $tab=GETPOST('tab','aZ09');
 $tabobj=GETPOST('tabobj','alpha');
 if (empty($module)) $module='initmodule';
 if (empty($tab)) $tab='description';
 if (empty($tabobj)) $tabobj='newobject';
+$file=GETPOST('file','alpha');
 
 $modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
 $objectname=dol_sanitizeFileName(GETPOST('objectname','alpha'));
 
 // Security check
+if (empty($conf->modulebuilder->enabled)) accessforbidden('ModuleBuilderNotAllowed');
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
 
 
@@ -373,6 +375,29 @@ if ($dirins && $action == 'generatepackage')
     }
 }
 
+if ($action == 'savefile')
+{
+    $pathoftrigger=dol_buildpath($file, 0);
+    $pathoftriggerbackup=dol_buildpath($file.'.back', 0);
+
+    dol_move($pathoftrigger, $pathoftriggerbackup, 0, 1, 0, 0);
+
+    $content = GETPOST('triggerfilecontent');
+
+    // Save file on disk
+    $newmask = 0;
+
+    file_put_contents($pathoftrigger, $content);
+    if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+    if (empty($newmask))	// This should no happen
+    {
+        $newmask='0664';
+    }
+
+    @chmod($pathoftrigger, octdec($newmask));
+}
+
+
 
 /*
  * View
@@ -568,7 +593,8 @@ elseif (! empty($module))
 
         $modulelowercase=strtolower($module);
 
-        $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive");
+        $urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
+        $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive", $urltomodulesetup);
         if (! empty($conf->$module->enabled))
         {
         	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
@@ -882,33 +908,62 @@ elseif (! empty($module))
 			$interfaces = new Interfaces($db);
 			$triggers = $interfaces->getTriggersList(array('/'.strtolower($module).'/core/triggers'));
 
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder">
-			<tr class="liste_titre">
-			<td colspan="2">'.$langs->trans("File").'</td>
-			<td align="center">'.$langs->trans("Active").'</td>
-			<td align="center">&nbsp;</td>
-			</tr>
-			';
-
-			$var=True;
-			foreach ($triggers as $trigger)
+			if ($action != 'editfile' || empty($file))
 			{
-				print '<tr class="oddeven">';
-				print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
-				print '<td class="tdtop">'.$trigger['relpath'].'</td>';
-				print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-				print '<td class="tdtop">';
-				$text=$trigger['info'];
-				$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
-				//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
-				print $form->textwithpicto('', $text);
-				print '</td>';
-				print '</tr>';
-			}
+    			print '<div class="div-table-responsive-no-min">';
+    			print '<table class="noborder">
+    			<tr class="liste_titre">
+    			<td colspan="2">'.$langs->trans("File").'</td>
+    			<td align="center">'.$langs->trans("Active").'</td>
+    			<td align="center">&nbsp;</td>
+    			<td align="center">&nbsp;</td>
+    			</tr>
+    			';
 
-			print '</table>';
-			print '</div>';
+    			$var=True;
+    			foreach ($triggers as $trigger)
+    			{
+    				print '<tr class="oddeven">';
+    				print '<td width="14" align="center">'.$trigger['picto'].'</td>';
+    				print '<td>'.$trigger['relpath'].'</td>';
+    				print '<td align="center">'.(empty($trigger['status'])?$langs->trans("No"):$trigger['status']).'</td>';
+    				print '<td class="tdtop">';
+    				$text=$trigger['info'];
+    				$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+    				//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+    				print $form->textwithpicto('', $text);
+    				print '</td>';
+    				print '<td>';
+    				print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($trigger['relpath']).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+    				print '</td>';
+    				print '</tr>';
+    			}
+
+    			print '</table>';
+    			print '</div>';
+			}
+			else
+			{
+			    $pathoftrigger=dol_buildpath($file, 0);
+
+			    $content = file_get_contents($pathoftrigger);
+
+			    // New module
+			    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="action" value="savefile">';
+			    print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+			    print '<input type="hidden" name="tab" value="'.$tab.'">';
+			    print '<input type="hidden" name="module" value="'.$module.'">';
+
+			    $doleditor=new DolEditor('triggerfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '90%');
+                print $doleditor->Create(1, '', false);
+                print '<center>';
+                print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print '</center>';
+
+                print '</form>';
+			}
         }
 
         if ($tab == 'widgets')

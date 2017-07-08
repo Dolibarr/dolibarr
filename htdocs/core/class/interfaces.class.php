@@ -335,7 +335,7 @@ class Interfaces
             $triggers[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
             $triggers[$j]['version'] = $objMod->getVersion();
             $triggers[$j]['status'] = img_picto($langs->trans("Active"),'tick');
-            if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = "&nbsp;";
+            if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = '';
 
             $text ='<b>'.$langs->trans("Description").':</b><br>';
             $text.=$objMod->getDesc().'<br>';
