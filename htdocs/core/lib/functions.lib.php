@@ -429,7 +429,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            break;
 	        case 'aZ09':
 	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9_\-]+/i',$out)) $out='';
+	            if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();

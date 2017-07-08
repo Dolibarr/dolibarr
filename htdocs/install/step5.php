@@ -47,8 +47,8 @@ if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upg
     $tmp=explode('_', $action, 2);
     if ($tmp[0]=='upgrade')
     {
-        //if (! empty($tmp[1])) $targetversion=$tmp[1];
-        $targetversion=$versionto;
+        if (! empty($tmp[1])) $targetversion=$tmp[1];   // if $action = 'upgrade_6.0.0-beta', we use '6.0.0-beta'
+        else $targetversion=DOL_VERSION;                // if $action = 'upgrade', we use DOL_VERSION
     }
 }
 
