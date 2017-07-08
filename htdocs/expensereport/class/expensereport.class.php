@@ -37,9 +37,9 @@ class ExpenseReport extends CommonObject
     var $picto = 'trip';
 
     var $lignes=array();
-    
+
     public $date_debut;
-    
+
     public $date_fin;
 
     var $fk_user_validator;
@@ -65,7 +65,7 @@ class ExpenseReport extends CommonObject
     // Update
 	var $date_modif;
     var $fk_user_modif;
-    
+
     // Refus
     var $date_refuse;
     var $detail_refuse;
@@ -128,7 +128,7 @@ class ExpenseReport extends CommonObject
 
         $fuserid = $this->fk_user_author;       // Note fk_user_author is not the 'author' but the guy the expense report is for.
         if (empty($fuserid)) $fuserid = $user->id;
-        
+
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
@@ -235,35 +235,35 @@ class ExpenseReport extends CommonObject
     function createFromClone($socid=0)
     {
         global $user,$hookmanager;
-    
+
         $error=0;
-    
+
         $this->context['createfromclone'] = 'createfromclone';
-    
+
         $this->db->begin();
-    
+
         // get extrafields so they will be clone
         foreach($this->lines as $line)
             //$line->fetch_optionals($line->rowid);
-    
+
             // Load source object
             $objFrom = clone $this;
-    
+
             $this->id=0;
             $this->ref = '';
             $this->statut=0;
-    
+
             // Clear fields
             $this->fk_user_author     = $user->id;     // Note fk_user_author is not the 'author' but the guy the expense report is for.
             $this->fk_user_valid      = '';
             $this->date_create  	  = '';
             $this->date_creation      = '';
             $this->date_validation    = '';
-    
+
             // Create clone
             $result=$this->create($user);
             if ($result < 0) $error++;
-    
+
             if (! $error)
             {
                 // Hook of thirdparty module
@@ -274,15 +274,15 @@ class ExpenseReport extends CommonObject
                     $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                     if ($reshook < 0) $error++;
                 }
-    
+
                 // Call trigger
                 $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
-    
+
             unset($this->context['createfromclone']);
-    
+
             // End
             if (! $error)
             {
@@ -295,8 +295,8 @@ class ExpenseReport extends CommonObject
                 return -1;
             }
     }
-    
-    
+
+
     /**
      * update
      *
@@ -399,7 +399,7 @@ class ExpenseReport extends CommonObject
                 $this->fk_user_refuse           = $obj->fk_user_refuse;
                 $this->fk_user_cancel           = $obj->fk_user_cancel;
                 $this->fk_user_approve          = $obj->fk_user_approve;
-                
+
                 $user_author = new User($this->db);
                 if ($this->fk_user_author > 0) $user_author->fetch($this->fk_user_author);
 
@@ -588,7 +588,7 @@ class ExpenseReport extends CommonObject
                     $auser->fetch($obj->fk_user_approve);
                     $this->user_approve   = $auser;
                 }
-                
+
             }
             $this->db->free($resql);
         }
@@ -1000,7 +1000,7 @@ class ExpenseReport extends CommonObject
                 $sql.= ", ref_number_int = ".$ref_number_int;
             }
             $sql.= ' WHERE rowid = '.$this->id;
-            
+
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1215,7 +1215,7 @@ class ExpenseReport extends CommonObject
 
         $sql = 'SELECT MAX(de.ref_number_int) as max';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' de';
-        
+
         $result = $this->db->query($sql);
 
         if($this->db->num_rows($result) > 0):
@@ -1359,7 +1359,7 @@ class ExpenseReport extends CommonObject
      * @param   int         $rowid                  Line to edit
      * @param   int         $type_fees_id           Type payment
      * @param   int         $projet_id              Project id
-     * @param   double      $vatrate                Vat rate
+     * @param   double      $vatrate                Vat rate. Can be '8.5* (8.5NPROM...)'
      * @param   string      $comments               Description
      * @param   real        $qty                    Qty
      * @param   double      $value_unit             Value init
@@ -1369,14 +1369,34 @@ class ExpenseReport extends CommonObject
      */
     function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id)
     {
-        global $user;
+        global $user, $mysoc;
 
         if ($this->fk_statut==0 || $this->fk_statut==99)
         {
             $this->db->begin();
 
+            $type = 0;      // TODO What if type is service ?
+
+            // We don't know seller and buyer for expense reports
+            $seller = $mysoc;
+            $buyer = new Societe($this->db);
+
+            $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$buyer,$seller);
+
+            // Clean vat code
+            $vat_src_code='';
+
+            if (preg_match('/\((.*)\)/', $vatrate, $reg))
+            {
+                $vat_src_code = $reg[1];
+                $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+            }
+            $vatrate = preg_replace('/\*/','',$vatrate);
+
+            $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+
             // calcul de tous les totaux de la ligne
-            $total_ttc  = price2num($qty*$value_unit, 'MT');
+            //$total_ttc  = price2num($qty*$value_unit, 'MT');
 
             $tx_tva = $vatrate / 100;
             $tx_tva = $tx_tva + 1;
@@ -1386,6 +1406,9 @@ class ExpenseReport extends CommonObject
             // fin calculs
 
             $ligne = new ExpenseReportLine($this->db);
+
+            $ligne->rowid           = $rowid;
+
             $ligne->comments        = $comments;
             $ligne->qty             = $qty;
             $ligne->value_unit      = $value_unit;
@@ -1395,11 +1418,21 @@ class ExpenseReport extends CommonObject
             $ligne->fk_c_type_fees  = $type_fees_id;
             $ligne->fk_projet       = $projet_id;
 
-            $ligne->total_ht        = $total_ht;
-            $ligne->total_tva       = $total_tva;
-            $ligne->total_ttc       = $total_ttc;
-            $ligne->vatrate         = price2num($vatrate);
-            $ligne->rowid           = $rowid;
+            //$ligne->total_ht        = $total_ht;
+            //$ligne->total_tva       = $total_tva;
+            //$ligne->total_ttc       = $total_ttc;
+            //$ligne->vatrate         = price2num($vatrate);
+
+            $ligne->vat_src_code = $vat_src_code;
+            $ligne->vatrate = price2num($vatrate);
+            $ligne->total_ttc = $tmp[2];
+            $ligne->total_ht = $tmp[0];
+            $ligne->total_tva = $tmp[1];
+            $ligne->localtax1_tx = $localtaxes_type[1];
+            $ligne->localtax2_tx = $localtaxes_type[3];
+            $ligne->localtax1_type = $localtaxes_type[0];
+            $ligne->localtax2_type = $localtaxes_type[2];
+
 
             // Select des infos sur le type fees
             $sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
@@ -1540,7 +1573,7 @@ class ExpenseReport extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ugu, ".MAIN_DB_PREFIX."usergroup_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
         $sql.= " WHERE ugu.fk_usergroup = ur.fk_usergroup AND ur.fk_id = rd.id and rd.module = 'expensereport' AND rd.perms = 'approve'";       // Permission 'Approve';
         //print $sql;
-        
+
         dol_syslog(get_class($this)."::fetch_users_approver_expensereport sql=".$sql);
         $result = $this->db->query($sql);
         if($result)
@@ -1679,7 +1712,7 @@ class ExpenseReport extends CommonObject
 	    $now=dol_now();
 
 	    $userchildids = $user->getAllChildIds(1);
-	    
+
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
@@ -1711,7 +1744,7 @@ class ExpenseReport extends CommonObject
             while ($obj=$this->db->fetch_object($resql))
             {
 	            $response->nbtodo++;
-                
+
 	            if ($option == 'toapprove')
 	            {
 	                if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->approve->warning_delay)) {
@@ -1735,7 +1768,7 @@ class ExpenseReport extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      * Return if an expense report is late or not
      *
@@ -1745,11 +1778,11 @@ class ExpenseReport extends CommonObject
     public function hasDelay($option)
     {
         global $conf;
-    
+
         //Only valid members
         if ($option == 'toapprove' && $this->status != 2) return false;
         if ($option == 'topay' && $this->status != 5) return false;
-    
+
         $now = dol_now();
         if ($option == 'toapprove')
         {
@@ -1757,7 +1790,7 @@ class ExpenseReport extends CommonObject
         }
         else
             return ($this->datevalid?$this->datevalid:$this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
-    }    
+    }
 }
 
 
