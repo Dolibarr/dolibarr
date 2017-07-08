@@ -617,8 +617,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * Gives the long description of a module. First check README-la_LA.md then README.md
      * If not markdown files found, it return translated value of the key ->descriptionlong.
      *
-     * @param   int     $checkonly
-     * @return  string                  Long description of a module from README of from property.
+     * @return  string                  Long description of a module from README.md of from property.
      */
     function getDescLong()
     {
