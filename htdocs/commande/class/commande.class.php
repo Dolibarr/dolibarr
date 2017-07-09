@@ -1360,10 +1360,10 @@ class Commande extends CommonOrder
 
 			$this->line->vat_src_code=$vat_src_code;
             $this->line->tva_tx=$txtva;
-            $this->line->localtax1_tx=$txlocaltax1;
-            $this->line->localtax2_tx=$txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+            $this->line->localtax1_tx=$localtaxes_type[1];
+            $this->line->localtax2_tx=$localtaxes_type[3];
+			$this->line->localtax1_type=$localtaxes_type[0];
+			$this->line->localtax2_type=$localtaxes_type[2];
             $this->line->fk_product=$fk_product;
 			$this->line->product_type=$product_type;
             $this->line->fk_remise_except=$fk_remise_except;
