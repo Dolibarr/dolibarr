@@ -16,7 +16,7 @@
 --
 -- ===========================================================================
 
-ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
+ALTER TABLE llx_website_pages ADD UNIQUE INDEX uk_website_pages_url (fk_website,pageurl);
 
-ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
+ALTER TABLE llx_website_pages ADD CONSTRAINT fk_website_pages_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
 

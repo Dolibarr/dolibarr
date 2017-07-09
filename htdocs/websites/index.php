@@ -458,7 +458,8 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
     if (! is_link(dol_osencode($pathtomediasinwebsite)))
     {
         dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-        symlink($pathtomedias, $pathtomediasinwebsite);
+        dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+        $result = symlink($pathtomedias, $pathtomediasinwebsite);
     }
 
     /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))

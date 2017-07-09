@@ -17,7 +17,7 @@
 -- ========================================================================
 
 
-CREATE TABLE llx_website_page
+CREATE TABLE llx_website_pages
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer NOT NULL,
