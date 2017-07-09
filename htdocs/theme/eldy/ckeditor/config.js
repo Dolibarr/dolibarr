@@ -25,7 +25,10 @@ CKEDITOR.editorConfig = function( config )
 	config.dialog_backgroundCoverColor = 'rgb(255, 254, 253)';
 	//config.contentsCss = '/css/mysitestyles.css';
 	config.image_previewText=' ';	// Must no be empty
-		
+	//config.autoParagraph = false;
+	//config.removeFormatTags = 'b,big,code,del,dfn,em,font,i,ins,kbd';		// See also rules on this.dataProcessor.writer.setRules
+	//config.forcePasteAsPlainText = true;
+	
 	config.toolbar_Full =
 	[
 	    ['Templates','NewPage'],

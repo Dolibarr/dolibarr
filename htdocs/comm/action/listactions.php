@@ -120,10 +120,13 @@ $hookmanager->initHooks(array('agendalist'));
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
 {
 	$param='';
-	foreach($_POST as $key => $val)
-	{
-		$param.='&'.$key.'='.urlencode($val);
-	}
+    if (is_array($_POST))
+    {
+    	foreach($_POST as $key => $val)
+    	{
+    		$param.='&'.$key.'='.urlencode($val);
+    	}
+    }
 	//print $param;
 	header("Location: ".DOL_URL_ROOT.'/comm/action/index.php?'.$param);
 	exit;
