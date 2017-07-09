@@ -139,7 +139,7 @@ if ($result && (! empty($id) || ! empty($ref)))
 	dol_fiche_head($head, 'stats', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 
     dol_fiche_end();
@@ -173,50 +173,50 @@ if (empty($id) & empty($ref))
 
 if ($result || empty($id))
 {
-        print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-        print '<input type="hidden" name="id" value="'.$id.'">';
-        
-    	print '<table class="noborder" width="100%">';
-    	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="id" value="'.$id.'">';
 
-    	if (empty($id))
-    	{
-        	// Type
-    		print '<tr><td class="titlefield">'.$langs->trans("ProductsAndServices").'</td><td>';
-    		$array=array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
-    		print $form->selectarray('type', $array, $type);
-    		print '</td></tr>';
-		
-    		// Tag
-    		if ($conf->categorie->enabled)
-    		{
-        		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-        		//$moreforfilter.='<div class="divsearchfield">';
-        		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
-        		//$moreforfilter.='</div>';
-        		print $moreforfilter;
-        		print '</td></tr>';
-    		}
-    	}
-		
-		// Year
-		print '<tr><td class="titlefield">'.$langs->trans("Year").'</td><td>';
-		$arrayyears=array();
-		for ($year = $currentyear - 10; $year < $currentyear + 10 ; $year++)
-		{
-		    $arrayyears[$year]=$year;
-		}
-		if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-		if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
-		arsort($arrayyears);
-		print $form->selectarray('search_year',$arrayyears,$search_year,0);
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+
+	if (empty($id))
+	{
+    	// Type
+		print '<tr><td class="titlefield">'.$langs->trans("ProductsAndServices").'</td><td>';
+		$array=array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
+		print $form->selectarray('type', $array, $type);
 		print '</td></tr>';
-		print '</table>';
-		print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
-		print '</form>';
-		
-		print '<br>';
-    
+
+		// Tag
+		if ($conf->categorie->enabled)
+		{
+    		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
+    		//$moreforfilter.='<div class="divsearchfield">';
+    		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
+    		//$moreforfilter.='</div>';
+    		print $moreforfilter;
+    		print '</td></tr>';
+		}
+	}
+
+	// Year
+	print '<tr><td class="titlefield">'.$langs->trans("Year").'</td><td>';
+	$arrayyears=array();
+	for ($year = $currentyear - 10; $year < $currentyear + 10 ; $year++)
+	{
+	    $arrayyears[$year]=$year;
+	}
+	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	arsort($arrayyears);
+	print $form->selectarray('search_year',$arrayyears,$search_year,0);
+	print '</td></tr>';
+	print '</table>';
+	print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
+	print '</form>';
+
+	print '<br>';
+
 
 	// Choice of stats mode (byunit or bynumber)
 	if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
@@ -308,7 +308,7 @@ if ($result || empty($id))
 				else
 				{
 				    $morefilters='';
-				    if ($search_categ > 0) 
+				    if ($search_categ > 0)
 				    {
 				        $categ=new Categorie($db);
 				        $categ->fetch($search_categ);
@@ -319,7 +319,7 @@ if ($result || empty($id))
 				    {
 				        $morefilters=' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
 				    }
-				    
+
 					if ($key == 'propal')             $graph_data = $object->get_nb_propal($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'orders')             $graph_data = $object->get_nb_order($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'invoices')           $graph_data = $object->get_nb_vente($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
@@ -394,7 +394,7 @@ if ($result || empty($id))
 			    print $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate='<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')','refresh').'</a>';
-			
+
 			// Show graph
 			print '<table class="noborder" width="100%">';
 			// Label

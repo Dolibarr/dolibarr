@@ -54,6 +54,8 @@ $type = 'order';
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
 	$maskconstorder=GETPOST('maskconstorder','alpha');
@@ -118,35 +120,6 @@ else if ($action == 'specimen')
 	}
 }
 
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-	{
-		if (array_key_exists('param'.$i,$_POST))
-		{
-			$param=GETPOST("param".$i,'alpha');
-			$value=GETPOST("value".$i,'alpha');
-			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
-
 // Activate a model
 else if ($action == 'set')
 {
@@ -182,7 +155,7 @@ else if ($action == 'setdoc')
 
 else if ($action == 'setmod')
 {
-	// TODO Check if numbering module chosen can be activated 
+	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_ADDON",$value,'chaine',0,'',$conf->entity);
@@ -207,7 +180,7 @@ else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 
 else if ($action == 'set_ORDER_FREE_TEXT')
 {
-	$freetext = GETPOST("ORDER_FREE_TEXT");	// No alpha here, we want exact string
+	$freetext = GETPOST("ORDER_FREE_TEXT",'none');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -331,7 +304,7 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						
+
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -586,7 +559,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';
@@ -609,7 +582,7 @@ print "</td></tr>\n";
 print '</form>';
 
 // Shippable Icon in List
-/* Kept as hidden feature for the moment, result seems bugged. 
+/* Kept as hidden feature for the moment, result seems bugged.
 Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
 
 print '<tr class="oddeven">';
@@ -631,7 +604,7 @@ print '</tr>';
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -653,7 +626,7 @@ if ($conf->banque->enabled)
 }
 else
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
@@ -661,7 +634,7 @@ else
 // Ask for warehouse during order
 if ($conf->stock->enabled)
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
@@ -683,7 +656,7 @@ if ($conf->stock->enabled)
 }
 else
 {
-    
+
     print '<tr class="oddeven"><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }

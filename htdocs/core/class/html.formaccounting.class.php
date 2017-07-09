@@ -54,15 +54,14 @@ class FormAccounting extends Form
 	 * @param	string	$htmlname	Name of field in html form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
-	 * @param	array	$event		Event options
 	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
 	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
 	 * @param	string	$morecss	More css non HTML object
 	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 *
+	 * @param   int     $disabledajaxcombo Disable ajax combo box.
 	 * @return	string				String with HTML select
 	 */
-	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
 	{
 		global $conf;
 
@@ -91,8 +90,6 @@ class FormAccounting extends Form
 				dol_syslog(get_class($this)."::select_journal ".$this->error, LOG_ERR);
 				return -1;
 			}
-
-			$out = ajax_combobox($htmlname, $event);
 
     		$selected = 0;
 			while ($obj = $this->db->fetch_object($resql))
@@ -125,7 +122,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, ($disabledajaxcombo?0:1));
 
 		return $out;
 	}
@@ -204,9 +201,9 @@ class FormAccounting extends Form
         {
             dol_print_error($db,$db->lasterror());
         }
-        
-        $out .= ajax_combobox($htmlname, $event);
-        
+
+        $out .= ajax_combobox($htmlname, array());
+
         print $out;
     }
 
@@ -221,7 +218,7 @@ class FormAccounting extends Form
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
-	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 		$sql .= ' ORDER BY import_key DESC';
 
 		dol_syslog(get_class($this) . "::select_bookkeeping_importkey", LOG_DEBUG);
@@ -244,7 +241,7 @@ class FormAccounting extends Form
 	 * Return list of accounts with label by chart of accounts
 	 *
 	 * @param string   $selectid           Preselected id or code of accounting accounts (depends on $select_in)
-	 * @param string   $htmlname           Name of field in html form
+	 * @param string   $htmlname           Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int      $showempty          Add an empty field
 	 * @param array    $event              Event options
 	 * @param int      $select_in          0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
@@ -260,7 +257,7 @@ class FormAccounting extends Form
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 		$out = '';
-		
+
     	$options = array();
 		if ($usecache && ! empty($this->options_cache[$usecache]))
 		{
@@ -269,7 +266,7 @@ class FormAccounting extends Form
 		}
 		else
 		{
-    		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
+    		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
     		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
     		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -286,8 +283,6 @@ class FormAccounting extends Form
     			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
     			return -1;
     		}
-
-    		$out .= ajax_combobox($htmlname, $event);
 
     		$selected = 0;
     		while ($obj = $this->db->fetch_object($resql))
@@ -330,21 +325,20 @@ class FormAccounting extends Form
 	/**
 	 * Return list of auxilary thirdparty accounts
 	 *
-	 * @param string $selectid Preselected pcg_type
-	 * @param string $htmlname Name of field in html form
-	 * @param int $showempty Add an empty field
-	 * @param array $event Event options
-	 *
-	 * @return string String with HTML select
+	 * @param string   $selectid       Preselected pcg_type
+	 * @param string   $htmlname       Name of field in html form
+	 * @param int      $showempty      Add an empty field
+	 * @param string   $morecss        More css
+	 * @return string                  String with HTML select
 	 */
-	function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $event = array()) {
+	function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200') {
 
 		$aux_account = array();
 
 		// Auxiliary customer account
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-	    $sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
+	    $sql .= " WHERE entity IN (" . getEntity('societe') . ")";
 		$sql .= " ORDER BY code_compta";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -364,7 +358,7 @@ class FormAccounting extends Form
 		// Auxiliary supplier account
 		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE entity IN (" . getEntity("societe", 1) . ")";
+		$sql .= " WHERE entity IN (" . getEntity('societe') . ")";
 		$sql .= " ORDER BY code_compta_fournisseur";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -382,8 +376,7 @@ class FormAccounting extends Form
 		$this->db->free($resql);
 
 		// Build select
-		$out = ajax_combobox($htmlname, $event);
-		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}
@@ -405,7 +398,7 @@ class FormAccounting extends Form
 
 		$sql = "SELECT DISTINCT date_format(doc_date,'%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-	    $sql .= " WHERE entity IN (" . getEntity("accountancy", 1) . ")";
+	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " ORDER BY date_format(doc_date,'%Y')";
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

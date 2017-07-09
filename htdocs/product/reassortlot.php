@@ -124,7 +124,7 @@ $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock 
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+$sql.= " WHERE p.entity IN (".getEntity('product').")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if ($sall) $sql.=natural_search(array('p.ref','p.label','p.description','p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
@@ -232,7 +232,7 @@ if ($resql)
 	 	$moreforfilter.='</div>';
 	}
 	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -257,7 +257,7 @@ if ($resql)
 
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
-	
+
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
@@ -304,14 +304,14 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
-	
+
 	$product_static=new Product($db);
 	$warehousetmp=new Entrepot($db);
 
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-		
+
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 		{
@@ -335,20 +335,20 @@ if ($resql)
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
-		
+
 		$warehousetmp->id=$objp->fk_entrepot;
 		$warehousetmp->ref=$objp->warehouse_ref;
 		$warehousetmp->label=$objp->warehouse_ref;
 		$warehousetmp->fk_parent=$objp->warehouse_parent;
 
 		print '<tr>';
-		
+
 		// Ref
 		print '<td class="nowrap">';
 		print $product_static->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
-		
+
 		// Label
 		print '<td>'.$objp->label.'</td>';
 
@@ -390,18 +390,6 @@ if ($resql)
 	print "</table>";
 	print '</div>';
 	print '</form>';
-
-	if ($num > $conf->liste_limit)
-	{
-		if ($sref || $snom || $sall || GETPOST('search'))
-		{
-	  		print_barre_liste('', $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, '');
-		}
-		else
-		{
-	  		print_barre_liste('', $page, "reassort.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, '');
-		}
-	}
 
 	$db->free($resql);
 

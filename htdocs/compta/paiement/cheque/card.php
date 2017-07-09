@@ -416,7 +416,7 @@ if ($action == 'new')
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (b.fk_account = ba.rowid)";
 	$sql.= " WHERE b.fk_type = 'CHQ'";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
 	if ($filterdate)          $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
@@ -656,7 +656,7 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
-	$sql.= " WHERE ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " WHERE ba.entity IN (".getEntity('bank_account').")";
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$object->id;
 	$sql.= $db->order($sortfield, $sortorder);

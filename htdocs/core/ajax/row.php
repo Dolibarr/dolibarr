@@ -18,8 +18,8 @@
 
 /**
  *       \file       htdocs/core/ajax/row.php
- *       \brief      File to return Ajax response on Row move. 
- *                   This ajax page is called when doing an up or down drag and drop. 
+ *       \brief      File to return Ajax response on Row move.
+ *                   This ajax page is called when doing an up or down drag and drop.
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disable token renewal
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 top_httphead();
 
-print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
 if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST['table_element_line']) && ! empty($_POST['table_element_line']))

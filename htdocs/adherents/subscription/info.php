@@ -53,7 +53,17 @@ $result = $object->fetch($rowid);
 
 $head = subscription_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Subscription"), '', 'payment');
+dol_fiche_head($head, 'info', $langs->trans("Subscription"), -1, 'payment');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'rowid', $linkback, 1);
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
 
 $object->info($rowid);
 
@@ -63,6 +73,8 @@ print '</td></tr></table>';
 
 print '</div>';
 
+
+dol_fiche_end();
 
 llxFooter();
 $db->close();

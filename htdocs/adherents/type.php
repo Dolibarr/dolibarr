@@ -44,11 +44,11 @@ $search_email		= GETPOST('search_email','alpha');
 $type				= GETPOST('type','alpha');
 $status				= GETPOST('status','alpha');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -79,7 +79,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter_x") || GETP
 }
 
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('membertypecard','globalcard'));
 
 
@@ -173,7 +173,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity().")";
+	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -278,6 +278,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -336,14 +337,8 @@ if ($rowid > 0)
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($object->mail_valid)."</td></tr>";
 
-		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			// View extrafields
-			print $object->showOptionals($extrafields);
-		}
+    	// Other attributes
+    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
         print '</div>';
@@ -352,8 +347,9 @@ if ($rowid > 0)
 
 
 		/*
-		 * Hotbar
+		 * Buttons
 		 */
+
 		print '<div class="tabsAction">';
 
 		// Edit
@@ -386,7 +382,7 @@ if ($rowid > 0)
 		$sql.= " t.libelle as type, t.subscription";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
-		$sql.= " AND d.entity IN (".getEntity().")";
+		$sql.= " AND d.entity IN (".getEntity('adherent').")";
 		$sql.= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
@@ -487,18 +483,8 @@ if ($rowid > 0)
             print '<div class="div-table-responsive">';
             print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-		    print '<tr class="liste_titre">';
-		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Nature"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-		    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
-		    print "</tr>\n";
-
 			// Lignes des champs de filtre
-			print '<tr class="liste_titre">';
+			print '<tr class="liste_titre_filter">';
 
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
@@ -520,6 +506,16 @@ if ($rowid > 0)
 			print '</td>';
 
 			print "</tr>\n";
+
+			print '<tr class="liste_titre">';
+		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Nature"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+		    print "</tr>\n";
 
 		    while ($i < $num && $i < $conf->liste_limit)
 		    {
@@ -650,9 +646,9 @@ if ($rowid > 0)
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print $form->selectyesno("subscription",$object->subscription,1);
@@ -674,6 +670,11 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+		    print $object->showOptionals($extrafields,'edit');
+		}
 
 		print '</table>';
 

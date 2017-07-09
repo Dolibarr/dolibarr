@@ -26,16 +26,17 @@ CREATE TABLE llx_accounting_bookkeeping
   doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
   fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
-  code_tiers            varchar(32),				-- FEC:CompAuxNum	| account number of auxiliary account
-  thirdparty_label      varchar(255),				-- FEC:CompAuxLib	| label of auxiliary account
+  thirdparty_code       varchar(32),                -- Third party code (customer or supplier) when record is saved (may help debug) 
+  subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
+  subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
   numero_compte         varchar(32) NOT NULL,		-- FEC:CompteNum	| account number
   label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
-  debit                 double NOT NULL,			-- FEC:Debit
-  credit                double NOT NULL,			-- FEC:Credit
-  montant               double NOT NULL,			-- FEC:Montant (Not necessary)
+  debit                 double(24,8) NOT NULL,		-- FEC:Debit
+  credit                double(24,8) NOT NULL,		-- FEC:Credit
+  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
-  multicurrency_amount  double,						-- FEC:Montantdevise
+  multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=Kadrovska služba
-Holidays=Leaves
-CPTitreMenu=Leaves
+Holidays=Odlasci
+CPTitreMenu=Odlasci
 MenuReportMonth=Mjesečni izvještaj
 MenuAddCP=New leave request
 NotActiveModCP=You must enable the module Leaves to view this page.
@@ -16,7 +16,7 @@ CancelCP=Otkazan
 RefuseCP=Odbijen
 ValidatorCP=Osoba koja odobrava
 ListeCP=List of leaves
-ReviewedByCP=Bit će pregledano od strane
+ReviewedByCP=Will be approved by
 DescCP=Opis
 SendRequestCP=Create leave request
 DelayToRequestCP=Leave requests must be made at least <b>%s day(s)</b> before them.

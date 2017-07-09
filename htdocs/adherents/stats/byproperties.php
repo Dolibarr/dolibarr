@@ -67,7 +67,7 @@ $tab='byproperties';
 $data = array();
 $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, d.morphy as code";
 $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
-$sql.=" WHERE d.entity IN (".getEntity().")";
+$sql.=" WHERE d.entity IN (".getEntity('adherent').")";
 $sql.=" AND d.statut = 1";
 $sql.=" GROUP BY d.morphy";
 
@@ -101,7 +101,7 @@ else
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title

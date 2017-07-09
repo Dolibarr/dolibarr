@@ -76,7 +76,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier')
 {
     $title=$langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
-    $dir=$conf->fournisseur->dir_output.'/commande/temp';
+    $dir=$conf->fournisseur->commande->dir_temp;
 }
 
 llxHeader('', $title);
@@ -322,7 +322,7 @@ foreach ($data as $val)
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		
+
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
@@ -334,7 +334,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	
+
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';

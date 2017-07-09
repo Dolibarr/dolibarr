@@ -106,6 +106,14 @@ p {
 	padding-right: 5px;
 }
 
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	.menu_choix0 {
+		max-width: 180px;
+	}
+}
+
 .menu_choix0 a {
 	font-weight: normal;
 	text-decoration: none;
@@ -259,7 +267,6 @@ p.titre {
 
 /* --------------------- Combo lists ------------------- */
 .select_design {
-	width: 370px;
 	overflow: auto;
 }
 

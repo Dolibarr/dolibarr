@@ -8,7 +8,7 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -54,9 +54,10 @@ $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
+$code=GETPOST('code','alpha');
 
 // Security access
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -73,14 +74,14 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id','int');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -151,7 +152,7 @@ $sourceList=array();
 
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
 {
-    $search_country_id = '';    
+    $search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
@@ -370,8 +371,8 @@ if ($action == $acts[0])
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
     }
 
     $result = $db->query($sql);
@@ -390,8 +391,8 @@ if ($action == $acts[1])
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
     }
 
     $result = $db->query($sql);
@@ -410,8 +411,8 @@ if ($action == 'activate_favorite')
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$code."'";
     }
 
     $result = $db->query($sql);
@@ -430,8 +431,8 @@ if ($action == 'disable_favorite')
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$code."'";
     }
 
     $result = $db->query($sql);
@@ -461,7 +462,7 @@ print load_fiche_titre($titre,$linkback,$titlepicto);
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -479,7 +480,7 @@ if ($id)
         else $sql.=" WHERE ";
         $sql.= " c.rowid = ".$search_country_id;
     }
-    
+
     if ($sortfield)
     {
         // If sort order is "country", we use country_code instead
@@ -506,7 +507,7 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
-    
+
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -546,9 +547,9 @@ if ($id)
             if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); }
             if ($fieldlist[$field]=='pcg_version' || $fieldlist[$field]=='fk_pcg_version') { $valuetoshow=$langs->trans("Pcg_version"); }
             if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
-			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
+			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Direction"); }
 			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
-				
+
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
@@ -617,7 +618,7 @@ if ($id)
         if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
         if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
         if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
+
         // There is several pages
         if ($num > $listlimit)
         {
@@ -632,9 +633,9 @@ if ($id)
         foreach ($fieldlist as $field => $value)
         {
             $showfield=1;							  	// By defaut
-            
+
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
-            
+
             if ($showfield)
             {
                 if ($value == 'country')
@@ -661,7 +662,7 @@ if ($id)
     	}
     	print '</td>';
     	print '</tr>';
-    	
+
     	// Title of lines
         print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
@@ -700,7 +701,7 @@ if ($id)
             if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
         	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
 			if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
-			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
+			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Direction"); }
 			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
             // Affiche nom du champ
             if ($showfield)
@@ -754,7 +755,7 @@ if ($id)
                     {
                         foreach ($fieldlist as $field => $value)
                         {
-                            
+
                             $showfield=1;
                         	$align="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};

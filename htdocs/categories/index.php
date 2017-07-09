@@ -36,9 +36,8 @@ $langs->load("categories");
 if (! $user->rights->categorie->lire) accessforbidden();
 
 $id=GETPOST('id','int');
-$type=(GETPOST('type') ? GETPOST('type') : Categorie::TYPE_PRODUCT);
+$type=(GETPOST('type','aZ09') ? GETPOST('type','aZ09') : Categorie::TYPE_PRODUCT);
 $catname=GETPOST('catname','alpha');
-$section=(GETPOST('section')?GETPOST('section'):0);
 
 
 /*
@@ -48,14 +47,15 @@ $section=(GETPOST('section')?GETPOST('section'):0);
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoriesArea");
-elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoriesArea");
-elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoriesArea");
-elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoriesArea");
-elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactsCategoriesArea");
-elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesArea");
-elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesArea");
-else                                        $title=$langs->trans("CategoriesArea");
+if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
+elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
+elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
+elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
+elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
+elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='account'; }
+elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
+elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
+else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
@@ -104,7 +104,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 if ($catname || $id > 0)
 {
-	$cats = $categstatic->rechercher($id,$catname,$type);
+	$cats = $categstatic->rechercher($id, $catname, $typetext);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
@@ -140,7 +140,7 @@ print '<div class="fichecenter"><br>';
 
 
 // Charge tableau des categories
-$cate_arbo = $categstatic->get_full_arbo($type);
+$cate_arbo = $categstatic->get_full_arbo($typetext);
 
 // Define fulltree array
 $fulltree=$cate_arbo;

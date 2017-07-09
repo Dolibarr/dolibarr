@@ -38,9 +38,10 @@ $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
+$code=GETPOST('code','alpha');
 
 // Security access
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -57,7 +58,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -66,7 +67,7 @@ if (empty($sortorder)) $sortorder='ASC';
 
 $error = 0;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -127,12 +128,13 @@ complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
-    // Must match ids defined into eldy.lib.php 
+    // Must match ids defined into eldy.lib.php
     $sourceList = array(
 			'1' => $langs->trans('AccountingJournalType1'),
 			'2' => $langs->trans('AccountingJournalType2'),
 			'3' => $langs->trans('AccountingJournalType3'),
 			'4' => $langs->trans('AccountingJournalType4'),
+			'5' => $langs->trans('AccountingJournalType5'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 
@@ -142,7 +144,7 @@ $elementList = array();
 
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
 {
-    $search_country_id = '';    
+    $search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
@@ -321,8 +323,8 @@ if ($action == $acts[0])
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
     }
 
     $result = $db->query($sql);
@@ -341,8 +343,8 @@ if ($action == $acts[1])
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
     }
 
     $result = $db->query($sql);
@@ -371,18 +373,11 @@ if ($id)
 
 print load_fiche_titre($titre,$linkback,$titlepicto);
 
-if (empty($id))
-{
-    print $langs->trans("DictionaryDesc");
-    print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-}
-print "<br>\n";
-
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -400,7 +395,7 @@ if ($id)
         else $sql.=" WHERE ";
         $sql.= " c.rowid = ".$search_country_id;
     }
-    
+
     if ($sortfield)
     {
         // If sort order is "country", we use country_code instead
@@ -427,7 +422,7 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
-    
+
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -453,7 +448,7 @@ if ($id)
             	$valuetoshow=$langs->trans("Label");
             }
             if ($fieldlist[$field]=='nature')          { $valuetoshow=$langs->trans("Nature"); }
-				
+
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
@@ -522,7 +517,7 @@ if ($id)
         if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
         if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
         if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
+
         // There is several pages
         if ($num > $listlimit)
         {
@@ -582,7 +577,7 @@ if ($id)
     	}
     	print '</td>';
     	print '</tr>';
-            
+
         if ($num)
         {
             // Lines with values
@@ -621,7 +616,7 @@ if ($id)
                     {
                         foreach ($fieldlist as $field => $value)
                         {
-                            
+
                             $showfield=1;
                         	$align="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};
@@ -682,10 +677,10 @@ if ($id)
                     else print '<td>&nbsp;</td>';
 
                     print '<td></td>';
-                                         
+
                     print '</td>';
                 }
-                
+
                 print "</tr>\n";
                 $i++;
             }

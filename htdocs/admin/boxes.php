@@ -235,7 +235,7 @@ $sql = "SELECT b.rowid, b.box_id, b.position, b.box_order,";
 $sql.= " bd.rowid as boxid";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql.= " WHERE b.box_id = bd.rowid";
-$sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+$sql.= " AND b.entity IN (0,".$conf->entity.")";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
@@ -342,7 +342,7 @@ print "</tr>\n";
 $var=true;
 foreach($boxtoadd as $box)
 {
-    
+
 
     if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
     {
@@ -479,7 +479,7 @@ print '</tr>';
 
 // Activate FileCache - Developement
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-    
+
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
     print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
     print '</td>';

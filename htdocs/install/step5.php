@@ -41,11 +41,15 @@ $action=GETPOST('action', 'alpha');
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
-$targetversion=DOL_VERSION;		// It it's last upgrade
+$targetversion=DOL_VERSION;		// If it's latest upgrade
 if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upgrade
 {
     $tmp=explode('_', $action, 2);
-    if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
+    if ($tmp[0]=='upgrade')
+    {
+        if (! empty($tmp[1])) $targetversion=$tmp[1];   // if $action = 'upgrade_6.0.0-beta', we use '6.0.0-beta'
+        else $targetversion=DOL_VERSION;                // if $action = 'upgrade', we use DOL_VERSION
+    }
 }
 
 $langs->load("admin");
@@ -162,25 +166,30 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         {
             $conf->setValues($db);
 
-            // Create user
+            // Create admin user
             include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
 
-            // Set default encryption to yes if there is no user yet into database
+            // Set default encryption to yes, generate a salt and set default encryption algorythm (but only if there is no user yet into database)
 		    $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		    //$sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5 value
 		    $resql=$db->query($sql);
 		    if ($resql)
 		    {
 		        $numrows=$db->num_rows($resql);
-    			if ($numrows == 0) dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1",'chaine',0,'',$conf->entity);
-		    }            
-            
+    			if ($numrows == 0)
+    			{
+    			    // Define default setup for password encryption
+    			    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+    			    dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
+    			    dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                               // All entities
+    			}
+		    }
+
 		    // Create user used to create the admin user
             $createuser=new User($db);
             $createuser->id=0;
             $createuser->admin=1;
-            
+
             // Set admin user
             $newuser = new User($db);
             $newuser->lastname='SuperAdmin';
@@ -214,12 +223,27 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 
             if ($success)
             {
+                // Insert MAIN_VERSION_FIRST_INSTALL in a dedicated transaction. So if it fails (when first install was already done), we can do other following requests.
+                $db->begin();
+                dolibarr_install_syslog('step5: set MAIN_VERSION_FIRST_INSTALL const to ' . $targetversion, LOG_DEBUG);
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_FIRST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when first install',0)");
+                if ($resql)
+                {
+                    $conf->global->MAIN_VERSION_FIRST_INSTALL=$targetversion;
+                    $db->commit();
+                }
+                else
+                {
+                    //if (! $resql) dol_print_error($db,'Error in setup program');      // We ignore errors. Key may already exists
+                    $db->commit();
+                }
+
                 $db->begin();
 
                 dolibarr_install_syslog('step5: set MAIN_VERSION_LAST_INSTALL const to ' . $targetversion, LOG_DEBUG);
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_INSTALL'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
-                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when install',0)");
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when last install',0)");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 

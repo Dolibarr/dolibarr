@@ -470,7 +470,7 @@ class Dolresource extends CommonObject
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
-    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -555,7 +555,7 @@ class Dolresource extends CommonObject
 		$sql.= " t.fk_user_create,";
 		$sql.= " t.tms";
    		$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-   		$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
+   		$sql.= " WHERE t.entity IN (".getEntity('resource').")";
 
    		//Manage filter
    		if (!empty($filter)){
@@ -637,7 +637,7 @@ class Dolresource extends CommonObject
     	$sql.= " t.fk_user_create,";
     	$sql.= " t.tms";
     	$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
 
     	//Manage filter
     	if (!empty($filter)){

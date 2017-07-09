@@ -475,7 +475,13 @@ class FactureRec extends CommonInvoice
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
 			dol_syslog($sql);
-			if (! $this->db->query($sql))
+			if ($this->db->query($sql))
+			{
+				// Delete linked object
+				$res = $this->deleteObjectLinked();
+				if ($res < 0) $error=-3;
+			}
+			else 
 			{
 				$this->error=$this->db->lasterror();
 				$error=-1;
@@ -955,7 +961,7 @@ class FactureRec extends CommonInvoice
 		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

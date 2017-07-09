@@ -64,14 +64,13 @@ class modFacture extends DolibarrModules
 		$this->dirs = array("/facture/temp");
 
 		// Dependencies
-		$this->depends = array('always'=>"modSociete", 'FR'=>'modBlockedLog');
+		$this->depends = array('always'=>"modSociete");
 		$this->requiredby = array("modComptabilite","modAccounting");
 		$this->conflictwith = array();
 		$this->langfiles = array("bills","companies","compta","products");
-		$this->warnings_activation = array('FR'=>'WarningNoteModuleInvoiceForFrenchLaw');                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation = array();
-		$this->warnings_activation_ext = array('FR'=>'WarningInstallationMayBecomeNotCompliantWithLaw');  // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
-		
+		$this->warnings_activation = array();                              // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation_ext = array();                          // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
+
 		// Config pages
 		$this->config_page_url = array("facture.php");
 
@@ -99,7 +98,7 @@ class modFacture extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		/*$this->const[$r][0] = "FACTURE_DRAFT_WATERMARK";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "__(Draft)__";
@@ -107,7 +106,7 @@ class modFacture extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;*/
 
-		
+
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
 		$this->boxes = array(
@@ -116,16 +115,16 @@ class modFacture extends DolibarrModules
 				2=>array('file'=>'box_graph_invoices_permonth.php','enabledbydefaulton'=>'Home')
 		);
 
-        // Cronjobs 
+        // Cronjobs
         $this->cronjobs = array(
-            0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600*24), 
+            0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600*24),
             // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
-        ); 
-        // List of cron jobs entries to add 
-        // Example: 
+        );
+        // List of cron jobs entries to add
+        // Example:
         // $this->cronjobs=array(
-        //              0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600), 
-        //              1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600) 
+        //              0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600),
+        //              1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600)
         // );
 
         // Permissions
@@ -206,8 +205,8 @@ class modFacture extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=1;
@@ -241,7 +240,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture').')';
 		if(isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 		$r++;
 
@@ -271,7 +270,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture').')';
 		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 		$r++;
 	}

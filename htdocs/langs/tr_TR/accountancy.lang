@@ -3,16 +3,16 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Parça sayısını dışaaktar
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Genel hesapla birlikte dışaaktar
-ACCOUNTING_EXPORT_LABEL=Etiket dışaaktar
-ACCOUNTING_EXPORT_AMOUNT=Tutarı dışaaktar
-ACCOUNTING_EXPORT_DEVISE=Para birimi dışaaktar
+ACCOUNTING_EXPORT_LABEL=Etiket dışa aktar
+ACCOUNTING_EXPORT_AMOUNT=Tutarı dışa aktar
+ACCOUNTING_EXPORT_DEVISE=Para birimi dışa aktar
 Selectformat=Dosya için biçimi seçin
 ACCOUNTING_EXPORT_PREFIX_SPEC=Dosya adı için öneki belirtin
-ThisService=This service
-ThisProduct=This product
-DefaultForService=Default for service
-DefaultForProduct=Default for product
-CantSuggest=Can't suggest
+ThisService=Bu hizmet
+ThisProduct=Bu ürün
+DefaultForService=Hizmet için varsayılan
+DefaultForProduct=Ürün için varsayılan
+CantSuggest=Öneri yok
 AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
 ConfigAccountingExpert=Hesap uzmanı modülü yapılandırması
 Journalization=Journalization
@@ -22,31 +22,35 @@ BackToChartofaccounts=Hesap planı cirosu
 Chartofaccounts=Hesap planı
 CurrentDedicatedAccountingAccount=Current dedicated account
 AssignDedicatedAccountingAccount=New account to assign
-InvoiceLabel=Invoice label
+InvoiceLabel=Fatura etiketi
 OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to accounting account
 OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accounting account
-OtherInfo=Other information
+OtherInfo=Diğer Bilgiler
+DeleteCptCategory=Remove accounting account from group
+ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
 AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making thee journalization (writing record in Journals and General ledger)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
 AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+
+AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
 AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
-AccountancyAreaDescBank=STEP %s: Check the binding between bank accounts and accounting account is done. Complete missing bindings. For this, go on the card of each financial account. You can start from page %s.
-AccountancyAreaDescVat=STEP %s: Check the binding between vat rates and accounting account is done. Complete missing bindings. You can set accounting accounts to use for each VAT from page %s.
-AccountancyAreaDescExpenseReport=STEP %s: Check the binding between type of expense report and accounting account is done. Complete missing bindings. You can set accounting accounts to use for each VAT from page %s.
-AccountancyAreaDescSal=STEP %s: Check the binding between salaries payment and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescContrib=STEP %s: Check the binding between special expences (miscellaneous taxes) and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescDonation=STEP %s: Check the binding between donation and accounting account is done. Complete missing bindings. You can set the account dedicated for that from the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Check the default binding between miscellaneous transaction lines and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescProd=STEP %s: Check the binding between products/services and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescLoan=STEP %s: Check the binding between loans payment and accounting account is done. Complete missing bindings. For this you can use the menu entry %s.
 
-AccountancyAreaDescCustomer=STEP %s: Check the binding between existing customer invoice lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescSupplier=STEP %s: Check the binding between existing supplier invoice lines and accounting account is done, so application will be able to journalize transactions in General Ledger in one click. Complete missing bindings. For this you can use the menu entry %s.
-AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the General Ledger. For this, go into each Journal, and click into button "Journalize transactions in General Ledger".
+AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
+AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
+AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts for each bank and financial accounts. For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
+
+AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
 AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and generate reports and exports.
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
@@ -57,12 +61,16 @@ ChangeAndLoad=Change and load
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
 AccountAccountingShort=Hesap
+SubledgerAccount=Subledger Account
+subledger_account=Subledger Account
+ShowAccountingAccount=Show accounting account
+ShowAccountingJournal=Show accounting journal
 AccountAccountingSuggest=Önerilen muhasebe hesabı
 MenuDefaultAccounts=Default accounts
 MenuVatAccounts=Vat accounts
-MenuTaxAccounts=Tax accounts
-MenuExpenseReportAccounts=Expense report accounts
-MenuLoanAccounts=Loan accounts
+MenuTaxAccounts=Vergi hesabı
+MenuExpenseReportAccounts=Gider raporu hesapları
+MenuLoanAccounts=Kredi hesapları
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Hesaba bağlama
@@ -71,8 +79,8 @@ SuppliersVentilation=Tedarikçi faturası bağlama
 ExpenseReportsVentilation=Expense report binding
 CreateMvts=Yeni işlem oluştur
 UpdateMvts=İşlemi değiştir
-WriteBookKeeping=İşlemleri Büyük Deftere kaydet
-Bookkeeping=Büyük Defter
+WriteBookKeeping=Journalize transactions in Ledger
+Bookkeeping=Ledger
 AccountBalance=Hesap bakiyesi
 
 CAHTF=Total purchase supplier before tax
@@ -93,19 +101,19 @@ Lineofinvoice=Fatura satırı
 LineOfExpenseReport=Line of expense report
 NoAccountSelected=No accounting account selected
 VentilatedinAccount=Muhasebe hesabına başarıyla bağlandı
-NotVentilatedinAccount=Not bound to the accounting account
+NotVentilatedinAccount=Muhasebe hesabına bağlı değil
 XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Her sayfada gösterilen bağlanacak öğe sayısı (ençok önerilen: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO="Bağlama yapılacaklar" sayfasının sıralama işlemini en son öğelerden başlatın
+ACCOUNTING_LIST_SORT_VENTILATION_DONE="Bağlama yapılanlar" sayfasının sıralama işlemini en son öğelerden başlatın
 
-ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
-ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must also set the 2 following parameters (or it is ignored)
+ACCOUNTING_LENGTH_DESCRIPTION=Listedeki ürün ve hizmet açıklamalarını x karakterden sonra kesin (En iyi = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Listedeki ürün ve hizmet hesabı açıklamalarını x karakterden sonra kesin (En iyi = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Genel muhasebe hesaplarının uzunluğu (eğer burada değeri 6 olarak ayarlarsanız '706' nolu hesap ekranda '706000' gibi görüntülenecektir)
+ACCOUNTING_LENGTH_AACCOUNT=Üçüncü taraf muhasebe hesaplarının uzunluğu (eğer burada değeri 6 olarak ayarlarsanız '401' nolu hesap ekranda '401000' gibi görüntülenecektir)
+ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zero at the end of an accounting account. Needed by some countries (like switzerland). If keep to off (default), you can set the 2 following parameters to ask application to add virtual zero.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 
 ACCOUNTING_SELL_JOURNAL=Satış günlüğü
@@ -114,14 +122,14 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Çeşitli günlük
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Rapor günlüğü dışaaktarılsın mı?
 ACCOUNTING_SOCIAL_JOURNAL=Sosyal günlük
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Muhasebe hesabının transferi
+ACCOUNTING_ACCOUNT_SUSPENSE=Muhasebe hesabının bekletilmesi
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (used if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (used if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Satınalınan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Satılan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Satınalınan hizmetler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan hizmetler için varsayılan muhasebe kodu (hizmet sayfasında tanımlanmamışsa)
 
 Doctype=Belge türü
 Docdate=Tarih
@@ -132,19 +140,19 @@ Sens=Sens (borsa haberleri yayınlama günlüğü)
 Codejournal=Günlük
 NumPiece=Parça sayısı
 TransactionNumShort=Num. transaction
-AccountingCategory=Muhasebe kategorisi
+AccountingCategory=Accounting account groups
 GroupByAccountAccounting=Group by accounting account
 NotMatch=Ayarlanmamış
-DeleteMvt=Büyük defter satırı sil
+DeleteMvt=Delete Ledger lines
 DelYear=Silinecek yıl
 DelJournal=Silinecek günlük
-ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specific journal. At least one criteria is required.
-ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
-DelBookKeeping=Delete record of the general ledger
+ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the Ledger
+DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
-ExpenseReportsJournal=Expense reports journal
+ExpenseReportsJournal=Gider raporları günlüğü
 DescFinanceJournal=Banka hesabından yapılan tüm ödeme türlerini içeren finans günlüğü
-DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the General Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
@@ -152,22 +160,22 @@ FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Müşteri faturası ödemesi
 ThirdPartyAccount=Üçüncü taraf hesabı
-NewAccountingMvt=New transaction
-NumMvts=Numero of transaction
-ListeMvts=List of movements
+NewAccountingMvt=Yeni İşlem
+NumMvts=İşlem hareket sayısı
+ListeMvts=Hareketler Listesi
 ErrorDebitCredit=Borç ve Alacak aynı anda bir değere sahip olamaz
-
-ReportThirdParty=List third party account
-DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
+AddCompteFromBK=Add accounting accounts to the group
+ReportThirdParty=Üçüncü taraf hesabını listele
+DescThirdPartyReport=Burada üçüncü taraf müşterileri ve tedarikçileri ile onların muhasebe hesaplarının listesine bakın
 ListAccounts=Muhasebe hesapları listesi
 
 Pcgtype=Hesap sınıfı
-Pcgsubtype=Hesap sınıfı altında
+Pcgsubtype=Subclass of account
 
 TotalVente=Vergi öncesi toplam gelir
 TotalMarge=Toplam satışlar kar oranı
 
-DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
+DescVentilCustomer=Burada bir ürün hesabına bağlı (ya da bağlı olmayan) müşteri faturaları satırları listesine bakın.
 DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
@@ -186,16 +194,28 @@ AutomaticBindingDone=Automatic binding done
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
 MvtNotCorrectlyBalanced=Hareket doğru denkleştirilmemiş. Alacak = %s. Borç = %s
 FicheVentilation=Binding card
-GeneralLedgerIsWritten=Transactions are written in the general ledger
-GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be recorded.
-NoNewRecordSaved=No new record saved
+GeneralLedgerIsWritten=Transactions are written in the Ledger
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
+NoNewRecordSaved=No new record dispatched
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Toplu kategori uygula
-AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+AddAccountFromBookKeepingWithNoCategories=Önceden kategori kullanılmayan bir hesap ekle
 CategoryDeleted=Category for the accounting account has been removed
+AccountingJournals=Accounting journals
+AccountingJournal=Accounting journal
+NewAccountingJournal=New accounting journal
+ShowAccoutingJournal=Show accounting journal
+Code=Kod
+Nature=Niteliği
+AccountingJournalType1=Various operation
+AccountingJournalType2=Satışlar
+AccountingJournalType3=Alışlar
+AccountingJournalType4=Banka
+AccountingJournalType9=Has-new
+ErrorAccountingJournalIsAlreadyUse=This journal is already use
 
 ## Export
 Exports=Dışaaktarımlar
@@ -211,7 +231,8 @@ Modelcsv_ciel=Sage Ciel Compta ya da Compta Evolution'a doğru dışaaktar
 Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
 Modelcsv_ebp=EBP'ye yönelik dışaaktarım
 Modelcsv_cogilog=Cogilog'a dışaaktar
-ChartofaccountsId=Chart of accounts Id
+Modelcsv_agiris=Export towards Agiris (Test)
+ChartofaccountsId=Hesap planı Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı
@@ -235,11 +256,12 @@ Calculated=Hesaplanmış
 Formula=Formül
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
+SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
 ExportNotSupported=Ayarlanan dışaaktarım biçimi bu sayfada desteklenmiyor
 BookeppingLineAlreayExists=Satırlar zaten muhasebede bulunmaktadır
-
+NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 
-WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. It will be replaced by a more complete report in a next version.

@@ -77,7 +77,7 @@ class Users extends DolibarrApi
 	
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
-	    $sql.= ' WHERE t.entity IN ('.getEntity('user', 1).')';
+	    $sql.= ' WHERE t.entity IN ('.getEntity('user').')';
 	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
 	    // Add sql filters
         if ($sqlfilters) 

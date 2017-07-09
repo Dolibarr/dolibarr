@@ -76,7 +76,7 @@ $paymentmethod='paypal';
  * View
  */
 
-dol_syslog("Callback url when a PayPal payment was canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_paypal');
+dol_syslog("Callback url when a PayPal payment was canceled. query_string=".(dol_escape_htmltag($_SERVER["QUERY_STRING"])?dol_escape_htmltag($_SERVER["QUERY_STRING"]):'')." script_uri=".(dol_escape_htmltag($_SERVER["SCRIPT_URI"])?dol_escape_htmltag($_SERVER["SCRIPT_URI"]):''), LOG_DEBUG, 0, '_paypal');
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
@@ -94,23 +94,23 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
-        
+
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
     $result=$interface->run_triggers('PAYPAL_PAYMENT_KO',$object,$user,$langs,$conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
-    
+
     // Send an email
     $sendemail = '';
     if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))  $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    
+
     if ($sendemail)
     {
     	$sendto=$sendemail;
     	$from=$conf->global->MAILING_EMAIL_FROM;
-    
+
     	// Define link to login card
     	$appli=constant('DOL_APPLICATION_TITLE');
     	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -123,7 +123,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	    else $appli.=" ".DOL_VERSION;
     	}
     	else $appli.=" ".DOL_VERSION;
-    	
+
     	$urlback=$_SERVER["REQUEST_URI"];
     	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
     	$content="";
@@ -133,10 +133,10 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
     	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
     	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-    
+
     	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
     	$mailfile = new CMailFile($topic, $sendto, $from, $content);
-    
+
     	$result=$mailfile->sendfile();
     	if ($result)
     	{
@@ -147,7 +147,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
     	}
     }
-    
+
     unset($_SESSION['ipaddress']);
 }
 

@@ -1430,7 +1430,7 @@ class FactureFournisseur extends CommonInvoice
             if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
             // Mise a jour informations denormalisees au niveau de la facture meme
-            $result=$this->update_price(1,'auto',0,$mysoc);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+            $result=$this->update_price(1,'auto',0,$this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
             if ($result > 0)
             {
                 $this->db->commit();
@@ -1966,7 +1966,7 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('product').")";
 
         $resql = $this->db->query($sql);
         if ($resql)

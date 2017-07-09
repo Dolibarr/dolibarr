@@ -144,24 +144,24 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
-        foreach($filesarray as $key => $file) 
+        foreach($filesarray as $key => $file)
         {
             if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) continue;
             if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) continue;
             if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) continue;
             if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) continue;
             if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) continue;
-            
+
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
-            
+
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'db->' && $val[1] != 'esca') 
+                if ($val[1] != 'db->' && $val[1] != 'esca')
                 {
                     $ok=false;
                     break;
@@ -171,9 +171,39 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
             $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['fullname'].' ('.$val[0].'). Bad.');
             //exit;
+
+            // Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/(...................)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+                if ($val[1] != 'dol_escape_htmltag(')
+                {
+                    $ok=false;
+                    break;
+                }
+            }
+            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+
+            // Test that output of $_SERVER\[\'PHP_SELF\'\] is escaped (not done for the moment, did not found a way to forge value of $_SERVER['PHP_SELF'] by extern access).
+            /*$ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/(...................)\$_SERVER\[\'PHP_SELF\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+                if ($val[1] != 'dol_escape_htmltag(')
+                {
+                    $ok=false;
+                    break;
+                }
+            }
+            $this->assertTrue($ok, 'Found a $_SERVER[\'PHP_SELF\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'PHP_SELF\']). Bad.');
+            */
         }
 
         return;
     }
-
 }

@@ -67,7 +67,7 @@ if ($id > 0)
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -124,7 +124,7 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	$linkback = img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
-	$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
 
 	// Link to other agenda views
 	$out='';
@@ -137,7 +137,7 @@ if ($object->id > 0)
 	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
 	$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 	$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
-	
+
 	$linkback.=$out;
 
 	$morehtmlref='<div class="refidno">';
@@ -161,13 +161,13 @@ if ($object->id > 0)
 	    }
 	}
 	$morehtmlref.='</div>';
-	
+
 	dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
-	
+
 	print '<div class="fichecenter">';
-	
+
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	// Affichage fiche action en mode visu
 	print '<table class="border" width="100%">';
 
@@ -228,7 +228,7 @@ if ($object->id > 0)
 	print '<div class="assignedtouser">';
 	print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</div>';
-	if (in_array($user->id,array_keys($listofuserid))) 
+	if (in_array($user->id,array_keys($listofuserid)))
 	{
 		print '<div class="myavailability">';
 		print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
@@ -237,7 +237,7 @@ if ($object->id > 0)
 	print '	</td></tr>';
 
 	print '</table>';
-	
+
 	print '<table class="border" width="100%">';
 
 	// Construit liste des fichiers
@@ -255,7 +255,7 @@ if ($object->id > 0)
 	print '</table>';
 
     print '</div>';
-	
+
     dol_fiche_end();
 
 

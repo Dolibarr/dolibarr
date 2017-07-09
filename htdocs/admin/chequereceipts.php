@@ -77,7 +77,7 @@ if ($action == 'setmod')
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -274,7 +274,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';

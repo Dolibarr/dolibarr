@@ -79,7 +79,7 @@ if ($mode)
         $data = array();
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code";
         //print $sql;
@@ -96,7 +96,7 @@ if ($mode)
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, c.nom";
         //print $sql;
@@ -112,7 +112,7 @@ if ($mode)
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, r.nom"; //+
         //print $sql;
@@ -127,7 +127,7 @@ if ($mode)
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label, d.town as label2";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code, d.town";
         //print $sql;
@@ -198,7 +198,7 @@ if ($mode)
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, $tab, $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, $tab, $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title

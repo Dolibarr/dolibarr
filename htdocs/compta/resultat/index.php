@@ -164,7 +164,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " WHERE pf.rowid IS NULL";
 	$sql.= " AND p.fk_bank = b.rowid";
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm";
 
@@ -492,14 +492,14 @@ if (! empty($conf->salaries->enabled))
     } else {
     	$column = 'p.datep';
     }
-    
+
     $subtotal_ht = 0;
     $subtotal_ttc = 0;
     $sql = "SELECT p.label as nom, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
     $sql.= " WHERE p.entity = ".$conf->entity;
     $sql.= " GROUP BY p.label, dm";
-    
+
     dol_syslog("get social salaries payments");
     $result=$db->query($sql);
     if ($result)
@@ -512,13 +512,13 @@ if (! empty($conf->salaries->enabled))
     		while ($i < $num)
     		{
     			$obj = $db->fetch_object($result);
-    
+
     			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
     			$decaiss[$obj->dm] += $obj->amount;
-    
+
     			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
     			$decaiss_ttc[$obj->dm] += $obj->amount;
-    
+
     			$i++;
     		}
     	}
@@ -536,7 +536,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql = "SELECT date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
-		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
 		$column='p.date_valid';
@@ -547,7 +547,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
 		$column='pe.datep';
@@ -568,7 +568,7 @@ if (! empty($conf->expensereport->enabled))
 			{
 				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
 				$decaiss[$obj->dm] += $obj->amount_ht;
-				
+
 				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
 
@@ -588,7 +588,7 @@ if (! empty($conf->don->enabled))
 {
     $subtotal_ht = 0;
     $subtotal_ttc = 0;
-    
+
     if ($modecompta == 'CREANCES-DETTES') {
         $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
@@ -600,7 +600,7 @@ if (! empty($conf->don->enabled))
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-		$sql.= " WHERE p.entity = ".getEntity('donation',1);
+		$sql.= " WHERE p.entity = ".getEntity('donation');
    	    $sql.= " AND fk_statut >= 2";
     }
     $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
@@ -617,13 +617,13 @@ if (! empty($conf->don->enabled))
     		while ($i < $num)
     		{
     			$obj = $db->fetch_object($result);
-    
+
     			if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
     			$encaiss[$obj->dm] += $obj->amount;
-    
+
     			if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
     			$encaiss_ttc[$obj->dm] += $obj->amount;
-    
+
     			$i++;
     		}
     	}
@@ -671,7 +671,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 {
 	$mois_modulo = $mois;
 	if($mois>12) {$mois_modulo = $mois-12;}
-	
+
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,$annee),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -680,7 +680,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if($mois>12) {$annee_decalage=$annee+1;}
 		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois_modulo,1,$annee_decalage));
 
-		print '<td class="liste_titre" align="right">&nbsp;';
+		print '<td align="right">&nbsp;';
 		if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 		{
 			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
@@ -689,7 +689,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" class="liste_titre borderrightlight">&nbsp;';
+		print '<td align="right" class="borderrightlight">&nbsp;';
 		//if (isset($encaiss_ttc[$case]) && $encaiss_ttc[$case] != 0)
 		if (isset($encaiss_ttc[$case]))
 		{

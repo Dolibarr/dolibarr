@@ -115,16 +115,11 @@ if ($conf->use_javascript_ajax)
                 {
 					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
                     {
-                        jQuery("#tramount").hide();
-                        jQuery("#tredit").hide();
-                        jQuery("#trpayment").hide();
-                        jQuery("#tremail").hide();
+                        jQuery("#trforcetype, #tramount, #tredit, #trpayment, #tremail").hide();
                     }
                     if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\')
                     {
-                        jQuery("#tramount").show();
-                        jQuery("#tredit").show();
-                        jQuery("#trpayment").show();
+                        jQuery("#trforcetype, #tramount, #tredit, #trpayment").show();
                         if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') jQuery("#tremail").hide();
                         else jQuery("#tremail").show();
 					}
@@ -156,9 +151,9 @@ print "</td></tr>\n";
 
 // Force Type
 $adht = new AdherentType($db);
-print '<tr class="oddeven drag"><td>';
+print '<tr class="oddeven drag" id="trforcetype"><td>';
 print $langs->trans("ForceMemberType");
-print '</td><td width="60" align="center">';
+print '</td><td width="60" align="right">';
 $listofval = array(-1 => $langs->trans("Undefined"));
 $listofval += $adht->liste_array();
 $forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;

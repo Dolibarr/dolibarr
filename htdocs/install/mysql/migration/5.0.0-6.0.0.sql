@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 5.0.0 or higher.
+-- when current version is 6.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -25,6 +25,23 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_adherent set datefin = NULL where DATE(STR_TO_DATE(datefin, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_adherent set datefin = NULL where DATE(STR_TO_DATE(datefin, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-01 00:00:00';
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN datefin datetime NULL;
+
+-- To remove a default value for date that is not valid when field is not null
+-- VMYSQL4.1 ALTER TABLE llx_chargesociales MODIFY COLUMN date_ech datetime DEFAULT NULL;
+-- VMYSQL4.1 ALTER TABLE llx_chargesociales MODIFY COLUMN date_ech datetime NOT NULL;
+
+
+
+
 -- Clean corrupted values for tms
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
@@ -34,11 +51,7 @@
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
-
-ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
-ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
-
-ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
@@ -46,6 +59,19 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_spy tinyint NOT NULL DEFAULT 1 AFTER allow_comments;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
+
+
+ALTER TABLE llx_socpeople MODIFY COLUMN zip varchar(25);
+
+
+ALTER TABLE llx_extrafields ADD COLUMN fieldcomputed text;
+ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
+
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
+
+
+ALTER TABLE llx_holiday ADD COLUMN ref	varchar(30) NULL;
+ALTER TABLE llx_holiday ADD COLUMN ref_ext	varchar(255);
 
 
 create table llx_notify_def_object
@@ -80,15 +106,28 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, ent
 ALTER TABLE llx_ecm_files ADD INDEX idx_ecm_files_label (label);
 
 
+ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
+
+
 ALTER TABLE llx_holiday ADD COLUMN import_key				varchar(14);
 ALTER TABLE llx_holiday ADD COLUMN extraparams				varchar(255);	
-
-ALTER TABLE llx_expedition ADD COLUMN fk_projet integer DEFAULT NULL after fk_soc;
 
 ALTER TABLE llx_expensereport ADD COLUMN import_key			varchar(14);
 ALTER TABLE llx_expensereport ADD COLUMN extraparams		varchar(255);	
 
+ALTER TABLE llx_actioncomm ADD COLUMN import_key			varchar(14);
+ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);	
+
+
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
+
+-- VMYSQL4.1 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;
+
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN state_id integer USING state_id::integer;
+-- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN country integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN country integer USING country::integer;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
@@ -159,12 +198,16 @@ CREATE TABLE llx_product_attribute_combination
 
 ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
 
+-- Fix missing entity column after init demo
+ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
+
 -- Add journal entries
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (1,'VT', 'Sale journal', 2, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (2,'AC', 'Purchase journal', 3, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (3,'BQ', 'Bank journal', 4, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (4,'OD', 'Other journal', 1, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Has new journal', 9, 1);
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (6,'ER', 'Expense report journal', 5, 1);
 -- Fix old entries
 UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
 UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
@@ -181,10 +224,20 @@ UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM ll
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_tiers varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN code_tiers thirdparty_code varchar(32);
+
+--Subledger account
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_account varchar(32);
+ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it	
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_label varchar(255) AFTER subledger_account;	-- If field dod not exists yet
+
+update llx_accounting_bookkeeping set subledger_account = numero_compte where subledger_account IS NULL;
+
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
-ALTER TABLE llx_accounting_bookkeeping ADD COLUMN thirdparty_label varchar(255) AFTER code_tiers;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN label_operation varchar(255) AFTER label_compte;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_amount double AFTER sens;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN multicurrency_code varchar(255) AFTER multicurrency_amount;
@@ -192,6 +245,54 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_code varchar(255) AF
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lettering datetime AFTER lettering_code;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFTER code_journal;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
+
+DROP TABLE llx_accounting_bookkeeping_tmp;
+CREATE TABLE llx_accounting_bookkeeping_tmp 
+(
+  rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
+  doc_date              date NOT NULL,				-- FEC:PieceDate
+  doc_type              varchar(30) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
+  fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
+  fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
+  thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug) 
+  subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
+  subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
+  numero_compte         varchar(32),				-- FEC:CompteNum	| account number
+  label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
+  label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
+  debit                 double(24,8) NOT NULL,		-- FEC:Debit
+  credit                double(24,8) NOT NULL,		-- FEC:Credit
+  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
+  sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
+  multicurrency_amount  double(24,8),				-- FEC:Montantdevise
+  multicurrency_code    varchar(255),				-- FEC:Idevise
+  lettering_code        varchar(255),				-- FEC:EcritureLet
+  date_lettering        datetime,					-- FEC:DateLet
+  fk_user_author        integer NOT NULL,			-- 					| user creating
+  fk_user_modif         integer,					-- 					| user making last change
+  date_creation         datetime,					-- FEC:EcritureDate	| creation date
+  tms                   timestamp,					--					| date last modification 
+  import_key            varchar(14),
+  code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
+  journal_label         varchar(255),				-- FEC:JournalLib
+  piece_num             integer NOT NULL,			-- FEC:EcritureNum
+  validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
+  date_validated        datetime					-- FEC:ValidDate
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal);
+
+
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN debit double(24,8);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN credit double(24,8);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN montant double(24,8);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN multicurrency_amount double(24,8);
+
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
@@ -214,6 +315,7 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoic
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_invoice_supplier_source FOREIGN KEY (fk_invoice_supplier)      REFERENCES llx_facture_fourn (rowid);
 
 ALTER TABLE llx_facture_rec ADD COLUMN vat_src_code	varchar(10) DEFAULT '';
+ALTER TABLE llx_expensereport_det ADD COLUMN vat_src_code varchar(10)  DEFAULT '';
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('ADHERENT_BANK_USE_AUTO')__;
 
@@ -255,6 +357,8 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_code		 va
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     double(24,8) DEFAULT 1;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+
+UPDATE llx_contrat set ref = rowid where ref is null or ref = '';
 
 create table llx_payment_various
 (
@@ -348,5 +452,85 @@ ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
 DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
+-- Fix: delete orphelin category.
+delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
+
+create table llx_loan_schedule
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  fk_loan			integer,
+  datec				datetime,         
+  tms				timestamp,
+  datep				datetime,         
+  amount_capital	real DEFAULT 0,
+  amount_insurance	real DEFAULT 0,
+  amount_interest	real DEFAULT 0,
+  fk_typepayment	integer NOT NULL,
+  num_payment		varchar(50),
+  note_private      text,
+  note_public       text,
+  fk_bank			integer NOT NULL,
+  fk_user_creat		integer,          
+  fk_user_modif		integer           
+)ENGINE=innodb;
+
+ALTER TABLE llx_tva ADD COLUMN datec date AFTER tms;
+
+ALTER TABLE llx_user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_user_rights DROP FOREIGN KEY fk_user_rights_fk_user_user;
+ALTER TABLE llx_user_rights DROP INDEX uk_user_rights;
+ALTER TABLE llx_user_rights DROP INDEX fk_user;
+ALTER TABLE llx_user_rights ADD UNIQUE INDEX uk_user_rights (entity, fk_user, fk_id);
+ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_usergroup_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_usergroup_rights DROP FOREIGN KEY fk_usergroup_rights_fk_usergroup;
+ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
+ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
+ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
+
+CREATE TABLE llx_blockedlog 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	tms	timestamp,
+	action varchar(50), 
+	amounts real NOT NULL, 
+	signature varchar(100) NOT NULL, 
+	signature_line varchar(100) NOT NULL, 
+	element varchar(50), 
+	fk_object integer,
+	ref_object varchar(100), 
+	date_object	datetime,
+	object_data	text,
+	fk_user	integer,
+	entity integer DEFAULT 1 NOT NULL, 
+	certified integer
+) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
+ALTER TABLE llx_blockedlog ADD INDEX fk_object_element (fk_object,element);
+ALTER TABLE llx_blockedlog ADD INDEX entity (entity);
+ALTER TABLE llx_blockedlog ADD INDEX fk_user (fk_user); 
+ALTER TABLE llx_blockedlog ADD INDEX entity_action (entity,action);
+ALTER TABLE llx_blockedlog ADD INDEX entity_action_certified (entity,action,certified);
+
+CREATE TABLE llx_blockedlog_authority 
+( 
+	rowid integer AUTO_INCREMENT PRIMARY KEY, 
+	blockchain longtext NOT NULL,
+	signature varchar(100) NOT NULL,
+	tms timestamp
+) ENGINE=innodb;
+
+ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);
+
+-- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid;
+
+UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
+UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';

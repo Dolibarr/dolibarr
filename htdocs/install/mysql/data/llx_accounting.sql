@@ -32,6 +32,7 @@ INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', '
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Journal de banque', 4, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Journal des opérations diverses', 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Journal des à-nouveaux', 9, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('ER', 'Journal des notes de frais', 5, 1);
 --
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --
@@ -359,7 +360,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (305,'PCG99-BASE','FINAN', 'XXXXXX',  '511', '304', 'Valeurs à l''encaissement', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (306,'PCG99-BASE','FINAN', 'BANK',    '512', '304', 'Banques', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (307,'PCG99-BASE','FINAN', 'XXXXXX',  '514', '304', 'Chèques postaux', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (308,'PCG99-BASE','FINAN', 'XXXXXX',  '515', '304', '"Caisses" du Trésor et des établissements publics', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (308,'PCG99-BASE','FINAN', 'XXXXXX',  '515', '304', 'Caisses du Trésor et des établissements publics', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (309,'PCG99-BASE','FINAN', 'XXXXXX',  '516', '304', 'Sociétés de bourse', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (310,'PCG99-BASE','FINAN', 'XXXXXX',  '517', '304', 'Autres organismes financiers', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (311,'PCG99-BASE','FINAN', 'XXXXXX',  '518', '304', 'Intérêts courus', 1);

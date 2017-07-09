@@ -71,7 +71,7 @@ if ($action == 'setmod')
 
 if ($action == 'setparams')
 {
-	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS');	// No alpha here, we want exact string
+	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS','none');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$freetext,'chaine',0,'',$conf->entity);
 
@@ -81,24 +81,11 @@ if ($action == 'setparams')
 	{
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-	
-	/*
-	$freetext = GETPOST('INVOICE_AUTO_FILLJS');	// No alpha here, we want exact string
-	
-	$res = dolibarr_set_const($db, "INVOICE_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
-	
-	if (! $res > 0) $error++;
-	
-	if ($error)
-	{
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-	}*/
-
 	if (! $error)
 	{
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	
+
 }
 
 
