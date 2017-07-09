@@ -124,6 +124,7 @@ WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
 WeightUnitpound=pound
+WeightUnitounce=ons
 Length=Uzunluk
 LengthUnitm=m
 LengthUnitdm=dm

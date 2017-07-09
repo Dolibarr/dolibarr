@@ -35,6 +35,7 @@ DocModelAuroreDescription=Un modèle de demande complet (logo ...)
 DefaultModelSupplierProposalCreate=Création de modèle par défaut
 DefaultModelSupplierProposalToBill=Modèle par défaut lors de la clôture d'une demande de prix (acceptée)
 DefaultModelSupplierProposalClosed=Modèle par défaut lors de la clôture d'une demande de prix (refusée)
+ListOfSupplierProposals=Liste des demandes de proposition de fournisseur
 ListSupplierProposalsAssociatedProject=Liste des propositions de fournisseurs associées au projet
 SupplierProposalsToClose=Propositions de fournisseurs à clôturer
 SupplierProposalsToProcess=Propositions de fournisseurs à traiter

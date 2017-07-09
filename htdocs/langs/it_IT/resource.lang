@@ -20,8 +20,8 @@ ShowResource=Mostra risorsa
 
 ResourceElementPage=Risorse dell'elemento
 ResourceCreatedWithSuccess=Risorsa creata con successo
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
+RessourceLineSuccessfullyDeleted=Riga di risorsa eliminata correttamente
+RessourceLineSuccessfullyUpdated=Riga di risorsa aggiornata correttamente
 ResourceLinkedWithSuccess=Risorsa collegata con successo
 
 ConfirmDeleteResource=Conferma l'eliminazione di questa risorsa
@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Risorsa eliminata con successo
 DictionaryResourceType=Tipo di risorse
 
 SelectResource=Seleziona risorsa
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Risorse
