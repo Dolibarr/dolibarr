@@ -63,9 +63,6 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
-// This page is a generic page to edit dictionaries
-// Put here declaration of dictionaries properties
-
 // Name of SQL tables of dictionaries
 $tabname=array();
 $tabname[1] = MAIN_DB_PREFIX."website";
@@ -341,7 +338,7 @@ if ($action == 'delete')
 //var_dump($elementList);
 
 /*
- * Show a dictionary
+ * Show website list
  */
 if ($id)
 {
@@ -447,8 +444,7 @@ if ($id)
 
 
 
-    // List of available values in database
-    dol_syslog("htdocs/admin/dict", LOG_DEBUG);
+    // List of websites in database
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -464,14 +460,6 @@ if ($id)
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
             print '<table class="noborder" width="100%">';
-
-            // There is several pages
-            if ($num > $listlimit)
-            {
-                print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
-                print_fleche_navigation($page, $_SERVER["PHP_SELF"], '', ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
-                print '</td></tr>';
-            }
 
             // Title of lines
             print '<tr class="liste_titre">';

@@ -15,6 +15,7 @@ CKEDITOR.editorConfig = function( config )
 	//config.height = '300px';
 	//config.resize_dir = 'vertical';	// horizontal, vertical, both
 	config.removePlugins = 'elementspath,save'; // config.removePlugins = 'elementspath,save,font';
+	//config.extraPlugins = 'docprops,scayt,showprotected';
 	config.removeDialogTabs = 'flash:advanced';	// config.removeDialogTabs = 'flash:advanced;image:Link';
 	config.protectedSource.push( /<\?[\s\S]*?\?>/g );   // Prevent PHP Code to be formatted
 	//config.menu_groups = 'clipboard,table,anchor,link,image';	// for context menu 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea' 

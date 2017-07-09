@@ -1090,7 +1090,10 @@ if ($action == 'preview')
         $out.=$csscontent;
         $out.='</style>'."\n";
 
-        $out.=$objectpage->content."\n";
+        // Replace php code
+        $content = preg_replace('/<\?php.*\?>/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $objectpage->content);
+
+        $out.=$content."\n";
 
         $out.='</div>';
 
