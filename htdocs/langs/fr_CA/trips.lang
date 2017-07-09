@@ -48,6 +48,7 @@ DATE_REFUS=Déni de date
 DATE_CANCEL=Date d'annulation
 DATE_PAIEMENT=Date de règlement
 BROUILLONNER=Rouvrir
+ExpenseReportRef=Réf. rapport de dépenses
 ValidateAndSubmit=Validez et soumettez pour approbation
 NOT_AUTHOR=Vous n'êtes pas l'auteur de ce rapport de dépenses. Fonctionnement annulé.
 ConfirmRefuseTrip=Êtes-vous sûr de vouloir refuser ce rapport de dépenses?

@@ -11,6 +11,7 @@ YourEMail=E-posti aadress makse kinnituse saamiseks
 Creditor=Kreeditor
 PaymentCode=Makse kood
 PayBoxDoPayment=Mine maksmisele
+ToPay=Soorita makse
 YouWillBeRedirectedOnPayBox=Teid suunatakse turvalisele Payboxi lehele krediitkaardi info sisestamiseks
 Continue=Järgmine
 ToOfferALinkForOnlinePayment=Makse %s URL

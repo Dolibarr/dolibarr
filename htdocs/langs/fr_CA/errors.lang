@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - errors
 NoErrorCommitIsDone=Aucune erreur, nous nous engageons
-ErrorButCommitIsDone=Les erreurs trouvées, mais nous validons malgré cela
+ErrorButCommitIsDone=Erreurs trouvées, mais nous validons malgré cela
 ErrorBadEMail=Le courriel %s n'est pas bon
 ErrorBadUrl=L'adresse Url %s n'est pas bonne
 ErrorBadValueForParamNotAString=Valeur incorrecte pour votre paramètre. Il ajoute généralement lorsque la traduction est manquante.

@@ -112,7 +112,6 @@ DocumentModelBeluga=Modelo de projeto para visão geral objetos ligados
 DocumentModelBaleine=Modelo de relatório do Projeto para tarefas
 PlannedWorkload=carga horária planejada
 PlannedWorkloadShort=Carga de trabalho
-ProjectReferers=Itens relacionados
 ProjectMustBeValidatedFirst=O projeto tem que primeiramente ser validado
 FirstAddRessourceToAllocateTime=Atribuir o recurso de um usuário à tarefa para alocação do tempo
 InputPerDay=Entrada por dia

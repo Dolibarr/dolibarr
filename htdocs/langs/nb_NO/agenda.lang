@@ -75,14 +75,17 @@ InterventionSentByEMail=Intervensjon %s sendt på epost
 ProposalDeleted=Tilbud slettet
 OrderDeleted=Ordre slettet
 InvoiceDeleted=Faktura slettet
+PRODUCT_CREATEInDolibarr=Vare%s opprettet
+PRODUCT_MODIFYInDolibarr=Vare %s endret
+PRODUCT_DELETEInDolibarr=Vare %s slettet
 ##### End agenda events #####
 AgendaModelModule=Dokumentmaler for hendelse
 DateActionStart=Startdato
 DateActionEnd=Sluttdato
 AgendaUrlOptions1=Du kan også bruke følgende parametere til å filtrere listen:
-AgendaUrlOptions2=<b>login=%s</b> for å begrense resultat til hendelse som er opprettet av eller tildelt bruker<b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet av en bruker <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> for å begrense resultat til handlinger relatert til bruker <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger som ikke eies av brukeren <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> for å begrense resultat til handlinger som er knyttet til prosjektet <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Vis kontakters fødselsdager
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager

@@ -28,6 +28,7 @@ OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accoun
 OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
+AlreadyInGeneralLedger=Already journalized in ledgers
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -62,7 +63,6 @@ Addanaccount=Aggiungi un account di contabilità
 AccountAccounting=Account di contabilità
 AccountAccountingShort=Conto
 SubledgerAccount=Subledger Account
-subledger_account=Subledger Account
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 AccountAccountingSuggest=Account per contabilità suggerito
@@ -79,6 +79,7 @@ SuppliersVentilation=Supplier invoice binding
 ExpenseReportsVentilation=Expense report binding
 CreateMvts=Inserisci movimento
 UpdateMvts=Modifica di un movimento
+ValidTransaction=Validate transaction
 WriteBookKeeping=Journalize transactions in Ledger
 Bookkeeping=Ledger
 AccountBalance=Saldo
@@ -109,7 +110,7 @@ ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maxi
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
-ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION=Tronca la descrizione di prodotto & servizi negli elenchi dopo x caratteri (Consigliato = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
@@ -138,13 +139,14 @@ Code_tiers=Terza parte
 Labelcompte=Etichetta account
 Sens=Verso
 Codejournal=Giornale
-NumPiece=Piece number
+NumPiece=Numero del pezzo
 TransactionNumShort=Num. transaction
 AccountingCategory=Accounting account groups
 GroupByAccountAccounting=Group by accounting account
+ByAccounts=By accounts
 NotMatch=Non impostato
 DeleteMvt=Delete Ledger lines
-DelYear=Year to delete
+DelYear=Anno da cancellare
 DelJournal=Journal to delete
 ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
 ConfirmDeleteMvtPartial=This will delete the selected line(s) of the Ledger
@@ -160,9 +162,9 @@ FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Payment of invoice customer
 ThirdPartyAccount=Thirdparty account
-NewAccountingMvt=New transaction
-NumMvts=Numero of transaction
-ListeMvts=List of movements
+NewAccountingMvt=Nuova transazione
+NumMvts=Numero della transazione
+ListeMvts=Lista dei movimenti
 ErrorDebitCredit=Debito e Credito non possono avere un valore contemporaneamente
 AddCompteFromBK=Add accounting accounts to the group
 ReportThirdParty=List third party account
@@ -201,7 +203,7 @@ ListOfProductsWithoutAccountingAccount=List of products not bound to any account
 ChangeBinding=Change the binding
 
 ## Admin
-ApplyMassCategories=Apply mass categories
+ApplyMassCategories=Applica categorie di massa
 AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
 CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
@@ -214,12 +216,14 @@ AccountingJournalType1=Various operation
 AccountingJournalType2=Vendite
 AccountingJournalType3=Acquisti
 AccountingJournalType4=Banca
+AccountingJournalType5=Expenses report
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 
 ## Export
 Exports=Esportazioni
 Export=Esportazione
+ExportDraftJournal=Export draft journal
 Modelcsv=Modello di esportazione
 OptionsDeactivatedForThisExportModel=Per questo modello di esportazione, le opzioni sono disattivate
 Selectmodelcsv=Seleziona un modello di esportazione
@@ -230,7 +234,7 @@ Modelcsv_bob50=Esportazione per Sage BOB 50
 Modelcsv_ciel=Esportazione per Sage Ciel Compta o Compta Evolution
 Modelcsv_quadratus=Esportazione per Quadratus QuadraCompta
 Modelcsv_ebp=Esportazione per EBP
-Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_cogilog=Esporta per Cogilog
 Modelcsv_agiris=Export towards Agiris (Test)
 ChartofaccountsId=Chart of accounts Id
 
@@ -239,8 +243,8 @@ InitAccountancy=Inizializza contabilità
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
 Options=Opzioni
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
+OptionModeProductSell=Modalità vendita
+OptionModeProductBuy=Modalità acquisto
 OptionModeProductSellDesc=Show all products with accounting account for sales.
 OptionModeProductBuyDesc=Show all products with accounting account for purchases.
 CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
@@ -258,7 +262,7 @@ Formula=Formula
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
-ExportNotSupported=The export format setuped is not supported into this page
+ExportNotSupported=Il formato di esportazione configurato non è supportato in questa pagina
 BookeppingLineAlreayExists=Lines already existing into bookeeping
 NoJournalDefined=No journal defined
 Binded=Lines bound

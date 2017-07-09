@@ -7,7 +7,6 @@ PAYPAL_API_USER=API Benutzername
 PAYPAL_API_PASSWORD=API Passwort
 PAYPAL_API_SIGNATURE=API Unterschrift
 PaypalModeOnlyPaypal=nur PayPal
-PAYPAL_CSS_URL=optionale Url eines CSS style sheets auf der Payment-Seite
 ThisIsTransactionId=Dies ist id Geschäftsart: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Fügen Sie die URL der Paypal Zahlung, wenn Sie ein Dokument per E-Mail senden
 YouAreCurrentlyInSandboxMode=Sie befinden sich derzeit im "Sandkasten-Modus"

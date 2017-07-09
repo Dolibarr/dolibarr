@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Nota spese
 ExpenseReports=Note spese
-ShowExpenseReport=Show expense report
+ShowExpenseReport=Mostra note spese
 Trips=Note spese
 TripsAndExpenses=Note spese
 TripsAndExpensesStatistics=Statistiche note spese
@@ -9,19 +9,29 @@ TripCard=Scheda nota spese
 AddTrip=Crea nota spese
 ListOfTrips=Lista delle note spese
 ListOfFees=Elenco delle tariffe
-TypeFees=Types of fees
-ShowTrip=Show expense report
+TypeFees=Tipi di imposte
+ShowTrip=Mostra note spese
 NewTrip=Nuova nota spese
-CompanyVisited=Società/Fondazione visitata
+CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Tariffa kilometrica o importo
 DeleteTrip=Elimina nota spese
-ConfirmDeleteTrip=Are you sure you want to delete this expense report?
+ConfirmDeleteTrip=Vuoi davvero eliminare questa nota spese?
 ListTripsAndExpenses=Lista delle note spese
 ListToApprove=In attesa di approvazione
 ExpensesArea=Area note spese
 ClassifyRefunded=Classifica come "Rimborsata"
 ExpenseReportWaitingForApproval=È stata inserita una nuova nota spese da approvare
 ExpenseReportWaitingForApprovalMessage=È stata inserita una nuova nota spese da approvare.\n- Utente: %s\n- Periodo: %s\nClicca qui per approvarla: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=ID nota spese
 AnyOtherInThisListCanValidate=Persona da informare per la convalida
 TripSociete=Informazioni azienda
@@ -48,9 +58,9 @@ ModePaiement=Modalità di pagamento
 VALIDATOR=Utente responsabile per l'approvazione
 VALIDOR=Approvata da
 AUTHOR=Registrata da
-AUTHORPAIEMENT=Paid by
+AUTHORPAIEMENT=Pagata da
 REFUSEUR=Rifiutata da
-CANCEL_USER=Deleted by
+CANCEL_USER=Cancellata da
 
 MOTIF_REFUS=Motivo
 MOTIF_CANCEL=Motivo
@@ -59,31 +69,24 @@ DATE_REFUS=Rifiutata in data
 DATE_SAVE=Convalidata in data
 DATE_CANCEL=Eliminata in data
 DATE_PAIEMENT=Liquidata in data
-
 BROUILLONNER=Riapri
+ExpenseReportRef=Ref. expense report
 ValidateAndSubmit=Convalida e proponi per l'approvazione
-ValidatedWaitingApproval=Validated (waiting for approval)
-
+ValidatedWaitingApproval=Convalidata (in attesa di approvazione)
 NOT_AUTHOR=Non sei l'autore di questa nota spese. Operazione annullata.
-
-ConfirmRefuseTrip=Are you sure you want to deny this expense report?
-
+ConfirmRefuseTrip=Vuoi davvero rifiutare questa nota spese?
 ValideTrip=Approva la nota spese
-ConfirmValideTrip=Are you sure you want to approve this expense report?
-
+ConfirmValideTrip=Vuoi davvero approvare questa nota spese?
 PaidTrip=Liquida una nota spese
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid"?
-
-ConfirmCancelTrip=Are you sure you want to cancel this expense report?
-
-BrouillonnerTrip=Move back expense report to status "Draft"
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft"?
-
+ConfirmPaidTrip=Vuoi davvero modificare lo stato di questa nota spese in "liquidata"?
+ConfirmCancelTrip=Vuoi davvero eliminare questa nota spese?
+BrouillonnerTrip=Riporta la nota spese allo stato di "bozza"
+ConfirmBrouillonnerTrip=Vuoi davvero riportare questa nota spese allo stato "bozza"?
 SaveTrip=Convalida la nota spese
-ConfirmSaveTrip=Are you sure you want to validate this expense report?
-
+ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
 NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo
-ExpenseReportPayment=Expense report payment
-
+ExpenseReportPayment=Pagamento nota spese
 ExpenseReportsToApprove=Note spese da approvare
-ExpenseReportsToPay=Expense reports to pay
+ExpenseReportsToPay=Note spese da pagare
+CloneExpenseReport=Clone expense report
+ConfirmCloneExpenseReport=Vuoi davvero clonare questa nota spese?

@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Za namestitev Dolibarr uporabljate čarovnika DoliWamp, za
 KeepDefaultValuesDeb=Za namestitev Dolibarr uporabljate čarovnika iz paketov, podobnih Ubuntu ali Debian, zato so predlagane vrednosti že optimizirane. Spremenite jih le, če veste kaj počnete.
 KeepDefaultValuesMamp=Za namestitev Dolibarr uporabljate čarovnika DoliMamp, zato so predlagane vrednosti že optimizirane. Spremenite jih le, če veste kaj počnete.
 KeepDefaultValuesProxmox=Za namestitev Dolibarr uporabljate čarovnika Proxmox virtual appliance, zato so predlagane vrednosti že optimizirane. Spremenite jih le, če veste kaj počnete.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

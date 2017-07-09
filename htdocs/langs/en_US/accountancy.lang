@@ -210,7 +210,6 @@ AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
-Code=Code
 Nature=Nature
 AccountingJournalType1=Various operation
 AccountingJournalType2=Sales
@@ -221,8 +220,6 @@ AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 
 ## Export
-Exports=Exports
-Export=Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Model of export
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated

@@ -462,9 +462,9 @@ YouMustCreateStandardInvoiceFirstDesc=Pour créer une facture modèle, vous deve
 PDFCrabeDescription=Modèle de facture PDF complet (modèle recommandé par défaut)
 PDFCrevetteDescription=Modèle de facture PDF Crevette (modèle complet pour les factures de situation)
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et factures de remplacement, %syymm-nnnn pour les avoirs et %syymm-nnnn pour les acomptes où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
-MarsNumRefModelDesc1=Renvoie une numérotation au format %syymm-nnnn pour les factures standards, %syymm-nnnn pour les factures de remplacement, %syymm-nnnn pour les factures d'acompte et %syymm-nnnn pour les factures d'avoir où yy est l'année, mm, le mois et nnnn un compteur sans rupture ni remise à zéro.
+MarsNumRefModelDesc1=Renvoie une numérotation au format %syymm-nnnn pour les factures standards, %syymm-nnnn pour les factures de remplacement, %syymm-nnnn pour les factures d'acompte et %syymm-nnnn pour les factures d'avoir où yy est l'année, mm le mois et nnnn un compteur sans rupture ni retour à zéro.
 TerreNumRefModelError=Une facture commençant par $syymm existe déjà et est incompatible avec cet modèle de numérotation. Supprimez-la ou renommez-la pour activer ce module.
-CactusNumRefModelDesc1=Renvoie un numéro au format %syymm-nnnn pour les factures standards, %syymm-nnnn pour les factures d'avoir et %syymm-nnnn pour les factures d'acompte où yy est l'année, mm le mois et nnnn un compteur sans rupture ni remise à 0.
+CactusNumRefModelDesc1=Renvoie un numéro au format %syymm-nnnn pour les factures standards, %syymm-nnnn pour les factures d'avoir et %syymm-nnnn pour les factures d'acompte où yy est l'année, mm le mois et nnnn un compteur sans rupture ni retour à zéro.
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable suivi facture client
 TypeContact_facture_external_BILLING=Contact client facturation
