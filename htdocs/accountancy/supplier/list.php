@@ -191,7 +191,8 @@ $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountan
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql.= " AND product_type <= 2";
-$sql.= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy ='')";
+$sql.= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy =''OR p.accountancy_code_buy  NOT IN
+	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accounting_account as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid ='" . $conf->global->CHARTOFACCOUNTS . "'))";
 // Add search filter like
 if ($search_lineid) {
     $sql .= natural_search("l.rowid", $search_lineid, 1);

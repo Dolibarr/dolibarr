@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliWamp,
 KeepDefaultValuesDeb=Jūs izmantojat Dolibarr iestatīšanas vedni no Linux paketi (Ubuntu, Debian, Fedora ...), tāpēc vērtības ierosinātās šeit jau ir optimizēta. Tikai datu bāzes īpašnieks, lai izveidotu paroli jāpabeidz. Mainītu citus parametrus tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesMamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliMamp, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojat Dolibarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

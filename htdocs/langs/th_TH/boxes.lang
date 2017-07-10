@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Login information
 BoxLastRssInfos=ข้อมูล Rss
 BoxLastProducts=Latest %s products/services
 BoxProductsAlertStock=Stock alerts for products
@@ -58,7 +59,7 @@ NoUnpaidCustomerBills=No unpaid customer invoices
 NoUnpaidSupplierBills=No unpaid supplier invoices
 NoModifiedSupplierBills=No recorded supplier invoices
 NoRecordedProducts=ไม่มีสินค้าบันทึก / บริการ
-NoRecordedProspects=ไม่มีโอกาสที่บันทึกไว้
+NoRecordedProspects=ไม่มีลูกค้าเป้าหมายที่บันทึกไว้
 NoContractedProducts=ผลิตภัณฑ์ / บริการไม่มีการทำสัญญา
 NoRecordedContracts=ไม่มีสัญญาบันทึก
 NoRecordedInterventions=ไม่มีการแทรกแซงที่บันทึกไว้
@@ -82,3 +83,4 @@ ForCustomersOrders=คำสั่งซื้อของลูกค้า
 ForProposals=ข้อเสนอ
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
+BoxAdded=Widget was added in your dashboard

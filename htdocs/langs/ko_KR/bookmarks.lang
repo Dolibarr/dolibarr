@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add this page to bookmarks
+AddThisPageToBookmarks=Add current page to bookmarks
 Bookmark=Bookmark
 Bookmarks=Bookmarks
+ListOfBookmarks=List of bookmarks
+EditBookmarks=List/edit bookmarks
 NewBookmark=New bookmark
 ShowBookmark=Show bookmark
 OpenANewWindow=Open a new window
@@ -10,7 +12,7 @@ BookmarkTargetNewWindowShort=New window
 BookmarkTargetReplaceWindowShort=Current window
 BookmarkTitle=Bookmark title
 UrlOrLink=URL
-BehaviourOnClick=Behaviour when a URL is clicked
+BehaviourOnClick=Behaviour when a bookmark URL is selected
 CreateBookmark=Create bookmark
 SetHereATitleForLink=Set a title for the bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relative Dolibarr URL

@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi moneda
+ErrorAddRateFail=Error al añadir tasa
+ErrorAddCurrencyFail=Error al añadir la divisa
+ErrorDeleteCurrencyFail=Error al eliminar
+multicurrency_syncronize_error=Error sincronización: %s
+multicurrency_useOriginTx=Cuando un objeto se crea desde otro, mantiene la tasa original del objeto de origen (de lo contrario, utilice la nueva tasa conocida)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Debe crear una cuenta en su sitio web para utilizar esta función.  <br />Obtenga su <b>clave API</b><br />Si utiliza una cuenta gratuita, no puede cambiar la <b>divisa origen</b> (USD por defecto)<br />. Pero si su divisa principal no es USD, puede usar la <b>divisa origen alternativa</b> para forzar su divisa principal. <br /><br />Está limitado a 1000 sincronizaciones por mes
+multicurrency_appId=Clave API
+multicurrency_appCurrencySource=Divisa origen
+multicurrency_alternateCurrencySource= Divisa origen alternativa
+CurrenciesUsed=Divisas usadas
+CurrenciesUsed_help_to_add=Añada las diferentes divisas y las tasas que necesite usar en sus <b>presupuestos</b>, <b>pedidos</b>, etc.
+rate=tasa
+MulticurrencyReceived=Recibido, divisa origen
+MulticurrencyRemainderToTake=Cantidad restante, moneda original
+MulticurrencyPaymentAmount=Importe total, divisa original

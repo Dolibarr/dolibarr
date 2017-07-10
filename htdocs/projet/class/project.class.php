@@ -991,7 +991,7 @@ class Project extends CommonObject
         }
 
         $linkclose='';
-        if (empty($notooltip) && $user->rights->propal->lire)
+        if (empty($notooltip) && $user->rights->projet->lire)
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {

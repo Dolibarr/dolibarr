@@ -429,7 +429,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            break;
 	        case 'aZ09':
 	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9_\-]+/i',$out)) $out='';
+	            if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
@@ -4161,7 +4161,7 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
  *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type1, rate localtax2, accountancycodecust, accountancycodesupp)
+ *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid=0)

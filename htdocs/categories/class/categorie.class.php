@@ -1179,7 +1179,7 @@ class Categorie extends CommonObject
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent.": rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent." than category id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
