@@ -497,7 +497,7 @@ ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup
 
 -- For new module website
 
-CREATE TABLE llx_website_pages
+CREATE TABLE llx_website_page
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer NOT NULL,
@@ -513,9 +513,9 @@ CREATE TABLE llx_website_pages
 	tms            timestamp
 ) ENGINE=innodb;
 
-ALTER TABLE llx_website_pages ADD UNIQUE INDEX uk_website_pages_url (fk_website,pageurl);
+ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
 
-ALTER TABLE llx_website_pages ADD CONSTRAINT fk_website_pages_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
+ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
 
 
 -- For new module blockedlog
