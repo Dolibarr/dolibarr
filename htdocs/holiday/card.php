@@ -3,8 +3,8 @@
  * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014-2017	Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 $myparam = GETPOST("myparam");
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
-$userid = GETPOST('userid')?GETPOST('userid'):$user->id;
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -61,7 +60,8 @@ if ($action == 'create')
 	$object = new Holiday($db);
 
     // If no right to create a request
-    if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
+    $fuserid = GETPOST('fuserid');
+    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
     	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
@@ -86,7 +86,6 @@ if ($action == 'create')
 
 	    $valideur = GETPOST('valideur');
 	    $description = trim(GETPOST('description'));
-	    $userID = GETPOST('userID');
 
     	// If no type
 	    if ($type <= 0)
@@ -722,7 +721,7 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
 {
     // Si l'utilisateur n'a pas le droit de faire une demande
-    if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
+    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
         $errors[]=$langs->trans('CantCreateCP');
     }
@@ -802,7 +801,6 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
-        print '<input type="hidden" name="userID" value="'.$userid.'" />'."\n";
 
         dol_fiche_head();
 
@@ -833,10 +831,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers($userid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-        	print '<input type="hidden" name="userid" value="'.$userid.'">';
+        	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+        	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        else print $form->select_dolusers(GETPOST('fuserid')?GETPOST('fuserid'):$user->id,'fuserid',0,'',0);
         print '</td>';
         print '</tr>';
 

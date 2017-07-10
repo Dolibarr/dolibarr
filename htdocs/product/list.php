@@ -164,6 +164,8 @@ $arrayfields=array(
     'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
 	'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
     'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
+	'p.numbuyprice'=>array('label'=>$langs->trans("BuyingPriceNumShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
+	'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
     'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
     'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
@@ -266,7 +268,7 @@ else
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
     $sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
     $sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
-    $sql.= ' p.datec as date_creation, p.tms as date_update,';
+    $sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
     //$sql.= ' pfp.ref_fourn as ref_supplier, ';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
@@ -335,7 +337,7 @@ else
 	$sql.=$hookmanager->resPrint;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-    $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy';
+    $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy, p.pmp';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
 		$sql .= ', pac.rowid';
 	}
@@ -564,6 +566,20 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
+			// Number buying Price
+			if (! empty($arrayfields['p.numbuyprice']['checked']))
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
+			// WAP
+			if (! empty($arrayfields['p.pmp']['checked']))
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
     	    // Limit for alert
 			if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
     		{
@@ -659,6 +675,8 @@ else
     		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.numbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.pmp']['checked']))  print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))  print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"],"p.seuil_stock_alerte","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desiredstock","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
@@ -725,6 +743,7 @@ else
     			$product_static->status_buy = $obj->tobuy;
                 $product_static->status     = $obj->tosell;
 				$product_static->entity = $obj->entity;
+				$product_static->pmp = $obj->pmp;
 
 				if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 				{
@@ -827,6 +846,29 @@ else
         			print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
     			}
+
+				// Number of buy prices
+				if (! empty($arrayfields['p.numbuyprice']['checked']))
+				{
+					print  '<td align="right">';
+					if ($obj->tobuy)
+					{
+						if (($productFournList = $product_fourn->list_product_fournisseur_price($product_fourn->id)) > 0)
+						{
+							$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
+							print $form->textwithpicto(count($productFournList),$htmltext);
+						}
+					}
+					print '</td>';
+				}
+
+				// WAP
+				if (! empty($arrayfields['p.pmp']['checked']))
+				{
+					print '<td class="nowrap" align="right">';
+					print price($product_static->pmp, 1, $langs);
+					print '</td>';
+				}
 
     		    // Limit alert
 		        if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))

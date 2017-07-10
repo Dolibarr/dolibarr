@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Login information
 BoxLastRssInfos=RSS信息
 BoxLastProducts=Latest %s products/services
 BoxProductsAlertStock=Stock alerts for products
@@ -82,3 +83,4 @@ ForCustomersOrders=Customers orders
 ForProposals=建議
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
+BoxAdded=Widget was added in your dashboard

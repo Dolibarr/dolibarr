@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Ressource erfolgreich gelöscht
 DictionaryResourceType=Ressourcen-Typ
 
 SelectResource=Ressource wählen
+
+IdResource=Resourcen ID
+AssetNumber=Seriennummer
+ResourceTypeCode=Ressourcen-Typ Code
+ImportDataset_resource_1=Ressourcen

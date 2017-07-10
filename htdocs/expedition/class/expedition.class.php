@@ -716,6 +716,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -729,6 +730,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}

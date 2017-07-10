@@ -11,6 +11,7 @@ YourEMail=E-mail για να λάβετε επιβεβαίωση της πληρ
 Creditor=Πιστωτής
 PaymentCode=Κωδικός Πληρωμής
 PayBoxDoPayment=Μετάβαση στην πληρωμή
+ToPay=Εισαγωγή Πληρωμής
 YouWillBeRedirectedOnPayBox=Θα μεταφερθείτε σε προστατευμένη σελίδα Paybox να εισάγετε τα στοιχεία της πιστωτικής σας κάρτας
 Continue=Επόμενη
 ToOfferALinkForOnlinePayment=URL για %s πληρωμής

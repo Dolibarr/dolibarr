@@ -1,19 +1,18 @@
 # Dolibarr language file - Source file is en_US - bills
 DisabledBecauseNotErasable=Deaktiviert, weil es nicht gelöscht werden kann
 InvoiceStandardDesc=Dies ist die übliche Rechnungsart.
-InvoiceDeposit=Anzahlung
-InvoiceDepositAsk=Anzahlung
-InvoiceDepositDesc=Diese Art der Rechnung wird ausgestellt, wenn eine Anzahlung eingegangen ist.
 InvoiceProForma=Proformarechnung
 InvoiceProFormaAsk=Proformarechnung
 InvoiceProFormaDesc=<b>Proformarechnung</b> entspricht dem Wert der echten Rechnung, wird aber nicht verbucht.
 InvoiceReplacementDesc=<b>Ersatzrechnung</b> wird verwendet um eine Rechnung, die niemals bezahlt wurde, zu stornieren.<br><br>Beachte: Nur Rechnungen ohne Bezahlung können storniert werden. Wenn die stornierte Rechnung noch nicht geschlossen is, wird sie automatisch geschlossen und als 'storniert' markiert.
 ConsumedBy=Consumed von
 CardBill=Rechnungskarte
-ConfirmDeletePayment=Are you sure you want to delete this payment ?
+BillShortStatusValidated=Bestätigt
+BillShortStatusClosedUnpaid=geschlossen
 ValidateBill=Validate Rechnung
 NewRelativeDiscount=Neue relative Rabatt
 RelatedBill=Verwandte Rechnung
+PaymentTypeShortTRA=Entwurf
 IBANNumber=IBAN
 BICNumber=BIC/SWIFT
 LawApplicationPart2=Die Ware bleibt Eigentum der

@@ -46,6 +46,6 @@ IPP_Media=Yazıcı ortamı
 IPP_Supported=Ortam türü
 DirectPrintingJobsDesc=Bu sayfa geçerli yazıcılar için yazdırma işlerini listeler.
 GoogleAuthNotConfigured=Google OAuth ayarları yapılmamış. OAuth modülünü etkinleştir ve bir Google ID/Secret ayarla.
-GoogleAuthConfigured=OAuth modülünde Google OAuth kimlik bilgileri bulundu.
+GoogleAuthConfigured=Google OAuth kimlik bilgileri OAuth modülünün kurulumunda bulundu.
 PrintingDriverDescprintgcp=Google Bulut Yazdırma yazıcı sürücüsü yapılandırma değişkenleri.
 PrintTestDescprintgcp=Google Bulut Yazdırma Yazıcı Listesi.

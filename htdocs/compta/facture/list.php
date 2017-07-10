@@ -594,6 +594,7 @@ if ($resql)
 
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -1253,10 +1254,10 @@ if ($resql)
             // Status
             if (! empty($arrayfields['f.fk_statut']['checked']))
             {
-                print '<td align="right" class="nowrap">';
-                print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
-                print "</td>";
-                if (! $i) $totalarray['nbfield']++;
+            	print '<td align="right" class="nowrap">';
+            	print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
+            	print "</td>";
+            	if (! $i) $totalarray['nbfield']++;
             }
 
     		// Action column

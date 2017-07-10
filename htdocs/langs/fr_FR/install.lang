@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Si vous utilisez l'installeur automatique DoliWamp, les do
 KeepDefaultValuesDeb=Vous utilisez l'assistant d'installation depuis un environnement Linux (Ubuntu, Debian, Fedor...). Les valeurs présentes ici sont pré-remplies. Seul le mot de passe d'accès du propriétaire de la base de données doit être renseigné. Les autres paramètres ne doivent être modifiés qu'en connaissance de cause.
 KeepDefaultValuesMamp=Vous utilisez l'assistant d'installation DoliMamp. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 KeepDefaultValuesProxmox=Vous utilisez l'assistant d'installation depuis une application Proxmox. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
+UpgradeExternalModule=Lancer le processus de mise à jour d'un module externe
 
 #########
 # upgrade
