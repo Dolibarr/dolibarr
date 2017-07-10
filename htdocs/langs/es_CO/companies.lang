@@ -11,7 +11,6 @@ ProfId2CO=Identificación (CC, NIT, CE)
 ProfId3CO=CIIU
 VATIntra=NIT
 VATIntraShort=NIT
-CompanyHasAbsoluteDiscount=Este cliente tiene <b>%s %s</b> descuentos disponibles (descuentos, anticipos...)
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
 NoContactForAnyProposal=Este contacto no es contacto de ningúna cotización
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al servicio RUES el NIT. Se requiere acceso a internet para que el servicio funcione

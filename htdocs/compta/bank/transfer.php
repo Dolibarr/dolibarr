@@ -37,6 +37,7 @@ if (! $user->rights->banque->transfer)
   accessforbidden();
 
 $action = GETPOST('action','alpha');
+$error = 0;
 
 
 /*
@@ -54,27 +55,24 @@ if ($action == 'add')
 
 	if (! $label)
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Description")), null, 'errors');
 	}
 	if (! $amount)
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
 	if (! GETPOST('account_from','int'))
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
 	if (! GETPOST('account_to','int'))
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
 	}
-
-
-
 	if (! $error)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -90,23 +88,21 @@ if ($action == 'add')
 		} else {
 			if (! $amountto)
 			{
-				$error=1;
+				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")), null, 'errors');
 			}
 		}
-
 
 		if (($accountto->id != $accountfrom->id) && empty($error))
 		{
 			$db->begin();
 
-			$error=0;
 			$bank_line_id_from=0;
 			$bank_line_id_to=0;
 			$result=0;
 
 			// By default, electronic transfert from bank to bank
-			$typefrom='VIR';
+			$typefrom='PRE';
 			$typeto='VIR';
 			if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
 			{
@@ -139,6 +135,7 @@ if ($action == 'add')
 		}
 		else
 		{
+		    $error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}
@@ -151,8 +148,6 @@ if ($action == 'add')
  */
 
 llxHeader();
-
-
 print '		<script type="text/javascript">
         	$(document).ready(function () {
     	  		$(".selectbankaccount").change(function() {
@@ -205,7 +200,6 @@ print '		<script type="text/javascript">
         		});
         	});
     		</script>';
-
 
 $form=new Form($db);
 

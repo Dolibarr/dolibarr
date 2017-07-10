@@ -1,12 +1,11 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastProducts=%s derniers produits / services
-BoxProductsAlertStock=Alertes stockées pour les produits
+BoxProductsAlertStock=Alertes de stock pour les produits
 BoxLastProductsInContract=%s derniers produits / services sous contrat
 BoxLastSupplierBills=Dernières factures des fournisseurs
 BoxLastCustomerBills=Dernières factures client
 BoxOldestUnpaidCustomerBills=Les factures des clients non payées les plus anciennes
 BoxOldestUnpaidSupplierBills=Les plus anciennes factures fournisseurs non payées
-BoxLastProspects=Dernières perspectives modifiées
 BoxLastCustomerOrders=Derniers commandes client
 BoxLastActions=Dernières actions
 BoxLastContacts=Derniers contacts / adresses
@@ -20,7 +19,7 @@ BoxTitleLastModifiedCustomers=%s derniers clients modifiés
 BoxTitleLastCustomersOrProspects=%s derniers  clients ou prospects
 BoxTitleLastCustomerBills=Dernières %s factures client
 BoxTitleLastSupplierBills=Dernières %s factures fournisseurs
-BoxTitleLastModifiedProspects=%s dernières prospects modifiées
+BoxTitleLastModifiedProspects=%s dernières prospects modifiés
 BoxTitleLastModifiedMembers=%s derniers membres
 BoxTitleLastFicheInter=%s dernières interventions modifiées
 BoxTitleCurrentAccounts=Soldes des comptes ouverts
@@ -46,3 +45,4 @@ BoxTitleLastModifiedCustomerOrders=%s dernières commandes client modifiées
 BoxTitleLastModifiedPropals=%s dernières modifications proposées
 LastXMonthRolling=Le dernier roulement du mois de %s
 ChooseBoxToAdd=Ajouter un widget sur votre tableau de bord
+BoxAdded=Le Widget a été ajouté dans votre tableau de bord

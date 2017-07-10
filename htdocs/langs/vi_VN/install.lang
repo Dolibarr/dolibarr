@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr
 KeepDefaultValuesDeb=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một gói phần mềm Linux (Ubuntu, Debian, Fedora ...), do đó giá trị đề xuất ở đây đã được tối ưu hóa. Chỉ có mật khẩu của chủ sở hữu cơ sở dữ liệu để tạo ra phải được hoàn tất. Thay đổi các thông số khác chỉ khi bạn biết những gì bạn làm.
 KeepDefaultValuesMamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ DoliMamp, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
 KeepDefaultValuesProxmox=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một thiết bị ảo Proxmox, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

@@ -135,9 +135,10 @@ ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane
 WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Twoja wersja bazy danych to %s. Ma krytyczną lukę utraty danych jeśli się zmieni struktury na bazie danych, tak jak jest to wymagane podczas procesu migracji. Z tego powodu migracje nie zostaną dopuszczone dopóki nie ulepszysz bazy danych do wyższej wersji  (lista znanych wersji z lukami: %s)
 KeepDefaultValuesWamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
-KeepDefaultValuesDeb=Uzywasz kreatora instalacji dla Linuxa (Ubutu, Debian, Fedora..), więc zaproponowane wartości są zoptymalizowane. Tylko hasło właściciela bazy danych do stworzenia musi być kompletne. Inne parametry zmieniaj TYLKO jeśli wiesz co robisz.
+KeepDefaultValuesDeb=Używasz kreatora instalacji Dolibarr z pakietu Linux (Ubutu, Debian, Fedora..), więc zaproponowane wartości są zoptymalizowane. Musisz stworzyć tylko hasło dla właściciela bazy danych. Inne parametry zmieniaj tylko jeśli wiesz co robisz.
 KeepDefaultValuesMamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 KeepDefaultValuesProxmox=Możesz skorzystać z kreatora konfiguracji Dolibarr z urządzeniem wirtualnym Proxmox, więc wartości zaproponowane tutaj są już zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

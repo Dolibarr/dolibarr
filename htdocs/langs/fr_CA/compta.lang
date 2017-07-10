@@ -12,7 +12,6 @@ VATPaid=TPS/TVH payée
 LT1PaidES=RE (TVQ) Payé
 LT1CustomerES=RE (TVQ) ventes
 VATCollected=TPS/TVH récupérée
-ToPay=Saisir règlement
 SocialContribution=Charge sociale
 SocialContributions=Charges sociales
 SocialContributionsDeductibles=Taxes sociales ou fiscales déductibles

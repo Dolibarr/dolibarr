@@ -67,7 +67,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
     if ($object->paye)
     {
         $result = $object->set_unpaid($user);
-        if ($result > 0) 
+        if ($result > 0)
         {
             header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
             exit();
@@ -350,7 +350,7 @@ if ($action == 'create')
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
 		$numproject=$formproject->select_projects(-1, $projectid,'fk_project',0,0,1,1);
-		
+
 		print '</td></tr>';
 	}
 
@@ -405,7 +405,7 @@ if ($id > 0)
 		$head=tax_prepare_head($object);
 
 		$totalpaye = $object->getSommePaiement();
-		
+
 		// Clone confirmation
 		if ($action === 'clone')
 		{
@@ -473,21 +473,21 @@ if ($id > 0)
 		            $morehtmlref.='';
 		        }
 		    }
-		}		
+		}
 		$morehtmlref.='</div>';
-		
+
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
-		
+
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
-		
+
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
-		
+
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border" width="100%">';
-		
+
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
 		print "</tr>";
@@ -588,7 +588,7 @@ if ($id > 0)
 		if ($resql)
 		{
 		    $totalpaye = 0;
-		    
+
 		    $num = $db->num_rows($resql);
 		    $i = 0; $total = 0;
 		    print '<table class="noborder paymenttable">';
@@ -598,14 +598,14 @@ if ($id > 0)
 		    print '<td>'.$langs->trans("Type").'</td>';
 		    print '<td align="right">'.$langs->trans("Amount").'</td>';
 		    print '</tr>';
-		
+
 		    $var=true;
             if ($num > 0)
             {
     		    while ($i < $num)
     		    {
     		        $objp = $db->fetch_object($resql);
-    		        
+
     		        print "<tr ".$bc[$var]."><td>";
     		        print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
     		        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
@@ -619,18 +619,18 @@ if ($id > 0)
             }
             else
 		    {
-		        
+
 		        print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 		    }
-                
+
 		    //if ($object->status == ChargeSociales::STATUS_DRAFT)
 		    //{
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
-		
+
 		        $resteapayer = $object->amount - $totalpaye;
 		        $cssforamountpaymentcomplete = 'amountpaymentcomplete';
-		        
+
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 		        print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
 		    //}
@@ -640,12 +640,12 @@ if ($id > 0)
 		else
 		{
 		    dol_print_error($db);
-		}		
-		
+		}
+
 		print '</div>';
 		print '</div>';
 		print '</div>';
-		
+
 		print '<div class="clearboth"></div>';
 
 		dol_fiche_end();

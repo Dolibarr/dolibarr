@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsCustomersUnpaidForCompany=Les factures des clients non payées pour %s
 BillsSuppliersUnpaidForCompany=Factures fournisseurs non payées pour %s
-DisabledBecauseNotErasable=Désactivé car il ne peut pas être effacé
+DisabledBecauseNotErasable=Désactivé car ne peut pas être effacé
 InvoiceDepositDesc=Ce type de facture se fait lorsque l'acompte a été reçu.
 InvoiceHasAvoir=Était une source d'une ou de plusieurs notes de crédit
 PredefinedInvoices=Facture prédéfinie

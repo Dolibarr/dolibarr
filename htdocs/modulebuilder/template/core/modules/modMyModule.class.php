@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ class modMyModule extends DolibarrModules
 									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 									'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
-	 								'js' => array('/mymodule/js/mymodule.js'),          // Set this to relative path of js file if module must load a js on all pages
+	 								'js' => array('/mymodule/js/mymodule.js.php'),          // Set this to relative path of js file if module must load a js on all pages
 									'hooks' => array('hookcontext1','hookcontext2') 	// Set here all hooks context managed by module. You can also set hook context 'all'
 		                        );
 

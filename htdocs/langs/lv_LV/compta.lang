@@ -206,6 +206,6 @@ BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Based on the t
 LinkedFichinter=Link to an intervention
 ImportDataset_tax_contrib=Social/fiscal taxes
 ImportDataset_tax_vat=Vat payments
-ErrorBankAccountNotFound=Error: Bank account not found
+ErrorBankAccountNotFound=Kļūda: Bankas konts nav atrasts
 FiscalPeriod=Accounting period
 ListSocialContributionAssociatedProject=List of social contributions associated with the project

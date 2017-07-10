@@ -303,6 +303,8 @@ foreach($filesToProcess as $fileToProcess)
 
 			// ----- Process output now -----
 
+			//print "Found primary key = ".$key."\n";
+
 			// Key not in other file
 			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/',$key) || preg_match('/^FormatHour/',$key))
 			{
@@ -321,7 +323,7 @@ foreach($filesToProcess as $fileToProcess)
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/',$key) || preg_match('/^FormatHour/',$key)
 				)
 			{
-				//print "Key $key differs so we add it into new secondary language (line: $cnt).\n";
+				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";
 				fwrite($oh, $key."=".(empty($aSecondary[$key])?$aPrimary[$key]:$aSecondary[$key])."\n");
 			}
 		}

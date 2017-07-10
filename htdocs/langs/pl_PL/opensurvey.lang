@@ -54,6 +54,6 @@ BackToCurrentMonth=Powrót do bieżącego miesiąca
 ErrorOpenSurveyFillFirstSection=Nie zapełnione pierwszą część tworzenia ankiecie
 ErrorOpenSurveyOneChoice=Wprowadź co najmniej jeden wybór
 ErrorInsertingComment=Wystąpił błąd podczas wstawiania komentarz
-MoreChoices=Wprowadź więcej możliwości dla wyborców
+MoreChoices=Wprowadź więcej możliwości dla głosujących
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=% S napełnił linię. Możesz znaleźć ankietę na link:% s

@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Kaynak silme başarılı
 DictionaryResourceType=Kaynak türleri
 
 SelectResource=Kaynak seç
+
+IdResource=Id kaynağı
+AssetNumber=Seri numarası
+ResourceTypeCode=Kaynak türü kodu
+ImportDataset_resource_1=Kaynaklar

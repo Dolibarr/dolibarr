@@ -71,7 +71,7 @@ class ProductFournisseur extends Product
 
     var $fk_supplier_price_expression;
     var $supplier_reputation;     // reputation of supplier
-    var $reputations=array();     // list of available supplier reputations 
+    var $reputations=array();     // list of available supplier reputations
 
     /**
 	 *	Constructor
@@ -81,7 +81,7 @@ class ProductFournisseur extends Product
     function __construct($db)
     {
         global $langs;
-        
+
         $this->db = $db;
         $langs->load("suppliers");
         $this->reputations= array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
@@ -134,9 +134,9 @@ class ProductFournisseur extends Product
     function remove_product_fournisseur_price($rowid)
     {
         global $conf, $user;
-        
+
         $error=0;
-        
+
         $this->db->begin();
 
         // Call trigger
@@ -236,7 +236,7 @@ class ProductFournisseur extends Product
 			$sql.= " info_bits = ".$newnpr.",";
 			$sql.= " charges = ".$charges.",";           // deprecated
 			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null').",";
-			$sql.= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'");			
+			$sql.= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'");
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -271,7 +271,7 @@ class ProductFournisseur extends Product
         else
         {
             dol_syslog(get_class($this) . '::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
-            
+
             // Delete price for this quantity
             $sql = "DELETE FROM  " . MAIN_DB_PREFIX . "product_fournisseur_price";
             $sql .= " WHERE fk_soc = " . $fourn->id . " AND ref_fourn = '" . $this->db->escape($ref_fourn) . "' AND quantity = " . $qty . " AND entity = " . $conf->entity;
@@ -299,9 +299,9 @@ class ProductFournisseur extends Product
                 $sql .= $delivery_time_days . ",";
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'");
                 $sql .= ")";
-                
+
                 $idinserted = 0;
-                
+
                 $resql = $this->db->query($sql);
                 if ($resql) {
                     $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
@@ -309,7 +309,7 @@ class ProductFournisseur extends Product
                 else {
                     $error++;
                 }
-                
+
                 if (! $error && ! empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
                     $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";
@@ -320,20 +320,20 @@ class ProductFournisseur extends Product
                     $sql .= " " . price2num($buyprice) . ",";
                     $sql .= " " . $qty;
                     $sql .= ")";
-                    
+
                     $resql = $this->db->query($sql);
                     if (! $resql) {
                         $error++;
                     }
                 }
-                
+
                 if (! $error) {
                     // Call trigger
                     $result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_CREATE', $user);
                     if ($result < 0)
                         $error++;
                         // End call triggers
-                    
+
                     if (empty($error)) {
                         $this->db->commit();
                         return $idinserted;
@@ -398,7 +398,7 @@ class ProductFournisseur extends Product
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
   		        $this->supplier_reputation      = $obj->supplier_reputation;
 
-                if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) 
+                if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression))
                 {
                     $priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProductSupplier($this->fk_product, $this->fk_supplier_price_expression, $this->fourn_qty, $this->fourn_tva_tx);
@@ -699,17 +699,36 @@ class ProductFournisseur extends Product
     /**
      *	Display price of product
      *
-     *  @param	int		$showunitprice	Show "Unit price" into output string
-     *  @param	int		$showsuptitle	Show "Supplier" into output string
-     *	@param	int		$maxlen			Max length of name
-     *  @param	integer	$notooltip		1=Disable tooltip
-     *	@return	string					String with supplier price
+     *  @param  int     $showunitprice    Show "Unit price" into output string
+     *  @param  int     $showsuptitle     Show "Supplier" into output string
+     *  @param  int     $maxlen           Max length of name
+     *  @param  integer $notooltip        1=Disable tooltip
+     *  @param  array   $productFournList  list of ProductFournisseur objects
+     *                                    to display in table format.
+     *  @return string                    String with supplier price
      */
-    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0)
+    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0, $productFournList=array())
     {
         global $langs;
+
+        $out = '';
         $langs->load("suppliers");
-        $out=($showunitprice?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent/100) + $this->fourn_unitcharges - $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        if (count($productFournList) > 0) {
+            $out .= '<table class="nobordernopadding" width="100%">';
+            $out .= '<tr><td class="liste_titre" align="right">'.($showunitprice?$langs->trans("Price").' '.$langs->trans("HT"):'').'</td>';
+            $out .= '<td class="liste_titre" align="right">'.($showunitprice?$langs->trans("QtyMin"):'').'</td>';
+            $out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
+            $out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
+            foreach ($productFournList as $productFourn) {
+                $out.= '<tr><td align="right">'.($showunitprice?price($productFourn->fourn_unitprice * (1 -$productFourn->fourn_remise_percent/100) + $productFourn->fourn_unitcharges - $productFourn->fourn_remise):'').'</td>';
+                $out.= '<td align="right">'.($showunitprice?$productFourn->fourn_qty:'').'</td>';
+                $out.= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
+                $out.= '<td>'.$productFourn->fourn_ref.'<td></tr>';
+            }
+            $out .= '</table>';
+        } else {
+            $out=($showunitprice?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent/100) + $this->fourn_unitcharges - $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        }
         return $out;
     }
 

@@ -106,7 +106,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 {
     $actiondone=1;
 
-    print '<h3>'.$langs->trans("DatabaseMigration").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("DatabaseMigration").'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
