@@ -181,9 +181,9 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 }
 
 /**
- *  Gets VAT to collect for the given year (and given quarter or month)
- *  The function gets the VAT in split results, as the VAT declaration asks
- *  to report the amounts for different VAT rates as different lines.
+ *  Gets Tax to collect for the given year (and given quarter or month)
+ *  The function gets the Tax in split results, as the Tax declaration asks
+ *  to report the amounts for different Tax rates as different lines.
  *  This function also accounts recurrent invoices.
  *
  *  @param	string	$type          	Tax type, either vat, 'localtax1' or 'localtax2'. Default to 'vat'
@@ -628,6 +628,22 @@ function tax_by_date($type='vat', $db, $y, $q, $date_start, $date_end, $modetax,
 	return $list;
 }
 
+/**
+ *  Gets VAT to collect for the given year (and given quarter or month)
+ *  The function gets the VAT in split results, as the VAT declaration asks
+ *  to report the amounts for different VAT rates as different lines.
+ *  This function also accounts recurrent invoices.
+ *
+ *  @param	DoliDB	$db          	Database handler object
+ *  @param  int		$y           	Year
+ *  @param  int		$q           	Quarter
+ *  @param  string	$date_start  	Start date
+ *  @param  string	$date_end    	End date
+ *  @param  int		$modetax     	0 or 1 (option vat on debit)
+ *  @param  int		$direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
+ *  @param  int		$m           	Month
+ *  @return array       			List of quarters with vat
+ */
 function vat_by_date ($db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
 {
 	return tax_by_date('vat', $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m);
