@@ -133,7 +133,7 @@ class Categorie extends CommonObject
 	);
 
 	public $element='category';
-	public $table_element='categories';
+	public $table_element='categorie';
 
 	public $fk_parent;
 	public $label;
