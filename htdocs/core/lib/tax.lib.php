@@ -186,7 +186,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
  *  to report the amounts for different Tax rates as different lines.
  *  This function also accounts recurrent invoices.
  *
- *  @param	string	$type          	Tax type, either vat, 'localtax1' or 'localtax2'. Default to 'vat'
+ *  @param	string	$type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
  *  @param	DoliDB	$db          	Database handler object
  *  @param  int		$y           	Year
  *  @param  int		$q           	Quarter
@@ -197,7 +197,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
  *  @param  int		$m           	Month
  *  @return array       			List of quarters with vat
  */
-function tax_by_date($type='vat', $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
+function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
 {
     global $conf;
 
