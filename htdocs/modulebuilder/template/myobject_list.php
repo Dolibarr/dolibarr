@@ -68,13 +68,7 @@ $toselect   = GETPOST('toselect', 'array');
 
 $id			= GETPOST('id','int');
 $backtopage = GETPOST('backtopage');
-$myparam	= GETPOST('myparam','alpha');
-
-$search_all=trim(GETPOST("sall"));
-$search_field1=GETPOST("search_field1");
-$search_field2=GETPOST("search_field2");
-$search_myfield=GETPOST('search_myfield');
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss  = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -85,6 +79,7 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
 if (! $sortfield) $sortfield="t.rowid"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
@@ -95,6 +90,19 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 	//accessforbidden();
 }
+
+// Initialize array of search criterias
+$object=new MyModule($db);
+$search_all=trim(GETPOST("search_all"));
+$search=array();
+foreach($object->fields as $key)
+{
+    if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+}
+/*$search_field1=GETPOST("search_field1");
+$search_field2=GETPOST("search_field2");
+$search_myfield=GETPOST('search_myfield');
+*/
 
 // Initialize technical object to manage context to save list fields
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';
@@ -132,8 +140,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
     }
 }
 
-
-$object=new Skeleton_Class($db);
 
 
 

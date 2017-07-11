@@ -38,3 +38,5 @@ PathToModulePackage=Path to zip of module/application package
 PathToModuleDocumentation=Path to file of module/application documentation
 SpaceOrSpecialCharAreNotAllowed=Spaces or special characters are not allowed.
 FileNotYetGenerated=File not yet generated
+SpecificationFile=File with business rules
+ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong> ? This will change code in PHP class but also remove column from table definition of object.
