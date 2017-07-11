@@ -174,11 +174,11 @@ if (empty($reshook))
     }
 
     // Mass actions
-    $objectclass='Skeleton';
-    $objectlabel='Skeleton';
-    $permtoread = $user->rights->skeleton->read;
-    $permtodelete = $user->rights->skeleton->delete;
-    $uploaddir = $conf->skeleton->dir_output;
+    $objectclass='MyModule';
+    $objectlabel='MyModule';
+    $permtoread = $user->rights->mymodule->read;
+    $permtodelete = $user->rights->mymodule->delete;
+    $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -290,7 +290,7 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_field1 != '') $param.= '&amp;search_field1='.urlencode($search_field1);
 if ($search_field2 != '') $param.= '&amp;search_field2='.urlencode($search_field2);
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($optioncss != '')     $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {

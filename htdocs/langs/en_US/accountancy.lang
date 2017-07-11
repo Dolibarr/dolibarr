@@ -103,7 +103,7 @@ LineOfExpenseReport=Line of expense report
 NoAccountSelected=No accounting account selected
 VentilatedinAccount=Binded successfully to the accounting account
 NotVentilatedinAccount=Not bound to the accounting account
-XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
