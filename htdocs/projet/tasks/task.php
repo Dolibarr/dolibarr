@@ -458,9 +458,11 @@ if ($id > 0 || ! empty($ref))
 			    $morehtmlref.='<br>';
 
 			    // Third party
-			    $morehtmlref.=$langs->trans("ThirdParty").': ';
-			    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
-			    $morehtmlref.='</div>';
+			    if(!empty($projectstatic->thirdparty)) {
+				    $morehtmlref.=$langs->trans("ThirdParty").': ';
+				    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+				    $morehtmlref.='</div>';
+			    }
 			}
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
