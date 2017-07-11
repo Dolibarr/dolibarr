@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Az erőforrás sikeresen törölve
 DictionaryResourceType=Erőforrás típusa
 
 SelectResource=Válasszon erőforrást
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Erőforrások

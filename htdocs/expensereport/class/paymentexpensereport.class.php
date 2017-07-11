@@ -548,18 +548,18 @@ class PaymentExpenseReport extends CommonObject
                 // Add link 'user' in bank_url between user and bank transaction
                 if (! $error)
                 {
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have always same user but we loop in case of.
                     {
                     	if ($mode == 'payment_expensereport')
                         {
-                        	$er = new ExpenseReport($this->db);
-                            $er->fetch($key);
-                            $er->fetch_user($er->fk_user_author);
+                        	$fuser = new User($this->db);
+                            $fuser->fetch($key);
+
                             $result=$acc->add_url_line(
                                 $bank_line_id,
-                                $er->user->id,
+                                $fuser->id,
                                 DOL_URL_ROOT.'/user/card.php?id=',
-                                $er->user->getFullName($langs),
+                                $fuser->getFullName($langs),
                                 'user'
                             );
                             if ($result <= 0)

@@ -11,6 +11,7 @@ YourEMail=E-mail om betalingsbevestiging te ontvangen
 Creditor=Crediteur
 PaymentCode=Betalingscode
 PayBoxDoPayment=Ga naar betaling
+ToPay=Doe een betaling
 YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina om uw credit card informatie in te voeren
 Continue=Volgende
 ToOfferALinkForOnlinePayment=URL voor %s betaling

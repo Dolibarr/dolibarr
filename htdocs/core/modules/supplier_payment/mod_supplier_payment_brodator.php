@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
 /**
  *	Class to manage customer payment numbering rules Ant
  */
-class mod_supplier_payment_brodator extends ModeleNumRefPayments
+class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';

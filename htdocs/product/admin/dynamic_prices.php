@@ -54,9 +54,11 @@ if ($action == 'edit_updater') {
     }
 }
 
+
 /*
  * Actions
  */
+
 if (!empty($action) && empty($cancel)) {
     //Global variable actions
     if ($action == 'create_variable' || $action == 'edit_variable') {

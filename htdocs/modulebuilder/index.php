@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +20,11 @@
  *       \brief      Home page for module builder module
  */
 
+if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');			// Do not check anti CSRF attack test
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");
 $langs->load("modulebuilder");
@@ -31,17 +32,21 @@ $langs->load("other");
 
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
+$cancel=GETPOST('cancel','alpha');
+
 $module=GETPOST('module','alpha');
 $tab=GETPOST('tab','aZ09');
 $tabobj=GETPOST('tabobj','alpha');
 if (empty($module)) $module='initmodule';
 if (empty($tab)) $tab='description';
 if (empty($tabobj)) $tabobj='newobject';
+$file=GETPOST('file','alpha');
 
 $modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
 $objectname=dol_sanitizeFileName(GETPOST('objectname','alpha'));
 
 // Security check
+if (empty($conf->modulebuilder->enabled)) accessforbidden('ModuleBuilderNotAllowed');
 if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
 
 
@@ -374,6 +379,45 @@ if ($dirins && $action == 'generatepackage')
 }
 
 
+// Save file
+if ($action == 'savefile' && empty($cancel))
+{
+    $relofcustom = basename($dirins);
+
+    if ($relofcustom)
+    {
+        // Check that relative path ($file) start with name 'custom'
+        if (! preg_match('/^'.$relofcustom.'/', $file)) $file=$relofcustom.'/'.$file;
+
+        $pathoffile=dol_buildpath($file, 0);
+        $pathoffilebackup=dol_buildpath($file.'.back', 0);
+
+        // Save old version
+        if (dol_is_file($pathoffile))
+        {
+            dol_move($pathoffile, $pathoffilebackup, 0, 1, 0, 0);
+        }
+
+        $content = GETPOST('editfilecontent');
+
+        // Save file on disk
+        $newmask = 0;
+
+        file_put_contents($pathoffile, $content);
+        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+        if (empty($newmask))	// This should no happen
+        {
+            $newmask='0664';
+        }
+
+        @chmod($pathoffile, octdec($newmask));
+
+        setEventMessages($langs->trans("FileSaved"), null);
+    }
+}
+
+
+
 /*
  * View
  */
@@ -413,7 +457,7 @@ if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// En
                     if (dol_is_file($fullname.'/'.$FILEFLAG))
                     {
                     	// Get real name of module (MyModule instead of mymodule)
-                    	$descriptorfiles = dol_dir_list($fullname.'/core/modules/', 'files', 0, 'mod.*\.class\.php');
+                    	$descriptorfiles = dol_dir_list($fullname.'/core/modules/', 'files', 0, 'mod.*\.class\.php$');
                     	$modulenamewithcase='';
                     	foreach($descriptorfiles as $descriptorcursor)
                     	{
@@ -568,7 +612,8 @@ elseif (! empty($module))
 
         $modulelowercase=strtolower($module);
 
-        $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive");
+        $urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
+        $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive", $urltomodulesetup);
         if (! empty($conf->$module->enabled))
         {
         	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
@@ -577,6 +622,11 @@ elseif (! empty($module))
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module;
         $head2[$h][1] = $langs->trans("Description");
         $head2[$h][2] = 'description';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module;
+        $head2[$h][1] = $langs->trans("Specifications");
+        $head2[$h][2] = 'specifications';
         $h++;
 
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module;
@@ -623,73 +673,155 @@ elseif (! empty($module))
         if ($tab == 'description')
         {
             $pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+            $pathtofilereadme = $modulelowercase.'/README.md';
 
-            print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong><br>';
-            print '<br>';
+            if ($action != 'editfile' || empty($file))
+            {
+                print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print '<br>';
 
-            print '<div class="underbanner clearboth"></div>';
-        	print '<div class="fichecenter">';
+                print '<span class="fa fa-file"></span> '.$langs->trans("ReadmeFile").' : <strong>'.$pathtofilereadme.'</strong>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofilereadme).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print '<br>';
 
-        	print '<table class="border centpercent">';
-        	print '<tr class="liste_titre"><td class="titlefield">';
-        	print $langs->trans("Parameter");
-        	print '</td><td>';
-        	print $langs->trans("Value");
-        	print '</td></tr>';
+                print '<br>';
+                print '<br>';
 
-        	print '<tr><td>';
-        	print $langs->trans("Numero");
-        	print ' (<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeHere").'</a>)';
-        	print '</td><td>';
-        	print $moduleobj->numero;
-        	print '</td></tr>';
+            	print_fiche_titre($langs->trans("DescriptorFile"));
 
-        	print '<tr><td>';
-        	print $langs->trans("Name");
-        	print '</td><td>';
-        	print $moduleobj->getName();
-        	print '</td></tr>';
+                print '<div class="underbanner clearboth"></div>';
+            	print '<div class="fichecenter">';
 
-        	print '<tr><td>';
-        	print $langs->trans("Version");
-        	print '</td><td>';
-        	print $moduleobj->getVersion();
-        	print '</td></tr>';
+            	print '<table class="border centpercent">';
+            	print '<tr class="liste_titre"><td class="titlefield">';
+            	print $langs->trans("Parameter");
+            	print '</td><td>';
+            	print $langs->trans("Value");
+            	print '</td></tr>';
 
-        	print '<tr><td>';
-        	print $langs->trans("Family");
-        	//print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
-        	print '</td><td>';
-        	print $moduleobj->family;
-        	print '</td></tr>';
+            	print '<tr><td>';
+            	print $langs->trans("Numero");
+            	print ' (<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeHere").'</a>)';
+            	print '</td><td>';
+            	print $moduleobj->numero;
+            	print '</td></tr>';
 
-        	print '<tr><td>';
-        	print $langs->trans("EditorName");
-        	print '</td><td>';
-        	print $moduleobj->editor_name;
-        	print '</td></tr>';
+            	print '<tr><td>';
+            	print $langs->trans("Name");
+            	print '</td><td>';
+            	print $moduleobj->getName();
+            	print '</td></tr>';
 
-        	print '<tr><td>';
-        	print $langs->trans("EditorUrl");
-        	print '</td><td>';
-        	print $moduleobj->editor_url;
-        	print '</td></tr>';
+            	print '<tr><td>';
+            	print $langs->trans("Version");
+            	print '</td><td>';
+            	print $moduleobj->getVersion();
+            	print '</td></tr>';
 
-        	print '<tr><td>';
-        	print $langs->trans("Description");
-        	print '</td><td>';
-        	print $moduleobj->getDesc();
-        	print '</td></tr>';
+            	print '<tr><td>';
+            	print $langs->trans("Family");
+            	//print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
+            	print '</td><td>';
+            	print $moduleobj->family;
+            	print '</td></tr>';
 
-        	print '<tr><td>';
-        	print $langs->trans("DescriptionLong");
-        	print '</td><td>';
-        	print $moduleobj->getDescLong();
-        	print '</td></tr>';
+            	print '<tr><td>';
+            	print $langs->trans("EditorName");
+            	print '</td><td>';
+            	print $moduleobj->editor_name;
+            	print '</td></tr>';
 
-        	print '</table>';
+            	print '<tr><td>';
+            	print $langs->trans("EditorUrl");
+            	print '</td><td>';
+            	print $moduleobj->editor_url;
+            	print '</td></tr>';
 
-        	print '</div>';
+            	print '<tr><td>';
+            	print $langs->trans("Description");
+            	print '</td><td>';
+            	print $moduleobj->getDesc();
+            	print '</td></tr>';
+
+            	print '</table>';
+
+
+            	print '<br><br>';
+
+
+            	print_fiche_titre($langs->trans("ReadmeFile"));
+
+            	print '<div class="underbanner clearboth"></div>';
+            	print '<div class="fichecenter">';
+
+            	print $moduleobj->getDescLong();
+
+            	print '</div>';
+            }
+        	else
+        	{
+        	    $fullpathoffile=dol_buildpath($file, 0);
+
+        	    $content = file_get_contents($fullpathoffile);
+
+        	    // New module
+        	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        	    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        	    print '<input type="hidden" name="action" value="savefile">';
+        	    print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+        	    print '<input type="hidden" name="tab" value="'.$tab.'">';
+        	    print '<input type="hidden" name="module" value="'.$module.'">';
+
+        	    $doleditor=new DolEditor('editfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '99%');
+        	    print $doleditor->Create(1, '', false);
+        	    print '<br>';
+        	    print '<center>';
+        	    print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        	    print ' &nbsp; ';
+        	    print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+        	    print '</center>';
+
+        	    print '</form>';
+        	}
+        }
+
+
+        if ($tab == 'specifications')
+        {
+            $pathtofile = $modulelowercase.'/SPECIFICATIONS.md';
+
+            if ($action != 'editfile' || empty($file))
+            {
+                print '<span class="fa fa-file"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print '<br>';
+            }
+            else
+            {
+        	    $fullpathoffile=dol_buildpath($file, 0);
+
+        	    $content = file_get_contents($fullpathoffile);
+
+                // New module
+                print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="action" value="savefile">';
+                print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+                print '<input type="hidden" name="tab" value="'.$tab.'">';
+                print '<input type="hidden" name="module" value="'.$module.'">';
+
+                $doleditor=new DolEditor('editfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '99%');
+                print $doleditor->Create(1, '', false);
+                print '<br>';
+                print '<center>';
+                print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print ' &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+                print '</center>';
+
+                print '</form>';
+            }
         }
 
         if ($tab == 'objects')
@@ -849,7 +981,6 @@ elseif (! empty($module))
         {
     		print $langs->trans("FeatureNotYetAvailable");
 
-
         }
 
         if ($tab == 'permissions')
@@ -871,36 +1002,45 @@ elseif (! empty($module))
 			$interfaces = new Interfaces($db);
 			$triggers = $interfaces->getTriggersList(array('/'.strtolower($module).'/core/triggers'));
 
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder">
-			<tr class="liste_titre">
-			<td colspan="2">'.$langs->trans("File").'</td>
-			<td align="center">'.$langs->trans("Active").'</td>
-			<td align="center">&nbsp;</td>
-			</tr>
-			';
-
-			$var=True;
-			foreach ($triggers as $trigger)
+			if ($action != 'editfile' || empty($file))
 			{
-				print '<tr class="oddeven">';
-				print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
-				print '<td class="tdtop">'.$trigger['relpath'].'</td>';
-				print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-				print '<td class="tdtop">';
-				$text=$trigger['info'];
-				$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
-				//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
-				print $form->textwithpicto('', $text);
-				print '</td>';
-				print '</tr>';
-			}
+    			foreach ($triggers as $trigger)
+    			{
+    			    $pathtofile = $trigger['relpath'];
 
-			print '</table>';
-			print '</div>';
+    			    print '<span class="fa fa-file"></span> '.$langs->trans("TriggerFile").' : <strong>'.$pathtofile.'</strong>';
+    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+    			    print '<br>';
+    			}
+			}
+			else
+			{
+        	    $fullpathoffile=dol_buildpath($file, 0);
+
+        	    $content = file_get_contents($fullpathoffile);
+
+			    // New module
+			    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="action" value="savefile">';
+			    print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+			    print '<input type="hidden" name="tab" value="'.$tab.'">';
+			    print '<input type="hidden" name="module" value="'.$module.'">';
+
+			    $doleditor=new DolEditor('editfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '99%');
+                print $doleditor->Create(1, '', false);
+                print '<br>';
+                print '<center>';
+                print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print ' &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+                print '</center>';
+
+                print '</form>';
+			}
         }
 
-        if ($tab == 'widget')
+        if ($tab == 'widgets')
         {
     		print $langs->trans("FeatureNotYetAvailable");
 
@@ -947,23 +1087,47 @@ elseif (! empty($module))
             {
                 $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
                 $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
+
+                $FILENAMEDOC="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".md";
+                $outputfiledoc = $conf->admin->dir_temp.'/'.$FILENAMEDOC;
             }
 
+            print '<br>';
+
             print '<span class="fa fa-file"></span> '. $langs->trans("PathToModulePackage") . ' : ';
-            if (! dol_is_file($outputfile)) print '<strong>'.$langs->trans("PackageFileNotYetGenerated").'</strong>';
+            if (! dol_is_file($outputfile)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
             else {
                 print '<strong>'.$outputfile.'</strong>';
                 print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfile), 'dayhour').')';
             }
             print '</strong><br>';
 
-            print '<br><br>';
+            print '<br>';
 
         	print '<form name="generatepackage">';
         	print '<input type="hidden" name="action" value="generatepackage">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
         	print '<input type="submit" class="button" value="'.$langs->trans("BuildPackage").'">';
+        	print '</form>';
+
+        	print '<br><br><br>';
+
+            print '<span class="fa fa-file"></span> '. $langs->trans("PathToModuleDocumentation") . ' : ';
+            if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+            else {
+                print '<strong>'.$outputfiledoc.'</strong>';
+                print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
+            }
+            print '</strong><br>';
+
+            print '<br>';
+
+            print '<form name="generatepackage">';
+        	print '<input type="hidden" name="action" value="generatedoc">';
+        	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
+        	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+        	print '<input type="submit" class="button" value="'.$langs->trans("BuildDocumentation").'">';
         	print '</form>';
         }
 

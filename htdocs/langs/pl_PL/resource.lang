@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
 DictionaryResourceType=Typ zasobów
 
 SelectResource=Wybierz zasoby
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Zasoby

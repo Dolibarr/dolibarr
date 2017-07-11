@@ -268,7 +268,6 @@ class ExpenseReport extends CommonObject
         if (empty($fk_user_author)) $fk_user_author = $user->id;
 
         $this->context['createfromclone'] = 'createfromclone';
-
         $this->db->begin();
 
         // get extrafields so they will be clone
@@ -307,6 +306,7 @@ class ExpenseReport extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
+
             if ($result < 0) $error++;
             // End call triggers
         }
@@ -621,7 +621,7 @@ class ExpenseReport extends CommonObject
         $sql.= " f.tms as date_modification,";
         $sql.= " f.date_valid as datev,";
         $sql.= " f.date_approve as datea,";
-        $sql.= " f.fk_user_author as fk_user_creation,";
+        //$sql.= " f.fk_user_author as fk_user_creation,";      // This is not user of creation but user the expense is for.
         $sql.= " f.fk_user_modif as fk_user_modification,";
         $sql.= " f.fk_user_valid,";
         $sql.= " f.fk_user_approve";
@@ -1578,7 +1578,7 @@ class ExpenseReport extends CommonObject
      * @param   int         $rowid                  Line to edit
      * @param   int         $type_fees_id           Type payment
      * @param   int         $projet_id              Project id
-     * @param   double      $vatrate                Vat rate
+     * @param   double      $vatrate                Vat rate. Can be '8.5* (8.5NPROM...)'
      * @param   string      $comments               Description
      * @param   real        $qty                    Qty
      * @param   double      $value_unit             Value init
@@ -1588,14 +1588,34 @@ class ExpenseReport extends CommonObject
      */
     function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id)
     {
-        global $user;
+        global $user, $mysoc;
 
         if ($this->fk_statut==0 || $this->fk_statut==99)
         {
             $this->db->begin();
 
+            $type = 0;      // TODO What if type is service ?
+
+            // We don't know seller and buyer for expense reports
+            $seller = $mysoc;
+            $buyer = new Societe($this->db);
+
+            $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$buyer,$seller);
+
+            // Clean vat code
+            $vat_src_code='';
+
+            if (preg_match('/\((.*)\)/', $vatrate, $reg))
+            {
+                $vat_src_code = $reg[1];
+                $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+            }
+            $vatrate = preg_replace('/\*/','',$vatrate);
+
+            $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+
             // calcul de tous les totaux de la ligne
-            $total_ttc  = price2num($qty*$value_unit, 'MT');
+            //$total_ttc  = price2num($qty*$value_unit, 'MT');
 
             $tx_tva = $vatrate / 100;
             $tx_tva = $tx_tva + 1;
@@ -1605,6 +1625,9 @@ class ExpenseReport extends CommonObject
             // fin calculs
 
             $ligne = new ExpenseReportLine($this->db);
+
+            $ligne->rowid           = $rowid;
+
             $ligne->comments        = $comments;
             $ligne->qty             = $qty;
             $ligne->value_unit      = $value_unit;
@@ -1614,11 +1637,21 @@ class ExpenseReport extends CommonObject
             $ligne->fk_c_type_fees  = $type_fees_id;
             $ligne->fk_projet       = $projet_id;
 
-            $ligne->total_ht        = $total_ht;
-            $ligne->total_tva       = $total_tva;
-            $ligne->total_ttc       = $total_ttc;
-            $ligne->vatrate         = price2num($vatrate);
-            $ligne->rowid           = $rowid;
+            //$ligne->total_ht        = $total_ht;
+            //$ligne->total_tva       = $total_tva;
+            //$ligne->total_ttc       = $total_ttc;
+            //$ligne->vatrate         = price2num($vatrate);
+
+            $ligne->vat_src_code = $vat_src_code;
+            $ligne->vatrate = price2num($vatrate);
+            $ligne->total_ttc = $tmp[2];
+            $ligne->total_ht = $tmp[0];
+            $ligne->total_tva = $tmp[1];
+            $ligne->localtax1_tx = $localtaxes_type[1];
+            $ligne->localtax2_tx = $localtaxes_type[3];
+            $ligne->localtax1_type = $localtaxes_type[0];
+            $ligne->localtax2_type = $localtaxes_type[2];
+
 
             // Select des infos sur le type fees
             $sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
@@ -2026,7 +2059,7 @@ class ExpenseReportLine
     function fetch($rowid)
     {
         $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-        $sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+        $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
         $sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
         $sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -2055,6 +2088,7 @@ class ExpenseReportLine
             $this->projet_ref = $objp->projet_ref;
             $this->projet_title = $objp->projet_title;
             $this->vatrate = $objp->vatrate;
+            $this->vat_src_code = $objp->vat_src_code;
             $this->total_ht = $objp->total_ht;
             $this->total_tva = $objp->total_tva;
             $this->total_ttc = $objp->total_ttc;
@@ -2089,11 +2123,12 @@ class ExpenseReportLine
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
         $sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-        $sql.= ' tva_tx, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
+        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
         $sql.= " VALUES (".$this->fk_expensereport.",";
         $sql.= " ".$this->fk_c_type_fees.",";
         $sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
         $sql.= " ".$this->vatrate.",";
+        $sql.= " '".$this->db->escape($this->vat_src_code)."',";
         $sql.= " '".$this->db->escape($this->comments)."',";
         $sql.= " ".$this->qty.",";
         $sql.= " ".$this->value_unit.",";
@@ -2164,6 +2199,7 @@ class ExpenseReportLine
         $sql.= ",total_tva=".$this->total_tva."";
         $sql.= ",total_ttc=".$this->total_ttc."";
         $sql.= ",tva_tx=".$this->vatrate;
+        $sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
         if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->fk_c_type_fees;
         else $sql.= ",fk_c_type_fees=null";
         if ($this->fk_projet) $sql.= ",fk_projet=".$this->fk_projet;

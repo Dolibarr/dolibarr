@@ -68,7 +68,7 @@ print load_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'title_setup')
 
 $head = categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'attributes_categories', $langs->trans("Categories"), 0, 'category');
+dol_fiche_head($head, 'attributes_categories', $langs->trans("Categories"), -1, 'category');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -2756,7 +2756,6 @@ else
                     }
 	            }
 	            print '</div>';
-	            print '<br>';
 
 	            if ($action != 'edit')
 	            {

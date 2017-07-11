@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Silinen müdahale %s
 InterventionsArea=Müdahaleler alanı
 DraftFichinter=Taslak müdahale
 LastModifiedInterventions=Değiştirilen son %s müdahale
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Müşteri izleme yetkilisi
 # Modele numérotation

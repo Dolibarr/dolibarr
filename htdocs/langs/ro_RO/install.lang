@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Puteţi utiliza expertul de configurare de la Dolibarr Dol
 KeepDefaultValuesDeb=Puteţi utiliza expertul de configurare Dolibarr dintr-un pachet Linux (Ubuntu, Debian, Fedora ...), astfel încât valorile propuse aici sunt deja optimizate. Numai parola proprietarul bazei de date pentru a crea trebuie să fie completate. Modificarea alţi parametri numai dacă ştii ce faci.
 KeepDefaultValuesMamp=Puteţi utiliza expertul de configurare de la Dolibarr DoliMamp, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
 KeepDefaultValuesProxmox=Puteţi utiliza expertul de configurare Dolibarr de la un aparat Proxmox virtuale, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

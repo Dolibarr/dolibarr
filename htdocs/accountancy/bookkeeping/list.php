@@ -399,11 +399,29 @@ print '</td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
 print $langs->trans('From');
-print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+// use setup of keypress to select thirdparty and this hang browser on large database.
+if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+{
+    print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+}
+else
+{
+    print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+}
 print '</div>';
 print '<div class="nowrap">';
 print $langs->trans('to');
-print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+// use setup of keypress to select thirdparty and this hang browser on large database.
+if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+{
+    print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+}
+else
+{
+    print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+}
 print '</div>';
 print '</td>';
 print '<td class="liste_titre">';
