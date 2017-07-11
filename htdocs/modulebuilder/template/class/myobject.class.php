@@ -47,7 +47,7 @@ class MyObject extends CommonObject
 	/**
 	 * @var array  Does this field is linked to a thirdparty ?
 	 */
-	protected $isnolinkedbythird=1;
+	protected $isnolinkedbythird = 1;
 	/**
 	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
@@ -58,18 +58,19 @@ class MyObject extends CommonObject
 	public $picto = 'myobject';
 
 
-	/* BEGIN PROPERTY FIELDS - Do not remove this comment */
+	// BEGIN MODULEBUILDER PROPERTIES - Do not remove this comment
 	/**
      * @var array  Array with all fields and their property
      */
 	public $fields=array(
-	    'ref'=>array('type'=>'string','label'=>'Ref','position'=>10,'index'=>true,'comment'=>'Reference of object'),
-	    'entity'=>array('type'=>'integer','label'=>'Entity','index'=>true),
-	    'status'=>array('type'=>'integer','label'=>'Status','index'=>true),
-	    'date'=>array('type'=>'date','label'=>'Date','default'=>'__NOW__'),
-	    'title'=>array('type'=>'string','label'=>'Title'),
+	    'ref'   =>array('type'=>'varchar(64)',  'label'=>'Ref',              'position'=>10,  'notnull'=>true, 'index'=>true, 'searchall'=>1, 'comment'=>'Reference of object'),
+	    'entity'=>array('type'=>'integer',      'label'=>'Entity',           'notnull'=>true, 'index'=>true),
+	    'label' =>array('type'=>'varchar(255)', 'label'=>'Label',            'searchall'=>1),
+	    'datec' =>array('type'=>'datetime',     'label'=>'DateCreation',     'notnull'=>true, 'position'=>500),
+	    'tms'   =>array('type'=>'timestamp',    'label'=>'DateModification', 'notnull'=>true, 'position'=>500),
+	    'status'=>array('type'=>'integer',      'label'=>'Status',           'index'=>true,   'position'=>1000),
 	);
-	/* END PROPERTY FIELDS - Do not remove this comment */
+	// Do not remove this comment - END MODULEBUILDER PROPERTIES
 
 
 

@@ -736,6 +736,7 @@ ShowTransaction=Show entry on bank account
 GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into Home - Setup - Display to hide.
 Deny=Deny
 Denied=Denied
+ListOf=List of %s
 ListOfTemplates=List of templates
 Gender=Gender
 Genderman=Man

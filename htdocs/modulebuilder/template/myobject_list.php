@@ -65,6 +65,7 @@ $massaction = GETPOST('massaction','alpha');
 $show_files = GETPOST('show_files','int');
 $confirm    = GETPOST('confirm','alpha');
 $toselect   = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
 
 $id			= GETPOST('id','int');
 $backtopage = GETPOST('backtopage');
@@ -80,32 +81,27 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! $sortfield) $sortfield="t.rowid"; // Set here default search field
+$object=new MyObject($db);
+
+// Default sort order (if not yet defined by previous GETPOST)
+if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
 if (! $sortorder) $sortorder="ASC";
 
 // Protection if external user
 $socid=0;
 if ($user->societe_id > 0)
 {
-    $socid = $user->societe_id;
-	//accessforbidden();
+    //$socid = $user->societe_id;
+	accessforbidden();
 }
 
 // Initialize array of search criterias
-$object=new MyModule($db);
-$search_all=trim(GETPOST("search_all"));
+$search_all=trim(GETPOST("search_all",'alpha'));
 $search=array();
-foreach($object->fields as $key)
+foreach($object->fields as $key => $val)
 {
     if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
 }
-/*$search_field1=GETPOST("search_field1");
-$search_field2=GETPOST("search_field2");
-$search_myfield=GETPOST('search_myfield');
-*/
-
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('myobjectlist'));
@@ -116,21 +112,18 @@ $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-    't.ref'=>'Ref',
-    't.note_public'=>'NotePublic',
-);
-if (empty($user->socid)) $fieldstosearchall["t.note_private"]="NotePrivate";
+$fieldstosearchall = array();
+foreach($object->fields as $key => $val)
+{
+    if ($val['searchall']) $fieldstosearchall['t.'.$key]=$val['label'];
+}
 
 // Definition of fields for list
-$arrayfields=array(
-    't.field1'=>array('label'=>"Field1", 'checked'=>1),
-    't.field2'=>array('label'=>"Field2", 'checked'=>1),
-    //'t.entity'=>array('label'=>"Entity", 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
-    't.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
-    't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-    //'t.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-);
+$arrayfields=array();
+foreach($object->fields as $key => $val)
+{
+    $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>1);
+}
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -143,11 +136,10 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 
 
 
-
 /*
  * ACTIONS
  *
- * Put here all code to do according to value of "action" parameter
+ * Put here all code to do according to value of "$action" parameter
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
@@ -165,17 +157,17 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
     {
-    	$search_field1='';
-    	$search_field2='';
-    	$search_date_creation='';
-    	$search_date_update='';
+        foreach($object->fields as $key => $val)
+        {
+            $search[$key]='';
+        }
         $toselect='';
         $search_array_options=array();
     }
 
     // Mass actions
-    $objectclass='MyModule';
-    $objectlabel='MyModule';
+    $objectclass='MyObject';
+    $objectlabel='MyObject';
     $permtoread = $user->rights->mymodule->read;
     $permtodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
@@ -196,7 +188,7 @@ $form=new Form($db);
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
-$title = $langs->trans('MyModuleListTitle');
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("MyObjects"));
 
 // Put here content of your page
 
@@ -215,24 +207,26 @@ jQuery(document).ready(function() {
 });
 </script>';
 
-
-$sql = "SELECT";
-$sql.= " t.rowid,";
-$sql.= " t.field1,";
-$sql.= " t.field2";
+$sql = 'SELECT ';
+foreach($object->fields as $key => $val)
+{
+    $sql.='t.'.$key.', ';
+}
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mytable_extrafields as ef on (t.rowid = ef.fk_object)";
-$sql.= " WHERE 1 = 1";
-//$sql.= " WHERE u.entity IN (".getEntity('mytable').")";
-if ($search_field1) $sql.= natural_search("field1",$search_field1);
-if ($search_field2) $sql.= natural_search("field2",$search_field2);
-if ($sall)          $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+$sql=preg_replace('/, $/','', $sql);
+$sql.= " FROM ".MAIN_DB_PREFIX."myobject as t";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."myobject_extrafields as ef on (t.rowid = ef.fk_object)";
+$sql.= " WHERE t.entity IN (".getEntity('myobject').")";
+foreach($search as $key => $val)
+{
+    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:($object->fields[$key]['type'] == 'integer'?1:0)));
+}
+if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -394,7 +388,7 @@ if (! empty($arrayfields['t.tms']['checked']))
     print '<td class="liste_titre">';
     print '</td>';
 }
-/*if (! empty($arrayfields['u.statut']['checked']))
+/*if (! empty($arrayfields['t.statut']['checked']))
  {
  // Status
  print '<td class="liste_titre" align="center">';
@@ -507,7 +501,7 @@ while ($i < min($num, $limit))
         }
         // Status
         /*
-        if (! empty($arrayfields['u.statut']['checked']))
+        if (! empty($arrayfields['t.statut']['checked']))
         {
 		  $userstatic->statut=$obj->statut;
           print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';

@@ -13,9 +13,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 CREATE TABLE llx_myobject(
 	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
+	-- BEGIN MODULEBUILDER FIELDS
 	entity INTEGER DEFAULT 1 NOT NULL,
-	fk_othertable INTEGER NOT NULL,
-	name VARCHAR(189)
-);
+	label VARCHAR(255),
+	datec DATETIME NOT NULL,
+	tms TIMESTAMP NOT NULL,
+	status INTEGER
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
