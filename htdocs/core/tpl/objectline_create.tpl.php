@@ -370,6 +370,9 @@ else {
 		elseif ($this->table_element_line=='facture_fourn_det') {
 			$newline = new SupplierInvoiceLine($this->db);
 		}
+		elseif ($this->table_element_line=='facturedet_rec') {
+			$newline = new FactureLigneRec($this->db);
+		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
 		}
