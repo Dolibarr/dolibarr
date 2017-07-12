@@ -55,7 +55,7 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
 
-    if (! $error)
+    if (! $error && is_array($_POST))
     {
     	//var_dump($_POST);
 	    foreach($_POST as $key => $val)
@@ -172,7 +172,7 @@ $var=true;
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    
+
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
@@ -183,7 +183,7 @@ foreach($listofnotifiedevents as $notifiedevent)
 
     if ($i) print ', ';
     print $label;
-     
+
     $i++;
 }
 print '</td></tr>';
@@ -213,7 +213,7 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 $var=true;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    
+
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');

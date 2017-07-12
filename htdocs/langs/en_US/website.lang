@@ -4,6 +4,7 @@ WebsiteSetupDesc=Create here as much entry as number of different websites you n
 DeleteWebsite=Delete website
 ConfirmDeleteWebsite=Are you sure you want to delete this web site. All its pages and content will also be removed. 
 WEBSITE_PAGENAME=Page name/alias
+WEBSITE_HTML_HEADER=HTML Header
 WEBSITE_CSS_URL=URL of external CSS file
 WEBSITE_CSS_INLINE=CSS content
 PageNameAliasHelp=Name or alias of the page.<br>This alias is also used to forge a SEO URL when website is read from a Virtual host of a Web server (like Apacke, Nginx, ...). Use the button "<strong>%s</strong>" to edit this alias.  

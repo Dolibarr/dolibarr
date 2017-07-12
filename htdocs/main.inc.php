@@ -1498,10 +1498,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    {
 	        $qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
-			foreach($_POST as $key=>$value) {
-				if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
-			}
-
+	        if (is_array($_POST))
+	        {
+    			foreach($_POST as $key=>$value) {
+    				if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
+    			}
+	        }
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        //$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');

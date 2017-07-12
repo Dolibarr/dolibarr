@@ -52,22 +52,24 @@ class MyObject extends CommonObject
 	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	protected $ismultientitymanaged = 1;
-
-
 	/**
-     * @var string String with name of icon for myobject
-     */
+	 * @var string String with name of icon for myobject
+	 */
 	public $picto = 'myobject';
 
-	/**
-	 * @var int    Entity Id
-	 */
-	public $entity;
 
+	/* BEGIN PROPERTY FIELDS - Do not remove this comment */
 	/**
      * @var array  Array with all fields and their property
      */
-	public $fields;
+	public $fields=array(
+	    'ref'=>array('type'=>'string','label'=>'Ref','position'=>10,'index'=>true,'comment'=>'Reference of object'),
+	    'entity'=>array('type'=>'integer','label'=>'Entity','index'=>true),
+	    'status'=>array('type'=>'integer','label'=>'Status','index'=>true),
+	    'date'=>array('type'=>'date','label'=>'Date','default'=>'__NOW__'),
+	    'title'=>array('type'=>'string','label'=>'Title'),
+	);
+	/* END PROPERTY FIELDS - Do not remove this comment */
 
 
 
