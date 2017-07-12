@@ -154,7 +154,8 @@ print '<script type="text/javascript">
  * Supplier Invoice lines
  */
 $sql = "SELECT f.rowid as facid, f.ref as facnumber, f.ref_supplier, f.libelle as invoice_label, f.datef, f.fk_soc,";
-$sql.= " l.rowid, l.fk_product, l.description, l.total_ht , l.qty, l.tva_tx, aa.label, aa.account_number, ";
+$sql.= " l.rowid, l.fk_product, l.description, l.total_ht , l.qty, l.tva_tx, l.vat_src_code,";
+$sql.= " aa.label, aa.account_number, ";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, co.label as country, s.tva_intra";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
@@ -336,7 +337,7 @@ if ($result) {
 		print '</td>';
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
-		print '<td align="center">' . price($objp->tva_tx) . '</td>';
+		print '<td align="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 		print '<td align="left">';
 		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();

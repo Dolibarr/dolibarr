@@ -146,7 +146,7 @@ print '<script type="text/javascript">
  * Expense reports lines
  */
 $sql = "SELECT er.ref, er.rowid as erid,";
-$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.date,";
+$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.vat_src_code, erd.date,";
 $sql .= " aa.label, aa.account_number,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
@@ -293,7 +293,7 @@ if ($result) {
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 
-		print '<td align="center">' . price($objp->tva_tx) . '</td>';
+		print '<td align="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
 		print '<td>' . $codeCompta . '</td>';
 
