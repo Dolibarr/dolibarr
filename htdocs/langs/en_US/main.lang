@@ -197,6 +197,7 @@ Parameter=Parameter
 Parameters=Parameters
 Value=Value
 PersonalValue=Personal value
+NewObject=New %s
 NewValue=New value
 CurrentValue=Current value
 Code=Code

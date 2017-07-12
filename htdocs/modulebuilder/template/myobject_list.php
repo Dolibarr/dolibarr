@@ -81,8 +81,14 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+// Initialize technical objects
 $object=new MyObject($db);
+$extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
+// Fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -103,13 +109,6 @@ foreach($object->fields as $key => $val)
 {
     if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
 }
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('myobjectlist'));
-$extrafields = new ExtraFields($db);
-// Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -579,27 +578,28 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-
-if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+if ($nbtotalofrecords === '' || $nbtotalofrecords)
 {
-    require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-    $formfile = new FormFile($db);
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+        $formfile = new FormFile($db);
 
-    // Show list of available documents
-    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-    $urlsource.=str_replace('&amp;','&',$param);
+        // Show list of available documents
+        $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+        $urlsource.=str_replace('&amp;','&',$param);
 
-    $filedir=$diroutputmassaction;
-    $genallowed=$user->rights->mymodule->read;
-    $delallowed=$user->rights->mymodule->read;
+        $filedir=$diroutputmassaction;
+        $genallowed=$user->rights->mymodule->read;
+        $delallowed=$user->rights->mymodule->read;
 
-    print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+        print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+    }
+    else
+    {
+        print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+    }
 }
-else
-{
-    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-}
-
 
 // End of page
 llxFooter();

@@ -55,67 +55,69 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
     {
         include_once $pathoffiletoeditsrc;
         if (class_exists($objectname)) $object=new $objectname($db);
+
+        // Backup old file
+        dol_copy($pathoffiletoeditsrc, $pathoffiletoeditsrc.'.back', $newmask, 1);
+
+        // Edit class files
+        $contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+
+        $i=0;
+        $texttoinsert = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
+        $texttoinsert.= "\t".'/**'."\n";
+        $texttoinsert.= "\t".' * @var array  Array with all fields and their property'."\n";
+        $texttoinsert.= "\t".' */'."\n";
+        $texttoinsert.= "\t".'public $fields=array('."\n";
+
+        if (count($object->fields))
+        {
+            foreach($object->fields as $key => $val)
+            {
+                $i++;
+                $typephp='';
+                $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
+                if ($val['position']) $texttoinsert.= " 'position'=>".$val['position'].",";
+                if ($val['notnull']) $texttoinsert.= " 'notnull'=>".$val['notnull'].",";
+                if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
+                if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
+                if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
+                $texttoinsert.= "),\n";
+            }
+        }
+        $texttoinsert.= "\t".');'."\n";
+
+        $texttoinsert.= "\n";
+
+        if (count($object->fields))
+        {
+            foreach($object->fields as $key => $val)
+            {
+                $i++;
+                $typephp='';
+                $texttoinsert.= "\t".'public $'.$key.$typephp.";";
+                //if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
+                //if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
+                //$texttoinsert.= ($val['notnull']?' NOT NULL':'');
+                //if ($i < count($object->fields)) $texttoinsert.=";";
+                $texttoinsert.= "\n";
+            }
+        }
+
+        $texttoinsert.= "\t".'// END MODULEBUILDER PROPERTIES';
+
+        $contentclass = preg_replace('/\/\/ BEGIN MODULEBUILDER PROPERTIES.*END MODULEBUILDER PROPERTIES/ims', $texttoinsert, $contentclass);
+
+        //file_put_contents($pathoffiletoedittmp, $contentclass);
+        file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
+        @chmod($pathoffiletoedit, octdec($newmask));
+
+        return 1;
     }
     catch(Exception $e)
     {
         print $e->getMessage();
+        return -1;
     }
-
-    // Edit class files
-
-    $contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
-
-    $i=0;
-    $texttoinsert = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
-    $texttoinsert.= "\t".'/**'."\n";
-    $texttoinsert.= "\t".' * @var array  Array with all fields and their property'."\n";
-    $texttoinsert.= "\t".' */'."\n";
-    $texttoinsert.= "\t".'public $fields=array('."\n";
-
-    if (count($object->fields))
-    {
-        foreach($object->fields as $key => $val)
-        {
-            $i++;
-            $typephp='';
-            $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
-            if ($val['position']) $texttoinsert.= " 'position'=>".$val['position'].",";
-            if ($val['notnull']) $texttoinsert.= " 'notnull'=>".$val['notnull'].",";
-            if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
-            if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
-            if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
-            $texttoinsert.= "),\n";
-        }
-    }
-    $texttoinsert.= "\t".');'."\n";
-
-    $texttoinsert.= "\n";
-
-    if (count($object->fields))
-    {
-        foreach($object->fields as $key => $val)
-        {
-            $i++;
-            $typephp='';
-            $texttoinsert.= "\t".'public $'.$key.$typephp.";";
-            //if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
-            //if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
-            //$texttoinsert.= ($val['notnull']?' NOT NULL':'');
-            //if ($i < count($object->fields)) $texttoinsert.=";";
-            $texttoinsert.= "\n";
-        }
-    }
-
-    $texttoinsert.= "\t".'// END MODULEBUILDER PROPERTIES';
-
-    $contentclass = preg_replace('/\/\/ BEGIN MODULEBUILDER PROPERTIES.*END MODULEBUILDER PROPERTIES/ims', $texttoinsert, $contentclass);
-
-    //file_put_contents($pathoffiletoedittmp, $contentclass);
-    file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
-    @chmod($pathoffiletoedit, octdec($newmask));
-
-
-    return 1;
 }
 
 /**
