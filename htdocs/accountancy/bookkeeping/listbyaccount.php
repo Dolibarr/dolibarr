@@ -92,7 +92,7 @@ if (! empty($search_doc_date)) {
 }
 
 
-if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (!GETPOST('button_removefilter_x','alpha') && !GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
   if (! empty($search_accountancy_code_start)) {
   	$filter['t.numero_compte'] = $search_accountancy_code_start;
@@ -121,7 +121,7 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';

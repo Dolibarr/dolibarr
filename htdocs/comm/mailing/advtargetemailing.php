@@ -66,7 +66,7 @@ $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x")) {
+if (GETPOST('button_removefilter_x','alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
