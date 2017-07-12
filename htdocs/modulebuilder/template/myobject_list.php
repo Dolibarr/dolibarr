@@ -82,6 +82,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $object=new MyObject($db);
+$diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -106,8 +107,7 @@ foreach($object->fields as $key => $val)
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('myobjectlist'));
 $extrafields = new ExtraFields($db);
-
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
@@ -182,31 +182,17 @@ if (empty($reshook))
  * Put here all code to build page
  */
 
-$now=dol_now();
-
 $form=new Form($db);
 
-//$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
+$now=dol_now();
+
+//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url='';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("MyObjects"));
 
-// Put here content of your page
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = 'SELECT ';
 foreach($object->fields as $key => $val)
 {
@@ -275,15 +261,36 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
     exit;
 }
 
+
+// Output page
+// --------------------------------------------------------------------
+
 llxHeader('', $title, $help_url);
+
+// Example : Adding jquery code
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_myfunc()
+	{
+		jQuery("#myid").removeAttr(\'disabled\');
+		jQuery("#myid").attr(\'disabled\',\'disabled\');
+	}
+	init_myfunc();
+	jQuery("#mybutton").click(function() {
+		init_myfunc();
+	});
+});
+</script>';
 
 $arrayofselected=is_array($toselect)?$toselect:array();
 
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($search_field1 != '') $param.= '&amp;search_field1='.urlencode($search_field1);
-if ($search_field2 != '') $param.= '&amp;search_field2='.urlencode($search_field2);
+foreach($search as $key => $val)
+{
+    $param.= '&search_'.$key.'='.urlencode($search[$key]);
+}
 if ($optioncss != '')     $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
@@ -345,10 +352,16 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 
 // Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-// LIST_OF_TD_TITLE_SEARCH
-//if (! empty($arrayfields['t.field1']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
-//if (! empty($arrayfields['t.field2']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
+foreach($object->fields as $key => $val)
+{
+    if (in_array($key, array('datec','tms','status'))) continue;
+    $align='';
+    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+}
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -376,25 +389,15 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['t.datec']['checked']))
+// Rest of fields search
+foreach($object->fields as $key => $val)
 {
-    // Date creation
-    print '<td class="liste_titre">';
-    print '</td>';
+    if (! in_array($key, array('datec','tms','status'))) continue;
+    $align='';
+    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
-if (! empty($arrayfields['t.tms']['checked']))
-{
-    // Date modification
-    print '<td class="liste_titre">';
-    print '</td>';
-}
-/*if (! empty($arrayfields['t.statut']['checked']))
- {
- // Status
- print '<td class="liste_titre" align="center">';
- print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
- print '</td>';
- }*/
 // Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
@@ -402,11 +405,18 @@ print $searchpicto;
 print '</td>';
 print '</tr>'."\n";
 
-// Fields title
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-// LIST_OF_TD_TITLE_FIELDS
-//if (! empty($arrayfields['t.field1']['checked'])) print_liste_field_titre($arrayfields['t.field1']['label'],$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
-//if (! empty($arrayfields['t.field2']['checked'])) print_liste_field_titre($arrayfields['t.field2']['label'],$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
+foreach($object->fields as $key => $val)
+{
+    if (in_array($key, array('datec','tms','status'))) continue;
+    $align='';
+    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+    if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+    if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
+}
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -417,7 +427,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 			$align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
 			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder)."\n";
        }
    }
 }
@@ -425,10 +435,16 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'],$_SERVER["PHP_SELF"],"t.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($arrayfields['t.tms']['label'],$_SERVER["PHP_SELF"],"t.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-//if (! empty($arrayfields['t.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+// Rest of fields title
+foreach($object->fields as $key => $val)
+{
+    if (! in_array($key, array('datec','tms','status'))) continue;
+    $align='';
+    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
+}
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
 
@@ -440,6 +456,8 @@ foreach ($extrafields->attribute_computed as $key => $val)
 }
 
 
+// Loop on record
+// --------------------------------------------------------------------
 $i=0;
 $totalarray=array();
 while ($i < min($num, $limit))
@@ -449,18 +467,22 @@ while ($i < min($num, $limit))
     {
         // Show here line of result
         print '<tr class="oddeven">';
-        // LIST_OF_TD_FIELDS_LIST
-        /*
-        if (! empty($arrayfields['t.field1']['checked']))
+        foreach($object->fields as $key => $val)
         {
-            print '<td>'.$obj->field1.'</td>';
-		    if (! $i) $totalarray['nbfield']++;
+            if (in_array($key, array('datec','tms','status'))) continue;
+            $align='';
+            if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+            if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+            if (! empty($arrayfields['t.'.$key]['checked']))
+            {
+                print '<td'.($align?' class="'.$align.'"':'').'>';
+                if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
+                elseif ($key == 'status') print '<td align="center">'.$object->getLibStatut(3).'</td>';
+                else print $obj->$key;
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
         }
-        if (! empty($arrayfields['t.field2']['checked']))
-        {
-            print '<td>'.$obj->field2.'</td>';
-		    if (! $i) $totalarray['nbfield']++;
-        }*/
     	// Extra fields
 		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 		{
@@ -483,30 +505,23 @@ while ($i < min($num, $limit))
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-    	// Date creation
-        if (! empty($arrayfields['t.datec']['checked']))
+        // Rest of fields
+        foreach($object->fields as $key => $val)
         {
-            print '<td align="center">';
-            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
-            print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
+            if (! in_array($key, array('datec','tms','status'))) continue;
+            $align='';
+            if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+            if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+            if (! empty($arrayfields['t.'.$key]['checked']))
+            {
+                print '<td'.($align?' class="'.$align.'"':'').'>';
+                if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
+                elseif ($key == 'status') print '<td align="center">'.$object->getLibStatut(3).'</td>';
+                else print $obj->$key;
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
         }
-        // Date modification
-        if (! empty($arrayfields['t.tms']['checked']))
-        {
-            print '<td align="center">';
-            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
-            print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
-        }
-        // Status
-        /*
-        if (! empty($arrayfields['t.statut']['checked']))
-        {
-		  $userstatic->statut=$obj->statut;
-          print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
-        }*/
-
         // Action column
         print '<td class="nowrap" align="center">';
 	    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -536,7 +551,7 @@ if (isset($totalarray['totalhtfield']))
             if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
-        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+        elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';
         elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
         elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
         else print '<td></td>';
@@ -567,13 +582,16 @@ print '</form>'."\n";
 
 if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 {
+    require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+    $formfile = new FormFile($db);
+
     // Show list of available documents
     $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
     $urlsource.=str_replace('&amp;','&',$param);
 
     $filedir=$diroutputmassaction;
-    $genallowed=$user->rights->facture->lire;
-    $delallowed=$user->rights->facture->lire;
+    $genallowed=$user->rights->mymodule->read;
+    $delallowed=$user->rights->mymodule->read;
 
     print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 }

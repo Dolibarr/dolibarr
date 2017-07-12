@@ -58,7 +58,7 @@ class MyObject extends CommonObject
 	public $picto = 'myobject';
 
 
-	// BEGIN MODULEBUILDER PROPERTIES - Do not remove this comment
+	// BEGIN MODULEBUILDER PROPERTIES
 	/**
      * @var array  Array with all fields and their property
      */
@@ -70,7 +70,7 @@ class MyObject extends CommonObject
 	    'tms'   =>array('type'=>'timestamp',    'label'=>'DateModification', 'notnull'=>true, 'position'=>500),
 	    'status'=>array('type'=>'integer',      'label'=>'Status',           'index'=>true,   'position'=>1000),
 	);
-	// Do not remove this comment - END MODULEBUILDER PROPERTIES
+	// END MODULEBUILDER PROPERTIES
 
 
 

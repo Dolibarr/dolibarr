@@ -22,6 +22,8 @@
  */
 
 
+
+
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
@@ -31,63 +33,173 @@
  * 	@param	string		$newmask		New mask
  * 	@return	int							<0 if KO, >0 if OK
  */
-function rebuildobjectsql($destdir, $module, $objectname, $newmask)
+function rebuildObjectClass($destdir, $module, $objectname, $newmask)
 {
-    global $db;
+    global $db, $langs;
 
     if (empty($objectname)) return -1;
 
-    dol_include_once(strtolower($module).'/class/'.strtolower($objectname).'.class.php');
-    $object=new $objectname($db);
+    $pathoffiletoeditsrc=$destdir.'/class/'.strtolower($objectname).'.class.php';
+    $pathoffiletoedittarget=$destdir.'/class/'.strtolower($objectname).'.class.php';
+    if (! dol_is_file($pathoffiletoeditsrc))
+    {
+        //$pathoffiletoeditsrc=DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/myobject.class.php';
+        setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
+        return -1;
+    }
 
-    // Edit sql files
-    $pathoffiletoedit=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.sql');
+    //$pathoffiletoedittmp=$destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
+    //dol_delete_file($pathoffiletoedittmp, 0, 1, 1);
 
-    $contentsql = file_get_contents($pathoffiletoedit, 'r');
+    try
+    {
+        include_once $pathoffiletoeditsrc;
+        if (class_exists($objectname)) $object=new $objectname($db);
+    }
+    catch(Exception $e)
+    {
+        print $e->getMessage();
+    }
+
+    // Edit class files
+
+    $contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+
+    $i=0;
+    $texttoinsert = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
+    $texttoinsert.= "\t".'/**'."\n";
+    $texttoinsert.= "\t".' * @var array  Array with all fields and their property'."\n";
+    $texttoinsert.= "\t".' */'."\n";
+    $texttoinsert.= "\t".'public $fields=array('."\n";
+
+    if (count($object->fields))
+    {
+        foreach($object->fields as $key => $val)
+        {
+            $i++;
+            $typephp='';
+            $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
+            if ($val['position']) $texttoinsert.= " 'position'=>".$val['position'].",";
+            if ($val['notnull']) $texttoinsert.= " 'notnull'=>".$val['notnull'].",";
+            if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
+            if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
+            if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
+            $texttoinsert.= "),\n";
+        }
+    }
+    $texttoinsert.= "\t".');'."\n";
+
+    $texttoinsert.= "\n";
+
+    if (count($object->fields))
+    {
+        foreach($object->fields as $key => $val)
+        {
+            $i++;
+            $typephp='';
+            $texttoinsert.= "\t".'public $'.$key.$typephp.";";
+            //if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
+            //if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
+            //$texttoinsert.= ($val['notnull']?' NOT NULL':'');
+            //if ($i < count($object->fields)) $texttoinsert.=";";
+            $texttoinsert.= "\n";
+        }
+    }
+
+    $texttoinsert.= "\t".'// END MODULEBUILDER PROPERTIES';
+
+    $contentclass = preg_replace('/\/\/ BEGIN MODULEBUILDER PROPERTIES.*END MODULEBUILDER PROPERTIES/ims', $texttoinsert, $contentclass);
+
+    //file_put_contents($pathoffiletoedittmp, $contentclass);
+    file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
+    @chmod($pathoffiletoedit, octdec($newmask));
+
+
+    return 1;
+}
+
+/**
+ * 	Save data into a memory area shared by all users, all sessions on server
+ *
+ *  @param	string      $destdir		Directory
+ * 	@param	string		$module			Module name
+ *  @param	string      $objectname		Name of object
+ * 	@param	string		$newmask		New mask
+ * 	@return	int							<0 if KO, >0 if OK
+ */
+function rebuildObjectSql($destdir, $module, $objectname, $newmask)
+{
+    global $db, $langs;
+
+    if (empty($objectname)) return -1;
+
+    try
+    {
+        dol_include_once(strtolower($module).'/class/'.strtolower($objectname).'.class.php');
+        if (class_exists($objectname)) $object=new $objectname($db);
+    }
+    catch(Exception $e)
+    {
+        print $e->getMessage();
+    }
+
+    // Edit .sql file
+    $pathoffiletoeditsrc=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.sql');
+    $pathoffiletoedittarget=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.sql');
+
+    $contentsql = file_get_contents($pathoffiletoeditsrc, 'r');
 
     $i=0;
     $texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
-    foreach($object->fields as $key => $val)
+    if (count($object->fields))
     {
-        $i++;
-        $texttoinsert.= "\t".$key." ".$val['type'];
-        if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
-        if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
-        $texttoinsert.= ($val['notnull']?' NOT NULL':'');
-        if ($i < count($object->fields)) $texttoinsert.=", ";
-        $texttoinsert.= "\n";
+        foreach($object->fields as $key => $val)
+        {
+            $i++;
+            $texttoinsert.= "\t".$key." ".$val['type'];
+            if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
+            if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
+            $texttoinsert.= ($val['notnull']?' NOT NULL':'');
+            if ($i < count($object->fields)) $texttoinsert.=", ";
+            $texttoinsert.= "\n";
+        }
     }
     $texttoinsert.= "\t".'-- END MODULEBUILDER FIELDS';
 
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
 
-    file_put_contents($pathoffiletoedit, $contentsql);
+    file_put_contents($pathoffiletoedittarget, $contentsql);
     @chmod($pathoffiletoedit, octdec($newmask));
 
 
+    // Edit .key.sql file
+    $pathoffiletoeditsrc=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.key.sql');
+    $pathoffiletoedittarget=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.key.sql');
 
-    // Edit sql files
-    $pathoffiletoedit=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.key.sql');
-
-    $contentsql = file_get_contents($pathoffiletoedit, 'r');
+    $contentsql = file_get_contents($pathoffiletoeditsrc, 'r');
 
     $i=0;
     $texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
-    foreach($object->fields as $key => $val)
+    if (count($object->fields))
     {
-        $i++;
-        if ($val['index'])
+        foreach($object->fields as $key => $val)
         {
-            $texttoinsert.= "ALTER TABLE llx_".strtolower($objectname)." ADD INDEX idx_".strtolower($objectname)."_".$key." (".$key.");";
-            $texttoinsert.= "\n";
+            $i++;
+            if ($val['index'])
+            {
+                $texttoinsert.= "ALTER TABLE llx_".strtolower($objectname)." ADD INDEX idx_".strtolower($objectname)."_".$key." (".$key.");";
+                $texttoinsert.= "\n";
+            }
         }
     }
     $texttoinsert.= '-- END MODULEBUILDER INDEXES';
 
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
 
-    file_put_contents($pathoffiletoedit, $contentsql);
+    file_put_contents($pathoffiletoedittarget, $contentsql);
     @chmod($pathoffiletoedit, octdec($newmask));
 
     return 1;
 }
+
+

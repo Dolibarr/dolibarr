@@ -231,12 +231,11 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
     if (! $error)
     {
-        // Edit sql with new properties
-        rebuildobjectsql($destdir, $module, $objectname, $newmask);
-
         // Edit the class file to write properties
+        rebuildObjectClass($destdir, $module, $objectname, $newmask);
 
-
+        // Edit sql with new properties
+        rebuildObjectSql($destdir, $module, $objectname, $newmask);
     }
 
     if (! $error)
@@ -251,8 +250,13 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 
     $destdir = $dirins.'/'.strtolower($module);
 
+    // TODO Complete list of fields with new one
+
+    // Edit the class file to write properties
+    rebuildObjectClass($destdir, $module, $objectname, $newmask);
+
     // Edit sql with new properties
-    rebuildobjectsql($destdir, $module, $objectname, $newmask);
+    rebuildObjectSql($destdir, $module, $objectname, $newmask);
 
     if (! $error)
     {
@@ -973,7 +977,7 @@ elseif (! empty($module))
                         print '<br><br><br>';
 
                         $result = dol_include_once($pathtoclass);
-                        $tmpobjet = new $tabobj($db);
+                        if (class_exists($tabobj)) $tmpobjet = new $tabobj($db);
 
                         $reflector = new ReflectionClass($tabobj);
                         $properties = $reflector->getProperties();          // Can also use get_object_vars
