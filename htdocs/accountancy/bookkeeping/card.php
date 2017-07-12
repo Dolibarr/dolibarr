@@ -645,16 +645,18 @@ if ($action == 'create') {
 				}
 				print '</table>';
 
+
 				if ($mode=='_tmp' && $action=='')
 				{
-					print '<div class="tabsAction">';
+				    print '<br>';
+					print '<div class="center">';
 					if ($total_debit == $total_credit)
 					{
-					   print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+					   print '<a class="button" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
 					}
 					else
 					{
-					    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'">'.$langs->trans("ValidTransaction").'</a>';
+					    print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 					print "</div>";
 				}
