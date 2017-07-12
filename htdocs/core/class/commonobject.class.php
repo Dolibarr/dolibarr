@@ -599,7 +599,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-		
+
         // Socpeople must have already been added by some a trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
         $TListeContacts=$this->liste_contact(-1, $source);
         $already_added=false;
@@ -611,11 +611,11 @@ abstract class CommonObject
 	        	}
 	        }
         }
-        
+
         if(!$already_added) {
-        	
+
         	$this->db->begin();
-        	
+
 	        // Insertion dans la base
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 	        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -623,7 +623,7 @@ abstract class CommonObject
 	        $sql.= "'".$this->db->idate($datecreate)."'";
 	        $sql.= ", 4, ". $id_type_contact;
 	        $sql.= ")";
-	        
+
 	        $resql=$this->db->query($sql);
 	        if ($resql)
 	        {
@@ -636,7 +636,7 @@ abstract class CommonObject
 		                return -1;
 		            }
 	            }
-	
+
 	            $this->db->commit();
 	            return 1;
 	        }
@@ -4226,7 +4226,10 @@ abstract class CommonObject
 	{
 		$this->db->begin();
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+		$table_element = $this->table_element;
+		if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
 		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
 		$resql=$this->db->query($sql_del);
 		if (! $resql)
