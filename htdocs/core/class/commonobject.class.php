@@ -599,7 +599,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-		
+
         // Socpeople must have already been added by some a trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
         $TListeContacts=$this->liste_contact(-1, $source);
         $already_added=false;
@@ -611,11 +611,11 @@ abstract class CommonObject
 	        	}
 	        }
         }
-        
+
         if(!$already_added) {
-        	
+
         	$this->db->begin();
-        	
+
 	        // Insertion dans la base
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 	        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -623,7 +623,7 @@ abstract class CommonObject
 	        $sql.= "'".$this->db->idate($datecreate)."'";
 	        $sql.= ", 4, ". $id_type_contact;
 	        $sql.= ")";
-	        
+
 	        $resql=$this->db->query($sql);
 	        if ($resql)
 	        {
@@ -636,7 +636,7 @@ abstract class CommonObject
 		                return -1;
 		            }
 	            }
-	
+
 	            $this->db->commit();
 	            return 1;
 	        }
@@ -4726,6 +4726,9 @@ abstract class CommonObject
 		return $buyPrice;
 	}
 
+
+
+
 	/**
 	 * Function test if type is date
 	 *
@@ -4734,7 +4737,7 @@ abstract class CommonObject
 	 */
 	protected function isDate($info)
 	{
-		if(isset($info['type']) && $info['type']=='date') return true;
+		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
 		else return false;
 	}
 
@@ -4881,79 +4884,45 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Create object into database
-	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
-	 */
-	public function createCommon(User $user, $notrigger = false)
-	{
-
-	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
-
-	    foreach ($fields as $k => $v) {
-
-	    	$keys[] = $k;
-	    	$values[] = $this->quote($v);
-
-	    }
-	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'
-					( '.implode( ",", $keys ).' )
-					VALUES ( '.implode( ",", $values ).' ) ';
-	    $res = $this->db->query( $sql );
-	    if($res===false) {
-
-	    	return false;
-	    }
-
-	    // TODO Add triggers
-
-	    return true;
-
-	}
-
-	/**
 	 * Function to load data into current object this
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
 	private function set_vars_by_db(&$obj)
 	{
-		foreach ($this->fields as $field => $info)
-		{
-			if($this->isDate($info))
-			{
-				if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
-				else $this->{$field} = strtotime($obj->{$field});
-			}
-			elseif($this->isArray($info))
-			{
-				$this->{$field} = @unserialize($obj->{$field});
-				// Hack for data not in UTF8
-				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
-			}
-			elseif($this->isInt($info))
-			{
-				$this->{$field} = (int) $obj->{$field};
-			}
-			elseif($this->isFloat($info))
-			{
-				$this->{$field} = (double) $obj->{$field};
-			}
-			elseif($this->isNull($info))
-			{
-				$val = $obj->{$field};
-				// zero is not null
-				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
-			}
-			else
-			{
-				$this->{$field} = $obj->{$field};
-			}
+	    foreach ($this->fields as $field => $info)
+	    {
+	        if($this->isDate($info))
+	        {
+	            if(empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
+	            else $this->{$field} = strtotime($obj->{$field});
+	        }
+	        elseif($this->isArray($info))
+	        {
+	            $this->{$field} = @unserialize($obj->{$field});
+	            // Hack for data not in UTF8
+	            if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
+	        }
+	        elseif($this->isInt($info))
+	        {
+	            $this->{$field} = (int) $obj->{$field};
+	        }
+	        elseif($this->isFloat($info))
+	        {
+	            $this->{$field} = (double) $obj->{$field};
+	        }
+	        elseif($this->isNull($info))
+	        {
+	            $val = $obj->{$field};
+	            // zero is not null
+	            $this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
+	        }
+	        else
+	        {
+	            $this->{$field} = $obj->{$field};
+	        }
 
-		}
+	    }
 	}
 
 	/**
@@ -4963,21 +4932,134 @@ abstract class CommonObject
 	 */
 	private function get_field_list()
 	{
-		$keys = array_keys($this->fields);
-		return implode(',', $keys);
+	    $keys = array_keys($this->fields);
+	    return implode(',', $keys);
+	}
+
+	/**
+	 * Add quote to field value if necessary
+	 *
+	 * @param string|int	$value	value to protect
+	 * @return string|int
+	 */
+	protected function quote($value) {
+
+	    if(is_null($value)) return 'NULL';
+	    else if(is_numeric($value)) return $value;
+	    else return "'".$this->db->escape( $value )."'";
+
+	}
+
+
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function createCommon(User $user, $notrigger = false)
+	{
+        $error = 0;
+
+	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
+
+	    foreach ($fields as $k => $v) {
+	    	$keys[] = $k;
+	    	$values[] = $this->quote($v);
+	    }
+
+	    $this->db->begin();
+
+	    if (! $error)
+	    {
+    	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'
+    					( '.implode( ",", $keys ).' )
+    					VALUES ( '.implode( ",", $values ).' ) ';
+    	    $res = $this->db->query( $sql );
+    	    if ($res===false) {
+    	        $error++;
+    	        $this->errors[] = $this->db->lasterror();
+    	    }
+	    }
+
+        if (! $error && ! $notrigger) {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+
+            if (!$notrigger) {
+                // Call triggers
+                $result=$this->call_trigger(strtoupper(get_class(self)).'_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return $this->id;
+		}
+	}
+
+	/**
+	 * Load an object from its id and create a new one in database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  int $fromid     Id of object to clone
+	 * @return int             New id of clone
+	 */
+	public function createFromCloneCommon(User $user, $fromid)
+	{
+	    global $user;
+
+	    $error = 0;
+
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+
+	    $object = new self($this->db);
+
+	    $this->db->begin();
+
+	    // Load source object
+	    $object->fetchCommon($fromid);
+	    // Reset object
+	    $object->id = 0;
+
+	    // Clear fields
+	    // ...
+
+	    // Create clone
+	    $result = $object->createCommon($user);
+
+	    // Other options
+	    if ($result < 0) {
+	        $error ++;
+	        $this->errors = $object->errors;
+	        dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+	    }
+
+	    // End
+	    if (!$error) {
+	        $this->db->commit();
+	        return $object->id;
+	    } else {
+	        $this->db->rollback();
+	        return -1;
+	    }
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $ref Ref
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchCommon($id, $ref = null)
 	{
-
 		if (empty($id) && empty($ref)) return false;
 
 		$sql = 'SELECT '.$this->get_field_list().', datec, tms';
@@ -4991,13 +5073,20 @@ abstract class CommonObject
 		{
     		if ($obj = $this->db->fetch_object($res))
     		{
-    			$this->id = $id;
-    			$this->set_vars_by_db($obj);
+    		    if ($obj)
+    		    {
+        			$this->id = $id;
+        			$this->set_vars_by_db($obj);
 
-    			$this->datec = $this->db->idate($obj->datec);
-    			$this->tms = $this->db->idate($obj->tms);
+        			$this->datec = $this->db->idate($obj->datec);
+        			$this->tms = $this->db->idate($obj->tms);
 
-    			return $this->id;
+        			return $this->id;
+    		    }
+    		    else
+    		    {
+    		        return 0;
+    		    }
     		}
     		else
     		{
@@ -5019,15 +5108,15 @@ abstract class CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
+	    $error = 0;
+
 		$fields = $this->set_save_query();
 
 		foreach ($fields as $k => $v) {
-
 			if (is_array($key)){
 				$i=array_search($k, $key);
 				if ( $i !== false) {
@@ -5040,57 +5129,93 @@ abstract class CommonObject
 					continue;
 				}
 			}
-
 			$tmp[] = $k.'='.$this->quote($v);
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
-		$res = $this->db->query( $sql );
 
-		if($res===false) {
-			//error
-			return false;
+		$this->db->begin();
+
+		if (! $error)
+		{
+    		$res = $this->db->query($sql);
+    		if ($res===false)
+    		{
+    		    $error++;
+    	        $this->errors[] = $this->db->lasterror();
+    		}
 		}
 
-		// TODO Add triggers
+		if (! $error && ! $notrigger) {
+		    // Call triggers
+		    $result=$this->call_trigger(strtoupper(get_class(self)).'_MODIFY',$user);
+		    if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+		    // End call triggers
+		}
 
-		return true;
+		// Commit or rollback
+		if ($error) {
+		    $this->db->rollback();
+		    return -1;
+		} else {
+		    $this->db->commit();
+		    return $this->id;
+		}
 	}
 
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false)
 	{
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+	    $error=0;
 
-		$res = $this->db->query( $sql );
-		if($res===false) {
-			return false;
+	    $this->db->begin();
+
+	    if (! $error) {
+	        if (! $notrigger) {
+	            // Call triggers
+	            $result=$this->call_trigger(strtoupper(get_class(self)).'_DELETE', $user);
+	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
+	            // End call triggers
+	        }
+	    }
+
+	    if (! $error)
+	    {
+    		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+
+    		$res = $this->db->query($sql);
+    		if($res===false) {
+    		    $error++;
+    		    $this->errors[] = $this->db->lasterror();
+    		}
+	    }
+
+    	// Commit or rollback
+		if ($error) {
+		    $this->db->rollback();
+		    return -1;
+		} else {
+		    $this->db->commit();
+		    return 1;
 		}
-
-		// TODO Add triggers
-
-		return true;
 	}
 
 	/**
-	 * Add quote to field value if necessary
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @param string|int	$value	value to protect
-	 * @return string|int
+	 * @return void
 	 */
-	protected function quote($value) {
+	public function initAsSpecimenCommon()
+	{
+	    $this->id = 0;
 
-	    if(is_null($value)) return 'NULL';
-	    else if(is_numeric($value)) return $value;
-	    else return "'".$this->db->escape( $value )."'";
-
+	    // TODO...
 	}
 
 }
-

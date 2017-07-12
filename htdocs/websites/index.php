@@ -129,6 +129,7 @@ if ($pageid > 0 && $action != 'add')
 
 global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
+$filehtmlheader=$pathofwebsite.'/header.html';
 $filecss=$pathofwebsite.'/styles.css.php';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex=$pathofwebsite.'/index.php';
@@ -240,25 +241,30 @@ if ($action == 'delete')
 // Update css
 if ($action == 'updatecss')
 {
-    //$db->begin();
-
     $res = $object->fetch(0, $website);
 
-    /*
-    $res = $object->update($user);
-    if ($res > 0)
-    {
-        $db->commit();
-        $action='';
-    }
-    else
+    // Html header file
+    $htmlheadercontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+    $htmlheadercontent.= '<!-- File generated to save common html header - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
+    $htmlheadercontent.= '<!-- END -->'."\n";
+    $htmlheadercontent.= GETPOST('WEBSITE_HTML_HEADER');
+
+    dol_syslog("Save file css into ".$filehtmlheader);
+
+    dol_mkdir($pathofwebsite);
+    $result = file_put_contents($filehtmlheader, $htmlheadercontent);
+    if (! empty($conf->global->MAIN_UMASK))
+        @chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
+
+    if (! $result)
     {
         $error++;
-       $db->rollback();
-    }*/
+        setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+    }
 
+    // Css file
     $csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
-    $csscontent.= '<!-- File generated to wrap the css file - DO NOT MODIFY - It is just a copy of database css content -->'."\n";
+    $csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
     $csscontent.= '<?php '."\n";
     $csscontent.= "header('Content-type: text/css');\n";
     $csscontent.= "?>"."\n";
@@ -277,6 +283,7 @@ if ($action == 'updatecss')
         $error++;
         setEventMessages('Failed to write file '.$filecss, null, 'errors');
     }
+
 
     if (! $error)
     {
@@ -310,7 +317,7 @@ if ($action == 'setashome')
         dol_delete_file($fileindex);
 
         $indexcontent = '<?php'."\n";
-        $indexcontent.= '// File generated to wrap the home page - DO NOT MODIFY - It is just an include'."\n";
+        $indexcontent.= '// File generated to provide a shortcut to the Home Page - DO NOT MODIFY - It is just an include.'."\n";
         $indexcontent.= "include_once './".basename($filetpl)."'\n";
         $indexcontent.= '?>'."\n";
         $result = file_put_contents($fileindex, $indexcontent);
@@ -406,6 +413,7 @@ if ($action == 'updatemeta')
             $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
             $tplcontent.= '<html>'."\n";
             $tplcontent.= '<header>'."\n";
+            $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
             $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
             $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
             $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
@@ -414,8 +422,10 @@ if ($action == 'updatemeta')
             $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
             $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
             $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+            $tplcontent.= '<!-- Include link to CSS file -->'."\n";
             $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
-            $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+            $tplcontent.= '<!-- Include common page header file -->'."\n";
+            $tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/header.html"); ?>'."\n";
             $tplcontent.= '</header>'."\n";
 
             $tplcontent.= '<body>'."\n";
@@ -458,7 +468,8 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
     if (! is_link(dol_osencode($pathtomediasinwebsite)))
     {
         dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-        symlink($pathtomedias, $pathtomediasinwebsite);
+        dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+        $result = symlink($pathtomedias, $pathtomediasinwebsite);
     }
 
     /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
@@ -560,6 +571,7 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
                 $tplcontent.= "// END PHP ?>\n";
         	    $tplcontent.= '<html>'."\n";
         	    $tplcontent.= '<header>'."\n";
+        	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
         	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
         	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
         	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
@@ -567,8 +579,10 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
         	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
         	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
         	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
-        	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
-        	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+                $tplcontent.= '<!-- Include link to CSS file -->'."\n";
+                $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
+        	    $tplcontent.= '<!-- Include common page header file -->'."\n";
+                $tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/header.html"); ?>'."\n";
         	    $tplcontent.= '</header>'."\n";
 
         	    $tplcontent.= '<body>'."\n";
@@ -939,6 +953,11 @@ if ($action == 'editcss')
 
     print '<br>';
 
+    $htmlheader = @file_get_contents($filehtmlheader);
+    // Clean the php css file to remove php code and get only html part
+    $htmlheader = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $htmlheader);
+
+
     $csscontent = @file_get_contents($filecss);
     // Clean the php css file to remove php code and get only css part
     $csscontent = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $csscontent);
@@ -957,8 +976,16 @@ if ($action == 'editcss')
     print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_CSS_INLINE');
     print '</td><td>';
-    print '<textarea class="flat centpercent" rows="32" name="WEBSITE_CSS_INLINE">';
+    print '<textarea class="flat centpercent" rows="20" name="WEBSITE_CSS_INLINE">';
     print $csscontent;
+    print '</textarea>';
+    print '</td></tr>';
+
+    print '<tr><td class="tdtop">';
+    print $langs->trans('WEBSITE_HTML_HEADER');
+    print '</td><td>';
+    print '<textarea class="flat centpercent" rows="20" name="WEBSITE_HTML_HEADER">';
+    print $htmlheader;
     print '</textarea>';
     print '</td></tr>';
 
@@ -1089,7 +1116,10 @@ if ($action == 'preview')
         $out.=$csscontent;
         $out.='</style>'."\n";
 
-        $out.=$objectpage->content."\n";
+        // Replace php code
+        $content = preg_replace('/<\?php.*\?>/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $objectpage->content);
+
+        $out.=$content."\n";
 
         $out.='</div>';
 

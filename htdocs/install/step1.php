@@ -345,11 +345,14 @@ if (! $error && $db->connected)
 if (! $error && $db->connected && $action == "set")
 {
     umask(0);
-    foreach($_POST as $key => $value)
+    if (is_array($_POST))
     {
-        if (! preg_match('/^db_pass/i', $key)) {
-			dolibarr_install_syslog("step1: choice for " . $key . " = " . $value);
-		}
+        foreach($_POST as $key => $value)
+        {
+            if (! preg_match('/^db_pass/i', $key)) {
+    			dolibarr_install_syslog("step1: choice for " . $key . " = " . $value);
+    		}
+        }
     }
 
     // Show title of step

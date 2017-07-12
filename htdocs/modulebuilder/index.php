@@ -24,6 +24,7 @@ if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");
@@ -37,9 +38,10 @@ $cancel=GETPOST('cancel','alpha');
 $module=GETPOST('module','alpha');
 $tab=GETPOST('tab','aZ09');
 $tabobj=GETPOST('tabobj','alpha');
+$propertykey=GETPOST('propertykey','alpha');
 if (empty($module)) $module='initmodule';
 if (empty($tab)) $tab='description';
-if (empty($tabobj)) $tabobj='newobject';
+if (empty($tabobj)) $tabobj='newobjectifnoobj';
 $file=GETPOST('file','alpha');
 
 $modulename=dol_sanitizeFileName(GETPOST('modulename','alpha'));
@@ -57,6 +59,13 @@ $dirins = $tmp[0];
 $FILEFLAG='modulebuilder.txt';
 
 $now=dol_now();
+$newmask = 0;
+if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+if (empty($newmask))	// This should no happen
+{
+    $newmask='0664';
+}
+
 
 /*
  * Actions
@@ -156,14 +165,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
         $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
         $destdir = $dirins.'/'.strtolower($module);
 
-        $arrayreplacement=array(
-            'mymodule'=>strtolower($module),
-            'MyModule'=>$module,
-            'myobject'=>strtolower($objectname),
-            'MyObject'=>$objectname
-        );
-
-
         // Delete some files
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
@@ -180,7 +181,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
         foreach($filetogenerate as $srcfile => $destfile)
         {
-            $result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile);
+            $result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile, $newmask, 0);
             if ($result <= 0)
             {
                 if ($result < 0)
@@ -191,7 +192,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
                 }
                 else	// $result == 0
                 {
-                    setEventMessages($langs->trans("FileAlreadyExists", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'warnings');
+                    setEventMessages($langs->trans("FileAlreadyExists", $destfile), null, 'warnings');
                 }
             }
             else
@@ -210,10 +211,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
             //var_dump($phpfileval['fullname']);
             $arrayreplacement=array(
-                'mymodule'=>strtolower($modulename),
-                'MyModule'=>$modulename,
-                'MYMODULE'=>strtoupper($modulename),
-                'My module'=>$modulename,
+                'mymodule'=>strtolower($module),
+                'MyModule'=>$module,
+                'MYMODULE'=>strtoupper($module),
+                'My module'=>$module,
                 'htdocs/modulebuilder/template/'=>'',
                 'myobject'=>strtolower($objectname),
                 'MyObject'=>$objectname
@@ -230,7 +231,36 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
     if (! $error)
     {
-        setEventMessages('FilesForObjectInitialized', null);
+        // Edit the class file to write properties
+        rebuildObjectClass($destdir, $module, $objectname, $newmask);
+
+        // Edit sql with new properties
+        rebuildObjectSql($destdir, $module, $objectname, $newmask);
+    }
+
+    if (! $error)
+    {
+        setEventMessages($langs->trans('FilesForObjectInitialized', $objectname), null);
+    }
+}
+
+if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
+{
+    $objectname = $tabobj;
+
+    $destdir = $dirins.'/'.strtolower($module);
+
+    // TODO Complete list of fields with new one
+
+    // Edit the class file to write properties
+    rebuildObjectClass($destdir, $module, $objectname, $newmask);
+
+    // Edit sql with new properties
+    rebuildObjectSql($destdir, $module, $objectname, $newmask);
+
+    if (! $error)
+    {
+        setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
     }
 }
 
@@ -320,6 +350,29 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
     $tabobj = 'deleteobject';
 }
 
+if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
+{
+    if (! $error)
+    {
+        $modulelowercase=strtolower($module);
+        $objectlowercase=strtolower($objectname);
+
+        // File of class
+        $fileforclass = $dirins.'/'.$modulelowercase.'/class/'.$objectlowercase.'.class.php';
+
+        // TODO
+
+        // File of sql
+        $fileforsql = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'.sql';
+        $fileforsqlkey = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'.key.sql';
+
+
+        // TODO
+    }
+}
+
+
+
 if ($dirins && $action == 'generatepackage')
 {
     $modulelowercase=strtolower($module);
@@ -401,15 +454,7 @@ if ($action == 'savefile' && empty($cancel))
         $content = GETPOST('editfilecontent');
 
         // Save file on disk
-        $newmask = 0;
-
         file_put_contents($pathoffile, $content);
-        if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-        if (empty($newmask))	// This should no happen
-        {
-            $newmask='0664';
-        }
-
         @chmod($pathoffile, octdec($newmask));
 
         setEventMessages($langs->trans("FileSaved"), null);
@@ -838,9 +883,11 @@ elseif (! empty($module))
             $h++;
 
             $listofobject = dol_dir_list($dir, 'files', 0, '\.txt$');
+            $firstobjectname='';
             foreach($listofobject as $fileobj)
             {
                 $objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
+                if (empty($firstobjectname)) $firstobjectname = $objectname;
 
                 $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj='.$objectname;
                 $head3[$h][1] = $objectname;
@@ -853,6 +900,12 @@ elseif (! empty($module))
             $head3[$h][2] = 'deleteobject';
             $h++;
 
+            // If tabobj was not defined, then we check if there is one obj. If yes, we force on it, if no, we will show tab to create new objects.
+            if ($tabobj == 'newobjectifnoobj')
+            {
+                if ($firstobjectname) $tabobj=$firstobjectname;
+                else $tabobj = 'newobject';
+            }
 
             dol_fiche_head($head3, $tabobj, '', -1, '');
 
@@ -888,91 +941,185 @@ elseif (! empty($module))
             }
             else
             {
-                try {
-                    $pathtoclass = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
-                    $pathtoapi = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
-                    $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.class.php';
-                    $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.class.php';
-                    print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong><br>';
-                    print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong><br>';
-                    print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong><br>';
-                    print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong>'.$pathtocard.'</strong><br>';
+                if ($action == 'deleteproperty')
+                {
+                    $formconfirm = $form->formconfirm(
+                        $_SERVER["PHP_SELF"].'?propertykey='.urlencode(GETPOST('propertykey','alpha')).'&objectname='.urlencode($objectname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
+                        $langs->trans('Delete'), $langs->trans('ConfirmDeleteProperty', GETPOST('propertykey','alpha')), 'confirm_deleteproperty', '', 0, 1
+                        );
 
-                    $result = dol_include_once($pathtoclass);
-                    $tmpobjet = new $tabobj($db);
+                    // Print form confirm
+                    print $formconfirm;
+                }
 
-                    $reflector = new ReflectionClass($tabobj);
-                    $properties = $reflector->getProperties();          // Can also use get_object_vars
-                    $propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
-                    //$propstat = $reflector->getStaticProperties();
+                if ($action != 'editfile' || empty($file))
+                {
+                    try {
+                        $pathtoclass = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
+                        $pathtoapi = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
+                        $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.php';
+                        $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.php';
+                        print '<div class="fichehalfleft">';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '</div>';
+                        print '<div class="fichehalfleft">';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong>'.$pathtocard.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '</div>';
 
-                    print load_fiche_titre($langs->trans("Properties"), '', '');
+                        print '<br><br><br>';
 
-                    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="action" value="initobject">';
-                    print '<input type="hidden" name="tab" value="objects">';
-                    print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-                    print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+                        $result = dol_include_once($pathtoclass);
+                        if (class_exists($tabobj)) $tmpobjet = new $tabobj($db);
 
-                    print '<table class="noborder">';
-                    print '<tr class="liste_titre">';
-                    print '<td>'.$langs->trans("Property");
-                    print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
-                    print '</td>';
-                    print '<td>'.$langs->trans("Comment").'</td>';
-                    print '<td>'.$langs->trans("Type").'</td>';
-                    print '<td>'.$langs->trans("DefaultValue").'</td>';
-                    print '<td></td>';
-                    print '</tr>';
-                    print '<tr>';
-                    print '<td><input class="text" name="propname" value=""></td>';
-                    print '<td><input class="text" name="propname" value=""></td>';
-                    print '<td><input class="text" name="propname" value=""></td>';
-                    print '<td><input class="text" name="propname" value=""></td>';
-                    print '<td align="center">';
-                    print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
-                    print '</td></tr>';
-                    foreach($properties as $propkey => $propval)
-                    {
-                        if ($propval->class == $tabobj)
+                        $reflector = new ReflectionClass($tabobj);
+                        $properties = $reflector->getProperties();          // Can also use get_object_vars
+                        $propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+                        //$propstat = $reflector->getStaticProperties();
+
+                        print load_fiche_titre($langs->trans("Properties"), '', '');
+
+                        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                        print '<input type="hidden" name="action" value="addproperty">';
+                        print '<input type="hidden" name="tab" value="objects">';
+                        print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+                        print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+                        print '<table class="noborder">';
+                        print '<tr class="liste_titre">';
+                        print '<td>'.$langs->trans("Property");
+                        print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
+                        print '</td>';
+                        print '<td>';
+                        print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
+                        print '</td>';
+                        print '<td>'.$langs->trans("Type").'</td>';
+                        print '<td class="right">'.$langs->trans("Position").'</td>';
+                        print '<td class="center">'.$langs->trans("NotNull").'</td>';
+                        print '<td class="center">'.$langs->trans("SearchAll").'</td>';
+                        //print '<td>'.$langs->trans("DefaultValue").'</td>';
+                        print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
+                        print '<td>'.$langs->trans("Comment").'</td>';
+                        print '<td></td>';
+                        print '</tr>';
+                        print '<tr>';
+                        print '<td><input class="text" name="propname" value=""></td>';
+                        print '<td><input class="text" name="proplabel" value=""></td>';
+                        print '<td><input class="text" name="proptype" value=""></td>';
+                        print '<td class="right"><input class="text right" size="2" name="propposition" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propnotnull" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propsearchall" value=""></td>';
+                        //print '<td><input class="text" name="propdefault" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propindex" value=""></td>';
+                        print '<td><input class="text" name="propcomment" value=""></td>';
+                        print '<td align="center">';
+                        print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+                        print '</td></tr>';
+
+                        $properties = $tmpobjet->fields;
+
+                        foreach($properties as $propkey => $propval)
                         {
-                            $propname=$propval->getName();
+                            /* If from Reflection
+                            if ($propval->class == $tabobj)
+                            {
+                                $propname=$propval->getName();
+                                $comment=$propval->getDocComment();
+                                $type=gettype($tmpobjet->$propname);
+                                $default=$propdefault[$propname];
+                                // Discard generic properties
+                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
 
-                            // Discard generic properties
-                            if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
+                                // Keep or not lines
+                                if (in_array($propname, array('fk_element', 'lines'))) continue;
+                            }*/
 
-                            // Keep or not lines
-                            if (in_array($propname, array('fk_element', 'lines'))) continue;
+                            $propname=$propkey;
+                            $proplabel=$propval['label'];
+                            $proptype=$propval['type'];
+                            $propposition=$propval['position'];
+                            $propnotnull=$propval['notnull'];
+                            $propsearchall=$propval['searchall'];
+                            //$propdefault=$propval['default'];
+                            $propindex=$propval['index'];
+                            $propcomment=$propval['comment'];
 
+                            print '<tr class="oddeven">';
 
-                            print '<tr class="oddeven"><td>';
+                            print '<td>';
                             print $propname;
                             print '</td>';
                             print '<td>';
-                            print $propval->getDocComment();
+                            print $proplabel;
                             print '</td>';
                             print '<td>';
-                            print gettype($tmpobjet->$propname);
+                            print $proptype;
                             print '</td>';
-
+                            print '<td align="right">';
+                            print $propposition;
+                            print '</td>';
+                            print '<td class="center">';
+                            print $propnotnull?'X':'';
+                            print '</td>';
+                            print '<td class="center">';
+                            print $propsearchall?'X':'';
+                            print '</td>';
+                            /*print '<td>';
+                            print $propdefault;
+                            print '</td>';*/
+                            print '<td class="center">';
+                            print $propindex?'X':'';
+                            print '</td>';
                             print '<td>';
-                            print $propdefault[$propname];
+                            print $propcomment;
+                            print '</td>';
+                            print '<td class="center">';
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
                             print '</td>';
 
-                            print '<td>';
-
-                            print '</td>';
                             print '</tr>';
                         }
+                        print '</table>';
+
+                        print '</form>';
                     }
-                    print '</table>';
+                    catch(Exception $e)
+                    {
+                        print $e->getMessage();
+                    }
+                }
+                else
+                {
+                    $fullpathoffile=dol_buildpath($file, 0);
+
+                    $content = file_get_contents($fullpathoffile);
+
+                    // New module
+                    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    print '<input type="hidden" name="action" value="savefile">';
+                    print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+                    print '<input type="hidden" name="tab" value="'.$tab.'">';
+                    print '<input type="hidden" name="module" value="'.$module.'">';
+
+                    $doleditor=new DolEditor('editfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '99%');
+                    print $doleditor->Create(1, '', false);
+                    print '<br>';
+                    print '<center>';
+                    print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                    print ' &nbsp; ';
+                    print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+                    print '</center>';
 
                     print '</form>';
-                }
-                catch(Exception $e)
-                {
-                    print $e->getMessage();
                 }
             }
         }

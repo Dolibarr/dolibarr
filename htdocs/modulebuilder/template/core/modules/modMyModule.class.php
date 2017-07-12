@@ -99,7 +99,7 @@ class modMyModule extends DolibarrModules
 		                        );
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/mymodule/temp");
+		// Example: this->dirs = array("/mymodule/temp","/mymodule/subdir");
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
@@ -287,6 +287,12 @@ class modMyModule extends DolibarrModules
 		$sql = array();
 
 		$this->_load_tables('/mymodule/sql/');
+
+		// Create extrafields
+		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1, 3, 'thirdparty');
+		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'string', 1, 10, 'project');
 
 		return $this->_init($sql, $options);
 	}

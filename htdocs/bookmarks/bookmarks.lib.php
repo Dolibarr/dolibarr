@@ -53,11 +53,13 @@ function printBookmarksList($aDb, $aLangs)
 	    // No urlencode, all param $url will be urlencoded later
 	    if ($sortfield) $tmpurl.=($tmpurl?'&':'').'sortfield='.$sortfield;
 	    if ($sortorder) $tmpurl.=($tmpurl?'&':'').'sortorder='.$sortorder;
-	    foreach($_POST as $key => $val)
+	    if (is_array($_POST))
 	    {
-            if (preg_match('/^search_/', $key) && $val != '') $tmpurl.=($tmpurl?'&':'').$key.'='.$val;
+    	    foreach($_POST as $key => $val)
+    	    {
+                if (preg_match('/^search_/', $key) && $val != '') $tmpurl.=($tmpurl?'&':'').$key.'='.$val;
+    	    }
 	    }
-
 	    $url.=($tmpurl?'?'.$tmpurl:'');
 	}
 

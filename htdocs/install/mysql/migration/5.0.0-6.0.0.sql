@@ -495,6 +495,31 @@ ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
 
+-- For new module website
+
+CREATE TABLE llx_website_page
+(
+	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	fk_website    integer NOT NULL,
+	pageurl       varchar(16) NOT NULL,
+	title         varchar(255),						
+	description   varchar(255),						
+	keywords      varchar(255),
+	content		  mediumtext,		-- text is not enough in size
+    status        integer,
+    fk_user_create integer,
+    fk_user_modif  integer,
+    date_creation  datetime,
+	tms            timestamp
+) ENGINE=innodb;
+
+ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
+
+ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
+
+
+-- For new module blockedlog
+
 CREATE TABLE llx_blockedlog 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
