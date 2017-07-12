@@ -93,7 +93,7 @@ class Utils
 		    // Define files log
 			if ($dolibarr_main_data_root)
 			{
-                $filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log$', 'install\.lock$');
+                $filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*$', 'install\.lock$');
 			}
 
 			$filelog='';
