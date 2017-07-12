@@ -1323,13 +1323,21 @@ abstract class CommonObject
             return -1;
         }
 
+		if ($this->table_element == 'categories')
+		{
+			$table_element = 'categorie';
+		}
+		else
+		{
+			$table_element = $this->table_element;
+		}
         // this->ismultientitymanaged contains
         // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
         $alias = 's';
         if ($this->element == 'societe') $alias = 'te';
 
         $sql = "SELECT MAX(te.".$fieldid.")";
-        $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
+        $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$table_element." as te";
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
@@ -1354,7 +1362,7 @@ abstract class CommonObject
 
 
         $sql = "SELECT MIN(te.".$fieldid.")";
-        $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
+        $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$table_element." as te";
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
