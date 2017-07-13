@@ -191,6 +191,11 @@ if (empty($reshook))
         $toselect='';
         $search_array_options=array();
     }
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+     || GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    {
+        $massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
+    }
 
     // Mass actions
     $objectclass='Commande';
@@ -776,7 +781,15 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 0, 1);
+		if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+		{
+		    print $form->selectyesno('valdate_invoices', 0, 1, 1);
+		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
+		}
+		else
+		{
+            print $form->selectyesno('valdate_invoices', 0, 1);
+		}
 		print '</td>';
 		print '</tr>';
 		print '</table>';
