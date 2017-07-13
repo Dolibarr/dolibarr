@@ -913,7 +913,7 @@ if (empty($action) || $action == 'view') {
 			if ($resultmid) {
 				$objmid = $db->fetch_object($resultmid);
 				$variousstatic->fetch($objmid->id);
-				$ref=$variousstatic->getNomUrl(1);
+				$ref=$langs->trans("VariousPayment").' '.$variousstatic->getNomUrl(1);
 			}
 			else dol_print_error($db);
 		}
