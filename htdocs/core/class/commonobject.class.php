@@ -4169,6 +4169,9 @@ abstract class CommonObject
             $optionsArray = $extrafields->attributes[$this->table_element]['label'];
         }
 
+        $table_element = $this->table_element;
+        if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
         // Request to get complementary values
         if (count($optionsArray) > 0)
         {
@@ -4180,7 +4183,7 @@ abstract class CommonObject
                     $sql.= ", ".$name;
                 }
             }
-            $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
+            $sql.= " FROM ".MAIN_DB_PREFIX.$table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
 
             dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);
@@ -4335,11 +4338,14 @@ abstract class CommonObject
             }
             $this->db->begin();
 
-            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+            $table_element = $this->table_element;
+            if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
+            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
             dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
             $this->db->query($sql_del);
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$table_element."_extrafields (fk_object";
             foreach($new_array_options as $key => $value)
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
