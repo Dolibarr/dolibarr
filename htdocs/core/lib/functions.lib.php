@@ -407,6 +407,9 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    {
 	        case 'none':
 	            break;
+		case 'float':
+		    if (! is_float($out)) { $out=''; }
+		    break;	
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
 	            break;
