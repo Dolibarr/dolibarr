@@ -65,6 +65,7 @@ $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
 $show_files = GETPOST('show_files','int');
 $confirm    = GETPOST('confirm','alpha');
+$cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
 

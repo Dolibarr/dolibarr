@@ -158,6 +158,8 @@ ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_user ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_facture_rec ADD COLUMN tms timestamp;
+UPDATE llx_facture_rec SET tms = datec where tms < '2000-01-01';
 
 CREATE TABLE llx_product_attribute
 (

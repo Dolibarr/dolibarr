@@ -46,13 +46,18 @@ $langs->load('compta');
 $langs->load('admin');
 $langs->load('other');
 
+$action     = GETPOST('action','alpha');
+$massaction = GETPOST('massaction','alpha');
+$show_files = GETPOST('show_files','int');
+$confirm    = GETPOST('confirm','alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect   = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'invoicetemplatelist';   // To manage different context of search
+
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
-$confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'alpha');
 $lineid=GETPOST('lineid','int');
 $ref=GETPOST('ref','alpha');
-$action=GETPOST('action', 'alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
@@ -919,7 +924,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
 
-		dol_fiche_head();
+		dol_fiche_head(null, '', '', 0);
 
 		$rowspan=4;
 		if (! empty($conf->projet->enabled)) $rowspan++;
@@ -966,10 +971,10 @@ if ($action == 'create')
 
 		// Public note
 		print '<tr>';
-		print '<td class="border tdtop">';
+		print '<td class="tdtop">';
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
-		print '<td valign="top" colspan="2">';
+		print '<td colspan="2">';
 		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         print $doleditor->Create(1);
 
@@ -977,7 +982,7 @@ if ($action == 'create')
 		if (empty($user->societe_id))
 		{
 		    print '<tr>';
-		    print '<td class="border tdtop">';
+		    print '<td class="tdtop">';
 		    print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 		    print '</td>';
 		    print '<td valign="top" colspan="2">';
@@ -1021,12 +1026,14 @@ if ($action == 'create')
 
 		print "</table>";
 
-		print '<br><br>';
+		dol_fiche_end();
 
 
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
-		print load_fiche_titre($title, '', 'calendar');
+		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$title, '', '');
+
+		dol_fiche_head(null, '', '', 0);
 
 		print '<table class="border" width="100%">';
 
@@ -1054,7 +1061,8 @@ if ($action == 'create')
 
 		print "</table>";
 
-		print '<br><br>';
+        dol_fiche_end();
+
 
 		$title = $langs->trans("ProductsAndServices");
 		if (empty($conf->service->enabled))
@@ -1091,8 +1099,6 @@ if ($action == 'create')
 			print '</td></tr>';
 		}
 		print "</table>\n";
-
-        dol_fiche_end();
 
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
         print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -1572,7 +1578,8 @@ else
 		 *  List mode
 		 */
 		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
-		$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when";
+		$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
+		$sql.= " f.datec, f.tms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		if (! $user->rights->societe->client->voir && ! $socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1584,10 +1591,10 @@ else
 		}
 		if ($search_ref) $sql .= natural_search('f.titre', $search_ref);
 		if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-		if ($search_frequency) $sql .= natural_search('f.frequency', $search_frequency);
 		if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 		if ($search_montant_vat != '') $sql.= natural_search('f.tva', $search_montant_vat, 1);
 		if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
+		if ($search_frequency > 0)    $sql.= natural_search('f.frequency', $search_frequency);
 		if ($search_frequency == '1') $sql.= ' AND f.frequency > 0';
 		if ($search_frequency == '0') $sql.= ' AND (f.frequency IS NULL or f.frequency = 0)';
 
@@ -1619,23 +1626,24 @@ else
 		}
 
 		$nbtotalofrecords = '';
-        	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-        	{
-        		$result = $db->query($sql);
-        		$nbtotalofrecords = $db->num_rows($result);
-        	}
+    	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+    	{
+    		$result = $db->query($sql);
+    		$nbtotalofrecords = $db->num_rows($result);
+    	}
 
-        	$sql.= $db->order($sortfield, $sortorder);
-        	$sql.= $db->plimit($limit+1,$offset);
+    	$sql.= $db->order($sortfield, $sortorder);
+    	$sql.= $db->plimit($limit+1,$offset);
 
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
 
-			$param='&socid='.$socid;
+			$param='';
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 			if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+			if ($socid)              $param.='&socid='.$socid;
 			if ($day)                $param.='&day='.$day;
 			if ($month)              $param.='&month='.$month;
 			if ($year)               $param.='&year=' .$year;
@@ -1645,9 +1653,9 @@ else
 			if ($search_ref)         $param.='&search_ref=' .$search_ref;
 			if ($search_societe)     $param.='&search_societe=' .$search_societe;
 			if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
-			if ($search_montant_vat != '')  $param.='&search_montant_vat='.$search_montant_vat;
+			if ($search_montant_vat != '') $param.='&search_montant_vat='.$search_montant_vat;
 			if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
-			if ($search_frequency)         $param.='&search_frequency=' .$search_frequency;
+			if ($search_frequency > 0)     $param.='&search_frequency='  .$search_frequency;
 			if ($option)             $param.="&option=".$option;
 			if ($optioncss != '')    $param.='&optioncss='.$optioncss;
 			// Add $param from extra fields
@@ -1660,6 +1668,7 @@ else
 
 			$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
+            $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 			$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 			//$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
@@ -1671,7 +1680,8 @@ else
         	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
             print '<input type="hidden" name="page" value="'.$page.'">';
-        	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+            print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+            print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
 
@@ -1857,25 +1867,25 @@ else
 					if (! empty($arrayfields['f.date_last_gen']['checked']))
 					{
 					   print '<td align="center">';
-					   print ($objp->frequency ? dol_print_date($objp->date_last_gen,'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+					   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_last_gen),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 					   print '</td>';
 					}
 					if (! empty($arrayfields['f.date_when']['checked']))
 					{
 					   print '<td align="center">';
-					   print ($objp->frequency ? dol_print_date($objp->date_when,'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+					   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_when),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 					   print '</td>';
 					}
 					if (! empty($arrayfields['f.datec']['checked']))
 					{
 					   print '<td align="center">';
-					   print dol_print_date($objp->datec,'dayhour');
+					   print dol_print_date($db->jdate($objp->datec),'dayhour');
 					   print '</td>';
 					}
 					if (! empty($arrayfields['f.tms']['checked']))
 					{
 					   print '<td align="center">';
-					   print dol_print_date($objp->tms,'dayjour');
+					   print dol_print_date($db->jdate($objp->tms),'dayhour');
 					   print '</td>';
 					}
 					// Action column
