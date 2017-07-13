@@ -325,14 +325,17 @@ else
 
 			print '<table class="border" width="100%">';
 
-			// Name
-			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-			print '<td class="valeur">'.$object->name;
-			if (empty($object->entity))
-			{
-				print img_picto($langs->trans("GlobalGroup"),'redstar');
-			}
-			print "</td></tr>\n";
+            // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
+            if (! empty($conf->mutlicompany->enabled))
+            {
+    			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+    			print '<td class="valeur">'.$object->name;
+    			if (empty($object->entity))
+    			{
+    				print img_picto($langs->trans("GlobalGroup"),'redstar');
+    			}
+    			print "</td></tr>\n";
+            }
 
 			// Multicompany
 			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
