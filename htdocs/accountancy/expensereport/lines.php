@@ -241,8 +241,8 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterButtons();
@@ -258,7 +258,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('');
     $checkpicto=$form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');

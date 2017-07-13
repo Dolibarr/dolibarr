@@ -371,7 +371,7 @@ if (empty($reshook))
 
     		}
 
-    		$cmd->classifyBilled($user);
+    		//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
 
     		if(!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
     		else $TFact[$object->id] = $object;
@@ -754,7 +754,7 @@ if ($resql)
 		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-		print '<table class="border" width="100%" >';
+		print '<table class="noborder" width="100%" >';
 		print '<tr>';
 		print '<td class="titlefieldmiddle">';
 		print $langs->trans('DateInvoice');
@@ -776,7 +776,7 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		print $form->selectyesno('valdate_invoices', 0, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';
@@ -838,7 +838,7 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -976,6 +976,7 @@ if ($resql)
     	    Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
     	    Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSentShort"),
     	    Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+    	    -3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
     	    Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
     	);
     	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
@@ -1033,7 +1034,7 @@ if ($resql)
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'],$_SERVER["PHP_SELF"],"c.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'],$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>'."\n";
 
 	$total=0;

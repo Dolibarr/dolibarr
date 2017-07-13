@@ -344,7 +344,7 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

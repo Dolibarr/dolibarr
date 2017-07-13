@@ -52,6 +52,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
     {
         if (empty($conf->workflow->enabled)) return 0;     // Module not active, we do nothing
 
+
         // Proposals to order
         if ($action == 'PROPAL_CLOSE_SIGNED')
         {
@@ -89,6 +90,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 return $ret;
             }
         }
+
+
 
         // Order classify billed proposal
         if ($action == 'ORDER_CLASSIFY_BILLED')
@@ -159,7 +162,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	}
         }
 
-        if ($action=='SHIPPING_VALIDATE') {
+        if ($action=='SHIPPING_VALIDATE')
+        {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 
