@@ -181,11 +181,12 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
 }
 
 /**
- *  Gets VAT to collect for the given year (and given quarter or month)
- *  The function gets the VAT in split results, as the VAT declaration asks
- *  to report the amounts for different VAT rates as different lines.
+ *  Gets Tax to collect for the given year (and given quarter or month)
+ *  The function gets the Tax in split results, as the Tax declaration asks
+ *  to report the amounts for different Tax rates as different lines.
  *  This function also accounts recurrent invoices.
  *
+ *  @param	string	$type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
  *  @param	DoliDB	$db          	Database handler object
  *  @param  int		$y           	Year
  *  @param  int		$q           	Quarter
@@ -196,7 +197,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
  *  @param  int		$m           	Month
  *  @return array       			List of quarters with vat
  */
-function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
+function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
 {
     global $conf;
 
@@ -210,8 +211,6 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $fk_facture2='fk_facture';
         $fk_payment='fk_paiement';
         $total_tva='total_tva';
-        $total_localtax1='total_localtax1';
-        $total_localtax2='total_localtax2';
         $paymenttable='paiement';
         $paymentfacturetable='paiement_facture';
         $invoicefieldref='facnumber';
@@ -224,13 +223,20 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         $fk_facture2='fk_facturefourn';
         $fk_payment='fk_paiementfourn';
         $total_tva='tva';
-        $total_localtax1='total_localtax1';
-        $total_localtax2='total_localtax2';
         $paymenttable='paiementfourn';
         $paymentfacturetable='paiementfourn_facturefourn';
         $invoicefieldref='ref';
     }
 
+	if ( strpos( $type, 'localtax' ) === 0 ) {
+		$f_rate = $type . '_tx';
+	} else {
+		$f_rate = 'tva_tx';
+	}
+
+	$total_localtax1='total_localtax1';
+	$total_localtax2='total_localtax2';
+    
     // CAS DES BIENS
 
     // Define sql request
@@ -238,7 +244,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     if ($modetax == 1)  // Option vat on delivery for goods (payment) and debit invoice for services
     {
         // Count on delivery date (use invoice date as delivery is unknown)
-        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
         $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
         $sql.= " d.date_start as date_start, d.date_end as date_end,";
         $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
@@ -273,7 +279,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     else    // Option vat on delivery for goods (payments) and payments for services
     {
         // Count on delivery date (use invoice date as delivery is unknown)
-        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
         $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
         $sql.= " d.date_start as date_start, d.date_end as date_end,";
         $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef as date_f, s.nom as company_name, s.rowid as company_id,";
@@ -378,7 +384,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     if ($modetax == 1)  // Option vat on delivery for goods (payment) and debit invoice for services
     {
         // Count on invoice date
-        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
         $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
         $sql.= " d.date_start as date_start, d.date_end as date_end,";
         $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
@@ -413,7 +419,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     else    // Option vat on delivery for goods (payments) and payments for services
     {
         // Count on payments date
-        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
         $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
         $sql.= " d.date_start as date_start, d.date_end as date_end,";
         $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
@@ -522,7 +528,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 		$sql='';
 
 		// Count on payments date
-		$sql = "SELECT e.rowid, d.product_type as dtype, e.rowid as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
+		$sql = "SELECT e.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .=" d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql.= " e.date_debut as date_start, e.date_fin as date_end,";
 		$sql.= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, s.nom as company_name, s.rowid as company_id, d.fk_c_type_fees as type,";
@@ -620,5 +626,26 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 	}
 
 	return $list;
+}
+
+/**
+ *  Gets VAT to collect for the given year (and given quarter or month)
+ *  The function gets the VAT in split results, as the VAT declaration asks
+ *  to report the amounts for different VAT rates as different lines.
+ *  This function also accounts recurrent invoices.
+ *
+ *  @param	DoliDB	$db          	Database handler object
+ *  @param  int		$y           	Year
+ *  @param  int		$q           	Quarter
+ *  @param  string	$date_start  	Start date
+ *  @param  string	$date_end    	End date
+ *  @param  int		$modetax     	0 or 1 (option vat on debit)
+ *  @param  int		$direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
+ *  @param  int		$m           	Month
+ *  @return array       			List of quarters with vat
+ */
+function vat_by_date ($db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
+{
+	return tax_by_date('vat', $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m);
 }
 
