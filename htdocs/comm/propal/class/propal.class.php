@@ -3502,7 +3502,7 @@ class Propal extends CommonObject
 /**
  *	Class to manage commercial proposal lines
  */
-class PropaleLigne  extends CommonObjectLine
+class PropaleLigne extends CommonObjectLine
 {
     public $element='propaldet';
     public $table_element='propaldet';

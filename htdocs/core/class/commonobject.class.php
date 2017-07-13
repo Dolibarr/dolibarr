@@ -4655,18 +4655,17 @@ abstract class CommonObject
 
 	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
-	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
+	 *	 Set buy price = sell price if ForceBuyingPriceIfNull configured,
 	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
 	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *
-	 * @param float		$unitPrice		 product unit price
-	 * @param float		$discountPercent line discount percent
-	 * @param int		$fk_product		 product id
-	 *
-	 * @return	float <0 if ko, buyprice if ok
+	 * @param float		$unitPrice		 Product unit price
+	 * @param float		$discountPercent Line discount percent
+	 * @param int		$fk_product		 Product id
+	 * @return	float                    <0 if KO, buyprice if OK
 	 */
-	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0)
+	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
 		global $conf;
 
@@ -4973,6 +4972,8 @@ abstract class CommonObject
 
 	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
 
+	    $keys=array();
+	    $values = array();
 	    foreach ($fields as $k => $v) {
 	    	$keys[] = $k;
 	    	$values[] = $this->quote($v);
