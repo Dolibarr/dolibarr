@@ -81,7 +81,7 @@ if ($action == 'add_currency')
 	$langs->loadCacheCurrencies('');
 
 	$code = GETPOST('code', 'alpha');
-	$rate = GETPOST('rate', 'int');
+	$rate = GETPOST('rate', 'alpha');
 	$currency = new MultiCurrency($db);
 	$currency->code = $code;
 	$currency->name = !empty($langs->cache_currencies[$code]['label']) ? $langs->cache_currencies[$code]['label'].' ('.$langs->getCurrencySymbol($code).')' : $code;
