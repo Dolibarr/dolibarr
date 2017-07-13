@@ -65,9 +65,8 @@ class Commande extends CommonOrder
     public $contactid;
 
 	/**
-	 * Status of the order. Check the following constants:
+	 * Status of the order
 	 * @var int
-	 * @see Commande::STATUS_CANCELED, Commande::STATUS_DRAFT, Commande::STATUS_ACCEPTED, Commande::STATUS_CLOSED
 	 */
     public $statut;
 	/**

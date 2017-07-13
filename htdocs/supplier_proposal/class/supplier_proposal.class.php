@@ -2563,10 +2563,9 @@ class SupplierProposal extends CommonObject
 
 
 /**
- *	\class      SupplierProposalLine
- *	\brief      Class to manage supplier_proposal lines
+ *	Class to manage supplier_proposal lines
  */
-class SupplierProposalLine  extends CommonObjectLine
+class SupplierProposalLine extends CommonObjectLine
 {
     var $db;
     var $error;

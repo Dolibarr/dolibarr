@@ -1250,6 +1250,8 @@ $now = dol_now();
 // Add new proposal
 if ($action == 'create')
 {
+    $currency_code = $conf->currency;
+
 	print load_fiche_titre($langs->trans("NewProp"));
 
 	$soc = new Societe($db);

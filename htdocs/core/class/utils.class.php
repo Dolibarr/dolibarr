@@ -112,21 +112,33 @@ class Utils
 		}
 
 		$count=0;
+		$countdeleted=0;
+		$counterror=0;
 		if (count($filesarray))
 		{
 			foreach($filesarray as $key => $value)
 			{
-				//print "x ".$filesarray[$key]['fullname']."<br>\n";
+				//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
 				if ($filesarray[$key]['type'] == 'dir')
 				{
-					$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
+				    $startcount=0;
+				    $tmpcountdeleted=0;
+					$result=dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+				    $count+=$result;
+				    $countdeleted+=$tmpcountdeleted;
 				}
 				elseif ($filesarray[$key]['type'] == 'file')
 				{
 					// If (file that is not logfile) or (if logfile with option logfile)
 					if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 					{
-						$count+=(dol_delete_file($filesarray[$key]['fullname'])?1:0);
+					    $result=dol_delete_file($filesarray[$key]['fullname'], 1, 1);
+					    if ($result)
+					    {
+					        $count++;
+					        $countdeleted++;
+					    }
+					    else $counterror++;
 					}
 				}
 			}
@@ -140,8 +152,12 @@ class Utils
 			}
 		}
 
-		if ($count > 0) $this->output=$langs->trans("PurgeNDirectoriesDeleted", $count);
-		else $this->output=$langs->trans("PurgeNothingToDelete");
+		if ($count > 0)
+		{
+		    $this->output=$langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
+		    if ($count > $countdeleted) $this->output.='<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+		}
+		else $this->output=$langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)':'');
 
 		//return $count;
 		return 0;     // This function can be called by cron so must return 0 if OK
