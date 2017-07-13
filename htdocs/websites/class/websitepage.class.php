@@ -129,7 +129,7 @@ class WebsitePage extends CommonObject
 		$sql.= 'content,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
-		$sql.= 'date_modification';
+		$sql.= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->fk_website)?'NULL':$this->fk_website).',';
 		$sql .= ' '.(! isset($this->pageurl)?'NULL':"'".$this->db->escape($this->pageurl)."'").',';
