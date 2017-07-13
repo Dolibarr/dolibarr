@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2006       Marc Barilley/Ocebo     <marc@ocebo.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
@@ -5845,11 +5845,11 @@ class Form
      *	  @param	string	$morehtmlright	More html code to show after ref.
      * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
-    {
-    	global $langs,$conf,$hookmanager;
+	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
+	{
+		global $langs,$conf,$hookmanager;
 
-    	$ret='';
+		$ret='';
         if (empty($fieldid))  $fieldid='rowid';
         if (empty($fieldref)) $fieldref='ref';
 
@@ -5880,10 +5880,10 @@ class Form
         // Right part of banner
 		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
 
-        if ($previous_ref || $next_ref || $morehtml)
-        {
-        	$ret.='<div class="pagination"><ul>';
-        }
+		if ($previous_ref || $next_ref || $morehtml)
+		{
+			$ret.='<div class="pagination"><ul>';
+		}
         if ($morehtml)
         {
             $ret.='<li class="noborder litext">'.$morehtml.'</li>';
@@ -5914,7 +5914,7 @@ class Form
 		{
 		    $ret.=dol_htmlentities($object->name);
 		}
-		else if (in_array($object->element, array('contact', 'user', 'member')))
+		else if (in_array($object->element, array('contact', 'user', 'usergroup', 'member')))
 		{
 		    $ret.=dol_htmlentities($object->getFullName($langs));
 		}
