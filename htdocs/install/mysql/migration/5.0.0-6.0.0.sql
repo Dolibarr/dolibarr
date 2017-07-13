@@ -561,4 +561,4 @@ ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);
 UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
 UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';
 
-ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(1000);
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
