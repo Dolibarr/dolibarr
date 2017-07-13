@@ -407,7 +407,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    {
 	        case 'none':
 	            break;
-	        case 'int':
+	        case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
 	            if (! is_numeric($out)) { $out=''; }
 	            break;
 	        case 'intcomma':
