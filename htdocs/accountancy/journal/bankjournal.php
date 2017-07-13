@@ -169,9 +169,9 @@ if ($result) {
 
 		// Set accountancy code (for bank and thirdparty)
 		$compta_bank = $obj->account_number;
-		if ($obj->label == '(SupplierInvoicePayment)')
+		if ($obj->label == '(SupplierInvoicePayment)' || $obj->label == '(SupplierInvoicePaymentBack)')
 			$compta_soc = (! empty($obj->code_compta_fournisseur) ? $obj->code_compta_fournisseur : $account_supplier);
-		if ($obj->label == '(CustomerInvoicePayment)')
+		if ($obj->label == '(CustomerInvoicePayment)' || $obj->label == '(CustomerInvoicePaymentBack)')
 			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $account_customer);
 
 		$tabcompany[$obj->rowid] = array (
@@ -542,10 +542,10 @@ if ($action == 'export_csv') {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
 			$reflabel = $val["ref"];
-			if ($reflabel == '(SupplierInvoicePayment)') {
+			if ($reflabel == '(SupplierInvoicePayment)' || $reflabel == '(SupplierInvoicePaymentBack)') {
 				$reflabel = $langs->trans('Supplier');
 			}
-			if ($reflabel == '(CustomerInvoicePayment)') {
+			if ($reflabel == '(CustomerInvoicePayment)' || $reflabel == '(CustomerInvoicePaymentBack)') {
 				$reflabel = $langs->trans('Customer');
 			}
 			if ($reflabel == '(SocialContributionPayment)') {
@@ -769,10 +769,10 @@ if (empty($action) || $action == 'view') {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$reflabel = $val["ref"];
-		if ($reflabel == '(SupplierInvoicePayment)') {
+		if ($reflabel == '(SupplierInvoicePayment)' || $reflabel == '(SupplierInvoicePaymentBack)') {
 			$reflabel = $langs->trans('Supplier');
 		}
-		if ($reflabel == '(CustomerInvoicePayment)') {
+		if ($reflabel == '(CustomerInvoicePayment)' || $reflabel == '(CustomerInvoicePaymentBack)') {
 			$reflabel = $langs->trans('Customer');
 		}		
 		if ($reflabel == '(SocialContributionPayment)') {
