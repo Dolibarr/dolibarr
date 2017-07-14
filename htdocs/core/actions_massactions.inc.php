@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 // $objectclass and $$objectlabel must be defined
 // $parameters, $object, $action must be defined for the hook.
 
+// $permtoread, $permtocreate and $permtodelete may be defined
 // $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
 
@@ -522,6 +523,66 @@ if ($action == 'remove_file')
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
     $action='';
+}
+
+// Validate  records
+if (! $error && $massaction == 'validate' && $permtocreate)
+{
+	if ($object->element == 'invoice_supplier' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
+	{
+		$langs->load("errors");
+		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
+		$error++;
+	}
+	if (! $error)
+	{
+		$db->begin();
+
+		$objecttmp=new $objectclass($db);
+		$nbok = 0;
+		foreach($toselect as $toselectid)
+		{
+			$result=$objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				//if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
+				//else
+				$result = $objecttmp->validate($user);
+				if ($result == 0)
+				{
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');
+					$error++;
+					break;
+				}
+				elseif ($result < 0)
+				{
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+				else $nbok++;
+			}
+			else
+			{
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (! $error)
+		{
+			if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+		//var_dump($listofobjectthirdparties);exit;
+	}
 }
 
 // Delete records
