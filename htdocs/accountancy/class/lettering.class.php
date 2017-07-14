@@ -19,8 +19,8 @@
 
 /**
  * \file      accountancy/class/bookkeeping.class.php
- * \ingroup   Accounting Expert
- * \brief     Fichier de la classe des comptes comptable
+ * \ingroup   Advanced accountancy
+ * \brief     File of class for lettering
  */
 
 include_once DOL_DOCUMENT_ROOT."/accountancy/class/bookkeeping.class.php";

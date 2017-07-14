@@ -55,6 +55,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
     {
         include_once $pathoffiletoeditsrc;
         if (class_exists($objectname)) $object=new $objectname($db);
+        else return -1;
 
         // Backup old file
         dol_copy($pathoffiletoeditsrc, $pathoffiletoeditsrc.'.back', $newmask, 1);
@@ -109,7 +110,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
 
         //file_put_contents($pathoffiletoedittmp, $contentclass);
         file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
-        @chmod($pathoffiletoedit, octdec($newmask));
+        @chmod($pathoffiletoedittarget, octdec($newmask));
 
         return 1;
     }
@@ -139,6 +140,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask)
     {
         dol_include_once(strtolower($module).'/class/'.strtolower($objectname).'.class.php');
         if (class_exists($objectname)) $object=new $objectname($db);
+        else return -1;
     }
     catch(Exception $e)
     {
@@ -171,7 +173,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask)
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
 
     file_put_contents($pathoffiletoedittarget, $contentsql);
-    @chmod($pathoffiletoedit, octdec($newmask));
+    @chmod($pathoffiletoedittarget, octdec($newmask));
 
 
     // Edit .key.sql file
@@ -199,7 +201,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask)
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
 
     file_put_contents($pathoffiletoedittarget, $contentsql);
-    @chmod($pathoffiletoedit, octdec($newmask));
+    @chmod($pathoffiletoedittarget, octdec($newmask));
 
     return 1;
 }

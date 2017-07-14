@@ -51,7 +51,7 @@ class Categorie extends CommonObject
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
 
     const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
-	const TYPE_PROJECT = 6;
+	const TYPE_PROJECT = 6;    // TODO Replace this value with 'project'
     const TYPE_BANK_LINE = 'bank_line';
 	public $picto = 'category';
 

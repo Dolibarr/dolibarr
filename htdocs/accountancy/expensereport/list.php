@@ -95,7 +95,7 @@ if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $search_expensereport = '';
     $search_label = '';
@@ -174,7 +174,7 @@ llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 
 // Expense report lines
 $sql = "SELECT er.ref, er.rowid as erid, er.date_debut,";
-$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.date,";
+$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.vat_src_code, erd.date,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
@@ -284,8 +284,8 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
-	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
+	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"', $sortfield, $sortorder);
 	$checkpicto='';
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
@@ -333,7 +333,7 @@ if ($result) {
 
 		// Vat rate
 		print '<td align="right">';
-		print price($objp->tva_tx_line);
+		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
 		// Current account

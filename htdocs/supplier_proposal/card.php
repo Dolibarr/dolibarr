@@ -983,7 +983,9 @@ $now = dol_now();
 // Add new askprice
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewAskPrice"));
+    $currency_code = $conf->currency;
+
+    print load_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)

@@ -4169,6 +4169,9 @@ abstract class CommonObject
             $optionsArray = $extrafields->attributes[$this->table_element]['label'];
         }
 
+        $table_element = $this->table_element;
+        if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
         // Request to get complementary values
         if (count($optionsArray) > 0)
         {
@@ -4180,7 +4183,7 @@ abstract class CommonObject
                     $sql.= ", ".$name;
                 }
             }
-            $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
+            $sql.= " FROM ".MAIN_DB_PREFIX.$table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
 
             dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);
@@ -4226,7 +4229,10 @@ abstract class CommonObject
 	{
 		$this->db->begin();
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+		$table_element = $this->table_element;
+		if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
 		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
 		$resql=$this->db->query($sql_del);
 		if (! $resql)
@@ -4332,11 +4338,14 @@ abstract class CommonObject
             }
             $this->db->begin();
 
-            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+            $table_element = $this->table_element;
+            if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
+            $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
             dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
             $this->db->query($sql_del);
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$table_element."_extrafields (fk_object";
             foreach($new_array_options as $key => $value)
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
@@ -4646,18 +4655,17 @@ abstract class CommonObject
 
 	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
-	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
+	 *	 Set buy price = sell price if ForceBuyingPriceIfNull configured,
 	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
 	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *
-	 * @param float		$unitPrice		 product unit price
-	 * @param float		$discountPercent line discount percent
-	 * @param int		$fk_product		 product id
-	 *
-	 * @return	float <0 if ko, buyprice if ok
+	 * @param float		$unitPrice		 Product unit price
+	 * @param float		$discountPercent Line discount percent
+	 * @param int		$fk_product		 Product id
+	 * @return	float                    <0 if KO, buyprice if OK
 	 */
-	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0)
+	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
 		global $conf;
 
@@ -4964,6 +4972,8 @@ abstract class CommonObject
 
 	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
 
+	    $keys=array();
+	    $values = array();
 	    foreach ($fields as $k => $v) {
 	    	$keys[] = $k;
 	    	$values[] = $this->quote($v);

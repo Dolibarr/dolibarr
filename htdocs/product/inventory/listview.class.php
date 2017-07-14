@@ -221,7 +221,7 @@ class Listview
      */
     private function search($sql, &$TParam)
     {
-		if (empty($TParam['no-auto-sql-search']) && !GETPOST("button_removefilter_x") && !GETPOST("button_removefilter.x") && !GETPOST("button_removefilter"))
+		if (empty($TParam['no-auto-sql-search']) && !GETPOST('button_removefilter_x','alpha') && !GETPOST('button_removefilter.x','alpha') && !GETPOST('button_removefilter','alpha'))
 		{
 			foreach ($TParam['search'] as $field => $info)
 			{
@@ -331,7 +331,7 @@ class Listview
 			if(empty($TSearch[$key]))$TSearch[$key]='';
 		}
 		
-		$removeFilter = (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter"));
+		$removeFilter = (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha'));
 		foreach($TParam['search'] as $key => $param_search)
 		{
 			if ($removeFilter) $value = '';

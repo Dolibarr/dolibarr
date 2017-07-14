@@ -116,7 +116,7 @@ print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 print '<div class="center">';
 print $langs->trans("BackupDesc",DOL_DATA_ROOT);
 print '</div>';
-print '<br><br>';
+print '<br>';
 
 ?>
 

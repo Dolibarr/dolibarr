@@ -460,7 +460,7 @@ if ($id > 0 || ! empty($ref))
 			    // Third party
 			    $morehtmlref.=$langs->trans("ThirdParty").': ';
 			    if (!empty($projectstatic->thirdparty)) {
-				    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+                    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
 			    }
 			    $morehtmlref.='</div>';
 			}
