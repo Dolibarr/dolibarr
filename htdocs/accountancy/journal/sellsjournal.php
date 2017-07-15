@@ -264,7 +264,7 @@ if ($action == 'writebookkeeping') {
 						{
 							$error++;
 							$errorforline++;
-							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
 						else
 						{
@@ -311,7 +311,7 @@ if ($action == 'writebookkeeping') {
 							{
 								$error++;
 								$errorforline++;
-								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
 							else
 							{
@@ -364,7 +364,7 @@ if ($action == 'writebookkeeping') {
 							{
 								$error++;
 								$errorforline++;
-								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
 							else
 							{

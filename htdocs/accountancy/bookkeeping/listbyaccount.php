@@ -236,7 +236,7 @@ print '<td class="liste_titre"><input type="text" size="7" class="flat" name="se
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_account" value="' . $search_label_account . '"/></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
 print '<td class="liste_titre" align="right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
@@ -250,7 +250,7 @@ print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_re
 print_liste_field_titre($langs->trans("Label"));
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
 

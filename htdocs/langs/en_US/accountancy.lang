@@ -89,7 +89,7 @@ ValidTransaction=Validate transaction
 WriteBookKeeping=Journalize transactions in Ledger
 Bookkeeping=Ledger
 AccountBalance=Account balance
-
+ObjectsRef=Source object ref
 CAHTF=Total purchase supplier before tax
 TotalExpenseReport=Total expense report
 InvoiceLines=Lines of invoices to bind
@@ -176,8 +176,8 @@ AddCompteFromBK=Add accounting accounts to the group
 ReportThirdParty=List third party account
 DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 ListAccounts=List of the accounting accounts
-UnknownAccountForThirdparty=Unknown third party account. We will use %s.
-UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error.
+UnknownAccountForThirdparty=Unknown third party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Class of account
 Pcgsubtype=Subclass of account
