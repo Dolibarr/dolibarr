@@ -121,7 +121,7 @@ if ($result) {
 	$tabuser = array ();
 
 	$num = $db->num_rows($result);
-	
+
 	// Variables
 	$account_salary = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT)) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
 	$account_vat = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
@@ -138,7 +138,7 @@ if ($result) {
 		$compta_tva = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $account_vat);
 		$compta_localtax1 = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 		$compta_localtax2 = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-		
+
 		// Define array to display all VAT rates that use this accounting account $compta_tva
 		if (price2num($obj->tva_tx) || ! empty($obj->vat_src_code))
 		{
@@ -149,14 +149,14 @@ if ($result) {
 		$taber[$obj->rowid]["ref"] = $obj->ref;
 		$taber[$obj->rowid]["comments"] = $obj->comments;
 		$taber[$obj->rowid]["fk_expensereportdet"] = $obj->erdid;
-		
+
 		// Avoid warnings
 		if (! isset($tabttc[$obj->rowid][$compta_user])) $tabttc[$obj->rowid][$compta_user] = 0;
 		if (! isset($tabht[$obj->rowid][$compta_fees])) $tabht[$obj->rowid][$compta_fees] = 0;
 		if (! isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva] = 0;
 		if (! isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
 		if (! isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
-		
+
 		$tabttc[$obj->rowid][$compta_user] += $obj->total_ttc;
 		$tabht[$obj->rowid][$compta_fees] += $obj->total_ht;
 		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
@@ -356,6 +356,22 @@ if ($action == 'writebookkeeping') {
 	}
 
 	$action='';
+
+	// Must reload data, so we make a redirect
+	if (count($tabpay) != $error)
+	{
+		$param='';
+		$param='id_journal='.$id_journal;
+		$param.='&date_startday='.$date_startday;
+		$param.='&date_startmonth='.$date_startmonth;
+		$param.='&date_startyear='.$date_startyear;
+		$param.='&date_endday='.$date_endday;
+		$param.='&date_endmonth='.$date_endmonth;
+		$param.='&date_endyear='.$date_endyear;
+		$param.='&in_bookeeping='.$in_bookeeping;
+		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
+		exit;
+	}
 }
 
 /*

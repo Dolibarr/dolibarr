@@ -57,13 +57,13 @@ $langs->loadLangs(array("companies","other","compta","banks",'bills','donations'
 // Multi journal
 $id_journal = GETPOST('id_journal', 'int');
 
-$date_startmonth = GETPOST('date_startmonth');
-$date_startday = GETPOST('date_startday');
-$date_startyear = GETPOST('date_startyear');
-$date_endmonth = GETPOST('date_endmonth');
-$date_endday = GETPOST('date_endday');
-$date_endyear = GETPOST('date_endyear');
-$in_bookkeeping = GETPOST('in_bookkeeping');
+$date_startmonth = GETPOST('date_startmonth','int');
+$date_startday = GETPOST('date_startday','int');
+$date_startyear = GETPOST('date_startyear','int');
+$date_endmonth = GETPOST('date_endmonth','int');
+$date_endday = GETPOST('date_endday','int');
+$date_endyear = GETPOST('date_endyear','int');
+$in_bookkeeping = GETPOST('in_bookkeeping','aZ09');
 if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 
 $now = dol_now();
@@ -645,6 +645,22 @@ if (! $error && $action == 'writebookkeeping') {
 	}
 
 	$action = '';
+
+	// Must reload data, so we make a redirect
+	if (count($tabpay) != $error)
+	{
+		$param='';
+		$param='id_journal='.$id_journal;
+		$param.='&date_startday='.$date_startday;
+		$param.='&date_startmonth='.$date_startmonth;
+		$param.='&date_startyear='.$date_startyear;
+		$param.='&date_endday='.$date_endday;
+		$param.='&date_endmonth='.$date_endmonth;
+		$param.='&date_endyear='.$date_endyear;
+		$param.='&in_bookeeping='.$in_bookeeping;
+		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
+		exit;
+	}
 }
 
 // Export
