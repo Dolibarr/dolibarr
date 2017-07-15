@@ -680,8 +680,28 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			$reflabel = $langs->trans('Employee');
 		}
 
-		$companystatic->id = $tabcompany[$key]['id'];
-		$companystatic->name = $tabcompany[$key]['name'];
+		if (! empty($tabcompany[$key]['id']))
+		{
+			$companystatic->id = $tabcompany[$key]['id'];
+			$companystatic->name = $tabcompany[$key]['name'];
+		}
+		else
+		{
+			$companystatic->id = 0;
+			$companystatic->name = '';
+		}
+		if (! empty($tabuser[$key]['id']))
+		{
+			$userstatic->id = $tabuser[$key]['id'];
+			$userstatic->lastname = $tabuser[$key]['lastname'];
+			$userstatic->firstname = $tabuser[$key]['firstname'];
+		}
+		else
+		{
+			$userstatic->id = 0;
+			$userstatic->lastname = '';
+			$userstatic->firstname = '';
+		}
 
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {
