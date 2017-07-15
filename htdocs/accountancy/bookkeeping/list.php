@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2016		Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -455,7 +454,10 @@ print "</tr>\n";
 $total_debit = 0;
 $total_credit = 0;
 
-foreach ($object->lines as $line ) {
+$i=0;
+while ($i < min($num, $limit))
+{
+	$line = $object->lines[$i];
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -481,6 +483,8 @@ foreach ($object->lines as $line ) {
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';
 	print "</tr>\n";
+
+	$i++;
 }
 
 print '<tr class="liste_total">';

@@ -290,11 +290,11 @@ if (GETPOST('save') && $id && ! $cancel && $user->rights->banque->modifier)
         $error++;
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
     }
-    if (! empty($conf->accounting->enabled) && (empty($accountancy_code) || $accountancy_code == '-1'))
+    /*if (! empty($conf->accounting->enabled) && (empty($accountancy_code) || $accountancy_code == '-1'))
     {
     	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
     	$error++;
-    }
+    }*/
 
     if (! $error)
     {
@@ -666,12 +666,12 @@ if ($resql)
 		print '<td colspan="2">'.$langs->trans("Description").'</td>';
 		print '<td align=right>'.$langs->trans("Debit").'</td>';
 		print '<td align=right>'.$langs->trans("Credit").'</td>';
-		if (! empty($conf->accounting->enabled))
+		/*if (! empty($conf->accounting->enabled))
 		{
 			print '<td align="center">';
 			print $langs->trans("AccountAccounting");
 			print '</td>';
-		}
+		}*/
 		print '<td colspan="2" align="center">&nbsp;</td>';
 		print '</tr>';
 
@@ -692,16 +692,17 @@ if ($resql)
 		print '</td>';
 		print '<td align="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit").'"></td>';
 		print '<td align="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit").'"></td>';
-		if (! empty($conf->accounting->enabled))
+		/*if (! empty($conf->accounting->enabled))
 		{
 			print '<td align="center">';
 			print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
 			print '</td>';
-		}
+		}*/
 		print '<td colspan="2" align="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
+
 		print '</table>';
 		print '<br>';
 	}

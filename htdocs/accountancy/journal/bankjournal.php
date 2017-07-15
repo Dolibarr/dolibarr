@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
@@ -51,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/paymentvarious.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
 $langs->loadLangs(array("companies","other","compta","banks",'bills','donations',"accountancy","trips","salaries","hrm"));
 
@@ -99,7 +102,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 
 $idpays = $mysoc->country_id;
 
-$sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+$sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop,";
 $sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, bu2.type as typeop";
@@ -125,6 +128,7 @@ $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $societestatic = new Societe($db);
 $userstatic = new User($db);
+$bankaccountstatic = new Account($db);
 $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new TVA($db);
@@ -198,6 +202,7 @@ if ($result) {
 		$tabpay[$obj->rowid]["type_payment"] = $obj->fk_type;		// CHQ, VIR, LIQ, CB, ...
 		$tabpay[$obj->rowid]["ref"] = $obj->label;					// By default. Not unique. May be changed later
 		$tabpay[$obj->rowid]["fk_bank"] = $obj->rowid;
+		$tabpay[$obj->rowid]["fk_bank_account"] = $obj->fk_account;
 		if (preg_match('/^\((.*)\)$/i', $obj->label, $reg)) {
 			$tabpay[$obj->rowid]["lib"] = $langs->trans($reg[1]);
 		} else {
@@ -318,6 +323,8 @@ if ($result) {
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
+					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
+					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
 				}
 			}
 		}
@@ -774,7 +781,7 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("ObjectsRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
-	print "<td>" . $langs->trans("Type") . "</td>";
+	print "<td>" . $langs->trans("Label") . "</td>";
 	print "<td>" . $langs->trans("PaymentMode") . "</td>";
 	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";

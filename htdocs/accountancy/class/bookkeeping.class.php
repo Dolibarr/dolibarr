@@ -803,7 +803,7 @@ class BookKeeping extends CommonObject
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		$this->lines = array ();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
