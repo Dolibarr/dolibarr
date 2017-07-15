@@ -111,15 +111,15 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
-		
+
 		$r++;
 		$this->rights[$r][0] = 513;
 		$this->rights[$r][1] = 'Create/modify payment of salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'write';
-		$this->rights[$r][5] = '';
-		
+		$this->rights[$r][4] = 'payment';
+		$this->rights[$r][5] = 'write';
+
 		$r++;
 		$this->rights[$r][0] = 514;
 		$this->rights[$r][1] = 'Delete contracts/salaries';
@@ -140,8 +140,8 @@ class modSalaries extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
