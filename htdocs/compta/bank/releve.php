@@ -482,7 +482,7 @@ else
     $mesprevnext.='<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
     $mesprevnext.='</ul></div>';
 
-    $title=$langs->trans("AccountStatement").' '.$numref.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0, 'receipts');
+    $title=$langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $mesprevnext, 'title_bank.png');
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 	print '<br>';
