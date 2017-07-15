@@ -360,7 +360,6 @@ if ($action == 'writebookkeeping') {
 	// Must reload data, so we make a redirect
 	if (count($tabpay) != $error)
 	{
-		$param='';
 		$param='id_journal='.$id_journal;
 		$param.='&date_startday='.$date_startday;
 		$param.='&date_startmonth='.$date_startmonth;
