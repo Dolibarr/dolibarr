@@ -28,7 +28,13 @@ OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accoun
 OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
+JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
+NotYetInGeneralLedger=Not yet journalized in ledgers
+
+MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -154,7 +160,7 @@ DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
