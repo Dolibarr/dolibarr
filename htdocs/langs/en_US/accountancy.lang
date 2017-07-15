@@ -35,6 +35,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
+MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
