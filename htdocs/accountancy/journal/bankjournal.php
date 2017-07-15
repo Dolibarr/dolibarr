@@ -118,6 +118,7 @@ if ($in_bookkeeping == 'already')
 if ($in_bookkeeping == 'notyet')
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 $sql .= " ORDER BY b.datev";
+//print $sql;
 
 $object = new Account($db);
 $paymentstatic = new Paiement($db);
@@ -158,10 +159,10 @@ if ($result) {
 	$tabtp = array ();
 	$tabtype = array ();
 
-	// Loop on each line into bank account. For each line, we should get:
-	// on line tabpay = line into bank
-	// one line for bank jounral = tabbq
-	// one line for thirdparty journal = tabtp
+	// Loop on each line into llx_bank table. For each line, we should get:
+	// one line tabpay = line into bank
+	// one line for bank record = tabbq
+	// one line for thirdparty record = tabtp
 	$i = 0;
 	while ( $i < $num )
 	{
@@ -202,11 +203,16 @@ if ($result) {
 		}
 		$links = $object->get_url($obj->rowid);
 
-		/*var_dump($i);
-		var_dump($links);*/
+		//var_dump($i);
+		//var_dump($tabpay);
+
+		// By default
+		$tabpay[$obj->rowid]['type'] = 'unknown';	// Can be SOLD, miscellaneous entry, payment of patient, or old record with no links in bank_url.
+		$tabtype[$obj->rowid] = 'unknown';
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
+
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
 
@@ -217,6 +223,14 @@ if ($result) {
 					// We save tabtype for a future use, to remember what kind of payment it is
 					$tabpay[$obj->rowid]['type'] = $links[$key]['type'];
 					$tabtype[$obj->rowid] = $links[$key]['type'];
+				}
+				elseif (in_array($links[$key]['type'], array('company', 'user')))
+				{
+					if ($tabpay[$obj->rowid]['type'] == 'unknown')
+					{
+						// We can guess here it is a bank record for a company or a user.
+						// But we won't be able to record somewhere else than into a waiting account, because there is no other journal to record the contreparty.
+					}
 				}
 
 				if ($links[$key]['type'] == 'payment') {
@@ -305,10 +319,6 @@ if ($result) {
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
 				}
 			}
-		}
-		else
-		{
-			$tabpay[$obj->rowid]['type'] = 'unknown';	// Can be SOLD, miscellaneous entry, payment of patient, or old record with no links in bank_url.
 		}
 
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
@@ -586,13 +596,16 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->label_compte = '';
 						$bookkeeping->doc_ref = '';
 					} else {
-						// Temporary account
-						$bookkeeping->label_operation = '';
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->subledger_label = '';
-						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-						$bookkeeping->label_compte = '';
-						$bookkeeping->doc_ref = $k;
+						if ($tabtype[$key] == 'unknown')	// Unknown transaction, we will use a waiting account for thirdparty.
+						{
+							// Temporary account
+							$bookkeeping->label_operation = '';
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
+							$bookkeeping->label_compte = '';
+							$bookkeeping->doc_ref = $k;
+						}
 					}
 
 					$result = $bookkeeping->create($user);
@@ -1054,12 +1067,21 @@ if (empty($action) || $action == 'view') {
 					$accounttoshow = length_accounta($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
-						$errorstring='ThirdpartyDefaultAccountNotDefined';
-						if ($tabtype[$key] == 'payment') $errorstring='MainAccountForCustomersNotDefined';
-						if ($tabtype[$key] == 'payment_supplier') $errorstring='MainAccountForSuppliersNotDefined';
-						if ($tabtype[$key] == 'payment_expensereport') $errorstring='MainAccountForUsersNotDefined';
-						if ($tabtype[$key] == 'payment_salary') $errorstring='MainAccountForUsersNotDefined';
-						print '<span class="error">'.$langs->trans($errorstring).'</span>';
+						if ($tabtype[$key] == 'unknown')
+						{
+							// We will accept writing, but into a waiting account
+							print '<span class="warning">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>';	// We will a waiting account
+						}
+						else
+						{
+							// We will refuse writing
+							$errorstring='UnknownAccountForThirdpartyBlocking';
+							if ($tabtype[$key] == 'payment') $errorstring='MainAccountForCustomersNotDefined';
+							if ($tabtype[$key] == 'payment_supplier') $errorstring='MainAccountForSuppliersNotDefined';
+							if ($tabtype[$key] == 'payment_expensereport') $errorstring='MainAccountForUsersNotDefined';
+							if ($tabtype[$key] == 'payment_salary') $errorstring='MainAccountForUsersNotDefined';
+							print '<span class="error">'.$langs->trans($errorstring).'</span>';
+						}
 					}
 					else print $accounttoshow;
 					print "</td>";

@@ -377,28 +377,28 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
-print $langs->trans('From') . ': ';
+print $langs->trans('From') . ' ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to') . ': ';
+print $langs->trans('to') . ' ';
 print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 print '</div>';
 print '</td>';
 print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
-print $langs->trans('From');
+print $langs->trans('From').' ';
 print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to');
+print $langs->trans('to').' ';
 print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '</td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
-print $langs->trans('From');
+print $langs->trans('From').' ';
 // TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 // use setup of keypress to select thirdparty and this hang browser on large database.
 if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
@@ -411,7 +411,7 @@ else
 }
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to');
+print $langs->trans('to').' ';
 // TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 // use setup of keypress to select thirdparty and this hang browser on large database.
 if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))

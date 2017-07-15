@@ -51,7 +51,7 @@ AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.    
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.    
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Define default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s. 
 AccountancyAreaDescBank=STEP %s: Define accounting accounts for each bank and financial accounts. For this, go on the card of each financial account. You can start from page %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
@@ -176,6 +176,8 @@ AddCompteFromBK=Add accounting accounts to the group
 ReportThirdParty=List third party account
 DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 ListAccounts=List of the accounting accounts
+UnknownAccountForThirdparty=Unknown third party account. We will use %s.
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error.
 
 Pcgtype=Class of account
 Pcgsubtype=Subclass of account
