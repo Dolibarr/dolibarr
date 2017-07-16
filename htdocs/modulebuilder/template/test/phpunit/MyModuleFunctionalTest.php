@@ -231,7 +231,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/boxes.php');
 		$this->authenticate();
-		return $this->assertContains('mybox', $this->source(), "Box enabled");
+		return $this->assertContains('mymodulewidget1', $this->source(), "Box enabled");
 	}
 
 	/**
@@ -244,7 +244,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
 		return $this->assertContains(
-			'interface_99_modMyModule_MyTrigger.class.php',
+			'interface_99_modMyModule_MyModuleTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
 		);
