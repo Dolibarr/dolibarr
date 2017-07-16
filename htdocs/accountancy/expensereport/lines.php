@@ -82,7 +82,7 @@ $formaccounting = new FormAccounting($db);
  */
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_expensereport = '';
 	$search_label = '';
@@ -146,7 +146,7 @@ print '<script type="text/javascript">
  * Expense reports lines
  */
 $sql = "SELECT er.ref, er.rowid as erid,";
-$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.date,";
+$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.vat_src_code, erd.date,";
 $sql .= " aa.label, aa.account_number,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
@@ -241,8 +241,8 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="right flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterButtons();
@@ -258,7 +258,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('');
     $checkpicto=$form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
@@ -293,7 +293,7 @@ if ($result) {
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 
-		print '<td align="center">' . price($objp->tva_tx) . '</td>';
+		print '<td align="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
 		print '<td>' . $codeCompta . '</td>';
 

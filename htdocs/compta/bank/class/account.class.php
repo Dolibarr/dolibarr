@@ -394,9 +394,10 @@ class Account extends CommonObject
      *  @param	User		$user			User that create
      *  @param	string		$emetteur		Name of cheque writer
      *  @param	string		$banque			Bank of cheque writer
+     *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
      *  @return	int							Rowid of added entry, <0 if KO
      */
-    function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='')
+    function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='')
     {
 	    // Deprecatîon warning
 	    if (is_numeric($oper)) {
@@ -457,6 +458,7 @@ class Account extends CommonObject
 		$accline->fk_user_author = $user->id;
 		$accline->fk_account = $this->rowid;
 		$accline->fk_type = $oper;
+		$accline->numero_compte = $accountancycode;
 
 		if ($num_chq) {
 			$accline->num_chq = $num_chq;
@@ -1684,8 +1686,9 @@ class AccountLine extends CommonObject
 		$sql .= ", num_chq";
 		$sql .= ", fk_account";
 		$sql .= ", fk_type";
-		$sql .= ",emetteur,banque";
+		$sql .= ", emetteur,banque";
 		$sql .= ", rappro";
+		$sql .= ", numero_compte";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->dateo)."'";
@@ -1699,6 +1702,7 @@ class AccountLine extends CommonObject
 		$sql .= ", ".($this->emetteur ? "'".$this->db->escape($this->emetteur)."'" : "null");
 		$sql .= ", ".($this->bank_chq ? "'".$this->db->escape($this->bank_chq)."'" : "null");
 		$sql .= ", ".(int) $this->rappro;
+		$sql .= ", ".($this->numero_compte ? "'".$this->db->escape($this->numero_compte)."'" : "''");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

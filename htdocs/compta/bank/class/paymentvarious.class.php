@@ -325,14 +325,14 @@ class PaymentVarious extends CommonObject
 		$sql.= " VALUES (";
 		$sql.= "'".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
-		$sql.= ", '".$this->sens."'";
+		$sql.= ", '".$this->db->escape($this->sens)."'";
 		$sql.= ", ".$this->amount;
-		$sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+		$sql.= ", '".$this->db->escape($this->type_payment)."'";
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
-		$sql.= ", '".$this->accountancy_code."'";
-		$sql.= ", '".$user->id."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", ".$user->id;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
@@ -342,7 +342,6 @@ class PaymentVarious extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
 
 			if ($this->id > 0)

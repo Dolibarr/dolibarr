@@ -95,7 +95,7 @@ $arrayfields=array();
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_ref="";
     $search_account="";
@@ -320,7 +320,7 @@ $form=new Form($db);
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
     $object = new FactureFournisseur($db);
-    $object->fetch($facid);
+    $result = $object->fetch($facid);
 
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
@@ -343,6 +343,80 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $total = $obj->total;
 
             print load_fiche_titre($langs->trans('DoPayment'));
+
+            // Add realtime total information
+            if (! empty($conf->use_javascript_ajax))
+            {
+            	print "\n".'<script type="text/javascript" language="javascript">';
+            	print '$(document).ready(function () {
+
+						function _elemToJson(selector)
+						{
+							var subJson = {};
+							$.map(selector.serializeArray(), function(n,i)
+							{
+								subJson[n["name"]] = n["value"];
+							});
+
+							return subJson;
+						}
+						function callForResult(imgId)
+						{
+							var json = {};
+							var form = $("#payment_form");
+
+							json["invoice_type"] = $("#invoice_type").val();
+            				json["amountPayment"] = $("#amountpayment").attr("value");
+							json["amounts"] = _elemToJson(form.find("input.amount"));
+							json["remains"] = _elemToJson(form.find("input.remain"));
+
+							if (imgId != null) {
+								json["imgClicked"] = imgId;
+							}
+
+							$.post("'.DOL_URL_ROOT.'/compta/ajaxpayment.php", json, function(data)
+							{
+								json = $.parseJSON(data);
+
+								form.data(json);
+
+								for (var key in json)
+								{
+									if (key == "result")	{
+										if (json["makeRed"]) {
+											$("#"+key).addClass("error");
+										} else {
+											$("#"+key).removeClass("error");
+										}
+										json[key]=json["label"]+" "+json[key];
+										$("#"+key).text(json[key]);
+									} else {console.log(key);
+										form.find("input[name*=\""+key+"\"]").each(function() {
+											$(this).attr("value", json[key]);
+										});
+									}
+								}
+							});
+						}
+						$("#payment_form").find("input.amount").change(function() {
+							callForResult();
+						});
+						$("#payment_form").find("input.amount").keyup(function() {
+							callForResult();
+						});
+			';
+
+            	print '	});'."\n";
+
+            	//Add js for AutoFill
+            	print ' $(document).ready(function () {';
+            	print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
+						});';
+            	print '	});'."\n";
+
+            	print '	</script>'."\n";
+            }
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -408,6 +482,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $num = $db->num_rows($resql);
 	                if ($num > 0)
 	                {
+	                	$sign=1;
+	                	if ($object->type == 2) $sign=-1;
+
 	                    $i = 0;
 	                    print '<br>';
 
@@ -447,6 +524,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    while ($i < $num)
 	                    {
 	                        $objp = $db->fetch_object($resql);
+
+	                        $invoice=new FactureFournisseur($db);
+	                        $invoice->fetch($objp->facid);
+	                        $paiement = $invoice->getSommePaiement();
+	                        $creditnotes=$invoice->getSumCreditNotesUsed();
+	                        $deposits=$invoice->getSumDepositsUsed();
+	                        $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+	                        $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+
+	                        // Multicurrency Price
+	                        if (!empty($conf->multicurrency->enabled))
+	                        {
+	                        	$multicurrency_payment = $invoice->getSommePaiement(1);
+	                        	$multicurrency_creditnotes=$invoice->getSumCreditNotesUsed(1);
+	                        	$multicurrency_deposits=$invoice->getSumDepositsUsed(1);
+	                        	$multicurrency_alreadypayed=price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits,'MT');
+	                        	$multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
+	                        }
 
 	                        print '<tr class="oddeven">';
 
@@ -503,27 +598,53 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	                        print '<td align="right">'.price($objp->am).'</td>';
 
-	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
+	                        print '<td align="right">'.price($remaintopay).'</td>';
 
+	                        // Amount
 	                        print '<td align="center">';
+
 	                        $namef = 'amount_'.$objp->facid;
-	                        if (!empty($conf->use_javascript_ajax))
-								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
-	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
+	                        $nameRemain = 'remain_'.$objp->facid;
+
+	                        if ($action != 'add_paiement')
+	                        {
+	                        	if (!empty($conf->use_javascript_ajax))
+	                        		print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
+	                        		print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+	                        		print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+	                        }
+	                        else
+	                        {
+	                        	print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
+	                        	print '<input type="hidden" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+	                        }
 							print "</td>";
 
-							// Multicurrency
-							if (!empty($conf->multicurrency->enabled))
+							// Multicurrency Price
+							if (! empty($conf->multicurrency->enabled))
 							{
-								print '<td align="center">';
+								print '<td align="right">';
+
+								// Add remind multicurrency amount
+								$namef = 'multicurrency_amount_'.$objp->facid;
+								$nameRemain = 'multicurrency_remain_'.$objp->facid;
+
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 								{
-    			                    $namef = 'multicurrency_amount_'.$objp->facid;
-    			                    if (!empty($conf->use_javascript_ajax))
-    									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
-    		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+									if ($action != 'add_paiement')
+									{
+										if (!empty($conf->use_javascript_ajax))
+											print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
+											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+									}
+									else
+									{
+										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
+										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+									}
 								}
-			                    print "</td>";
+								print "</td>";
 							}
 
 							print "</tr>\n";
@@ -544,8 +665,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
-	                        print '<td align="center">&nbsp;</td>';
-	                        if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+	                        print '<td align="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
+							if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 	                        print "</tr>\n";
 	                    }
 	                    print "</table>\n";

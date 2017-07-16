@@ -319,7 +319,7 @@ llxHeader('', $langs->trans("Payment"));
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
 	$facture = new Facture($db);
-	$result=$facture->fetch($facid);
+	$result = $facture->fetch($facid);
 
 	if ($result >= 0)
 	{
@@ -685,7 +685,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     {
                         if (!empty($conf->use_javascript_ajax))
 							print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
-                        print '<input type=hidden class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+                        print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
                         print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                     }
                     else
@@ -760,7 +760,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     if ($totalrecudeposits) print '+'.price($totalrecudeposits);
                     print '</b></td>';
                     print '<td align="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
-                    print '<td align="right" id="result" style="font-weight: bold;"></td>';
+                    print '<td align="right" id="result" style="font-weight: bold;"></td>';		// Autofilled
 					if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
                     print '<td align="center">&nbsp;</td>';
                     print "</tr>\n";
@@ -804,7 +804,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if (!empty($totalpayment)) $text=$langs->trans('ConfirmCustomerPayment',$totalpayment,$langs->trans("Currency".$conf->currency));
 			if (!empty($multicurrency_totalpayment))
 			{
-				$text.='<br />'.$langs->trans('ConfirmCustomerPayment',$multicurrency_totalpayment,$langs->trans("paymentInInvoiceCurrency"));
+				$text.='<br>'.$langs->trans('ConfirmCustomerPayment',$multicurrency_totalpayment,$langs->trans("paymentInInvoiceCurrency"));
 			}
             if (GETPOST('closepaidinvoices'))
             {

@@ -29,15 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("users");
-$langs->load("accountancy");
+$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
-$id=GETPOST("id",'int');
-$action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel','alpha');
+// Get parameters
+$id			= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 $label=GETPOST("label","alpha");
 $sens=GETPOST("sens","int");
@@ -61,114 +60,138 @@ $hookmanager->initHooks(array('variouscard','globalcard'));
  * Actions
  */
 
-if (! empty($cancel))
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-	header("Location: index.php");
-	exit;
-}
-
-if ($action == 'add' && empty($cancel))
-{
-	$error=0;
-
-	$datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
-	$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
-	if (empty($datev)) $datev=$datep;
-
-	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
-	$object->datev=$datev;
-	$object->datep=$datep;
-	$object->amount=price2num(GETPOST("amount"));
-	$object->label=GETPOST("label");
-	$object->note=GETPOST("note");
-	$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
-	$object->num_payment=GETPOST("num_payment");
-	$object->fk_user_author=$user->id;
-	$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
-
-	if (empty($datep) || empty($datev))
+	if ($cancel)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		$error++;
-	}
-	if (empty($object->type_payment) || $object->type_payment < 0)
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
-		$error++;
-	}
-	if (empty($object->amount))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
-		$error++;
-	}
-	if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
-		$error++;
-	}
-
-	if (! $error)
-	{
-		$db->begin();
-
-		$ret=$object->create($user);
-		if ($ret > 0)
+		if ($action != 'addlink')
 		{
-			$db->commit();
-			header("Location: index.php");
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
+			header("Location: ".$urltogo);
 			exit;
 		}
-		else
-		{
-			$db->rollback();
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action="create";
-		}
+		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		$action='';
 	}
 
-	$action='create';
-}
-
-if ($action == 'delete')
-{
-	$result=$object->fetch($id);
-
-	if ($object->rappro == 0)
+	if ($action == 'add')
 	{
-		$db->begin();
+		$error=0;
 
-		$ret=$object->delete($user);
-		if ($ret > 0)
+		$datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
+		$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		if (empty($datev)) $datev=$datep;
+
+		$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
+		$object->datev=$datev;
+		$object->datep=$datep;
+		$object->amount=price2num(GETPOST("amount"));
+		$object->label=GETPOST("label");
+		$object->note=GETPOST("note");
+		$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->num_payment=GETPOST("num_payment");
+		$object->fk_user_author=$user->id;
+		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
+		$object->sens=GETPOST('sens');
+
+		if (empty($datep) || empty($datev))
 		{
-			if ($object->fk_bank)
-			{
-				$accountline=new AccountLine($db);
-				$result=$accountline->fetch($object->fk_bank);
-				if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
-			}
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+			$error++;
+		}
+		if (empty($object->type_payment) || $object->type_payment < 0)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
+			$error++;
+		}
+		if (empty($object->amount))
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+			$error++;
+		}
+		if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
+			$error++;
+		}
+		if (! empty($conf->accounting->enabled) && ! $object->accountancy_code)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
+			$error++;
+		}
 
-			if ($result >= 0)
+		if (! $error)
+		{
+			$db->begin();
+
+			$ret=$object->create($user);
+			if ($ret > 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+				header("Location: index.php");
 				exit;
 			}
 			else
 			{
-				$object->error=$accountline->error;
+				$db->rollback();
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action="create";
+			}
+		}
+
+		$action='create';
+	}
+
+	if ($action == 'delete')
+	{
+		$result=$object->fetch($id);
+
+		if ($object->rappro == 0)
+		{
+			$db->begin();
+
+			$ret=$object->delete($user);
+			if ($ret > 0)
+			{
+				if ($object->fk_bank)
+				{
+					$accountline=new AccountLine($db);
+					$result=$accountline->fetch($object->fk_bank);
+					if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				}
+
+				if ($result >= 0)
+				{
+					$db->commit();
+					header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+					exit;
+				}
+				else
+				{
+					$object->error=$accountline->error;
+					$db->rollback();
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+			else
+			{
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
 		{
-			$db->rollback();
-			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 		}
-	}
-	else
-	{
-		setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
 
@@ -200,8 +223,9 @@ if ($id)
 /* ************************************************************************** */
 if ($action == 'create')
 {
-	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	print load_fiche_titre($langs->trans("NewVariousPayment"),'', 'title_accountancy.png');
@@ -269,7 +293,7 @@ if ($action == 'create')
 	// Accountancy account
 	if (! empty($conf->accounting->enabled))
 	{
-		print '<tr><td>'.$langs->trans("AccountAccounting").'</td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
         print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
         print '</td></tr>';
@@ -292,7 +316,7 @@ if ($action == 'create')
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print ' &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 

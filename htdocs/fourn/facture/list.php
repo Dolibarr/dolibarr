@@ -194,7 +194,7 @@ if (empty($reshook))
 {
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x"))		// All test must be present to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha'))		// All tests must be present to be compatible with all browsers
     {
         $search_all="";
         $search_user='';
@@ -237,6 +237,7 @@ if (empty($reshook))
     $objectclass='FactureFournisseur';
     $objectlabel='SupplierInvoices';
     $permtoread = $user->rights->fournisseur->facture->lire;
+    $permtocreate = $user->rights->fournisseur->facture->creer;
     $permtodelete = $user->rights->fournisseur->facture->supprimer;
     $uploaddir = $conf->fournisseur->facture->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -463,7 +464,8 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
+	    'validate'=>$langs->trans("Validate"),
+		//'presend'=>$langs->trans("SendByMail"),
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");

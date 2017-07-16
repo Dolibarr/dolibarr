@@ -22,7 +22,7 @@
 
 /**
  * \file    accounting/bookkeeping/thirdparty_lettrage.php
- * \ingroup Accounting Expert
+ * \ingroup Advanced accountancy
  * \brief   Onglet de gestion de parametrages des ventilations
  */
 

@@ -421,7 +421,7 @@ class ExpenseReport extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity = " . getEntity('c_paiement', 2);
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
-        $sql.= $restrict;
+        //$sql.= $restrict;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql) ;

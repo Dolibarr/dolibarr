@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *		\file	   htdocs/compta/bank/various_payment/index.php
- *	  \ingroup	bank
- *		\brief	 	List of various payments
+ *	\file	    htdocs/compta/bank/various_payment/index.php
+ *	\ingroup	bank
+ *	\brief	 	List of various payments
  */
 
 require '../../../main.inc.php';
@@ -33,6 +34,8 @@ $langs->load("bills");
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '', '', '');
+
+$optioncss = GETPOST('optioncss','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
@@ -50,11 +53,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="v.datep";
 if (! $sortorder) $sortorder="DESC";
-$optioncss = GETPOST('optioncss','alpha');
 
-$filtre=$_GET["filtre"];
+$filtre=GETPOST("filtre",'alpha');
 
-if (empty($_REQUEST['typeid']))
+if (! GETPOST('typeid'))
 {
 	$newfiltre=str_replace('filtre=','',$filtre);
 	$filterarray=explode('-',$newfiltre);
@@ -66,10 +68,10 @@ if (empty($_REQUEST['typeid']))
 }
 else
 {
-	$typeid=$_REQUEST['typeid'];
+	$typeid=GETPOST('typeid');
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -240,9 +242,12 @@ if ($result)
 
 	$colspan=4;
 	if (! empty($conf->banque->enabled)) $colspan++;
-	print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
+	print '<tr class="liste_total">';
+	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
 	print '<td class="liste_total" align="right">'.price($total)."</td>";
-	print "<td></td></tr>";
+	print '<td></td>';
+	print '<td></td>';
+	print '</tr>';
 
 	print "</table>";
 	print '</div>';

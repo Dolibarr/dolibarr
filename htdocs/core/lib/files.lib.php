@@ -1113,12 +1113,13 @@ function dol_delete_dir($dir,$nophperrors=0)
  *  Remove a directory $dir and its subdirectories (or only files and subdirectories)
  *
  *  @param	string	$dir            Dir to delete
- *  @param  int		$count          Counter to count nb of deleted elements
+ *  @param  int		$count          Counter to count nb of elements found to delete
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$onlysub		Delete only files and subdir, not main directory
- *  @return int             		Number of files and directory removed
+ *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
+ *  @return int             		Number of files and directory we try to remove. NB really removed is returned into $countdeleted.
  */
-function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0,$onlysub=0)
+function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$countdeleted=0)
 {
     dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
     if (dol_is_dir($dir))
@@ -1134,13 +1135,13 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0,$onlysub=0)
                 {
                     if (is_dir(dol_osencode("$dir/$item")))
                     {
-                        $count=dol_delete_dir_recursive("$dir/$item",$count,$nophperrors);
+                        $count=dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted);
                     }
                     else
                     {
-                        dol_delete_file("$dir/$item",1,$nophperrors);
+                        $result=dol_delete_file("$dir/$item", 1, $nophperrors);
                         $count++;
-                        //echo " removing $dir/$item<br>\n";
+                        if ($result) $countdeleted++;
                     }
                 }
             }
@@ -1148,14 +1149,13 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0,$onlysub=0)
 
             if (empty($onlysub))
             {
-	            dol_delete_dir($dir,$nophperrors);
-    	        $count++;
-        	    //echo "removing $dir<br>\n";
+	            $result=dol_delete_dir($dir, $nophperrors);
+	            $count++;
+    	        if ($result) $countdeleted++;
             }
         }
     }
 
-    //echo "return=".$count;
     return $count;
 }
 
