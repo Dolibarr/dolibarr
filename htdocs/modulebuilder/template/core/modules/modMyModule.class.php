@@ -173,15 +173,13 @@ class modMyModule extends DolibarrModules
         */
 
 
-        // Boxes
-		// Add here list of php file(s) stored in core/boxes that contains class to show a widget.
-        $this->boxes = array();			// List of boxes
-		// Example:
-		//$this->boxes=array(
-		//    0=>array('file'=>'myboxa.php@mymodule','note'=>'','enabledbydefaulton'=>'Home'),
-		//    1=>array('file'=>'myboxb.php@mymodule','note'=>''),
-		//    2=>array('file'=>'myboxc.php@mymodule','note'=>'')
-		//);
+        // Boxes/Widgets
+		// Add here list of php file(s) stored in mymodule/core/boxes that contains class to show a widget.
+        $this->boxes = array(
+        	0=>array('file'=>'mymodulewidget1.php@mymodule','note'=>'Widget provided by MyModule','enabledbydefaulton'=>'Home'),
+        	//1=>array('file'=>'mymodulewidget2.php@mymodule','note'=>'Widget provided by MyModule'),
+        	//2=>array('file'=>'mymodulewidget3.php@mymodule','note'=>'Widget provided by MyModule')
+        );
 
 
 		// Cronjobs

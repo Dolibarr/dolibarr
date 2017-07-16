@@ -719,6 +719,7 @@ elseif (! empty($module))
         {
             $pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
             $pathtofilereadme = $modulelowercase.'/README.md';
+            $pathtochangelog = $modulelowercase.'/ChangeLog.md';
 
             if ($action != 'editfile' || empty($file))
             {
@@ -728,6 +729,10 @@ elseif (! empty($module))
 
                 print '<span class="fa fa-file"></span> '.$langs->trans("ReadmeFile").' : <strong>'.$pathtofilereadme.'</strong>';
                 print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofilereadme).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print '<br>';
+
+                print '<span class="fa fa-file"></span> '.$langs->trans("ChangeLog").' : <strong>'.$pathtochangelog.'</strong>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtochangelog).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                 print '<br>';
 
                 print '<br>';
@@ -794,13 +799,23 @@ elseif (! empty($module))
 
             	print '<br><br>';
 
-
+				// Readme file
             	print_fiche_titre($langs->trans("ReadmeFile"));
 
             	print '<div class="underbanner clearboth"></div>';
             	print '<div class="fichecenter">';
 
             	print $moduleobj->getDescLong();
+
+            	print '<br><br>';
+
+            	// ChangeLog
+            	print_fiche_titre($langs->trans("ChangeLog"));
+
+            	print '<div class="underbanner clearboth"></div>';
+            	print '<div class="fichecenter">';
+
+            	print $moduleobj->getChangeLog();
 
             	print '</div>';
             }
@@ -959,12 +974,20 @@ elseif (! empty($module))
                         $pathtoapi = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
                         $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.php';
                         $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.php';
+                        $pathtosql = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
+                        $pathtosqlkey = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.$pathtosql.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.$pathtosqlkey.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '</div>';
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong>';
@@ -1138,8 +1161,38 @@ elseif (! empty($module))
 
         if ($tab == 'hooks')
         {
-            print $langs->trans("FeatureNotYetAvailable");
+        	if ($action != 'editfile' || empty($file))
+			{
+				$pathtohook = strtolower($module).'/class/actions_'.strtolower($module).'.class.php';
+   			    print '<span class="fa fa-file"></span> '.$langs->trans("HooksFile").' : <strong>'.$pathtohook.'</strong>';
+   			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+   			    print '<br>';
+			}
+			else
+			{
+        	    $fullpathoffile=dol_buildpath($file, 0);
 
+        	    $content = file_get_contents($fullpathoffile);
+
+			    // New module
+			    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="action" value="savefile">';
+			    print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+			    print '<input type="hidden" name="tab" value="'.$tab.'">';
+			    print '<input type="hidden" name="module" value="'.$module.'">';
+
+			    $doleditor=new DolEditor('editfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '99%');
+                print $doleditor->Create(1, '', false);
+                print '<br>';
+                print '<center>';
+                print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print ' &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+                print '</center>';
+
+                print '</form>';
+			}
         }
 
         if ($tab == 'triggers')
@@ -1155,7 +1208,7 @@ elseif (! empty($module))
     			{
     			    $pathtofile = $trigger['relpath'];
 
-    			    print '<span class="fa fa-file"></span> '.$langs->trans("TriggerFile").' : <strong>'.$pathtofile.'</strong>';
+    			    print '<span class="fa fa-file"></span> '.$langs->trans("TriggersFile").' : <strong>'.$pathtofile.'</strong>';
     			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
     			    print '<br>';
     			}
@@ -1189,8 +1242,46 @@ elseif (! empty($module))
 
         if ($tab == 'widgets')
         {
-    		print $langs->trans("FeatureNotYetAvailable");
+            require_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
+			$widgets = ModeleBoxes::getWidgetsList(array('/'.strtolower($module).'/core/boxes'));
+
+			if ($action != 'editfile' || empty($file))
+			{
+    			foreach ($widgets as $widget)
+    			{
+    			    $pathtofile = $widget['relpath'];
+
+    			    print '<span class="fa fa-file"></span> '.$langs->trans("WidgetFile").' : <strong>'.$pathtofile.'</strong>';
+    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+    			    print '<br>';
+    			}
+			}
+			else
+			{
+        	    $fullpathoffile=dol_buildpath($file, 0);
+
+        	    $content = file_get_contents($fullpathoffile);
+
+			    // New module
+			    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="action" value="savefile">';
+			    print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+			    print '<input type="hidden" name="tab" value="'.$tab.'">';
+			    print '<input type="hidden" name="module" value="'.$module.'">';
+
+			    $doleditor=new DolEditor('editfilecontent', $content, '', '600', 'Full', 'In', true, false, false, 0, '99%');
+                print $doleditor->Create(1, '', false);
+                print '<br>';
+                print '<center>';
+                print '<input type="submit" class="button" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print ' &nbsp; ';
+                print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+                print '</center>';
+
+                print '</form>';
+			}
         }
 
         if ($tab == 'buildpackage')
