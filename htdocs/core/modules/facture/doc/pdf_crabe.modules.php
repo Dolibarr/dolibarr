@@ -132,7 +132,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->posxdiscount=162;
 		$this->posxprogress=126; // Only displayed for situation invoices
 		$this->postotalht=174;
-		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
@@ -1141,7 +1141,26 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
                 //}
+                
 				// VAT
+				// Situations totals migth be wrong on huge amounts
+				if ($object->situation_cycle_ref && $object->situation_counter > 1) {
+					
+					$sum_pdf_tva = 0;
+					foreach($this->tva as $tvakey => $tvaval){
+						$sum_pdf_tva+=$tvaval; // sum VAT amounts to compare to object
+					}
+					
+					if($sum_pdf_tva!=$object->total_tva) { // apply coef to recover the VAT object amount (the good one)
+						$coef_fix_tva = $object->total_tva / $sum_pdf_tva;
+						
+						foreach($this->tva as $tvakey => $tvaval) {
+							$this->tva[$tvakey]=$tvaval * $coef_fix_tva;
+						}
+					}
+					
+				}
+				
 				foreach($this->tva as $tvakey => $tvaval)
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0

@@ -11,7 +11,7 @@ PHPSupportSessions=Este PHP suporta sessões.
 PHPSupportPOSTGETOk=Este PHP suporta variáveis GET e POST.
 PHPSupportPOSTGETKo=É possível que a sua configuração PHP não suporte as variáveis POST e/ou GET. Verifique o seu parâmetro <b>variables_order</b> no php.ini
 PHPSupportGD=Este PHP suporta funções gráficas GD .
-PHPSupportCurl=This PHP support Curl.
+PHPSupportCurl=Esta versão do PHP suporta Curl.
 PHPSupportUTF8=Este PHP suporte funções UTF8.
 PHPMemoryOK=A sua memória máxima da sessão PHP está definida para <b>%s.</b> Isto deverá ser suficiente.
 PHPMemoryTooLow=A sua memória máxima da sessão PHP está definida para <b>%s</b> bytes. Isto deve ser muito baixo. Altere o seu <b>php.ini</b> para definir o parâmetro <b>memory_limit</b> para pelo menos <b>%s</b> bytes.
@@ -132,12 +132,13 @@ MigrationFinished=Migração terminada
 LastStepDesc=<strong>Último passo:</strong> Defina aqui o login ea senha que você planeja usar para se conectar ao software. Não perca isso, pois é a conta para administrar todos os outros.
 ActivateModule=Ative o módulo %s
 ShowEditTechnicalParameters=Clique aqui para mostrar/editar os parâmetros avançados (modo avançado)
-WarningUpgrade=Warning:\nDid your run a database backup first?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=Aviso:\nEfetuou previamente uma cópia de segurança da base-de-dados?\nIsto é altamente recomendado: por exemplo, no caso de existirem falhas nos sistemas de base-de-dados (na versão 5.5.40/41/42/43 do MySQL), alguns dados ou tabelas poderão perder-se durante este processo, daí recomenda-se que faça uma cópia completa da sua base-de-dados antes de iniciar o processo de migração.\nClique em OK para iniciar o processo de migração...
+ErrorDatabaseVersionForbiddenForMigration=A sua versão da base-de-dados é %s. Esta versão possui um erro que poderá resultar em perda de dados se efetuar uma alteração da estrutura, como é efetuada durante o processo de migração. Como tal, a migração não será possível de efetuar enquanto a versão da base-de-dados for atualizada (lista de versões que contêm erros: %s)
 KeepDefaultValuesWamp=Você usa o DoliWamp Setup Wizard, para valores propostos aqui já estão otimizados. Alterá-los apenas se souber o que você faz.
 KeepDefaultValuesDeb=Você pode usar o assistente de configuração Dolibarr de um Ubuntu ou um pacote Debian, então os valores propostos aqui já estão otimizados. Apenas a senha do proprietário do banco de dados para criar tem de ser concluída. Alterar parâmetros outros apenas se você sabe o que fazer.
 KeepDefaultValuesMamp=Você usa o DoliMamp Setup Wizard, para valores propostos aqui já estão otimizados. Alterá-los apenas se souber o que você faz.
 KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um appliance virtual Proxmox, para valores propostos aqui já são otimizados. Alterá-los apenas se você sabe o que fazer.
+UpgradeExternalModule=Corra o processo de atualização dedicado dos módulos externos
 
 #########
 # upgrade
@@ -161,7 +162,7 @@ MigrationContractsLineCreation=Criar uma linha de contrato contrato ref %s
 MigrationContractsNothingToUpdate=Não há mais coisas para fazer
 MigrationContractsFieldDontExist=Campo fk_facture não existe mais. Nada a fazer.
 MigrationContractsEmptyDatesUpdate=Contrato vazio data correcção
-MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfully
+MigrationContractsEmptyDatesUpdateSuccess=A correção de datas por preencher em contratos existentes foi efetuada com sucesso
 MigrationContractsEmptyDatesNothingToUpdate=Nenhum contrato vazio com data para corrigir
 MigrationContractsEmptyCreationDatesNothingToUpdate=Nenhum contrato data de criação para corrigir
 MigrationContractsInvalidDatesUpdate=Data inválida, valor do contracto em correcção
@@ -169,7 +170,7 @@ MigrationContractsInvalidDateFix=Contracto correcto %s (Data do contracto
 MigrationContractsInvalidDatesNumber=%s contratos modificados
 MigrationContractsInvalidDatesNothingToUpdate=Data inválida com valor negativo para corrigir
 MigrationContractsIncoherentCreationDateUpdate=Valor errado,correcção, data de criação de contrato
-MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done successfully
+MigrationContractsIncoherentCreationDateUpdateSuccess=A correção de datas de criação de contratos contendo maus valores foi efetuada com sucesso
 MigrationContractsIncoherentCreationDateNothingToUpdate=Erro no contrato, data de criação ou valor para corrigir
 MigrationReopeningContracts=Abrir contrato fechado pelo erro
 MigrationReopenThisContract=Reabra contrato %s
@@ -189,10 +190,10 @@ MigrationProjectTaskTime=Atualização do tempo despendido em segundos
 MigrationActioncommElement=Atualizar os dados nas ações
 MigrationPaymentMode=A migração de dados para o modo de pagamento
 MigrationCategorieAssociation=Migração de categorias
-MigrationEvents=Migration of events to add event owner into assignement table
-MigrationRemiseEntity=Update entity field value of llx_societe_remise
-MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
+MigrationEvents=Migração dos eventos de forma a adicionar o criador do evento à tabela de atribuições
+MigrationRemiseEntity=Atualize o valor do campo entity da tabela llx_societe_remise
+MigrationRemiseExceptEntity=Atualize o valor do campo entity da tabela llx_societe_remise_except
 MigrationReloadModule=Recarregar módulo %s
 ShowNotAvailableOptions=Mostrar opções indisponíveis
 HideNotAvailableOptions=Ocultar opções indisponíveis
-ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.
+ErrorFoundDuringMigration=Não pode proceder ao próximo passo porque foram reportados erros durante o processo de migração. Para ignorar os erros, pode <a href="%s">clicar aqui</a>, mas a aplicação ou algumas funcionalidades desta poderão não funcionar corretamente.

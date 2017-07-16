@@ -46,10 +46,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Do not log events not enabled for this action
-		if (empty($conf->blockedlog->enabled)) {
-			return 0;
-		}
+        if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
 		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW') {

@@ -46,8 +46,17 @@ $cancel = GETPOST('cancel','alpha');
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id) $feature2=''; // A user can always read its own card
-$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
+// Ok if user->rights->salaries->read or user->rights->salaries->payment->write or user->rights->hrm->read
+//$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
+$ok=false;
+if ($user->id == $id) $ok=true; // A user can always read its own card
+if ($user->rights->salaries->read) $ok=true;
+if ($user->rights->salaries->payment->write) $ok=true;
+if ($user->rights->hrm->read) $ok=true;
+if (! $ok)
+{
+	accessforbidden();
+}
 
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
@@ -60,6 +69,42 @@ if ($id > 0 || ! empty($ref))
 /*
  *	Actions
  */
+
+if ($action == 'add' && ! $cancel)
+{
+	// Modification
+	$account = new UserBankAccount($db);
+
+	$account->userid          = $object->id;
+
+	$account->bank            = $_POST["bank"];
+	$account->label           = $_POST["label"];
+	$account->courant         = $_POST["courant"];
+	$account->clos            = $_POST["clos"];
+	$account->code_banque     = $_POST["code_banque"];
+	$account->code_guichet    = $_POST["code_guichet"];
+	$account->number          = $_POST["number"];
+	$account->cle_rib         = $_POST["cle_rib"];
+	$account->bic             = $_POST["bic"];
+	$account->iban            = $_POST["iban"];
+	$account->domiciliation   = $_POST["domiciliation"];
+	$account->proprio         = $_POST["proprio"];
+	$account->owner_address   = $_POST["owner_address"];
+
+	$result = $account->create($user);
+
+	if (! $result)
+	{
+		setEventMessages($account->error, $account->errors, 'errors');
+		$action='edit';     // Force chargement page edition
+	}
+	else
+	{
+		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id.'&bankid='.$bankid;
+		header('Location: '.$url);
+		exit;
+	}
+}
 
 if ($action == 'update' && ! $cancel)
 {
@@ -122,7 +167,7 @@ else
 if (empty($account->userid)) $account->userid=$object->id;
 
 
-if ($bankid && $action == 'edit' && $user->rights->user->user->creer)
+if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -130,7 +175,7 @@ if ($bankid && $action == 'edit' && $user->rights->user->user->creer)
     print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
     print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($bankid && $action == 'create' && $user->rights->user->user->creer)
+if ($id && $action == 'create' && $user->rights->user->user->creer)
 {
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -140,7 +185,7 @@ if ($bankid && $action == 'create' && $user->rights->user->user->creer)
 
 
 // View
-if ($account->id && $action != 'edit')
+if ($action != 'edit' && $action != 'create')		// If not bank account yet, $account may be empty
 {
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, -1, 'user');
@@ -150,24 +195,25 @@ if ($account->id && $action != 'edit')
 	if ($user->rights->user->user->lire || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	}
-	
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-        
+
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border centpercent">';
-    
-    print '<tr><td class="titlefield">'.$langs->trans("xxx").'</td>';
-    print '<td></td></tr>';
-    
+
+    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+    print '<td>'.$object->login.'</td>';
+    print '</tr>';
+
     print '</table>';
-    
+
     print '</br>';
-    
+
     print load_fiche_titre($langs->trans("BAN"));
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
@@ -237,7 +283,7 @@ if ($account->id && $action != 'edit')
 	}
 
     print "</div>";
-    
+
     dol_fiche_end();
 
 	/*
@@ -247,24 +293,27 @@ if ($account->id && $action != 'edit')
 
 	if ($user->rights->user->user->creer)
 	{
+		if ($account->id > 0)
 		print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=edit">'.$langs->trans("Edit").'</a>';
+		else
+		print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=create">'.$langs->trans("Create").'</a>';
 	}
 
 	print '</div>';
 }
 
 // Edit
-if ($id && $action == 'edit' && $user->rights->user->user->creer)
+if ($id && ($action == 'edit' || $action == 'create' ) && $user->rights->user->user->creer)
 {
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, 0, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	
-    dol_banner_tab($object, 'id', $linkback,$user->rights->user->user->lire || $user->admin);
-        
+
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+
     //print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -323,7 +372,7 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
     print '</table>';
 
     //print '</div>';
-    
+
     dol_fiche_end();
 
 	print '<div align="center">';
@@ -334,7 +383,9 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer)
 }
 
 if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
-    
+
+if ($id && $action == 'create' && $user->rights->user->user->creer) print '</form>';
+
 llxFooter();
 
 $db->close();

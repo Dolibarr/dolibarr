@@ -2,6 +2,7 @@
 IdAgenda=รหัสเหตุการณ์
 Actions=เหตุการณ์ที่เกิดขึ้น
 Agenda=ระเบียบวาระการประชุม
+TMenuAgenda=ระเบียบวาระการประชุม
 Agendas=วาระ
 LocalAgenda=ปฏิทินภายใน
 ActionsOwnedBy=เหตุการณ์ที่เป็นเจ้าของโดย
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=ใบแจ้งหนี้% s ลบ
 InvoicePaidInDolibarr=ใบแจ้งหนี้% s เปลี่ยนไปจ่าย
 InvoiceCanceledInDolibarr=ใบแจ้งหนี้% s ยกเลิก
 MemberValidatedInDolibarr=สมาชิก s% ผ่านการตรวจสอบ
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=สมาชิก s% ลบ
 MemberSubscriptionAddedInDolibarr=สมัครสมาชิกสำหรับสมาชิก% s เพิ่ม
 ShipmentValidatedInDolibarr=% s การตรวจสอบการจัดส่ง
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=% s การจัดส่งที่ถูกลบ
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=สั่งซื้อ% s ตรวจสอบ
@@ -73,13 +75,17 @@ InterventionSentByEMail=การแทรกแซง% s ส่งทางอ�
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=วันที่เริ่มต้น
 DateActionEnd=วันที่สิ้นสุด
 AgendaUrlOptions1=นอกจากนี้คุณยังสามารถเพิ่มพารามิเตอร์ต่อไปนี้เพื่อกรองเอาท์พุท:
-AgendaUrlOptions2=<b>เข้าสู่ระบบ =% s</b> ​​ที่จะ จำกัด <b>การส่งออกไปยังที่สร้างขึ้นโดยการกระทำหรือได้รับมอบหมายให้ผู้ใช้%</b> s
 AgendaUrlOptions3=<b>Logina =% s</b> ​​ที่จะ จำกัด <b>การส่งออกไปยังการดำเนินการที่เป็นเจ้าของโดยผู้ใช้%</b> s
-AgendaUrlOptions4=<b>logint =% s</b> ​​ที่จะ จำกัด <b>การส่งออกไปยังการดำเนินการกำหนดให้ผู้ใช้%</b> s
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>โครงการ = PROJECT_ID</b> ที่จะ จำกัด การส่งออกไปยังการดำเนินการที่เกี่ยวข้องกับโครงการ <b>PROJECT_ID</b>
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts

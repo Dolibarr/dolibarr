@@ -31,7 +31,7 @@ if (! $user->admin)
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$choice=GETPOST('choice');
+$choice=GETPOST('choice','aZ09');
 
 
 // Define filelog to discard it from purge

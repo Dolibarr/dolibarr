@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Livrare
 DeliveryRef=Ref Livrare
-DeliveryCard=Receipt card
+DeliveryCard=Chitanta card
 DeliveryOrder=Ordin de livrare 
 DeliveryDate=Data de livrare
-CreateDeliveryOrder=Generate delivery receipt
+CreateDeliveryOrder=Generați chitanța de livrare
 DeliveryStateSaved=Stare livrare salvata
 SetDeliveryDate=Setaţi data de expediere
 ValidateDeliveryReceipt=Validare recepţie  livrare
-ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+ValidateDeliveryReceiptConfirm=Sigur doriți să validați această chitanță de livrare?
 DeleteDeliveryReceipt=Ştergeţi recepţie livrare
-DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeleteDeliveryReceiptConfirm=Sigur doriți să ștergeți chitanța de livrare <b> %s </b>?
 DeliveryMethod=Metoda de livrare
 TrackingNumber=Număr de urmărire
 DeliveryNotValidated=Livrare  nevalidată

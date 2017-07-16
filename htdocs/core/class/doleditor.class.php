@@ -58,7 +58,7 @@ class DolEditor
      *                              		      	'Out:name' share toolbar into the div called 'name'
      *      @param  boolean	$toolbarstartexpanded  	Bar is visible or not at start
 	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
+	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor). If false, use simple textarea.
      *      @param  int		$rows                   Size of rows for textarea tool
 	 *      @param  string	$cols                   Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
@@ -100,7 +100,7 @@ class DolEditor
         	$this->editor->Height   = $height;
         	if (! empty($width)) $this->editor->Width = $width;
         	$this->editor->ToolbarSet = $shorttoolbarname;         // Profile of this toolbar set is deinfed into theme/mytheme/ckeditor/config.js
-        	$this->editor->Config['AutoDetectLanguage'] = 'true';
+        	$this->editor->Config['AutoDetectLanguage'] = 'true';  // Language of user (browser)
         	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
         	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 
@@ -196,7 +196,7 @@ class DolEditor
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent?'false':'true').',
             						extraAllowedContent : \'\',
-            						fullPage : '.($fullpage?'true':'false').', 
+            						fullPage : '.($fullpage?'true':'false').',
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',

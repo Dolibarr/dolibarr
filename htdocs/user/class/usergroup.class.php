@@ -806,6 +806,7 @@ class UserGroup extends CommonObject
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
+
 		$info=array();
 
 		// Object classes

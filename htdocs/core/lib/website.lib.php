@@ -31,21 +31,36 @@
 function dolWebsiteOutput($content)
 {
     global $db, $langs, $conf, $user;
+    global $dolibarr_main_url_root;
 
     dol_syslog("dolWebsiteOutput start");
-    
+
     if (! defined('USEDOLIBARRSERVER'))
     {
-        // Replace link of Dolibarr medias with direct link for virtual server
-        
-        
-        
-        
-        
+        // Define $urlwithroot
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+        //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+        $symlinktomediaexists=1;
+
+		// Make a change into HTML code to allow to include images from medias directory correct with direct link for virtual server
+		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+		// become
+		// <img alt="" src="'.$urlwithroot.'/medias/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+        $nbrep=0;
+        if (! $symlinktomediaexists)
+        {
+            $content=preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+        }
+        else
+        {
+            $content=preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1medias/\4\5', $content, -1, $nbrep);
+        }
     }
-    
+
     dol_syslog("dolWebsiteOutput end");
-    
+
     print $content;
 }
 

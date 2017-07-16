@@ -345,16 +345,18 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
  * @param   Societe|Contact     $thirdparty     Contact or thirdparty
  * @param   Translate           $outputlangs    Output language
  * @param   int                 $includealias   1=Include alias name after name
- * @return string
+ * @return  string                              String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias=0)
 {
+    global $conf;
+
 	// Recipient name
 	$socname = '';
 
 	if ($thirdparty instanceof Societe) {
 		$socname .= $thirdparty->name;
-		if ($includealias && !empty($thirdparty->name_alias)) {
+		if (($includealias || ! empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) && !empty($thirdparty->name_alias)) {
 		    $socname .= "\n".$thirdparty->name_alias;
 		}
 	} elseif ($thirdparty instanceof Contact) {
@@ -865,7 +867,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		// Make a change into HTML code to allow to include images from medias directory.
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 		// become
-		// <img alt="" src="'.DOL_DATA_ROOT.'/media/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+		// <img alt="" src="'.DOL_DATA_ROOT.'/medias/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 		$newfreetext=preg_replace('/(<img.*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)("[^\/]*\/>)/', '\1'.DOL_DATA_ROOT.'/medias/\2\3', $newfreetext);
 
 		$line.=$outputlangs->convToOutputCharset($newfreetext);

@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=あなたがDoliWampからDolibarrセットアップ·ウ�
 KeepDefaultValuesDeb=あなたは、Linuxパッケージ（Ubuntuのは、Debian、Fedoraの...）からDolibarrセットアップ·ウィザードを使用するので、ここで提案値がすでに最適化されています。作成するデータベースの所有者のパスワードのみを完了する必要があります。あなたは何をすべきか分かっている場合にのみ、他のパラメータを変更します。
 KeepDefaultValuesMamp=あなたがDoliMampからDolibarrのセットアップウィザードを使用して、ここで提案するので、値がすでに最適化されています。あなたは何をすべきか分かっている場合にのみ、それらを変更してください。
 KeepDefaultValuesProxmox=あなたがProxmox仮想アプライアンスからDolibarrのセットアップウィザードを使用して、ここで提案するので、値がすでに最適化されています。あなたは何をすべきか分かっている場合にのみ、それらを変更してください。
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

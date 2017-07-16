@@ -37,6 +37,7 @@ $action=GETPOST('action','aZ09');
 /*
  *	Actions
  */
+
 if (preg_match('/set_(.*)/',$action,$reg))
 {
     $code=$reg[1];
@@ -82,7 +83,7 @@ print load_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'title_setup')
 
 $head=categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Categories"), 0, 'category');
+dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
 print '<table class="noborder" width="100%">';

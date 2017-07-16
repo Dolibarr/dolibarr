@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - companies
+OverAllProposals=Quotations
+ContactForProposals=Quotation's contact
+NoContactForAnyProposal=This contact is not a contact for any quotation

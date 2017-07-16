@@ -35,14 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 $id=GETPOST('id','int');
-$ref=GETPOST('ref');
+$label=GETPOST('label');
 $type=GETPOST('type');
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $removeelem = GETPOST('removeelem','int');
 $elemid=GETPOST('elemid');
 
-if ($id == "")
+if ($id == "" && $label == "")
 {
 	dol_print_error('','Missing parameter id');
 	exit();
@@ -52,7 +52,7 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result=$object->fetch($id);
+$result=$object->fetch($id, $label);
 $object->fetch_optionals($id,$extralabels);
 if ($result <= 0)
 {
@@ -195,7 +195,7 @@ $head = categories_prepare_head($object,$type);
 dol_fiche_head($head, 'card', $title, -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-
+$object->next_prev_filter=" type = ".$object->type;
 $object->ref = $object->label;
 $morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -205,7 +205,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
 
 
 /*

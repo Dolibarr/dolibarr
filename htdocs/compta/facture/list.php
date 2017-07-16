@@ -191,7 +191,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_user='';
     $search_sale='';
@@ -594,6 +594,7 @@ if ($resql)
 
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -1253,10 +1254,10 @@ if ($resql)
             // Status
             if (! empty($arrayfields['f.fk_statut']['checked']))
             {
-                print '<td align="right" class="nowrap">';
-                print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
-                print "</td>";
-                if (! $i) $totalarray['nbfield']++;
+            	print '<td align="right" class="nowrap">';
+            	print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
+            	print "</td>";
+            	if (! $i) $totalarray['nbfield']++;
             }
 
     		// Action column

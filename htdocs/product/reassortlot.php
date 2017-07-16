@@ -83,7 +83,7 @@ if (! empty($canvas))
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $sref="";
     $snom="";
@@ -232,7 +232,7 @@ if ($resql)
 	 	$moreforfilter.='</div>';
 	}
 	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -257,7 +257,7 @@ if ($resql)
 
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
-	
+
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
@@ -304,14 +304,14 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
-	
+
 	$product_static=new Product($db);
 	$warehousetmp=new Entrepot($db);
 
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-		
+
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 		{
@@ -335,20 +335,20 @@ if ($resql)
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
-		
+
 		$warehousetmp->id=$objp->fk_entrepot;
 		$warehousetmp->ref=$objp->warehouse_ref;
 		$warehousetmp->label=$objp->warehouse_ref;
 		$warehousetmp->fk_parent=$objp->warehouse_parent;
 
 		print '<tr>';
-		
+
 		// Ref
 		print '<td class="nowrap">';
 		print $product_static->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
-		
+
 		// Label
 		print '<td>'.$objp->label.'</td>';
 
@@ -390,18 +390,6 @@ if ($resql)
 	print "</table>";
 	print '</div>';
 	print '</form>';
-
-	if ($num > $conf->liste_limit)
-	{
-		if ($sref || $snom || $sall || GETPOST('search'))
-		{
-	  		print_barre_liste('', $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, '');
-		}
-		else
-		{
-	  		print_barre_liste('', $page, "reassort.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, '');
-		}
-	}
 
 	$db->free($resql);
 

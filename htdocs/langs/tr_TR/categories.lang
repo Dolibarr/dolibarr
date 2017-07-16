@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Etiket/Kategori
 Rubriques=Etiketler/Kategoriler
+RubriquesTransactions=İşlem Etiketleri/Kategorileri
 categories=etiketler/kategoriler
 NoCategoryYet=Bu türde oluşturulmuş etiket/kategori yok
 In=İçinde

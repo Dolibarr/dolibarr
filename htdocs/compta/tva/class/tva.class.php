@@ -173,7 +173,6 @@ class Tva extends CommonObject
 
 		// Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
-
 		$sql.= " tms=".$this->db->idate($this->tms).",";
 		$sql.= " datep=".$this->db->idate($this->datep).",";
 		$sql.= " datev=".$this->db->idate($this->datev).",";
@@ -182,9 +181,7 @@ class Tva extends CommonObject
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".$this->fk_bank.",";
 		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
-		$sql.= " fk_user_modif=".$this->fk_user_modif."";
-
-
+		$sql.= " fk_user_modif=".($this->fk_user_modif>0?$this->fk_user_modif:$user->id)."";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -580,7 +577,7 @@ class Tva extends CommonObject
 					} else {
 						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), '', '', $user);
 					}
-						
+
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
 					{
@@ -731,7 +728,7 @@ class Tva extends CommonObject
 	{
 	    return $this->LibStatut($this->statut,$mode);
 	}
-	
+
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *

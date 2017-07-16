@@ -75,14 +75,17 @@ InterventionSentByEMail=Intervenció %s enviada per email
 ProposalDeleted=Pressupost esborrat
 OrderDeleted=Comanda esborrada
 InvoiceDeleted=Factura esborrada
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
 AgendaModelModule=Plantilles de documents per esdeveniments
 DateActionStart=Data d'inici
 DateActionEnd=Data finalització
 AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
-AgendaUrlOptions2=<b>login=%s</b> per a restringir insercions a accions creades o realitzades per l'usuari <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accions creades per l'usuari <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes

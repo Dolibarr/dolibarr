@@ -129,7 +129,7 @@ class WebsitePage extends CommonObject
 		$sql.= 'content,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
-		$sql.= 'date_modification';
+		$sql.= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->fk_website)?'NULL':$this->fk_website).',';
 		$sql .= ' '.(! isset($this->pageurl)?'NULL':"'".$this->db->escape($this->pageurl)."'").',';
@@ -193,7 +193,6 @@ class WebsitePage extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-
 		$sql .= " t.fk_website,";
 		$sql .= " t.pageurl,";
 		$sql .= " t.title,";
@@ -203,7 +202,6 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
-
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -214,7 +212,7 @@ class WebsitePage extends CommonObject
 			$sql .= ' AND t.rowid = ' . $id;
 		}
         $sql .= $this->db->plimit(1);
-        
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
@@ -278,7 +276,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid; 
+		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -399,9 +397,9 @@ class WebsitePage extends CommonObject
 		if ($this->old_object->pageurl != $this->pageurl)
 		{
 		      dol_syslog("The alias was changed, we must rename/recreate the page file into document");
-		      
+
 		}
-		
+
 		if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
@@ -628,7 +626,7 @@ class WebsitePage extends CommonObject
 		$this->id = 0;
 
 		$now=dol_now();
-		
+
 		$this->fk_website = '';
 		$this->pageurl = '';
 		$this->title = 'My Page';

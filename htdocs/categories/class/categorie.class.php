@@ -49,8 +49,9 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
 	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
+
     const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
-	const TYPE_PROJECT = 6;
+	const TYPE_PROJECT = 6;    // TODO Replace this value with 'project'
     const TYPE_BANK_LINE = 'bank_line';
 	public $picto = 'category';
 
@@ -132,7 +133,7 @@ class Categorie extends CommonObject
 	);
 
 	public $element='category';
-	public $table_element='categories';
+	public $table_element='categorie';
 
 	public $fk_parent;
 	public $label;
@@ -447,9 +448,10 @@ class Categorie extends CommonObject
 	 * 	Delete a category from database
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
-	 *	@return	int <0 KO >0 OK
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int                 <0 KO >0 OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
 
@@ -461,6 +463,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::remove");
 
 		$this->db->begin();
+
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CATEGORY_DELETE',$user);
+		    if ($result < 0) $error++;
+		    // End call triggers
+		}
 
 		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (! $error)
@@ -580,25 +590,16 @@ class Categorie extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+		}
+
+		// Removed extrafields
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
 			{
-				// Removed extrafields
-				if (! $error)
-				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result=$this->deleteExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
-						}
-					}
-				}
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				$error++;
+				dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -1174,11 +1175,11 @@ class Categorie extends CommonObject
 				 */
 				if($obj[0] > 0 && $obj[0] != $this->id)
 				{
-					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent." than category id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else

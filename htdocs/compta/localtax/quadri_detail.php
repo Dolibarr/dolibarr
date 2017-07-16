@@ -54,8 +54,9 @@ if (empty($year))
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+
+$date_start = dol_mktime( 0, 0, 0, GETPOST( "date_startmonth" ), GETPOST( "date_startday" ), GETPOST( "date_startyear" ) );
+$date_end   = dol_mktime( 23, 59, 59, GETPOST( "date_endmonth" ), GETPOST( "date_endday" ), GETPOST( "date_endyear" ) );
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
@@ -92,12 +93,9 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-
-
-/*
+/**
  * View
  */
-
 $morequerystring='';
 $listofparams=array('date_startmonth','date_startyear','date_startday','date_endmonth','date_endyear','date_endday');
 foreach($listofparams as $param)
@@ -118,6 +116,7 @@ $paymentfourn_static=new PaiementFourn($db);
 
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch.='  <input type="hidden" name="localTaxType" value="'.$local.'">';
 
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 
@@ -196,9 +195,8 @@ $total = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
-
+$x_coll = tax_by_date('localtax' . $local, $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_date('localtax' . $local, $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 echo '<table class="noborder" width="100%">';
 
