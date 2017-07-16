@@ -24,6 +24,7 @@ if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -389,8 +390,6 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
     }
 }
 
-
-
 if ($dirins && $action == 'generatepackage')
 {
     $modulelowercase=strtolower($module);
@@ -449,7 +448,6 @@ if ($dirins && $action == 'generatepackage')
     }
 }
 
-
 // Save file
 if ($action == 'savefile' && empty($cancel))
 {
@@ -479,6 +477,47 @@ if ($action == 'savefile' && empty($cancel))
     }
 }
 
+// Enable module
+if ($action == 'set' && $user->admin)
+{
+	$param='module='.$module;
+	$value = GETPOST('value','alpha');
+	$resarray = activateModule($value);
+	if (! empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
+	else
+	{
+		//var_dump($resarray);exit;
+		if ($resarray['nbperms'] > 0)
+		{
+			$tmpsql="SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
+			$resqltmp=$db->query($tmpsql);
+			if ($resqltmp)
+			{
+				$obj=$db->fetch_object($resqltmp);
+				//var_dump($obj->nb);exit;
+				if ($obj && $obj->nb > 1)
+				{
+					$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+					setEventMessages($msg, null, 'warnings');
+				}
+			}
+			else dol_print_error($db);
+		}
+	}
+	header("Location: ".$_SERVER["PHP_SELF"]."?".$param);
+	exit;
+}
+
+// Disable module
+if ($action == 'reset' && $user->admin)
+{
+	$param='module='.$module;
+	$value = GETPOST('value','alpha');
+	$result=unActivateModule($value);
+	if ($result) setEventMessages($result, null, 'errors');
+	header("Location: ".$_SERVER["PHP_SELF"]."?".$param);
+	exit;
+}
 
 
 /*
@@ -674,8 +713,24 @@ elseif (! empty($module))
         $h=0;
 
         $modulelowercase=strtolower($module);
+        $const_name = 'MAIN_MODULE_'.strtoupper($module);
 
+        $param='&tab='.$tab.'&module='.$module;
         $urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
+        $linktoenabledisable='';
+        if (! empty($conf->global->$const_name))	// If module is already activated
+        {
+        	$linktoenabledisable.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
+        	$linktoenabledisable.=img_picto($langs->trans("Activated"),'switch_on');
+        	$linktoenabledisable.='</a>';
+        }
+        else
+        {
+        	$linktoenabledisable.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
+        	$linktoenabledisable.=img_picto($langs->trans("Disabled"),'switch_off');
+        	$linktoenabledisable.="</a>\n";
+        }
+
         $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive", $urltomodulesetup);
         if (! empty($conf->$module->enabled))
         {
@@ -727,7 +782,9 @@ elseif (! empty($module))
         $head2[$h][2] = 'buildpackage';
         $h++;
 
-        print $modulestatusinfo.'<br><br>';
+        print $modulestatusinfo;
+        print ' '.$linktoenabledisable;
+        print '<br><br>';
 
         dol_fiche_head($head2, $tab, '', -1, '');
 
