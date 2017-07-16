@@ -52,3 +52,4 @@ ReadmeFile=Readme file
 ChangeLog=ChangeLog file
 SqlFile=Sql file
 SqlFileKey=Sql file for keys
+AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case

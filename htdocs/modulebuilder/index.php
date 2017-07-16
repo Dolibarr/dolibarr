@@ -160,11 +160,29 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
         setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
     }
 
+    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+    $destdir = $dirins.'/'.strtolower($module);
+
+    // Scan dir class to find if an object with same name already exists.
     if (! $error)
     {
-        $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-        $destdir = $dirins.'/'.strtolower($module);
+    	$dirlist=dol_dir_list($destdir.'/class','files',0,'\.txt$');
+    	$alreadyfound=false;
+    	foreach($dirlist as $key => $val)
+    	{
+    		$filefound=preg_replace('/\.txt$/','',$val['name']);
+    		if (strtolower($objectname) == strtolower($filefound) && $objectname != $filefound)
+    		{
+    			$alreadyfound=true;
+    			$error++;
+    			setEventMessages($langs->trans("AnObjectAlreadyExistWithThisNameAndDiffCase"), null, 'errors');
+    			break;
+    		}
+    	}
+    }
 
+    if (! $error)
+    {
         // Delete some files
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
