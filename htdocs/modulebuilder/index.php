@@ -931,6 +931,9 @@ elseif (! empty($module))
                 print '<span class="fa fa-file"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
                 print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                 print '<br>';
+
+                // Use MD or asciidoc
+                //print 'http://asciidoctor.org/docs/user-manual/#compared-to-markdown';
             }
             else
             {
