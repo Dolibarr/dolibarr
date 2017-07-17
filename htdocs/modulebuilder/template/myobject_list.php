@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -350,14 +351,19 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
+            if (in_array($typeofextrafield, array('varchar', 'int', 'double')) && empty($extrafields->attribute_computed[$key]))
             {
                 $crit=$val;
                 $tmpkey=preg_replace('/search_options_/','',$key);
                 $searchclass='';
-                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+                if ('varchar' == $typeofextrafield) $searchclass='searchstring';
+                else $searchclass='searchnum';
                 print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+            }
+            else
+            {
+                // for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+                echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
             }
             print '</td>';
         }
