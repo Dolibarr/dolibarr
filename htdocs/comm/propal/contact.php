@@ -130,12 +130,12 @@ else if ($action == 'deletecontact' && $user->rights->propale->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->propale->creer)
 {
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
 
 
 /*
@@ -151,7 +151,7 @@ $formother = new FormOther($db);
 if ($object->id > 0)
 {
     $head = propal_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
+	dol_fiche_head($head, 'contact', $langs->trans("Proposal"), -1, 'propal');
 
 
 	// Proposal card

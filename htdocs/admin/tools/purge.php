@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ $choice=GETPOST('choice');
 $filelog='';
 if (! empty($conf->syslog->enabled))
 {
-	$filelog=SYSLOG_FILE;
+	$filelog=$conf->global->SYSLOG_FILE;
 	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 }
 

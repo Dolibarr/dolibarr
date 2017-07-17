@@ -10,6 +10,8 @@ source-is-missing htdocs/includes/ckeditor/ckeditor/lang/*.js
 source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/*/dialogs/*.js
 source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/*/filter/*.js
 source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/templates/templates/default.js
-source-is-missing htdocs/includes/mobiledetect/mobiledetectlib/Mobile_Detect.json
 source-is-missing htdocs/includes/restler/framework/Luracast/Restler/explorer/lib/*.js
+# Those are false positives, the files are their own sources since
+# they are data files
+source-is-missing htdocs/includes/mobiledetect/mobiledetectlib/Mobile_Detect.json
 

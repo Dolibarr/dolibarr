@@ -93,7 +93,7 @@ class MenuManager
 			$classname='class="tmenusel"';
 
 			// Show/Hide vertical menu
-			if ($mode != 'jmobile' && $mode != 'topnb' && (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			if ($mode != 'jmobile' && $mode != 'topnb' && (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
 			    $showmode=1;
 			    $classname = 'class="tmenu menuhider"';
@@ -248,8 +248,8 @@ class MenuManager
 		{
 			foreach($this->topmenu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 			{
-				print '<ul class="ulmenu" data-role="listview" data-inset="true">';
-				print '<li data-role="list-dividerxxx" class="lilevel0">';
+				print '<ul class="ulmenu" data-inset="true">';
+				print '<li class="lilevel0">';
 				if ($val['enabled'] == 1)
 				{
 					$relurl=dol_buildpath($val['url'],1);
@@ -273,7 +273,7 @@ class MenuManager
         			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
 					{
 						// We add sub entry
-						print '<li data-role="list-dividerxxx"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+						print '<li><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
 					}
 					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 					{
@@ -281,7 +281,7 @@ class MenuManager
 						$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
 						$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
 						//var_dump($val2);
-						print '<li'.($val2['level']==0?' data-role="list-dividerxxx"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+						print '<li><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
 					}
 					//var_dump($submenu);
 					print '</ul>';

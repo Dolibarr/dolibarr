@@ -52,7 +52,7 @@ if (GETPOST('cancel') && ! empty($backtopage))
      exit;
 }
 
-if (GETPOST("action") == 'setremise')
+if (GETPOST('action','aZ09') == 'setremise')
 {
 	$object = new Societe($db);
 	$object->fetch($id);
@@ -107,7 +107,7 @@ if ($socid > 0)
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), 0, 'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -119,7 +119,6 @@ if ($socid > 0)
 	// Discount
 	print '<tr><td class="titlefield">';
 	print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
-
 	print '</table>';
 	print '<br>';
 
@@ -130,11 +129,11 @@ if ($socid > 0)
 	print '<table class="border centpercent">';
 
 	// New value
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans("NewValue").'</td><td><input type="text" size="5" name="remise" value="'.dol_escape_htmltag(GETPOST("remise")).'">%</td></tr>';
 
 	// Motif/Note
-	print '<tr><td>';
+	print '<tr><td class="fieldrequired">';
 	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note")).'"></td></tr>';
 
 	print "</table>";
@@ -179,21 +178,26 @@ if ($socid > 0)
 		print '<td align="left">'.$langs->trans("NoteReason").'</td>';
 		print '<td align="center">'.$langs->trans("User").'</td>';
 		print '</tr>';
-		$i = 0 ;
 		$num = $db->num_rows($resql);
-
-		while ($i < $num )
-		{
-			$obj = $db->fetch_object($resql);
-			$tag = !$tag;
-			print '<tr '.$bc[$tag].'>';
-			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
-			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-			print '<td align="left">'.$obj->note.'</td>';
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
-			print '</tr>';
-			$i++;
+        if ($num > 0)
+        {
+		    $i = 0;
+            while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			print '<tr class="oddeven">';
+    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+    			print '<td align="left">'.$obj->note.'</td>';
+    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+    			print '</tr>';
+    			$i++;
+    		}
 		}
+		else
+		{
+		    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		}		
 		$db->free($resql);
 		print "</table>";
 	}

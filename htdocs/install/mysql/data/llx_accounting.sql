@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,9 +27,12 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-delete from llx_accounting_account;
-delete from llx_accounting_system;
-
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('VT', 'Journal des ventes', 2, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Journal des achats', 3, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Journal de banque', 4, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Journal des opérations diverses', 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Journal des à-nouveaux', 9, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('ER', 'Journal des notes de frais', 5, 1);
 --
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --

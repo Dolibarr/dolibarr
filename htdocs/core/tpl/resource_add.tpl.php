@@ -17,7 +17,8 @@ $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_typ
 
 
 // Place
-$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div><div>';
+$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
+$out .= '<div class="tagtd">';
 $events=array();
 $out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
 $out .= '</div>';

@@ -38,7 +38,7 @@ $langs->load("stocks");
 $langs->load("companies");
 $langs->load("categories");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm');
 
@@ -53,7 +53,7 @@ $backtopage=GETPOST("backtopage");
 // Security check
 $result=restrictedArea($user,'stock');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('warehousecard','globalcard'));
 
 $object = new Entrepot($db);
@@ -477,9 +477,9 @@ else
 						}
 					}
 
-					$var=!$var;
+					
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					print "<td>";
 					$productstatic->id=$objp->rowid;
                     $productstatic->ref = $objp->ref;

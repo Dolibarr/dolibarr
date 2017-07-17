@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -70,11 +70,11 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount');
 $btn_changetype = GETPOST('changetype');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -184,7 +184,7 @@ if ($action == 'update') {
  * View
  */
 
-$form = new FormVentilation($db);
+$form = new FormAccounting($db);
 
 // Defaut AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
@@ -218,7 +218,7 @@ else
 {
     $sql.=" p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
 }
-$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     if (strlen(trim($search_current_account))) {
         $sql .= natural_search("p.accountancy_code_buy",$search_current_account);
@@ -279,6 +279,7 @@ if ($result)
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
     
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
@@ -312,22 +313,8 @@ if ($result)
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 	
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("OnSell"), $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
-   	print_liste_field_titre($langs->trans("OnBuy"), $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
-   	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-   	    $fieldtosortaccount="p.accountancy_code_buy";
-   	}
-   	else $fieldtosortaccount="p.accountancy_code_sell";
-   	print_liste_field_titre($langs->trans("CurrentDedicatedAccountingAccount"), $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AssignDedicatedAccountingAccount"));
-	print_liste_field_titre('', '', '', '', '', 'align="center"');
-	print '</tr>';
-	
-	print '<tr class="liste_titre">';
+
+	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
@@ -342,10 +329,26 @@ if ($result)
 	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
-	print $searchpitco;
+	print '<td align="center" class="liste_titre">';
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
+	print '</tr>';
+	
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
+    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("OnSell"), $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
+   	print_liste_field_titre($langs->trans("OnBuy"), $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
+   	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+   	    $fieldtosortaccount="p.accountancy_code_buy";
+   	}
+   	else $fieldtosortaccount="p.accountancy_code_sell";
+   	print_liste_field_titre($langs->trans("CurrentDedicatedAccountingAccount"), $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("AssignDedicatedAccountingAccount"));
+	$clickpitco=$form->showCheckAddButtons('checkforselect', 1);
+	print_liste_field_titre($clickpitco, '', '', '', '', 'align="center"');
 	print '</tr>';
 	
 	$product_static = new Product($db);
@@ -381,8 +384,7 @@ if ($result)
 			$compta_prodbuy_id = $aarowid_servbuy;
 		}
 		
-		$var = ! $var;
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 		
 		print '<td>';
 		print $product_static->getNomUrl(1);
@@ -440,7 +442,7 @@ if ($result)
 		}
 		
 		// Checkbox select
-		print '<td align="right">';
+		print '<td align="center">';
 		print '<input type="checkbox" class="checkforselect" name="chk_prod[]" value="' . $obj->rowid . '"/></td>';
 		print "</tr>";
 		$i ++;

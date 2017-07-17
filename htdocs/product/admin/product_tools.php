@@ -72,7 +72,7 @@ if ($action == 'convert')
 		{
 			$sql = 'SELECT rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
-			$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
+			$sql.= ' WHERE entity IN ('.getEntity('product').')';
 			$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
 
 			$resql=$db->query($sql);
@@ -162,7 +162,7 @@ if ($action == 'convert')
 		// Change supplier prices
 		$sql = 'SELECT pfp.rowid, pfp.fk_soc, pfp.price as price, pfp.quantity as qty, pfp.fk_availability, pfp.ref_fourn';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
-		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product',1).')';
+		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
 		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
 		$sql.= " AND s.fk_pays = '".$country_id."'";
 		//print $sql;
@@ -274,16 +274,16 @@ else
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc);
@@ -291,8 +291,8 @@ else
 	print '</tr>'."\n";
 
 	/*
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->selectPriceBaseType($price_base_type);

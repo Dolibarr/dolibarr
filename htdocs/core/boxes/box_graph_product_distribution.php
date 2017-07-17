@@ -105,6 +105,10 @@ class box_graph_product_distribution extends ModeleBoxes
 		$nowarray=dol_getdate(dol_now(),true);
 		if (empty($year)) $year=$nowarray['year'];
 
+		$nbofgraph=0;
+		if ($showinvoicenb) $nbofgraph++;
+		if ($showpropalnb)  $nbofgraph++;
+		if ($showordernb)   $nbofgraph++;
 
 		$text = $langs->trans("BoxProductDistribution",$max).' - '.$langs->trans("Year").': '.$year;
 		$this->info_box_head = array(
@@ -118,11 +122,6 @@ class box_graph_product_distribution extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
-
-		$nbofgraph=0;
-		if ($showinvoicenb) $nbofgraph++;
-		if ($showpropalnb)  $nbofgraph++;
-		if ($showordernb)   $nbofgraph++;
 
 		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
 		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
@@ -145,7 +144,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1; $nocolor = 0;
 				$mode='customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
 				if (empty($data1))
 				{
 					$showpointvalue=0;
@@ -203,7 +202,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
 				$showpointvalue = 1; $nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
-				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
 				if (empty($data2))
 				{
 					$showpointvalue = 0;
@@ -265,7 +264,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1; $nocolor = 0;
 				$mode='customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
 				if (empty($data3))
 				{
 					$showpointvalue = 0;
@@ -315,6 +314,11 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
+		if (empty($nbofgraph))
+		{
+		    $langs->load("errors");
+		    $mesg=$langs->trans("ReadPermissionNotAllowed");
+		}
 		if (empty($conf->use_javascript_ajax))
 		{
 			$langs->load("errors");
@@ -386,9 +390,11 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 		else
 		{
-			$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
-					'maxlength'=>500,
-					'text' => $mesg);
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+				'maxlength'=>500,
+				'text' => $mesg
+			);
 		}
 
 	}

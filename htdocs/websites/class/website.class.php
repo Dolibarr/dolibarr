@@ -76,10 +76,6 @@ class Website extends CommonObject
 	/**
 	 * @var mixed
 	 */
-	public $date_modification;
-	/**
-	 * @var mixed
-	 */
 	public $tms = '';
 	/**
 	 * @var integer
@@ -123,7 +119,6 @@ class Website extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -136,36 +131,30 @@ class Website extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-
-		
+		if (empty($this->date_creation)) $this->date_creation = dol_now();
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
 		$sql.= 'entity,';
 		$sql.= 'ref,';
 		$sql.= 'description,';
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'date_creation,';
-		$sql.= 'date_modification';
-		
+		$sql.= 'fk_user_create';
+		$sql.= 'date_creation';
 		$sql .= ') VALUES (';
-		
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':$this->virtualhost).',';
-		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
-
-		
+		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
+		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -223,8 +212,9 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
@@ -247,11 +237,10 @@ class Website extends CommonObject
 				$this->status = $obj->status;
 				$this->fk_default_home = $obj->fk_default_home;
 				$this->virtualhost = $obj->virtualhost;
+				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->tms = $this->db->jdate($obj->tms);
-
-				
 			}
 			$this->db->free($resql);
 
@@ -286,17 +275,16 @@ class Website extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
-		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -314,7 +302,7 @@ class Website extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 		$this->records = array();
 
@@ -323,7 +311,7 @@ class Website extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new WebsiteLine();
+				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
 				
@@ -333,8 +321,9 @@ class Website extends CommonObject
 				$line->status = $obj->status;
 				$line->fk_default_home = $obj->fk_default_home;
 				$line->virtualhost = $obj->virtualhost;
+				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
-				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->tms = $this->db->jdate($obj->tms);
 
 				$this->records[$line->id] = $line;
@@ -379,25 +368,20 @@ class Website extends CommonObject
 			 $this->status = trim($this->status);
 		}
 
-		
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		
 		$sql .= ' entity = '.(isset($this->entity)?$this->entity:"null").',';
 		$sql .= ' ref = '.(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").',';
 		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '')?"'".$this->db->escape($this->virtualhost)."'":"null").',';
+		$sql .= ' fk_user_modif = '.(! isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' date_modification = '.(! isset($this->date_modification) || dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'");
-
-        
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -633,6 +617,8 @@ class Website extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+	    global $user;
+	    
 		$this->id = 0;
 		
 		$this->entity = 1;
@@ -641,8 +627,9 @@ class Website extends CommonObject
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
+		$this->fk_user_create = $user->id;
+		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
-		$this->date_modification = dol_now();
 		$this->tms = dol_now();
 
 		
@@ -650,50 +637,3 @@ class Website extends CommonObject
 
 }
 
-/**
- * Class WebsiteLine
- */
-class WebsiteLine
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-	/**
-	 * @var int
-	 */
-	public $entity;
-	/**
-	 * @var string
-	 */
-	public $ref;
-	/**
-	 * @var string
-	 */
-	public $description;
-	/**
-	 * @var int
-	 */
-	public $status;
-	/**
-	 * @var int
-	 */
-	public $fk_default_home;
-	/**
-	 * @var string
-	 */
-	public $virtualhost;
-	/**
-	 * @var mixed
-	 */
-	public $date_creation;
-	/**
-	 * @var mixed
-	 */
-	public $date_modification;
-	/**
-	 * @var mixed
-	 */
-	public $tms = '';
-	
-}

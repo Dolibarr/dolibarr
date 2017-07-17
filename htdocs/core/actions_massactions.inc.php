@@ -24,20 +24,22 @@
 
 // $massaction must be defined
 // $objectclass and $$objectlabel must be defined
-// $uploaddir (example $conf->projet->dir_output . "/";)
+// $parameters, $object, $action must be defined for the hook.
+
+// $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
 
 
 // Protection
-if (empty($objectclass) || empty($uploaddir)) 
+if (empty($objectclass) || empty($uploaddir))
 {
     dol_print_error(null, 'include of actions_massactions.inc.php is done but var $massaction or $objectclass or $uploaddir was not defined');
     exit;
 }
 
 
-// Mass actions. Controls on number of lines checked
-$maxformassaction=1000;
+// Mass actions. Controls on number of lines checked.
+$maxformassaction=(empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS)?1000:$conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (! empty($massaction) && count($toselect) < 1)
 {
     $error++;
@@ -87,7 +89,7 @@ if (! $error && $massaction == 'confirm_presend')
             }
         }
         //var_dump($listofobjectthirdparties);exit;
-        	
+
         foreach ($listofobjectthirdparties as $thirdpartyid)
         {
             $result = $thirdparty->fetch($thirdpartyid);
@@ -144,7 +146,7 @@ if (! $error && $massaction == 'confirm_presend')
             {
                 //var_dump($object);
                 //var_dump($thirdpartyid.' - '.$objectid.' - '.$object->statut);
-                	
+
                 if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
                 {
                     $nbignored++;
@@ -157,7 +159,7 @@ if (! $error && $massaction == 'confirm_presend')
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue;
                 }
-                
+
                 // Read document
                 // TODO Use future field $object->fullpathdoc to know where is stored default file
                 // TODO If not defined, use $object->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
@@ -202,7 +204,7 @@ if (! $error && $massaction == 'confirm_presend')
                     dol_syslog('Failed to read file: '.$file, LOG_WARNING);
                     continue;
                 }
-                	
+
                 //var_dump($listofqualifiedref);
             }
 
@@ -252,9 +254,9 @@ if (! $error && $massaction == 'confirm_presend')
                 $filepath = $attachedfiles['paths'];
                 $filename = $attachedfiles['names'];
                 $mimetype = $attachedfiles['mimes'];
-                	
+
                 //var_dump($filepath);
-                	
+
                 // Send mail
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
@@ -274,13 +276,13 @@ if (! $error && $massaction == 'confirm_presend')
                         // Insert logs into agenda
                         foreach($listofqualifiedinvoice as $invid => $object)
                         {
-                            if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
+                            /*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
                             if ($objectclass == 'Commande') $actiontypecode='AC_COM';
                             if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
                             if ($objectclass == 'Supplier_Proposal') $actiontypecode='AC_SUP_PRO';
                             if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
-                            if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';
-                            
+                            if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
+
                             $actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
                             if ($message)
                             {
@@ -289,10 +291,10 @@ if (! $error && $massaction == 'confirm_presend')
                                 $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
                                 $actionmsg = dol_concatdesc($actionmsg, $message);
                             }
+                            $actionmsg2='';
 
                             // Initialisation donnees
                             $object->sendtoid		= 0;
-                            $object->actiontypecode	= $actiontypecode;
                             $object->actionmsg		= $actionmsg;  // Long text
                             $object->actionmsg2		= $actionmsg2; // Short text
                             $object->fk_element		= $invid;
@@ -335,7 +337,7 @@ if (! $error && $massaction == 'confirm_presend')
         $resaction.=$langs->trans("NbSelected").': '.count($toselect)."\n<br>";
         $resaction.=$langs->trans("NbIgnored").': '.($nbignored?$nbignored:0)."\n<br>";
         $resaction.=$langs->trans("NbSent").': '.($nbsent?$nbsent:0)."\n<br>";
-        	
+
         if ($nbsent)
         {
             $action='';	// Do not show form post if there was at least one successfull sent
@@ -359,7 +361,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-     
+
     $objecttmp=new $objectclass($db);
     $listofobjectid=array();
     $listofobjectthirdparties=array();
@@ -406,57 +408,105 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $outputlangs->setDefaultLang($newlang);
     }
 
-    // Create empty PDF
-    $pdf=pdf_getInstance();
-    if (class_exists('TCPDF'))
-    {
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+    if(!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT)) {
+    	// Create output dir if not exists
+	dol_mkdir($diroutputmassaction);
+
+	// Defined name of merged file
+	$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+	$filename=preg_replace('/\s/','_',$filename);
+
+	// Save merged file
+	if ($filter=='paye:0')
+	{
+	if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+	else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+	}
+	if ($year) $filename.='_'.$year;
+	if ($month) $filename.='_'.$month;
+
+    	if (count($files)>0)
+    	{
+
+    		$now=dol_now();
+    		$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+
+    		$input_files = '';
+    		foreach($files as $f) {
+    			$input_files.=' '.escapeshellarg($f);
+    		}
+
+    		$cmd = 'pdftk '.$input_files.' cat output '.escapeshellarg($file);
+    		exec($cmd);
+
+    		if (! empty($conf->global->MAIN_UMASK))
+    			@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+    			$langs->load("exports");
+    			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+    	}
+    	else
+    	{
+    		setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+    	}
+
     }
-    $pdf->SetFont(pdf_getPDFFont($outputlangs));
+    else {
+	    // Create empty PDF
+	    $pdf=pdf_getInstance();
+	    if (class_exists('TCPDF'))
+	    {
+		$pdf->setPrintHeader(false);
+		$pdf->setPrintFooter(false);
+	    }
+	    $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-    if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+	    if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-    // Add all others
-    foreach($files as $file)
-    {
-        // Charge un document PDF depuis un fichier.
-        $pagecount = $pdf->setSourceFile($file);
-        for ($i = 1; $i <= $pagecount; $i++)
-        {
-            $tplidx = $pdf->importPage($i);
-            $s = $pdf->getTemplatesize($tplidx);
-            $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-            $pdf->useTemplate($tplidx);
-        }
-    }
+	    // Add all others
+	    foreach($files as $file)
+	    {
+		// Charge un document PDF depuis un fichier.
+		$pagecount = $pdf->setSourceFile($file);
+		for ($i = 1; $i <= $pagecount; $i++)
+		{
+		    $tplidx = $pdf->importPage($i);
+		    $s = $pdf->getTemplatesize($tplidx);
+		    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+		    $pdf->useTemplate($tplidx);
+		}
+	    }
 
-    // Create output dir if not exists
-    dol_mkdir($diroutputmassaction);
+	    // Create output dir if not exists
+	    dol_mkdir($diroutputmassaction);
 
-    // Save merged file
-    $filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
-    if ($filter=='paye:0')
-    {
-        if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
-        else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
-    }
-    if ($year) $filename.='_'.$year;
-    if ($month) $filename.='_'.$month;
-    if ($pagecount)
-    {
-        $now=dol_now();
-        $file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
-        $pdf->Output($file,'F');
-        if (! empty($conf->global->MAIN_UMASK))
-            @chmod($file, octdec($conf->global->MAIN_UMASK));
+	    // Defined name of merged file
+	    $filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+	    $filename=preg_replace('/\s/','_',$filename);
 
-            $langs->load("exports");
-            setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+	    // Save merged file
+	    if ($filter=='paye:0')
+	    {
+		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+		else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+	    }
+	    if ($year) $filename.='_'.$year;
+	    if ($month) $filename.='_'.$month;
+	    if ($pagecount)
+	    {
+		$now=dol_now();
+		$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+		$pdf->Output($file,'F');
+		if (! empty($conf->global->MAIN_UMASK))
+		    @chmod($file, octdec($conf->global->MAIN_UMASK));
+
+		    $langs->load("exports");
+		    setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+	    }
+	    else
+	    {
+		setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+	    }
     }
 }
 
@@ -486,7 +536,8 @@ if (! $error && $massaction == 'delete' && $permtodelete)
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
-            $result = $objecttmp->delete($user);
+            if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
+            else $result = $objecttmp->delete($user);
             if ($result <= 0)
             {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -516,6 +567,11 @@ if (! $error && $massaction == 'delete' && $permtodelete)
     //var_dump($listofobjectthirdparties);exit;
 }
 
+$parameters['toselect']=$toselect;
+$parameters['uploaddir']=$uploaddir;
+
+$reshook=$hookmanager->executeHooks('doMassActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
 

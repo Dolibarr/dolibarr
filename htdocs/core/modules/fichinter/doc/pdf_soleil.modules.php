@@ -65,7 +65,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$this->db = $db;
 		$this->name = 'soleil';
-		$this->description = $langs->trans("DocumentModelStandard");
+		$this->description = $langs->trans("DocumentModelStandardPDF");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -464,11 +464,11 @@ class Don extends CommonObject
         $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
         $sql .= ",date_valid=".($this->date_valid?"'".$this->db->idate($this->date)."'":"null");
-        $sql .= ",email='".$this->email."'";
-        $sql .= ",phone='".$this->phone."'";
-        $sql .= ",phone_mobile='".$this->phone_mobile."'";
+        $sql .= ",email='".$this->db->escape($this->email)."'";
+        $sql .= ",phone='".$this->db->escape($this->phone)."'";
+        $sql .= ",phone_mobile='".$this->db->escape($this->phone_mobile)."'";
         $sql .= ",fk_statut=".$this->statut;
-        $sql .= " WHERE rowid = '".$this->id."'";
+        $sql .= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::Update", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -804,6 +804,39 @@ class Don extends CommonObject
         return $result;
     }
 
+	/**
+     *	Charge indicateurs this->nb pour le tableau de bord
+     *
+     *	@return     int         <0 if KO, >0 if OK
+     */
+    function load_state_board()
+    {
+        global $conf;
+
+        $this->nb=array();
+
+        $sql = "SELECT count(d.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
+        $sql.= " WHERE d.fk_statut > 0";
+        $sql.= " AND d.entity IN (".getEntity('don').")";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nb["donations"]=$obj->nb;
+            }
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 
     /**
      *	Return clicable name (with picto eventually)

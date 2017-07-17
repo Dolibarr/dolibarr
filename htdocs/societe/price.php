@@ -52,7 +52,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $object = new Societe($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycustomerprice','globalcard'));
 
 
@@ -510,8 +510,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             print '<td colspan="8">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
-            print $searchpitco;
+            $searchpicto=$form->showFilterAndCheckAddButtons(0);
+            print $searchpicto;
             print '</td>';
             print '</tr>';
         }

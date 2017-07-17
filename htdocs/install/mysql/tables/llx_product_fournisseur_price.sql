@@ -43,5 +43,11 @@ create table llx_product_fournisseur_price
   fk_supplier_price_expression	integer,            -- Link to the rule for dynamic price calculation
   import_key			varchar(14),                -- Import key
   delivery_time_days    integer,
-  supplier_reputation varchar(10)
+  supplier_reputation varchar(10),
+  
+  fk_multicurrency		integer,
+  multicurrency_code	varchar(255),
+  multicurrency_tx			double(24,8) DEFAULT 1,
+  multicurrency_price	double(24,8) DEFAULT NULL,
+  multicurrency_price_ttc	double(24,8) DEFAULT NULL
 )ENGINE=innodb;

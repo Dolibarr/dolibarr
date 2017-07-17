@@ -117,6 +117,43 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		
+		$this->rights[5][0] = 1011;
+		$this->rights[5][1] = 'inventoryReadPermission';	// Permission label
+		$this->rights[5][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[5][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[5][5] = 'read';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		
+		$this->rights[6][0] = 1012;
+		$this->rights[6][1] = 'inventoryCreatePermission';	// Permission label
+		$this->rights[6][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[6][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[6][5] = 'create';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		
+		$this->rights[7][0] = 1013;
+		$this->rights[7][1] = 'inventoryWritePermission';	// Permission label
+		$this->rights[7][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[7][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[7][5] = 'write';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		
+		$this->rights[8][0] = 1014;
+		$this->rights[8][1] = 'inventoryValidatePermission';	// Permission label
+		$this->rights[8][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[8][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[8][5] = 'validate';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		
+		$this->rights[9][0] = 1015;
+		$this->rights[9][1] = 'inventoryChangePMPPermission';	// Permission label
+		$this->rights[9][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[9][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[9][5] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		
+		}
+		
+		// Main menu entries
+		$this->menu = array();			// List of menus to add
+		$r=0;
 		
 		// Menus
 		//-------
@@ -139,7 +176,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
-		$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock',1).')';
+		$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock').')';
 
 		if ($conf->productbatch->enabled)
 		{
@@ -159,7 +196,7 @@ class modStock extends DolibarrModules
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e, '.MAIN_DB_PREFIX.'product_batch as pb';
 			$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid AND ps.rowid = pb.fk_product_stock';
-			$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock',1).')';
+			$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock').')';
 		}
 
 		// Imports

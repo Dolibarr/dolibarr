@@ -33,6 +33,7 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("agenda");
 
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
@@ -144,13 +145,12 @@ print '<input type="hidden" name="action" value="save">';
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
 print $langs->trans("AgendaAutoActionDesc")."<br>\n";
 print $langs->trans("OnlyActiveElementsAreShown").'<br>';
 print "<br>\n";
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
@@ -173,14 +173,14 @@ if (! empty($triggers))
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+
+			print '<tr class="oddeven">';
 			print '<td>'.$trigger['code'].'</td>';
 			print '<td>'.$trigger['label'].'</td>';
 			print '<td align="right" width="40">';
 			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 			$value=$conf->global->$key;
-			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
+			print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
 			print '</td></tr>'."\n";
 		}
 	}

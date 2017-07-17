@@ -23,7 +23,6 @@
  *		\brief      File to show page after a failed payment.
  *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -39,6 +38,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
 if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
@@ -50,13 +50,19 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
+$langs->load("stripe");
 
 $PAYPALTOKEN=GETPOST('TOKEN');
 if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
 $PAYPALPAYERID=GETPOST('PAYERID');
 if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-$PAYPALFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
+$FULLTAG=GETPOST('FULLTAG');
+if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
+
+
+$object = new stdClass();   // For triggers
+
+$paymentmethod='paypal';
 
 
 /*
@@ -76,14 +82,12 @@ $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
-
-// Send an email
-if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
+if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
 {
     // Get on url call
-    $token              = $PAYPALTOKEN;
-    $fulltag            = $PAYPALFULLTAG;
-    $payerID            = $PAYPALPAYERID;
+    $fulltag            = $FULLTAG;
+    $onlinetoken        = empty($PAYPALTOKEN)?$_SESSION['onlinetoken']:$PAYPALTOKEN;
+    $payerID            = empty($PAYPALPAYERID)?$_SESSION['payerID']:$PAYPALPAYERID;
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
@@ -91,29 +95,70 @@ if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
 
+    // Appel des triggers
+    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    $interface=new Interfaces($db);
+    $result=$interface->run_triggers('PAYPAL_PAYMENT_KO',$object,$user,$langs,$conf);
+    if ($result < 0) { $error++; $errors=$interface->errors; }
+    // Fin appel triggers
 
-	$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-	$from=$conf->global->MAILING_EMAIL_FROM;
+    // Send an email
+    $sendemail = '';
+    if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))  $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 
-	$urlback=$_SERVER["REQUEST_URI"];
-	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentFailed");
-	$content=$langs->transnoentitiesnoconv("NewPaypalPaymentFailed")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile($topic, $sendto, $from, $content);
+    if ($sendemail)
+    {
+    	$sendto=$sendemail;
+    	$from=$conf->global->MAILING_EMAIL_FROM;
 
-	$result=$mailfile->sendfile();
-	if ($result)
-	{
-		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
-	}
-	else
-	{
-		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
-	}
+    	// Define link to login card
+    	$appli=constant('DOL_APPLICATION_TITLE');
+    	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+    	{
+    	    $appli=$conf->global->MAIN_APPLICATION_TITLE;
+    	    if (preg_match('/\d\.\d/', $appli))
+    	    {
+    	        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+    	    }
+    	    else $appli.=" ".DOL_VERSION;
+    	}
+    	else $appli.=" ".DOL_VERSION;
+
+    	$urlback=$_SERVER["REQUEST_URI"];
+    	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
+    	$content="";
+    	$content.=$langs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."\n";
+    	$content.="\n";
+    	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+    	$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
+    	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+    	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+    	$mailfile = new CMailFile($topic, $sendto, $from, $content);
+
+    	$result=$mailfile->sendfile();
+    	if ($result)
+    	{
+    		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
+    	}
+    	else
+    	{
+    		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
+    	}
+    }
+
+    unset($_SESSION['ipaddress']);
 }
 
 
-llxHeaderPaypal($langs->trans("PaymentForm"));
+$head='';
+if (! empty($conf->global->PAYPAL_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Show ko message
@@ -125,9 +170,9 @@ if (! empty($conf->global->PAYPAL_MESSAGE_KO)) print $conf->global->PAYPAL_MESSA
 print "\n</div>\n";
 
 
-html_print_paypal_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooterPaypal();
+llxFooter('', 'public');
 
 $db->close();

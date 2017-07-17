@@ -29,8 +29,8 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Langs
@@ -59,7 +59,7 @@ $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page','int');
@@ -74,10 +74,6 @@ if (empty($search_date_start)) $search_date_start = dol_mktime(0, 0, 0, 1, 1, do
 if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 
 $object = new BookKeeping($db);
-
-$formventilation = new FormVentilation($db);
-$formother = new FormOther($db);
-$form = new Form($db);
 
 
 $options = '';
@@ -126,7 +122,7 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';
@@ -155,6 +151,10 @@ if ($action == 'delmouvconfirm') {
 /*
  * View
  */
+
+$formaccounting = new FormAccounting($db);
+$formother = new FormOther($db);
+$form = new Form($db);
 
 $title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . $langs->trans("AccountAccounting");
 
@@ -188,7 +188,7 @@ if ($action == 'delbookkeepingyear') {
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
-	$year_array = $formventilation->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
 
 	$form_question['delyear'] = array (
 			'name' => 'delyear',
@@ -207,7 +207,7 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-$viewflat = ' <a href="./list.php">' . $langs->trans("ViewFlatList") . '</a>';
+$viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'',$limit);
 
@@ -217,22 +217,11 @@ if ( preg_match('/^asc/i', $sortorder) )
 else
   $sortorder = "desc";
 
-print '<div class="tabsAction">' . "\n";
+print '<div class="tabsAction tabsActionNoBottom">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '</div>';
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("AccountAccounting") . '</td>';
-print_liste_field_titre($langs->trans("TransactionNumShort"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("SuppliersInvoices") . ' / ' . $langs->trans("CustomersInvoices"));
-print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
-print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">' . $object->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '') . '</td>';
@@ -250,39 +239,50 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
 print '<td class="liste_titre" align="right" colspan="2">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
+
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF']);
+print_liste_field_titre($langs->trans("TransactionNumShort"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"));
+print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
+print "</tr>\n";
 
 print '</tr>';
 
-$var = True;
 
 $total_debit = 0;
 $total_credit = 0;
 $sous_total_debit = 0;
 $sous_total_credit = 0;
-$displayed_account_number = null;       // Start with undefined to be able to distinguish with empty 
+$displayed_account_number = null;       // Start with undefined to be able to distinguish with empty
 
 foreach ( $object->lines as $line ) {
-	$var = ! $var;
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
     $accountg = length_accountg($line->numero_compte);
 	//if (empty($accountg)) $accountg = '-';
-	
+
 	// Is it a break ?
     if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
-        
+
         // Affiche un Sous-Total par compte comptable
         if (isset($displayed_account_number)) {
-          print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
-          print "<td>&nbsp;</td>\n";
-          print '</tr>';
+            print '<tr class="liste_total"><td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+            print "<td>&nbsp;</td>\n";
+            print "<td>&nbsp;</td>\n";
+            print '</tr>';
         }
-        
+
         // Show the break account
         $colspan = 9;
         print "<tr>";
@@ -291,34 +291,35 @@ foreach ( $object->lines as $line ) {
         else print '<span class="error">'.$langs->trans("Unknown").'</span>';
         print '</td>';
         print '</tr>';
-        
+
         $displayed_account_number = $accountg;
         //if (empty($displayed_account_number)) $displayed_account_number='-';
         $sous_total_debit = 0;
         $sous_total_credit = 0;
     }
 
-	print '<tr '. $bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td>';
-	print '<td align="right">'.$line->piece_num.'</td>';
+	print '<td align="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->doc_ref . '</a></td>';
-    
+
+	// TODO Add a link according to doc_type and fk_doc
+	print '<td class="nowrap">';
+    //if ($line->doc_type == 'supplier_invoice')
+    //if ($line->doc_type == 'customer_invoice')
+	print $line->doc_ref;
+    print '</td>';
+
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    if ($line->doc_type == 'supplier_invoice')
-     print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
-    elseif ($line->doc_type == 'customer_invoice')
-    print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/compta/facture/list.php?search_ref=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/compta/facture/list.php?search_ref=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
-    else
-    print strlen(length_accounta($line->code_tiers)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
-	print '<td align="right">' . price($line->debit) . '</td>';
-	print '<td align="right">' . price($line->credit) . '</td>';
+	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';
+	print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 	print '<td align="center">' . $line->code_journal . '</td>';
 	print '<td align="center">';
-	print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
+	print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';
 	print "</tr>\n";
@@ -332,6 +333,7 @@ foreach ( $object->lines as $line ) {
 // Affiche un Sous-Total du dernier compte comptable affiché
 print '<tr class="liste_total">';
 print '<td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+print "<td>&nbsp;</td>\n";
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
@@ -352,6 +354,4 @@ print "</table>";
 print '</form>';
 
 llxFooter();
-
-
 $db->close();

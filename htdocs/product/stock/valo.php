@@ -56,7 +56,7 @@ $sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sell
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
+$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 if ($sref)
 {
     $sql.= " AND e.label LIKE '%".$db->escape($sref)."%'";
@@ -102,7 +102,7 @@ if ($result)
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
@@ -120,7 +120,7 @@ if ($result)
             print "</tr>\n";
             $total += price2num($objp->estimatedvalue,'MU');
             $totalsell += price2num($objp->sellvalue,'MU');
-            $var=!$var;
+            
             $i++;
         }
 

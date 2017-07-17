@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 $langs->load('companies');
 $langs->load('other');
 
-$action		= GETPOST('action');
+$action		= GETPOST('action','aZ09');
 $confirm	= GETPOST('confirm');
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref');
@@ -53,7 +53,7 @@ $result=restrictedArea($user,'commande',$id,'');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -92,10 +92,10 @@ if ($id > 0 || ! empty($ref))
 		$upload_dir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), 0, 'order');
+		dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, 'order');
 
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{

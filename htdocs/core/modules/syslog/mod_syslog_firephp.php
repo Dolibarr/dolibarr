@@ -56,7 +56,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning', self::$firephp_class_path);
+		return ($this->isActive() == 1)?'':$langs->trans('ClassNotFoundIntoPathWarning', self::$firephp_class_path);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 			$res = @include_once self::$firephp_class_path;
 			restore_include_path();
 			if ($res) {
-				return 1;
+        		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_FIREPHP)?1:0;    // Set SYSLOG_DISABLE_LOGHANDLER_FIREPHP to 1 to disable this loghandler
 			} else {
 				return 0;
 			}

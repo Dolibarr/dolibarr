@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
--- Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,26 +19,35 @@
 
 CREATE TABLE llx_accounting_bookkeeping 
 (
-  rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
-  doc_date			date NOT NULL,
-  doc_type			varchar(30) NOT NULL,	-- facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
-  doc_ref			varchar(300) NOT NULL,	-- facture_client/reglement_client/... reference number
-  fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
-  fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
-  code_tiers		varchar(24),			-- code tiers
-  numero_compte		varchar(32) NOT NULL,
-  label_compte		varchar(128) NOT NULL,
-  debit				double NOT NULL,
-  credit			double NOT NULL,
-  montant			double NOT NULL,
-  sens				varchar(1) DEFAULT NULL,
-  fk_user_author	integer NOT NULL,						-- user creating
-  fk_user_modif     integer,                                -- user making last change
-  date_creation		datetime,								-- date de creation
-  tms               timestamp,								-- date last modification 
-  import_key		varchar(14),
-  code_journal		varchar(10) NOT NULL,
-  piece_num			integer NOT NULL,
-  validated         tinyint DEFAULT 0 NOT NULL -- 0 line not validated / 1 line validated (No deleting / No modification) 
+  rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
+  doc_date              date NOT NULL,				-- FEC:PieceDate
+  doc_type              varchar(30) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
+  fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
+  fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
+  thirdparty_code       varchar(32),                -- Third party code (customer or supplier) when record is saved (may help debug) 
+  subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
+  subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
+  numero_compte         varchar(32) NOT NULL,		-- FEC:CompteNum	| account number
+  label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
+  label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
+  debit                 double NOT NULL,			-- FEC:Debit
+  credit                double NOT NULL,			-- FEC:Credit
+  montant               double NOT NULL,			-- FEC:Montant (Not necessary)
+  sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
+  multicurrency_amount  double,						-- FEC:Montantdevise
+  multicurrency_code    varchar(255),				-- FEC:Idevise
+  lettering_code        varchar(255),				-- FEC:EcritureLet
+  date_lettering        datetime,					-- FEC:DateLet
+  fk_user_author        integer NOT NULL,			-- 					| user creating
+  fk_user_modif         integer,					-- 					| user making last change
+  date_creation         datetime,					-- FEC:EcritureDate	| creation date
+  tms                   timestamp,					--					| date last modification 
+  import_key            varchar(14),
+  code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
+  journal_label         varchar(255),				-- FEC:JournalLib
+  piece_num             integer NOT NULL,			-- FEC:EcritureNum
+  validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
+  date_validated        datetime					-- FEC:ValidDate
 ) ENGINE=innodb;

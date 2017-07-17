@@ -187,8 +187,8 @@ class Deplacement extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
-		$sql .= " , type = '".$this->type."'";
-		$sql .= " , fk_statut = '".$this->statut."'";
+		$sql .= " , type = '".$this->db->escape($this->type)."'";
+		$sql .= " , fk_statut = '".$this->db->escape($this->statut)."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
@@ -223,7 +223,7 @@ class Deplacement extends CommonObject
 	{
 		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
-		$sql.= " WHERE entity IN (".getEntity('deplacement').")";
+		$sql.= " WHERE entity IN (".getEntity('deplacement', 0).")";
 		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
 		else $sql.= " AND rowid = ".$id;
 

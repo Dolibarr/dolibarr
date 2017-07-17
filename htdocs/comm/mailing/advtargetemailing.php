@@ -59,7 +59,7 @@ if (! $sortfield)
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $search_nom = GETPOST("search_nom");
 $search_prenom = GETPOST("search_prenom");
 $search_email = GETPOST("search_email");
@@ -767,19 +767,19 @@ if ($object->fetch($id) >= 0) {
 		} else {
 			$std_soc = new Societe($db);
 			$action_search = 'query';
-			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array (
-					'thirdpartycard'
-			));
+			$hookmanager->initHooks(array ('thirdpartycard'));
+
+			$parameters=array();
 			if (! empty($advTarget->id)) {
-				$parameters = array (
-						'array_query' => $advTarget->filtervalue
-				);
+				$parameters = array('array_query' => $advTarget->filtervalue);
 			}
-			// Module extrafield feature
+			// Other attributes
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $std_soc, $action_search);
+            print $hookmanager->resPrint;
 		}
 
 		// State Contact
