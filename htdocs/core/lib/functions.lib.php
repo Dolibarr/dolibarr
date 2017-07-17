@@ -3292,9 +3292,10 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
  *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$disablesortlink	1=Disable sort link
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="")
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0)
 {
 	global $conf, $langs;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
@@ -3318,7 +3319,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -3339,7 +3340,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	$out.=$langs->trans($name);
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
 		$out.='</a>';
 	}

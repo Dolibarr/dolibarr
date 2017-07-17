@@ -17,9 +17,9 @@
  */
 
 /**
- * \file    core/boxes/mybox.php
+ * \file    modulebuilder/template/core/boxes/mymodulewidget1.php
  * \ingroup mymodule
- * \brief   Example box definition.
+ * \brief   Widget provided by MyModule
  *
  * Put detailed description here.
  */
@@ -33,12 +33,12 @@ include_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
  * Warning: for the box to be detected correctly by dolibarr,
  * the filename should be the lowercase classname
  */
-class MyBox extends ModeleBoxes
+class mymodulewidget1 extends ModeleBoxes
 {
 	/**
 	 * @var string Alphanumeric ID. Populated by the constructor.
 	 */
-	public $boxcode = "mybox";
+	public $boxcode = "mymodulebox";
 
 	/**
 	 * @var string Box icon (in configuration page)
@@ -90,7 +90,7 @@ class MyBox extends ModeleBoxes
 
 		parent::__construct($db, $param);
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("MyBox");
+		$this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
 
 		$this->param = $param;
 
@@ -114,7 +114,7 @@ class MyBox extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT . "/mymodule/class/mymodule.class.php";
 
 		// Populate the head at runtime
-		$text = $langs->trans("MyBoxDescription", $max);
+		$text = $langs->trans("MyModuleBoxDescription", $max);
 		$this->info_box_head = array(
 			// Title text
 			'text' => $text,
@@ -142,18 +142,21 @@ class MyBox extends ModeleBoxes
 					'tr'           => 'align="left"',
 					// HTML properties of the TD element
 					'td'           => '',
-					// Fist line logo
-					'logo'         => 'mymodule@mymodule',
-					// Main text
-					'text'         => 'My text',
-					// Secondary text
-					'text2'        => '<p><strong>Another text</strong></p>',
-					// Unformatted text, usefull to load javascript elements
-					'textnoformat' => '',
+
+					// Main text for content of cell
+					'text'         => 'First cell of first line',
 					// Link on 'text' and 'logo' elements
 					'url'          => 'http://example.com',
 					// Link's target HTML property
 					'target'       => '_blank',
+					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
+					//'logo'         => 'monmodule@monmodule',
+					// Unformatted text, added after text. Usefull to add/load javascript code
+					'textnoformat' => '',
+
+					// Main text for content of cell (other method)
+					//'text2'        => '<p><strong>Another text</strong></p>',
+
 					// Truncates 'text' element to the specified character length, 0 = disabled
 					'maxlength'    => 0,
 					// Prevents HTML cleaning (and truncation)
@@ -164,19 +167,27 @@ class MyBox extends ModeleBoxes
 				1 => array( // Another column
 					// No TR for n≠0
 					'td'   => '',
-					'text' => 'Another cell',
+					'text' => 'Second cell',
 				)
 			),
 			1 => array( // Another line
 				0 => array( // TR
 					'tr'   => 'align="left"',
 					'text' => 'Another line'
+				),
+				1 => array( // TR
+					'tr'   => 'align="left"',
+					'text' => ''
 				)
 			),
 			2 => array( // Another line
 				0 => array( // TR
 					'tr'   => 'align="left"',
-					'text' => 'Yet another line'
+					'text' => ''
+				),
+				0 => array( // TR
+					'tr'   => 'align="left"',
+					'text' => ''
 				)
 			),
 		);

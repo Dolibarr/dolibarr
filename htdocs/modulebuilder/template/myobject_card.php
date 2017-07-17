@@ -258,10 +258,11 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("MyObject")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
@@ -277,7 +278,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></div>';
 
 	print '</form>';
 }

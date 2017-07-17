@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2016		Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -377,28 +376,28 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
-print $langs->trans('From') . ': ';
+print $langs->trans('From') . ' ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to') . ': ';
+print $langs->trans('to') . ' ';
 print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 print '</div>';
 print '</td>';
 print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
-print $langs->trans('From');
+print $langs->trans('From').' ';
 print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to');
+print $langs->trans('to').' ';
 print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '</td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
-print $langs->trans('From');
+print $langs->trans('From').' ';
 // TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 // use setup of keypress to select thirdparty and this hang browser on large database.
 if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
@@ -411,7 +410,7 @@ else
 }
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to');
+print $langs->trans('to').' ';
 // TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 // use setup of keypress to select thirdparty and this hang browser on large database.
 if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
@@ -455,7 +454,10 @@ print "</tr>\n";
 $total_debit = 0;
 $total_credit = 0;
 
-foreach ($object->lines as $line ) {
+$i=0;
+while ($i < min($num, $limit))
+{
+	$line = $object->lines[$i];
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -481,6 +483,8 @@ foreach ($object->lines as $line ) {
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';
 	print "</tr>\n";
+
+	$i++;
 }
 
 print '<tr class="liste_total">';
