@@ -426,9 +426,19 @@ if ($dirins && $action == 'generatepackage')
     if (count($arrayversion))
     {
         $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
-        $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
 
-        $result = dol_compress_dir($dir, $outputfile, 'zip');
+        $dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
+        $outputfile = $dirofmodule.'/'.$FILENAMEZIP;
+		if ($dirofmodule)
+		{
+	        if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
+	        $result = dol_compress_dir($dir, $outputfile, 'zip');
+		}
+		else
+		{
+			$result = -1;
+		}
+
         if ($result > 0)
         {
             setEventMessages($langs->trans("ZipFileGeneratedInto", $outputfile), null);
@@ -446,6 +456,76 @@ if ($dirins && $action == 'generatepackage')
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
     }
+}
+
+if ($dirins && $action == 'generatedoc')
+{
+	$modulelowercase=strtolower($module);
+
+	// Dir for module
+	$dir = $dirins.'/'.$modulelowercase;
+	// Zip file to build
+	$FILENAMEDOC='';
+
+	// Load module
+	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+	$class='mod'.$module;
+
+	if (class_exists($class))
+	{
+		try {
+			$moduleobj = new $class($db);
+		}
+		catch(Exception $e)
+		{
+			$error++;
+			dol_print_error($e->getMessage());
+		}
+	}
+	else
+	{
+		$error++;
+		$langs->load("errors");
+		dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		exit;
+	}
+
+	$arrayversion=explode('.',$moduleobj->version,3);
+	if (count($arrayversion))
+	{
+		$FILENAMEDOC=$modulelowercase.'.html';
+
+		$dirofmodule = dol_buildpath($modulelowercase, 0).'/doc';
+		$outputfile = $dirofmodule.'/'.$FILENAMEDOC;
+		if ($dirofmodule)
+		{
+			if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
+			//...
+
+			$result = 0;
+		}
+		else
+		{
+			$result = 0;
+		}
+
+		if ($result > 0)
+		{
+			setEventMessages($langs->trans("DocFileGeneratedInto", $outputfile), null);
+		}
+		else
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfile), null, 'errors');
+		}
+	}
+	else
+	{
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
+	}
 }
 
 // Save file
@@ -1408,10 +1488,10 @@ elseif (! empty($module))
             if (count($arrayversion))
             {
                 $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
-                $outputfile = $conf->admin->dir_temp.'/'.$FILENAMEZIP;
+                $outputfile = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
 
-                $FILENAMEDOC="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".md";
-                $outputfiledoc = $conf->admin->dir_temp.'/'.$FILENAMEDOC;
+                $FILENAMEDOC=$modulelowercase.'.html';
+                $outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
             }
 
             print '<br>';
@@ -1430,7 +1510,7 @@ elseif (! empty($module))
         	print '<input type="hidden" name="action" value="generatepackage">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-        	print '<input type="submit" class="button" value="'.$langs->trans("BuildPackage").'">';
+        	print '<input type="submit" class="button" name="generatepackage" value="'.$langs->trans("BuildPackage").'">';
         	print '</form>';
 
         	print '<br><br><br>';
@@ -1445,11 +1525,11 @@ elseif (! empty($module))
 
             print '<br>';
 
-            print '<form name="generatepackage">';
+            print '<form name="generatedoc">';
         	print '<input type="hidden" name="action" value="generatedoc">';
         	print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
         	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-        	print '<input type="submit" class="button" value="'.$langs->trans("BuildDocumentation").'">';
+        	print '<input type="submit" class="button" name="generatedoc" value="'.$langs->trans("BuildDocumentation").'">';
         	print '</form>';
         }
 

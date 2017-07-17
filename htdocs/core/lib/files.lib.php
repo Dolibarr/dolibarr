@@ -47,7 +47,7 @@ function dol_basename($pathfile)
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
  *                                      but must not contains the start and end '/'. Filter is checked into basename only.
  *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked into fullpath.
- *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
+ *  @param	string		$sortcriteria	Sort criteria ("","fullname","relativename","name","date","size")
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  *  @param	int			$nohook			Disable all hooks
@@ -1692,7 +1692,7 @@ function dol_uncompress($inputfile,$outputdir)
  * Compress a directory and subdirectories into a package file.
  *
  * @param 	string	$inputdir		Source dir name
- * @param 	string	$outputfile		Target file name
+ * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
  * @return	int						<0 if KO, >0 if OK
  */
@@ -1701,6 +1701,15 @@ function dol_compress_dir($inputdir, $outputfile, $mode="zip")
     $foundhandler=0;
 
     dol_syslog("Try to zip dir ".$inputdir." into ".$outputdir." mode=".$mode);
+
+    if (! dol_is_dir(dirname($outputfile)) || ! is_writable(dirname($outputfile)))
+    {
+    	global $langs, $errormsg;
+    	$langs->load("errors");
+    	$errormsg=$langs->trans("ErrorFailedToWriteInDir",$outputfile);
+		return -3;
+    }
+
     try
     {
         if ($mode == 'gz')     { $foundhandler=0; }
@@ -1724,7 +1733,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode="zip")
 
                 // Initialize archive object
                 $zip = new ZipArchive();
-                $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+                $result = $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
                 // Create recursive directory iterator
                 /** @var SplFileInfo[] $files */
@@ -1758,6 +1767,10 @@ function dol_compress_dir($inputdir, $outputfile, $mode="zip")
         {
             dol_syslog("Try to zip with format ".$mode." with no handler for this format",LOG_ERR);
             return -2;
+        }
+        else
+        {
+        	return 0;
         }
     }
     catch (Exception $e)
