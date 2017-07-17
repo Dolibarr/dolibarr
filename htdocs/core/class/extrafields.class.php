@@ -197,6 +197,7 @@ class ExtraFields
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/",$attrname) && ! is_numeric($attrname))
 		{
@@ -350,6 +351,7 @@ class ExtraFields
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		$error=0;
 
@@ -460,6 +462,7 @@ class ExtraFields
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{

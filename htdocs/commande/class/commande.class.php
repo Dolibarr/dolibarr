@@ -65,9 +65,8 @@ class Commande extends CommonOrder
     public $contactid;
 
 	/**
-	 * Status of the order. Check the following constants:
+	 * Status of the order
 	 * @var int
-	 * @see Commande::STATUS_CANCELED, Commande::STATUS_DRAFT, Commande::STATUS_ACCEPTED, Commande::STATUS_CLOSED
 	 */
     public $statut;
 	/**
@@ -1359,10 +1358,10 @@ class Commande extends CommonOrder
 
 			$this->line->vat_src_code=$vat_src_code;
             $this->line->tva_tx=$txtva;
-            $this->line->localtax1_tx=$txlocaltax1;
-            $this->line->localtax2_tx=$txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+            $this->line->localtax1_tx=$localtaxes_type[1];
+            $this->line->localtax2_tx=$localtaxes_type[3];
+			$this->line->localtax1_type=$localtaxes_type[0];
+			$this->line->localtax2_type=$localtaxes_type[2];
             $this->line->fk_product=$fk_product;
 			$this->line->product_type=$product_type;
             $this->line->fk_remise_except=$fk_remise_except;
@@ -3372,14 +3371,14 @@ class Commande extends CommonOrder
      *	Return clicable link of object (with eventually picto)
      *
      *	@param      int			$withpicto                Add picto into link
-     *	@param      int			$option                   Where point the link (0=> main card, 1,2 => shipment)
+     *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
      *	@param      int			$max          	          Max length to show
      *	@param      int			$short			          ???
      *  @param	    int   	    $notooltip		          1=Disable tooltip
      *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return     string          			          String with URL
      */
-    function getNomUrl($withpicto=0, $option=0, $max=0, $short=0, $notooltip=0, $save_lastsearch_value=-1)
+    function getNomUrl($withpicto=0, $option='', $max=0, $short=0, $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $user;
 
@@ -3387,7 +3386,7 @@ class Commande extends CommonOrder
 
         $result='';
 
-        if (! empty($conf->expedition->enabled) && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
+        if (! empty($conf->expedition->enabled) && ($option == '1' || $option == '2')) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
         else $url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
 
         if ($option !== 'nolink')

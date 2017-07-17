@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=فتح وثيقة
 CloseEtablishment=إنشاء وثيقة
 # Dictionary
-DictionaryDepartment=شؤون الموظفين - الأقسام 
+DictionaryDepartment=شؤون الموظفين - الأقسام
 DictionaryFunction=شؤون الموظفين - الوظائف
 # Module
 Employees=الموظفين

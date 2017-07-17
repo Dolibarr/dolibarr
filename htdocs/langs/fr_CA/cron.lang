@@ -35,7 +35,6 @@ CronSaveSucess=Sauvegarde réussie
 CronFieldMandatory=Les champs %s sont obligatoires
 CronErrEndDateStartDt=La date de fin ne peut pas être avant la date de début
 CronTaskInactive=Ce travail est désactivé
-CronClassFile=Nom de fichier avec classe
 CronModuleHelp=Nom du répertoire du module Dolibarr (fonctionne également avec le module Dolibarr externe). <BR> Par exemple, appeler la méthode de récupération de l'objet de produit Dolibarr /htdocs/<u>product</u>/class/product.class.php, la valeur du module est <i> produit </i>
 CronClassFileHelp=Le chemin relatif et le nom du fichier à charger (le chemin d'accès est relatif au répertoire racine du serveur Web). <BR> Par exemple, appeler la méthode de récupération de Dolibarr Product object htdocs / product / class / <u> product.class.php</u>, la valeur du nom de fichier de classe est <i> product / class / product.class .php </i>
 CronObjectHelp=Le nom de l'objet à charger. <BR> Pour appeler par exemple la méthode de récupération de l'objet de produit Dolibarr /htdocs/product/class/product.class.php, la valeur du nom de fichier de classe est <i> Produit</i>

@@ -124,6 +124,7 @@ WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
 WeightUnitpound=Pfund
+WeightUnitounce=Unze
 Length=Länge
 LengthUnitm=m
 LengthUnitdm=dm

@@ -124,6 +124,7 @@ WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
 WeightUnitpound=font
+WeightUnitounce=uncia
 Length=Hossz
 LengthUnitm=m
 LengthUnitdm=dm

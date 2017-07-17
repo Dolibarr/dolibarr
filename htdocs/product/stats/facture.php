@@ -62,7 +62,7 @@ if (! $sortfield) $sortfield="f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
 	$search_month='';
 	$search_year='';
 }
@@ -145,7 +145,7 @@ if ($id > 0 || ! empty($ref))
         elseif ($user->rights->facture->lire)
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
+            $sql.= " f.facnumber, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
             $sql.= " d.rowid, d.total_ht as total_ht, d.qty";           // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -239,21 +239,22 @@ if ($id > 0 || ! empty($ref))
 					{
                         $objp = $db->fetch_object($result);
 
+                        $invoicestatic->id=$objp->facid;
+						$invoicestatic->ref=$objp->facnumber;
+						$societestatic->fetch($objp->socid);
+						$paiement = $invoicestatic->getSommePaiement();
 
                         print '<tr class="oddeven">';
                         print '<td>';
-                        $invoicestatic->id=$objp->facid;
-                        $invoicestatic->ref=$objp->facnumber;
                         print $invoicestatic->getNomUrl(1);
                         print "</td>\n";
-                        $societestatic->fetch($objp->socid);
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
                         print "<td>".$objp->code_client."</td>\n";
                         print '<td align="center">';
                         print dol_print_date($db->jdate($objp->datef),'day')."</td>";
                         print '<td align="center">'.$objp->qty."</td>\n";
                         print '<td align="right">'.price($objp->total_ht)."</td>\n";
-                        print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
+                        print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5,$paiement,$objp->type).'</td>';
                         print "</tr>\n";
                         $i++;
 

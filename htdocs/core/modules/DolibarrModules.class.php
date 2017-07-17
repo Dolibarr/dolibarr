@@ -617,7 +617,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * Gives the long description of a module. First check README-la_LA.md then README.md
      * If not markdown files found, it return translated value of the key ->descriptionlong.
      *
-     * @return  string  Long description of a module
+     * @return  string                  Long description of a module from README.md of from property.
      */
     function getDescLong()
     {
@@ -627,25 +627,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-        $filefound= false;
+        $pathoffile = $this->getDescLongReadmeFound();
 
-        // Define path to file README.md.
-        // First check README-la_LA.md then README.md
-        $pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$langs->defaultlang.'.md', 0);
-        if (dol_is_file($pathoffile))
-        {
-            $filefound = true;
-        }
-        if (! $filefound)
-        {
-            $pathoffile = dol_buildpath(strtolower($this->name).'/README.md', 0);
-            if (dol_is_file($pathoffile))
-            {
-                $filefound = true;
-            }
-        }
-
-        if ($filefound)     // Mostly for external modules
+        if ($pathoffile)     // Mostly for external modules
         {
             $content = file_get_contents($pathoffile);
 
@@ -682,6 +666,35 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
         return $content;
     }
+
+    /**
+     * Return path of file if a README file was found.
+     *
+     * @return  string      Path of file if a README file was found.
+     */
+    function getDescLongReadmeFound()
+    {
+        $filefound= false;
+
+        // Define path to file README.md.
+        // First check README-la_LA.md then README.md
+        $pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$langs->defaultlang.'.md', 0);
+        if (dol_is_file($pathoffile))
+        {
+            $filefound = true;
+        }
+        if (! $filefound)
+        {
+            $pathoffile = dol_buildpath(strtolower($this->name).'/README.md', 0);
+            if (dol_is_file($pathoffile))
+            {
+                $filefound = true;
+            }
+        }
+
+        return ($filefound?$pathoffile:'');
+    }
+
 
     /**
      * Gives the changelog. First check ChangeLog-la_LA.md then ChangeLog.md

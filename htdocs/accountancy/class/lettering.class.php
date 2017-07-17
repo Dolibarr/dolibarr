@@ -19,8 +19,8 @@
 
 /**
  * \file      accountancy/class/bookkeeping.class.php
- * \ingroup   Accounting Expert
- * \brief     Fichier de la classe des comptes comptable
+ * \ingroup   Advanced accountancy
+ * \brief     File of class for lettering
  */
 
 include_once DOL_DOCUMENT_ROOT."/accountancy/class/bookkeeping.class.php";
@@ -31,9 +31,15 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 /**
  * Class lettering
  */
-class lettering extends BookKeeping {
-
-	public function LettrageTiers($socid){
+class lettering extends BookKeeping
+{
+    /**
+     * lettrageTiers
+     *
+     * @param   int   $socid      Thirdparty id
+     * @return  void
+     */
+	public function lettrageTiers($socid) {
 
 		$db = $this->db;
 

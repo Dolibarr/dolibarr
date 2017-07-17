@@ -70,7 +70,6 @@ $search_type     = GETPOST('search_type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'cp.rowid'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname'
@@ -82,7 +81,7 @@ $fieldstosearchall = array(
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -124,7 +123,7 @@ $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 // Ref
 if(!empty($search_ref))
 {
-    $filter.= " AND cp.rowid LIKE '%".$db->escape($search_ref)."%'\n";
+    $filter.= " AND cp.rowid = ".$db->escape($search_ref);
 }
 
 // Start date

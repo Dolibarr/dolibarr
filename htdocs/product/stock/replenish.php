@@ -92,7 +92,7 @@ if ($mode == 'virtual') $usevirtualstock=1;
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter") || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
     $sref = '';
     $snom = '';

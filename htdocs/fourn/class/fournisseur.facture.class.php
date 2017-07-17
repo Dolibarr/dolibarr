@@ -130,7 +130,7 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ttc;
     //! id of source invoice if replacement invoice or credit note
     public $fk_facture_source;
-    
+
     /**
      * Standard invoice
      */
@@ -883,7 +883,7 @@ class FactureFournisseur extends CommonInvoice
             }
             // Fin appel triggers
         }
-        
+
         if (! $error)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
@@ -902,7 +902,7 @@ class FactureFournisseur extends CommonInvoice
             	$error++;
             }
         }
-        
+
 		if (! $error)
 		{
 			// Delete linked object
@@ -1081,20 +1081,29 @@ class FactureFournisseur extends CommonInvoice
     public function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
     {
         global $conf,$langs;
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+        $now=dol_now();
 
         $error=0;
+        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
 
-        // Protection
+        // Check parameters
         if ($this->statut > self::STATUS_DRAFT)	// This is to avoid to validate twice (avoid errors on logs and stock management)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
             return 0;
         }
-
-        // Check parameters
         if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->ref_supplier))
         {
-            $this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
+        	$langs->load("errors");
+        	$this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
+            return -1;
+        }
+        if (count($this->lines) <= 0)
+        {
+        	$langs->load("errors");
+            $this->error=$langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
             return -1;
         }
 
@@ -1116,7 +1125,7 @@ class FactureFournisseur extends CommonInvoice
         $this->newref = $num;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
+        $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::validate", LOG_DEBUG);

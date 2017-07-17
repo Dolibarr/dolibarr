@@ -314,7 +314,7 @@ class FormFile
 
         if (preg_match('/massfilesarea_/', $modulepart))
         {
-	        $out.='<div id="show_files"><br></div>';
+	        $out.='<div id="show_files"><br></div>'."\n";
 			$title=$langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
 			$title.='<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
@@ -788,14 +788,14 @@ class FormFile
                     $out.=dol_print_date($file->datea,'dayhour');
                     $out.='</td>';
                     if ($delallowed || $printer || $morepicto) $out.='<td></td>';
-                    $out.='</tr>';
+                    $out.='</tr>'."\n";
                 }
                 $this->numoffiles++;
             }
 
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
             {
-	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
     	    }
 
         }

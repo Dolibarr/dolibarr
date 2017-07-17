@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,12 @@ $error=0;
 define('EVEN_IF_ONLY_LOGIN_ALLOWED',1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Include and load Dolibarr environment variables
-require_once($path."../../htdocs/master.inc.php");
+$res=0;
+if (! $res && file_exists($path."master.inc.php")) $res=@include($path."master.inc.php");
+if (! $res && file_exists($path."../master.inc.php")) $res=@include($path."../master.inc.php");
+if (! $res && file_exists($path."../../master.inc.php")) $res=@include($path."../../master.inc.php");
+if (! $res && file_exists($path."../../../master.inc.php")) $res=@include($path."../../../master.inc.php");
+if (! $res) die("Include of master fails");
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 

@@ -51,7 +51,7 @@ class Categorie extends CommonObject
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
 
     const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
-	const TYPE_PROJECT = 6;
+	const TYPE_PROJECT = 6;    // TODO Replace this value with 'project'
     const TYPE_BANK_LINE = 'bank_line';
 	public $picto = 'category';
 
@@ -133,7 +133,7 @@ class Categorie extends CommonObject
 	);
 
 	public $element='category';
-	public $table_element='categories';
+	public $table_element='categorie';
 
 	public $fk_parent;
 	public $label;
@@ -1179,7 +1179,7 @@ class Categorie extends CommonObject
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent.": rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent." than category id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else

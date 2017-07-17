@@ -9,9 +9,9 @@ ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
 # Dictionary
-DictionaryDepartment=HRM - Department list
+DictionaryDepartment=HRM - Afdelingslijst
 DictionaryFunction=HRM - Function list
 # Module
-Employees=Employees
+Employees=Werknemers
 Employee=Werknemer
-NewEmployee=New employee
+NewEmployee=Nieuwe werknemer

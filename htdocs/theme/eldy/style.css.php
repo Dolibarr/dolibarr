@@ -2607,7 +2607,7 @@ form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-ty
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-td.nobottom, td.nobottom {
+tr.nobottom td, tr.nobottom , td.nobottom {
     border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {

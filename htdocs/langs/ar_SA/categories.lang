@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=العلامة / الفئة
 Rubriques=الكلمات / فئات
+RubriquesTransactions=Tags/Categories of transactions
 categories=علامات / فئات
 NoCategoryYet=أي علامة / فئة من هذا النوع تم إنشاؤها
 In=في

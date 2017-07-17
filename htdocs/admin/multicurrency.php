@@ -178,7 +178,7 @@ print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnDocumentDate").'</td>';
+print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';

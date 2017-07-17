@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Вы можете использовать мастер н
 KeepDefaultValuesDeb=Du bruker Dolibarr konfigurasjonsveiviseren fra en Ubuntu eller Debian-pakke, så verdiene foreslått her allerede er optimalisert. Bare passordet til databasen eieren til å opprette må fullføres. Endre andre parametere bare hvis du vet hva du gjør.
 KeepDefaultValuesMamp=Вы можете использовать мастер настройки DoliMamp, поэтому ценности предлагаемого здесь уже оптимизирован. Изменить их только, если вы знаете, что вы делаете.
 KeepDefaultValuesProxmox=Вы можете использовать мастер установки из Dolibarr прибор Proxmox виртуальные, поэтому значения предлагаемых здесь уже оптимизированы. Изменение их, только если вы знаете, что вы делаете.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade
