@@ -70,7 +70,6 @@ $type            = GETPOST('type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'cp.rowid'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname'
@@ -124,7 +123,7 @@ $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 // WHERE
 if(!empty($search_ref))
 {
-    $filter.= " AND cp.rowid LIKE '%".$db->escape($search_ref)."%'\n";
+    $filter.= " AND cp.rowid = ".$db->escape($search_ref);
 }
 
 // DATE START

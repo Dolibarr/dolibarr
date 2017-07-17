@@ -102,7 +102,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 $pageplusone = GETPOST("pageplusone",'int');
 if ($pageplusone) $page = $pageplusone - 1;
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -130,7 +130,7 @@ if ($id > 0 || ! empty($ref))
 $contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 //var_dump($contextpage);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -580,6 +580,7 @@ if ($resql)
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
 	if (GETPOST('bid')) print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';
@@ -1212,6 +1213,7 @@ if ($resql)
         	{
         	    print '<td align="right">-</td>';
         	}
+			if (! $i) $totalarray['nbfield']++;
     	}
 
     	if (! empty($arrayfields['b.num_releve']['checked']))
