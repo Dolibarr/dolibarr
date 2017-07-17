@@ -924,20 +924,26 @@ elseif (! empty($module))
 
         if ($tab == 'specifications')
         {
-            $pathtofile = $modulelowercase.'/SPECIFICATIONS.md';
-
             if ($action != 'editfile' || empty($file))
             {
-                print '<span class="fa fa-file"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
-                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-                print '<br>';
+            	$specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$');
 
-                // Use MD or asciidoc
-                //print 'http://asciidoctor.org/docs/user-manual/#compared-to-markdown';
+	            foreach ($specs as $spec)
+	            {
+	            	$pathtofile = $modulelowercase.'/doc/'.$spec['relativename'];
+
+	            	print '<span class="fa fa-file"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
+	                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+	                print '<br>';
+	            }
             }
             else
             {
-        	    $fullpathoffile=dol_buildpath($file, 0);
+                // Use MD or asciidoc
+
+                //print $langs->trans("UseAsciiDocFormat").'<br>';
+
+                $fullpathoffile=dol_buildpath($file, 0);
 
         	    $content = file_get_contents($fullpathoffile);
 

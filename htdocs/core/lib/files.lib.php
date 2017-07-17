@@ -51,10 +51,11 @@ function dol_basename($pathfile)
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  *  @param	int			$nohook			Disable all hooks
+ *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0)
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="")
 {
 	global $db, $hookmanager;
 	global $object;
@@ -144,6 +145,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 										"name" => $file,
 										"path" => $path,
 										"level1name" => $level1name,
+										"relativename" => ($relativename?$relativename.'/':'').$file,
 										"fullname" => $path.'/'.$file,
 										"date" => $filedate,
 										"size" => $filesize,
@@ -155,7 +157,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive)
 						{
-							$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook));
+							$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename?$relativename.'/':'').$file));
 						}
 					}
 					else if (! $isdir && (($types == "files") || ($types == "all")))
@@ -172,6 +174,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 									"name" => $file,
 									"path" => $path,
 									"level1name" => $level1name,
+									"relativename" => ($relativename?$relativename.'/':'').$file,
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
 									"size" => $filesize,
