@@ -5,7 +5,7 @@ in Dolibarr root.
 
 ALL:
 ----
-Check "DOL_CHANGE"
+Check "@CHANGE"
 
 
 CKEDITOR (4.6.2):
