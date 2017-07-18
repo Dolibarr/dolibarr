@@ -611,8 +611,34 @@ if (! dol_is_dir($dirins))
 }
 $dirins_ok=(dol_is_dir($dirins));
 
-
-llxHeader('', $langs->trans("ModuleBuilder"), "", '', 0, 0, array('/includes/ace/ace.js'), array());
+$head='<style type="text/css" media="screen">
+	.ace_editor {
+		margin: 0;
+	}
+	#statusBar {
+        margin: 0;
+        padding: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 20px;
+        background-color: rgb(245, 245, 245);
+        color: gray;
+    }
+    .ace_status-indicator {
+        color: gray;
+        position: relative;
+        right: 0;
+        border-left: 1px solid;
+    }
+	</style>';
+llxHeader($head, $langs->trans("ModuleBuilder"), "", '', 0, 0,
+	array(
+		'/includes/ace/ace.js',
+		'/includes/ace/ext-statusbar.js',
+		'/includes/ace/ext-language_tools.js',
+		//'/includes/ace/ext-chromevox.js'
+	), array());
 
 
 $text=$langs->trans("ModuleBuilder");
@@ -1302,7 +1328,7 @@ elseif (! empty($module))
                     print $doleditor->Create(1, '', false);
                     print '<br>';
                     print '<center>';
-                    print '<input type="submit" class="button id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                    print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
                     print ' &nbsp; ';
                     print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
                     print '</center>';

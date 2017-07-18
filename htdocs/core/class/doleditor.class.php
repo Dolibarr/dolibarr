@@ -146,7 +146,7 @@ class DolEditor
      *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements.
      *  @return	void|string
      */
-    function Create($noprint=0,$morejs='',$disallowAnyContent=true)
+    function Create($noprint=0, $morejs='', $disallowAnyContent=true)
     {
     	global $conf,$langs;
 
@@ -243,48 +243,62 @@ class DolEditor
                                filebrowserImageWindowHeight : \'500\'';
             	}
             	$out.= '	})'.$morejs;
-            	$out.= '});
-            			</script>';
+            	$out.= '});'."\n";
+            	$out.= '</script>'."\n";
             }
         }
+
+        // Output editor ACE
+        // Warning: ace.js and ext-statusbar.js must be loaded by the parent page.
         if (preg_match('/^ace/', $this->tool))
         {
         	$found=1;
 			$format=(GETPOST('format','aZ09')?GETPOST('format','aZ09'):'php');
 
-        	print '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width?'width: '.$this->width.'px; ':'').($this->height?' height: '.$this->height.'px; ':'').'">';
-        	print preg_replace(array('/^<\?php/','/\?>$/'), array('&lt;?php','?&gt;'), $this->content);
-        	print '</pre>';
-        	print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" style="width:0px; height: 0px; display: none;">';
-        	print $this->content;
-        	print '</textarea>';
+            $out.= '<!-- Output Ace editor -->'."\n";
+        	$out.= '<div id="statusBar"></div>';
+            $out.= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width?'width: '.$this->width.'px; ':'').($this->height?' height: '.$this->height.'px; ':'').'">';
+        	/*$out.= preg_replace(array('/^<\?php/','/\?>$/'), array('&lt;?php','?&gt;'), $this->content); */
+        	$out.= htmlentities($this->content);
+        	$out.= '</pre>';
+        	$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" style="width:0px; height: 0px; display: none;">';
+        	$out.= htmlentities($this->content);
+        	$out.= '</textarea>';
 
-        	print '<script type="text/javascript" language="javascript">'."\n";
-        	print 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
-					    aceEditor.session.setMode("ace/mode/'.$format.'");
-						aceEditor.setOptions({
-		   				   //enableBasicAutocompletion: false, // the editor completes the statement when you hit Ctrl + Space
-						   //enableLiveAutocompletion: false, // the editor completes the statement while you are typing
-						   //showPrintMargin: true, // hides the vertical limiting strip
-						   //maxLines: 34,
-						   fontSize: "100%" // ensures that the editor fits in the environment
-						});
-						// defines the style of the editor
-						aceEditor.setTheme("ace/theme/chrome");
-						// hides line numbers (widens the area occupied by error and warning messages)
-						//aceEditor.renderer.setOption("showLineNumbers", false);
-						// ensures proper autocomplete, validation and highlighting of JavaScript code
-						//aceEditor.getSession().setMode("ace/mode/javascript_expression");
-						'."\n";
+        	$out.= '<script type="text/javascript" language="javascript">'."\n";
+        	$out.= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
-        	print 'jQuery(document).ready(function() {
+				    // Init status bar. Need lib ext-statusbar
+        			//var StatusBar = ace.require("ace/ext/statusbar").StatusBar;
+	    			//var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar"));
+
+				    aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.setOptions({
+	   				   enableBasicAutocompletion: true, // the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
+					   enableLiveAutocompletion: false, // the editor completes the statement while you are typing. Need lib ext-language_tools.js
+					   showPrintMargin: false, // hides the vertical limiting strip
+					   minLines: 10,
+					   //maxLines: 34,
+					   fontSize: "100%" // ensures that the editor fits in the environment
+					});
+
+					// defines the style of the editor
+					aceEditor.setTheme("ace/theme/chrome");
+					// hides line numbers (widens the area occupied by error and warning messages)
+					//aceEditor.renderer.setOption("showLineNumbers", false);
+					// ensures proper autocomplete, validation and highlighting of JavaScript code
+					//aceEditor.getSession().setMode("ace/mode/javascript_expression");
+					'."\n";
+
+        	$out.= 'jQuery(document).ready(function() {
 						jQuery("#savefile").click(function() {
+        					console.log("We click on savefile button");
 							jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
 							if (strlen(jQuery("#'.$this->htmlname.'").html()) > 0) return true;
 							else return false;
 	        			});
 					})';
-        	print '</script>'."\n";
+        	$out.= '</script>'."\n";
         }
 
         if (empty($found))
