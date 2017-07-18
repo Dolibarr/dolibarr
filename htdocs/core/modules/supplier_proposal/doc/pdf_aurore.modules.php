@@ -357,7 +357,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$posYAfterDescription=0;
 
 					// We start with Photo of product line
-					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
 					{
 						$pdf->AddPage('','',true);
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -368,7 +368,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						$showpricebeforepagebreak=0;
 					}
 
-					if (isset($imglinesize['width']) && isset($imglinesize['height']))
+					if (!empty($imglinesize['width']) && !empty($imglinesize['height']))
 					{
 						$curX = $this->posxpicture-1;
 						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
@@ -380,8 +380,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$curX = $this->posxdesc-1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
-
+					if ($posYAfterImage > 0) 
+					{
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+					} 
+					else 
+					{
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+					}
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -1131,20 +1137,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
 
-		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
-		{
-			$pdf->line($this->posxpicture-1, $tab_top, $this->posxpicture-1, $tab_top + $tab_height);
-			if (empty($hidetop))
-			{
-				//$pdf->SetXY($this->posxpicture-1, $tab_top+1);
-				//$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
-			}
-		}
-
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			//$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->line($this->posxtva-2, $tab_top, $this->posxtva-2, $tab_top + $tab_height);
+			$pdf->line($this->posxtva, $tab_top, $this->posxtva, $tab_top + $tab_height);
+			//$pdf->line($this->posxtva-2, $tab_top, $this->posxtva-2, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{
 				$pdf->SetXY($this->posxtva-5, $tab_top+1);
