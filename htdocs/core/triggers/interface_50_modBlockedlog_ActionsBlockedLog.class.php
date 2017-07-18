@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 class InterfaceActionsBlockedLog extends DolibarrTriggers
 {
 	public $family = 'system';
-	public $description = "Triggers of this module add blocklog.";
+	public $description = "Triggers of this module add action for BlockedLog module.";
 	public $version = self::VERSION_DOLIBARR;
-	public $picto = 'system';
+	public $picto = 'technic';
 
 	/**
 	 * Function called on Dolibarrr payment or invoice event.

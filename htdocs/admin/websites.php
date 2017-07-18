@@ -362,7 +362,7 @@ if ($id)
         $sql.=" ORDER BY ";
     }
     $sql.=$tabsqlsort[$id];
-    $sql.=$db->plimit($listlimit+1,$offset);
+    $sql.=$db->plimit($limit+1, $offset);
     //print $sql;
 
     $fieldlist=explode(',',$tabfield[$id]);
