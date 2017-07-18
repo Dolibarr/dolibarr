@@ -2738,6 +2738,7 @@ class SupplierProposalLine  extends CommonObject
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2920,6 +2921,7 @@ class SupplierProposalLine  extends CommonObject
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
