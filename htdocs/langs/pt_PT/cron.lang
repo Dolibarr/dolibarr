@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Ler trabalho agendado
+Permission23101 = Ler trabalho agendadocar
 Permission23102 = Criar/atualizar trabalho agendado
 Permission23103 = Apagar Trabalho Agendado
 Permission23104 = Executar Trabalho Agendado

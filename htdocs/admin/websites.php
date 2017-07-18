@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,23 +48,20 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
-$listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
 $status = 1;
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1 || $page == null) { $page = 0 ; }
-$offset = $listlimit * $page ;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
-
-// This page is a generic page to edit dictionaries
-// Put here declaration of dictionaries properties
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -118,7 +115,7 @@ $elementList = array();
 $sourceList=array();
 
 // Actions add or modify an entry into a dictionary
-if (GETPOST('actionadd') || GETPOST('actionmodify'))
+if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
     $listfield=explode(',',$tabfield[$id]);
     $listfieldinsert=explode(',',$tabfieldinsert[$id]);
@@ -138,7 +135,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
 
     // Si verif ok et action add, on ajoute la ligne
-    if ($ok && GETPOST('actionadd'))
+    if ($ok && GETPOST('actionadd','alpha'))
     {
         if ($tabrowid[$id])
         {
@@ -200,7 +197,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
 
     // Si verif ok et action modify, on modifie la ligne
-    if ($ok && GETPOST('actionmodify'))
+    if ($ok && GETPOST('actionmodify','alpha'))
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
@@ -252,7 +249,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel'))
+if (GETPOST('actioncancel','alpha'))
 {
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
@@ -262,7 +259,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".MAIN_DB_PREFIX."website_pages WHERE fk_website ='".$rowid."'";
+    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
     $result = $db->query($sql);
 
     $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
@@ -341,7 +338,7 @@ if ($action == 'delete')
 //var_dump($elementList);
 
 /*
- * Show a dictionary
+ * Show website list
  */
 if ($id)
 {
@@ -365,7 +362,7 @@ if ($id)
         $sql.=" ORDER BY ";
     }
     $sql.=$tabsqlsort[$id];
-    $sql.=$db->plimit($listlimit+1,$offset);
+    $sql.=$db->plimit($limit+1, $offset);
     //print $sql;
 
     $fieldlist=explode(',',$tabfield[$id]);
@@ -412,11 +409,11 @@ if ($id)
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
-        if (GETPOST('actionadd'))
+        if (GETPOST('actionadd','alpha'))
         {
             foreach ($fieldlist as $key=>$val)
             {
-                if (GETPOST($val))
+                if (GETPOST($val,'alpha'))
                 	$obj->$val=GETPOST($val);
             }
         }
@@ -447,8 +444,7 @@ if ($id)
 
 
 
-    // List of available values in database
-    dol_syslog("htdocs/admin/dict", LOG_DEBUG);
+    // List of websites in database
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -464,14 +460,6 @@ if ($id)
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
             print '<table class="noborder" width="100%">';
-
-            // There is several pages
-            if ($num > $listlimit)
-            {
-                print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
-                print_fleche_navigation($page, $_SERVER["PHP_SELF"], '', ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
-                print '</td></tr>';
-            }
 
             // Title of lines
             print '<tr class="liste_titre">';

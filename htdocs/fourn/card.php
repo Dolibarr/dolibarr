@@ -375,12 +375,6 @@ if ($object->id > 0)
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
 		$langs->load("products");
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductServicePrices").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
-		print '</a></td></tr>';
-
 		//Query from product/liste.php
 		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity,';
 		$sql.= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
@@ -394,16 +388,21 @@ if ($object->id > 0)
 		$query = $db->query($sql);
         if (! $query) dol_print_error($db);
 
+        $num = $db->num_rows($query);
+
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre'.(($num == 0) ? ' nobottom':'').'">';
+        print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+        print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductServicePrices").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
+        print '</a></td></tr>';
+
 		$return = array();
-
-		if ($db->num_rows($query)) {
-
+		if ($num > 0)
+		{
 			$productstatic = new Product($db);
 
-			while ($objp = $db->fetch_object($query)) {
-
-
-
+			while ($objp = $db->fetch_object($query))
+			{
 				$productstatic->id = $objp->rowid;
 				$productstatic->ref = $objp->ref;
 				$productstatic->label = $objp->label;
@@ -467,7 +466,7 @@ if ($object->id > 0)
 
 	            print '<tr class="liste_titre">';
 	            print '<td colspan="3">';
-	            print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierProposals",($num<$MAXLIST?"":$MAXLIST)).'</td>';
+	            print '<table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastSupplierProposals",($num<$MAXLIST?"":$MAXLIST)).'</td>';
 	            print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'">'.$langs->trans("AllPriceRequests").' <span class="badge">'.$num.'</span></td>';
 	            print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 	            print '</tr></table>';

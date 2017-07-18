@@ -129,10 +129,13 @@ $hookmanager->initHooks(array('agenda'));
 if (GETPOST("viewlist") || $action == 'show_list')
 {
     $param='';
-    foreach($_POST as $key => $val)
+    if (is_array($_POST))
     {
-        if ($key=='token') continue;
-        $param.='&'.$key.'='.urlencode($val);
+        foreach($_POST as $key => $val)
+        {
+            if ($key=='token') continue;
+            $param.='&'.$key.'='.urlencode($val);
+        }
     }
     //print $param;
     header("Location: ".DOL_URL_ROOT.'/comm/action/listactions.php?'.$param);
@@ -142,10 +145,13 @@ if (GETPOST("viewlist") || $action == 'show_list')
 if (GETPOST("viewperuser") || $action == 'show_peruser')
 {
     $param='';
-    foreach($_POST as $key => $val)
+    if (is_array($_POST))
     {
-        if ($key=='token') continue;
-        $param.='&'.$key.'='.urlencode($val);
+        foreach($_POST as $key => $val)
+        {
+            if ($key=='token') continue;
+            $param.='&'.$key.'='.urlencode($val);
+        }
     }
     //print $param;
     header("Location: ".DOL_URL_ROOT.'/comm/action/peruser.php?'.$param);
@@ -537,8 +543,10 @@ $resql=$db->query($sql);
 if ($resql)
 {
     $num = $db->num_rows($resql);
+
+    $MAXONSAMEPAGE=10000;   // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
     $i=0;
-    while ($i < $num)
+    while ($i < $num && $i < $MAXONSAMEPAGE)
     {
         $obj = $db->fetch_object($resql);
 

@@ -22,9 +22,9 @@
  *
  */
 /**
- * \file htdocs/accountancy/supplier/card.php
- * \ingroup Accountancy
- * \brief Card supplier ventilation
+ * \file 	htdocs/accountancy/supplier/card.php
+ * \ingroup Advanced accountancy
+ * \brief 	Card supplier ventilation
  */
 require '../../main.inc.php';
 
@@ -44,7 +44,7 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
-	
+
 /*
  * Actions
  */
@@ -97,14 +97,14 @@ if (! empty($id)) {
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
 	$sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
-	
+
 	dol_syslog("/accounting/supplier/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
-	
+
 	if ($result) {
 		$num_lines = $db->num_rows($result);
 		$i = 0;
-		
+
 		if ($num_lines) {
 			$objp = $db->fetch_object($result);
 

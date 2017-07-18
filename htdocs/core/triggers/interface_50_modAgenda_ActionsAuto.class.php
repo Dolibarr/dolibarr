@@ -62,10 +62,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Module not active, we do nothing
-        if (empty($conf->agenda->enabled)) {
-	        return 0;
-        }
+        if (empty($conf->agenda->enabled)) return 0;     // Module not active, we do nothing
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
 
@@ -651,25 +648,25 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("projects");
-        
+
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Project").': '.$object->ref;
-        
+
             $object->sendtoid=0;
         }
         elseif($action == 'PROJECT_MODIFY') {
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("projects");
-        
+
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
-        
+
             $object->sendtoid=0;
         }
-        
+
 		// Project tasks
 		elseif($action == 'TASK_CREATE') {
             $langs->load("agenda");
@@ -708,18 +705,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		// TODO Merge all previous cases into this generic one
 		else {
-		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function) 
+		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
 		    $langs->load("agenda");
 		    $langs->load("other");
-		    
+
 		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities($action."InDolibarr",$object->ref);
 		    $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
-		    
+
 		    $object->sendtoid=0;
 		}
-		
+
 		$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-		
+
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         // Add entry in event table
@@ -783,7 +780,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->elementtype = $object->element;
 
 		$ret=$actioncomm->create($user);       // User creating action
-		
+
 		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)
 		{
 			if (is_array($object->attachedfiles) && array_key_exists('paths',$object->attachedfiles) && count($object->attachedfiles['paths'])>0) {
@@ -798,9 +795,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 		}
-		
+
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
-		
+
 		if ($ret > 0)
 		{
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;

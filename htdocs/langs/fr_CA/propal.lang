@@ -12,6 +12,7 @@ SearchAProposal=Rechercher une proposition
 NoProposal=Pas de propositions
 ProposalsStatistics=Statistiques de la proposition commerciale
 AmountOfProposalsByMonthHT=Montant par mois (net d'impôt)
+PropalsOpened=Ouverte
 PropalStatusValidated=Validé (la proposition est ouverte)
 PropalStatusNotSigned=Non signée (close)
 PropalsToClose=Propositions commerciales à clôturer

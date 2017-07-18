@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
  */
 class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 {
-	public $family = 'ldap';
+	public $family = 'mailmanspip';
 	public $description = "Triggers of this module allows to synchronize Mailman an Spip.";
 	public $version = self::VERSION_DOLIBARR;
 	public $picto = 'technic';
@@ -50,12 +50,6 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
         if (empty($conf->mailmanspip->enabled)) return 0;     // Module not active, we do nothing
-
-        if (! function_exists('ldap_connect'))
-        {
-        	dol_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
-        	return 0;
-        }
 
         if ($action == 'CATEGORY_LINK')
         {

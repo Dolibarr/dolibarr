@@ -92,7 +92,7 @@ if (! empty($search_doc_date)) {
 }
 
 
-if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (! GETPOST('button_removefilter_x','alpha') && ! GETPOST('button_removefilter.x','alpha') && ! GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
   if (! empty($search_accountancy_code_start)) {
   	$filter['t.numero_compte'] = $search_accountancy_code_start;
@@ -121,7 +121,7 @@ if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Bot
  * Action
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';
@@ -160,7 +160,6 @@ $title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By"
 llxHeader('', $title_page);
 
 // List
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
@@ -173,7 +172,9 @@ $result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $f
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
-$nbtotalofrecords = $result;
+
+$num=count($object->lines);
+
 
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
@@ -204,7 +205,7 @@ if ($action == 'delbookkeepingyear') {
 
 
 
-print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
 $viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
 
@@ -236,7 +237,7 @@ print '<td class="liste_titre"><input type="text" size="7" class="flat" name="se
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_account" value="' . $search_label_account . '"/></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="right"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
 print '<td class="liste_titre" align="right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
@@ -250,7 +251,7 @@ print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_re
 print_liste_field_titre($langs->trans("Label"));
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
 
@@ -263,7 +264,10 @@ $sous_total_debit = 0;
 $sous_total_credit = 0;
 $displayed_account_number = null;       // Start with undefined to be able to distinguish with empty
 
-foreach ( $object->lines as $line ) {
+$i=0;
+while ($i < min($num, $limit))
+{
+	$line = $object->lines[$i];
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -323,10 +327,11 @@ foreach ( $object->lines as $line ) {
 	print '</td>';
 	print "</tr>\n";
 
-  // Comptabilise le sous-total
-  $sous_total_debit += $line->debit;
-  $sous_total_credit += $line->credit;
+	// Comptabilise le sous-total
+	$sous_total_debit += $line->debit;
+	$sous_total_credit += $line->credit;
 
+	$i++;
 }
 
 // Affiche un Sous-Total du dernier compte comptable affiché

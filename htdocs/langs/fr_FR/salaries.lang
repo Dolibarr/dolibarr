@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable par défaut pour les paiements des salaires
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable salaires
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Dedicated accounting account defined on user card will be used for Subledger accouting, this one for General Ledger or as default value of Subledger accounting if dedicated user accouting account on user is not defined
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable par défaut pour les charges de personnel
 Salary=Salaire
 Salaries=Salaires
@@ -7,8 +8,8 @@ NewSalaryPayment=Nouveau règlement de salaire
 SalaryPayment=Règlement salaire
 SalariesPayments=Règlements des salaires
 ShowSalaryPayment=Afficher règlement de salaire
-THM=Salaire horaire moyen
-TJM=Salaire journalier moyen
-CurrentSalary=Salaire courant
+THM=Tarif horaire moyen
+TJM=Tarif journalier moyen
+CurrentSalary=Salaire actuel
 THMDescription=Cette valeur peut être utilisé pour calculer le coût horaire consommé dans un projet suivi par utilisateurs si le module projet est utilisé
 TJMDescription=Cette valeur est actuellement seulement une information et n'est utilisé pour aucun calcul

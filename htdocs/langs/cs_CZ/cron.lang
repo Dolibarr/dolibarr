@@ -11,7 +11,7 @@ URLToLaunchCronJobs=URL ke kontrole a spuštění úlohy v případě potřeby
 OrToLaunchASpecificJob=Nebo zkontrolovat a zahájit konkrétní práci
 KeyForCronAccess=Bezpečnostní klíč URL spuštění úlohy
 FileToLaunchCronJobs=Příkazový řádek pro spuštění úlohy
-CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následující položku crontab ke spuštění příkazového řádku každých 5 minut 
+CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následující položku crontab ke spuštění příkazového řádku každých 5 minut
 CronExplainHowToRunWin=Na Microsoft Windows systémech můžete použít naplánováné nástroje úloh ke spuštění příkazového řádku každých 5 minut
 CronMethodDoesNotExists=Třída %s neobsahuje žádné metody %s
 # Menu
@@ -47,7 +47,7 @@ JobFinished=Práce zahájena a dokončena
 #Page card
 CronAdd= Přidat práci
 CronEvery=Vykonat práci každý
-CronObject=Vytvoření Instance/objektu 
+CronObject=Vytvoření Instance/objektu
 CronArgs=Parametry
 CronSaveSucess=Úspěšně uloženo
 CronNote=Komentář
@@ -63,7 +63,7 @@ CronClassFileHelp=The relative path and file name to load (path is relative to w
 CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is <i>Product</i>
 CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is <i>fecth</i>
 CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be <i>0, ProductRef</i>
-CronCommandHelp=Spustit příkazový řádek. 
+CronCommandHelp=Spustit příkazový řádek.
 CronCreateJob=Vytvořit novou naplánovanou úlohu
 CronFrom=Z
 # Info

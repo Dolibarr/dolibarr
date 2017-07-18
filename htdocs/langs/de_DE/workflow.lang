@@ -10,6 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kennzeichne verknüpftes Angebot als i
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung als bezahlt markiert wird
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung bestätigt wird
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kennzeichne das verknüpfte Angebot als abgerechnet, wenn die Kundenrechnung erstellt wurde.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne verknüpfte Aufträge als geliefert, wenn die Lieferung verbucht wurde und die Liefermenge der Bestellmenge entspricht
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation

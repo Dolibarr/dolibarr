@@ -6,7 +6,6 @@ WEBSITE_CSS_URL=URL zu externer CSS Datei
 EditPageMeta=Metadaten bearbeiten
 Website=Website
 PreviewOfSiteNotYetAvailable=Vorschau des Webauftritt <strong>%s</strong> noch nicht verfügbar. Sie müssen zuerst eine Seite hinzufügen.
-RequestedPageHasNoContentYet=Die Seite mit ID %s hat noch keinen Inhalt, oder die Cachedatei .tpl.php wurde gelöscht. Editieren sie die Seite um das Problem zu lösen.
 PageDeleted=Seite '%s' des Webauftritt %s gelöscht
 PageAdded=Seite '%s' hinzugefügt
 ViewSiteInNewTab=Webauftritt in neuem Tab anzeigen

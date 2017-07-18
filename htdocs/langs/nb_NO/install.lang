@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Du bruker Dolibarrs konfigureringsveiviser fra DoliWamp, s
 KeepDefaultValuesDeb=Du bruker Dolibarrs konfigureringsveiviser fra en Linux-pakke (Ubuntu, Debian, Fedora ...), så verdiene foreslått her, er allerede optimalisert. Bare passordet til databaseeieren må  fylles ut. Endre andre parametere bare hvis du vet hva du gjør.
 KeepDefaultValuesMamp=Du bruker Dolibarrs konfigureringsveiviser fra DoliMamp, så verdiene foreslått her, er allerede optimalisert. Endre dem bare hvis du vet hva du gjør.
 KeepDefaultValuesProxmox=Du bruker Dolibarrs konfigureringsveiviser fra en Proxmox virtual appliance, så verdiene foreslått her, er allerede optimalisert. Endre dem bare hvis du vet hva du gjør.
+UpgradeExternalModule=Kjør dedikert oppgradering av eksterne moduler
 
 #########
 # upgrade

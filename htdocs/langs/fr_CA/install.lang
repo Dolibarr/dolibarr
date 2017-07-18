@@ -8,6 +8,7 @@ KeepDefaultValuesWamp=Comme vous utilisez l'assistant d'installation Dolibarr de
 KeepDefaultValuesDeb=Comme vous utilisez l'assistant d'installation Dolibarr depuis un paquet Linux ou BSD (Ubuntu, Debian, Fedora, …), les valeurs proposées aux paramètres sont déjà optimisées. Seul le mot de passe du propriétaire de la base de données à créer est à renseigner. Ne modifiez les autres informations qu'en connaissance de cause.
 KeepDefaultValuesMamp=Comme vous utilisez l'assistant d'installation Dolibarr depuis DoliMamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifiez qu'en connaissance de cause.
 KeepDefaultValuesProxmox=Comme vous utilisez l'assistant d'installation Dolibarr depuis une machine virtuelle Proxmox, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifiez qu'en connaissance de cause.
+UpgradeExternalModule=Exécuter un processus de mise à niveau dédié des modules externes
 MigrationSuccessfullUpdate=Mise à niveau réussie
 MigrationContractsEmptyDatesUpdateSuccess=Contrat de correction de date d'emtpy effectué avec succès
 MigrationContractsIncoherentCreationDateUpdateSuccess=Correction mauvaise valeur de la date de création du contrat effectuée avec succès
