@@ -212,7 +212,7 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	
-	if ($socid)
+	if ($socid > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
