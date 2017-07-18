@@ -976,12 +976,12 @@ class Form
     			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
     			else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
     			if ($hidelabel == 2) {
-    				$out.=  img_picto($langs->trans("Search"), 'search');
+    				$out.=img_picto($langs->trans("Search"), 'search');
     			}
     		}
             $out.=  '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
     		if ($hidelabel == 3) {
-    			$out.=  img_picto($langs->trans("Search"), 'search');
+    			$out.=img_picto($langs->trans("Search"), 'search');
     		}
     	}
     	else
@@ -1438,9 +1438,9 @@ class Form
        {
         	if (! empty($conf->multicompany->transverse_mode))
         	{
-        		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
-        		$sql.= " ON ug.fk_user = u.rowid";
-        		$sql.= " WHERE ug.entity = ".$conf->entity;
+        		$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+        		$sql.= " WHERE ug.fk_user = u.rowid";
+        		$sql.= " AND ug.entity = ".$conf->entity;
         	}
         	else
         	{
