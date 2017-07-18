@@ -256,8 +256,10 @@ class DolEditor
 			$format=(GETPOST('format','aZ09')?GETPOST('format','aZ09'):'php');
 
             $out.= '<!-- Output Ace editor -->'."\n";
-        	$out.= '<div id="statusBar"></div>';
-            $out.= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width?'width: '.$this->width.'px; ':'').($this->height?' height: '.$this->height.'px; ':'').'">';
+            $out.= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width?'width: '.$this->width.'px; ':'');
+            $out.= ($this->height?' height: '.$this->height.'px; ':'');
+            //$out.=" min-height: 100px;";
+            $out.= '">';
         	/*$out.= preg_replace(array('/^<\?php/','/\?>$/'), array('&lt;?php','?&gt;'), $this->content); */
         	$out.= htmlentities($this->content);
         	$out.= '</pre>';
@@ -268,18 +270,14 @@ class DolEditor
         	$out.= '<script type="text/javascript" language="javascript">'."\n";
         	$out.= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
-				    // Init status bar. Need lib ext-statusbar
-        			//var StatusBar = ace.require("ace/ext/statusbar").StatusBar;
-	    			//var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar"));
-
 				    aceEditor.session.setMode("ace/mode/'.$format.'");
 					aceEditor.setOptions({
 	   				   enableBasicAutocompletion: true, // the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
 					   enableLiveAutocompletion: false, // the editor completes the statement while you are typing. Need lib ext-language_tools.js
 					   showPrintMargin: false, // hides the vertical limiting strip
 					   minLines: 10,
-					   //maxLines: 34,
-					   fontSize: "100%" // ensures that the editor fits in the environment
+					   maxLines: 34,
+					   fontSize: "110%" // ensures that the editor fits in the environment
 					});
 
 					// defines the style of the editor

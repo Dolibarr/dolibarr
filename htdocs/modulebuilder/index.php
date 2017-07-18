@@ -611,28 +611,7 @@ if (! dol_is_dir($dirins))
 }
 $dirins_ok=(dol_is_dir($dirins));
 
-$head='<style type="text/css" media="screen">
-	.ace_editor {
-		margin: 0;
-	}
-	#statusBar {
-        margin: 0;
-        padding: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 20px;
-        background-color: rgb(245, 245, 245);
-        color: gray;
-    }
-    .ace_status-indicator {
-        color: gray;
-        position: relative;
-        right: 0;
-        border-left: 1px solid;
-    }
-	</style>';
-llxHeader($head, $langs->trans("ModuleBuilder"), "", '', 0, 0,
+llxHeader('', $langs->trans("ModuleBuilder"), "", '', 0, 0,
 	array(
 		'/includes/ace/ace.js',
 		'/includes/ace/ext-statusbar.js',
@@ -894,17 +873,17 @@ elseif (! empty($module))
 
         dol_fiche_head($head2, $tab, '', -1, '');
 
-        print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
-
         if ($tab == 'description')
         {
-            $pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+        	$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
             $pathtofilereadme = $modulelowercase.'/README.md';
             $pathtochangelog = $modulelowercase.'/ChangeLog.md';
 
             if ($action != 'editfile' || empty($file))
             {
-                print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+	        	print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
+
+            	print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
                 print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                 print '<br>';
 
@@ -1014,7 +993,27 @@ elseif (! empty($module))
         	    print '<input type="hidden" name="tab" value="'.$tab.'">';
         	    print '<input type="hidden" name="module" value="'.$module.'">';
 
-        	    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
+        	    $htmlname='editfilecontent';
+
+        	    $out.= '<div class="aceeditorstatusbar" id="statusBar">'.$langs->trans("File").' : '.$file;
+        	    $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+        	    $out.= '</div>';
+        	    $out.= '<script type="text/javascript" language="javascript">'."\n";
+        	    $out.= 'jQuery(document).ready(function() {'."\n";
+        	    $out.= '	var aceEditor = window.ace.edit("'.$htmlname.'aceeditorid");
+	        	    		// Init status bar. Need lib ext-statusbar
+    	    		    	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;
+        			    	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar"));';
+        	    $out.= '	jQuery("#morelines").click(function() {
+								console.log("We click on more lines");
+        	    				var aceEditor = window.ace.edit("'.$htmlname.'aceeditorid");
+        	    				aceEditor.setOptions({ maxLines: 500 });
+							});
+						})';
+        	    $out.= '</script>'."\n";
+        	    print $out;
+
+        	    $doleditor=new DolEditor($htmlname, $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
         	    print $doleditor->Create(1, '', false);
 
         	    print '<center>';
