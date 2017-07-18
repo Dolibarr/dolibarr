@@ -142,11 +142,12 @@ class DolEditor
      *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
      *
      *  @param	int		$noprint             1=Return HTML string instead of printing it to output
-     *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
-     *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements.
+     *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
+     *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
+     *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
      *  @return	void|string
      */
-    function Create($noprint=0, $morejs='', $disallowAnyContent=true)
+    function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='')
     {
     	global $conf,$langs;
 
@@ -256,6 +257,26 @@ class DolEditor
 			$format=(GETPOST('format','aZ09')?GETPOST('format','aZ09'):'php');
 
             $out.= '<!-- Output Ace editor -->'."\n";
+
+			if ($titlecontent)
+			{
+	            $out.= '<div class="aceeditorstatusbar" id="statusBar">'.$titlecontent;
+	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+	            $out.= '</div>';
+	            $out.= '<script type="text/javascript" language="javascript">'."\n";
+	            $out.= 'jQuery(document).ready(function() {'."\n";
+	            $out.= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;					// Init status bar. Need lib ext-statusbar
+	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar"));		// Init status bar. Need lib ext-statusbar
+	            			jQuery("#morelines").click(function() {
+									console.log("We click on more lines");
+	        	    				var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+	        	    				aceEditor.setOptions({ maxLines: 500 });
+							});
+						})';
+	            $out.= '</script>'."\n";
+			}
+
             $out.= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width?'width: '.$this->width.'px; ':'');
             $out.= ($this->height?' height: '.$this->height.'px; ':'');
             //$out.=" min-height: 100px;";

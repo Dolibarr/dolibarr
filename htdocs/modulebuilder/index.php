@@ -760,7 +760,7 @@ $head[$h][2] = 'deletemodule';
 $h++;
 
 
-dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic');
+dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic');	// Modules
 
 if ($module == 'initmodule')
 {
@@ -871,8 +871,6 @@ elseif (! empty($module))
         print ' '.$linktoenabledisable;
         print '<br><br>';
 
-        dol_fiche_head($head2, $tab, '', -1, '');
-
         if ($tab == 'description')
         {
         	$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
@@ -881,7 +879,9 @@ elseif (! empty($module))
 
             if ($action != 'editfile' || empty($file))
             {
-	        	print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
+        		dol_fiche_head($head2, $tab, '', -1, '');	// Description - level 2
+
+            	print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
 
             	print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
                 print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
@@ -978,10 +978,12 @@ elseif (! empty($module))
             	print $moduleobj->getChangeLog();
 
             	print '</div>';
+
+            	dol_fiche_end();
             }
         	else
         	{
-        	    $fullpathoffile=dol_buildpath($file, 0);
+        		$fullpathoffile=dol_buildpath($file, 0);	// Description - level 2
 
         	    $content = file_get_contents($fullpathoffile);
 
@@ -993,28 +995,12 @@ elseif (! empty($module))
         	    print '<input type="hidden" name="tab" value="'.$tab.'">';
         	    print '<input type="hidden" name="module" value="'.$module.'">';
 
-        	    $htmlname='editfilecontent';
+        		dol_fiche_head($head2, $tab, '', -1, '');
 
-        	    $out.= '<div class="aceeditorstatusbar" id="statusBar">'.$langs->trans("File").' : '.$file;
-        	    $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
-        	    $out.= '</div>';
-        	    $out.= '<script type="text/javascript" language="javascript">'."\n";
-        	    $out.= 'jQuery(document).ready(function() {'."\n";
-        	    $out.= '	var aceEditor = window.ace.edit("'.$htmlname.'aceeditorid");
-	        	    		// Init status bar. Need lib ext-statusbar
-    	    		    	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;
-        			    	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar"));';
-        	    $out.= '	jQuery("#morelines").click(function() {
-								console.log("We click on more lines");
-        	    				var aceEditor = window.ace.edit("'.$htmlname.'aceeditorid");
-        	    				aceEditor.setOptions({ maxLines: 500 });
-							});
-						})';
-        	    $out.= '</script>'."\n";
-        	    print $out;
+        	    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
+        	    print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
 
-        	    $doleditor=new DolEditor($htmlname, $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
-        	    print $doleditor->Create(1, '', false);
+        	    dol_fiche_end();
 
         	    print '<center>';
         	    print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1024,6 +1010,10 @@ elseif (! empty($module))
 
         	    print '</form>';
         	}
+        }
+        else
+        {
+        	dol_fiche_head($head2, $tab, '', -1, '');	// Level 2
         }
 
 
@@ -1062,7 +1052,7 @@ elseif (! empty($module))
                 print '<input type="hidden" name="module" value="'.$module.'">';
 
                 $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1112,7 +1102,7 @@ elseif (! empty($module))
                 else $tabobj = 'newobject';
             }
 
-            dol_fiche_head($head3, $tabobj, '', -1, '');
+            dol_fiche_head($head3, $tabobj, '', -1, '');	// Level 3
 
             if ($tabobj == 'newobject')
             {
@@ -1324,7 +1314,7 @@ elseif (! empty($module))
                     print '<input type="hidden" name="module" value="'.$module.'">';
 
                     $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                    print $doleditor->Create(1, '', false);
+                    print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
                     print '<br>';
                     print '<center>';
                     print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1335,6 +1325,8 @@ elseif (! empty($module))
                     print '</form>';
                 }
             }
+
+            dol_fiche_end();	// Level 3
         }
 
         if ($tab == 'menus')
@@ -1373,7 +1365,7 @@ elseif (! empty($module))
 			    print '<input type="hidden" name="module" value="'.$module.'">';
 
 			    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1418,7 +1410,7 @@ elseif (! empty($module))
 			    print '<input type="hidden" name="module" value="'.$module.'">';
 
 			    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1462,7 +1454,7 @@ elseif (! empty($module))
 			    print '<input type="hidden" name="module" value="'.$module.'">';
 
 			    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1559,11 +1551,14 @@ elseif (! empty($module))
         	print '</form>';
         }
 
-        dol_fiche_end();
+        if ($tab != 'description')
+        {
+        	dol_fiche_end();
+        }
     }
 }
 
-dol_fiche_end();
+dol_fiche_end(); // End modules
 
 
 

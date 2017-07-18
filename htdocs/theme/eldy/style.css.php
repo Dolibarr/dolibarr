@@ -3672,7 +3672,7 @@ a.cke_dialog_ui_button_ok span {
         bottom: 0;
         height: 20px;
         background-color: #ebebeb;
-        /* color: gray; */
+        color: #666;
 }
 .ace_status-indicator {
         color: gray;
@@ -3680,10 +3680,9 @@ a.cke_dialog_ui_button_ok span {
         right: 0;
         border-left: 1px solid;
 }
-.aceeditorstatusbar {
-
+pre#editfilecontentaceeditorid {
+    margin-top: 5px;
 }
-
 
 
 /* ============================================================================== */
