@@ -75,7 +75,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'attributes', $langs->trans("Agenda"), -1, 'action');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

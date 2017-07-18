@@ -54,9 +54,10 @@ class FormActions
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
      *  @param	integer	$showempty		Show an empty line if select is used
      *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
+    function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
         global $langs,$conf;
 
@@ -120,7 +121,7 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'">';
             if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
@@ -172,6 +173,7 @@ class FormActions
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'supplier_payment')    $title=$langs->trans('ActionsOnSupplierPayment');
         	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
@@ -186,8 +188,10 @@ class FormActions
         	print load_fiche_titre($title, $buttontoaddnewevent, '');
 
         	$page=0; $param=''; $sortfield='a.datep';
-        	
-        	$total = 0;	$var=true; 
+
+        	$total = 0;
+
+        	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
         	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
@@ -205,12 +209,23 @@ class FormActions
         	{
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
-                
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
+
+        		print '<tr class="oddeven">';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
-        		print '<td>'.$action->type.'</td>';
+        		print '<td>';
+        		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+        		{
+        		    if ($action->type_picto) print img_picto('', $action->type_picto);
+        		    else {
+        		        if ($action->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
+        		        if ($action->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
+        		        if ($action->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
+        		        if ($action->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+        		    }
+        		}
+        		print $action->type;
+        		print '</td>';
         		print '<td>'.dol_print_date($action->datep,'dayhour');
         		if ($action->datef)
         		{
@@ -229,7 +244,7 @@ class FormActions
         			$userstatic->id = $action->author->id;
         			$userstatic->firstname = $action->author->firstname;
         			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1);
+        			print $userstatic->getNomUrl(1, '', 0, 0, 16, 0, '', '');
         		}
         		print '</td>';
         		print '<td align="right">';
@@ -241,6 +256,7 @@ class FormActions
         		print '</tr>';
         	}
         	print '</table>';
+        	print '</div>';
         }
 
         return $num;
@@ -280,22 +296,22 @@ class FormActions
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
        	$out='';
-       	
-		if (! empty($multiselect)) 
+
+		if (! empty($multiselect))
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
-		else 
+		else
 		{
 			$out.=$form->selectarray($htmlname, $arraylist, $selected);
 		}
-		
-        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
             $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
         }
-        
+
         if ($nooutput) return $out;
         else print $out;
         return '';

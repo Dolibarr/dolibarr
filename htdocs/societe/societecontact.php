@@ -107,13 +107,14 @@ else if ($action == 'deletecontact' && $user->rights->societe->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
+
 
 /*
  * View
@@ -149,12 +150,12 @@ if ($id > 0 || ! empty($ref))
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-		
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
         dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-            
+
     	print '<div class="fichecenter">';
-    
+
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
@@ -186,9 +187,9 @@ if ($id > 0 || ! empty($ref))
 		    print '</td></tr>';
 		}
 		print '</table>';
-		
+
 		print '</div>';
-		
+
 		print '</form>';
 		print '<br>';
 
@@ -259,8 +260,8 @@ if ($id > 0 || ! empty($ref))
 
 						$companyname=$objp->company;
 
-						$var=!$var;
-						print "<tr ".$bc[$var].">";
+
+						print '<tr class="oddeven">';
 
 						// Ref
 						print "<td>";

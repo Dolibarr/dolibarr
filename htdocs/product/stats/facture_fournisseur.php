@@ -46,7 +46,7 @@ $socid = '';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatssupplyinvoice'));
 
 $mesg = '';
@@ -54,7 +54,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -63,7 +63,7 @@ if (! $sortfield) $sortfield = "f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -96,9 +96,10 @@ if ($id > 0 || ! empty($ref))
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct" . $product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
@@ -134,7 +135,7 @@ if ($id > 0 || ! empty($ref))
 			$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn_det as d";
 			if (! $user->rights->societe->client->voir && ! $socid)	$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE f.fk_soc = s.rowid";
-			$sql .= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
+			$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 			$sql .= " AND d.fk_facture_fourn = f.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))

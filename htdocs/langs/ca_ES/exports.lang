@@ -113,8 +113,14 @@ ExportDateFilter=AAAA, AAAAMM, AAAAMMDD: filtres per any/mes/dia<br>AAAA+AAAA, A
 ExportNumericFilter=NNNNN filtra per un valor<br>NNNNN+NNNNN filtra sobre un rang de valors<br>< NNNN filtra per valors menors<br>> NNNNN filtra per valors majors
 ImportFromLine=Importa començant des del número de línia
 EndAtLineNb=Final en el número de línia
+ImportFromToLine=Import line numbers (from - to)
 SetThisValueTo2ToExcludeFirstLine=Per exemple, defineix aquest valor a 3 per excloure les 2 primeres línies
 KeepEmptyToGoToEndOfFile=Deixa aquest camp buit per anar al final del fitxer
+SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for update attempt
+UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
+NoUpdateAttempt=No update attempt was performed, only insert
+ImportDataset_user_1=Usuaris (empleats o no) i propietats
+ComputedField=Computed field
 ## filters
 SelectFilterFields=Si vol aplicar un filtre sobre alguns valors, introduïu-los aquí.
 FilteredFields=Camps filtrats

@@ -33,13 +33,14 @@
 // Build doc
 if ($action == 'builddoc' && $permissioncreate)
 {
+	
     if (is_numeric(GETPOST('model')))
     {
         $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
     }
     else
     {
-        // Reload to get all modified line records and be ready for hooks
+   		// Reload to get all modified line records and be ready for hooks
         $ret = $object->fetch($id);
         $ret = $object->fetch_thirdparty();
         /*if (empty($object->id) || ! $object->id > 0)
@@ -67,7 +68,7 @@ if ($action == 'builddoc' && $permissioncreate)
         $outputlangs = $langs;
         $newlang='';
 
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->thirdparty->default_lang)) $newlang=$object->thirdparty->default_lang;  // for proposal, order, invoice, ...
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->default_lang)) $newlang=$object->default_lang;                  // for thirdparty
         if (! empty($newlang))
@@ -91,6 +92,9 @@ if ($action == 'builddoc' && $permissioncreate)
         else
         {
             setEventMessages($langs->trans("FileGenerated"), null);
+
+            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
+            exit;
         }
     }
 }

@@ -69,8 +69,8 @@ class CompanyBankAccount extends Account
      */
     function create(User $user = null, $notrigger=0)
     {
-        $now=dol_now();
-
+        $now	= dol_now();
+	$error	= 0;
         // Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1";
    		$result = $this->db->query($sql);
@@ -89,7 +89,29 @@ class CompanyBankAccount extends Account
             if ($this->db->affected_rows($resql))
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
-                return 1;
+		    
+		    if (! $notrigger)
+		    {
+		   	 // Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		    
+		    }
+		    else
+		    {
+		    	return 1;
+		    }
+               
             }
         }
         else
@@ -108,7 +130,9 @@ class CompanyBankAccount extends Account
      */
     function update(User $user = null, $notrigger = 0)
     {
-    	global $conf;
+	    global $conf;
+	    $error = 0;
+	   
 
         if (! $this->id)
         {
@@ -120,12 +144,12 @@ class CompanyBankAccount extends Account
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
         $sql.= " bank = '" .$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -145,12 +169,33 @@ class CompanyBankAccount extends Account
         $result = $this->db->query($sql);
         if ($result)
         {
-            return 1;
+		
+		
+		if (! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+			if(! $error )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return 1;
+		}
+		
         }
         else
         {
             dol_print_error($this->db);
-            return 0;
+            return -1;
         }
     }
 
@@ -213,24 +258,49 @@ class CompanyBankAccount extends Account
     /**
      *  Delete a rib from database
      *
-     *	@param	User	$user	User deleting
-     *  @return int         	<0 if KO, >0 if OK
+     *	@param		User	$user		User deleting
+     *	@param  	int		$notrigger	1=Disable triggers
+     *  @return		int		            <0 if KO, >0 if OK
      */
-    function delete(User $user = null)
+    function delete(User $user = null, $notrigger=0)
     {
         global $conf;
+        
+        $error = 0;
+        
+        dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+        
+        $this->db->begin();
+        
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-        $sql.= " WHERE rowid  = ".$this->id;
-
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result) {
+        if (! $error)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_rib";
+            $sql .= " WHERE rowid  = " . $this->id;
+            
+            if (! $this->db->query($sql))
+        	{
+        		$error++;
+        		$this->errors[]=$this->db->lasterror();
+        	}
+        }
+        
+        if (! $error)
+        {
+            $this->db->commit();
             return 1;
         }
-        else {
-            dol_print_error($this->db);
-            return -1;
+        else
+        {
+            $this->db->rollback();
+            return -1*$error;
         }
     }
 

@@ -1082,19 +1082,19 @@ class BonPrelevement extends CommonObject
     {
     	$this->db->begin();
 
-    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = '".$this->id."')";
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id.")";
     	$resql1=$this->db->query($sql);
     	if (! $resql1) dol_print_error($this->db);
 
-    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = '".$this->id."'";
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id;
     	$resql2=$this->db->query($sql);
     	if (! $resql2) dol_print_error($this->db);
 
-    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = '".$this->id."'";
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = ".$this->id;
     	$resql3=$this->db->query($sql);
 		if (! $resql3) dol_print_error($this->db);
 
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = '".$this->id."'";
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".$this->id;
     	$resql4=$this->db->query($sql);
 		if (! $resql4) dol_print_error($this->db);
 

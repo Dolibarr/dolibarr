@@ -61,7 +61,7 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+	$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 	if ($socid)
 	{
         $sql.=" AND (";

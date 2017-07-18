@@ -31,7 +31,7 @@ $langs->load("bills");
 $langs->load("loan");
 
 $chid=GETPOST('id','int');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 
 // Security check
@@ -248,7 +248,7 @@ if ($action == 'create')
 	$var=True;
 
 
-	print "<tr ".$bc[$var].">";
+	print '<tr class="oddeven">';
 
 	if ($loan->datestart > 0)
 	{

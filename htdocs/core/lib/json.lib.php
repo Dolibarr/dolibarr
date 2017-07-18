@@ -49,11 +49,14 @@ function dol_json_encode($elements)
 {
 	dol_syslog('dol_json_encode() is deprecated. Please update your code to use native json_encode().', LOG_WARNING);
 
-	$num=count($elements);
+	$num=0;
 	if (is_object($elements))	// Count number of properties for an object
 	{
-		$num=0;
 		foreach($elements as $key => $value) $num++;
+	}
+	else
+	{
+	    $num=count($elements);
 	}
 	//var_dump($num);
 

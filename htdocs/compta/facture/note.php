@@ -77,7 +77,7 @@ if ($id > 0 || ! empty($ref))
 	
     $totalpaye = $object->getSommePaiement();
     
-    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), 0, 'bill');
+    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
     // Invoice content
 

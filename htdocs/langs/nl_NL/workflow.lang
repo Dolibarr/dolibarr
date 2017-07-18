@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Workflow module setup
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+WorkflowDesc=Deze module is ontworpen om het gedrag van automatische acties aan te passen. Standaard is de workflow open (u kunt dingen doen in de volgorde die u wilt). U kunt automatische acties activeren indien u wenst.
 ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed

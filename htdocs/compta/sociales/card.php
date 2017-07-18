@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,19 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("compta");
 $langs->load("bills");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
+$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -42,8 +48,6 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
 $object = new ChargeSociales($db);
-
-
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -63,7 +67,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
     if ($object->paye)
     {
         $result = $object->set_unpaid($user);
-        if ($result > 0) 
+        if ($result > 0)
         {
             header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
             exit();
@@ -71,6 +75,13 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
             setEventMessages($object->error, $object->errors, 'errors');
         }
     }
+}
+
+// Link to a project
+if ($action == 'classin' && $user->rights->tax->charges->creer)
+{
+    $object->fetch($id);
+    $object->setProject(GETPOST('projectid'));
 }
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
@@ -122,6 +133,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	$dateperiod=dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
     $amount=price2num(GETPOST('amount'));
     $actioncode=GETPOST('actioncode');
+
 	if (! $dateech)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
@@ -149,13 +161,14 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	}
 	else
 	{
-		$object->type=$actioncode;
-		$object->lib=GETPOST('label');
-		$object->date_ech=$dateech;
-		$object->periode=$dateperiod;
-		$object->amount=$amount;
-        $object->mode_reglement_id = GETPOST('mode_reglement_id');
-        $object->fk_account = GETPOST('fk_account', 'int');
+		$object->type				= $actioncode;
+		$object->lib				= GETPOST('label');
+		$object->date_ech			= $dateech;
+		$object->periode			= $dateperiod;
+		$object->amount				= $amount;
+        $object->mode_reglement_id	= GETPOST('mode_reglement_id');
+        $object->fk_account			= GETPOST('fk_account', 'int');
+		$object->fk_project			= GETPOST('fk_project');
 
 		$id=$object->create($user);
 		if ($id <= 0)
@@ -172,6 +185,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
     $dateech=dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
     $dateperiod=dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
     $amount=price2num(GETPOST('amount'));
+
     if (! $dateech)
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateDue")), null, 'errors');
@@ -196,9 +210,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	{
         $result=$object->fetch($id);
 
-        $object->date_ech=$dateech;
-        $object->periode=$dateperiod;
-        $object->amount=price2num($amount);
+        $object->date_ech	= $dateech;
+        $object->periode	= $dateperiod;
+        $object->amount		= price2num($amount);
 
         $result=$object->update($user);
         if ($result <= 0)
@@ -267,6 +281,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 $form = new Form($db);
 $formsocialcontrib = new FormSocialContrib($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Card");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
@@ -324,6 +339,21 @@ if ($action == 'create')
 	print '<td><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
     print '</tr>';
 
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$formproject=new FormProjets($db);
+
+		// Associated project
+		$langs->load("projects");
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+		$numproject=$formproject->select_projects(-1, $projectid,'fk_project',0,0,1,1);
+
+		print '</td></tr>';
+	}
+
     // Payment Mode
     print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
     $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
@@ -375,7 +405,7 @@ if ($id > 0)
 		$head=tax_prepare_head($object);
 
 		$totalpaye = $object->getSommePaiement();
-		
+
 		// Clone confirmation
 		if ($action === 'clone')
 		{
@@ -406,45 +436,58 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+		// Project
+		if (! empty($conf->projet->enabled))
+		{
+		    $langs->load("projects");
+		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		    if ($user->rights->tax->charges->creer)
+		    {
+		        if ($action != 'classify')
+		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            if ($action == 'classify') {
+		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		                $morehtmlref.='</form>';
+		            } else {
+		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		            }
+		    } else {
+		        if (! empty($object->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($object->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		        } else {
+		            $morehtmlref.='';
+		        }
+		    }
+		}
 		$morehtmlref.='</div>';
-		
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
-		
+
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
-		
+
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
-		
+
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border" width="100%">';
 
-        /*
-		// Ref
-		print '<tr><td>'.$langs->trans("Ref").'</td><td>';
-		print $form->showrefnav($object,'id',$linkback);
-		print "</td></tr>";
-        */
-
-		// Label
-		/*if ($action == 'edit')
-		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td>';
-			print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
-			print '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->lib.'</td></tr>';
-		}*/
-		
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
 		print "</tr>";
@@ -545,7 +588,7 @@ if ($id > 0)
 		if ($resql)
 		{
 		    $totalpaye = 0;
-		    
+
 		    $num = $db->num_rows($resql);
 		    $i = 0; $total = 0;
 		    print '<table class="noborder paymenttable">';
@@ -555,14 +598,14 @@ if ($id > 0)
 		    print '<td>'.$langs->trans("Type").'</td>';
 		    print '<td align="right">'.$langs->trans("Amount").'</td>';
 		    print '</tr>';
-		
+
 		    $var=true;
             if ($num > 0)
             {
     		    while ($i < $num)
     		    {
     		        $objp = $db->fetch_object($resql);
-    		        $var=!$var;
+
     		        print "<tr ".$bc[$var]."><td>";
     		        print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
     		        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
@@ -576,18 +619,18 @@ if ($id > 0)
             }
             else
 		    {
-		        $var=!$var;
-		        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
+
+		        print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 		    }
-                
+
 		    //if ($object->status == ChargeSociales::STATUS_DRAFT)
 		    //{
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
-		
+
 		        $resteapayer = $object->amount - $totalpaye;
 		        $cssforamountpaymentcomplete = 'amountpaymentcomplete';
-		        
+
 		        print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 		        print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
 		    //}
@@ -597,12 +640,12 @@ if ($id > 0)
 		else
 		{
 		    dol_print_error($db);
-		}		
-		
+		}
+
 		print '</div>';
 		print '</div>';
 		print '</div>';
-		
+
 		print '<div class="clearboth"></div>';
 
 		dol_fiche_end();

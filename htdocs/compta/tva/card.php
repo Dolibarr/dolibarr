@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Tva($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 
@@ -65,7 +65,7 @@ if ($action == 'setdatev' && $user->rights->tax->charges->creer)
     $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
-    
+
     $action='';
 }
 
@@ -81,7 +81,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->num_payment=GETPOST("num_payment");
     $object->datev=$datev;
     $object->datep=$datep;
-	
+
 	$amount = price2num(GETPOST("amount"));
 	if ($refund == 1) {
 		$amount= -$amount;
@@ -89,7 +89,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $object->amount= $amount;
 	$object->label=GETPOST("label");
 	$object->note=GETPOST("note");
-	
+
 	if (empty($object->datev))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
@@ -207,11 +207,11 @@ if ($action == 'create')
         print '$(document).ready(function () {
                 $("#radiopayment").click(function() {
                     $("#label").val($(this).data("label"));
-                    
+
                 });
                 $("#radiorefund").click(function() {
                     $("#label").val($(this).data("label"));
-                    
+
                 });
         });';
 		print '</script>'."\n";
@@ -282,8 +282,9 @@ if ($action == 'create')
 	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     print '</table>';
 
@@ -305,16 +306,17 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
-	print '</td></tr>';
-
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td>';
@@ -335,22 +337,26 @@ if ($id)
 	{
 		if ($object->fk_account > 0)
 		{
- 		   	$bankline=new AccountLine($db);
-    		$bankline->fetch($object->fk_bank);
+			$bankline=new AccountLine($db);
+			$bankline->fetch($object->fk_bank);
 
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<tr>';
+			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
-	    	print '</td>';
-	    	print '</tr>';
+			print '</td>';
+			print '</tr>';
 		}
 	}
 
-        // Other attributes
-        $reshook=$hookmanager->executeHooks('formObjectOptions','',$object,$action);    // Note that $action and $object may have been modified by hook
+	// Other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
+
+	print '</div>';
 
 	dol_fiche_end();
 

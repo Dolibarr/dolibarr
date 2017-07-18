@@ -57,14 +57,14 @@ $search_amount_no_tax = GETPOST('search_amount_no_tax','alpha');
 $search_amount_all_tax = GETPOST('search_amount_all_tax','alpha');
 
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_ref_supplier="";
@@ -216,8 +216,8 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
 		print "</tr>\n";
 
@@ -235,9 +235,9 @@ if ($user->rights->fournisseur->facture->lire)
 				$facturestatic->statut = $objp->fk_statut;
 				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
 
-				$var=!$var;
+				
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				$classname = "impayee";
 
 				print '<td class="nowrap">';

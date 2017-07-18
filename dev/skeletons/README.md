@@ -1,0 +1,1 @@
+Files and tools were moved into htdocs/modulebuilder/template

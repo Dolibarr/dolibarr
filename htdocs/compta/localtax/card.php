@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $localtax = new Localtax($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('localtaxvatcard','globalcard'));
 
 
@@ -158,7 +158,7 @@ if ($id)
 if ($action == 'create')
 {
     print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
-    
+
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
@@ -193,15 +193,16 @@ if ($action == 'create')
 	    $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype");
 	    print "</td>\n";
 	    print "</tr>";
-	
+
 		// Number
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
     }
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     print '</table>';
 
@@ -237,20 +238,20 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
 	print $vatpayment->ref;
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($vatpayment->datep,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($vatpayment->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($vatpayment->amount).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -261,7 +262,7 @@ if ($id)
 
 	    	print '<tr>';
 	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
 	    	print '</td>';
 	    	print '</tr>';
@@ -269,13 +270,14 @@ if ($id)
 	}
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="3"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$vatpayment,$action);    // Note that $action and $object may have been modified by hook
-	
+    print $hookmanager->resPrint;
+
     print '</table>';
 
 	dol_fiche_end();
-	
+
 
 	/*
 	* Boutons d'actions

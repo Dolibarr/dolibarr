@@ -58,7 +58,7 @@ class DolEditor
      *                              		      	'Out:name' share toolbar into the div called 'name'
      *      @param  boolean	$toolbarstartexpanded  	Bar is visible or not at start
 	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
+	 *      @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like fckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
      *      @param  int		$rows                   Size of rows for textarea tool
 	 *      @param  string	$cols                   Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
@@ -80,8 +80,9 @@ class DolEditor
         $this->readonly=$readonly;
 
         // Check if extended editor is ok. If not we force textarea
-        if (empty($conf->fckeditor->enabled) || ! $okforextendededitor) $this->tool = 'textarea';
-        if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // TODO ckeditor ko with jmobile
+        if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) $this->tool = 'textarea';
+		if ($okforextendededitor === 'ace') $this->tool='ace';
+        if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // TODO ckeditor ko with mobile ? ace ko with mobile ?
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')
@@ -100,7 +101,7 @@ class DolEditor
         	$this->editor->Height   = $height;
         	if (! empty($width)) $this->editor->Width = $width;
         	$this->editor->ToolbarSet = $shorttoolbarname;         // Profile of this toolbar set is deinfed into theme/mytheme/ckeditor/config.js
-        	$this->editor->Config['AutoDetectLanguage'] = 'true';
+        	$this->editor->Config['AutoDetectLanguage'] = 'true';  // Language of user (browser)
         	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
         	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
 
@@ -122,7 +123,7 @@ class DolEditor
     	}
 
     	// Define some properties
-        if (in_array($this->tool,array('textarea','ckeditor')))
+        if (in_array($this->tool,array('textarea','ckeditor','ace')))
         {
     	    $this->content				= $content;
     	    $this->htmlname 			= $htmlname;
@@ -160,14 +161,14 @@ class DolEditor
 
         if ($this->tool == 'fckeditor') // not used anymore
         {
-            $found=1;
+			$found=1;
             $this->editor->Create();
         }
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
             $found=1;
             //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'"'.($this->readonly?' disabled':'').' class="flat">';
-            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 2px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
+            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
 
@@ -178,7 +179,7 @@ class DolEditor
             	if (! empty($conf->global->FCKEDITOR_SKIN)) {
 					$skin = $conf->global->FCKEDITOR_SKIN;
 				} else {
-					$skin = 'moono'; // default with ckeditor 4 : moono
+					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
@@ -196,7 +197,7 @@ class DolEditor
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent?'false':'true').',
             						extraAllowedContent : \'\',
-            						fullPage : '.($fullpage?'true':'false').', 
+            						fullPage : '.($fullpage?'true':'false').',
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
@@ -245,6 +246,45 @@ class DolEditor
             	$out.= '});
             			</script>';
             }
+        }
+        if (preg_match('/^ace/', $this->tool))
+        {
+        	$found=1;
+			$format=(GETPOST('format','aZ09')?GETPOST('format','aZ09'):'php');
+
+        	print '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width?'width: '.$this->width.'px; ':'').($this->height?' height: '.$this->height.'px; ':'').'">';
+        	print preg_replace(array('/^<\?php/','/\?>$/'), array('&lt;?php','?&gt;'), $this->content);
+        	print '</pre>';
+        	print '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" style="width:0px; height: 0px; display: none;">';
+        	print $this->content;
+        	print '</textarea>';
+
+        	print '<script type="text/javascript" language="javascript">'."\n";
+        	print 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+					    aceEditor.session.setMode("ace/mode/'.$format.'");
+						aceEditor.setOptions({
+		   				   //enableBasicAutocompletion: false, // the editor completes the statement when you hit Ctrl + Space
+						   //enableLiveAutocompletion: false, // the editor completes the statement while you are typing
+						   //showPrintMargin: true, // hides the vertical limiting strip
+						   //maxLines: 34,
+						   fontSize: "100%" // ensures that the editor fits in the environment
+						});
+						// defines the style of the editor
+						aceEditor.setTheme("ace/theme/chrome");
+						// hides line numbers (widens the area occupied by error and warning messages)
+						//aceEditor.renderer.setOption("showLineNumbers", false);
+						// ensures proper autocomplete, validation and highlighting of JavaScript code
+						//aceEditor.getSession().setMode("ace/mode/javascript_expression");
+						'."\n";
+
+        	print 'jQuery(document).ready(function() {
+						jQuery("#savefile").click(function() {
+							jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
+							if (strlen(jQuery("#'.$this->htmlname.'").html()) > 0) return true;
+							else return false;
+	        			});
+					})';
+        	print '</script>'."\n";
         }
 
         if (empty($found))

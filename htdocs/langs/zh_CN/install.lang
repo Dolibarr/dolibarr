@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=您使用从DoliWamp Dolibarr安装向导，所以这里�
 KeepDefaultValuesDeb=您使用从Ubuntu或者Debian软件包的Dolibarr安装向导，所以这里建议值已经进行了优化。只有数据库的所有者创建的密码必须完成。其他参数的变化，如果你只知道你做什么。
 KeepDefaultValuesMamp=您使用从DoliMamp Dolibarr安装向导，所以这里建议值已经进行了优化。他们唯一的变化，如果你知道你做什么。
 KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导，因此，这里提出的价值已经优化。改变他们，只有当你知道你做什么。
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

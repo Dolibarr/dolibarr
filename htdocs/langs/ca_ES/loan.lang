@@ -44,8 +44,10 @@ GoToInterest=%s es destinaran a INTERÈS
 GoToPrincipal=%s es destinaran a PRINCIPAL
 YouWillSpend=Gastaràs %s en l'any %s
 ListLoanAssociatedProject=Llistat de prèstecs associats al projecte
+AddLoan=Create loan
 # Admin
 ConfigLoan=Configuració del mòdul de préstecs
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable del capital per defecte
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable per al interès per defecte
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable de l'assegurança per defecte
+CreateCalcSchedule=Créer / Modifier échéancier de pret

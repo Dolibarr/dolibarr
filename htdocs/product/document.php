@@ -50,19 +50,19 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 
 $object = new Product($db);
@@ -125,7 +125,7 @@ if ($action=='filemerge')
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		if ($conf->global->MAIN_MULTILANGS) {
-			$lang_id = GETPOST('lang_id');
+			$lang_id = GETPOST('lang_id','aZ09');
 		}
 
 		// Delete all file already associated
@@ -188,17 +188,20 @@ if ($object->id)
 	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
+	dol_fiche_head($head, 'documents', $titre, -1, $picto);
+
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
-		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$filearray=array_merge($filearray, $filearrayold);
 	}
 
@@ -210,6 +213,7 @@ if ($object->id)
 
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
     if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -241,7 +245,7 @@ if ($object->id)
     	$filetomerge = new Propalmergepdfproduct($db);
 
     	if ($conf->global->MAIN_MULTILANGS) {
-    		$lang_id = GETPOST('lang_id');
+    		$lang_id = GETPOST('lang_id','aZ09');
     		$result = $filetomerge->fetch_by_product($object->id, $lang_id);
     	} else {
     		$result = $filetomerge->fetch_by_product($object->id);

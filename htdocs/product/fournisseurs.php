@@ -65,7 +65,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 
 $object = new ProductFournisseur($db);
@@ -305,9 +305,11 @@ if ($id > 0 || $ref)
 			$head=product_prepare_head($object);
 			$titre=$langs->trans("CardProduct".$object->type);
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
+
+			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
             if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -397,7 +399,7 @@ if ($id > 0 || $ref)
 					{
 						if (empty($form->result))
 						{
-							print ' - <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
 						}
 					}
 				}
@@ -548,6 +550,7 @@ if ($id > 0 || $ref)
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);
 				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
+                    print $hookmanager->resPrint;
 				}
 
 				print '</table>';
@@ -625,9 +628,9 @@ if ($id > 0 || $ref)
 
 					foreach($product_fourn_list as $productfourn)
 					{
-						$var=!$var;
 
-						print "<tr ".$bc[$var].">";
+
+						print '<tr class="oddeven">';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
@@ -682,6 +685,7 @@ if ($id > 0 || $ref)
 						print'</td>';
 
 						// Charges ????
+						/*
 						if ($conf->global->PRODUCT_CHARGES)
 						{
 							if (! empty($conf->margin->enabled))
@@ -690,7 +694,7 @@ if ($id > 0 || $ref)
 								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 								print '</td>';
 							}
-						}
+						}*/
 
 						if (is_object($hookmanager))
 						{

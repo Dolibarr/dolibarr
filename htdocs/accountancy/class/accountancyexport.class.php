@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre	<phf@atm-consulting.fr>
- * Copyright (C) 2016		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,15 @@
  *
  * Manage the different format accountancy export
  */
+
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+
 class AccountancyExport
 {
 	/**
-	 *
-	 * @var Type of export
+	 * @var Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
 	 */
-	public static $EXPORT_TYPE_NORMAL = 1;
+	public static $EXPORT_TYPE_NORMAL = 1;     // Classic CSV
 	public static $EXPORT_TYPE_CEGID = 2;
 	public static $EXPORT_TYPE_COALA = 3;
 	public static $EXPORT_TYPE_BOB50 = 4;
@@ -47,6 +48,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_QUADRATUS = 6;
 	public static $EXPORT_TYPE_EBP = 7;
 	public static $EXPORT_TYPE_COGILOG = 8;
+	public static $EXPORT_TYPE_AGIRIS = 9;
 
 	/**
 	 *
@@ -80,7 +82,7 @@ class AccountancyExport
 	}
 
 	/**
-	 * Get all export type are available
+	 * Array wit all export type available (key + label)
 	 *
 	 * @return array of type
 	 */
@@ -96,6 +98,7 @@ class AccountancyExport
 				self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
 				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
+				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris')
 		);
 	}
 
@@ -145,6 +148,9 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_COGILOG :
 				$this->exportCogilog($TData);
 				break;
+			case self::$EXPORT_TYPE_AGIRIS :
+				$this->exportAgiris($TData);
+				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
@@ -167,7 +173,7 @@ class AccountancyExport
 			print $date . $this->separator;
 			print $line->doc_ref . $this->separator;
 			print length_accountg($line->numero_compte) . $this->separator;
-			print length_accounta($line->code_tiers) . $this->separator;
+			print length_accounta($line->subledger_account) . $this->separator;
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
 			print $line->code_journal . $this->separator;
@@ -190,10 +196,10 @@ class AccountancyExport
 			print $date . $separator;
 			print $line->code_journal . $separator;
 			print length_accountg($line->numero_compte) . $separator;
-			print length_accounta($line->code_tiers) . $separator;
+			print length_accounta($line->subledger_account) . $separator;
 			print $line->sens . $separator;
 			print price($line->montant) . $separator;
-			print $line->label_compte . $separator;
+			print $line->label_operation . $separator;
 			print $line->doc_ref;
 			print $this->end_line;
 		}
@@ -215,7 +221,7 @@ class AccountancyExport
 			print $line->piece_num . $this->separator;
 			print length_accountg($line->numero_compte) . $this->separator;
 			print '' . $this->separator;
-			print $line->label_compte . $this->separator;
+			print $line->label_operation . $this->separator;
 			print $date . $this->separator;
 			if ($line->sens=='D') {
 				print price($line->montant) . $this->separator;
@@ -225,7 +231,7 @@ class AccountancyExport
 				print price($line->montant) . $this->separator;
 			}
 			print $line->doc_ref . $this->separator;
-			print $line->label_compte . $this->separator;
+			print $line->label_operation . $this->separator;
 			print $this->end_line;
 		}
 	}
@@ -249,7 +255,7 @@ class AccountancyExport
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
 			print 'E' . $this->separator;
-			print length_accountg($line->code_tiers) . $this->separator;
+			print length_accountg($line->subledger_account) . $this->separator;
 			print $this->end_line;
 		}
 	}
@@ -269,7 +275,7 @@ class AccountancyExport
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $this->separator;
 
-			if (empty($line->code_tiers)) {
+			if (empty($line->subledger_account)) {
 				print 'G' . $this->separator;
 				print length_accounta($line->numero_compte) . $this->separator;
 			} else {
@@ -279,12 +285,12 @@ class AccountancyExport
 				if (substr($line->numero_compte, 0, 3) == '401') {
 					print 'F' . $this->separator;
 				}
-				print length_accountg($line->code_tiers) . $this->separator;
+				print length_accountg($line->subledger_account) . $this->separator;
 			}
 
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
-			print dol_trunc($line->label_compte, 32) . $this->separator;
+			print dol_trunc($line->label_operation, 32) . $this->separator;
 			print $this->end_line;
 		}
 	}
@@ -302,11 +308,11 @@ class AccountancyExport
 		$this->end_line ="\r\n";
 
 		$i = 1;
-		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
+		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
 		foreach ( $TData as $data ) {
 			$code_compta = $data->numero_compte;
-			if (! empty($data->code_tiers))
-				$code_compta = $data->code_tiers;
+			if (! empty($data->subledger_account))
+				$code_compta = $data->subledger_account;
 
 			$Tab = array ();
 			$Tab['num_ecriture'] = str_pad($i, 5);
@@ -315,11 +321,11 @@ class AccountancyExport
 			$Tab['date_ope'] = dol_print_date($data->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
 			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 12), 12);
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
-			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . $data->label_compte, 25), 25);
+			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . $data->label_operation, 25), 25);
 			$Tab['montant'] = str_pad(abs($data->montant), 13, ' ', STR_PAD_LEFT);
 			$Tab['type_montant'] = str_pad($data->sens, 1);
 			$Tab['vide'] = str_repeat(' ', 18);
-			$Tab['intitule_compte'] = str_pad(self::trunc($data->label_compte, 34), 34);
+			$Tab['intitule_compte'] = str_pad(self::trunc($data->label_operation, 34), 34);
 			$Tab['end'] = 'O2003';
 
 			$Tab['end_line'] = $this->end_line;
@@ -344,8 +350,8 @@ class AccountancyExport
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {
 			$code_compta = $data->numero_compte;
-			if (! empty($data->code_tiers))
-				$code_compta = $data->code_tiers;
+			if (! empty($data->subledger_account))
+				$code_compta = $data->subledger_account;
 
 			$Tab = array ();
 			$Tab['type_ligne'] = 'M';
@@ -354,7 +360,7 @@ class AccountancyExport
 			$Tab['folio'] = '000';
 			$Tab['date_ecriture'] = $date_ecriture;
 			$Tab['filler'] = ' ';
-			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_compte, 20), 20);
+			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 20), 20);
 			$Tab['sens'] = $data->sens; // C or D
 			$Tab['signe_montant'] = '+';
 			$Tab['montant'] = str_pad(abs($data->montant), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
@@ -370,7 +376,7 @@ class AccountancyExport
 			$Tab['devis'] = str_pad($conf->currency, 3);
 			$Tab['code_journal2'] = str_pad(self::trunc($data->code_journal, 3), 3);
 			$Tab['filler3'] = str_repeat(' ', 3);
-			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_compte, 32), 32);
+			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 32), 32);
 			$Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
 			$Tab['filler4'] = str_repeat(' ', 73);
 
@@ -382,7 +388,7 @@ class AccountancyExport
 
 
 	/**
-	 * Export format : Normal
+	 * Export format : EBP
 	 *
 	 * @param array $objectLines data
 	 *
@@ -401,7 +407,7 @@ class AccountancyExport
 			print $line->code_journal . $this->separator;
 			print length_accountg($line->numero_compte) . $this->separator;
 			print substr(length_accountg($line->numero_compte),0,2) . $this->separator;
-			print '"'.dol_trunc($line->label_compte,40,'right','UTF-8',1).'"' . $this->separator;
+			print '"'.dol_trunc($line->label_operation,40,'right','UTF-8',1).'"' . $this->separator;
 			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
 			print price2num($line->montant).$this->separator;
 			print $line->sens.$this->separator;
@@ -411,6 +417,49 @@ class AccountancyExport
 		}
 	}
 
+
+	/**
+	 * Export format : Agiris
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportAgiris($objectLines) {
+
+		$this->separator = ';';
+
+		foreach ( $objectLines as $line ) {
+
+			$date = dol_print_date($line->doc_date, '%d%m%Y');
+
+			print $line->id . $this->separator;
+			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
+			print $date . $this->separator;
+			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
+
+			if (empty($line->subledger_account)) {
+				print length_accountg($line->numero_compte) . $this->separator;
+			} else {
+			    // FIXME Because the subledger_account is already an accounting account, does we really need
+			    // to concat 4011 or 401 to it ?
+				if (substr($line->numero_compte, 0, 1) == 'C' || substr($line->numero_compte, 0, 1) == '9') {
+					print '411' . substr(str_replace(" ", "", $line->subledger_account), 0, 5) . $this->separator;
+				}
+				if (substr($line->numero_compte, 0, 1) == 'F' || substr($line->numero_compte, 0, 1) == '0') {
+					print '401' . substr(str_replace(" ", "", $line->subledger_account), 0, 5) . $this->separator;
+				}
+			}
+
+			print length_accounta($line->subledger_account) . $this->separator;
+			print price($line->debit) . $this->separator;
+			print price($line->credit) . $this->separator;
+			print price($line->montant).$this->separator;
+			print $line->sens.$this->separator;
+			print $line->code_journal . $this->separator;
+			print $this->end_line;
+		}
+	}
 
 
 	/**

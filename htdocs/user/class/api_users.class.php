@@ -77,7 +77,7 @@ class Users extends DolibarrApi
 	
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
-	    $sql.= ' WHERE t.entity IN ('.getEntity('user', 1).')';
+	    $sql.= ' WHERE t.entity IN ('.getEntity('user').')';
 	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
 	    // Add sql filters
         if ($sqlfilters) 
@@ -106,7 +106,8 @@ class Users extends DolibarrApi
 	    if ($result)
 	    {
 	        $num = $db->num_rows($result);
-	        while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+	        $min = min($num, ($limit <= 0 ? $num : $limit));
+	        while ($i < $min)
 	        {
 	            $obj = $db->fetch_object($result);
 	            $user_static = new User($db);
@@ -224,9 +225,9 @@ class Users extends DolibarrApi
     /**
 	 * add user to group
 	 *
-	 * @param   int     $id User ID
-	 * @param   int     $group Group ID
-	 * @return  int
+	 * @param   int     $id        User ID
+	 * @param   int     $group     Group ID
+	 * @return  int                1 if success
      * 
 	 * @url	GET {id}/setGroup/{group}
 	 */
@@ -245,7 +246,13 @@ class Users extends DolibarrApi
           throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
         }
     
-        return $this->useraccount->SetInGroup($group,1);
+        $result = $this->useraccount->SetInGroup($group,1);
+        if (! ($result > 0))
+        {
+            throw new RestException(500, $this->useraccount->error);
+        }
+                
+        return 1;
     }
 
 	/**
@@ -272,6 +279,29 @@ class Users extends DolibarrApi
 		return $this->useraccount->delete($id);
 	}
 
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	function _cleanObjectDatas($object) {
+	
+	    $object = parent::_cleanObjectDatas($object);
+	
+	    unset($object->default_values);
+	    unset($object->lastsearch_values);
+	    unset($object->lastsearch_values_tmp);
+	     
+	    unset($object->total_ht);
+	    unset($object->total_tva);
+	    unset($object->total_localtax1);
+	    unset($object->total_localtax2);
+	    unset($object->total_ttc);
+	    
+	    return $object;
+	}	
+	
 	/**
 	 * Validate fields before create or update object
      * 

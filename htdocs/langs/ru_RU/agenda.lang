@@ -2,6 +2,7 @@
 IdAgenda=ID события
 Actions=События
 Agenda=Повестка дня
+TMenuAgenda=Повестка дня
 Agendas=Повестка дня
 LocalAgenda=Внутренний календарь
 ActionsOwnedBy=Событие принадлежит 
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=Счёт %s удален
 InvoicePaidInDolibarr=Счёт %s  оплачен
 InvoiceCanceledInDolibarr=Счёт %s  отменён
 MemberValidatedInDolibarr=Участник %s  подтверждён
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Участник  %s удалён
 MemberSubscriptionAddedInDolibarr=Подписка участника %s  добавлена
 ShipmentValidatedInDolibarr=Отправка %s  подтверждена
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Отправка %s удалена
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Заказ %s проверен
@@ -73,13 +75,17 @@ InterventionSentByEMail=Посредничество %s отправлено п�
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Начальная дата
 DateActionEnd=Конечная дата
 AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=<b>logint= %s</b> ограничить выход на действия пользователя, <b>пострадавших %s.</b>
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
