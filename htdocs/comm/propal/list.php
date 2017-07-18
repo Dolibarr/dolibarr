@@ -353,6 +353,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfProposals') . ' - '.$soc->name;
+		if (empty($search_societe)) $search_societe = $soc->name;
 	}
 	else
 	{
