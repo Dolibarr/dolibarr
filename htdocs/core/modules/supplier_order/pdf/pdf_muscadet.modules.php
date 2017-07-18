@@ -342,12 +342,42 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
+					$showpricebeforepagebreak=1;
+					$posYAfterImage=0;
+					$posYAfterDescription=0;
+
+					// We start with Photo of product line
+					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+					{
+						$pdf->AddPage('','',true);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$pdf->setPage($pageposbefore+1);
+
+						$curY = $tab_top_newpage;
+						$showpricebeforepagebreak=0;
+					}
+
+					if (!empty($imglinesize['width']) && !empty($imglinesize['height']))
+					{
+						$curX = $this->posxpicture-1;
+						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva-$this->posxpicture-$imglinesize['width'])/2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+						// $pdf->Image does not increase value return by getY, so we save it manually
+						$posYAfterImage=$curY+$imglinesize['height'];
+					}
 					// Description of product line
 					$curX = $this->posxdesc-1;
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+					if ($posYAfterImage > 0) 
+					{
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+					} 
+					else 
+					{
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+					}
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -472,6 +502,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 
+					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
 
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -924,7 +955,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
         if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
         {
-    		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
+    		$pdf->line($this->posxtva, $tab_top, $this->posxtva, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{
     			$pdf->SetXY($this->posxtva-3, $tab_top+1);
