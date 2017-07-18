@@ -221,7 +221,7 @@ class SMTPs
 	var $_debug = false;
 
 
-	// DOL_CHANGE LDR
+	// @CHANGE LDR
 	var $log = '';
 	var $_errorsTo = '';
 	var $_deliveryReceipt = 0;
@@ -361,7 +361,7 @@ class SMTPs
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
-		// DOL_CHANGE LDR
+		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if ( (! is_ip($host)) && ((gethostbyname($host)) == $host))
@@ -393,7 +393,7 @@ class SMTPs
 			// This connection attempt failed.
 			else
 			{
-				// DOL_CHANGE LDR
+				// @CHANGE LDR
 				if (empty($this->errstr)) $this->errstr='Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
@@ -1093,7 +1093,7 @@ class SMTPs
 					{
 						foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
 						{
-							if ( $_realName )	// DOL_CHANGE LDR
+							if ( $_realName )	// @CHANGE LDR
 							{
 								$_realName = '"' . $_realName . '"';
 								$_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
@@ -1270,7 +1270,7 @@ class SMTPs
 		$_header .= $this->getPriority();
 
 
-		// DOL_CHANGE LDR
+		// @CHANGE LDR
 		if ( $this->getDeliveryReceipt() )
 		    $_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
@@ -1414,7 +1414,7 @@ class SMTPs
 						$content .= "\r\n" .  $_data['data'] . "\r\n\r\n";
 					}
 				}
-				// DOL_CHANGE LDR
+				// @CHANGE LDR
 				else if ( $type == 'image' )
 				{
 					// loop through all images
@@ -1521,7 +1521,7 @@ class SMTPs
 	}
 
 
-	// DOL_CHANGE LDR
+	// @CHANGE LDR
 
 	/**
 	 * Image attachments are added to the content array as sub-arrays,
@@ -1546,7 +1546,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
 		}
 	}
-	// END DOL_CHANGE LDR
+	// END @CHANGE LDR
 
 
 	/**
@@ -1740,7 +1740,7 @@ class SMTPs
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{
-		if ($this->_debug) $this->log.=$_strSend;	// DOL_CHANGE LDR for log
+		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
 		fputs($this->socket, $_strSend . $CRLF);
 		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
 

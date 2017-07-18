@@ -3741,6 +3741,33 @@ a.cke_dialog_ui_button_ok span {
 
 
 /* ============================================================================== */
+/*  ACE editor                                                                    */
+/* ============================================================================== */
+.ace_editor {
+    border: 1px solid #ddd;
+	margin: 0;
+}
+#statusBar {
+        margin: 0;
+        padding: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 20px;
+        color: #666;
+}
+.ace_status-indicator {
+        color: gray;
+        position: relative;
+        right: 0;
+        border-left: 1px solid;
+}
+pre#editfilecontentaceeditorid {
+    margin-top: 5px;
+}
+
+
+/* ============================================================================== */
 /*  File upload                                                                   */
 /* ============================================================================== */
 

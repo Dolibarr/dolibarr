@@ -730,6 +730,7 @@ SetBankAccount=Define Bank Account
 AccountCurrency=Account Currency
 ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
+ShowMoreLines=Show more lines
 PublicUrl=Public URL
 AddBox=Add box
 SelectElementAndClick=Select an element and click %s

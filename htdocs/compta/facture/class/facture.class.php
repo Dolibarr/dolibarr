@@ -3855,11 +3855,12 @@ class Facture extends CommonInvoice
 				}
 
 				$this->lines[$xnbp]=$line;
-				$xnbp++;
 
 				$this->total_ht       += $line->total_ht;
 				$this->total_tva      += $line->total_tva;
 				$this->total_ttc      += $line->total_ttc;
+
+				$xnbp++;
 			}
 			$this->revenuestamp = 0;
 

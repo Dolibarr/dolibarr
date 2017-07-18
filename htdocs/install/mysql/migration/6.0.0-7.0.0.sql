@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 6.0.0 or higher.
+-- when current version is 7.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -26,6 +26,6 @@
 
 
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
-ALTER TABLE llx_facture_fourn ADD COLUMN date_valid			date;
+ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
 
