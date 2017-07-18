@@ -306,7 +306,7 @@ if ($resql)
 
     $arrayofselected=is_array($toselect)?$toselect:array();
     
-	if ($socid)
+	if ($socid > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
