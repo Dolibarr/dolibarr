@@ -611,7 +611,7 @@ if (! dol_is_dir($dirins))
 }
 $dirins_ok=(dol_is_dir($dirins));
 
-llxHeader('', $langs->trans("ModuleBuilder"), "", '', 0, 0,
+llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
 	array(
 		'/includes/ace/ace.js',
 		'/includes/ace/ext-statusbar.js',
@@ -998,7 +998,7 @@ elseif (! empty($module))
         		dol_fiche_head($head2, $tab, '', -1, '');
 
         	    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
-        	    print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
+        	    print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
 
         	    dol_fiche_end();
 
@@ -1052,7 +1052,7 @@ elseif (! empty($module))
                 print '<input type="hidden" name="module" value="'.$module.'">';
 
                 $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1314,7 +1314,7 @@ elseif (! empty($module))
                     print '<input type="hidden" name="module" value="'.$module.'">';
 
                     $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                    print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
+                    print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                     print '<br>';
                     print '<center>';
                     print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1365,7 +1365,7 @@ elseif (! empty($module))
 			    print '<input type="hidden" name="module" value="'.$module.'">';
 
 			    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1410,7 +1410,7 @@ elseif (! empty($module))
 			    print '<input type="hidden" name="module" value="'.$module.'">';
 
 			    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1454,7 +1454,7 @@ elseif (! empty($module))
 			    print '<input type="hidden" name="module" value="'.$module.'">';
 
 			    $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file);
+                print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
                 print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';

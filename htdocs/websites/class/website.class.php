@@ -85,13 +85,13 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
-	
-	
+
+
 	public $records;
-	
+
 	/**
 	 */
-	
+
 
 	/**
 	 * Constructor
@@ -117,6 +117,7 @@ class Website extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
+		$now=dol_now();
 
 		// Clean parameters
 		if (isset($this->entity)) {
@@ -131,7 +132,8 @@ class Website extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-		if (empty($this->date_creation)) $this->date_creation = dol_now();
+		if (empty($this->date_creation)) $this->date_creation = $now;
+		if (empty($this->date_modification)) $this->date_modification = $now;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -146,6 +148,7 @@ class Website extends CommonObject
 		$sql.= 'virtualhost,';
 		$sql.= 'fk_user_create';
 		$sql.= 'date_creation';
+		$sql.= 'tmps';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
@@ -155,6 +158,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':$this->virtualhost).',';
 		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
+		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -230,7 +234,7 @@ class Website extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				
+
 				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
 				$this->description = $obj->description;
@@ -297,7 +301,7 @@ class Website extends CommonObject
 		if (count($sqlwhere) > 0) {
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
@@ -314,7 +318,7 @@ class Website extends CommonObject
 				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
-				
+
 				$line->entity = $obj->entity;
 				$line->ref = $obj->ref;
 				$line->description = $obj->description;
@@ -354,7 +358,7 @@ class Website extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -552,7 +556,7 @@ class Website extends CommonObject
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
@@ -607,8 +611,8 @@ class Website extends CommonObject
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -618,9 +622,9 @@ class Website extends CommonObject
 	public function initAsSpecimen()
 	{
 	    global $user;
-	    
+
 		$this->id = 0;
-		
+
 		$this->entity = 1;
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
@@ -632,7 +636,7 @@ class Website extends CommonObject
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();
 
-		
+
 	}
 
 }
