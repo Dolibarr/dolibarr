@@ -110,9 +110,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
-			$this->posxtva=99;
+			$this->posxtva=97;
 			$this->posxup=114;
-			$this->posxqty=130;
+			$this->posxqty=132;
 			$this->posxunit=147;
 		} else {
 			$this->posxtva=112;
@@ -120,7 +120,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$this->posxqty=145;
 		}
 
-		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxup = $this->posxtva; // posxtva is picture position reference
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
@@ -372,12 +372,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->startTransaction();
 					if ($posYAfterImage > 0) 
 					{
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+						$descWidth = $this->posxpicture-$curX;
 					} 
 					else 
 					{
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+						$descWidth = $this->posxtva-$curX;
 					}
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$descWidth,3,$curX,$curY,$hideref,$hidedesc,1);
+
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -385,7 +387,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,1);
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$descWidth,3,$curX,$curY,$hideref,$hidedesc,1);
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
@@ -963,7 +965,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
         }
 
-		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+		$pdf->line($this->posxup, $tab_top, $this->posxup, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxup-1, $tab_top+1);

@@ -108,7 +108,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
-		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva=$this->posxup;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxup=$this->posxtva;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
@@ -382,12 +382,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$pdf->startTransaction();
 					if ($posYAfterImage > 0) 
 					{
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+						$descWidth = $this->posxpicture-$curX;
 					} 
 					else 
 					{
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+						$descWidth = $this->posxtva-$curX;
 					}
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$descWidth,3,$curX,$curY,$hideref,$hidedesc,1);
+
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -395,7 +397,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$descWidth,3,$curX,$curY,$hideref,$hidedesc);
 
 						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
