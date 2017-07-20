@@ -73,7 +73,7 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.status FROM ".MAIN_DB_PREFIX."website as f";
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX."website as f";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -81,15 +81,15 @@ $tabsqlsort[1] ="ref ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[1] = "ref,description";
+$tabfield[1] = "ref,description,virtualhost";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[1] = "ref,description";
+$tabfieldvalue[1] = "ref,description,virtualhost";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[1] = "ref,description,entity";
+$tabfieldinsert[1] = "ref,description,virtualhost,entity";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -103,7 +103,7 @@ $tabcond[1] = (! empty($conf->websites->enabled));
 
 // List of help for fields
 $tabhelp=array();
-$tabhelp[1]  = array();
+$tabhelp[1]  = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/websites/<i>websiteref</i>'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -126,11 +126,18 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if (! isset($_POST[$value]) || $_POST[$value]=='')  // Fields that are not mandatory
+        if ((! isset($_POST[$value]) || $_POST[$value]=='')
+			&& (! in_array($listfield[$f], array('virtualhost'))))        // Fields that are not mandatory
         {
             $ok=0;
             $fieldnamekey=$listfield[$f];
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+        }
+        if ($value == 'ref' && (preg_match('/[a-zA-Z0-9]/', $_POST[$value])))
+        {
+			$ok=0;
+            $fieldnamekey=$listfield[$f];
+			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
     }
 

@@ -109,10 +109,10 @@ class WebsitePage extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-		if (isset($this->date_creation)) {
+		if (empty($this->date_creation)) {
 			 $this->date_creation = $now;
 		}
-		if (isset($this->date_modification)) {
+		if (empty($this->date_modification)) {
 			 $this->date_modification = $now;
 		}
 
@@ -382,7 +382,7 @@ class WebsitePage extends CommonObject
 		$sql .= ' content = '.(isset($this->content)?"'".$this->db->escape($this->content)."'":"null").',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
+		//$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();

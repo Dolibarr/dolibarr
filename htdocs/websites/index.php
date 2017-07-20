@@ -70,6 +70,7 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
 
@@ -146,8 +147,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
  */
 
 if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
-if (GETPOST('refreshpage')) $action='preview';
-
+if (GETPOST('refreshpage') && ! in_array($action, array('updatecss'))) $action='preview';
 
 // Add page
 if ($action == 'add')
@@ -241,56 +241,63 @@ if ($action == 'delete')
 // Update css
 if ($action == 'updatecss')
 {
-    $res = $object->fetch(0, $website);
+	if (GETPOST('refreshsite') || GETPOST('refreshpage'))		// If we tried to reload another site/page, we stay on editcss mode.
+	{
+		$action='editcss';
+	}
+	else
+	{
+	    $res = $object->fetch(0, $website);
 
-    // Html header file
-    $htmlheadercontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
-    $htmlheadercontent.= '<!-- File generated to save common html header - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
-    $htmlheadercontent.= '<!-- END -->'."\n";
-    $htmlheadercontent.= GETPOST('WEBSITE_HTML_HEADER');
+	    // Html header file
+	    $htmlheadercontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+	    $htmlheadercontent.= '<!-- File generated to save common html header - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
+	    $htmlheadercontent.= '<!-- END -->'."\n";
+	    $htmlheadercontent.= GETPOST('WEBSITE_HTML_HEADER');
 
-    dol_syslog("Save file css into ".$filehtmlheader);
+	    dol_syslog("Save file css into ".$filehtmlheader);
 
-    dol_mkdir($pathofwebsite);
-    $result = file_put_contents($filehtmlheader, $htmlheadercontent);
-    if (! empty($conf->global->MAIN_UMASK))
-        @chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
+	    dol_mkdir($pathofwebsite);
+	    $result = file_put_contents($filehtmlheader, $htmlheadercontent);
+	    if (! empty($conf->global->MAIN_UMASK))
+	        @chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
 
-    if (! $result)
-    {
-        $error++;
-        setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
-    }
+	    if (! $result)
+	    {
+	        $error++;
+	        setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+	    }
 
-    // Css file
-    $csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
-    $csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
-    $csscontent.= '<?php '."\n";
-    $csscontent.= "header('Content-type: text/css');\n";
-    $csscontent.= "?>"."\n";
-    $csscontent.= '<!-- END -->'."\n";
-    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
+	    // Css file
+	    $csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+	    $csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
+	    $csscontent.= '<?php '."\n";
+	    $csscontent.= "header('Content-type: text/css');\n";
+	    $csscontent.= "?>"."\n";
+	    $csscontent.= '<!-- END -->'."\n";
+	    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
 
-    dol_syslog("Save file css into ".$filecss);
+	    dol_syslog("Save file css into ".$filecss);
 
-    dol_mkdir($pathofwebsite);
-    $result = file_put_contents($filecss, $csscontent);
-    if (! empty($conf->global->MAIN_UMASK))
-        @chmod($filecss, octdec($conf->global->MAIN_UMASK));
+	    dol_mkdir($pathofwebsite);
+	    $result = file_put_contents($filecss, $csscontent);
+	    if (! empty($conf->global->MAIN_UMASK))
+	        @chmod($filecss, octdec($conf->global->MAIN_UMASK));
 
-    if (! $result)
-    {
-        $error++;
-        setEventMessages('Failed to write file '.$filecss, null, 'errors');
-    }
+	    if (! $result)
+	    {
+	        $error++;
+	        setEventMessages('Failed to write file '.$filecss, null, 'errors');
+	    }
 
 
-    if (! $error)
-    {
-        setEventMessages($langs->trans("Saved"), null, 'mesgs');
-    }
+	    if (! $error)
+	    {
+	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+	    }
 
-    $action='preview';
+	    $action='preview';
+	}
 }
 
 // Update page
@@ -458,7 +465,7 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))
+if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
     $object->fetch(0, $website);
 
@@ -638,7 +645,13 @@ $form = new Form($db);
 
 $help_url='';
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url);
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0,
+	array(
+		'/includes/ace/ace.js',
+		'/includes/ace/ext-statusbar.js',
+		'/includes/ace/ext-language_tools.js',
+		//'/includes/ace/ext-chromevox.js'
+	), array());
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -737,7 +750,7 @@ if (count($object->records) > 0)
 
     if ($action == 'preview')
     {
-        print '<div class="websiteinputurl">';
+        print '<div class="websiteinputurl" id="websiteinputurl">';
         print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
         //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
         $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
@@ -746,12 +759,9 @@ if (count($object->records) > 0)
 
         $urlext=$virtualurl;
         $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
-        //if (! empty($object->virtualhost))
-        //{
-            print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
-            print '</a>';
-        //}
+        print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+        print '</a>';
 
         print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
         print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
@@ -760,9 +770,9 @@ if (count($object->records) > 0)
 
     if (in_array($action, array('editcss','editmenu','create')))
     {
+        if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
     }
 
     print '</div>';
@@ -857,26 +867,18 @@ if (count($object->records) > 0)
             $realpage=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
             $pagealias = $websitepage->pageurl;
 
-            print '<div class="websiteinputurl">';
+            print '<div class="websiteinputurl" id="websiteinputpage">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
             //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
             $htmltext=$langs->trans("PageNameAliasHelp", $langs->transnoentitiesnoconv("EditPageMeta"));
             print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helppagealias');
             print '</div>';
 
-            if (! empty($object->virtualhost))
-            {
-                $urlext=$virtualurl.'/'.$pagealias.'.php';
-                print '<a class="websitebuttonsitepreview" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext)).'">';
-                print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
-                print '</a>';
-            }
-            else
-            {
-                print '<a class="websitebuttonsitepreview" id="previewpageextnoclick" href="#">';
-                print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
-                print '</a>';
-            }
+            $urlext=$virtualurl.'/'.$pagealias.'.php';
+            $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
+            print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+            print '</a>';
 
             print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
             print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview');
@@ -887,9 +889,9 @@ if (count($object->records) > 0)
         }
         if (! in_array($action, array('editcss','editmenu','create')))
         {
+            if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
             if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-            if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-            if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         }
 
         print '</div>';
@@ -901,6 +903,11 @@ if (count($object->records) > 0)
             {
                 print '<script type="text/javascript" language="javascript">
                     jQuery(document).ready(function() {
+                		jQuery("#websiteinputurl").keyup(function() {
+                            console.log("Website external url modified "+jQuery("#previewsiteurl").val());
+                			if (jQuery("#previewsiteurl").val() != "") jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+                			else jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 0.2 });
+                		});
                     	jQuery("#previewsiteext,#previewpageext").click(function() {
                             newurl=jQuery("#previewsiteurl").val();
                             newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
@@ -953,14 +960,17 @@ if ($action == 'editcss')
 
     print '<br>';
 
+    $csscontent = @file_get_contents($filecss);
+    // Clean the php css file to remove php code and get only css part
+    $csscontent = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $csscontent);
+
+    if (! trim($csscontent)) $csscontent='/* CSS content (all website)  */';
+
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php css file to remove php code and get only html part
     $htmlheader = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $htmlheader);
 
-
-    $csscontent = @file_get_contents($filecss);
-    // Clean the php css file to remove php code and get only css part
-    $csscontent = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $csscontent);
+    if (! trim($htmlheader)) $htmlheader='<html><!-- HTML header content (all website) --></html>';
 
     dol_fiche_head();
 
@@ -976,17 +986,25 @@ if ($action == 'editcss')
     print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_CSS_INLINE');
     print '</td><td>';
-    print '<textarea class="flat centpercent" rows="20" name="WEBSITE_CSS_INLINE">';
+
+    $doleditor=new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	print $doleditor->Create(1, '', true, 'CSS', 'css');
+
+    /*print '<textarea class="flat centpercent" rows="20" name="WEBSITE_CSS_INLINE">';
     print $csscontent;
-    print '</textarea>';
+    print '</textarea>';*/
     print '</td></tr>';
 
-    print '<tr><td class="tdtop">';
+	print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_HTML_HEADER');
     print '</td><td>';
-    print '<textarea class="flat centpercent" rows="20" name="WEBSITE_HTML_HEADER">';
+
+    $doleditor=new DolEditor('WEBSITE_HTML_HEADER', $htmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
+
+    /*print '<textarea class="flat centpercent" rows="20" name="WEBSITE_HTML_HEADER">';
     print $htmlheader;
-    print '</textarea>';
+    print '</textarea>';*/
     print '</td></tr>';
 
     /*print '<tr><td>';
@@ -1032,13 +1050,13 @@ if ($action == 'editmeta' || $action == 'create')
     if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION');
     if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS');
 
-    print '<tr><td class="titlefieldcreate">';
+    print '<tr><td class="titlefieldcreate fieldrequired">';
     print $langs->trans('WEBSITE_PAGENAME');
     print '</td><td>';
     print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.$pageurl.'">';
     print '</td></tr>';
 
-    print '<tr><td>';
+    print '<tr><td class="fieldrequired">';
     print $langs->trans('WEBSITE_TITLE');
     print '</td><td>';
     print '<input type="text" class="flat" size="96" name="WEBSITE_TITLE" value="'.$pagetitle.'">';
