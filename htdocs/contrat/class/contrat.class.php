@@ -1278,6 +1278,15 @@ class Contrat extends CommonObject
 				//// End call triggers
 				}
 			}
+			
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 			// Commit or rollback
 			if ($error)
