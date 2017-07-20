@@ -48,7 +48,7 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
     // html header
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-    print '<body id="mainbody">';
+    print '<body id="websitebody" class="websitebody">';
 
     // top menu and left menu area
     if (empty($conf->dol_hide_topmenu))
@@ -250,10 +250,13 @@ if ($action == 'updatecss')
 	    $res = $object->fetch(0, $website);
 
 	    // Html header file
-	    $htmlheadercontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+	    $htmlheadercontent.= '<?php '."\n";
+	    $htmlheadercontent.= "header('Content-type: text/html');\n";
+	    $htmlheadercontent.= "?>"."\n";
+	    $htmlheadercontent = '<!-- BEGIN DOLIBARR-WEBSITE-HTML-ADDED-HEADER -->'."\n";
 	    $htmlheadercontent.= '<!-- File generated to save common html header - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
 	    $htmlheadercontent.= '<!-- END -->'."\n";
-	    $htmlheadercontent.= GETPOST('WEBSITE_HTML_HEADER');
+	    $htmlheadercontent.= preg_replace(array('/<html>/','/<\/html>/'),array('',''),GETPOST('WEBSITE_HTML_HEADER'));
 
 	    dol_syslog("Save file css into ".$filehtmlheader);
 
@@ -269,12 +272,12 @@ if ($action == 'updatecss')
 	    }
 
 	    // Css file
-	    $csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
-	    $csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. -->'."\n";
 	    $csscontent.= '<?php '."\n";
 	    $csscontent.= "header('Content-type: text/css');\n";
 	    $csscontent.= "?>"."\n";
-	    $csscontent.= '<!-- END -->'."\n";
+	    $csscontent = '/* BEGIN DOLIBARR-WEBSITE-CSS-ADDED-HEADER */'."\n";
+	    $csscontent.= '/* File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THIS FILE. Change affects all pages of website. */'."\n";
+	    $csscontent.= '/* END */'."\n";
 	    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
 
 	    dol_syslog("Save file css into ".$filecss);
@@ -969,15 +972,19 @@ if ($action == 'editcss')
 
     $csscontent = @file_get_contents($filecss);
     // Clean the php css file to remove php code and get only css part
-    $csscontent = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $csscontent);
+    $csscontent = preg_replace('/^<\?php[^\?]+\?>/ims', '', $csscontent);
+    $csscontent = preg_replace('/\/\* BEGIN DOLIBARR.*END \*\/\n*/ims', '', $csscontent);
 
-    if (! trim($csscontent)) $csscontent='/* CSS content (all website)  */'."\n".'body { margin: 0; }';
+    if (! trim($csscontent)) $csscontent='/* CSS content (all website) */'."\n".'body { margin: 0; }';
+
 
     $htmlheader = @file_get_contents($filehtmlheader);
-    // Clean the php css file to remove php code and get only html part
-    $htmlheader = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $htmlheader);
+    // Clean the php htmlheader file to remove php code and get only html part
+    $htmlheader = preg_replace('/^<\?php[^\?]+\?>/ims', '', $htmlheader);
+    $htmlheader = preg_replace('/<!-- BEGIN DOLIBARR.*END -->\n*/ims', '', $htmlheader);
 
     if (! trim($htmlheader)) $htmlheader='<html><!-- HTML header content (all website) --></html>';
+    else $htmlheader='<html>'.$htmlheader.'</html>';
 
     dol_fiche_head();
 
