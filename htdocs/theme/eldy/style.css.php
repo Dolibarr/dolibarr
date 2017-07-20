@@ -3347,6 +3347,11 @@ a.websitebuttonsitepreview img {
 	width: 26px;
 	display: inline-block;
 }
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 
 /* ============================================================================== */

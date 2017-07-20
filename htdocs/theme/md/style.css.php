@@ -3428,7 +3428,11 @@ a.websitebuttonsitepreview img {
 .websiteiframenoborder {
 	border: 0px;
 }
-
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */
