@@ -130,7 +130,7 @@ if ($pageid > 0 && $action != 'add')
 
 global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
-$filehtmlheader=$pathofwebsite.'/header.html';
+$filehtmlheader=$pathofwebsite.'/htmlheader.html';
 $filecss=$pathofwebsite.'/styles.css.php';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex=$pathofwebsite.'/index.php';
@@ -433,7 +433,7 @@ if ($action == 'updatemeta')
             $tplcontent.= '<!-- Include link to CSS file -->'."\n";
             $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
             $tplcontent.= '<!-- Include common page header file -->'."\n";
-            $tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/header.html"); ?>'."\n";
+            $tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/htmlheader.html"); ?>'."\n";
             $tplcontent.= '</header>'."\n";
 
             $tplcontent.= '<body>'."\n";
@@ -592,7 +592,7 @@ if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite
                 $tplcontent.= '<!-- Include link to CSS file -->'."\n";
                 $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
         	    $tplcontent.= '<!-- Include common page header file -->'."\n";
-                $tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/header.html"); ?>'."\n";
+                $tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/htmlheader.html"); ?>'."\n";
         	    $tplcontent.= '</header>'."\n";
 
         	    $tplcontent.= '<body>'."\n";
@@ -845,12 +845,10 @@ if (count($object->records) > 0)
             {
                 print ' &nbsp; ';
 
-                if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-                else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
-                //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
-                //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
+                if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+                else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
             }
         }
@@ -973,7 +971,7 @@ if ($action == 'editcss')
     // Clean the php css file to remove php code and get only css part
     $csscontent = preg_replace('/<!-- BEGIN DOLIBARR.*END -->/s', '', $csscontent);
 
-    if (! trim($csscontent)) $csscontent='/* CSS content (all website)  */';
+    if (! trim($csscontent)) $csscontent='/* CSS content (all website)  */'."\n".'body { margin: 0; }';
 
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php css file to remove php code and get only html part

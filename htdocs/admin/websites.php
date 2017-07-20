@@ -114,7 +114,7 @@ $tabfieldcheck[1]  = array();
 $elementList = array();
 $sourceList=array();
 
-// Actions add or modify an entry into a dictionary
+// Actions add or modify a website
 if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
     $listfield=explode(',',$tabfield[$id]);
@@ -133,12 +133,18 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             $fieldnamekey=$listfield[$f];
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
-        if ($value == 'ref' && (preg_match('/[a-zA-Z0-9]/', $_POST[$value])))
+		if ($value == 'ref' && ! preg_match('/^[a-z0-9]+$/i', $_POST[$value]))
         {
 			$ok=0;
             $fieldnamekey=$listfield[$f];
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
+    }
+
+    // Clean parameters
+    if (! empty($_POST['ref']))
+    {
+    	$websitekey=strtolower($_POST['ref']);
     }
 
     // Si verif ok et action add, on ajoute la ligne
@@ -160,6 +166,12 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             }
         }
 
+        /* $website=new Website($db);
+        $website->ref=
+        $website->description=
+        $website->virtualhost=
+        $website->create($user); */
+
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
@@ -178,6 +190,9 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             if ($value == 'entity') {
             	$_POST[$listfieldvalue[$i]] = $conf->entity;
             }
+            if ($value == 'ref') {
+            	$_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
+            }
             if ($i) $sql.=",";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
@@ -189,6 +204,29 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
+			global $dolibarr_main_data_root;
+			$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websitekey;
+			$filehtmlheader=$pathofwebsite.'/htmlheader.html';
+			$filecss=$pathofwebsite.'/styles.css.php';
+			$filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
+			$fileindex=$pathofwebsite.'/index.php';
+
+        	// Css file
+        	$csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+        	$csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THE FILE styles.css.php. Change affects all pages of website. -->'."\n";
+        	$csscontent.= '<?php '."\n";
+        	$csscontent.= "header('Content-type: text/css');\n";
+        	$csscontent.= "?>"."\n";
+        	$csscontent.= '<!-- END -->'."\n";
+        	$csscontent.= 'body { margin: 0; }'."\n";
+
+        	dol_syslog("Save file css into ".$filecss);
+
+        	dol_mkdir($pathofwebsite);
+        	$result = file_put_contents($filecss, $csscontent);
+        	if (! empty($conf->global->MAIN_UMASK))
+        		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
+
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	unset($_POST);	// Clean $_POST array, we keep only
         }
