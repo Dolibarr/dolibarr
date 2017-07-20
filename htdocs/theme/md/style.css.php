@@ -551,6 +551,9 @@ textarea.centpercent {
 .cursormove {
 	cursor: move;
 }
+.cursornotallowed {
+	cursor: not-allowed;
+}
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -3747,7 +3750,7 @@ a.cke_dialog_ui_button_ok span {
     border: 1px solid #ddd;
 	margin: 0;
 }
-#statusBar {
+.aceeditorstatusbar {
         margin: 0;
         padding: 0;
         left: 0;
