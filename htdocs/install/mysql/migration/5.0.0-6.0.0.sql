@@ -573,3 +573,7 @@ UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement c
 UPDATE llx_bank SET label= '(payment_salary)' WHERE label LIKE 'Règlement salaire';
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
+
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
