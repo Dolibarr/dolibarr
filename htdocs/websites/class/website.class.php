@@ -133,7 +133,7 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create';
+		$sql.= 'fk_user_create,';
 		$sql.= 'date_creation';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
