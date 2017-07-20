@@ -3428,10 +3428,17 @@ a.websitebuttonsitepreview img {
 	width: 26px;
 	display: inline-block;
 }
+a.websitebuttonsitepreviewdisabled img {
+	opacity: 0.2;
+}
 .websiteiframenoborder {
 	border: 0px;
 }
-
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */

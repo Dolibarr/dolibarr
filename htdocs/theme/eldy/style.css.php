@@ -3353,6 +3353,11 @@ a.websitebuttonsitepreview img {
 a.websitebuttonsitepreviewdisabled img {
 	opacity: 0.2;
 }
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 
 /* ============================================================================== */

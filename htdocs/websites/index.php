@@ -379,12 +379,13 @@ if ($action == 'updatemeta')
 
 
             // Now generate the master.inc.php page
-            dol_syslog("We regenerate the master file");
+            dol_syslog("We regenerate the master file (because we update meta)");
             dol_delete_file($filemaster);
 
             $mastercontent = '<?php'."\n";
             $mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
             $mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+            $mastercontent.= '$website = new WebSite($db)'."\n";
             $mastercontent.= '?>'."\n";
             $result = file_put_contents($filemaster, $mastercontent);
             if (! empty($conf->global->MAIN_UMASK))
@@ -572,8 +573,10 @@ if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite
 
                 $tplcontent ='';
                 $tplcontent.= "<?php // BEGIN PHP\n";
+                $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
                 $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
                 $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+                $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
                 $tplcontent.= "ob_start();\n";
                 $tplcontent.= "// END PHP ?>\n";
         	    $tplcontent.= '<html>'."\n";
@@ -759,8 +762,8 @@ if (count($object->records) > 0)
 
         $urlext=$virtualurl;
         $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
-        print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+        print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
         print '</a>';
 
         print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
@@ -832,7 +835,6 @@ if (count($object->records) > 0)
         }
 
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
-        //print $form->selectarray('page', $array);
 
         if ($action == 'preview')
         {
@@ -854,8 +856,6 @@ if (count($object->records) > 0)
         }
 
         print '</div>';
-        print '<div class="websiteselection">';
-        print '</div>';
 
         print '<div class="websitetools">';
 
@@ -869,15 +869,14 @@ if (count($object->records) > 0)
 
             print '<div class="websiteinputurl" id="websiteinputpage">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
-            //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
             $htmltext=$langs->trans("PageNameAliasHelp", $langs->transnoentitiesnoconv("EditPageMeta"));
             print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helppagealias');
             print '</div>';
 
             $urlext=$virtualurl.'/'.$pagealias.'.php';
             $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
-            print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+            print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'ext" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext)).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
             print '</a>';
 
             print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
@@ -895,6 +894,16 @@ if (count($object->records) > 0)
         }
 
         print '</div>';
+
+        print '<div class="websitehelp">';
+        if (GETPOST('editcontent', 'alpha'))
+        {
+        	$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
+        	print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 0, 2, 'tooltipsubstitution');
+        }
+        print '</div>';
+
+
 
         if ($action == 'preview')
         {

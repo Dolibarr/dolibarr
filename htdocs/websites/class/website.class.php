@@ -49,11 +49,6 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var WebsitePage[]  Lines of all pages
-	 */
-	public $lines = array();
-
-	/**
 	 * @var int
 	 */
 	public $entity;
@@ -85,12 +80,6 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
-
-
-	public $records;
-
-	/**
-	 */
 
 
 	/**
@@ -146,8 +135,8 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create';
-		$sql.= 'date_creation';
+		$sql.= 'fk_user_create,';
+		$sql.= 'date_creation,';
 		$sql.= 'tmps';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
@@ -222,7 +211,7 @@ class Website extends CommonObject
 		$sql .= " t.tms";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+			$sql .= " WHERE t.ref = '" . $this->db->escape($ref) . "'";
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
