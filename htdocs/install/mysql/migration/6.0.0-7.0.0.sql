@@ -28,4 +28,13 @@
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
+ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 
+ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
+ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
+ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
+
+ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
+ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);

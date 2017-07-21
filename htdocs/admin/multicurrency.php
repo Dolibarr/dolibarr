@@ -100,7 +100,7 @@ elseif ($action == 'update_currency')
 	if ($submit == $langs->trans('Modify'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
-		$rate = GETPOST('rate', 'float');
+		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
 		if ($currency->fetch($fk_multicurrency) > 0)

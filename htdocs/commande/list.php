@@ -578,6 +578,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfOrders') . ' - '.$soc->name;
+		if (empty($search_company)) $search_company = $soc->name;
 	}
 	else
 	{

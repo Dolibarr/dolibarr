@@ -467,6 +467,8 @@ DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM l
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
+
 CREATE TABLE llx_loan_schedule
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
@@ -572,11 +574,6 @@ UPDATE llx_bank SET label= '(payment_salary)' WHERE label LIKE 'Règlement salai
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
 
-ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
-ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
-ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
-ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
-ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
-ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
-ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
