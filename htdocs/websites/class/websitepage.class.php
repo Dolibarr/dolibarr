@@ -181,9 +181,9 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one. found
-	 * @param string $website_id   Web site id
-	 * @param string $page         Page name
+	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one found.
+	 * @param string $website_id   Web site id (page name must also be filled if this parameter is used)
+	 * @param string $page         Page name (website id must also be filled if this parameter is used)
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -205,11 +205,16 @@ class WebsitePage extends CommonObject
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
-		if (null !== $website_id) {
-		    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
-		    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
-		} else {
+		if ($id > 0)
+		{
 			$sql .= ' AND t.rowid = ' . $id;
+		}
+		else
+		{
+			if (null !== $website_id) {
+			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
+			    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
+			}
 		}
         $sql .= $this->db->plimit(1);
 

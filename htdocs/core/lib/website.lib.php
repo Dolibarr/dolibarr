@@ -31,17 +31,17 @@
 function dolWebsiteOutput($content)
 {
     global $db, $langs, $conf, $user;
-    global $dolibarr_main_url_root;
+    global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
     dol_syslog("dolWebsiteOutput start");
 
+    // Define $urlwithroot
+    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
     if (! defined('USEDOLIBARRSERVER'))
     {
-        // Define $urlwithroot
-        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-        //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
         $symlinktomediaexists=1;
 
 		// Make a change into HTML code to allow to include images from medias directory correct with direct link for virtual server
@@ -55,8 +55,17 @@ function dolWebsiteOutput($content)
         }
         else
         {
-            $content=preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1medias/\4\5', $content, -1, $nbrep);
+        	$content=preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1medias/\4\5', $content, -1, $nbrep);
         }
+    }
+    else
+    {
+    	global $website;
+
+    	// Replace relative link / with dolibarr URL
+    	$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+    	// Replace relative link /xxx.php with dolibarr URL
+    	$content=preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
     }
 
     dol_syslog("dolWebsiteOutput end");
