@@ -101,6 +101,8 @@ if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
 if (GETPOST('editmeta')) { $action='editmeta'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
+if (GETPOST('createfromclone')) { $action='createfromclone'; }
+if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
 
 if (empty($action)) $action='preview';
 
@@ -446,19 +448,27 @@ if ($action == 'updatemeta')
 
             dol_delete_file($filetpl);
 
+            // TODO Same code than into updatecontent
             $tplcontent ='';
-            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+            $tplcontent.= "<?php // BEGIN PHP\n";
+            $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+            $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
+            $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+            $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+            $tplcontent.= "ob_start();\n";
+            $tplcontent.= "// END PHP ?>\n";
             $tplcontent.= '<html>'."\n";
             $tplcontent.= '<header>'."\n";
-            $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+            $tplcontent.= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";
+            $tplcontent.= '<meta charset="UTF-8">'."\n";
             $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
             $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
             $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
             $tplcontent.= '<link rel="canonical" href="'.$objectpage->pageurl.'">'."\n";
             $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
-            $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
-            $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
-            $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+            $tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
+            $tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
+            $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.'" />'."\n";
             $tplcontent.= '<!-- Include link to CSS file -->'."\n";
             $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
             $tplcontent.= '<!-- Include common HTML header file -->'."\n";
@@ -469,6 +479,11 @@ if ($action == 'updatemeta')
             $tplcontent.= '<body id="bodywebsite" class="bodywebsite">'."\n";
             $tplcontent.= $objectpage->content."\n";
             $tplcontent.= '</body>'."\n";
+
+            $tplcontent.= '<?php // BEGIN PHP'."\n";
+            $tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+            $tplcontent.= "// END PHP ?>"."\n";
+
             //var_dump($filetpl);exit;
             $result = file_put_contents($filetpl, $tplcontent);
             if (! empty($conf->global->MAIN_UMASK))
@@ -492,9 +507,21 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
+if (($action == 'updatecontent' || $action == 'createpagefromclone')
+	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
     $object->fetch(0, $website);
+
+	if ($action == 'createpagefromclone')
+	{
+    	$objectpage = new WebsitePage($db);
+		$result = $objectpage->createFromClone($pageid);
+		if ($result < 0)
+		{
+			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+			$action='preview';
+		}
+    }
 
     // Check symlink to medias and restore it if ko
     $pathtomedias=DOL_DATA_ROOT.'/medias';
@@ -597,7 +624,8 @@ if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite
         	    // Now create the .tpl file with code to be able to make dynamic changes
         	    dol_delete_file($filetpl);
 
-                $tplcontent ='';
+	            // TODO Same code than into updatemeta
+        	    $tplcontent ='';
                 $tplcontent.= "<?php // BEGIN PHP\n";
                 $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
                 $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
@@ -607,14 +635,15 @@ if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite
                 $tplcontent.= "// END PHP ?>\n";
         	    $tplcontent.= '<html>'."\n";
         	    $tplcontent.= '<header>'."\n";
-        	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+        	    $tplcontent.= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";
+        	    $tplcontent.= '<meta charset="UTF-8">'."\n";
         	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
         	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
         	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
         	    $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
-        	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
-        	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
-        	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+        	    $tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
+        	    $tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
+        	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.'" />'."\n";
                 $tplcontent.= '<!-- Include link to CSS file -->'."\n";
                 $tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
         	    $tplcontent.= '<!-- Include common HTML header file -->'."\n";
@@ -770,7 +799,7 @@ if (count($object->records) > 0)
         //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
     }
 
     print '</div>';
@@ -819,6 +848,11 @@ if (count($object->records) > 0)
         $atleastonepage=(is_array($array) && count($array) > 0);
 
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
+
+        print '<div class="websiteselection hideonsmartphoneimp">';
+        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+        print '</div>';
+
         print '<div class="websiteselection hideonsmartphoneimp">';
         print $langs->trans("Page").': ';
         print '</div>';
@@ -876,6 +910,7 @@ if (count($object->records) > 0)
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+        		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
                 print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
             }
         }

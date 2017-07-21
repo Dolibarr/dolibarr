@@ -482,17 +482,17 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param int $fromid 	Id of object to clone
+	 * @return int 			New id of clone
 	 */
 	public function createFromClone($fromid)
 	{
+		global $user, $langs;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		global $user;
 		$error = 0;
-		$object = new Websitepage($this->db);
+		$object = new self($this->db);
 
 		$this->db->begin();
 
@@ -502,14 +502,17 @@ class WebsitePage extends CommonObject
 		$object->id = 0;
 
 		// Clear fields
-		// ...
+		$object->ref = 'copy_of_'.$object->ref;
+		$object->pageurl = 'copy_of_'.$object->pageurl;
+		$object->title = $langs->trans("CopyOf").' '.$object->title;
 
 		// Create clone
 		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0) {
-			$error ++;
+			$error++;
+			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
@@ -522,7 +525,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 
