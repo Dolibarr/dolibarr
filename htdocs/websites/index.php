@@ -260,15 +260,21 @@ if ($action == 'updatecss')
 
 	    // Html header file
 	    $htmlheadercontent ='';
-	    /* Not required. htmlheader.html is never call as a standalone page
-	    $htmlheadercontent.= '<?php '."\n";
-	    $htmlheadercontent.= "header('Content-type: text/html');\n";
-	    $htmlheadercontent.= "?>"."\n";
-	    */
-	    $htmlheadercontent.= '<!-- BEGIN DOLIBARR-WEBSITE-HTML-ADDED-HEADER -->'."\n";
-	    $htmlheadercontent.= '<!-- File generated to save common html header - YOU CAN MODIFY DIRECTLY THE FILE htmlheader.html. Change affects all pages of website. -->'."\n";
-	    $htmlheadercontent.= '<!-- END -->'."\n";
+
+	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
+	    $htmlheadercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+	    $htmlheadercontent.= "ob_start();\n";
+	    // $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
+	    $htmlheadercontent.= "// END PHP ?>\n";
+
 	    $htmlheadercontent.= preg_replace(array('/<html>\n*/ims','/<\/html>\n*/ims'),array('',''),GETPOST('WEBSITE_HTML_HEADER'));
+
+	    $htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
+	    $htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+	    $htmlheadercontent.= "// END PHP ?>"."\n";
 
 	    dol_syslog("Save file css into ".$filehtmlheader);
 
@@ -285,13 +291,22 @@ if ($action == 'updatecss')
 
 	    // Css file
 	    $csscontent ='';
-	    $csscontent.= '<?php '."\n";
+
+	    $csscontent.= "<?php // BEGIN PHP\n";
+	    $csscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	    $csscontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	    $csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+	    $csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+	    $csscontent.= "ob_start();\n";
 	    $csscontent.= "header('Content-type: text/css');\n";
-	    $csscontent.= "?>"."\n";
-	    $csscontent.= '/* BEGIN DOLIBARR-WEBSITE-CSS-ADDED-HEADER */'."\n";
-	    $csscontent.= '/* File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THE FILE styles.css.php. Change affects all pages of website. */'."\n";
-	    $csscontent.= '/* END */'."\n";
+	    $csscontent.= "// END PHP ?>\n";
+
 	    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
+
+	    $csscontent.= "\n".'<?php // BEGIN PHP'."\n";
+	    $csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+	    $csscontent.= "// END PHP ?>"."\n";
+
 
 	    dol_syslog("Save file css into ".$filecss);
 
@@ -1035,19 +1050,19 @@ if ($action == 'editcss')
 
     $csscontent = @file_get_contents($filecss);
     // Clean the php css file to remove php code and get only css part
-    $csscontent = preg_replace('/^<\?php[^\?]+\?>\n*/ims', '', $csscontent);
-    $csscontent = preg_replace('/\/\* BEGIN DOLIBARR.*END \*\/\n*/ims', '', $csscontent);
+    $csscontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $csscontent);
+
+    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
 
     if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n".'body.bodywebsite { margin: 0; }';
 
 
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php htmlheader file to remove php code and get only html part
-    $htmlheader = preg_replace('/^<\?php[^\?]+\?>\n*/ims', '', $htmlheader);
-    $htmlheader = preg_replace('/<!-- BEGIN DOLIBARR.*END -->\n*/ims', '', $htmlheader);
+    $htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $htmlheader);
 
-    if (! trim($htmlheader)) $htmlheader='<html><!-- HTML header content (all pages) --></html>';
-    else $htmlheader='<html>'.$htmlheader.'</html>';
+    if (! trim($htmlheader)) $htmlheader='<html>'."\n".'<!-- HTML header content (all pages) -->'."\n".'</html>';
+    else $htmlheader='<html>'."\n".$htmlheader."\n".'</html>';
 
     dol_fiche_head();
 
@@ -1083,12 +1098,6 @@ if ($action == 'editcss')
     print $htmlheader;
     print '</textarea>';*/
     print '</td></tr>';
-
-    /*print '<tr><td>';
-    print $langs->trans('WEBSITE_CSS_URL');
-    print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_CSS_URL" value="'.dol_escape_htmltag($obj->WEBSITE_CSS_URL).'">';
-    print '</td></tr>';*/
 
     print '</table>';
 
