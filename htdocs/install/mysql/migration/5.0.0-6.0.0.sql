@@ -577,3 +577,6 @@ ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
+
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'IGST-CGST', 8, 8, '1', 0, '0', 0, 'IGST-CGST', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'SGST', 0, 0, '0', 16, '1', 0, 'SGST', 1);
