@@ -62,8 +62,9 @@ function dolWebsiteOutput($content)
     {
     	global $website;
 
-    	// Replace relative link with dolibarr URL
+    	// Replace relative link / with dolibarr URL
     	$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+    	// Replace relative link /xxx.php with dolibarr URL
     	$content=preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
     }
 

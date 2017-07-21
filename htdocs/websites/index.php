@@ -1176,8 +1176,10 @@ if ($action == 'preview')
         // Replace php code. Note $objectpage->content come from database and does not contains body tags.
         $content = preg_replace('/<\?php.*\?>/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $objectpage->content);
 
-        // Replace internal relative links with Dolibarr links
-        // TODO
+        // Replace relative link / with dolibarr URL
+        $content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageid='.$object->fk_default_home.'"', $content, -1, $nbrep);
+        // Replace relative link /xxx.php with dolibarr URL
+        $content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageref=\2"', $content, -1, $nbrep);
 
 
         $out.=$content."\n";
