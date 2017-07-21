@@ -414,7 +414,7 @@ if ($action == 'updatemeta')
 
             $mastercontent = '<?php'."\n";
             $mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-            $mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+            $mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
             //$mastercontent.= "include_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';"."\n";
             //$mastercontent.= '$website = new WebSite($db)'."\n";
             $mastercontent.= '?>'."\n";
@@ -432,11 +432,12 @@ if ($action == 'updatemeta')
                 dol_delete_file($fileoldalias);
             }
 
-            $aliascontent = '<?php'."\n";
-            $aliascontent.= '// File generated to wrap the page - DO NOT MODIFY - It is just an include'."\n";
-            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
-            $aliascontent.= '?>'."\n";
-            $result = file_put_contents($filealias, $aliascontent);
+   		    $aliascontent = '<?php'."\n";
+   		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
+   		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
+   		    $aliascontent.= 'require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+   		    $aliascontent.= '?>'."\n";
+   		    $result = file_put_contents($filealias, $aliascontent);
             if (! empty($conf->global->MAIN_UMASK))
                 @chmod($filealias, octdec($conf->global->MAIN_UMASK));
 
@@ -452,7 +453,7 @@ if ($action == 'updatemeta')
             $tplcontent ='';
             $tplcontent.= "<?php // BEGIN PHP\n";
             $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-            $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
+            $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
             $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
             $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
             $tplcontent.= "ob_start();\n";
@@ -594,7 +595,7 @@ if (($action == 'updatecontent' || $action == 'createpagefromclone')
 
         		$mastercontent = '<?php'."\n";
         		$mastercontent.= '// File generated to link to the master file'."\n";
-        		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+        		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
         		$mastercontent.= '?>'."\n";
         		$result = file_put_contents($filemaster, $mastercontent);
         		if (! empty($conf->global->MAIN_UMASK))
@@ -612,7 +613,8 @@ if (($action == 'updatecontent' || $action == 'createpagefromclone')
 
     		    $aliascontent = '<?php'."\n";
     		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
-    		    $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
+    		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
+    		    $aliascontent.= 'require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
     		    $aliascontent.= '?>'."\n";
     		    $result = file_put_contents($filealias, $aliascontent);
     		    if (! empty($conf->global->MAIN_UMASK))
@@ -628,7 +630,7 @@ if (($action == 'updatecontent' || $action == 'createpagefromclone')
         	    $tplcontent ='';
                 $tplcontent.= "<?php // BEGIN PHP\n";
                 $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-                $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
+                $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
                 $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
                 $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
                 $tplcontent.= "ob_start();\n";
