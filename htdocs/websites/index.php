@@ -1112,7 +1112,7 @@ if ($action == 'preview')
     {
         $objectpage->fetch($pageid);
 
-        $out = "\n".'<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
+        $out = '<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
 
         $out.='<div id="websitecontent" class="websitecontent">'."\n";
 
