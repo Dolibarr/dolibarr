@@ -435,7 +435,8 @@ if ($action == 'updatemeta')
    		    $aliascontent = '<?php'."\n";
    		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
    		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
-   		    $aliascontent.= 'require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+   		    $aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\';';
+   		    $aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
    		    $aliascontent.= '?>'."\n";
    		    $result = file_put_contents($filealias, $aliascontent);
             if (! empty($conf->global->MAIN_UMASK))
@@ -614,7 +615,8 @@ if (($action == 'updatecontent' || $action == 'createpagefromclone')
     		    $aliascontent = '<?php'."\n";
     		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
     		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
-    		    $aliascontent.= 'require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+    		    $aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\';';
+    		    $aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
     		    $aliascontent.= '?>'."\n";
     		    $result = file_put_contents($filealias, $aliascontent);
     		    if (! empty($conf->global->MAIN_UMASK))
