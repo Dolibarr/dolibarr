@@ -446,8 +446,15 @@ if ($action == 'updatemeta')
 
             dol_delete_file($filetpl);
 
+            // TODO Same code than into updatecontent
             $tplcontent ='';
-            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+            $tplcontent.= "<?php // BEGIN PHP\n";
+            $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+            $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
+            $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+            $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+            $tplcontent.= "ob_start();\n";
+            $tplcontent.= "// END PHP ?>\n";
             $tplcontent.= '<html>'."\n";
             $tplcontent.= '<header>'."\n";
             $tplcontent.= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";
@@ -598,7 +605,8 @@ if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite
         	    // Now create the .tpl file with code to be able to make dynamic changes
         	    dol_delete_file($filetpl);
 
-                $tplcontent ='';
+	            // TODO Same code than into updatemeta
+        	    $tplcontent ='';
                 $tplcontent.= "<?php // BEGIN PHP\n";
                 $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
                 $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
