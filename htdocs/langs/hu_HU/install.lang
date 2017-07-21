@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=A DoliWamp-ot használja a Dolibarr telepítéséhez, az i
 KeepDefaultValuesDeb=Linux csomagból (Ubuntun, Fedora vagy Debian, ...) használja a telepítési varázslót, az itt lévõ értékek már optimalizálva vannak. Csak az adatbázis tulajdonosnak kell jelszót megadni. Csak saját felelõsségre módosítsa ezeket az értékeket.
 KeepDefaultValuesMamp=A DoliMamp-ot használja a Dolibarr telepítéséhez, az itt lévõ értékek már optimalizálva vannak. Csak saját felelõsségre módosítsa ezeket.
 KeepDefaultValuesProxmox=Ön használja az Dolibarr Setup Wizard egy Proxmox virtuális készüléket, így az itt javasolt értékek már optimalizálva. Megváltoztatni őket, ha tudod, mit csinálsz.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

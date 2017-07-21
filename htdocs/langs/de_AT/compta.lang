@@ -7,7 +7,6 @@ VATReceived=Eingehobene MwSt.
 VATToCollect=Einzuhebende MwSt.
 VATSummary=MwSt. Zahllast
 VATCollected=Eingehobene MwSt.
-ToPay=To pay
 MenuSpecialExpenses=Steuern, Sozialbeiträge und Dividenden
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
 AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
@@ -534,74 +534,73 @@ if ($id > 0)
 	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
 
-	if ($conf->propal->enabled)
+	if (! empty($conf->propal->enabled))
 	{
-    	// Box proposals
-    	$tmp = $object->getOutstandingProposals();
-    	$outstandingOpened=$tmp['opened'];
-    	$outstandingTotal=$tmp['total_ht'];
-    	$outstandingTotalIncTax=$tmp['total_ttc'];
-	    $text=$langs->trans("OverAllProposals");
-    	$link='';
-    	$icon='bill';
-    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-    	$boxstat.='<div class="boxstats">';
-    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
-    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
-    	$boxstat.='</div>';
-    	if ($link) $boxstat.='</a>';
+		// Box proposals
+		$tmp = $object->getOutstandingProposals();
+		$outstandingOpened=$tmp['opened'];
+		$outstandingTotal=$tmp['total_ht'];
+		$outstandingTotalIncTax=$tmp['total_ttc'];
+		$text=$langs->trans("OverAllProposals");
+		$link='';
+		$icon='bill';
+		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+		$boxstat.='<div class="boxstats">';
+		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+		$boxstat.='</div>';
+		if ($link) $boxstat.='</a>';
 	}
 
-	if ($conf->commande->enabled)
+	if (! empty($conf->commande->enabled))
 	{
-	    // Box proposals
-	    $tmp = $object->getOutstandingOrders();
-	    $outstandingOpened=$tmp['opened'];
-	    $outstandingTotal=$tmp['total_ht'];
-	    $outstandingTotalIncTax=$tmp['total_ttc'];
-	    $text=$langs->trans("OverAllOrders");
-	    $link='';
-	    $icon='bill';
-	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
-	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
-	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
-	    $boxstat.='</div>';
-	    if ($link) $boxstat.='</a>';
+		// Box proposals
+		$tmp = $object->getOutstandingOrders();
+		$outstandingOpened=$tmp['opened'];
+		$outstandingTotal=$tmp['total_ht'];
+		$outstandingTotalIncTax=$tmp['total_ttc'];
+		$text=$langs->trans("OverAllOrders");
+		$link='';
+		$icon='bill';
+		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+		$boxstat.='<div class="boxstats">';
+		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+		$boxstat.='</div>';
+		if ($link) $boxstat.='</a>';
 	}
 
-	if ($conf->facture->enabled)
+	if (! empty($conf->facture->enabled))
 	{
-    	$tmp = $object->getOutstandingBills();
-    	$outstandingOpened=$tmp['opened'];
-    	$outstandingTotal=$tmp['total_ht'];
-    	$outstandingTotalIncTax=$tmp['total_ttc'];
+		$tmp = $object->getOutstandingBills();
+		$outstandingOpened=$tmp['opened'];
+		$outstandingTotal=$tmp['total_ht'];
+		$outstandingTotalIncTax=$tmp['total_ttc'];
+		$text=$langs->trans("OverAllInvoices");
+		$link='';
+		$icon='bill';
+		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+		$boxstat.='<div class="boxstats">';
+		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+		$boxstat.='</div>';
+		if ($link) $boxstat.='</a>';
 
-    	$text=$langs->trans("OverAllInvoices");
-    	$link='';
-    	$icon='bill';
-    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-    	$boxstat.='<div class="boxstats">';
-    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
-    	$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
-    	$boxstat.='</div>';
-    	if ($link) $boxstat.='</a>';
-
-    	// Box outstanding bill
-    	$warn = '';
-    	if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
-    	{
-    	    $warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
-    	}
-    	$text=$langs->trans("CurrentOutstandingBill");
-    	$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
-    	$icon='bill';
-    	if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-    	$boxstat.='<div class="boxstats">';
-    	$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
-    	$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-    	$boxstat.='</div>';
-    	if ($link) $boxstat.='</a>';
+		// Box outstanding bill
+		$warn = '';
+		if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened)
+		{
+			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
+		}
+		$text=$langs->trans("CurrentOutstandingBill");
+		$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
+		$icon='bill';
+		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+		$boxstat.='<div class="boxstats">';
+		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
+		$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+		$boxstat.='</div>';
+		if ($link) $boxstat.='</a>';
 	}
 
 	$boxstat.='</td></tr>';

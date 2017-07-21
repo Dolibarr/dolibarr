@@ -12,7 +12,7 @@ ListOfFees=Wykaz opłat
 TypeFees=Types of fees
 ShowTrip=Pokaż raport kosztowy
 NewTrip=Nowy raport kosztów
-CompanyVisited=Firm / fundacji odwiedzonych
+CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Kwota lub kilometry
 DeleteTrip=Usuń raport kosztów
 ConfirmDeleteTrip=Czy usunąć ten raport kosztów?
@@ -21,7 +21,17 @@ ListToApprove=Czeka na zaakceptowanie
 ExpensesArea=Obszar raportów kosztowych
 ClassifyRefunded=Zakfalifikowano do refundacji.
 ExpenseReportWaitingForApproval=Nowy raport kosztów został wysłany do zakaceptowania
-ExpenseReportWaitingForApprovalMessage=Nowy raport kosztów został wysłany i czeka na zaakceptowanie.\n- Użytkownik: %s\n- Czas: %s\nKliknij tutaj aby sprawdzić: %s
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.\nThe %s, you refused to approve the expense report for this reason: %s.\nA new version has been proposed and waiting for your approval.\n - User: %s\n - Period: %s\nClick here to validate: %s
+ExpenseReportApproved=An expense report was approved
+ExpenseReportApprovedMessage=The expense report %s was approved.\n - User: %s\n - Approved by: %s\nClick here to show the expense report: %s
+ExpenseReportRefused=An expense report was refused
+ExpenseReportRefusedMessage=The expense report %s was refused.\n - User: %s\n - Refused by: %s\n - Motive for refusal: %s\nClick here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.\n - User: %s\n - Canceled by: %s\n - Motive for cancellation: %s\nClick here to show the expense report: %s
+ExpenseReportPaid=An expense report was paid
+ExpenseReportPaidMessage=The expense report %s was paid.\n - User: %s\n - Paid by: %s\nClick here to show the expense report: %s
 TripId=ID raportu kosztowego
 AnyOtherInThisListCanValidate=Osoba do informowania o jej potwierdzenie.
 TripSociete=Informacje o firmie
@@ -59,31 +69,24 @@ DATE_REFUS=Data odmowy
 DATE_SAVE=Data zatwierdzenia
 DATE_CANCEL=Data anulowania
 DATE_PAIEMENT=Data płatności
-
 BROUILLONNER=Otworzyć na nowo
+ExpenseReportRef=Ref. expense report
 ValidateAndSubmit=Zatwierdź i wyślij do zaakceptowania
 ValidatedWaitingApproval=Zatwierdzony (czeka na zaakceptowanie)
-
 NOT_AUTHOR=Nie jesteś autorem tego raportu kosztowego. Operacja anulowana.
-
 ConfirmRefuseTrip=Czy odrzucić ten raport kosztów?
-
 ValideTrip=Zatwierdzić raport wydatków
 ConfirmValideTrip=Czy zaakceptować ten raport kosztów?
-
 PaidTrip=Zapłać raport wydatków
 ConfirmPaidTrip=Czy zmienić status tego raportu kosztów na "Zapłacone"?
-
 ConfirmCancelTrip=Czy anulować ten raport kosztów?
-
 BrouillonnerTrip=Cofnij raport kosztów do statusu "Szkic"
 ConfirmBrouillonnerTrip=Czy zmienić status tego raportu kosztów na "Szkic"?
-
 SaveTrip=Weryfikacja raportu wydatków
 ConfirmSaveTrip=Czy zatwierdzić ten raport kosztów?
-
 NoTripsToExportCSV=Brak raportu kosztowego to eksportowania za ten okres czasu.
 ExpenseReportPayment=Płatność Raport wydatek
-
 ExpenseReportsToApprove=Raporty kosztów do zaakceptowania
 ExpenseReportsToPay=Raporty kosztowe do zapłaty
+CloneExpenseReport=Clone expense report
+ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?

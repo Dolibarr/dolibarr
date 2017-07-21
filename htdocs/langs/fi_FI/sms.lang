@@ -38,7 +38,7 @@ SmsStatusNotSent=Ei lähetetty
 SmsSuccessfulySent=Sms oikein lähetetään (vuodesta %s ja %s)
 ErrorSmsRecipientIsEmpty=Määrä tavoite on tyhjä
 WarningNoSmsAdded=Ei uusia puhelinnumero lisätä kohde luetteloon
-ConfirmValidSms=Do you confirm validation of this campain?
+ConfirmValidSms=Haluatko vahvistaa tämän kampanjan hyväksytyksi?
 NbOfUniqueSms=Nb DOF ainutlaatuinen puhelinnumeroita
 NbOfSms=Nbre of phon numeroiden
 ThisIsATestMessage=Tämä on testi viesti
@@ -46,6 +46,6 @@ SendSms=Lähetä tekstiviesti
 SmsInfoCharRemain=Nb jäljellä olevien merkkien
 SmsInfoNumero= (Muoto kansainvälinen eli +33899701761)
 DelayBeforeSending=Viive ennen lähettämistä (min)
-SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
+SmsNoPossibleSenderFound=Lähettäjää ei ole saatavilla. Tarkista SMS asetukset.
 SmsNoPossibleRecipientFound=Ei tavoite käytettävissä. Tarkista asetukset oman SMS tarjoaja.
 

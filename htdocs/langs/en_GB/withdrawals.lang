@@ -3,7 +3,6 @@ NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Payment status
 NbOfInvoiceToWithdraw=No. of invoices with direct debit orders
 NbOfInvoiceToWithdrawWithInfo=No. of customer invoices with direct debit payment orders having defined bank account information
 AmountToWithdraw=Amount to pay
-NoInvoiceToWithdraw=No customer invoice in payment mode "payment" is waiting. Go to 'Payment' tab on invoice card to make a request.
 NoInvoiceCouldBeWithdrawed=No invoice paid successfully. Check that the invoice is on a company with a valid BAN.
 ClassCreditedConfirm=Are you sure you want to classify this Payment receipt as credited on your bank account?
 WithdrawalRefused=Payment refused

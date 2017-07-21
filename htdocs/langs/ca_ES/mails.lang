@@ -64,7 +64,7 @@ DateSending=Data enviament
 SentTo=Enviat a <b>%s</b>
 MailingStatusRead=Llegit
 YourMailUnsubcribeOK=El correu electrònic <b>%s</b>  és correcta desuscribe.
-ActivateCheckReadKey=Clau utilitzada per encriptar la URL utilitzada per les característiques de "Lector" i "Desubscriu" 
+ActivateCheckReadKey=Clau utilitzada per encriptar la URL utilitzada per les característiques de "Lector" i "Desubscriu"
 EMailSentToNRecipients=E-Mail enviat a %s destinataris.
 EMailSentForNElements=E-Mail enviat per %s elements.
 XTargetsAdded=<b>%s</b> destinataris agregats a la llista
@@ -79,6 +79,10 @@ MailingModuleDescContactsWithThirdpartyFilter=Contacte amb filtres de client
 MailingModuleDescContactsByCompanyCategory=Contactes per categoria de tercer
 MailingModuleDescContactsByCategory=Contactes per categories
 MailingModuleDescContactsByFunction=Contactes per càrrec
+MailingModuleDescEmailsFromFile=Emails from file
+MailingModuleDescEmailsFromUser=Emails input by user
+MailingModuleDescDolibarrUsers=Usuaris amb correus electrònics
+MailingModuleDescThirdPartiesByCategories=Tercers (per categories)
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línea %s en archiu

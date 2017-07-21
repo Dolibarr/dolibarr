@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 class InterfaceActionsBlockedLog extends DolibarrTriggers
 {
 	public $family = 'system';
-	public $description = "Triggers of this module add blocklog.";
+	public $description = "Triggers of this module add action for BlockedLog module.";
 	public $version = self::VERSION_DOLIBARR;
-	public $picto = 'system';
+	public $picto = 'technic';
 
 	/**
 	 * Function called on Dolibarrr payment or invoice event.
@@ -46,10 +46,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Do not log events not enabled for this action
-		if (empty($conf->blockedlog->enabled)) {
-			return 0;
-		}
+        if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
 		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW') {

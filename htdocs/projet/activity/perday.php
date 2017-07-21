@@ -97,7 +97,7 @@ $object=new Task($db);
  */
 
 // Purge criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $action = '';
     $search_usertoprocessid = '';
@@ -200,22 +200,25 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timespent_duration=array();
 
-    foreach($_POST as $key => $time)
+    if (is_array($_POST))
     {
-        if (intval($time) > 0)
+        foreach($_POST as $key => $time)
         {
-            // Hours or minutes of duration
-            if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
+            if (intval($time) > 0)
             {
-                $id = $matches[1];
-				if ($id > 0)
-				{
-	                // We store HOURS in seconds
-	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
+                // Hours or minutes of duration
+                if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
+                {
+                    $id = $matches[1];
+    				if ($id > 0)
+    				{
+    	                // We store HOURS in seconds
+    	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
 
-	                // We store MINUTES in seconds
-	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
-				}
+    	                // We store MINUTES in seconds
+    	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
+    				}
+                }
             }
         }
     }

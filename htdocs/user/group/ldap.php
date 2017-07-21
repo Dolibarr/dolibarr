@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->load("companies");
 $langs->load("ldap");
 $langs->load("users");
+$langs->load("admin");
 
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
@@ -110,21 +111,22 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
 
-// Name
-print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-print '<td class="valeur">'.$object->name;
-if (!$object->entity)
+// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
+if (! empty($conf->mutlicompany->enabled))
 {
-	print img_picto($langs->trans("GlobalGroup"),'redstar');
+    print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+    print '<td class="valeur">'.$object->name;
+    if (!$object->entity)
+    {
+    	print img_picto($langs->trans("GlobalGroup"),'redstar');
+    }
+    print "</td></tr>\n";
 }
-print "</td></tr>\n";
 
 // Note
-print '<tr><td width="25%" class="tdtop">'.$langs->trans("Note").'</td>';
-print '<td class="valeur">'.nl2br($object->note).'&nbsp;</td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
 print "</tr>\n";
-
-$langs->load("admin");
 
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPGroupDn").'</td><td class="valeur">'.$conf->global->LDAP_GROUP_DN."</td></tr>\n";
