@@ -101,6 +101,8 @@ if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
 if (GETPOST('editmeta')) { $action='editmeta'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
+if (GETPOST('createfromclone')) { $action='createfromclone'; }
+if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
 
 if (empty($action)) $action='preview';
 
@@ -505,9 +507,21 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if ($action == 'updatecontent' || ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
+if (($action == 'updatecontent' || $action == 'createpagefromclone')
+	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
     $object->fetch(0, $website);
+
+	if ($action == 'createpagefromclone')
+	{
+    	$objectpage = new WebsitePage($db);
+		$result = $objectpage->createFromClone($pageid);
+		if ($result < 0)
+		{
+			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+			$action='preview';
+		}
+    }
 
     // Check symlink to medias and restore it if ko
     $pathtomedias=DOL_DATA_ROOT.'/medias';
@@ -785,7 +799,7 @@ if (count($object->records) > 0)
         //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
     }
 
     print '</div>';
@@ -834,6 +848,11 @@ if (count($object->records) > 0)
         $atleastonepage=(is_array($array) && count($array) > 0);
 
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
+
+        print '<div class="websiteselection hideonsmartphoneimp">';
+        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+        print '</div>';
+
         print '<div class="websiteselection hideonsmartphoneimp">';
         print $langs->trans("Page").': ';
         print '</div>';
@@ -891,6 +910,7 @@ if (count($object->records) > 0)
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+        		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
                 print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
             }
         }
