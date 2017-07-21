@@ -872,7 +872,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-    	print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"><br/>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"><br>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
 	    // FRSTRECUR
 	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
