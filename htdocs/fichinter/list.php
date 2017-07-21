@@ -249,8 +249,15 @@ $sql.= $db->plimit($limit+1, $offset);
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-
+	$num = $db->num_rows($result);
+	
+	if ($socid > 0)
+	{
+		$soc = new Societe($db);
+		$soc->fetch($socid);
+		if (empty($search_company)) $search_company = $soc->name;
+	}
+	
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
 	$param='';
