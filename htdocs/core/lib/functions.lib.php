@@ -806,17 +806,19 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
  *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
+ *  @param		int			$onlytags			Only special chars like (", &, >, > ...) are replaced, not all chars that has an existing entity.
  *  @return     string     				 		Escaped string
  *
  *  @see		dol_string_nohtmltag
  */
-function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
+function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0, $onlytags=0)
 {
 	// escape quotes and backslashes, newlines, etc.
 	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
 	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
+	if ($onlytags) return htmlspecialchars($tmp,ENT_COMPAT,'UTF-8');
+	else return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
 
