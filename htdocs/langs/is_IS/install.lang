@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Þú notar Dolibarr skipulag töframaður frá DoliWamp, s
 KeepDefaultValuesDeb=Þú notar Dolibarr skipulag töframaður frá Ubuntu eða Debian pakka, þannig gildi lagt hér eru nú þegar bjartsýni. Aðeins lykilorð gagnagrunninum eigandi að búa verður að vera lokið. Breyta aðrar breytur aðeins ef þú veist hvað þú gerir.
 KeepDefaultValuesMamp=Þú notar Dolibarr skipulag töframaður frá DoliMamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
 KeepDefaultValuesProxmox=Þú notar Dolibarr uppsetningarhjálpina frá Proxmox raunverulegur tæki, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

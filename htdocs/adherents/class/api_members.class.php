@@ -100,13 +100,13 @@ class Members extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('adherent', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
         if (!empty($typeid))
         {
             $sql.= ' AND t.fk_adherent_type='.$typeid;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -115,7 +115,7 @@ class Members extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
@@ -132,9 +132,10 @@ class Members extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < min($limit, $num))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
+            	$obj = $db->fetch_object($result);
                 $member = new Adherent($this->db);
                 if($member->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($member);
@@ -249,11 +250,7 @@ class Members extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        // The Adherent::delete() method uses the global variable $user.
-        global $user;
-        $user = DolibarrApiAccess::$user;
-
-        if (! $member->delete($member->id)) {
+        if (! $member->delete($member->id, DolibarrApiAccess::$user)) {
             throw new RestException(401,'error when deleting member');
         }
 

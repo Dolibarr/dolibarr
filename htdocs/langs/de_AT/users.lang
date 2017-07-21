@@ -4,4 +4,3 @@ PasswordChangedAndSentTo=Passwort geändert und an <b>%s</b> gesandt.
 PasswordChangeRequestSent=Antrag auf eine Änderung das Passworts für <b>%s</b> an <b>%s</b> gesandt.
 LinkedToDolibarrUser=Mit Systembenutzer verknüpfen
 LinkedToDolibarrThirdParty=Mit Partner verknüpfen
-InternalExternalDesc=Ein <b>interner</b> Benutzer ist Teil Ihres Unternehmens/Ihrer Stiftung. <br> Ein <b>externer</b> Benutzer ist ein Kunde, Lieferant oder Anderes. <br><br> In beiden Fällen können Sie die Berechtigungen definieren - externe Benutzer können zudem auch einen andere Menüverwaltung als interne Benutzer haben (siehe Home - Einstellungen - Anzeige)

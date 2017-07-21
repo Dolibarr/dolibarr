@@ -2,6 +2,7 @@
 IdAgenda=ID sự kiện
 Actions=Sự kiện
 Agenda=Lịch làm việc
+TMenuAgenda=Chương trình nghị sự
 Agendas=Lịch làm việc
 LocalAgenda=Lịch nội bộ
 ActionsOwnedBy=Tổ chức sự kiện thuộc sở hữu của
@@ -11,21 +12,21 @@ Event=Sự kiện
 Events=Sự kiện
 EventsNb=Số sự kiện
 ListOfActions=Danh sách các sự kiện
-Location=Đến từ
+Location=Địa phương
 ToUserOfGroup=To any user in group
-EventOnFullDay=Sự kiện trên tất cả các ngày (s)
-MenuToDoActions=Tất cả các sự kiện không đầy đủ
-MenuDoneActions=Tất cả các sự kiện kết thúc
-MenuToDoMyActions=Sự kiện không đầy đủ của tôi
-MenuDoneMyActions=Sự kiện chấm dứt của tôi
-ListOfEvents=Danh sách các sự kiện (lịch nội bộ)
-ActionsAskedBy=Sự kiện báo cáo của
+EventOnFullDay=Tất cả sự kiện
+MenuToDoActions=Tất cả sự kiện chưa xong
+MenuDoneActions=Tất cả sự kiện đã chấm dứt
+MenuToDoMyActions=Sự kiện chưa xong của tôi
+MenuDoneMyActions=Sự kiện đã chấm dứt của tôi
+ListOfEvents=Danh sách sự kiện (lịch nội bộ)
+ActionsAskedBy=Sự kiện báo cáo bởi
 ActionsToDoBy=Sự kiện được giao
 ActionsDoneBy=Sự kiện được thực hiện bởi
 ActionAssignedTo=Sự kiện được giao cho
 ViewCal=Xem tháng
-ViewDay=Ngày xem
-ViewWeek=Xem theo tuần
+ViewDay=Xem ngày
+ViewWeek=Xem tuần
 ViewPerUser=Trung bình mỗi người dùng xem
 ViewPerType=Per type view
 AutoActions= Tự động điền
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=Hoá đơn %s bị xóa
 InvoicePaidInDolibarr=Invoice %s changed to paid
 InvoiceCanceledInDolibarr=Invoice %s canceled
 MemberValidatedInDolibarr=Member %s validated
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
 ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Thứ tự %s xác nhận
@@ -73,13 +75,17 @@ InterventionSentByEMail=Can thiệp %s gửi thư điện tử
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Ngày bắt đầu
 DateActionEnd=Ngày kết thúc
 AgendaUrlOptions1=Bạn cũng có thể thêm các thông số sau đây để lọc đầu ra:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>Logina =%s</b> ​​để hạn chế sản lượng để hành động thuộc sở hữu của một người dùng <b>%s</b>.
-AgendaUrlOptions4=<b>logint =%s</b> ​​để hạn chế sản lượng để hành động được gán cho người dùng <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>dự án = PROJECT_ID</b> để hạn chế sản lượng để hành động liên quan đến dự án <b>PROJECT_ID.</b>
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts

@@ -132,12 +132,13 @@ MigrationFinished=Actualización terminada
 LastStepDesc=<strong>Último paso</strong>: Indique aquí la cuenta y la contraseña del primer usuario que usted utilizará para conectarse a la aplicación. No pierda estos identificadores, es la cuenta que permite administrar el resto.
 ActivateModule=Activación del módulo %s
 ShowEditTechnicalParameters=Pulse aquí para ver/editar los parámetros técnicos (modo experto)
-WarningUpgrade=Advertencia: \\n¿Ha realizado una copia de seguridad de su base de datos antes? \\nEsto es altamente recomendado: por ejemplo, debido a algunos errores en los sistemas de bases de datos (por ejemplo MySQL versión 5.5.40/41/42/43), algunos datos o tablas pueden perderse durante este proceso, por lo que es altamente recomendado tener un volcado completo de la base de datos antes de iniciar la actualización.\\n\\nHaga clic en Aceptar para iniciar el proceso de actualización...
+WarningUpgrade=Advertencia: \\\n¿Ha realizado una copia de seguridad de su base de datos antes? \\\nEsto es altamente recomendado: por ejemplo, debido a algunos errores en los sistemas de bases de datos (por ejemplo MySQL versión 5.5.40/41/42/43), algunos datos o tablas pueden perderse durante este proceso, por lo que es altamente recomendado tener un volcado completo de la base de datos antes de iniciar la actualización.\\\n\\\nHaga clic en Aceptar para iniciar el proceso de actualización...
 ErrorDatabaseVersionForbiddenForMigration=Su versión de base de datos es la %s. Tiene un error crítico que hace que pierda los datos si cambia la estructura de la base de datos, como esto es necesario para el proceso de actualización, este no se va a realizar hasta que actualice su base de datos a una versión mayor con el error subsanado (listado de versiones conocidas con este error: %s)
 KeepDefaultValuesWamp=Está utilizando el asistente de instalación DoliWamp, los valores propuestos aquí están optimizados. Cambielos solamente si está seguro de ello.
 KeepDefaultValuesDeb=Está utilizando el asistente de instalación Dolibarr de un paquete Linux (Ubuntu, Debian, Fedora...), los valores propuestos aquí están optimizados. Sólo será necesaria la contraseña del propietario de la base de datos a crear. Cambie la otra información sólamente si está seguro de ello.
 KeepDefaultValuesMamp=Está utilizando el asistente de instalación DoliMamp, los valores propuestos aquí están optimizados. Cambielos solamente si está seguro de ello.
 KeepDefaultValuesProxmox=Está utilizando el asistente de instalación Dolibarr desde una máquina virtual Proxmox, los valores propuestos aquí están optimizados. Cambielos solamente si está seguro de ello.
+UpgradeExternalModule=Ejecutar proceso dedicado para actualizar módulos externos
 
 #########
 # upgrade

@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Resurs uspešno obrisan
 DictionaryResourceType=Tip resursa
 
 SelectResource=Izbor resursa
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Resursi

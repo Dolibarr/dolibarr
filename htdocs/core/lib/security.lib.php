@@ -98,7 +98,7 @@ function dol_hash($chain,$type=0)
 
 /**
  *	Check permissions of a user to show a page and an object. Check read permission.
- * 	If GETPOST('action') defined, we also check write and delete permission.
+ * 	If GETPOST('action','aZ09') defined, we also check write and delete permission.
  *
  *	@param	User	$user      	  	User to check
  *	@param  string	$features	    Features to check (it must be module name. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
@@ -109,6 +109,7 @@ function dol_hash($chain,$type=0)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	Canvas	$objcanvas		Object canvas
  * 	@return	int						Always 1, die process if not allowed
+ *  @see dol_check_secure_access_document
  */
 function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
@@ -209,7 +210,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check write permission from module
     $createok=1; $nbko=0;
-    if (GETPOST("action")  == 'create')
+    if (GETPOST('action','aZ09')  == 'create')
     {
         foreach ($featuresarray as $feature)
         {
@@ -264,7 +265,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check create user permission
     $createuserok=1;
-    if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm") == 'yes')
     {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -274,7 +275,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check delete permission from module
     $deleteok=1; $nbko=0;
-    if ((GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete')
+    if ((GETPOST('action','aZ09')  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST('action','aZ09')  == 'delete')
     {
         foreach ($featuresarray as $feature)
         {
@@ -402,9 +403,9 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (in_array($feature,$checksoc))	// We check feature = checksoc
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
-				if ($user->societe_id <> $objectid) return false;
+				if ($user->socid <> $objectid) return false;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))

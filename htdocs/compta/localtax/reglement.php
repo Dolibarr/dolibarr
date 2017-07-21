@@ -66,8 +66,8 @@ if ($result)
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+        
+        print '<tr class="oddeven">';
 
 		$localtax_static->id=$obj->rowid;
 		$localtax_static->ref=$obj->rowid;

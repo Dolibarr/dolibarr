@@ -38,10 +38,12 @@ $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
 
-// Security check
 $id=GETPOST('id','int');
+$ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+
+// Security check
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
@@ -163,11 +165,11 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("Payment"));
 
 $thirdpartystatic=new Societe($db);
 
-$result=$object->fetch($id);
+$result=$object->fetch($id, $ref);
 if ($result <= 0)
 {
 	dol_print_error($db,'Payement '.$id.' not found in database');
@@ -178,7 +180,7 @@ $form = new Form($db);
 
 $head = payment_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
+dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
 /*
  * Confirmation de la suppression du paiement
@@ -199,19 +201,18 @@ if ($action == 'valide')
 
 }
 
-
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
 
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">'."\n";
 
-// Ref
-print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
-print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-print '</td></tr>';
-
 // Date payment
-print '<tr><td>'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
+print '<tr><td class="titlefield">'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
 print $form->editfieldval("Date",'datep',$object->date,$object,$user->rights->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
 print '</td></tr>';
 
@@ -280,6 +281,8 @@ if (! empty($conf->banque->enabled))
 
 print '</table>';
 
+print '</div>';
+
 dol_fiche_end();
 
 
@@ -324,8 +327,8 @@ if ($resql)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 
             $invoice=new Facture($db);
             $invoice->fetch($objp->facid);
@@ -369,7 +372,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	print '</div>';

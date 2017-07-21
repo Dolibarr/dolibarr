@@ -6,7 +6,6 @@ ListOfTrips=Liste Reise- und Spesenabrechnungen
 TypeFees=Spesen- und Kostenarten
 ShowTrip=Spesenreport anzeigen
 NewTrip=neue Reisekostenabrechnung
-CompanyVisited=Besuchte Firma/Stiftung
 ListTripsAndExpenses=Liste Reise- und Spesenabrechnungen
 ExpenseReportWaitingForApproval=Eine neue Reisekostenabrechnung ist zur Genehmigung vorgelegt worden
 AnyOtherInThisListCanValidate=Zu informierende Person für die Bestätigung

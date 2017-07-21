@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -89,13 +90,13 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('subscription'));
+
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-
-
-
 
 /*
  * 	Actions
@@ -389,7 +390,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
 	                }
-	                 
+
 	                $result=$invoice->create($user);
 	                if ($result <= 0)
 	                {
@@ -578,15 +579,15 @@ if ($rowid > 0)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-    dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
+    dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-    
+
     dol_banner_tab($object, 'rowid', $linkback);
-    
+
     print '<div class="fichecenter">';
     print '<div class="fichehalfleft">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border" width="100%">';
 
@@ -624,13 +625,13 @@ if ($rowid > 0)
 	}
 
     print '</table>';
-    
+
     print '</div>';
     print '<div class="fichehalfright"><div class="ficheaddleft">';
-   
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
-	
+
 	// Birthday
 	print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
@@ -646,13 +647,9 @@ if ($rowid > 0)
 		print '</td></tr>';
 	}
 
-	// Other attributes
-	$parameters=array('colspan'=>2);
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields, 'view', $parameters);
-	}
+    // Other attributes
+    $cols=2;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	// Date end subscription
 	print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
@@ -677,7 +674,7 @@ if ($rowid > 0)
 	    }
 	}
 	print '</td></tr>';
-	
+
 	// Third party Dolibarr
 	if (! empty($conf->societe->enabled))
 	{
@@ -752,7 +749,7 @@ if ($rowid > 0)
 
 	print "</div></div></div>\n";
     print '<div style="clear:both"></div>';
-    
+
     dol_fiche_end();
 
     print '</form>';
@@ -792,7 +789,7 @@ if ($rowid > 0)
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
-        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.accountancy_journal, ba.number";
+        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -821,12 +818,10 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
-            $var=True;
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print '<tr class="oddeven">';
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
@@ -843,7 +838,12 @@ if ($rowid > 0)
                         $accountstatic->id=$objp->baid;
                         $accountstatic->number=$objp->number;
                         $accountstatic->account_number=$objp->account_number;
-                        $accountstatic->accountancy_journal=$objp->accountancy_journal;
+
+                        $accountingjournal = new AccountingJournal($db);
+                        $accountingjournal->fetch($objp->fk_accountancy_journal);
+
+                        $accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+
                         $accountstatic->ref=$objp->ref;
                         print $accountstatic->getNomUrl(1);
                     }
@@ -869,6 +869,13 @@ if ($rowid > 0)
         {
             include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
+        }
+
+        // Link for stripe payment
+        if (! empty($conf->stripe->enabled))
+        {
+            include_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+            print showStripePaymentUrl('membersubscription',$object->ref);
         }
 
     }

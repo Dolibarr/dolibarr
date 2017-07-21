@@ -128,7 +128,7 @@ if (! empty($id)) {
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
+$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$object->error;
@@ -136,7 +136,7 @@ if ($result<0)
 	exit(-1);
 }
 
-// TODO This sequence of code must be shared with code into cron_run_jobs.php php page.
+// TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
 // current date
 $now=dol_now();

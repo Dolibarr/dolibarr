@@ -119,7 +119,7 @@ print load_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
 
 $head = marges_admin_prepare_head();
 
-dol_fiche_head($head, 'parameters', $langs->trans("Margins"), 0, 'margin');
+dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
@@ -133,11 +133,11 @@ $var=true;
 $form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
-$var=!$var;
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
@@ -165,8 +165,8 @@ print '</tr>';
 print '</form>';
 
 // DISPLAY MARGIN RATES
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -189,8 +189,8 @@ print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$la
 print '</tr>';
 
 // DISPLAY MARK RATES
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -212,8 +212,8 @@ print '</td>';
 print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -242,11 +242,11 @@ $methods = array(
 	3 => $langs->trans('UseDiscountOnTotal')
 );
 
-$var=!$var;
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td align="left">';
 print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, $conf->global->MARGIN_METHODE_FOR_DISCOUNT);
@@ -259,11 +259,11 @@ print '</tr>';
 print '</form>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
-$var=!$var;
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td align="left">';
 $formcompany = new FormCompany($db);

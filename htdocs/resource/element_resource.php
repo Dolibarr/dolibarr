@@ -31,10 +31,15 @@ if (! $res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
 
 // Load traductions files requiredby by page
 $langs->load("resource");
 $langs->load("other");
+$langs->load("interventions");
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');
@@ -193,7 +198,7 @@ else
 
 			$head=actions_prepare_head($act);
 
-			dol_fiche_head($head, 'resources', $langs->trans("Action"),0,'action');
+			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
 			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
@@ -212,10 +217,34 @@ else
 
 			$linkback.=$out;
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', '&element='.$element, 0, '', '');
+			$morehtmlref='<div class="refidno">';
+			// Thirdparty
+			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled))
+			{
+			    $langs->load("projects");
+			    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			    $morehtmlref.=$langs->trans('Project') . ': ';
+		        if (! empty($act->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($act->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $act->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
+		        } else {
+		            $morehtmlref.='';
+		        }
+			}
+			$morehtmlref.='</div>';
+			
+			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
+			print '<div class="fichecenter">';
+				
 			print '<div class="underbanner clearboth"></div>';
-
+				
 			print '<table class="border" width="100%">';
 
 			// Type
@@ -285,6 +314,8 @@ else
 
 			print '</table>';
 
+			print '</div>';
+			
 			dol_fiche_end();
 		}
 	}
@@ -301,7 +332,7 @@ else
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
-			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), 0, 'company');
+			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
 			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
@@ -337,7 +368,7 @@ else
 		if (is_object($fichinter)) 
 		{
 			$head=fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
+			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';

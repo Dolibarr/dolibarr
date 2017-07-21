@@ -160,13 +160,6 @@ class modAdherent extends DolibarrModules
         $this->const[$r][4] = 0;
         $r++;
         
-        $this->const[$r][0] = "ADHERENT_BANK_USE_AUTO";
-        $this->const[$r][1] = "yesno";
-        $this->const[$r][2] = "";
-        $this->const[$r][3] = "Insertion automatique des cotisations dans le compte bancaire";
-        $this->const[$r][4] = 0;
-        $r++;
-        
         $this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
@@ -297,7 +290,7 @@ class modAdherent extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'subscription as c ON c.fk_adherent = a.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON a.state_id = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON a.country = co.rowid';
-        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid AND ta.entity IN ('.getEntity('adherent', 1).') ';
+        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid AND ta.entity IN ('.getEntity('adherent').') ';
         $this->export_dependencies_array[$r]=array('subscription'=>'c.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
         // Imports
@@ -369,8 +362,8 @@ class modAdherent extends DolibarrModules
         }*/
     
         $sql = array(
-            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type='member' AND entity = ".$conf->entity,
-            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','member',".$conf->entity.")"
+            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,
+            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
         );
     
         return $this->_init($sql,$options);

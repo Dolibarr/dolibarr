@@ -103,7 +103,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'misc', $langs->trans("Security"));
+dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
@@ -116,8 +116,8 @@ print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
 if (function_exists("imagecreatefrompng"))
@@ -146,8 +146,8 @@ else
 print '</td></tr>';
 
 // Enable advanced perms
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
 if (! empty($conf->use_javascript_ajax))
@@ -182,10 +182,10 @@ print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$var=!$var;
+
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
@@ -194,10 +194,10 @@ print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" valu
 print '</td>';
 print '</tr>';
 
-$var=!$var;
+
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';

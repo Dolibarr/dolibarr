@@ -27,6 +27,7 @@ CREATE TABLE llx_expensereport_det
    qty real NOT NULL,
    value_unit real NOT NULL,
    remise_percent real,
+   vat_src_code					varchar(10)  DEFAULT '',		-- Vat code used as source of vat fields. Not strict foreign key here.
    tva_tx						double(6,3),					-- Vat rate
    localtax1_tx               	double(6,3)  DEFAULT 0,    		-- localtax1 rate
    localtax1_type			 	varchar(10)	  	 NULL, 			-- localtax1 type

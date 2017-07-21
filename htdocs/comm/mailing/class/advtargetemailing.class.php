@@ -466,7 +466,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sqlwhere=array();
 
-		$sqlwhere[]= 't.entity IN ('.getEntity('societe',1).')';
+		$sqlwhere[]= 't.entity IN ('.getEntity('societe').')';
 
 		if (count($arrayquery)>0) {
 
@@ -474,7 +474,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
 			}
 			if (array_key_exists('cust_categ', $arrayquery)) {
-				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_societe as custcateg ON custcateg.fk_societe=t.rowid ";
+				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
@@ -625,7 +625,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sqlwhere=array();
 
-		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople',1).')';
+		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople').')';
 
 		if (count($arrayquery)>0) {
 

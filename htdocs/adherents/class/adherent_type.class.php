@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016      Charlie Benke        <charlie@patas-monkey.com>
+/* Copyright (C) 2002		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,13 @@ class AdherentType extends CommonObject
 	public $table_element = 'adherent_type';
 	public $element = 'adherent_type';
 	public $picto = 'group';
-	
+
+	/**
+	 * @var string
+	 * @deprecated Use label
+	 * @see label
+	 */
+	public $libelle;
 	/** @var string Label */
 	public $label;
 	/**
@@ -81,12 +87,13 @@ class AdherentType extends CommonObject
         global $conf;
 
         $this->statut=(int) $this->statut;
+        $this->label=(!empty($this->libelle)?trim($this->libelle):trim($this->label));
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
         $sql.= "libelle";
         $sql.= ", entity";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->db->escape($this->libelle)."'";
+        $sql.= "'".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -117,15 +124,15 @@ class AdherentType extends CommonObject
 
     	$error=0;
 
-        $this->libelle=trim($this->libelle);
+    	$this->label=(!empty($this->libelle)?trim($this->libelle):trim($this->label));
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
         $sql.= "SET ";
         $sql.= "statut = ".$this->statut.",";
-        $sql.= "libelle = '".$this->db->escape($this->libelle) ."',";
-        $sql.= "subscription = '".$this->subscription."',";
+        $sql.= "libelle = '".$this->db->escape($this->label) ."',";
+        $sql.= "subscription = '".$this->db->escape($this->subscription)."',";
         $sql.= "note = '".$this->db->escape($this->note)."',";
-        $sql.= "vote = '".$this->vote."',";
+        $sql.= "vote = '".$this->db->escape($this->vote)."',";
         $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
         $sql .= " WHERE rowid =".$this->id;
 
@@ -307,7 +314,7 @@ class AdherentType extends CommonObject
     {
     	return '';
     }
-    
+
     /**
      *     getMailOnValid
      *

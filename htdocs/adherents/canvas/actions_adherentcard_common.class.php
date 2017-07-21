@@ -182,7 +182,7 @@ abstract class ActionsAdherentCardCommon
             $this->object->old_name = $_POST["old_name"];
             $this->object->old_firstname = $_POST["old_firstname"];
 
-            $result = $this->object->delete();
+            $result = $this->object->delete(0, $user, 0);
             if ($result > 0)
             {
                 header("Location: list.php");
@@ -424,7 +424,7 @@ abstract class ActionsAdherentCardCommon
             if ($resql)
             {
                 $obj = $this->db->fetch_object($resql);
-            
+
                 $this->object->country_code	=	$obj->code;
                 $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
             }

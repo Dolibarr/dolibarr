@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Тег/Категория
 Rubriques=Теги/Категории
+RubriquesTransactions=Tags/Categories of transactions
 categories=теги/категории
 NoCategoryYet=Нет созданных тегов/категорий данного типа
 In=В
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=Категория к таким кодом уже с�
 ContentsVisibleByAllShort=Содержимое доступно всем
 ContentsNotVisibleByAllShort=Содержание не доступно всем
 DeleteCategory=Удалить тег/категорию
-ConfirmDeleteCategory=Вы точно хотите удалить этот тег/категорию?
+ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=Не задан тег/категория
 SuppliersCategoryShort=Suppliers tag/category
 CustomersCategoryShort=Customers tag/category
