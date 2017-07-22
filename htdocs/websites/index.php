@@ -98,6 +98,7 @@ if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
 if (GETPOST('editmeta')) { $action='editmeta'; }
+if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 
 if (empty($action)) $action='preview';
@@ -665,6 +666,10 @@ if ($action == 'editmeta')
 {
     print '<input type="hidden" name="action" value="updatemeta">';
 }
+if ($action == 'editsource')
+{
+    print '<input type="hidden" name="action" value="updatesource">';
+}
 if ($action == 'editcontent')
 {
     print '<input type="hidden" name="action" value="updatecontent">';
@@ -677,7 +682,7 @@ if ($action == 'edit')
 
 // Add a margin under toolbar ?
 $style='';
-if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
 
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
@@ -835,6 +840,7 @@ if (count($object->records) > 0)
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageSource")).'" name="editsource">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
@@ -891,7 +897,7 @@ if (count($object->records) > 0)
         print '</div>';
 
         print '<div class="websitehelp">';
-        if (GETPOST('editcontent', 'alpha'))
+        if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
         {
         	$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
         	print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 0, 2, 'tooltipsubstitution');
@@ -1081,6 +1087,25 @@ if ($action == 'editmenu')
 {
     print '<!-- Edit Menu -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+}
+
+if ($action == 'editsource')
+{
+	/*
+	 * Editing global variables not related to a specific theme
+	 */
+
+	$csscontent = @file_get_contents($filecss);
+
+	$contentforedit = '';
+	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+	 $contentforedit.=$csscontent;
+	 $contentforedit.='</style>'."\n";*/
+	$contentforedit .= $objectpage->content;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
+	$doleditor->Create(0, '', false);
 }
 
 if ($action == 'editcontent')
