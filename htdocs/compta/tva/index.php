@@ -263,18 +263,18 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 
         print "<tr>";
         print '<td align="right">' . $langs->trans("VATDue") . '</td>'; // need to add translation
-        print '<td class="nowrap" align="right">' . price(price2num($total, 1)) . '</td>';
+        print '<td class="nowrap" align="right">' . price(price2num($total, 'MT')) . '</td>';
         print "</tr>\n";
 
         print "<tr>";
         print '<td align="right">' . $langs->trans("VATPaid") . '</td>';
-        print '<td class="nowrap" align="right">' . price(price2num($obj->mm, 1)) . "</td>\n";
+        print '<td class="nowrap" align="right">' . price(price2num($obj->mm, 'MT')) . "</td>\n";
         print "</tr>\n";
 
         $restopay = $total - $obj->mm;
         print "<tr>";
         print '<td align="right">' . $langs->trans("VATRestopay") . '</td>'; // need to add translation
-        print '<td class="nowrap" align="right">' . price(price2num($restopay, 1)) . '</td>';
+        print '<td class="nowrap" align="right">' . price(price2num($restopay, 'MT')) . '</td>';
         print "</tr>\n";
 
         print '</table>';
