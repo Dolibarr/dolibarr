@@ -217,6 +217,46 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
             else
             {
                 // Copy is ok
+                if ($destfile == 'class/'.$objectname.'.txt')
+                {
+                	// Regenerate left menu entry in descriptor
+                	$stringtoadd='';
+					// TODO Loop on each .txt file in class dir.
+                	$stringtoadd.="
+\t\t\$this->menu[\$r++]=array(
+                				'fk_menu'=>'fk_mainmenu=mymodule',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'type'=>'left',			                // This is a Left menu entry
+								'titre'=>'List MyObject',
+								'mainmenu'=>'mymodule',
+								'leftmenu'=>'mymodule_myobject',
+								'url'=>'/mymodule/myobject_list.php',
+								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>1100+\$r,
+								'enabled'=>'\$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'1',			                // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+\t\t\$this->menu[\$r++]=array(
+                				'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'type'=>'left',			                // This is a Left menu entry
+								'titre'=>'New MyObject',
+								'mainmenu'=>'mymodule',
+								'leftmenu'=>'mymodule_myobject',
+								'url'=>'/mymodule/myobject_card.php?action=create',
+								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>1100+\$r,
+								'enabled'=>'\$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'1',			                // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+               		";
+                	$moduledescriptorfile=$dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+                	// TODO Allow a replace with regex using dolReplaceRegexInFile
+                	dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
+
+					// Add module descriptor to list of files to replace "MyObject' string with real name of object.
+                	$filetogenerate[]='core/modules/mod'.$module.'.class.php';
+                }
             }
         }
     }
@@ -1205,11 +1245,13 @@ elseif (! empty($module))
                         print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
                         print '</td>';
                         print '<td>'.$langs->trans("Type").'</td>';
-                        print '<td class="right">'.$langs->trans("Position").'</td>';
                         print '<td class="center">'.$langs->trans("NotNull").'</td>';
-                        print '<td class="center">'.$langs->trans("SearchAll").'</td>';
                         //print '<td>'.$langs->trans("DefaultValue").'</td>';
                         print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
+                        print '<td class="right">'.$langs->trans("Enabled").'</td>';
+                        print '<td class="right">'.$langs->trans("Visible").'</td>';
+                        print '<td class="right">'.$langs->trans("Position").'</td>';
+                        print '<td class="center">'.$langs->trans("SearchAll").'</td>';
                         print '<td>'.$langs->trans("Comment").'</td>';
                         print '<td></td>';
                         print '</tr>';
@@ -1217,11 +1259,13 @@ elseif (! empty($module))
                         print '<td><input class="text" name="propname" value=""></td>';
                         print '<td><input class="text" name="proplabel" value=""></td>';
                         print '<td><input class="text" name="proptype" value=""></td>';
-                        print '<td class="right"><input class="text right" size="2" name="propposition" value=""></td>';
                         print '<td class="center"><input class="text" size="2" name="propnotnull" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propsearchall" value=""></td>';
                         //print '<td><input class="text" name="propdefault" value=""></td>';
                         print '<td class="center"><input class="text" size="2" name="propindex" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propenabled" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propvisible" value=""></td>';
+                        print '<td class="right"><input class="text right" size="2" name="propposition" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propsearchall" value=""></td>';
                         print '<td><input class="text" name="propcomment" value=""></td>';
                         print '<td align="center">';
                         print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
@@ -1253,6 +1297,8 @@ elseif (! empty($module))
                             $propsearchall=$propval['searchall'];
                             //$propdefault=$propval['default'];
                             $propindex=$propval['index'];
+                            $propenabled=$propval['enabled'];
+                            $propvisible=$propval['visible'];
                             $propcomment=$propval['comment'];
 
                             print '<tr class="oddeven">';
@@ -1266,20 +1312,26 @@ elseif (! empty($module))
                             print '<td>';
                             print $proptype;
                             print '</td>';
-                            print '<td align="right">';
-                            print $propposition;
-                            print '</td>';
                             print '<td class="center">';
                             print $propnotnull?'X':'';
-                            print '</td>';
-                            print '<td class="center">';
-                            print $propsearchall?'X':'';
                             print '</td>';
                             /*print '<td>';
                             print $propdefault;
                             print '</td>';*/
                             print '<td class="center">';
                             print $propindex?'X':'';
+                            print '</td>';
+                            print '<td class="center">';
+                            print $propenabled?$propenabled:'';
+                            print '</td>';
+                            print '<td class="center">';
+                            print $propvisible?$propvisible:'';
+                            print '</td>';
+                            print '<td align="right">';
+                            print $propposition;
+                            print '</td>';
+                            print '<td class="center">';
+                            print $propsearchall?'X':'';
                             print '</td>';
                             print '<td>';
                             print $propcomment;

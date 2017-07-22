@@ -170,6 +170,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/api
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
+%_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories

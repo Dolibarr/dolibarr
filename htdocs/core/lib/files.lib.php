@@ -448,12 +448,12 @@ function dol_filemtime($pathoffile)
  * Make replacement of strings into a file.
  *
  * @param	string	$srcfile			Source file (can't be a directory)
- * @param	array	$arrayreplacement	Array with strings to replace
+ * @param	array	$arrayreplacement	Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string	$destfile			Destination file (can't be a directory). If empty, will be same than source file.
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr
+ * @see		dolCopyr dolReplaceRegExInFile
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -512,6 +512,23 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
     @chmod($newpathofdestfile, octdec($newmask));
 
     return 1;
+}
+
+/**
+ * Make replacement of strings into a file.
+ *
+ * @param	string	$srcfile			Source file (can't be a directory)
+ * @param	array	$arrayreplacement	Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	string	$destfile			Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	int		$indexdatabase		Index new file into database.
+ * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @see		dolCopyr dolReplaceInFile
+ */
+function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
+{
+	// TODO
+
 }
 
 /**
