@@ -110,8 +110,9 @@ if ($dirins && $action == 'initmodule' && $modulename)
         dol_delete_file($destdir.'/myobject_card.php');
         dol_delete_file($destdir.'/myobject_list.php');
         dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
-        dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
         dol_delete_file($destdir.'/sql/llx_myobject.sql');
+        dol_delete_file($destdir.'/sql/llx_myobject_extrafields.sql');
+        dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
         dol_delete_file($destdir.'/scripts/myobject.php');
         dol_delete_file($destdir.'/img/object_myobject.png');
         dol_delete_file($destdir.'/class/myobject.class.php');
@@ -189,9 +190,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
             'myobject_card.php'=>strtolower($objectname).'_card.php',
             'myobject_list.php'=>strtolower($objectname).'_list.php',
             'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-            'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-            'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+            'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
+        	'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+        	'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
             'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
             'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
             'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
@@ -377,9 +379,10 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
             'myobject_card.php'=>strtolower($objectname).'_card.php',
             'myobject_list.php'=>strtolower($objectname).'_list.php',
             'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-            'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-            'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+            'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
+        	'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+        	'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
             'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
             'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
             'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
@@ -423,6 +426,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
         // File of sql
         $fileforsql = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'.sql';
+        $fileforsqlextra = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'_extrafields.sql';
         $fileforsqlkey = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'.key.sql';
 
 
@@ -1195,6 +1199,7 @@ elseif (! empty($module))
                         $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.php';
                         $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.php';
                         $pathtosql = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
+                        $pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
                         $pathtosqlkey = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong>';
@@ -1205,6 +1210,9 @@ elseif (! empty($module))
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.$pathtosql.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.$pathtosqlextra.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.$pathtosqlkey.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';

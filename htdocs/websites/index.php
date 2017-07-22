@@ -101,6 +101,7 @@ if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
 if (GETPOST('editmeta')) { $action='editmeta'; }
+if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 if (GETPOST('createfromclone')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
@@ -463,12 +464,12 @@ if ($action == 'updatemeta')
             if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
 
-            // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
+            // Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
             dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
             dol_delete_file($filetpl);
 
-            // TODO Same code than into updatecontent
+            // TODO Same code than into updatesource updatecontent
             $tplcontent ='';
             $tplcontent.= "<?php // BEGIN PHP\n";
             $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
@@ -527,7 +528,7 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if (($action == 'updatecontent' || $action == 'confirm_createpagefromclone')
+if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createpagefromclone')
 	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
     $object->fetch(0, $website);
@@ -600,7 +601,7 @@ if (($action == 'updatecontent' || $action == 'confirm_createpagefromclone')
 
     if (! $error && $res > 0)
     {
-        if ($action == 'updatecontent')
+        if ($action == 'updatesource' || $action == 'updatecontent')
         {
             $db->begin();
 
@@ -777,6 +778,10 @@ if ($action == 'editmeta')
 {
     print '<input type="hidden" name="action" value="updatemeta">';
 }
+if ($action == 'editsource')
+{
+    print '<input type="hidden" name="action" value="updatesource">';
+}
 if ($action == 'editcontent')
 {
     print '<input type="hidden" name="action" value="updatecontent">';
@@ -789,7 +794,7 @@ if ($action == 'edit')
 
 // Add a margin under toolbar ?
 $style='';
-if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
 
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
@@ -862,7 +867,7 @@ if (count($object->records) > 0)
         $urlext=$virtualurl;
         $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
         print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
         print '</a>';
 
         print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
@@ -962,6 +967,7 @@ if (count($object->records) > 0)
 
                 print ' &nbsp; ';
 
+                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageSource")).'" name="editsource">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
@@ -1012,7 +1018,7 @@ if (count($object->records) > 0)
         print '</div>';
 
         print '<div class="websitehelp">';
-        if (GETPOST('editcontent', 'alpha'))
+        if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
         {
         	$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
         	print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 0, 2, 'tooltipsubstitution');
@@ -1224,6 +1230,25 @@ if ($action == 'editmenu')
 {
     print '<!-- Edit Menu -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+}
+
+if ($action == 'editsource')
+{
+	/*
+	 * Editing global variables not related to a specific theme
+	 */
+
+	$csscontent = @file_get_contents($filecss);
+
+	$contentforedit = '';
+	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+	 $contentforedit.=$csscontent;
+	 $contentforedit.='</style>'."\n";*/
+	$contentforedit .= $objectpage->content;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,'ace',ROWS_5,'90%');
+	$doleditor->Create(0, '', false, 'HTML Source', 'php');
 }
 
 if ($action == 'editcontent')

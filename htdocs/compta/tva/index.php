@@ -117,7 +117,7 @@ $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previo
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 
 print $conf->dol_optimize_smallscreen;
-print load_fiche_titre($langs->trans("VAT"), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
+print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
 
 print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
@@ -263,18 +263,18 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 
         print "<tr>";
         print '<td align="right">' . $langs->trans("VATDue") . '</td>'; // need to add translation
-        print '<td class="nowrap" align="right">' . price(price2num($total, 1)) . '</td>';
+        print '<td class="nowrap" align="right">' . price(price2num($total, 'MT')) . '</td>';
         print "</tr>\n";
 
         print "<tr>";
         print '<td align="right">' . $langs->trans("VATPaid") . '</td>';
-        print '<td class="nowrap" align="right">' . price(price2num($obj->mm, 1)) . "</td>\n";
+        print '<td class="nowrap" align="right">' . price(price2num($obj->mm, 'MT')) . "</td>\n";
         print "</tr>\n";
 
         $restopay = $total - $obj->mm;
         print "<tr>";
         print '<td align="right">' . $langs->trans("VATRestopay") . '</td>'; // need to add translation
-        print '<td class="nowrap" align="right">' . price(price2num($restopay, 1)) . '</td>';
+        print '<td class="nowrap" align="right">' . price(price2num($restopay, 'MT')) . '</td>';
         print "</tr>\n";
 
         print '</table>';
