@@ -4419,7 +4419,7 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.rowid, t.code, t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.rowid, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
@@ -4438,8 +4438,20 @@ class Form
     				$this->cache_vatrates[$i]['rowid']	= $obj->rowid;
     				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
+    				$this->cache_vatrates[$i]['localtax1']	    = $obj->localtax1;
+    				$this->cache_vatrates[$i]['localtax1_type']	= $obj->localtax1_type;
+    				$this->cache_vatrates[$i]['localtax2']	    = $obj->localtax2;
+    				$this->cache_vatrates[$i]['localtax2_type']	= $obj->localtax1_type;
+
+    				$this->cache_vatrates[$i]['label']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
+    				$this->cache_vatrates[$i]['labelallrates'] = $obj->taux.'/'.($obj->localtax1?$obj->localtax1:'0').'/'.($obj->localtax2?$obj->localtax2:'0').($obj->code?' ('.$obj->code.')':'');	// Must never be used as key, only label
+    				$positiverates='';
+    				if ($obj->taux) $positiverates.=($positiverates?'/':'').$obj->taux;
+    				if ($obj->localtax1) $positiverates.=($positiverates?'/':'').$obj->localtax1;
+    				if ($obj->localtax2) $positiverates.=($positiverates?'/':'').$obj->localtax2;
+    				if (empty($positiverates)) $positiverates='0';
+    				$this->cache_vatrates[$i]['labelpositiverates'] = $positiverates.($obj->code?' ('.$obj->code.')':'');	// Must never be used as key, only label
     			}
 
     			return $num;
@@ -4613,7 +4625,16 @@ class Form
                		    $selectedfound=true;
             		}
         		}
-        		$return.= '>'.vatrate($rate['libtva']);
+        		$return.= '>';
+        		//if (! empty($conf->global->MAIN_VAT_SHOW_POSITIVE_RATES))
+        		if ($mysoc->country_code == 'IN' || ! empty($conf->global->MAIN_VAT_LABEL_IS_POSITIVE_RATES))
+        		{
+        			$return.= $rate['labelpositiverates'];
+        		}
+        		else
+        		{
+        			$return.= vatrate($rate['label']);
+        		}
         		//$return.=($rate['code']?' '.$rate['code']:'');
         		$return.= (empty($rate['code']) && $rate['nprtva']) ? ' *': '';         // We show the *  (old behaviour only if new vat code is not used)
 

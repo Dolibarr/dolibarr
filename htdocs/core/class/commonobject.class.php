@@ -5023,7 +5023,7 @@ abstract class CommonObject
 	 */
 	public function createFromCloneCommon(User $user, $fromid)
 	{
-	    global $user;
+	    global $user, $langs;
 
 	    $error = 0;
 
@@ -5039,6 +5039,8 @@ abstract class CommonObject
 	    $object->id = 0;
 
 	    // Clear fields
+	    $object->ref = "copy_of_".$object->ref;
+	    $object->title = $langs->trans("CopyOf")." ".$object->title;
 	    // ...
 
 	    // Create clone
@@ -5046,7 +5048,8 @@ abstract class CommonObject
 
 	    // Other options
 	    if ($result < 0) {
-	        $error ++;
+	        $error++;
+	        $this->error = $object->error;
 	        $this->errors = $object->errors;
 	        dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 	    }

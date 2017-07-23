@@ -71,6 +71,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
 
@@ -100,6 +101,7 @@ if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
 if (GETPOST('editmeta')) { $action='editmeta'; }
+if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 if (GETPOST('createfromclone')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
@@ -163,7 +165,8 @@ if ($action == 'add')
     $objectpage->title = GETPOST('WEBSITE_TITLE');
     $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
     $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-    $objectpage->keywords = GETPOST('WEBSITE_KEYWORD');
+    $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
+    $objectpage->lang = GETPOST('WEBSITE_LANG');
 
     if (empty($objectpage->pageurl))
     {
@@ -404,6 +407,7 @@ if ($action == 'updatemeta')
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
         $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
+        $objectpage->lang = GETPOST('WEBSITE_LANG');
 
         $res = $objectpage->update($user);
         if (! $res > 0)
@@ -460,12 +464,12 @@ if ($action == 'updatemeta')
             if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
 
-            // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
+            // Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
             dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
             dol_delete_file($filetpl);
 
-            // TODO Same code than into updatecontent
+            // TODO Same code than into updatesource updatecontent
             $tplcontent ='';
             $tplcontent.= "<?php // BEGIN PHP\n";
             $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
@@ -524,60 +528,80 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if (($action == 'updatecontent' || $action == 'createpagefromclone')
+if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createpagefromclone')
 	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
     $object->fetch(0, $website);
 
-	if ($action == 'createpagefromclone')
+	if ($action == 'confirm_createpagefromclone')
 	{
-    	$objectpage = new WebsitePage($db);
-		$result = $objectpage->createFromClone($pageid);
-		if ($result < 0)
+		$istranslation=(GETPOST('is_a_translation','aZ09')=='on'?1:0);
+		if ($istranslation)
 		{
-			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-			$action='preview';
+			if (GETPOST('newlang','aZ09') == $objectpage->lang)
+			{
+				$error++;
+				setEventMessages($langs->trans("LanguageMustNotBeSameThanClonedPage"), null, 'errors');
+				$action='preview';
+			}
+		}
+
+		if (! $error)
+		{
+	    	$objectpage = new WebsitePage($db);
+			$result = $objectpage->createFromClone($pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation);
+			if ($result < 0)
+			{
+				$error++;
+				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+				$action='createpagefromclone';
+			}
 		}
     }
 
-    // Check symlink to medias and restore it if ko
-    $pathtomedias=DOL_DATA_ROOT.'/medias';
-    $pathtomediasinwebsite=$pathofwebsite.'/medias';
-    if (! is_link(dol_osencode($pathtomediasinwebsite)))
+    $res = 0;
+
+    if (! $error)
     {
-        dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-        dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
-        $result = symlink($pathtomedias, $pathtomediasinwebsite);
+	    // Check symlink to medias and restore it if ko
+	    $pathtomedias=DOL_DATA_ROOT.'/medias';
+	    $pathtomediasinwebsite=$pathofwebsite.'/medias';
+	    if (! is_link(dol_osencode($pathtomediasinwebsite)))
+	    {
+	        dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+	        dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+	        $result = symlink($pathtomedias, $pathtomediasinwebsite);
+	    }
+
+	    /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
+	    {
+	        $object->virtualhost = GETPOST('previewsite', 'alpha');
+	        $object->update($user);
+	    }*/
+
+	    $objectpage->fk_website = $object->id;
+
+	    if ($pageid > 0)
+	    {
+	        $res = $objectpage->fetch($pageid);
+	    }
+	    else
+	    {
+	        $res=0;
+	        if ($object->fk_default_home > 0)
+	        {
+	            $res = $objectpage->fetch($object->fk_default_home);
+	        }
+	        if (! ($res > 0))
+	        {
+	            $res = $objectpage->fetch(0, $object->id);
+	        }
+	    }
     }
 
-    /*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
+    if (! $error && $res > 0)
     {
-        $object->virtualhost = GETPOST('previewsite', 'alpha');
-        $object->update($user);
-    }*/
-
-    $objectpage->fk_website = $object->id;
-
-    if ($pageid > 0)
-    {
-        $res = $objectpage->fetch($pageid);
-    }
-    else
-    {
-        $res=0;
-        if ($object->fk_default_home > 0)
-        {
-            $res = $objectpage->fetch($object->fk_default_home);
-        }
-        if (! ($res > 0))
-        {
-            $res = $objectpage->fetch(0, $object->id);
-        }
-    }
-
-    if ($res > 0)
-    {
-        if ($action == 'updatecontent')
+        if ($action == 'updatesource' || $action == 'updatecontent')
         {
             $db->begin();
 
@@ -709,7 +733,7 @@ if (($action == 'updatecontent' || $action == 'createpagefromclone')
     }
     else
     {
-        setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
+        if (! $error) setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
     }
 }
 
@@ -720,6 +744,7 @@ if (($action == 'updatecontent' || $action == 'createpagefromclone')
  */
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 
 $help_url='';
 
@@ -753,6 +778,10 @@ if ($action == 'editmeta')
 {
     print '<input type="hidden" name="action" value="updatemeta">';
 }
+if ($action == 'editsource')
+{
+    print '<input type="hidden" name="action" value="updatesource">';
+}
 if ($action == 'editcontent')
 {
     print '<input type="hidden" name="action" value="updatecontent">';
@@ -765,7 +794,7 @@ if ($action == 'edit')
 
 // Add a margin under toolbar ?
 $style='';
-if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
 
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
@@ -838,7 +867,7 @@ if (count($object->records) > 0)
         $urlext=$virtualurl;
         $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
         print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:$langs->trans("VirtualHostUrlNotDefined")), 1, 'preview_ext');
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
         print '</a>';
 
         print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
@@ -916,15 +945,29 @@ if (count($object->records) > 0)
 
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 
-        if ($action == 'preview')
+        if ($action == 'preview' || $action == 'createpagefromclone')
         {
             $disabled='';
             if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
 
             if ($pageid > 0)
             {
+                // Confirmation to delete
+                if ($action == 'createpagefromclone') {
+	                // Create an array for form
+					$formquestion = array(
+						array('type' => 'text', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
+						array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
+						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')));
+
+	               	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 250);
+
+					print $formconfirm;
+	            }
+
                 print ' &nbsp; ';
 
+                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageSource")).'" name="editsource">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
@@ -938,7 +981,7 @@ if (count($object->records) > 0)
 
         print '<div class="websitetools">';
 
-        if ($website && $pageid > 0 && $action == 'preview')
+        if ($website && $pageid > 0 && ($action == 'preview' || $action == 'createpagefromclone'))
         {
             $websitepage = new WebSitePage($db);
             $websitepage->fetch($pageid);
@@ -965,7 +1008,7 @@ if (count($object->records) > 0)
 
             // TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
         }
-        if (! in_array($action, array('editcss','editmenu','create')))
+        if (! in_array($action, array('editcss','editmenu','create','createpagefromclone')))
         {
             if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
             if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -975,7 +1018,7 @@ if (count($object->records) > 0)
         print '</div>';
 
         print '<div class="websitehelp">';
-        if (GETPOST('editcontent', 'alpha'))
+        if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
         {
         	$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
         	print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 0, 2, 'tooltipsubstitution');
@@ -984,7 +1027,7 @@ if (count($object->records) > 0)
 
 
 
-        if ($action == 'preview')
+        if ($action == 'preview' || $action == 'createpagefromclone')
         {
             // Adding jquery code to change on the fly url of preview ext
             if (! empty($conf->use_javascript_ajax))
@@ -1126,38 +1169,46 @@ if ($action == 'editmeta' || $action == 'create')
         print '</td><td>';
         print '/public/websites/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
         print '</td></tr>';
-        $pageurl=dol_escape_htmltag($objectpage->pageurl);
-        $pagetitle=dol_escape_htmltag($objectpage->title);
-        $pagedescription=dol_escape_htmltag($objectpage->description);
-        $pagekeywords=dol_escape_htmltag($objectpage->keywords);
+        $pageurl=$objectpage->pageurl;
+        $pagetitle=$objectpage->title;
+        $pagedescription=$objectpage->description;
+        $pagekeywords=$objectpage->keywords;
+        $pagelang=$objectpage->lang;
     }
-    if (GETPOST('WEBSITE_PAGENAME'))    $pageurl=GETPOST('WEBSITE_PAGENAME');
-    if (GETPOST('WEBSITE_TITLE'))       $pagetitle=GETPOST('WEBSITE_TITLE');
-    if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION');
-    if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS');
+    if (GETPOST('WEBSITE_PAGENAME'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
+    if (GETPOST('WEBSITE_TITLE'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
+    if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
+    if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
+    if (GETPOST('WEBSITE_LANG'))        $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 
     print '<tr><td class="titlefieldcreate fieldrequired">';
     print $langs->trans('WEBSITE_PAGENAME');
     print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.$pageurl.'">';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">';
     print $langs->trans('WEBSITE_TITLE');
     print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_TITLE" value="'.$pagetitle.'">';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
     print '</td></tr>';
 
     print '<tr><td>';
     print $langs->trans('WEBSITE_DESCRIPTION');
     print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_DESCRIPTION" value="'.$pagedescription.'">';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
     print '</td></tr>';
 
     print '<tr><td>';
     print $langs->trans('WEBSITE_KEYWORDS');
     print '</td><td>';
-    print '<input type="text" class="flat" size="128" name="WEBSITE_KEYWORDS" value="'.$pagekeywords.'">';
+    print '<input type="text" class="flat" size="128" name="WEBSITE_KEYWORDS" value="'.dol_escape_htmltag($pagekeywords).'">';
+    print '</td></tr>';
+
+    print '<tr><td>';
+    print $langs->trans('Language');
+    print '</td><td>';
+    print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG');
     print '</td></tr>';
 
     print '</table>';
@@ -1179,6 +1230,25 @@ if ($action == 'editmenu')
 {
     print '<!-- Edit Menu -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+}
+
+if ($action == 'editsource')
+{
+	/*
+	 * Editing global variables not related to a specific theme
+	 */
+
+	$csscontent = @file_get_contents($filecss);
+
+	$contentforedit = '';
+	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+	 $contentforedit.=$csscontent;
+	 $contentforedit.='</style>'."\n";*/
+	$contentforedit .= $objectpage->content;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,'ace',ROWS_5,'90%');
+	$doleditor->Create(0, '', false, 'HTML Source', 'php');
 }
 
 if ($action == 'editcontent')
@@ -1204,7 +1274,7 @@ print "</div>\n</form>\n";
 
 
 
-if ($action == 'preview')
+if ($action == 'preview' || $action == 'createpagefromclone')
 {
     if ($pageid > 0)
     {
