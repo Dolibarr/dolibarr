@@ -624,18 +624,26 @@ function dol_buildpath($path, $type=0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  Property that are reference are also new object (true clone)
+ *  With native = 0: Property that are reference are also new object (true clone). This means $this->db is not valid.
+ *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db is still valid.
  *
  * 	@param	object	$object		Object to clone
+ *  @param	int		$native		Native method or true method
  *	@return object				Object clone
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
-function dol_clone($object)
+function dol_clone($object, $native=0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	//$myclone = clone $object;                    // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable
-	$myclone=unserialize(serialize($object));
+	if (empty($native))
+	{
+		$myclone=unserialize(serialize($object));
+	}
+	else
+	{
+		$myclone = clone $object;     // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
+	}
 
 	return $myclone;
 }
