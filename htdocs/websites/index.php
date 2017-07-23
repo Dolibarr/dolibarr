@@ -174,10 +174,11 @@ if ($action == 'add')
         $error++;
         $action='create';
     }
-    else if (! preg_match('/^[a-z0-9]+$/i', $objectpage->pageurl))
+    else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
     {
-    	$error++;
     	setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
+    	$error++;
+    	$action='create';
     }
     if (empty($objectpage->title))
     {
