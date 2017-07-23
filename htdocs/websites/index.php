@@ -66,12 +66,12 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
 }
 
 
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
 
@@ -549,7 +549,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		if (! $error)
 		{
 	    	$objectpage = new WebsitePage($db);
-			$result = $objectpage->createFromClone($pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation);
+			$result = $objectpage->createFromClone($pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation, GETPOST('newwebsite','int'));
 			if ($result < 0)
 			{
 				$error++;
@@ -745,6 +745,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
+$formwebsite = new FormWebsite($db);
 
 $help_url='';
 
@@ -958,7 +959,9 @@ if (count($object->records) > 0)
 					$formquestion = array(
 						array('type' => 'text', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
 						array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')));
+						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+					);
 
 	               	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 250);
 
