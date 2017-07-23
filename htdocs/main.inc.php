@@ -457,9 +457,7 @@ if (! defined('NOLOGIN'))
         $passwordtotest	= GETPOST('password','none',2);
         $entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-        // Validation of login/pass/entity
-        // If ok, the variable login will be returned
-        // If error, we will put error message in session under the name dol_loginmesg
+        // Define if we received data to test the login.
         $goontestloop=false;
         if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
@@ -473,6 +471,9 @@ if (! defined('NOLOGIN'))
         	$langs->setDefaultLang($langcode);
         }
 
+        // Validation of login/pass/entity
+        // If ok, the variable login will be returned
+        // If error, we will put error message in session under the name dol_loginmesg
         if ($test && $goontestloop)
         {
         	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
@@ -531,9 +532,10 @@ if (! defined('NOLOGIN'))
         // End test login / passwords
         if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
-            // We show login page
+            // No data to test login, so we show the login page
 			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." showing the login form and exit");
-        	dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
+			if (defined('NOREDIRECTBYMAINTOLOGIN')) return 'ERROR_NOT_LOGGED';
+        	else dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
