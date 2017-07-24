@@ -44,10 +44,11 @@ CREATE TABLE llx_accounting_bookkeeping
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
   tms                   timestamp,					--					| date last modification 
-  import_key            varchar(14),
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
   piece_num             integer NOT NULL,			-- FEC:EcritureNum
   validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
   date_validated        datetime					-- FEC:ValidDate
+  import_key            varchar(14),
+  extraparams	        varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;
