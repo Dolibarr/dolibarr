@@ -129,8 +129,8 @@ if (empty($reshook))
 	{
         foreach ($object->fields as $key => $val)
         {
-            if (in_array($key, array('entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
-            
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
+
             $object->$key=GETPOST($key,'alpha');
             if ($val['notnull'] && $object->$key == '')
             {
@@ -169,7 +169,7 @@ if (empty($reshook))
 	    foreach ($object->fields as $key => $val)
         {
             $object->$key=GETPOST($key,'alpha');
-            if (in_array($key, array('entity', 'datec', 'tms'))) continue;
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;
             if ($val['notnull'] && $object->$key == '')
             {
                 $error++;
