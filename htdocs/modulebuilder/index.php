@@ -360,7 +360,7 @@ if ($dirins && $action == 'confirm_delete')
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 {
-    if (preg_match('/\s/', $objectname))
+    if (preg_match('/[^a-z0-9]/i', $objectname))
     {
         $error++;
         setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -604,7 +604,11 @@ if ($action == 'savefile' && empty($cancel))
 // Enable module
 if ($action == 'set' && $user->admin)
 {
-	$param='module='.$module;
+	$param='';
+	if ($module) $param.='&module='.$module;
+	if ($tab)    $param.='&tab='.$tab;
+	if ($tabobj) $param.='&tabobj='.$tabobj;
+
 	$value = GETPOST('value','alpha');
 	$resarray = activateModule($value);
 	if (! empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
@@ -635,7 +639,11 @@ if ($action == 'set' && $user->admin)
 // Disable module
 if ($action == 'reset' && $user->admin)
 {
-	$param='module='.$module;
+	$param='';
+	if ($module) $param.='&module='.$module;
+	if ($tab)    $param.='&tab='.$tab;
+	if ($tabobj) $param.='&tabobj='.$tabobj;
+
 	$value = GETPOST('value','alpha');
 	$result=unActivateModule($value);
 	if ($result) setEventMessages($result, null, 'errors');
@@ -839,7 +847,11 @@ elseif (! empty($module))
         $modulelowercase=strtolower($module);
         $const_name = 'MAIN_MODULE_'.strtoupper($module);
 
-        $param='&tab='.$tab.'&module='.$module;
+        $param='';
+        if ($tab) $param.= '&tab='.$tab;
+        if ($module) $param.='&module='.$module;
+        if ($tabobj) $param.='&tabobj='.$tabobj;
+
         $urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
         $linktoenabledisable='';
         if (! empty($conf->global->$const_name))	// If module is already activated
@@ -1240,9 +1252,10 @@ elseif (! empty($module))
                         print '<td class="center">'.$langs->trans("NotNull").'</td>';
                         //print '<td>'.$langs->trans("DefaultValue").'</td>';
                         print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
+                        print '<td class="right">'.$langs->trans("Position").'</td>';
                         print '<td class="right">'.$langs->trans("Enabled").'</td>';
                         print '<td class="right">'.$langs->trans("Visible").'</td>';
-                        print '<td class="right">'.$langs->trans("Position").'</td>';
+                        print '<td class="right">'.$langs->trans("IsAMeasure").'</td>';
                         print '<td class="center">'.$langs->trans("SearchAll").'</td>';
                         print '<td>'.$langs->trans("Comment").'</td>';
                         print '<td></td>';
@@ -1254,9 +1267,10 @@ elseif (! empty($module))
                         print '<td class="center"><input class="text" size="2" name="propnotnull" value=""></td>';
                         //print '<td><input class="text" name="propdefault" value=""></td>';
                         print '<td class="center"><input class="text" size="2" name="propindex" value=""></td>';
+                        print '<td class="right"><input class="text right" size="2" name="propposition" value=""></td>';
                         print '<td class="center"><input class="text" size="2" name="propenabled" value=""></td>';
                         print '<td class="center"><input class="text" size="2" name="propvisible" value=""></td>';
-                        print '<td class="right"><input class="text right" size="2" name="propposition" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propisameasure" value=""></td>';
                         print '<td class="center"><input class="text" size="2" name="propsearchall" value=""></td>';
                         print '<td><input class="text" name="propcomment" value=""></td>';
                         print '<td align="center">';
@@ -1284,13 +1298,14 @@ elseif (! empty($module))
                             $propname=$propkey;
                             $proplabel=$propval['label'];
                             $proptype=$propval['type'];
-                            $propposition=$propval['position'];
                             $propnotnull=$propval['notnull'];
                             $propsearchall=$propval['searchall'];
                             //$propdefault=$propval['default'];
                             $propindex=$propval['index'];
+                            $propposition=$propval['position'];
                             $propenabled=$propval['enabled'];
                             $propvisible=$propval['visible'];
+                            $propisameasure=$propval['isameasure'];
                             $propcomment=$propval['comment'];
 
                             print '<tr class="oddeven">';
@@ -1313,14 +1328,17 @@ elseif (! empty($module))
                             print '<td class="center">';
                             print $propindex?'X':'';
                             print '</td>';
+                            print '<td align="right">';
+                            print $propposition;
+                            print '</td>';
                             print '<td class="center">';
                             print $propenabled?$propenabled:'';
                             print '</td>';
                             print '<td class="center">';
                             print $propvisible?$propvisible:'';
                             print '</td>';
-                            print '<td align="right">';
-                            print $propposition;
+                            print '<td class="center">';
+                            print $propisameasure?$propisameasure:'';
                             print '</td>';
                             print '<td class="center">';
                             print $propsearchall?'X':'';
