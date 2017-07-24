@@ -39,7 +39,7 @@ class mailing_contacts1 extends MailingTargets
 	var $require_module=array("societe");               // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                               // Module mailing actif pour user admin ou non
 	var $picto='contact';
-	
+
 	var $db;
 
 
@@ -160,7 +160,9 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
+		$contactstatic=new Contact($this->db);
+		$contactstatic->fetch($id);
+		return $contactstatic->getNomUrl(0);
 	}
 
 

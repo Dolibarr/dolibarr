@@ -59,7 +59,9 @@ class mailing_contacts4 extends MailingTargets
      */
     function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
+    	$contactstatic=new Contact($this->db);
+    	$contactstatic->fetch($id);
+    	return $contactstatic->getNomUrl(0);
     }
 
     /**

@@ -234,7 +234,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
+    	$companystatic=new Societe($this->db);
+    	$companystatic->fetch($id);
+    	return $companystatic->getNomUrl(0);
     }
 
 }
