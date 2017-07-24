@@ -55,3 +55,4 @@ SqlFileExtraFields=Sql file for complementary attributes
 SqlFileKey=Sql file for keys
 AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case
 UseAsciiDocFormat=You can use Markdown format, but it is recommanded to use Asciidoc format (Comparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
+IsAMeasure=Is a measure
