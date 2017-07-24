@@ -4736,19 +4736,6 @@ abstract class CommonObject
 
 
 
-
-	/**
-	 * Function test if type is date
-	 *
-	 * @param   array   $info   content informations of field
-	 * @return                  bool
-	 */
-	protected function isDate($info)
-	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		else return false;
-	}
-
 	/**
 	 * Function test if type is array
 	 *
@@ -4781,13 +4768,26 @@ abstract class CommonObject
 		else return false;
 	}
 
+
+	/**
+	 * Function test if type is date
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	public function isDate($info)
+	{
+		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
+		else return false;
+	}
+
 	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isInt($info)
+	public function isInt($info)
 	{
 		if(is_array($info))
 		{
@@ -4803,7 +4803,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isFloat($info)
+	public function isFloat($info)
 	{
 		if(is_array($info))
 		{
@@ -4819,7 +4819,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isText($info)
+	public function isText($info)
 	{
 		if(is_array($info))
 		{

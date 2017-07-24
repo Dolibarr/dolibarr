@@ -1210,6 +1210,7 @@ elseif (! empty($module))
                         $pathtoapi = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
                         $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.php';
                         $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.php';
+                        $pathtophpunit = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
                         $pathtosql = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
                         $pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
                         $pathtosqlkey = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
@@ -1219,6 +1220,9 @@ elseif (! empty($module))
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.$pathtophpunit.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.$pathtosql.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';

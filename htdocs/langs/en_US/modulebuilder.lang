@@ -50,6 +50,7 @@ HooksFile=File for hooks code
 WidgetFile=Widget file
 ReadmeFile=Readme file
 ChangeLog=ChangeLog file
+TestClassFile=File for PHP Unit Test class
 SqlFile=Sql file
 SqlFileExtraFields=Sql file for complementary attributes
 SqlFileKey=Sql file for keys

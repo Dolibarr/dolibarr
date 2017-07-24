@@ -216,7 +216,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " WHERE t.entity IN (".getEntity('myobject').")";
 foreach($search as $key => $val)
 {
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:($object->fields[$key]['type'] == 'integer'?1:0)));
+	$mode=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
+	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -404,6 +405,7 @@ foreach($object->fields as $key => $val)
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Action column
@@ -451,6 +453,7 @@ foreach($object->fields as $key => $val)
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 }
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
