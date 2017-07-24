@@ -110,6 +110,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	$error=0;
+
 	if ($cancel)
 	{
 		if ($action != 'addlink')
@@ -125,19 +127,10 @@ if (empty($reshook))
 	// Action to add record
 	if ($action == 'add' && ! empty($user->rights->mymodule->create))
 	{
-		if ($cancel)
-		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
-			header("Location: ".$urltogo);
-			exit;
-		}
-
-		$error=0;
-
         foreach ($object->fields as $key => $val)
         {
             if (in_array($key, array('entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
-
+            
             $object->$key=GETPOST($key,'alpha');
             if ($val['notnull'] && $object->$key == '')
             {
@@ -173,20 +166,20 @@ if (empty($reshook))
 	// Action to update record
 	if ($action == 'update' && ! empty($user->rights->mymodule->create))
 	{
-		$error=0;
-
-		$object->prop1=GETPOST("field1");
-		$object->prop2=GETPOST("field2");
-
-		if (empty($object->ref))
-		{
-			$error++;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		}
+	    foreach ($object->fields as $key => $val)
+        {
+            $object->$key=GETPOST($key,'alpha');
+            if (in_array($key, array('entity', 'datec', 'tms'))) continue;
+            if ($val['notnull'] && $object->$key == '')
+            {
+                $error++;
+                setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+            }
+        }
 
 		if (! $error)
 		{
-			$result=$object->update($user);
+			$result=$object->updateCommon($user);
 			if ($result > 0)
 			{
 				$action='view';
@@ -208,7 +201,7 @@ if (empty($reshook))
 	// Action to delete
 	if ($action == 'confirm_delete' && ! empty($user->rights->mymodule->delete))
 	{
-		$result=$object->delete($user);
+		$result=$object->deleteCommon($user);
 		if ($result > 0)
 		{
 			// Delete OK

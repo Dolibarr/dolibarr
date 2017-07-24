@@ -510,11 +510,11 @@ while ($i < min($num, $limit))
 					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 					print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
-	                if (! empty($val['isameasure']))
-	                {
-			            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
-	                	$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
-	                }
+		            if (! empty($val['isameasure']))
+		            {
+		            	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
+		            	$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
+		            }		            
 				}
 		   }
 		}

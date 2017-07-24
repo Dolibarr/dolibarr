@@ -58,7 +58,7 @@ class MyObject extends CommonObject
 	public $picto = 'myobject';
 
 
-	/*
+	/**
 	 *             'type' if the field format, 'label' the translation key, 'enabled' is a condition when the filed must be managed,
 	 *             'visible' says if field is visible in list (-1 means not shown by default but can be aded into list to be viewed)
 	 *             'notnull' if not null in database
@@ -84,8 +84,8 @@ class MyObject extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>true,  'position'=>1000, 'nullifempty'=>1),
 	);
 	// END MODULEBUILDER PROPERTIES
-
-
+	
+	
 
 	// If this object has a subtable with lines
 
