@@ -4982,6 +4982,7 @@ abstract class CommonObject
 
 	    $fieldvalues = $this->set_save_query();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
+		unset($fieldvalues['rowid']);	// We suppose the field rowid is reserved field for autoincrement field.
 
 	    $keys=array();
 	    $values = array();
@@ -5140,6 +5141,7 @@ abstract class CommonObject
 	    $error = 0;
 
 		$fieldvalues = $this->set_save_query();
+		unset($fieldvalues['rowid']);	// We don't update this field, it is the key to define which record to update.
 
 		foreach ($fieldvalues as $k => $v) {
 			if (is_array($key)){
