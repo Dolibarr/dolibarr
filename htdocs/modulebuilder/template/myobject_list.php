@@ -18,9 +18,8 @@
 
 /**
  *   	\file       htdocs/modulebuilder/template/myobject_list.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ *		\ingroup    mymodule
+ *		\brief      List page for monmodule
  */
 
 //if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
@@ -472,6 +471,13 @@ while ($i < min($num, $limit))
     $obj = $db->fetch_object($resql);
     if ($obj)
     {
+    	// Store properties in $object
+    	$object->id = $obj->rowid;
+    	foreach($object->fields as $key => $val)
+    	{
+    		if (isset($obj->$key)) $object->$key = $obj->$key;
+    	}
+
         // Show here line of result
         print '<tr class="oddeven">';
         foreach($object->fields as $key => $val)
@@ -480,11 +486,13 @@ while ($i < min($num, $limit))
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
             if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+            if ($key == 'status') $align.=($align?' ':'').'center';
             if (! empty($arrayfields['t.'.$key]['checked']))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
                 if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'status') print '<td align="center">'.$object->getLibStatut(3).'</td>';
+                elseif ($key == 'ref') print $object->getNomUrl(1);
+                elseif ($key == 'status') print $object->getLibStatut(3);
                 else print $obj->$key;
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
@@ -514,7 +522,7 @@ while ($i < min($num, $limit))
 		            {
 		            	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
 		            	$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
-		            }		            
+		            }
 				}
 		   }
 		}
@@ -529,6 +537,7 @@ while ($i < min($num, $limit))
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
             if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
+            if ($key == 'status') $align.=($align?' ':'').'center';
             if (! empty($arrayfields['t.'.$key]['checked']))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
