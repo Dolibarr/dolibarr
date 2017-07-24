@@ -127,6 +127,8 @@ class WebsitePage extends CommonObject
 		$sql.= 'description,';
 		$sql.= 'keywords,';
 		$sql.= 'content,';
+		$sql.= 'lang,';
+		$sql.= 'fk_page,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
@@ -137,6 +139,8 @@ class WebsitePage extends CommonObject
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->keywords)?'NULL':"'".$this->db->escape($this->keywords)."'").',';
 		$sql .= ' '.(! isset($this->content)?'NULL':"'".$this->db->escape($this->content)."'").',';
+		$sql .= ' '.(! isset($this->lang)?'NULL':"'".$this->db->escape($this->lang)."'").',';
+		$sql .= ' '.(empty($this->fk_page)?'NULL':$this->db->escape($this->fk_page)).',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
@@ -199,6 +203,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
 		$sql .= " t.content,";
+		$sql .= " t.lang,";
+		$sql .= " t.fk_page,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -232,6 +238,8 @@ class WebsitePage extends CommonObject
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
 				$this->content = $obj->content;
+				$this->lang = $obj->lang;
+				$this->fk_page = $obj->fk_page;
 				$this->status = $obj->status;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -277,6 +285,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
 		$sql .= " t.content,";
+		$sql .= " t.lang,";
+		$sql .= " t.fk_page,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -319,6 +329,8 @@ class WebsitePage extends CommonObject
 				$record->description = $obj->description;
 				$record->keywords = $obj->keywords;
 				$record->content = $obj->content;
+				$record->lang = $obj->lang;
+				$record->fk_page = $obj->fk_page;
 				$record->status = $obj->status;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
@@ -385,6 +397,8 @@ class WebsitePage extends CommonObject
 		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
 		$sql .= ' keywords = '.(isset($this->keywords)?"'".$this->db->escape($this->keywords)."'":"null").',';
 		$sql .= ' content = '.(isset($this->content)?"'".$this->db->escape($this->content)."'":"null").',';
+		$sql .= ' lang = '.(isset($this->lang)?"'".$this->db->escape($this->lang)."'":"null").',';
+		$sql .= ' fk_page = '.(empty($this->fk_page)?"null":$this->db->escape($this->fk_page)).',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
 		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
@@ -482,10 +496,14 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid 	Id of object to clone
-	 * @return int 			New id of clone
+	 * @param 	int 	$fromid 			Id of object to clone
+	 * @param	string	$newref				New ref/alias of page
+	 * @param	string	$newlang			New language
+	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
+	 * @param	int		$newwebsite			0=Same web site, 1=New web site
+	 * @return 	int 						New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone($fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
 		global $user, $langs;
 
@@ -502,9 +520,13 @@ class WebsitePage extends CommonObject
 		$object->id = 0;
 
 		// Clear fields
-		$object->ref = 'copy_of_'.$object->ref;
-		$object->pageurl = 'copy_of_'.$object->pageurl;
+		$object->ref = $newref;
+		$object->pageurl = $newref;
 		$object->title = $langs->trans("CopyOf").' '.$object->title;
+		if (! empty($newlang)) $object->lang=$newlang;
+		if ($istranslation) $object->fk_page = $fromid;
+		else $object->fk_page = 0;
+		if (! empty($newwebsite)) $object->fk_website=$newwebsite;
 
 		// Create clone
 		$result = $object->create($user);

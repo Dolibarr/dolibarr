@@ -25,6 +25,8 @@ CREATE TABLE llx_website_page
 	title         varchar(255),						
 	description   varchar(255),						
 	keywords      varchar(255),
+	lang          varchar(6),
+	fk_page       integer,          
 	content		  mediumtext,		-- text is not enough in size
     status        integer,
     fk_user_create integer,

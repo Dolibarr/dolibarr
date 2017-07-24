@@ -19,7 +19,7 @@
 use Luracast\Restler\RestException;
 
 /**
- * \file    htdocs/modulebuilder/template/class/myobject_api_class.class.php
+ * \file    htdocs/modulebuilder/template/class/api_myobject.class.php
  * \ingroup mymodule
  * \brief   File for API management of myobject.
  */
