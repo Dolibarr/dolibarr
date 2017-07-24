@@ -18,9 +18,8 @@
 
 /**
  *   	\file       htdocs/modulebuilder/template/myobject_card.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ *		\ingroup    mymodule
+ *		\brief      Page to create/edit/view myobject
  */
 
 //if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');

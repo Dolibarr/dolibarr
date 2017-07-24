@@ -19,7 +19,7 @@
 /**
  *   	\file       htdocs/modulebuilder/template/myobject_list.php
  *		\ingroup    mymodule
- *		\brief      List page for monmodule
+ *		\brief      List page for myobject
  */
 
 //if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
