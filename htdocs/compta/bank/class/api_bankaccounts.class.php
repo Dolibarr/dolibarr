@@ -72,7 +72,7 @@ class BankAccounts extends DolibarrApi
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('bank_account').')';
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -81,7 +81,7 @@ class BankAccounts extends DolibarrApi
             $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $this->db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
@@ -89,10 +89,10 @@ class BankAccounts extends DolibarrApi
                 $page = 0;
             }
             $offset = $limit * $page;
-        
+
             $sql.= $this->db->plimit($limit + 1, $offset);
         }
-        
+
         dol_syslog("API Rest request");
         $result = $this->db->query($sql);
 
@@ -236,7 +236,7 @@ class BankAccounts extends DolibarrApi
     function _validate($data)
     {
         $account = array();
-        foreach (Accounts::$FIELDS as $field) {
+        foreach (BankAccounts::$FIELDS as $field) {
             if (! isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $account[$field] = $data[$field];
