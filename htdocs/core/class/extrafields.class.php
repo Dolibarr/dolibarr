@@ -311,6 +311,7 @@ class ExtraFields
 			$sql.= " type,";
 			$sql.= " pos,";
 			$sql.= " size,";
+			$sql.= " entity,";
 			$sql.= " elementtype,";
 			$sql.= " fieldunique,";
 			$sql.= " fieldrequired,";
