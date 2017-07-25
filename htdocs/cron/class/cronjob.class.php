@@ -972,7 +972,7 @@ class Cronjob extends CommonObject
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
 
-				if ($result===false || $result < 0)
+				if ($result !== true || $result != 0)
 				{
 				    $langs->load("errors");
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$object->error, LOG_ERR);
@@ -1021,7 +1021,7 @@ class Cronjob extends CommonObject
 				$result = call_user_func_array($this->methodename, $params_arr);
 			}
 
-			if ($result === false || $result < 0)
+			if ($result !== true || $result != 0)
 			{
 			    $langs->load("errors");
 			    dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
