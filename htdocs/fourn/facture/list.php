@@ -232,7 +232,7 @@ if (empty($reshook))
 
 
 }
-    
+
 /*
  * View
  */
@@ -389,7 +389,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	if ($socid)
 	{
 		$soc = new Societe($db);
@@ -424,9 +424,9 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
+
 	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
-	
+
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -439,13 +439,13 @@ if ($resql)
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" - $soc->name":""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-	
+
 	if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
-    
+
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
@@ -471,7 +471,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
 	}
     $parameters=array();
@@ -488,7 +488,7 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 	print '<tr class="liste_titre">';
@@ -694,7 +694,7 @@ if ($resql)
     $facturestatic=new FactureFournisseur($db);
 	$supplierstatic=new Fournisseur($db);
 	$projectstatic=new Project($db);
-	
+
 	if ($num > 0)
     {
 		$i=0;
@@ -705,14 +705,14 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
-		
+
 			$datelimit=$db->jdate($obj->datelimite);
 			$facturestatic->id=$obj->facid;
 			$facturestatic->ref=$obj->ref;
 			$facturestatic->ref_supplier=$obj->ref_supplier;
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
-	
+
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.ref']['checked']))
     		{
@@ -733,11 +733,11 @@ if ($resql)
 				$subdir = get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
 				print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
 				print '</td></tr></table>';
-				
+
                 print "</td>\n";
 				if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
 			// Customer ref
     		if (! empty($arrayfields['f.ref_supplier']['checked']))
     		{
@@ -746,7 +746,7 @@ if ($resql)
     			print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
 			// Label
     		if (! empty($arrayfields['f.label']['checked']))
     		{
@@ -755,7 +755,7 @@ if ($resql)
     			print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
 			// Date
     		if (! empty($arrayfields['f.datef']['checked']))
     		{
@@ -764,7 +764,7 @@ if ($resql)
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
             // Date limit
     		if (! empty($arrayfields['f.date_lim_reglement']['checked']))
     		{
@@ -776,7 +776,7 @@ if ($resql)
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
     		// Project
     		if (! empty($arrayfields['p.ref']['checked']))
     		{
@@ -790,7 +790,7 @@ if ($resql)
     		    print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
     		// Third party
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
@@ -844,7 +844,7 @@ if ($resql)
     		    print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
             // Payment mode
     		if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
     		{
@@ -853,7 +853,7 @@ if ($resql)
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
     		}
-    		
+
             // Amount HT
             if (! empty($arrayfields['f.total_ht']['checked']))
             {
@@ -894,7 +894,7 @@ if ($resql)
     		    if (! $i) $totalarray['totalrtpfield']=$totalarray['nbfield'];
     		    $totalarray['totalrtp'] += $remaintopay;
             }
-            
+
             // Extra fields
             if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
             {
@@ -942,7 +942,7 @@ if ($resql)
                 print "</td>";
                 if (! $i) $totalarray['nbfield']++;
             }
-            
+
     		// Action column
             print '<td class="nowrap" align="center">';
             $selected=0;
@@ -950,12 +950,12 @@ if ($resql)
     		//print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected?' checked="checked"':'').'>';
     		print '</td>' ;
     		if (! $i) $totalarray['nbfield']++;
-    		
+
 			print "</tr>\n";
-			
+
 			$i++;
 		}
-		
+
 	    // Show total line
     	if (isset($totalarray['totalhtfield'])
  	   || isset($totalarray['totalvatfield'])
@@ -982,16 +982,16 @@ if ($resql)
     		   else print '<td></td>';
     		}
     		print '</tr>';
-    		
+
     	}
 	}
 
 	$db->free($resql);
-	
+
 	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	print "</table>\n";
     print '</div>';
 	print "</form>\n";
