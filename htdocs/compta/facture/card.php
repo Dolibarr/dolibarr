@@ -400,6 +400,22 @@ if (empty($reshook))
 				setEventMessages($discount->error, $discount->errors, 'errors');
 			}
 		}
+
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'setref_client' && $user->rights->facture->creer)
