@@ -8,6 +8,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2017      Charlie Benke	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1290,7 +1291,10 @@ else
 
 		// Note public
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
+		if ($action != 'editnote_public')
+			print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext), 'note_public', $object->note_public, $object, ($user->rights->facture->creer  && ! empty($object->brouillon)));
+		else
+			print $langs->trans('NotePublic');
 		print '</td><td colspan="5">';
 		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
@@ -1298,7 +1302,10 @@ else
 
 		// Note private
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		if (($action != 'editnote_private') && $user->rights->facture->creer && ! empty($object->brouillon))
+			print $form->editfieldkey($form->textwithpicto($langs->trans('NotePrivate'), $htmltext), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		else
+			print $langs->trans('NotePrivate');
 		print '</td><td colspan="5">';
 		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
@@ -1311,7 +1318,7 @@ else
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('RIB');
 		print '<td>';
-		if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+		if (($action != 'editbankaccount') && $user->rights->facture->creer && ! empty($object->brouillon))
 		    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
@@ -1380,14 +1387,10 @@ else
 
 		// Date when
 		print '<tr><td>';
-		if ($action == 'date_when' || $object->frequency > 0)
-		{
+		if (! empty($object->brouillon) && $user->rights->facture->create && ($action == 'date_when' || $object->frequency > 0))
 		    print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
-		}
 		else
-		{
 		    print $langs->trans("NextDateToExecution");
-		}
 		print '</td><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
@@ -1398,7 +1401,7 @@ else
 
 		// Max period / Rest period
 		print '<tr><td>';
-		if ($action == 'nb_gen_max' || $object->frequency > 0)
+		if (! empty($object->brouillon) && $user->rights->facture->create && ($action == 'nb_gen_max' || $object->frequency > 0))
 		{
 		    print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 		}
@@ -1420,12 +1423,13 @@ else
 
 		// Status of generated invoices
 		print '<tr><td>';
-		if ($action == 'auto_validate' || $object->frequency > 0)
+		if (! empty($object->brouillon) && $user->rights->facture->create && ($action == 'auto_validate' || $object->frequency > 0))
 		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
 		else
 		    print $langs->trans("StatusOfGeneratedInvoices");
 		print '</td><td>';
     		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
+
 		if ($action == 'auto_validate' || $object->frequency > 0)
 		{
     		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
