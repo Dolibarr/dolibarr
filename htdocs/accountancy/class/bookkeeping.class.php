@@ -1260,7 +1260,7 @@ class BookKeeping extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new Accountingbookkeeping($this->db);
+		$object = new BookKeeping($this->db);
 
 		$this->db->begin();
 

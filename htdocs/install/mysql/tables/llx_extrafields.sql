@@ -37,5 +37,9 @@ create table llx_extrafields
 	param			text,										-- extra parameters to define possible values of field
 	list			integer DEFAULT 0,							-- list of values for field that are combo lists
 	langs			varchar(24),								-- example: fileofmymodule@mymodule
-	ishidden		integer DEFAULT 0							-- ??? example of use case ???
+	ishidden		integer DEFAULT 0,							-- Can be foreign key of external system
+	fk_user_author	integer,									-- user making creation
+	fk_user_modif	integer,	                                -- user making last change
+	datec			datetime,									-- date de creation
+	tms				timestamp
 )ENGINE=innodb;
