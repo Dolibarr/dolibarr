@@ -375,6 +375,133 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
         return '';
 	}
 
+
+	/**
+	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
+	 *  List is sorted by widget filename so by priority to run.
+	 *
+	 *  @param	array	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
+	 * 	@return	array						Array list of widget
+	 */
+	static function getWidgetsList($forcedirwidget=null)
+	{
+		global $conf, $langs, $db;
+
+		$files = array();
+		$fullpath = array();
+		$relpath = array();
+		$iscoreorexternal = array();
+		$modules = array();
+		$orders = array();
+		$i = 0;
+
+		$dirwidget=array_merge(array('/core/boxes/'));
+		if (is_array($forcedirwidget))
+		{
+			$dirwidget=$forcedirwidget;
+		}
+
+		foreach($dirwidget as $reldir)
+		{
+			$dir=dol_buildpath($reldir,0);
+			$newdir=dol_osencode($dir);
+
+			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
+			if (! is_dir($newdir)) continue;
+
+			$handle=opendir($newdir);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
+				{
+					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/',$file,$reg))
+					{
+						if (preg_match('/\.back$/',$file)) continue;
+
+						$part1=$reg[1];
+
+						$modName = ucfirst($reg[1]);
+						//print "file=$file"; print "modName=$modName"; exit;
+						if (in_array($modName,$modules))
+						{
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget",$modName,"").'</div>';
+						}
+						else
+						{
+							try {
+								include_once $newdir.'/'.$file;
+							}
+							catch(Exception $e)
+							{
+								print $e->getMessage();
+							}
+						}
+
+						$files[$i] = $file;
+						$fullpath[$i] = $dir.'/'.$file;
+						$relpath[$i] = preg_replace('/^\//','',$reldir).'/'.$file;
+						$iscoreorexternal[$i] = ($reldir == '/core/boxes/'?'internal':'external');
+						$modules[$i] = $modName;
+						$orders[$i] = $part1;   // Set sort criteria value
+
+						$i++;
+					}
+				}
+				closedir($handle);
+			}
+		}
+
+		asort($orders);
+
+		$widget = array();
+		$j = 0;
+
+		// Loop on each widget
+		foreach ($orders as $key => $value)
+		{
+			$modName = $modules[$key];
+			if (empty($modName)) continue;
+
+			if (! class_exists($modName))
+			{
+				print 'Error: A widget file was found but its class "'.$modName.'" was not found.'."<br>\n";
+				continue;
+			}
+
+			$objMod = new $modName($db);
+			if (is_object($objMod))
+			{
+				// Define disabledbyname and disabledbymodule
+				$disabledbyname=0;
+				$module='';
+
+				// Check if widget file is disabled by name
+				if (preg_match('/NORUN$/i',$files[$key])) $disabledbyname=1;
+
+				// We set info of modules
+				$widget[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+				$widget[$j]['file'] = $files[$key];
+				$widget[$j]['fullpath'] = $fullpath[$key];
+				$widget[$j]['relpath'] = $relpath[$key];
+				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
+				//$widget[$j]['version'] = $objMod->getVersion();
+				$widget[$j]['status'] = img_picto($langs->trans("Active"),'tick');
+				if ($disabledbyname > 0 || $disabledbymodule > 1) $widget[$j]['status'] = '';
+
+				$text ='<b>'.$langs->trans("Description").':</b><br>';
+				$text.=$objMod->boxlabel.'<br>';
+				$text.='<br><b>'.$langs->trans("Status").':</b><br>';
+				if ($disabledbymodule == 2) $text.=$langs->trans("HooksDisabledAsModuleDisabled",$module).'<br>';
+
+				$widget[$j]['info'] = $text;
+			}
+			$j++;
+		}
+		return $widget;
+	}
+
+
 }
 
 

@@ -400,6 +400,22 @@ if (empty($reshook))
 				setEventMessages($discount->error, $discount->errors, 'errors');
 			}
 		}
+
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'setref_client' && $user->rights->facture->creer)
@@ -1105,8 +1121,17 @@ if (empty($reshook))
 
 							foreach ($amountdeposit as $tva => $amount)
 							{
+								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
+								$descline = $langs->trans('Deposit');
+								$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
+								if ($typeamount=='amount') {
+									$descline.= ' ('. price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
+								} elseif ($typeamount=='variable') {
+									$descline.= ' ('. $valuedeposit.'%)';
+								}
+								$descline.= ' - '.$srcobject->ref;
 								$result = $object->addline(
-										$langs->trans('Deposit'),
+										$descline,
 										$amount,		 	// subprice
 										1, 						// quantity
 										$tva,     // vat rate
@@ -1128,8 +1153,8 @@ if (empty($reshook))
 										0,
 										0,
 										0,
-										0,
-										$langs->trans('Deposit')
+										0
+										//,$langs->trans('Deposit') //Deprecated
 									);
 							}
 
@@ -1440,7 +1465,7 @@ if (empty($reshook))
         {
             if (GETPOST('type') < 0 && ! GETPOST('search_idprod'))
             {
-                setEventMessages($langs->trans('ErrorChooseBetweenFreeAntryOrPredefinedProduct'), null, 'errors');
+                setEventMessages($langs->trans('ErrorChooseBetweenFreeEntryOrPredefinedProduct'), null, 'errors');
                 $error ++;
             }
         }
@@ -4185,7 +4210,7 @@ else if ($id > 0 || ! empty($ref))
 			{
 				if (! $objectidnext && count($object->lines) > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
 			}
 

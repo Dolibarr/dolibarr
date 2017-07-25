@@ -176,6 +176,10 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                 print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
 
+                $result=strpos($filecontent,'NUMERIC(');
+                print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
+                $this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
+
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only

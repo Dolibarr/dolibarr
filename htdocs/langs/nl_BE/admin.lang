@@ -1,12 +1,10 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionLastInstall=Versie van eerste installatie
-VersionLastUpgrade=Laatste versie upgrade
 MaxNbOfLinesForBoxes=Max aantal lijnen voor widgets
 PurgeDeleteTemporaryFiles=Verwijder alle tijdelijke bestanden (geen risico op verlies van gegevens)
 PurgeNothingToDelete=Geen map of bestanden om te verwijderen.
 IgnoreDuplicateRecords=Negeer fouten van dubbele tabelregels (INSERT negeren)
 ModulesMarketPlaces=Meer modules...
-BoxesAvailable=Beschikbare widgets
 BoxesActivated=Geactiveerde widgets
 SubmitTranslationENUS=Als de vertaling voor deze taal niet volledig is of een fout bevat, dan kunt u dit corrigeren door het bewuste taalbestand in de map <b>Langs/%s</b> te wijzigen en de wijzigingen op het Dolibarr forum te delen met anderen: www.dolibarr.org.
 ModuleFamilyHr=Personeelszaken (HR)

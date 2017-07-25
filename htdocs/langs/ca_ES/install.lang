@@ -132,12 +132,13 @@ MigrationFinished=Acabada l'actualització
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 ActivateModule=Activació del mòdul %s
 ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnics (mode expert)
-WarningUpgrade=Atenció:\nVas fer una còpia de seguretat de la base de dades abans?\nAixò és altament recomanable: per exemple, degut a alguns problemes dels sistemes de base de dades (per exemple mysql versió 5.5.40/41/42/43), alguna dada o taules poden perdre's durant aquest procés, així doncs és molt recomanable tenir un bolcat de la teva base de dades abans de començar la migració.\n\nClica OK per a començar el procés de migració.... 
+WarningUpgrade=Atenció:\nVas fer una còpia de seguretat de la base de dades abans?\nAixò és altament recomanable: per exemple, degut a alguns problemes dels sistemes de base de dades (per exemple mysql versió 5.5.40/41/42/43), alguna dada o taules poden perdre's durant aquest procés, així doncs és molt recomanable tenir un bolcat de la teva base de dades abans de començar la migració.\n\nClica OK per a començar el procés de migració....
 ErrorDatabaseVersionForbiddenForMigration=La versió de la seva base de dades és %s. Aquesta te un error crític i es poden perdre dades si es fa un canvi a l'estructura de la base de dades i per fer l'actualització necessita fer aquests canvis. Per aquesta raó, la migració no es permetrà fins que s'actualitzi la seva base de dades a una versió estable i/o superior (llista de versions afectades: %s)
 KeepDefaultValuesWamp=Estàs utilitzant l'assistent d'instal·lació de DoliWamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesDeb=Estàs utilitzant l'assistent d'instal·lació Dolibarr d'un paquet Linux (Ubuntu, Debian, Fedora...) amb els valors proposats més òptims. Només cal completar la contrasenya del propietari de la base de dades a crear. Canvia els altres paràmetres només si estàs segur del que estàs fent.
 KeepDefaultValuesMamp=Estàs utilitzant l'assistent d'instal·lació de DoliMamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesProxmox=Estàs utilitzant l'assistent d'instal·lació de Dolibarr des d'una màquina virtual Proxmox amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

@@ -16,7 +16,7 @@ CancelCP=Atcelts
 RefuseCP=Atteikts
 ValidatorCP=Approbator
 ListeCP=List of leaves
-ReviewedByCP=Būs jāpārskata
+ReviewedByCP=Will be approved by
 DescCP=Apraksts
 SendRequestCP=Create leave request
 DelayToRequestCP=Leave requests must be made at least <b>%s day(s)</b> before them.
@@ -76,8 +76,8 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Ikmēneša atjauninājums
 ManualUpdate=Manuāla aktualizēšana
 HolidaysCancelation=Leave request cancelation
-EmployeeLastname=Employee last name
-EmployeeFirstname=Employee first name
+EmployeeLastname=Darbinieka uzvārds
+EmployeeFirstname=Darbinieka vārds
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 
 ## Configuration du Module ##

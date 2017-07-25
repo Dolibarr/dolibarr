@@ -34,15 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref');
-$type=GETPOST('type');
+$id   = GETPOST('id','int');
+$label= GETPOST('label','alpha');
+$type = GETPOST('type','az09');
 $action=GETPOST('action','aZ09');
-$confirm=GETPOST('confirm');
+$confirm    = GETPOST('confirm','alpha');
 $removeelem = GETPOST('removeelem','int');
-$elemid=GETPOST('elemid');
+$elemid     = GETPOST('elemid','alpha');
 
-if ($id == "")
+if ($id == "" && $label == "")
 {
 	dol_print_error('','Missing parameter id');
 	exit();
@@ -52,7 +52,7 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result=$object->fetch($id);
+$result=$object->fetch($id, $label);
 $object->fetch_optionals($id,$extralabels);
 if ($result <= 0)
 {
@@ -61,6 +61,7 @@ if ($result <= 0)
 }
 
 $type=$object->type;
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -187,6 +188,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategor
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -195,7 +197,7 @@ $head = categories_prepare_head($object,$type);
 dol_fiche_head($head, 'card', $title, -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-
+$object->next_prev_filter=" type = ".$object->type;
 $object->ref = $object->label;
 $morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -205,7 +207,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
 
 
 /*

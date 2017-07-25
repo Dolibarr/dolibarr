@@ -955,8 +955,15 @@ if ($id > 0)
 		// Type of event
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
-			$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		    print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
+		    if ($object->type_code != 'AC_OTH_AUTO')
+		    {
+                $formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		    }
+		    else
+		    {
+                print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
+		    }
 			print '</td></tr>';
 		}
 

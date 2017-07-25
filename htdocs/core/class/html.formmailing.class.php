@@ -25,13 +25,13 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 /**
  *	Class to offer components to list and upload files
  */
-class FormMailing  extends Form
+class FormMailing extends Form
 {
 	public $errors=array();
 
 	/**
 	 * Output a select with destinaries status
-	 * 
+	 *
 	 * @param string   $selectedid     The selected id
 	 * @param string   $htmlname       Name of controm
 	 * @param integer  $show_empty     Show empty option
@@ -46,7 +46,7 @@ class FormMailing  extends Form
 		$mailing = new Mailing($this->db);
 
 		$options = array();
-        
+
 		if ($show_empty) {
 			$options[-2] = '';   // Note -1 is used for error
 		}

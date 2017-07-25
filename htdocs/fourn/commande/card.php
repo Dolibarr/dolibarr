@@ -896,7 +896,7 @@ if (empty($reshook))
 	}
 
 	// Actions to build doc
-	$upload_dir = $conf->commande->dir_output;
+	$upload_dir = $conf->fournisseur->commande->dir_output;
 	$permissioncreate = $user->rights->fournisseur->commande->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -2704,7 +2704,7 @@ elseif (! empty($object->id))
 		    //print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 		    print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 		    $date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-		    print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
+		    print $form->select_date($date_com,'',1,1,'',"commande",1,1,1);
 		    print '</td></tr>';
 
 		    print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -2756,7 +2756,7 @@ if ($action != 'makeorder')
 			print '<table class="noborder" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print $form->select_date('','',1,1,'',"commande",1,0,1);
+			print $form->select_date('','',1,1,'',"commande",1,1,1);
 			print "</td></tr>\n";
 
 			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";

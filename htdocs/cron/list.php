@@ -78,7 +78,7 @@ $object = new Cronjob($db);
  */
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_label='';
 	$status=-1;
@@ -115,19 +115,19 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     {
         $object = new Cronjob($db);
     	$job = $object->fetch($id);
-    
+
         $now = dol_now();   // Date we start
-    
+
         $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
     	if ($resrunjob < 0) {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
-    
+
     	// Programm next run
     	$res = $object->reprogram_jobs($user->login, $now);
     	if ($res > 0)
     	{
-    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
+    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported
     		{
     		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
@@ -139,7 +139,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		setEventMessages($object->error, $object->errors, 'errors');
     		$action='';
     	}
-    
+
     	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
     	exit;
     }
@@ -352,10 +352,10 @@ if ($num > 0)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
-		
+
 
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
-	    
+
 		// title profil
 		if ($style=='pair') {$style='impair';}
 		else {$style='pair';}
@@ -391,7 +391,7 @@ if ($num > 0)
 			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $obj->params;
 			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($obj->note);
 		}
-		elseif ($obj->jobtype=='command') 
+		elseif ($obj->jobtype=='command')
 		{
 			$text=$langs->trans('CronCommand');
 			$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($obj->command);
@@ -419,7 +419,7 @@ if ($num > 0)
 		print '<td align="right">';
 		if (!empty($obj->maxrun)) {print $obj->maxrun;}
 		print '</td>';
-		
+
 		print '<td align="right">';
 		if (!empty($obj->nbrun)) {print $obj->nbrun;} else {print '0';}
 		print '</td>';
@@ -468,7 +468,7 @@ if ($num > 0)
 		print '</td>';
 
 		print '</tr>';
-		
+
 		$i++;
 	}
 }

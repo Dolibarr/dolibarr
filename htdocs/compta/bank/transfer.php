@@ -37,38 +37,40 @@ if (! $user->rights->banque->transfer)
   accessforbidden();
 
 $action = GETPOST('action','alpha');
+$error = 0;
 
 
 /*
  * Actions
  */
 
-if ($action == 'add')
+if ($action == 'add_confirm')
 {
 	$langs->load("errors");
 
 	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 	$label = GETPOST('label','alpha');
 	$amount= GETPOST('amount');
+	$amount_to= GETPOST('amount_to');
 
 	if (! $label)
 	{
-		$error=1;
+
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Description")), null, 'errors');
 	}
 	if (! $amount)
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
 	if (! GETPOST('account_from','int'))
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
 	if (! GETPOST('account_to','int'))
 	{
-		$error=1;
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
 	}
 	if (! $error)
@@ -81,17 +83,16 @@ if ($action == 'add')
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
 
-		if (($accountto->id != $accountfrom->id) && ($accountto->currency_code == $accountfrom->currency_code))
+		if ($accountto->id != $accountfrom->id)
 		{
 			$db->begin();
 
-			$error=0;
 			$bank_line_id_from=0;
 			$bank_line_id_to=0;
 			$result=0;
 
 			// By default, electronic transfert from bank to bank
-			$typefrom='VIR';
+			$typefrom='PRE';
 			$typeto='VIR';
 			if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
 			{
@@ -102,7 +103,8 @@ if ($action == 'add')
 
 			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
 			if (! ($bank_line_id_from > 0)) $error++;
-			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+			if ((! $error) && ($accountto->currency_code == $accountfrom->currency_code)) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+			if ((! $error) && ($accountto->currency_code != $accountfrom->currency_code)) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount_to), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
 
 		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
@@ -112,7 +114,7 @@ if ($action == 'add')
 
 			if (! $error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone","<a href=\"bankentries.php?id=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"bankentries.php?id=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone","<a href=\"card.php?id=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"card.php?id=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
@@ -124,6 +126,7 @@ if ($action == 'add')
 		}
 		else
 		{
+		    $error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}
@@ -143,8 +146,9 @@ $account_from='';
 $account_to='';
 $label='';
 $amount='';
+$amount_to='';
 
-if($error)
+if ($error)
 {
 	$account_from =	GETPOST('account_from','int');
 	$account_to	= GETPOST('account_to','int');
@@ -160,11 +164,12 @@ print "<br><br>";
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<input type="hidden" name="action" value="add">';
+print '<input type="hidden" name="action" value="add_confirm">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
+print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td>';
+print '<td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
 print '</tr>';
 
 $var=false;
@@ -181,7 +186,6 @@ $form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
 print "</td>\n";
 print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.$label.'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="6" value="'.$amount.'"></td>';
-
 print "</table>";
 
 print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></div>';

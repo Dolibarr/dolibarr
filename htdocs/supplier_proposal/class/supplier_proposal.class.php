@@ -506,7 +506,7 @@ class SupplierProposal extends CommonObject
                 if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
                 // Mise a jour informations denormalisees au niveau de la propale meme
-                $result=$this->update_price(1,'auto');	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                $result=$this->update_price(1,'auto',0,$this->thirdparty);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -2563,10 +2563,9 @@ class SupplierProposal extends CommonObject
 
 
 /**
- *	\class      SupplierProposalLine
- *	\brief      Class to manage supplier_proposal lines
+ *	Class to manage supplier_proposal lines
  */
-class SupplierProposalLine  extends CommonObjectLine
+class SupplierProposalLine extends CommonObjectLine
 {
     var $db;
     var $error;
@@ -2798,6 +2797,7 @@ class SupplierProposalLine  extends CommonObjectLine
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
         if (empty($this->fk_unit)) $this->fk_unit=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2841,7 +2841,7 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->localtax1_type."',";
 		$sql.= " '".$this->localtax2_type."',";
-        $sql.= " ".price2num($this->subprice).",";
+        $sql.= " ".(!empty($this->subprice)?price2num($this->subprice):"null").",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
@@ -2982,6 +2982,7 @@ class SupplierProposalLine  extends CommonObjectLine
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
         if (empty($this->fk_unit)) $this->fk_unit=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 

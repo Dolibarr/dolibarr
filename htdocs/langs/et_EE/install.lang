@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Kasutad DoliWampist pärit Dolibarri paigaldusabimeest, se
 KeepDefaultValuesDeb=Kasutad Linuxi (Ubuntu, Debian, Fedora, ...) pakist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Pead sisestama vaid loodava andmebaasi omaniku parooli. Muuda teisi parameetreid vaid siis, kui tead täpselt, mida teed.
 KeepDefaultValuesMamp=Kasutad DoliMampist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
 KeepDefaultValuesProxmox=Kasutad Proxmoxi virtuaalrakendusest pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

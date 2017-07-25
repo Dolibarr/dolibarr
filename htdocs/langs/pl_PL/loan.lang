@@ -43,8 +43,11 @@ LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly p
 GoToInterest=% s zostanie przeznaczona INTERESÓW
 GoToPrincipal=% s zostanie przeznaczona PODSTAWOWA
 YouWillSpend=You will spend %s in year %s
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
 # Admin
 ConfigLoan=Konfiguracja modułu kredytu
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Créer / Modifier échéancier de pret

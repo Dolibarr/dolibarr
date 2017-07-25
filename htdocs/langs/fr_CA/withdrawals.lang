@@ -31,6 +31,7 @@ RefusedData=Date de rejet
 RefusedReason=Raison du rejet
 NoInvoiceRefused=Ne chargez pas le rejet
 InvoiceRefused=Facture refusée (Charge le rejet au client)
+StatusDebitCredit=Statut de débit / crédit
 StatusWaiting=Attendre
 StatusTrans=Envoyé
 StatusCredited=Crédit
