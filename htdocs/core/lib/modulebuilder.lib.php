@@ -77,8 +77,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
                 $i++;
                 $typephp='';
                 $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
-                $texttoinsert.= " 'visible'=>".$val['visible'].",";
-                $texttoinsert.= " 'enabled'=>".$val['enabled'].",";
+                $texttoinsert.= " 'visible'=>".($val['visible']?$val['visible']:0).",";
+                $texttoinsert.= " 'enabled'=>".($val['enabled']?$val['enabled']:0).",";
                 if ($val['position']) $texttoinsert.= " 'position'=>".$val['position'].",";
                 if ($val['notnull']) $texttoinsert.= " 'notnull'=>".$val['notnull'].",";
                 if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";

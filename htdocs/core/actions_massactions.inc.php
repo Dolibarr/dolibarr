@@ -594,7 +594,7 @@ if (! $error && $massaction == 'delete' && $permtodelete)
     $nbok = 0;
     foreach($toselect as $toselectid)
     {
-        $result=$objecttmp->fetch($toselectid);
+    	$result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
             if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);

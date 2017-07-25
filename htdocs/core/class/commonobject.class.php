@@ -4736,19 +4736,6 @@ abstract class CommonObject
 
 
 
-
-	/**
-	 * Function test if type is date
-	 *
-	 * @param   array   $info   content informations of field
-	 * @return                  bool
-	 */
-	protected function isDate($info)
-	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		else return false;
-	}
-
 	/**
 	 * Function test if type is array
 	 *
@@ -4781,13 +4768,26 @@ abstract class CommonObject
 		else return false;
 	}
 
+
+	/**
+	 * Function test if type is date
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	public function isDate($info)
+	{
+		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
+		else return false;
+	}
+
 	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isInt($info)
+	public function isInt($info)
 	{
 		if(is_array($info))
 		{
@@ -4803,11 +4803,11 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isFloat($info)
+	public function isFloat($info)
 	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && $info['type']=='float') return true;
+			if (isset($info['type']) && (preg_match('/^(double|real)/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;
@@ -4819,7 +4819,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isText($info)
+	public function isText($info)
 	{
 		if(is_array($info))
 		{
@@ -4846,49 +4846,58 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Function to prepare the values to insert
+	 * Function to prepare the values to insert.
+	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
 	 *
 	 * @return array
 	 */
 	private function set_save_query()
 	{
-		$query=array();
-		foreach ($this->fields as $field=>$info)
+		global $conf;
+
+		$queryarray=array();
+		foreach ($this->fields as $field=>$info)	// Loop on definition of fields
 		{
+			// Depending on field type ('datetime', ...)
 			if($this->isDate($info))
 			{
 				if(empty($this->{$field}))
 				{
-					$query[$field] = NULL;
+					$queryarray[$field] = NULL;
 				}
 				else
 				{
-					$query[$field] = $this->db->idate($this->{$field});
+					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
 			}
 			else if($this->isArray($info))
 			{
-				$query[$field] = serialize($this->{$field});
+				$queryarray[$field] = serialize($this->{$field});
 			}
 			else if($this->isInt($info))
 			{
-				$query[$field] = (int) price2num($this->{$field});
+				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
+				else
+				{
+					$queryarray[$field] = (int) price2num($this->{$field});
+					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be rest to null later if property 'nullifempty' is on for this field.
+				}
 			}
 			else if($this->isFloat($info))
 			{
-				$query[$field] = (double) price2num($this->{$field});
-			}
-			elseif($this->isNull($info))
-			{
-				$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0') ? null : $this->{$field});
+				$queryarray[$field] = (double) price2num($this->{$field});
+				if (empty($queryarray[$field])) $queryarray[$field]=0;
 			}
 			else
 			{
-				$query[$field] = $this->{$field};
+				$queryarray[$field] = $this->{$field};
 			}
+
+			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
+			if (! empty($info['nullifempty']) && empty($queryarray[$field])) $queryarray[$field] = null;
 		}
 
-		return $query;
+		return $queryarray;
 	}
 
 	/**
@@ -4947,15 +4956,14 @@ abstract class CommonObject
 	/**
 	 * Add quote to field value if necessary
 	 *
-	 * @param string|int	$value	value to protect
-	 * @return string|int
+	 * @param 	string|int	$value			Value to protect
+	 * @param	array		$fieldsentry	Properties of field
+	 * @return 	string
 	 */
-	protected function quote($value) {
-
-	    if(is_null($value)) return 'NULL';
-	    else if(is_numeric($value)) return $value;
-	    else return "'".$this->db->escape( $value )."'";
-
+	protected function quote($value, $fieldsentry) {
+	    if (is_null($value)) return 'NULL';
+	    else if (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+	    else return "'".$this->db->escape($value)."'";
 	}
 
 
@@ -4970,23 +4978,28 @@ abstract class CommonObject
 	{
         $error = 0;
 
-	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
+        $now=dol_now();
+
+	    $fieldvalues = $this->set_save_query();
+		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
+		unset($fieldvalues['rowid']);	// We suppose the field rowid is reserved field for autoincrement field.
 
 	    $keys=array();
 	    $values = array();
-	    foreach ($fields as $k => $v) {
+	    foreach ($fieldvalues as $k => $v) {
 	    	$keys[] = $k;
-	    	$values[] = $this->quote($v);
+	    	$values[] = $this->quote($v, $this->fields[$k]);
 	    }
 
 	    $this->db->begin();
 
 	    if (! $error)
 	    {
-    	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'
-    					( '.implode( ",", $keys ).' )
-    					VALUES ( '.implode( ",", $values ).' ) ';
-    	    $res = $this->db->query( $sql );
+    	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql.= ' ('.implode( ", ", $keys ).')';
+    		$sql.= ' VALUES ('.implode( ", ", $values ).')';
+
+			$res = $this->db->query( $sql );
     	    if ($res===false) {
     	        $error++;
     	        $this->errors[] = $this->db->lasterror();
@@ -4998,7 +5011,7 @@ abstract class CommonObject
 
             if (!$notrigger) {
                 // Call triggers
-                $result=$this->call_trigger(strtoupper(get_class(self)).'_CREATE',$user);
+                $result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -5075,11 +5088,11 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref)) return false;
 
-		$sql = 'SELECT '.$this->get_field_list().', datec, tms';
+		$sql = 'SELECT '.$this->get_field_list().', date_creation, tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
-		else  $sql.= ' WHERE ref = \''.$this->quote($ref).'\'';
+		else $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -5091,7 +5104,7 @@ abstract class CommonObject
         			$this->id = $id;
         			$this->set_vars_by_db($obj);
 
-        			$this->datec = $this->db->idate($obj->datec);
+        			$this->date_creation = $this->db->idate($obj->date_creation);
         			$this->tms = $this->db->idate($obj->tms);
 
         			return $this->id;
@@ -5127,27 +5140,27 @@ abstract class CommonObject
 	{
 	    $error = 0;
 
-		$fields = $this->set_save_query();
+		$fieldvalues = $this->set_save_query();
+		unset($fieldvalues['rowid']);	// We don't update this field, it is the key to define which record to update.
 
-		foreach ($fields as $k => $v) {
+		foreach ($fieldvalues as $k => $v) {
 			if (is_array($key)){
 				$i=array_search($k, $key);
 				if ( $i !== false) {
-					$where[] = $key[$i].'=' . $this->quote( $v ) ;
+					$where[] = $key[$i].'=' . $this->quote($v, $this->fields[$k]);
 					continue;
 				}
 			} else {
 				if ( $k == $key) {
-					$where[] = $k.'=' .$this->quote( $v ) ;
+					$where[] = $k.'=' .$this->quote($v, $this->fields[$k]);
 					continue;
 				}
 			}
-			$tmp[] = $k.'='.$this->quote($v);
+			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
 
 		$this->db->begin();
-
 		if (! $error)
 		{
     		$res = $this->db->query($sql);
@@ -5160,7 +5173,7 @@ abstract class CommonObject
 
 		if (! $error && ! $notrigger) {
 		    // Call triggers
-		    $result=$this->call_trigger(strtoupper(get_class(self)).'_MODIFY',$user);
+		    $result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 		    if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 		    // End call triggers
 		}
@@ -5191,7 +5204,7 @@ abstract class CommonObject
 	    if (! $error) {
 	        if (! $notrigger) {
 	            // Call triggers
-	            $result=$this->call_trigger(strtoupper(get_class(self)).'_DELETE', $user);
+	            $result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 	            // End call triggers
 	        }

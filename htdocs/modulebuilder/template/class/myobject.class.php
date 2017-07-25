@@ -58,17 +58,36 @@ class MyObject extends CommonObject
 	public $picto = 'myobject';
 
 
+	/**
+	 *             'type' if the field format, 'label' the translation key, 'enabled' is a condition when the filed must be managed,
+	 *             'visible' says if field is visible in list (-1 means not shown by default but can be aded into list to be viewed)
+	 *             'notnull' if not null in database
+	 *             'index' if we want an index in database
+	 *             'position' is the sort order of field
+	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button
+	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *             'comment' is not used. You can store here any text of your choice.
+	 */
+
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
      * @var array  Array with all fields and their property
      */
 	public $fields=array(
-	    'ref'   =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>true, 'index'=>true, 'visible'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-	    'entity'=>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=>true, 'index'=>true, 'visible'=>0, 'position'=>20),
-	    'label' =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'visible'=>1, 'searchall'=>1),
-	    'datec' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'visible'=>-1, 'position'=>500),
-	    'tms'   =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'visible'=>-1, 'position'=>500),
-	    'status'=>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'visible'=>1, 'position'=>1000),
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'index'=>true, 'position'=>1,  'comment'=>'Id'),
+		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>true, 'index'=>true, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=>true, 'index'=>true, 'position'=>20),
+	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'position'=>40,  'searchall'=>0, 'isameasure'=>1),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>true,  'position'=>1000, 'nullifempty'=>1),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -109,6 +128,53 @@ class MyObject extends CommonObject
 		$this->db = $db;
 	}
 
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null)
+	{
+		return $this->fetchCommon($id, $ref);
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $trigger);
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -116,11 +182,10 @@ class MyObject extends CommonObject
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
      *  @param	int  	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -131,18 +196,18 @@ class MyObject extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("MyObject") . '</u>';
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id;
+        $url = $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowProject");
+                $label=$langs->trans("ShowMyObject");
                 $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';

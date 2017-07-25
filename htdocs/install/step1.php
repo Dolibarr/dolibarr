@@ -423,13 +423,11 @@ if (! $error && $db->connected && $action == "set")
             // Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre telecharges en passant outre l'authentification
             $dir[0] = $main_data_dir."/mycompany";
             $dir[1] = $main_data_dir."/users";
-            $dir[2] = $main_data_dir."/custom";
-            $dir[3] = $main_data_dir."/facture";
-            $dir[4] = $main_data_dir."/propale";
-            $dir[5] = $main_data_dir."/ficheinter";
-            $dir[6] = $main_data_dir."/produit";
-            $dir[7] = $main_data_dir."/doctemplates";
-            $dir[7] = $main_data_dir."/extensions";
+            $dir[2] = $main_data_dir."/facture";
+            $dir[3] = $main_data_dir."/propale";
+            $dir[4] = $main_data_dir."/ficheinter";
+            $dir[5] = $main_data_dir."/produit";
+            $dir[6] = $main_data_dir."/doctemplates";
 
             // Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
             $num=count($dir);
