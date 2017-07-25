@@ -1309,7 +1309,7 @@ abstract class CommonObject
      *      Load properties id_previous and id_next
      *
      *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
-     *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
      *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
@@ -1322,6 +1322,7 @@ abstract class CommonObject
             dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
             return -1;
         }
+		if ($fieldid == 'none') return 1;
 
         // this->ismultientitymanaged contains
         // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
