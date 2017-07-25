@@ -171,7 +171,7 @@ class Events // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
-		$sql.= " type='".$this->type."',";
+		$sql.= " type='".$this->db->escape($this->type)."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;

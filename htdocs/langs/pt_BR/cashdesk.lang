@@ -10,7 +10,6 @@ PrintTicket=Imprimir tíquete
 TotalTicket=Total do tíquite
 NoVAT=Nenhum ICMS para essa venda
 Change=Excesso recebido
-BankToPay=Cobrar conta
 ShowCompany=Mostar empresa
 DeleteArticle=Clique para remover esse artigo
 FilterRefOrLabelOrBC=Procurar (Ref/Rótulo)

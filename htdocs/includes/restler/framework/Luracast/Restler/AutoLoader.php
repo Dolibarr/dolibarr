@@ -263,7 +263,7 @@ class AutoLoader
      * @return bool false unless className now exists
      */
     private function loadLastResort($className, $loader = null) {
-        // DOL_LDR Add protection to avoid conflict with other autouploader
+        // @CHANGE LDR Add protection to avoid conflict with other autoloader
         /*print 'Try to load '.$className."\n";
         if (in_array($className, array('Google_Client')))
         {
@@ -307,7 +307,7 @@ class AutoLoader
      */
     private function alias($className, $currentClass)
     {
-        // DOL_LDR 
+        // @CHANGE LDR 
         if ($className == 'Luracast\Restler\string') return;
         if ($className == 'Luracast\Restler\mixed') return;
         

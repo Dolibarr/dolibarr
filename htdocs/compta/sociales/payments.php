@@ -49,7 +49,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -85,6 +85,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 if ($mode != 'sconly') 
@@ -163,7 +164,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			// Ref payment
 			$payment_sc_static->id=$obj->pid;
 			$payment_sc_static->ref=$obj->pid;
@@ -259,8 +260,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        $total = $total + $obj->amount;
 
-		        $var=!$var;
-		        print "<tr ".$bc[$var].">";
+		        
+		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 		        print "<td>".$obj->label."</td>\n";
@@ -361,8 +362,8 @@ while($j<$numlt)
 
 				$total = $total + $obj->amount;
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				
+				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 				print "<td>".$obj->label."</td>\n";
@@ -412,7 +413,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE s.entity IN (".getEntity('user',1).")";
+        $sql.= " WHERE s.entity IN (".getEntity('user').")";
         $sql.= " AND u.rowid = s.fk_user";
         if ($year > 0)
         {
@@ -443,8 +444,8 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $total = $total + $obj->amount;
 
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+                
+                print '<tr class="oddeven">';
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
 

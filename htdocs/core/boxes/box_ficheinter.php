@@ -113,7 +113,7 @@ class box_ficheinter extends ModeleBoxes
 					'logo' => $this->boximg,
 					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][1] = array('td' => '',
 					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some interventions have no ref
 					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
 
@@ -121,11 +121,11 @@ class box_ficheinter extends ModeleBoxes
 					'logo' => 'company',
 					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][3] = array('td' => '',
 					'text' => dol_trunc($objp->name,40),
 					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
+					$this->info_box_contents[$i][4] = array('td' => 'class="right"',
 					'text' => dol_print_date($datec,'day'));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
@@ -142,15 +142,17 @@ class box_ficheinter extends ModeleBoxes
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(  'td' => '',
 				'maxlength'=>500,
 				'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else
 		{
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-			'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 	}
 

@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Deze lijst bevat alleen de diensten van contracten
 StandardContractsTemplate=Standaard contracten sjabloon
 ContactNameAndSignature=Voor %s, naam en handtekening:
 OnlyLinesWithTypeServiceAreUsed=Alleen lijnen met type "Service" zullen worden gekloond.
+CloneContract=Dupliceer contract
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertegenwoordiger ondertekening contract

@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Používáte instalaci Dolibarr pomocí DoliWamp, tedy tyt
 KeepDefaultValuesDeb=Používáte instalaci Dolibarr z Linux-ového balíčku (Ubuntu, Debian, Fedora ...), takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Vyplňte pouze heslo vlastníka databáze. Ostatní parametry měňte jen pokud skutečně víte co děláte.
 KeepDefaultValuesMamp=Používáte instalaci Dolibarr pomocí DoliMamp, takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Parametry měňte jen pokud skutečně víte co děláte.
 KeepDefaultValuesProxmox=Používáte instalaci Dolibarr pomocí Proxmox, takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Parametry měňte jen pokud skutečně víte co děláte.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

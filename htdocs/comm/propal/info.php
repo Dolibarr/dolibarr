@@ -59,14 +59,14 @@ llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_c
 $object->fetch_thirdparty();
 
 $head = propal_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('Proposal'), 0, 'propal');
+dol_fiche_head($head, 'info', $langs->trans('Proposal'), -1, 'propal');
 
 $object->info($object->id);
 
 
 // Proposal card
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 $morehtmlref='<div class="refidno">';
@@ -122,6 +122,6 @@ dol_print_object_info($object);
 print '</div>';
 
 dol_fiche_end();
-	
+
 llxFooter();
 $db->close();

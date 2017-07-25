@@ -49,7 +49,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -93,7 +93,7 @@ if ($id > 0 || ! empty($ref))
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'margin', $titre, 0, $picto);
+		dol_fiche_head($head, 'margin', $titre, -1, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 		
@@ -196,12 +196,12 @@ if ($id > 0 || ! empty($ref))
                     $var=True;
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
                         $objp = $db->fetch_object($result);
-                        $var=!$var;
+                        
 
 						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
 						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
                         $invoicestatic->ref=$objp->facnumber;
@@ -229,7 +229,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // affichage totaux marges
-                $var=!$var;
+                
                 $totalMargin = $cumul_vente - $cumul_achat;
                 if ($totalMargin < 0)
                 {

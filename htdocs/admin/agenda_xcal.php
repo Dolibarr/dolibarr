@@ -83,7 +83,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 
 print $langs->trans("AgendaSetupOtherDesc")."<br>\n";
 print "<br>\n";
@@ -97,7 +97,7 @@ print "<td>".$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print "<tr ".$bc[false].">";
+print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
 print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="' . (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . '" size="40">';
 if (! empty($conf->use_javascript_ajax))
@@ -106,13 +106,13 @@ print '</td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print "<tr ".$bc[true].">";
+print '<tr class="oddeven">';
 print "<td>".$langs->trans("PastDelayVCalExport")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_PAST_DELAY\" value=\"". (GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha')?GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha'):$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY) . "\" size=\"10\"> ".$langs->trans("days")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print "<tr ".$bc[false].">";
+print '<tr class="oddeven">';
 print "<td>".$langs->trans("UseACacheDelay")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"". (GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')?GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha'):$conf->global->MAIN_AGENDA_EXPORT_CACHE) . "\" size=\"10\"></td>";
 print "<td>&nbsp;</td>";
@@ -128,8 +128,8 @@ print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 print "</tr>";
-print "<tr ".$bc[false].">";
-print '<td class="fieldrequired">'.$langs->trans("FixTZ")."</td>";
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("FixTZ")."</td>";
 print "<td>";
 print '<input class="flat" type="text" size="4" name="AGENDA_EXPORT_FIX_TZ" value="'.$conf->global->AGENDA_EXPORT_FIX_TZ.'">';
 print ' &nbsp; '.$langs->trans("FillThisOnlyIfRequired");
@@ -174,8 +174,8 @@ $message.='<br>';
 print $message;
 
 $message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
-//$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptionsNotAdmin",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);
 

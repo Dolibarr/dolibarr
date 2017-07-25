@@ -146,12 +146,12 @@ if ($id > 0 || ! empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
     // Project card
     
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
     
     $morehtmlref='<div class="refidno">';
     // Title
@@ -206,9 +206,12 @@ if ($id > 0 || ! empty($ref))
     
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-    print dol_print_date($object->date_start,'day');
-    $end=dol_print_date($object->date_end,'day');
-    if ($end) print ' - '.$end;
+	$start = dol_print_date($object->date_start,'dayhour');
+	print ($start?$start:'?');
+	$end = dol_print_date($object->date_end,'dayhour');
+	print ' - ';
+	print ($end?$end:'?');
+	if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
 
     // Budget
@@ -235,7 +238,7 @@ if ($id > 0 || ! empty($ref))
     print '</td></tr>';
     
     // Categories
-    if($conf->categorie->enabled) {
+    if ($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
         print $form->showCategories($object->id,'project',1);
         print "</td></tr>";
