@@ -21,9 +21,9 @@ if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocb
 if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
 
 ?>
-<!-- BEGIN PHP TEMPLATE BLOC SHOW/HIDE -->
+<!-- BEGIN PHP TEMPLATE bloc_showhide.tpl.php -->
 
-<?php 
+<?php
 print '<script type="text/javascript">'."\n";
 print '$(document).ready(function() {'."\n";
 print '$("#hide-'.$blocname.'").click(function(){'."\n";
@@ -57,7 +57,7 @@ print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1upa
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="show-'.$blocname.'"';
 print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow.png').'</div>'."\n";
 print '<div id="'.$blocname.'_title" class="liste_titre">'.$title.'</div>'."\n";
-print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobject')'">'."\n";
+print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobject').'">'."\n";
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php';
 print '</div><br>';
