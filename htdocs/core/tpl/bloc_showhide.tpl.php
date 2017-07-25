@@ -41,9 +41,9 @@ print '		$("#hide-'.$blocname.'").show();'."\n";
 print '});'."\n";
 
 print 'function setShowHide(status) {'."\n";
-print '		var id			= '.$object->id."\n";
-print '		var element		= '.$object->element."\n";
-print '		var htmlelement	= '.$blocname."\n";
+print '		var id			= '.$object->id.";\n";
+print "		var element		= '".$object->element."';\n";
+print "		var htmlelement	= '".$blocname."';\n";
 print '		var type		= "showhide";'."\n";
 print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
 print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";
