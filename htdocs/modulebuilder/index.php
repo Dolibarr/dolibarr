@@ -108,6 +108,9 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
         // Delete some files
         dol_delete_file($destdir.'/myobject_card.php');
+        dol_delete_file($destdir.'/myobject_note.php');
+        dol_delete_file($destdir.'/myobject_document.php');
+        dol_delete_file($destdir.'/myobject_agenda.php');
         dol_delete_file($destdir.'/myobject_list.php');
         dol_delete_file($destdir.'/lib/myobject.lib.php');
         dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
@@ -189,7 +192,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
         // Delete some files
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
-            'myobject_list.php'=>strtolower($objectname).'_list.php',
+            'myobject_note.php'=>strtolower($objectname).'_note.php',
+            'myobject_document.php'=>strtolower($objectname).'_document.php',
+            'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+        	'myobject_list.php'=>strtolower($objectname).'_list.php',
             'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
         	'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
@@ -379,7 +385,10 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
         // Delete some files
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
-            'myobject_list.php'=>strtolower($objectname).'_list.php',
+            'myobject_note.php'=>strtolower($objectname).'_note.php',
+            'myobject_document.php'=>strtolower($objectname).'_note.php',
+            'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+        	'myobject_list.php'=>strtolower($objectname).'_list.php',
             'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
         	'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',

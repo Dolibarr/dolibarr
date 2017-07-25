@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule","other"));
+$langs->loadLangs(array("mymodule@mymodule","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -85,11 +85,9 @@ foreach($object->fields as $key => $val)
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
-}
+// Security check - Protection if external user
+//if ($user->societe_id > 0) access_forbidden();
+//if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'mymodule', $id);
 
 // fetch optionals attributes and labels
@@ -363,7 +361,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
