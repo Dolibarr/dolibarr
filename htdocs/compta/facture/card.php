@@ -1105,8 +1105,17 @@ if (empty($reshook))
 
 							foreach ($amountdeposit as $tva => $amount)
 							{
+								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
+								$descline = $langs->trans('Deposit');
+								$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
+								if ($typeamount=='amount') {
+									$descline.= ' ('. price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
+								} elseif ($typeamount=='variable') {
+									$descline.= ' ('. $valuedeposit.'%)';
+								}
+								$descline.= ' - '.$srcobject->ref;
 								$result = $object->addline(
-										$langs->trans('Deposit'),
+										$descline,
 										$amount,		 	// subprice
 										1, 						// quantity
 										$tva,     // vat rate
@@ -1128,8 +1137,8 @@ if (empty($reshook))
 										0,
 										0,
 										0,
-										0,
-										$langs->trans('Deposit')
+										0
+										//,$langs->trans('Deposit') //Deprecated
 									);
 							}
 
