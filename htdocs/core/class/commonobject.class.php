@@ -4905,7 +4905,7 @@ abstract class CommonObject
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
-	private function set_vars_by_db(&$obj)
+	private function setVarsFromFetchObj(&$obj)
 	{
 	    foreach ($this->fields as $field => $info)
 	    {
@@ -4922,7 +4922,8 @@ abstract class CommonObject
 	        }
 	        elseif($this->isInt($info))
 	        {
-	            $this->{$field} = (int) $obj->{$field};
+	        	if ($field == 'rowid') $this->id = (int) $obj->{$field};
+	            else $this->{$field} = (int) $obj->{$field};
 	        }
 	        elseif($this->isFloat($info))
 	        {
@@ -4982,6 +4983,7 @@ abstract class CommonObject
 
 	    $fieldvalues = $this->set_save_query();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
+		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// We suppose the field rowid is reserved field for autoincrement field.
 
 	    $keys=array();
@@ -5048,8 +5050,10 @@ abstract class CommonObject
 
 	    // Load source object
 	    $object->fetchCommon($fromid);
-	    // Reset object
-	    $object->id = 0;
+	    // Reset some properties
+	    unset($object->id);
+	    unset($object->fk_user_creat);
+	    unset($object->import_key);
 
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
@@ -5088,7 +5092,7 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref)) return false;
 
-		$sql = 'SELECT '.$this->get_field_list().', date_creation, tms';
+		$sql = 'SELECT '.$this->get_field_list();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
@@ -5101,12 +5105,7 @@ abstract class CommonObject
     		{
     		    if ($obj)
     		    {
-        			$this->id = $id;
-        			$this->set_vars_by_db($obj);
-
-        			$this->date_creation = $this->db->idate($obj->date_creation);
-        			$this->tms = $this->db->idate($obj->tms);
-
+        			$this->setVarsFromFetchObj($obj);
         			return $this->id;
     		    }
     		    else

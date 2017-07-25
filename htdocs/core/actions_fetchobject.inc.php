@@ -30,7 +30,7 @@
 
 if (($id > 0 || (! empty($ref) && ! in_array($action, array('create','createtask')))) && empty($cancel))
 {
-    $ret = $object->fetch($id,$ref);
+    $ret = $object->fetch($id, $ref);
     if ($ret > 0)
     {
         $object->fetch_thirdparty();

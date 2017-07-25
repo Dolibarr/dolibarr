@@ -55,7 +55,7 @@ class MyObject extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject
 	 */
-	public $picto = 'myobject';
+	public $picto = 'myobject@mymodule';
 
 
 	/**
