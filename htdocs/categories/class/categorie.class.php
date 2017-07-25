@@ -43,23 +43,23 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 class Categorie extends CommonObject
 {
 	// Categories types
-	const TYPE_PRODUCT = 0;    // TODO Replace with value 'product'
-	const TYPE_SUPPLIER = 1;   // TODO Replace this value with 'supplier'
-	const TYPE_CUSTOMER = 2;   // TODO Replace this value with 'customer'
-	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
-	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
-	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
-
-    const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
-	const TYPE_PROJECT = 6;    // TODO Replace this value with 'project'
+	const TYPE_PRODUCT   = 'product';
+	const TYPE_SUPPLIER  = 'supplier';
+	const TYPE_CUSTOMER  = 'customer';
+	const TYPE_MEMBER    = 'member';
+	const TYPE_CONTACT   = 'contact';
+	const TYPE_USER      = 'user';
+	const TYPE_PROJECT   = 'project';
+	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
+
 	public $picto = 'category';
 
 
 	/**
 	 * @var array ID mapping from type string
 	 *
-	 * @note This array should be remove in future, once previous constants are moved to the string value.
+	 * @note This array should be remove in future, once previous constants are moved to the string value. Deprecated
 	 */
 	private $MAP_ID = array(
 		'product'  => 0,
@@ -67,10 +67,21 @@ class Categorie extends CommonObject
 		'customer' => 2,
 		'member'   => 3,
 		'contact'  => 4,
-		'user'     => 4,
         'account'  => 5,
         'project'  => 6,
+		'user'     => 7,
 	);
+	public static $MAP_ID_TO_CODE = array(
+		0 => 'product',
+		1 => 'supplier',
+		2 => 'customer',
+		3 => 'member',
+		4 => 'contact',
+		5 => 'account',
+		6 => 'project',
+		7 => 'user',
+	);
+
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
@@ -82,9 +93,9 @@ class Categorie extends CommonObject
 		'supplier' => 'soc',
 		'member'   => 'member',
 		'contact'  => 'socpeople',
-		'user'  => 'user',
-        'account' => 'account',
-        'project' => 'project',
+		'user'     => 'user',
+        'account'  => 'account',
+        'project'  => 'project',
 	);
 	/**
 	 * @var array Category tables mapping from type string
@@ -97,9 +108,9 @@ class Categorie extends CommonObject
 		'supplier' => 'fournisseur',
 		'member'   => 'member',
 		'contact'  => 'contact',
-		'user'  => 'user',
-        'account' => 'account',
-        'project' => 'project',
+		'user'     => 'user',
+        'account'  => 'account',
+        'project'  => 'project',
 	);
 	/**
 	 * @var array Object class mapping from type string
@@ -113,8 +124,8 @@ class Categorie extends CommonObject
 		'member'   => 'Adherent',
 		'contact'  => 'Contact',
 		'user'     => 'User',
-        'account' => 'Account',
-        'project' => 'Project',
+        'account'  => 'Account',
+        'project'  => 'Project',
 	);
 	/**
 	 * @var array Object table mapping from type string
@@ -128,8 +139,8 @@ class Categorie extends CommonObject
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account' => 'bank_account',
-        'project' => 'projet',
+        'account'  => 'bank_account',
+        'project'  => 'projet',
 	);
 
 	public $element='category';
