@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2017       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -470,7 +471,7 @@ if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
     $moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('Categories'). ': ';
-	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
+	$moreforfilter.=$formother->select_categories('contact',$search_categ,'search_categ',1);
 	$moreforfilter.='</div>';
 	if (empty($type) || $type == 'c' || $type == 'p')
 	{
@@ -478,14 +479,14 @@ if (! empty($conf->categorie->enabled))
         if ($type == 'c') $moreforfilter.=$langs->trans('CustomersCategoriesShort'). ': ';
     	else if ($type == 'p') $moreforfilter.=$langs->trans('ProspectsCategoriesShort'). ': ';
     	else $moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort'). ': ';
-    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ_thirdparty,'search_categ_thirdparty',1);
+    	$moreforfilter.=$formother->select_categories('customer',$search_categ_thirdparty,'search_categ_thirdparty',1);
     	$moreforfilter.='</div>';
 	}
 	if (empty($type) || $type == 'f')
 	{
     	$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('SuppliersCategoriesShort'). ': ';
-    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ_supplier,'search_categ_supplier',1);
+    	$moreforfilter.=$formother->select_categories('supplier',$search_categ_supplier,'search_categ_supplier',1);
     	$moreforfilter.='</div>';
 	}
 }
