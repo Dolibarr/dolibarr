@@ -401,7 +401,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_operation = $val["label"];
 					$bookkeeping->label_compte = $langs->trans("Bank");
-					$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
+					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
 					$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
@@ -462,7 +462,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->label_operation = $tabcompany[$key]['name'];
-					$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
+					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
