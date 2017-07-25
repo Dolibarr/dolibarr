@@ -42,4 +42,5 @@ ALTER TABLE llx_accounting_account ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN extraparams varchar(255);
 
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime;
 
