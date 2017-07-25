@@ -128,6 +128,53 @@ class MyObject extends CommonObject
 		$this->db = $db;
 	}
 
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null)
+	{
+		return $this->fetchCommon($id, $ref);
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $trigger);
+	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -153,7 +200,7 @@ class MyObject extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = $url = dol_buildpath('/mymodule/m_card.php',1).'?id='.$this->id;
+        $url = $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))

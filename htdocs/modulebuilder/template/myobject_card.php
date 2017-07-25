@@ -52,7 +52,9 @@ if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main
 if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("mymodule","other"));
@@ -226,6 +228,7 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
+$formfile=new FormFile($db);
 
 llxHeader('','MyObject','');
 
@@ -311,14 +314,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = mymodule_prepare_head($object);
-	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+	$head = myobjectPrepareHead($object);
+	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirmation of action xxxx
@@ -346,12 +349,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 
-
 	// Object card
 	// ------------------------------------------------------------
-
-	$linkback = '<a href="' . DOL_URL_ROOT . '/mymodule/myobject_list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -477,7 +477,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -486,7 +486,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'order', $socid);
+	    $somethingshown = $formactions->showactions($object, 'myobject', $socid);
 
 	    print '</div></div></div>';
 	}
@@ -534,7 +534,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print load_fiche_titre($langs->trans('SendOrderByMail'));
+		print load_fiche_titre($langs->trans('SendMyObjectByMail'));
 
 		dol_fiche_head('');
 
@@ -562,9 +562,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formmail->withtocc = $liste;
 		$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 		if (empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+			$formmail->withtopic = $outputlangs->trans('SendMyObjectRef', '__REF__');
 		} else if (! empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+			$formmail->withtopic = $outputlangs->trans('SendMyObjectRef', '__REF__ (__REFCLIENT__)');
 		}
 		$formmail->withfile = 2;
 		$formmail->withbody = 1;
@@ -572,7 +572,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
-		$formmail->substit ['__ORDERREF__'] = $object->ref;
+		$formmail->substit ['__REF__'] = $object->ref;
 
 		$custcontact = '';
 		$contactarr = array();
@@ -596,9 +596,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'order_send';
+		$formmail->param['models'] = 'myobject_send';
 		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['orderid'] = $object->id;
+		$formmail->param['myobjectid'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 		// Init list of files

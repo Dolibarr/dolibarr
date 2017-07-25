@@ -109,6 +109,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
         // Delete some files
         dol_delete_file($destdir.'/myobject_card.php');
         dol_delete_file($destdir.'/myobject_list.php');
+        dol_delete_file($destdir.'/lib/myobject.lib.php');
         dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
         dol_delete_file($destdir.'/sql/llx_myobject.sql');
         dol_delete_file($destdir.'/sql/llx_myobject_extrafields.sql');
@@ -132,7 +133,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 	        	'MyModule'=>$modulename,
 	        	'MYMODULE'=>strtoupper($modulename),
 	        	'My module'=>$modulename,
-	        	'htdocs/modulebuilder/template/'=>'',
+	        	'htdocs/modulebuilder/template/'=>strtolower($modulename),
                 '---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 	    	);
 
@@ -189,7 +190,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
             'myobject_list.php'=>strtolower($objectname).'_list.php',
-            'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+            'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+        	'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
             'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
         	'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
@@ -276,7 +278,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
                 'MyModule'=>$module,
                 'MYMODULE'=>strtoupper($module),
                 'My module'=>$module,
-                'htdocs/modulebuilder/template/'=>'',
+                'htdocs/modulebuilder/template/'=>strtolower($modulename),
                 'myobject'=>strtolower($objectname),
                 'MyObject'=>$objectname
             );
@@ -378,7 +380,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
             'myobject_list.php'=>strtolower($objectname).'_list.php',
-            'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+            'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+        	'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
             'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
         	'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
