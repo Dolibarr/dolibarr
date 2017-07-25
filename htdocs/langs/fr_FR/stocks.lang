@@ -69,6 +69,7 @@ NoPredefinedProductToDispatch=Pas de produits prédéfinis dans cet objet. Aucun
 DispatchVerb=Ventiler
 StockLimitShort=Limite pour alerte
 StockLimit=Limite stock pour alerte
+StockLimitDesc="" (vide) valeur par défaut signifie pas d'alerte. <br>"0" peut être utilisé avec la configuration 'Le stock peut être négatif'
 PhysicalStock=Stock physique
 RealStock=Stock réel
 VirtualStock=Stock théorique
