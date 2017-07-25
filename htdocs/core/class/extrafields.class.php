@@ -345,7 +345,8 @@ class ExtraFields
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
 			$sql .= "'" . $this->db->idate(dol_now()) . "'";
-
+			$sql.=')';
+			
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
