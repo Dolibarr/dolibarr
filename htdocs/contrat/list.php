@@ -305,7 +305,7 @@ if ($resql)
     $i = 0;
 
     $arrayofselected=is_array($toselect)?$toselect:array();
-    
+
 	if ($socid > 0)
 	{
 		$soc = new Societe($db);
@@ -313,7 +313,7 @@ if ($resql)
 		if (empty($search_name)) $search_name = $soc->name;
 	}
 
-  $param='';
+    $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($sall != '')                $param.='&sall='.$sall;

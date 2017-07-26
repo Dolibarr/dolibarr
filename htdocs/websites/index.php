@@ -66,12 +66,12 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
 }
 
 
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
 
@@ -138,6 +138,8 @@ global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
 $filehtmlheader=$pathofwebsite.'/htmlheader.html';
 $filecss=$pathofwebsite.'/styles.css.php';
+$filerobot=$pathofwebsite.'/robots.txt';
+$filehtaccess=$pathofwebsite.'/.htaccess';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex=$pathofwebsite.'/index.php';
 
@@ -174,10 +176,11 @@ if ($action == 'add')
         $error++;
         $action='create';
     }
-    else if (! preg_match('/^[a-z0-9]+$/i', $objectpage->pageurl))
+    else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
     {
-    	$error++;
     	setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
+    	$error++;
+    	$action='create';
     }
     if (empty($objectpage->title))
     {
@@ -310,7 +313,6 @@ if ($action == 'updatecss')
 	    $csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
 	    $csscontent.= "// END PHP ?>"."\n";
 
-
 	    dol_syslog("Save file css into ".$filecss);
 
 	    dol_mkdir($pathofwebsite);
@@ -325,6 +327,70 @@ if ($action == 'updatecss')
 	    }
 
 
+	    // Css file
+	    $robotcontent ='';
+
+	    /*$robotcontent.= "<?php // BEGIN PHP\n";
+	    $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+	    $robotcontent.= "ob_start();\n";
+	    $robotcontent.= "header('Content-type: text/css');\n";
+	    $robotcontent.= "// END PHP ?>\n";*/
+
+	    $robotcontent.= GETPOST('WEBSITE_ROBOT');
+
+	    /*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
+	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+	    $robotcontent.= "// END PHP ?>"."\n";*/
+
+	    dol_syslog("Save file robot into ".$filerobot);
+
+	    dol_mkdir($pathofwebsite);
+	    $result = file_put_contents($filerobot, $robotcontent);
+	    if (! empty($conf->global->MAIN_UMASK))
+	    	@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
+
+    	if (! $result)
+    	{
+    		$error++;
+    		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
+    	}
+
+
+    	// Css file
+    	$htaccesscontent ='';
+
+    	/*$robotcontent.= "<?php // BEGIN PHP\n";
+    	 $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+    	 $robotcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+    	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+    	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+    	 $robotcontent.= "ob_start();\n";
+    	 $robotcontent.= "header('Content-type: text/css');\n";
+    	 $robotcontent.= "// END PHP ?>\n";*/
+
+    	$htaccesscontent.= GETPOST('WEBSITE_HTACCESS');
+
+    	/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
+    	 $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    	 $robotcontent.= "// END PHP ?>"."\n";*/
+
+    	dol_syslog("Save file htaccess into ".$filehtaccess);
+
+    	dol_mkdir($pathofwebsite);
+    	$result = file_put_contents($filehtaccess, $htaccesscontent);
+    	if (! empty($conf->global->MAIN_UMASK))
+    		@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
+
+   		if (! $result)
+   		{
+   			$error++;
+   			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+   		}
+
+		// Message if no error
 	    if (! $error)
 	    {
 	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
@@ -549,7 +615,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		if (! $error)
 		{
 	    	$objectpage = new WebsitePage($db);
-			$result = $objectpage->createFromClone($pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation);
+			$result = $objectpage->createFromClone($pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation, GETPOST('newwebsite','int'));
 			if ($result < 0)
 			{
 				$error++;
@@ -745,6 +811,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
+$formwebsite = new FormWebsite($db);
 
 $help_url='';
 
@@ -958,7 +1025,9 @@ if (count($object->records) > 0)
 					$formquestion = array(
 						array('type' => 'text', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
 						array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')));
+						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+					);
 
 	               	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 250);
 
@@ -1094,30 +1163,49 @@ if ($action == 'editcss')
     $csscontent = @file_get_contents($filecss);
     // Clean the php css file to remove php code and get only css part
     $csscontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $csscontent);
-
     $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
-
     if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n".'body.bodywebsite { margin: 0; }';
-
 
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php htmlheader file to remove php code and get only html part
     $htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $htmlheader);
-
     if (! trim($htmlheader)) $htmlheader='<html>'."\n".'<!-- HTML header content (all pages) -->'."\n".'</html>';
     else $htmlheader='<html>'."\n".$htmlheader."\n".'</html>';
+
+    $robotcontent = @file_get_contents($filerobot);
+    // Clean the php htmlheader file to remove php code and get only html part
+    $robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $robotcontent);
+    if (! trim($robotcontent))
+    {
+    	$robotcontent.="# Robot file. Generated with ".DOL_APPLICATION_TITLE."\n";
+    	$robotcontent.="User-agent: *\n";
+    	$robotcontent.="Allow: /public/\n";
+    	$robotcontent.="Disallow: /administrator/\n";
+    }
+
+    $htaccesscontent = @file_get_contents($filehtaccess);
+    // Clean the php htmlheader file to remove php code and get only html part
+    $htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $htaccesscontent);
+    if (! trim($htaccesscontent))
+    {
+    	$htaccesscontent.="# Order allow,deny\n";
+		$htaccesscontent.="# Deny from all\n";
+    }
+    //else $htaccesscontent='<html>'."\n".$htaccesscontent."\n".'</html>';*/
 
     dol_fiche_head();
 
     print '<!-- Edit CSS -->'."\n";
     print '<table class="border" width="100%">';
 
+    // Website
     print '<tr><td class="titlefieldcreate">';
     print $langs->trans('WebSite');
     print '</td><td>';
     print $website;
     print '</td></tr>';
 
+    // CSS file
     print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_CSS_INLINE');
     print '</td><td>';
@@ -1125,11 +1213,9 @@ if ($action == 'editcss')
     $doleditor=new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, 'CSS', 'css');
 
-    /*print '<textarea class="flat centpercent" rows="20" name="WEBSITE_CSS_INLINE">';
-    print $csscontent;
-    print '</textarea>';*/
     print '</td></tr>';
 
+    // Common HTML header
 	print '<tr><td class="tdtop">';
     print $langs->trans('WEBSITE_HTML_HEADER');
     print '</td><td>';
@@ -1137,9 +1223,26 @@ if ($action == 'editcss')
     $doleditor=new DolEditor('WEBSITE_HTML_HEADER', $htmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 
-    /*print '<textarea class="flat centpercent" rows="20" name="WEBSITE_HTML_HEADER">';
-    print $htmlheader;
-    print '</textarea>';*/
+    print '</td></tr>';
+
+    // Robot file
+	print '<tr><td class="tdtop">';
+    print $langs->trans('WEBSITE_ROBOT');
+    print '</td><td>';
+
+    $doleditor=new DolEditor('WEBSITE_ROBOT', $robotcontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	print $doleditor->Create(1, '', true, 'Robot file', 'txt');
+
+    print '</td></tr>';
+
+    // .htaccess
+	print '<tr><td class="tdtop">';
+    print $langs->trans('WEBSITE_HTACCESS');
+    print '</td><td>';
+
+    $doleditor=new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'txt');
+
     print '</td></tr>';
 
     print '</table>';
@@ -1238,7 +1341,7 @@ if ($action == 'editsource')
 	 * Editing global variables not related to a specific theme
 	 */
 
-	$csscontent = @file_get_contents($filecss);
+	//$csscontent = @file_get_contents($filecss);
 
 	$contentforedit = '';
 	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
@@ -1257,7 +1360,7 @@ if ($action == 'editcontent')
      * Editing global variables not related to a specific theme
      */
 
-    $csscontent = @file_get_contents($filecss);
+    //$csscontent = @file_get_contents($filecss);
 
     $contentforedit = '';
     /*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers

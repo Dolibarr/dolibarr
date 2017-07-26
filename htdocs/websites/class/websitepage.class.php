@@ -500,9 +500,10 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newref				New ref/alias of page
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
+	 * @param	int		$newwebsite			0=Same web site, 1=New web site
 	 * @return 	int 						New id of clone
 	 */
-	public function createFromClone($fromid, $newref, $newlang='', $istranslation=0)
+	public function createFromClone($fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
 		global $user, $langs;
 
@@ -525,6 +526,7 @@ class WebsitePage extends CommonObject
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
+		if (! empty($newwebsite)) $object->fk_website=$newwebsite;
 
 		// Create clone
 		$result = $object->create($user);

@@ -35,11 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 $langs->load("languages");
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel','alpha');
-$type=GETPOST('type');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$cancel = GETPOST('cancel','alpha');
+$type   = GETPOST('type','aZ09');
+
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -153,6 +155,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategor
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -256,9 +259,9 @@ if ($action == 'edit')
 			print '</table>';
 		}
 	}
-    
+
 	print '<br>';
-	
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -271,7 +274,7 @@ if ($action == 'edit')
 else if ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
-    
+
     if (! empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)

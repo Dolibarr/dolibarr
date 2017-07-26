@@ -16,17 +16,18 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/template/lib/mymodule.lib.php
+ * \file    htdocs/modulebuilder/template/lib/myobject.lib.php
  * \ingroup mymodule
- * \brief   Library files with common functions for MyModule
+ * \brief   Library files with common functions for MyObject
  */
 
 /**
- * Prepare admin pages header
+ * Prepare array of tabs for MyObject
  *
- * @return array
+ * @param	MyObject	$object		MyObject
+ * @return 	array					Array of tabs
  */
-function mymoduleAdminPrepareHead()
+function myobjectPrepareHead($object)
 {
 	global $langs, $conf;
 
@@ -35,13 +36,24 @@ function mymoduleAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/mymodule/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
-	$head[$h][2] = 'settings';
+	$head[$h][0] = dol_buildpath("/mymodule/myobject_card.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
 	$h++;
-	$head[$h][0] = dol_buildpath("/mymodule/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
+	if (isset($object->fields['note_public']) || isset($object->fields['note_pricate']))
+	{
+		$head[$h][0] = dol_buildpath("/mymodule/myobject_note.php", 1).'?id='.$object->id;
+		$head[$h][1] = $langs->trans("Notes");
+		$head[$h][2] = 'note';
+		$h++;
+	}
+	$head[$h][0] = dol_buildpath("/mymodule/myobject_document.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Documents");
+	$head[$h][2] = 'document';
+	$h++;
+	$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	// Show more tabs from modules
@@ -52,7 +64,7 @@ function mymoduleAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mymodule');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'myobject@mymodule');
 
 	return $head;
 }

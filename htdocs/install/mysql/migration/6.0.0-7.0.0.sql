@@ -32,6 +32,18 @@ ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
 
+ALTER TABLE llx_fichinter ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_livraison ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_livraison ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_don ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_accounting_account ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_accounting_account ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime;
+
 ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;

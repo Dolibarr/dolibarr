@@ -5866,7 +5866,7 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
      *    @param	string	$morehtml  		More html content to output just before the nav bar.
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1).
-     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field).
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field). Use 'none' to disable next/prev.
      *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
      *    @param	string	$morehtmlref  	More html to show after ref.
      *    @param	string	$moreparam  	More param to add in nav link url. Must start with '&...'.

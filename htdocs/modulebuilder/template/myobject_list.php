@@ -18,9 +18,8 @@
 
 /**
  *   	\file       htdocs/modulebuilder/template/myobject_list.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ *		\ingroup    mymodule
+ *		\brief      List page for myobject
  */
 
 //if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
@@ -59,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule","other"));
+$langs->loadLangs(array("mymodule@mymodule","other"));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -217,7 +216,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " WHERE t.entity IN (".getEntity('myobject').")";
 foreach($search as $key => $val)
 {
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:($object->fields[$key]['type'] == 'integer'?1:0)));
+	$mode=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
+	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -227,7 +227,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double','real'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -307,9 +307,10 @@ foreach ($search_array_options as $key => $val)
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 }
 
+// List of mass actions available
 $arrayofmassactions =  array(
-    'presend'=>$langs->trans("SendByMail"),
-    'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
 if ($massaction == 'presend') $arrayofmassactions=array();
@@ -325,7 +326,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
 if ($sall)
 {
@@ -363,10 +364,11 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    if (in_array($key, array('datec','tms','status'))) continue;
+    if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Extra fields
@@ -399,10 +401,11 @@ print $hookmanager->resPrint;
 // Rest of fields search
 foreach($object->fields as $key => $val)
 {
-    if (! in_array($key, array('datec','tms','status'))) continue;
+    if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Action column
@@ -418,10 +421,11 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    if (in_array($key, array('datec','tms','status'))) continue;
+    if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 }
 // Extra fields
@@ -445,10 +449,11 @@ print $hookmanager->resPrint;
 // Rest of fields title
 foreach($object->fields as $key => $val)
 {
-    if (! in_array($key, array('datec','tms','status'))) continue;
+    if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 }
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
@@ -472,22 +477,36 @@ while ($i < min($num, $limit))
     $obj = $db->fetch_object($resql);
     if ($obj)
     {
+    	// Store properties in $object
+    	$object->id = $obj->rowid;
+    	foreach($object->fields as $key => $val)
+    	{
+    		if (isset($obj->$key)) $object->$key = $obj->$key;
+    	}
+
         // Show here line of result
         print '<tr class="oddeven">';
         foreach($object->fields as $key => $val)
         {
-            if (in_array($key, array('datec','tms','status'))) continue;
+            if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
             if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+            if ($key == 'status') $align.=($align?' ':'').'center';
             if (! empty($arrayfields['t.'.$key]['checked']))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
                 if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'status') print '<td align="center">'.$object->getLibStatut(3).'</td>';
+                elseif ($key == 'ref') print $object->getNomUrl(1, '', 0, '', 1);
+                elseif ($key == 'status') print $object->getLibStatut(3);
                 else print $obj->$key;
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
+                if (! empty($val['isameasure']))
+                {
+                	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
+                	$totalarray['val']['t.'.$key] += $obj->$key;
+                }
             }
         }
     	// Extra fields
@@ -505,6 +524,11 @@ while ($i < min($num, $limit))
 					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
 					print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
+		            if (! empty($val['isameasure']))
+		            {
+		            	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
+		            	$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
+		            }
 				}
 		   }
 		}
@@ -515,18 +539,24 @@ while ($i < min($num, $limit))
         // Rest of fields
         foreach($object->fields as $key => $val)
         {
-            if (! in_array($key, array('datec','tms','status'))) continue;
+            if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
             $align='';
-            if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-            if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+            if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
+            if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
+            if ($key == 'status') $align.=($align?' ':'').'center';
             if (! empty($arrayfields['t.'.$key]['checked']))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
                 if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'status') print '<td align="center">'.$object->getLibStatut(3).'</td>';
+                elseif ($key == 'status') print $object->getLibStatut(3);
                 else print $obj->$key;
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
+                if (! empty($val['isameasure']))
+                {
+	                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
+	               	$totalarray['val']['t.'.$key] += $obj->$key;
+                }
             }
         }
         // Action column
@@ -546,22 +576,23 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['totalhtfield']))
+if (isset($totalarray['pos']))
 {
     print '<tr class="liste_total">';
     $i=0;
     while ($i < $totalarray['nbfield'])
     {
         $i++;
-        if ($i == 1)
+        if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+        else
         {
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            if ($i == 1)
+	        {
+	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+	        }
+        	print '<td></td>';
         }
-        elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';
-        elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-        elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
-        else print '<td></td>';
     }
     print '</tr>';
 }
