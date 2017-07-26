@@ -91,8 +91,6 @@ class AllTests
         $suite->addTestSuite('MarginsLibTest');
         require_once dirname(__FILE__).'/FilesLibTest.php';
         $suite->addTestSuite('FilesLibTest');
-        require_once dirname(__FILE__).'/JsonLibTest.php';
-        $suite->addTestSuite('JsonLibTest');
         require_once dirname(__FILE__).'/ImagesLibTest.php';
         $suite->addTestSuite('ImagesLibTest');
         require_once dirname(__FILE__).'/FunctionsLibTest.php';
