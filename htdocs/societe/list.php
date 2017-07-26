@@ -49,6 +49,8 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
 $search_all=trim(GETPOST('sall', 'alphanohtml'));
+$search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
+
 $search_nom=trim(GETPOST("search_nom"));
 $search_alias=trim(GETPOST("search_alias"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
@@ -401,39 +403,42 @@ if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= "
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)           $sql.= " AND s.rowid = ".$socid;
-if ($search_sale)     $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
+if ($socid)                $sql.= " AND s.rowid = ".$socid;
+if ($search_sale)          $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
-if ($search_sale)     $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
-if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
-if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_all)      $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_nom)      $sql.= natural_search("s.nom",$search_nom);
-if ($search_alias)    $sql.= natural_search("s.name_alias",$search_alias);
-if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
+if ($search_sale)          $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
+if ($search_categ > 0)     $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ == -2)   $sql.= " AND cs.fk_categorie IS NULL";
+
+if ($search_all)           $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+if (strlen($search_cti))   $sql.= natural_search('s.phone', $search_cti);
+
+if ($search_nom)           $sql.= natural_search("s.nom",$search_nom);
+if ($search_alias)         $sql.= natural_search("s.name_alias",$search_alias);
+if ($search_nom_only)      $sql.= natural_search("s.nom",$search_nom_only);
 if ($search_customer_code) $sql.= natural_search("s.code_client",$search_customer_code);
 if ($search_supplier_code) $sql.= natural_search("s.code_fournisseur",$search_supplier_code);
 if ($search_account_customer_code) $sql.= natural_search("s.code_compta",$search_account_customer_code);
 if ($search_account_supplier_code) $sql.= natural_search("s.code_compta_fournisseur",$search_account_supplier_code);
-if ($search_town)     $sql.= natural_search("s.town",$search_town);
-if ($search_zip)      $sql.= natural_search("s.zip",$search_zip);
-if ($search_state)    $sql.= natural_search("state.nom",$search_state);
-if ($search_country)  $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_email)    $sql.= natural_search("s.email",$search_email);
-if ($search_phone)    $sql.= natural_search("s.phone",$search_phone);
-if ($search_url)      $sql.= natural_search("s.url",$search_url);
-if ($search_idprof1)  $sql.= natural_search("s.siren",$search_idprof1);
-if ($search_idprof2)  $sql.= natural_search("s.siret",$search_idprof2);
-if ($search_idprof3)  $sql.= natural_search("s.ape",$search_idprof3);
-if ($search_idprof4)  $sql.= natural_search("s.idprof4",$search_idprof4);
-if ($search_idprof5)  $sql.= natural_search("s.idprof5",$search_idprof5);
-if ($search_idprof6)  $sql.= natural_search("s.idprof6",$search_idprof6);
+if ($search_town)          $sql.= natural_search("s.town",$search_town);
+if (strlen($search_zip))   $sql.= natural_search("s.zip",$search_zip);
+if ($search_state)         $sql.= natural_search("state.nom",$search_state);
+if ($search_country)       $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_email)         $sql.= natural_search("s.email",$search_email);
+if (strlen($search_phone)) $sql.= natural_search("s.phone", $search_phone);
+if ($search_url)           $sql.= natural_search("s.url",$search_url);
+if (strlen($search_idprof1)) $sql.= natural_search("s.siren",$search_idprof1);
+if (strlen($search_idprof2)) $sql.= natural_search("s.siret",$search_idprof2);
+if (strlen($search_idprof3)) $sql.= natural_search("s.ape",$search_idprof3);
+if (strlen($search_idprof4)) $sql.= natural_search("s.idprof4",$search_idprof4);
+if (strlen($search_idprof5)) $sql.= natural_search("s.idprof5",$search_idprof5);
+if (strlen($search_idprof6)) $sql.= natural_search("s.idprof6",$search_idprof6);
 // Filter on type of thirdparty
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if ($search_status!='' && $search_status >= 0) $sql .= " AND s.status = ".$db->escape($search_status);
-if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= " AND s.barcode LIKE '%".$db->escape($search_barcode)."%'";
+if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= natural_search("s.barcode", $search_barcode);
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
 if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
@@ -478,7 +483,7 @@ $num = $db->num_rows($resql);
 
 $arrayofselected=is_array($toselect)?$toselect:array();
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && $action != 'list')
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && $action != 'list')
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;

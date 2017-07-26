@@ -48,12 +48,14 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
 $sall=GETPOST('sall', 'alphanohtml');
+$search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
+$search_phone=GETPOST("search_phone");
+
 $search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_societe=GETPOST("search_societe");
 $search_poste=GETPOST("search_poste");
-$search_phone=GETPOST("search_phone");
 $search_phone_perso=GETPOST("search_phone_perso");
 $search_phone_pro=GETPOST("search_phone_pro");
 $search_phone_mobile=GETPOST("search_phone_mobile");
@@ -272,53 +274,25 @@ if ($search_categ > 0)   $sql.= " AND cc.fk_categorie = ".$db->escape($search_ca
 if ($search_categ == -2) $sql.= " AND cc.fk_categorie IS NULL";
 if ($search_categ_thirdparty > 0)   $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ_thirdparty);
 if ($search_categ_thirdparty == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_categ_supplier > 0)   $sql.= " AND cs2.fk_categorie = ".$db->escape($search_categ_supplier);
-if ($search_categ_supplier == -2) $sql.= " AND cs2.fk_categorie IS NULL";
+if ($search_categ_supplier > 0)     $sql.= " AND cs2.fk_categorie = ".$db->escape($search_categ_supplier);
+if ($search_categ_supplier == -2)   $sql.= " AND cs2.fk_categorie IS NULL";
 
-if ($search_firstlast_only) {
-    $sql .= natural_search(array('p.lastname','p.firstname'), $search_firstlast_only);
-}
-if ($search_lastname) {      // filter on lastname
-    $sql .= natural_search('p.lastname', $search_lastname);
-}
-if ($search_firstname) {   // filter on firstname
-    $sql .= natural_search('p.firstname', $search_firstname);
-}
-if ($search_societe) {  // filtre sur la societe
-    $sql .= natural_search('s.nom', $search_societe);
-}
-if (strlen($search_poste)) {  // filtre sur la societe
-    $sql .= natural_search('p.poste', $search_poste);
-}
-if (strlen($search_phone))
-{
-    $sql .= " AND (p.phone LIKE '%".$db->escape($search_phone)."%' OR p.phone_perso LIKE '%".$db->escape($search_phone)."%' OR p.phone_mobile LIKE '%".$db->escape($search_phone)."%')";
-}
-if (strlen($search_phone_perso))
-{
-    $sql .= " AND p.phone_perso LIKE '%".$db->escape($search_phone_perso)."%'";
-}
-if (strlen($search_phone_pro))
-{
-    $sql .= " AND p.phone LIKE '%".$db->escape($search_phone_pro)."%'";
-}
-if (strlen($search_phone_mobile))
-{
-    $sql .= " AND p.phone_mobile LIKE '%".$db->escape($search_phone_mobile)."%'";
-}
-if (strlen($search_fax))
-{
-    $sql .= " AND p.fax LIKE '%".$db->escape($search_fax)."%'";
-}
-if (strlen($search_email))      // filtre sur l'email
-{
-    $sql .= " AND p.email LIKE '%".$db->escape($search_email)."%'";
-}
-if (strlen($search_skype))      // filtre sur skype
-{
-    $sql .= " AND p.skype LIKE '%".$db->escape($search_skype)."%'";
-}
-if ($search_status != '' && $search_status >= 0) $sql .= " AND p.statut = ".$db->escape($search_status);
+if ($sall)                          $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if (strlen($search_phone))          $sql.= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_phone);
+if (strlen($search_cti))            $sql.= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_cti);
+if (strlen($search_firstlast_only)) $sql.= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
+
+if ($search_lastname)               $sql.= natural_search('p.lastname', $search_lastname);
+if ($search_firstname)              $sql.= natural_search('p.firstname', $search_firstname);
+if ($search_societe)                $sql.= natural_search('s.nom', $search_societe);
+if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_poste);
+if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
+if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
+if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
+if (strlen($search_fax))            $sql.= natural_search('p.phone_fax', $search_fax);
+if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
+if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
+if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
 if ($type == "o")        // filtre sur type
 {
     $sql .= " AND p.fk_soc IS NULL";
@@ -334,10 +308,6 @@ else if ($type == "c")        // filtre sur type
 else if ($type == "p")        // filtre sur type
 {
     $sql .= " AND s.client IN (2, 3)";
-}
-if ($sall)
-{
-    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if (! empty($socid))
 {
@@ -391,7 +361,7 @@ $num = $db->num_rows($result);
 
 $arrayofselected=is_array($toselect)?$toselect:array();
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($sall != '' || $seearch_cti != ''))
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
