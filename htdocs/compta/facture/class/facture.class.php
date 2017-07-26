@@ -749,7 +749,12 @@ class Facture extends CommonInvoice
 		// Charge facture source
 		$facture=new Facture($this->db);
                 
-                foreach($this->lines as $line){
+                $this->fetch_optionals();
+                if(!empty($this->array_options)){
+                    $facture->array_options = $this->array_options;
+                }
+           
+                foreach($this->lines as &$line){
                     $line->fetch_optionals();//fetch extrafields
                 }
 
