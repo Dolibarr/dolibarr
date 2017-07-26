@@ -3960,7 +3960,8 @@ abstract class CommonObject
 	                    }
 	                }
 
-	                if (count($listoffiles))
+	                $num = (is_null($listoffiles) ? 0 : count($listoffiles)); // for avoid phpunit error : "Parameter must be an array or an object that implements Countable"
+	                if ($num)
 	                {
 	                	foreach($listoffiles as $record)
 	                    {
