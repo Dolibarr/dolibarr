@@ -28,9 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-$langs->load("admin");
-$langs->load("modulebuilder");
-$langs->load("other");
+$langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
