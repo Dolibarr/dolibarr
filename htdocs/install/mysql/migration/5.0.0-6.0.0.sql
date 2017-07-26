@@ -467,6 +467,8 @@ DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM l
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
+
 CREATE TABLE llx_loan_schedule
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
