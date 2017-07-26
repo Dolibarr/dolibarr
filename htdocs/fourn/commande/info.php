@@ -68,7 +68,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $actioncode='';
     $search_agenda_label='';
@@ -100,7 +100,7 @@ $now=dol_now();
 $head = ordersupplier_prepare_head($object);
 
 
-dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), 0, 'order');
+dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), -1, 'order');
 
 
 // Supplier order card
@@ -197,7 +197,7 @@ if (!empty($object->id))
     $param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    
+
     print load_fiche_titre($langs->trans("ActionsOnOrder"),'','');
 
     // List of actions on element

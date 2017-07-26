@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2016		Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -25,8 +24,7 @@
  * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
-
-// Class
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
@@ -47,11 +45,11 @@ $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETP
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
-if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt")) {
+if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
 }
-if (GETPOST("button_export_csv_x") || GETPOST("button_export_csv")) {
-	$action = 'export_csv';
+if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOST("button_export_file")) {
+	$action = 'export_file';
 }
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
@@ -99,7 +97,7 @@ $formother = new FormOther($db);
 $form = new Form($db);
 
 
-if ($action != 'export_csv' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction'])) {
+if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page)) {
     $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
     $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
@@ -113,7 +111,7 @@ if ($action != 'export_csv' && ! isset($_POST['begin']) && ! isset($_GET['begin'
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_mvt_num = '';
 	$search_doc_type = '';
@@ -183,7 +181,7 @@ if (! empty($search_accountancy_aux_code_end)) {
     $param .= '&search_accountancy_aux_code_end=' . $search_accountancy_aux_code_end;
 }
 if (! empty($search_mvt_label)) {
-    $filter['t.label_compte'] = $search_mvt_label;
+    $filter['t.label_operation'] = $search_mvt_label;
     $param .= '&search_mvt_label=' . $search_mvt_label;
 }
 if (! empty($search_direction)) {
@@ -261,9 +259,8 @@ if ($action == 'delmouvconfirm') {
 	}
 }
 
-if ($action == 'export_csv') {
-
-    include DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
+// Export into a file with format defined into setup
+if ($action == 'export_file') {
 
     $result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 
@@ -356,9 +353,11 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$button = '<a class="butAction" name="button_export_csv" href="'.$_SERVER["PHP_SELF"].'?action=export_csv'.($param?'&'.$param:'').'">';
+$listofformat=AccountancyExport::getType();
+$button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
+$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
 $button.= '</a>';
 
 $groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php"">' . $langs->trans("GroupByAccountAccounting") . '</a>';
@@ -377,33 +376,51 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
-print $langs->trans('From') . ': ';
+print $langs->trans('From') . ' ';
 print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to') . ': ';
+print $langs->trans('to') . ' ';
 print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 print '</div>';
 print '</td>';
 print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
-print $langs->trans('From');
+print $langs->trans('From').' ';
 print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to');
+print $langs->trans('to').' ';
 print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
 print '</div>';
 print '</td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
-print $langs->trans('From');
-print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+print $langs->trans('From').' ';
+// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+// use setup of keypress to select thirdparty and this hang browser on large database.
+if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+{
+    print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+}
+else
+{
+    print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+}
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to');
-print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+print $langs->trans('to').' ';
+// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+// use setup of keypress to select thirdparty and this hang browser on large database.
+if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+{
+    print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+}
+else
+{
+    print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+}
 print '</div>';
 print '</td>';
 print '<td class="liste_titre">';
@@ -424,7 +441,7 @@ print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_d
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("SubledgerAccount"), $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -437,8 +454,10 @@ print "</tr>\n";
 $total_debit = 0;
 $total_credit = 0;
 
-foreach ($object->lines as $line ) {
-	$var = ! $var;
+$i=0;
+while ($i < min($num, $limit))
+{
+	$line = $object->lines[$i];
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -450,7 +469,7 @@ foreach ($object->lines as $line ) {
 	print '<td class="nowrap">' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->subledger_account) . '</td>';
-	print '<td>' . $line->label_compte . '</td>';
+	print '<td>' . $line->label_operation . '</td>';
 	print '<td align="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
 	print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 
@@ -464,6 +483,8 @@ foreach ($object->lines as $line ) {
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';
 	print "</tr>\n";
+
+	$i++;
 }
 
 print '<tr class="liste_total">';

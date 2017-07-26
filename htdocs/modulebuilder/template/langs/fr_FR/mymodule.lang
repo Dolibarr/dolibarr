@@ -1,5 +1,4 @@
-# <one line to give the program's name and a brief idea of what it does.>
-# Copyright (C) <year>  <name of author>
+# Copyright (C) ---Put here your own copyright and developer email---
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,5 +44,5 @@ MyPageName = Nom de ma page
 #
 # Box d'exemple
 #
-MyBox = Ma boîte
-MyBoxDescription = Description de ma boîte
+MyWidget = Mon widget
+MyWidgetDescription = Description de mon widget

@@ -106,7 +106,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 {
     $actiondone=1;
 
-    print '<h3>'.$langs->trans("DatabaseMigration").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("DatabaseMigration").'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
@@ -185,10 +185,10 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
 
         // Test database version requirement
-        $versionmindb=$db::VERSIONMIN;
+        $versionmindb=explode('.',$db::VERSIONMIN);
         //print join('.',$versionarray).' - '.join('.',$versionmindb);
         if (count($versionmindb) && count($versionarray)
-        	&& versioncompare($versionarray,$versionmindb) < 0)
+        	&& versioncompare($versionarray, $versionmindb) < 0)
         {
         	// Warning: database version too low.
         	print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow",join('.',$versionarray),join('.',$versionmindb))."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";

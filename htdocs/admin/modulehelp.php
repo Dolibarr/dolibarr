@@ -225,20 +225,6 @@ asort($orders);
 //var_dump($modules);
 
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
-$head[$h][1] = $langs->trans("Description");
-$head[$h][2] = 'desc';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
-$head[$h][1] = $langs->trans("TechnicalServicesProvided");
-$head[$h][2] = 'feature';
-$h++;
-
-
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
@@ -256,6 +242,28 @@ $value = $orders[$key];
 $special = $objMod->special;
 $tab=explode('_',$value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
+
+
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
+$head[$h][1] = $langs->trans("Description");
+$head[$h][2] = 'desc';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
+$head[$h][1] = $langs->trans("TechnicalServicesProvided");
+$head[$h][2] = 'feature';
+$h++;
+
+if ($objMod->isCoreOrExternalModule() == 'external')
+{
+    $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=changelog';
+    $head[$h][1] = $langs->trans("ChangeLog");
+    $head[$h][2] = 'changelog';
+    $h++;
+}
 
 // Check filters
 $modulename=$objMod->getName();
@@ -535,6 +543,13 @@ if ($mode == 'feature')
     $text.=$langs->trans("DetectionNotPossible");
 }
 
+
+if ($mode == 'changelog')
+{
+    $changelog=$objMod->getChangeLog();
+    if ($changelog) $text.='<div class="moduledesclong">'.$changelog.'<div>';
+    else $text.='<div class="moduledesclong">'.$langs->trans("NotAvailable").'</div>';
+}
 
 print $text;
 

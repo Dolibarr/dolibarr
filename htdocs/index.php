@@ -333,7 +333,7 @@ if (empty($user->societe_id))
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            $boxstat.='<div class="boxstats">';
 	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
-	            $boxstat.='<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
+	            $boxstat.='<span class="boxstatsindicator">'.($board->nb[$val]?$board->nb[$val]:0).'</span>';
 	            $boxstat.='</div>';
 	            $boxstat.='</a>';
 	        }
@@ -448,7 +448,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->supplier_invoice->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
+if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fournisseur->facture->lire))
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);

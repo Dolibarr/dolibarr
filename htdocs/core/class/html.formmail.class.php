@@ -433,7 +433,7 @@ class FormMail extends Form
         		}
         		else
         		{
-        			$out.= "<tr><td>".$langs->trans("MailFrom")."</td><td>";
+        			$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom")."</td><td>";
         			$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
         			$out.= '&nbsp; &nbsp; ';
         			$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
@@ -441,42 +441,10 @@ class FormMail extends Form
         		}
         	}
 
-        	// Replyto
-        	if (! empty($this->withreplyto))
-        	{
-        		if ($this->withreplytoreadonly)
-        		{
-        			$out.= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
-        			$out.= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
-        			$out.= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
-        			$out.= "</td></tr>\n";
-        		}
-        	}
-
-        	// Errorsto
-        	if (! empty($this->witherrorsto))
-        	{
-        		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
-        		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
-        		if ($this->witherrorstoreadonly)
-        		{
-        			$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
-        			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-        			$out.= $errorstomail;
-        			$out.= "</td></tr>\n";
-        		}
-        		else
-        		{
-        			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-        			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
-        			$out.= "</td></tr>\n";
-        		}
-        	}
-
         	// To
         	if (! empty($this->withto) || is_array($this->withto))
         	{
-        		$out.= '<tr><td width="180">';
+        		$out.= '<tr><td class="fieldrequired" width="180">';
         		if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		else $out.= $langs->trans("MailTo");
         		$out.= '</td><td>';
@@ -528,7 +496,12 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$out.= $form->multiselectarray("receiver", $tmparray, GETPOST("receiver"), null, null, 'inline-block minwidth500', null, "");
+        				$withtoselected=GETPOST("receiver");     // Array of selected value
+        				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+        				{
+        				    $withtoselected = array_keys($tmparray);
+        				}
+        				$out.= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -556,7 +529,8 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$out.= $form->multiselectarray("receivercc", $tmparray, GETPOST("receivercc"), null, null, 'inline-block minwidth500',null, "");
+        				$withtoccselected=GETPOST("receivercc");     // Array of selected value
+        				$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -584,8 +558,8 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				//$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
-        				$out.= $form->multiselectarray("receiverccc", $tmparray, GETPOST("receiverccc"), null, null, null,null, "90%");
+        				$withtocccselected=GETPOST("receiverccc");     // Array of selected value
+        				$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
         			}
         		}
 
@@ -596,6 +570,38 @@ class FormMail extends Form
         		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
         		if ($showinfobcc) $out.=' + '.$showinfobcc;
         		$out.= "</td></tr>\n";
+        	}
+
+        	// Replyto
+        	if (! empty($this->withreplyto))
+        	{
+        		if ($this->withreplytoreadonly)
+        		{
+        			$out.= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
+        			$out.= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
+        			$out.= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
+        			$out.= "</td></tr>\n";
+        		}
+        	}
+
+        	// Errorsto
+        	if (! empty($this->witherrorsto))
+        	{
+        		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
+        		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
+        		if ($this->witherrorstoreadonly)
+        		{
+        			$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+        			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+        			$out.= $errorstomail;
+        			$out.= "</td></tr>\n";
+        		}
+        		else
+        		{
+        			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+        			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+        			$out.= "</td></tr>\n";
+        		}
         	}
 
         	// Ask delivery receipt
@@ -630,7 +636,7 @@ class FormMail extends Form
         		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
         		$out.= '<tr>';
-        		$out.= '<td width="180">'.$langs->trans("MailTopic").'</td>';
+        		$out.= '<td class="fieldrequired" width="180">'.$langs->trans("MailTopic").'</td>';
         		$out.= '<td>';
         		if ($this->withtopicreadonly)
         		{

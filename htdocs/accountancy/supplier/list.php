@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -100,11 +100,11 @@ if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $search_lineid = '';
     $search_ref = '';
-    $search_invoice = '';    
+    $search_invoice = '';
     $search_label = '';
     $search_desc = '';
     $search_amount = '';
@@ -146,10 +146,10 @@ if ($massaction == 'ventil') {
                 $sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
                 $sql .= " SET fk_code_ventilation = " . $monCompte;
                 $sql .= " WHERE rowid = " . $monId;
-    
+
                 $accountventilated = new AccountingAccount($db);
                 $accountventilated->fetch($monCompte, '');
-    
+
                 dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
                     $msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
@@ -159,7 +159,7 @@ if ($massaction == 'ventil') {
                     $ko++;
                 }
             }
-            
+
             $cpt++;
         }
         $msg.='</div>';
@@ -181,7 +181,7 @@ llxHeader('', $langs->trans("SuppliersVentilation"));
 
 // Supplier Invoice Lines
 $sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef,";
-$sql.= " l.rowid, l.fk_product, l.description, l.total_ht as price, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, ";
+$sql.= " l.rowid, l.fk_product, l.description, l.total_ht as price, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
 $sql.= " aa.rowid as aarowid";
 $sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
@@ -191,7 +191,8 @@ $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountan
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql.= " AND product_type <= 2";
-$sql.= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy ='')";
+$sql.= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy =''OR p.accountancy_code_buy  NOT IN
+	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accounting_account as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid ='" . $conf->global->CHARTOFACCOUNTS . "'))";
 // Add search filter like
 if ($search_lineid) {
     $sql .= natural_search("l.rowid", $search_lineid, 1);
@@ -332,7 +333,7 @@ if ($result) {
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->type;
-		
+
 		$code_buy_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
@@ -356,7 +357,7 @@ if ($result) {
 
 		// $objp->code_buy_p is now code of product/service
 		// $objp->code_buy_l is now default code of product/service
-					
+
 		print '<tr class="oddeven">';
 
 		// Line id
@@ -381,7 +382,7 @@ if ($result) {
         // Description
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
-		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
 
@@ -393,7 +394,7 @@ if ($result) {
 		if ($objp->vat_tx_l != $objp->vat_tx_p)
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		print '<td style="' . $code_vat_differ . '" align="right">';
-		print price($objp->tva_tx_line);
+		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
 		// Current account
@@ -422,7 +423,7 @@ if ($result) {
 
 	print '</table>';
 	print "</div>";
-	
+
 	print '</form>';
 } else {
 	print $db->error();

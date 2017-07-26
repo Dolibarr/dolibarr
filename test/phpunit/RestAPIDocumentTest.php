@@ -144,11 +144,11 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
         echo __METHOD__.' Request POST url='.$url."\n";
 
-        
+
         // Send to non existant directory
-        
+
         dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
-        
+
         //$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
         $data = array(
             'filename'=>"mynewfile.txt",
@@ -158,7 +158,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
             'filecontent'=>"content text",
             'fileencoding'=>""
         );
-        
+
         $result = getURLContent($url, 'POST', $data, 1);
         echo __METHOD__.' Result for sending document: '.var_export($result, true)."\n";
         echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
@@ -166,11 +166,11 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($object, 'Parsing of json result must no be null');
         $this->assertEquals('401', $object['error']['code']);
 
-        
+
         // Send to existant directory
-        
+
         dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
-        
+
         $data = array(
             'filename'=>"mynewfile.txt",
             'modulepart'=>"medias",
@@ -187,5 +187,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($object2, 'Parsing of json result must no be null');
         $this->assertEquals($result2['curl_error_no'], '');
         $this->assertEquals($result2['content'], 'true');
+
+        dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
     }
 }

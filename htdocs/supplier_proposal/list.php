@@ -177,7 +177,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -363,11 +363,11 @@ if ($resql)
 	{
 	    $title = $langs->trans('ListOfSupplierProposals');
 	}
-	
+
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
+
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -401,7 +401,7 @@ if ($resql)
 	if ($user->rights->supplier_proposal->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-	
+
 	// Lignes des champs de filtre
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -411,13 +411,13 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
-	
+
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
 	if ($massaction == 'presend')
 	{
 	    $langs->load("mails");
-	
+
 	    if (! GETPOST('cancel'))
 	    {
 	        $objecttmp=new SupplierProposal($db);
@@ -436,17 +436,17 @@ if ($resql)
 	            }
 	        }
 	    }
-	
+
 	    print '<input type="hidden" name="massaction" value="confirm_presend">';
-	
+
 	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	    $formmail = new FormMail($db);
-	
+
 	    dol_fiche_head(null, '', '');
-	
+
 	    $topicmail="SendProposalRef";
 	    $modelmail="propal_send";
-	
+
 	    // Cree l'objet formulaire mail
 	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	    $formmail = new FormMail($db);
@@ -499,25 +499,25 @@ if ($resql)
 	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
 	    $formmail->substit['__PERSONALIZED__']='';
 	    $formmail->substit['__CONTACTCIVNAME__']='';
-	
+
 	    // Tableau des parametres complementaires du post
 	    $formmail->param['action']=$action;
 	    $formmail->param['models']=$modelmail;
 	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
 	    $formmail->param['id']=join(',',$arrayofselected);
 	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	
+
 	    print $formmail->get_form();
-	
+
 	    dol_fiche_end();
 	}
-	
+
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 	}
-	
+
 	$i = 0;
 
 	$moreforfilter='';
@@ -553,30 +553,30 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
-	
+
 	if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
         print '</div>';
     }
-	
+
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-    
+
 	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['sp.ref']['checked']))            
+	if (! empty($arrayfields['sp.ref']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
-	{	
+	{
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 		print '</td>';
@@ -605,7 +605,7 @@ if ($resql)
     	print '</td>';
     }
 	// Date
-	if (! empty($arrayfields['sp.date_valid']['checked'])) 
+	if (! empty($arrayfields['sp.date_valid']['checked']))
 	{
 		print '<td class="liste_titre" colspan="1" align="center">';
 		//print $langs->trans('Month').': ';
@@ -613,10 +613,10 @@ if ($resql)
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$syearvalid = $yearvalid;
 		$formother->select_year($syearvalid,'yearvalid',1, 20, 5);
-		print '</td>';	
+		print '</td>';
 	}
 	// Date
-	if (! empty($arrayfields['sp.date_livraison']['checked'])) 
+	if (! empty($arrayfields['sp.date_livraison']['checked']))
 	{
 		print '<td class="liste_titre" colspan="1" align="center">';
 		//print $langs->trans('Month').': ';
@@ -654,7 +654,7 @@ if ($resql)
 	    print '<td class="liste_titre" align="center">';
 	    print '<input class="flat" size="4" type="text" name="search_login" value="'.$search_author.'">';
 	    print '</td>';
-	}	
+	}
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -698,7 +698,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre">';
 	    print '</td>';
-	}	
+	}
 	// Status
 	if (! empty($arrayfields['sp.fk_statut']['checked']))
 	{
@@ -732,12 +732,14 @@ if ($resql)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -750,7 +752,7 @@ if ($resql)
 	if (! empty($arrayfields['sp.fk_statut']['checked'])) print_liste_field_titre($arrayfields['sp.fk_statut']['label'],$_SERVER["PHP_SELF"],"sp.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>'."\n";
-	
+
 	$now = dol_now();
 	$i=0;
 	$total=0;
@@ -759,12 +761,12 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
 
 		print '<tr class="oddeven">';
-		
+
 		if (! empty($arrayfields['sp.ref']['checked']))
 		{
 			print '<td class="nowrap">';
@@ -797,11 +799,11 @@ if ($resql)
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
-	
+
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
-		
+
 		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid;
 
 		// Company
@@ -859,7 +861,7 @@ if ($resql)
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }
-        
+
 		// Date proposal
         if (! empty($arrayfields['sp.date_valid']['checked']))
         {
@@ -868,7 +870,7 @@ if ($resql)
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
         }
-		
+
 		// Date delivery
         if (! empty($arrayfields['sp.date_livraison']['checked']))
         {
@@ -902,7 +904,7 @@ if ($resql)
 		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 		    $totalarray['totalttc'] += $obj->total_ttc;
         }
-        
+
 		$userstatic->id=$obj->fk_user_author;
 		$userstatic->login=$obj->login;
 
@@ -915,7 +917,7 @@ if ($resql)
 			print "</td>\n";
     		if (! $i) $totalarray['nbfield']++;
         }
-        
+
         // Extra fields
         if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
         {
@@ -956,7 +958,7 @@ if ($resql)
         }
         // Status
         if (! empty($arrayfields['sp.fk_statut']['checked']))
-        {	
+        {
             print '<td align="right">'.$objectstatic->LibStatut($obj->fk_statut,5)."</td>\n";
             if (! $i) $totalarray['nbfield']++;
         }
@@ -971,7 +973,7 @@ if ($resql)
         }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-        
+
 		print "</tr>\n";
 
 		$total += $obj->total_ht;
@@ -1007,16 +1009,16 @@ if ($resql)
 	}
 
 	$db->free($resql);
-	
+
 	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	print '</table>'."\n";
     print '</div>'."\n";
 
 	print '</form>'."\n";
-	
+
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 	{
 	    /*
@@ -1024,18 +1026,18 @@ if ($resql)
 	     */
 	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	    $urlsource.=str_replace('&amp;','&',$param);
-	
+
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->supplier_proposal->lire;
 	    $delallowed=$user->rights->supplier_proposal->lire;
-	
+
 	    print $formfile->showdocuments('massfilesarea_supplier_proposal','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
 	}
 	else
 	{
 	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
 	}
-	
+
 }
 else
 {

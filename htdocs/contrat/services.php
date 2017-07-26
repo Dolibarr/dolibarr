@@ -153,7 +153,7 @@ if (empty($reshook))
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
     	$search_name="";
     	$search_contract="";
@@ -333,7 +333,7 @@ if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights-
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
     $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-    $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+    $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
     $moreforfilter.='</div>';
 }
 
@@ -373,7 +373,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
         if (! empty($arrayfields["ef.".$key]['checked']))
         {
             $align=$extrafields->getAlignFlag($key);
-            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			$sortonfield = "ef.".$key;
+			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -522,23 +524,22 @@ $var=True; $i=0;
 while ($i < min($num,$limit))
 {
 	$obj = $db->fetch_object($resql);
-	
+
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-	
-	
+
 
 	print '<tr class="oddeven">';
-	
+
 	// Ref
-    if (! empty($arrayfields['c.ref']['checked'])) 
+    if (! empty($arrayfields['c.ref']['checked']))
     {
         print '<td>';
 		print $contractstatic->getNomUrl(1,16);
 		print '</td>';
     }
 	// Service
-    if (! empty($arrayfields['p.description']['checked'])) 
+    if (! empty($arrayfields['p.description']['checked']))
     {
         print '<td>';
 		if ($obj->pid)
@@ -558,9 +559,9 @@ while ($i < min($num,$limit))
 		}
 		print '</td>';
     }
-    
+
 	// Third party
-    if (! empty($arrayfields['s.nom']['checked'])) 
+    if (! empty($arrayfields['s.nom']['checked']))
     {
         print '<td>';
 		$companystatic->id=$obj->socid;
@@ -569,9 +570,9 @@ while ($i < min($num,$limit))
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
     }
-    
+
 	// Start date
-    if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) 
+    if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
     {
 		print '<td align="center">';
 		print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue)):'&nbsp;');
@@ -580,15 +581,15 @@ while ($i < min($num,$limit))
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
 	}
-    if (! empty($arrayfields['cd.date_ouverture']['checked'])) 
+    if (! empty($arrayfields['cd.date_ouverture']['checked']))
     {
 	    print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
 	}
 	// End date
-    if (! empty($arrayfields['cd.date_fin_validite']['checked'])) 
+    if (! empty($arrayfields['cd.date_fin_validite']['checked']))
     {
 	    print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
-		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) 
+		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5)
 		{
 		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
             $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
@@ -597,7 +598,7 @@ while ($i < min($num,$limit))
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 	    print '</td>';
     }
-    if (! empty($arrayfields['cd.date_cloture']['checked'])) 
+    if (! empty($arrayfields['cd.date_cloture']['checked']))
     {
         print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture)).'</td>';
     }
@@ -664,7 +665,7 @@ while ($i < min($num,$limit))
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print "</tr>\n";
 	$i++;
 }

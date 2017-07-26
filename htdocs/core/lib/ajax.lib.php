@@ -37,9 +37,9 @@
  *  @param	int		$autoselect			Automatic selection if just one value
  *  @param	array	$ajaxoptions		Multiple options array
  *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                          Ex: array('disabled'=>
- *                                          Ex: array('show'=>
- *                                          Ex: array('update_textarea'=>
+ *                                          Ex: array('disabled'=> )
+ *                                          Ex: array('show'=> )
+ *                                          Ex: array('update_textarea'=> )
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
@@ -181,12 +181,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
-							
+
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
-						  
+
 						return $("<li>")
 						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
@@ -352,8 +352,8 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
 /**
  * Make content of an input box selected when we click into input field.
- * 
- * @param string	$htmlname	Id of html object 
+ *
+ * @param string	$htmlname	Id of html object
  * @param string	$addlink	Add a 'link to' after
  */
 function ajax_autoselect($htmlname, $addlink='')
@@ -383,7 +383,7 @@ function ajax_autoselect($htmlname, $addlink='')
 function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
-	
+
 	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
 	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
@@ -392,13 +392,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
-    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'				    
+					minimumInputLength: '.$minLengthToAutocomplete.'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

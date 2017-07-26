@@ -1,30 +1,32 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal konfiguracji modułu
-PaypalDesc=Ta oferta moduł stron, umożliwiających płatności w <a href="http://www.paypal.com" target="_blank">systemie PayPal</a> przez klientów. Może to być wykorzystywane do bezpłatnego opłatę lub wpłaty na konkretnego obiektu Dolibarr (faktura, zamówienie, ...)
+PaypalDesc=Ten moduł oferuję stronę pozwalającą na płatności w systemie <a href="http://www.paypal.com" target="_blank">PayPal</a> przez klientów. Moduł może być wykorzystany do bezpłatnych płatności lub do płatności za określone obiekty Dolibarr (faktury, zamówienie itp.)
 PaypalOrCBDoPayment=Zapłać kartą kredytową lub poprzez system Paypal
 PaypalDoPayment=Zapłać z PayPal
 PAYPAL_API_SANDBOX=Tryb testu / sandbox
 PAYPAL_API_USER=API użytkownika
 PAYPAL_API_PASSWORD=API hasło
 PAYPAL_API_SIGNATURE=Podpis API
-PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_SSLVERSION=Wersja Curl SSL
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta płatności "integralnej" (Karta kredytowa+Paypal) lub tylko "Paypal"
 PaypalModeIntegral=Integralny
 PaypalModeOnlyPaypal=Tylko PayPal
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+PAYPAL_CSS_URL=Opcjonalny adres URL arkusza stylów CSS na stronie płatności
 ThisIsTransactionId=Jest to id transakcji: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Dodaj url płatności PayPal podczas wysyłania dokumentów pocztą
-PredefinedMailContentLink=Możesz kliknąć na obrazek poniżej bezpiecznego aby dokonać płatności (PayPal), jeśli nie jest już zrobione. % S
-YouAreCurrentlyInSandboxMode=Jesteś obecnie w trybie &quot;sandbox&quot;
-NewPaypalPaymentReceived=Otrzymał nowe Paypal zapłata
-NewPaypalPaymentFailed=Nowe Paypal zapłata próbował, ale nie
-PAYPAL_PAYONLINE_SENDEMAIL=Napisz e-mail, aby ostrzec po płatności (sukces lub nie)
-ReturnURLAfterPayment=Powrót URL po dokonaniu płatności
-ValidationOfPaypalPaymentFailed=Walidacja Paypal płatności zawiodły
-PaypalConfirmPaymentPageWasCalledButFailed=Strona potwierdzenia płatności za Paypal został nazwany przez Paypal, ale potwierdzenie nie udało
-SetExpressCheckoutAPICallFailed=Połączenie poprzez SetExpressCheckout API nie powiodło się
-DoExpressCheckoutPaymentAPICallFailed=Połączenie poprzez DoExpressCheckoutPayment API nie powiodło się.
+PAYPAL_ADD_PAYMENT_URL=Dodaj link do płatności PayPal podczas wysyłania dokumentów za pośrednictwem email
+PredefinedMailContentLink=Możesz kliknąć na bezpieczny link poniżej aby dokonać płatności (PayPal), jeśli nie jest jeszcze wykonana.\n\n%s\n\n
+YouAreCurrentlyInSandboxMode=Jesteś obecnie w trybie "sandbox"
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+PAYPAL_PAYONLINE_SENDEMAIL=Napisz e-mail, aby poinformować po płatności (sukces lub nie)
+ReturnURLAfterPayment=Zwróć adres URL po dokonaniu płatności
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=Wywołanie API poprzez SetExpressCheckout nie powiodło się
+DoExpressCheckoutPaymentAPICallFailed=Wywołanie API poprzez DoExpressCheckoutPayment nie powiodło się.
 DetailedErrorMessage=Szczegółowa informacja o błędzie
 ShortErrorMessage=Krotka informacja o błędzie
 ErrorCode=Kod błędu
 ErrorSeverityCode=Kod ważności błędu
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)

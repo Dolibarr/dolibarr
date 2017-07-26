@@ -62,7 +62,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -412,7 +412,8 @@ else
 		                        array('from'=>'3.8.0', 'to'=>'3.9.0'),
 		                        array('from'=>'3.9.0', 'to'=>'4.0.0'),
 		                        array('from'=>'4.0.0', 'to'=>'5.0.0'),
-		                        array('from'=>'5.0.0', 'to'=>'6.0.0')
+		                        array('from'=>'5.0.0', 'to'=>'6.0.0'),
+		                        array('from'=>'6.0.0', 'to'=>'7.0.0')
 		);
 
 		$count=0;

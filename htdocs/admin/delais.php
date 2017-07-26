@@ -165,7 +165,7 @@ if ($action == 'edit')
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
     foreach($modules as $module => $delays)
     {
@@ -173,12 +173,12 @@ if ($action == 'edit')
     	{
     		foreach($delays as $delay)
     		{
-    			
+
 				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
     			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td>';
-    			print '<input size="5" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
+    			print '<input class="right maxwidth75" type="number" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
     		}
     	}
     }
@@ -189,11 +189,11 @@ if ($action == 'edit')
 
 	// Show if meteo is enabled
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	$var=false;
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
 
 	print '</table>';
 
@@ -211,7 +211,7 @@ else
      */
 
 	print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
     foreach($modules as $module => $delays)
@@ -220,12 +220,12 @@ else
     	{
     		foreach($delays as $delay)
     		{
-    			
+
 				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
     			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('',$delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
-    			print '<td>'.$value.' '.$langs->trans("days").'</td></tr>';
+    			print '<td class="right">'.$value.' '.$langs->trans("days").'</td></tr>';
     		}
     	}
     }
@@ -236,11 +236,11 @@ else
 
 	// Show if meteo is enabled
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	$var=false;
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 
 	print '</table>';
 

@@ -314,7 +314,7 @@ class FormFile
 
         if (preg_match('/massfilesarea_/', $modulepart))
         {
-	        $out.='<div id="show_files"><br></div>';
+	        $out.='<div id="show_files"><br></div>'."\n";
 			$title=$langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
 			$title.='<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
@@ -690,6 +690,7 @@ class FormFile
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
+                $out.= '<div class="div-table-responsive-no-min">';
                 $out.= '<table class="noborder" summary="listofdocumentstable" id="'.$modulepart.'_table" width="100%">'."\n";
             }
 
@@ -787,14 +788,14 @@ class FormFile
                     $out.=dol_print_date($file->datea,'dayhour');
                     $out.='</td>';
                     if ($delallowed || $printer || $morepicto) $out.='<td></td>';
-                    $out.='</tr>';
+                    $out.='</tr>'."\n";
                 }
                 $this->numoffiles++;
             }
 
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
             {
-	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	        	$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
     	    }
 
         }
@@ -1001,6 +1002,7 @@ class FormFile
 			    print '<input type="hidden" name="id" value="'.$object->id.'">';
 			    print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
+
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 
@@ -1105,8 +1107,6 @@ class FormFile
 						&& $file['name'] != '..'
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
-
-
 					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
 
 					$editline=0;

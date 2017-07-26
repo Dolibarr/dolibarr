@@ -380,7 +380,7 @@ if (($action=="create") || ($action=="edit"))
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print "<input type=\"text\" size=\"20\" name=\"params\" value=\"".$object->params."\" /> ";
+	print "<input type=\"text\" class=\"quatrevingtpercent\" name=\"params\" value=\"".$object->params."\" /> ";
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('',$langs->trans("CronArgsHelp"),1,'help');
@@ -408,10 +408,10 @@ if (($action=="create") || ($action=="edit"))
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
-	print "<select name=\"nbfrequency\">";
-	for($i=1; $i<=60; $i++)
+	print '<select name="nbfrequency">';
+	for ($i=1; $i<=60; $i++)
 	{
-	    if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i)
+	    if ($object->frequency == $i)
 	    {
 	        print "<option value='".$i."' selected>".$i."</option>";
 	    }

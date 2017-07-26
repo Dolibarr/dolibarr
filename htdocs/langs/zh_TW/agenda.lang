@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=事件
 Agenda=議程
+TMenuAgenda=議程
 Agendas=議程
 LocalAgenda=內部日曆
 ActionsOwnedBy=事件屬於
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=刪除發票
 InvoicePaidInDolibarr=Invoice %s changed to paid
 InvoiceCanceledInDolibarr=Invoice %s canceled
 MemberValidatedInDolibarr=Member %s validated
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
 ShipmentValidatedInDolibarr=Shipment %s validated
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=採購訂單%s已驗證
@@ -73,13 +75,17 @@ InterventionSentByEMail=通過電子郵件發送的幹預%s
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=開始日期
 DateActionEnd=結束日期
 AgendaUrlOptions1=您還可以添加以下參數來篩選輸出：
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b>到限制輸出到行動<b>使用者與受影響<b>%</b>。
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts

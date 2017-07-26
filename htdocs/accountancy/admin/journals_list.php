@@ -41,7 +41,7 @@ $rowid=GETPOST('rowid','alpha');
 $code=GETPOST('code','alpha');
 
 // Security access
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -58,7 +58,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -134,6 +134,7 @@ $elementList = array();
 			'2' => $langs->trans('AccountingJournalType2'),
 			'3' => $langs->trans('AccountingJournalType3'),
 			'4' => $langs->trans('AccountingJournalType4'),
+			'5' => $langs->trans('AccountingJournalType5'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 

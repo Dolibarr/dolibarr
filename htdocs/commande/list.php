@@ -51,12 +51,12 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$orderyear=GETPOST("orderyear","int");
-$ordermonth=GETPOST("ordermonth","int");
-$orderday=GETPOST("orderday","int");
-$deliveryyear=GETPOST("deliveryyear","int");
-$deliverymonth=GETPOST("deliverymonth","int");
-$deliveryday=GETPOST("deliveryday","int");
+$search_orderyear=GETPOST("search_orderyear","int");
+$search_ordermonth=GETPOST("search_ordermonth","int");
+$search_orderday=GETPOST("search_orderday","int");
+$search_deliveryyear=GETPOST("search_deliveryyear","int");
+$search_deliverymonth=GETPOST("search_deliverymonth","int");
+$search_deliveryday=GETPOST("search_deliveryday","int");
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref','alpha')!=''?GETPOST('search_ref','alpha'):GETPOST('sref','alpha');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
@@ -162,7 +162,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
         $search_categ='';
         $search_user='';
@@ -180,16 +180,21 @@ if (empty($reshook))
         $search_total_ht='';
         $search_total_vat='';
         $search_total_ttc='';
-        $orderyear='';
-        $ordermonth='';
-    	$orderday='';
-    	$deliveryday='';
-    	$deliverymonth='';
-        $deliveryyear='';
+        $search_orderyear='';
+        $search_ordermonth='';
+    	$search_orderday='';
+    	$search_deliveryday='';
+    	$search_deliverymonth='';
+        $search_deliveryyear='';
         $viewstatut='';
         $billed='';
         $toselect='';
         $search_array_options=array();
+    }
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+     || GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    {
+        $massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
 
     // Mass actions
@@ -371,7 +376,7 @@ if (empty($reshook))
 
     		}
 
-    		$cmd->classifyBilled($user);
+    		//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
 
     		if(!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
     		else $TFact[$object->id] = $object;
@@ -499,31 +504,31 @@ if ($viewstatut <> '')
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 }
-if ($ordermonth > 0)
+if ($search_ordermonth > 0)
 {
-    if ($orderyear > 0 && empty($orderday))
-    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
-    else if ($orderyear > 0 && ! empty($orderday))
-    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $orderday, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $orderday, $orderyear))."'";
+    if ($search_orderyear > 0 && empty($search_orderday))
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,$search_ordermonth,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,$search_ordermonth,false))."'";
+    else if ($search_orderyear > 0 && ! empty($search_orderday))
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_ordermonth, $search_orderday, $search_orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_ordermonth, $search_orderday, $search_orderyear))."'";
     else
-    $sql.= " AND date_format(c.date_commande, '%m') = '".$ordermonth."'";
+    $sql.= " AND date_format(c.date_commande, '%m') = '".$search_ordermonth."'";
 }
-else if ($orderyear > 0)
+else if ($search_orderyear > 0)
 {
-    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($orderyear,12,false))."'";
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,12,false))."'";
 }
-if ($deliverymonth > 0)
+if ($search_deliverymonth > 0)
 {
-    if ($deliveryyear > 0 && empty($deliveryday))
-    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,$deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,$deliverymonth,false))."'";
-    else if ($deliveryyear > 0 && ! empty($deliveryday))
-    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $deliverymonth, $deliveryday, $deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $deliverymonth, $deliveryday, $deliveryyear))."'";
+    if ($search_deliveryyear > 0 && empty($search_deliveryday))
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,$search_deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,$search_deliverymonth,false))."'";
+    else if ($search_deliveryyear > 0 && ! empty($search_deliveryday))
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."'";
     else
-    $sql.= " AND date_format(c.date_livraison, '%m') = '".$deliverymonth."'";
+    $sql.= " AND date_format(c.date_livraison, '%m') = '".$search_deliverymonth."'";
 }
-else if ($deliveryyear > 0)
+else if ($search_deliveryyear > 0)
 {
-    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,12,false))."'";
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,12,false))."'";
 }
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
@@ -573,6 +578,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfOrders') . ' - '.$soc->name;
+		if (empty($search_company)) $search_company = $soc->name;
 	}
 	else
 	{
@@ -605,12 +611,12 @@ if ($resql)
 	if ($sall)					$param.='&sall='.$sall;
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
-	if ($orderday)      		$param.='&orderday='.$orderday;
-	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
-	if ($orderyear)       		$param.='&orderyear='.$orderyear;
-	if ($deliveryday)   		$param.='&deliveryday='.$deliveryday;
-	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
-	if ($deliveryyear)    		$param.='&deliveryyear='.$deliveryyear;
+	if ($search_orderday)      		$param.='&search_orderday='.$search_orderday;
+	if ($search_ordermonth)      		$param.='&search_ordermonth='.$search_ordermonth;
+	if ($search_orderyear)       		$param.='&search_orderyear='.$search_orderyear;
+	if ($search_deliveryday)   		$param.='&search_deliveryday='.$search_deliveryday;
+	if ($search_deliverymonth)   		$param.='&search_deliverymonth='.$search_deliverymonth;
+	if ($search_deliveryyear)    		$param.='&search_deliveryyear='.$search_deliveryyear;
 	if ($search_ref)      		$param.='&search_ref='.$search_ref;
 	if ($search_company)  		$param.='&search_company='.$search_company;
 	if ($search_ref_customer)	$param.='&search_ref_customer='.$search_ref_customer;
@@ -754,7 +760,7 @@ if ($resql)
 		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-		print '<table class="border" width="100%" >';
+		print '<table class="noborder" width="100%" >';
 		print '<tr>';
 		print '<td class="titlefieldmiddle">';
 		print $langs->trans('DateInvoice');
@@ -776,7 +782,15 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+		{
+		    print $form->selectyesno('valdate_invoices', 0, 1, 1);
+		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
+		}
+		else
+		{
+            print $form->selectyesno('valdate_invoices', 0, 1);
+		}
 		print '</td>';
 		print '</tr>';
 		print '</table>';
@@ -838,7 +852,7 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -894,17 +908,17 @@ if ($resql)
 	if (! empty($arrayfields['c.date_commande']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="orderday" value="'.$orderday.'">';
-        print '<input class="flat" type="text" size="1" maxlength="2" name="ordermonth" value="'.$ordermonth.'">';
-        $formother->select_year($orderyear?$orderyear:-1,'orderyear',1, 20, 5);
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
+        print '<input class="flat" type="text" size="1" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
+        $formother->select_year($search_orderyear?$search_orderyear:-1,'search_orderyear',1, 20, 5);
     	print '</td>';
 	}
 	if (! empty($arrayfields['c.date_delivery']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="deliveryday" value="'.$deliveryday.'">';
-        print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
-        $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
+        print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
+        $formother->select_year($search_deliveryyear?$search_deliveryyear:-1,'search_deliveryyear',1, 20, 5);
     	print '</td>';
 	}
 	if (! empty($arrayfields['c.total_ht']['checked']))
@@ -981,6 +995,7 @@ if ($resql)
     	    Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
     	    Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSentShort"),
     	    Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+    	    -3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
     	    Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
     	);
     	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
@@ -1024,7 +1039,9 @@ if ($resql)
            if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -1036,7 +1053,7 @@ if ($resql)
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'],$_SERVER["PHP_SELF"],"c.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'],$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>'."\n";
 
 	$total=0;
@@ -1078,7 +1095,7 @@ if ($resql)
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             print '<td class="nobordernopadding nowrap">';
-            print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$obj->fk_statut));
+            print $generic_commande->getNomUrl(1, ($viewstatut != 2?0:$obj->fk_statut), 0, 0, 0, 1);
             print '</td>';
 
             // Show shippable Icon (create subloop, so may be slow)

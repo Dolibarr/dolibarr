@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ $search_subledger_account_end = GETPOST('search_subledger_account_end', 'alpha')
 if ($search_subledger_account_end == - 1) {
 	$search_subledger_account_end = '';
 }
-$search_label_compte = GETPOST('search_label_compte', 'alpha');
+$search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_sens = GETPOST('search_sens', 'alpha');
 $search_code_journal = GETPOST('search_code_journal', 'alpha');
 
@@ -86,14 +86,14 @@ $offset = $limit * $page;
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_doc_type = "";
 	$search_doc_date = "";
 	$search_doc_ref = "";
 	$search_numero_compte = "";
 	$search_subledger_account = "";
-	$search_label_compte = "";
+	$search_label_operation = "";
 	$search_sens = "";
 	$search_code_journal = "";
 }
@@ -144,9 +144,9 @@ if (! empty($search_subledger_account_end)) {
 	$filter['t.subledger_account<='] = $search_subledger_account_end;
 	$options .= '&amp;search_subledger_account_end=' . $search_subledger_account_end;
 }
-if (! empty($search_label_compte)) {
-	$filter['t.label_compte'] = $search_label_compte;
-	$options .= '&amp;search_label_compte=' . $search_label_compte;
+if (! empty($search_label_operation)) {
+	$filter['t.label_operation'] = $search_label_operation;
+	$options .= '&amp;search_label_operation=' . $search_label_operation;
 }
 if (! empty($search_sens)) {
 	$filter['t.sens'] = $search_sens;
@@ -207,7 +207,7 @@ print_liste_field_titre($langs->trans("Date"), $_SERVER['PHP_SELF'], "t.doc_date
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.subledger_account", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_operation", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, 'align="center"', $sortfield, $sortorder);
@@ -242,7 +242,7 @@ print '<input type="text" size=6 class="flat" name="search_subledger_account" va
 print '</td>';
 
 print '<td class="liste_titre">';
-print '<input type="text" size=6 class="flat" name="search_label_compte" value="' . $search_label_compte . '"/>';
+print '<input type="text" size=6 class="flat" name="search_label_operation" value="' . $search_label_operation . '"/>';
 print '</td>';
 
 print '<td class="liste_titre">';
@@ -279,7 +279,7 @@ foreach ( $object->lines as $line ) {
 	print '<td>' . $line->doc_ref . '</td>';
 	print '<td>' . length_accountg($line->numero_compte) . '</td>';
 	print '<td>' . length_accounta($line->subledger_account) . '</td>';
-	print '<td>' . $line->label_compte . '</td>';
+	print '<td>' . $line->label_operation . '</td>';
 	print '<td align="right">' . price($line->debit) . '</td>';
 	print '<td align="right">' . price($line->credit) . '</td>';
 	print '<td align="right">' . price($line->montant) . '</td>';

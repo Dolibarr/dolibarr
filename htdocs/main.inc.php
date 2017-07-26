@@ -199,12 +199,17 @@ $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-session_start();
-if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
+// This create lock released until session_write_close() or end of page.
+// We need this lock as long as we read/write $_SESSION ['vars']. We can close released when finished.
+if (! defined('NOSESSION'))
 {
-    foreach ($_SESSION as $key=>$value)
+    session_start();
+    if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
     {
-        if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        foreach ($_SESSION as $key=>$value)
+        {
+            if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        }
     }
 }
 
@@ -452,9 +457,7 @@ if (! defined('NOLOGIN'))
         $passwordtotest	= GETPOST('password','none',2);
         $entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-        // Validation of login/pass/entity
-        // If ok, the variable login will be returned
-        // If error, we will put error message in session under the name dol_loginmesg
+        // Define if we received data to test the login.
         $goontestloop=false;
         if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
@@ -468,6 +471,9 @@ if (! defined('NOLOGIN'))
         	$langs->setDefaultLang($langcode);
         }
 
+        // Validation of login/pass/entity
+        // If ok, the variable login will be returned
+        // If error, we will put error message in session under the name dol_loginmesg
         if ($test && $goontestloop)
         {
         	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
@@ -526,9 +532,10 @@ if (! defined('NOLOGIN'))
         // End test login / passwords
         if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
-            // We show login page
+            // No data to test login, so we show the login page
 			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." showing the login form and exit");
-        	dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
+			if (defined('NOREDIRECTBYMAINTOLOGIN')) return 'ERROR_NOT_LOGGED';
+        	else dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
@@ -651,9 +658,13 @@ if (! defined('NOLOGIN'))
 	       if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
 	       {
                $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
-	           if (constant('DOL_MAIN_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_MAIN_URL_ROOT'),'/').'/', '', $relativepathstring);
-	           $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
+               // Clean $relativepathstring
+   	           if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
                $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+               $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+               //var_dump($relativepathstring);
+
                if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
                {
                    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
@@ -1489,10 +1500,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    {
 	        $qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
-			foreach($_POST as $key=>$value) {
-				if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
-			}
-
+	        if (is_array($_POST))
+	        {
+    			foreach($_POST as $key=>$value) {
+    				if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
+    			}
+	        }
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        //$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');

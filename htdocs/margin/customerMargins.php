@@ -37,15 +37,22 @@ $langs->load("margins");
 $socid = GETPOST('socid','int');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
+$result = restrictedArea($user,'margins');
 
 
 $mesg = '';
 
-$page = GETPOST("page",'int');
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortfield) $sortfield="s.nom"; // Set here default search field
+if (! $sortorder) $sortorder="ASC";
 
 $startdate=$enddate='';
 
@@ -206,13 +213,13 @@ if ($result)
 	$num = $db->num_rows($result);
 
   	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,$num,'');
+	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice=$langs->trans('BuyingPrice');
 	else   // value is 'costprice' or 'pmp'
 	    $labelcostprice=$langs->trans('CostPrice');
-	
+
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
@@ -260,7 +267,7 @@ if ($result)
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
 
-			
+
 
 			print '<tr class="oddeven">';
 			if ($client) {
@@ -295,7 +302,7 @@ if ($result)
 	}
 
 	// affichage totaux marges
-	
+
 	$totalMargin = $cumul_vente - $cumul_achat;
 	/*if ($totalMargin < 0)
 	{

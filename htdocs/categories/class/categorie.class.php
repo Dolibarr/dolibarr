@@ -43,22 +43,23 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 class Categorie extends CommonObject
 {
 	// Categories types
-	const TYPE_PRODUCT = 0;    // TODO Replace with value 'product'
-	const TYPE_SUPPLIER = 1;   // TODO Replace this value with 'supplier'
-	const TYPE_CUSTOMER = 2;   // TODO Replace this value with 'customer'
-	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
-	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
-	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
-    const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
-	const TYPE_PROJECT = 6;
+	const TYPE_PRODUCT   = 'product';
+	const TYPE_SUPPLIER  = 'supplier';
+	const TYPE_CUSTOMER  = 'customer';
+	const TYPE_MEMBER    = 'member';
+	const TYPE_CONTACT   = 'contact';
+	const TYPE_USER      = 'user';
+	const TYPE_PROJECT   = 'project';
+	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
+
 	public $picto = 'category';
-    
+
 
 	/**
 	 * @var array ID mapping from type string
 	 *
-	 * @note This array should be remove in future, once previous constants are moved to the string value.
+	 * @note This array should be remove in future, once previous constants are moved to the string value. Deprecated
 	 */
 	private $MAP_ID = array(
 		'product'  => 0,
@@ -66,10 +67,21 @@ class Categorie extends CommonObject
 		'customer' => 2,
 		'member'   => 3,
 		'contact'  => 4,
-		'user'     => 4,
         'account'  => 5,
         'project'  => 6,
+		'user'     => 7,
 	);
+	public static $MAP_ID_TO_CODE = array(
+		0 => 'product',
+		1 => 'supplier',
+		2 => 'customer',
+		3 => 'member',
+		4 => 'contact',
+		5 => 'account',
+		6 => 'project',
+		7 => 'user',
+	);
+
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
@@ -81,9 +93,9 @@ class Categorie extends CommonObject
 		'supplier' => 'soc',
 		'member'   => 'member',
 		'contact'  => 'socpeople',
-		'user'  => 'user',
-        'account' => 'account',
-        'project' => 'project',
+		'user'     => 'user',
+        'account'  => 'account',
+        'project'  => 'project',
 	);
 	/**
 	 * @var array Category tables mapping from type string
@@ -96,9 +108,9 @@ class Categorie extends CommonObject
 		'supplier' => 'fournisseur',
 		'member'   => 'member',
 		'contact'  => 'contact',
-		'user'  => 'user',
-        'account' => 'account',
-        'project' => 'project',
+		'user'     => 'user',
+        'account'  => 'account',
+        'project'  => 'project',
 	);
 	/**
 	 * @var array Object class mapping from type string
@@ -112,8 +124,8 @@ class Categorie extends CommonObject
 		'member'   => 'Adherent',
 		'contact'  => 'Contact',
 		'user'     => 'User',
-        'account' => 'Account',
-        'project' => 'Project',
+        'account'  => 'Account',
+        'project'  => 'Project',
 	);
 	/**
 	 * @var array Object table mapping from type string
@@ -127,12 +139,12 @@ class Categorie extends CommonObject
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account' => 'bank_account',
-        'project' => 'projet',
+        'account'  => 'bank_account',
+        'project'  => 'projet',
 	);
 
 	public $element='category';
-	public $table_element='categories';
+	public $table_element='categorie';
 
 	public $fk_parent;
 	public $label;
@@ -447,9 +459,10 @@ class Categorie extends CommonObject
 	 * 	Delete a category from database
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
-	 *	@return	int <0 KO >0 OK
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int                 <0 KO >0 OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
 
@@ -461,6 +474,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::remove");
 
 		$this->db->begin();
+
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CATEGORY_DELETE',$user);
+		    if ($result < 0) $error++;
+		    // End call triggers
+		}
 
 		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (! $error)
@@ -557,7 +578,7 @@ class Categorie extends CommonObject
 		        $error++;
 		    }
 		}
-		
+
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
@@ -580,25 +601,16 @@ class Categorie extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+		}
+
+		// Removed extrafields
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
 			{
-				// Removed extrafields
-				if (! $error)
-				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result=$this->deleteExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
-						}
-					}
-				}
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				$error++;
+				dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -814,7 +826,7 @@ class Categorie extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($rec = $this->db->fetch_array($resql)) 
+			while ($rec = $this->db->fetch_array($resql))
 			{
 			    if ($onlyids)
 			    {
@@ -938,7 +950,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array               Array of categories. this->cats and this->motherof are set.
 	 */
-	function get_full_arbo($type,$markafterid=0)
+	function get_full_arbo($type, $markafterid=0)
 	{
 	    global $conf, $langs;
 
@@ -1174,11 +1186,11 @@ class Categorie extends CommonObject
 				 */
 				if($obj[0] > 0 && $obj[0] != $this->id)
 				{
-					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent." than category id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
@@ -1355,7 +1367,7 @@ class Categorie extends CommonObject
 		    $sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
 		    $sql.= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
 		    $sql.= " ORDER BY c.label";
-		    
+
 		    $res = $this->db->query($sql);
 		    if ($res)
 		    {
@@ -1377,7 +1389,7 @@ class Categorie extends CommonObject
 		    {
 		        dol_print_error($this->db);
 		        return -1;
-		    }		    
+		    }
 		}
         else
         {
@@ -1385,7 +1397,7 @@ class Categorie extends CommonObject
     		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
     		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
     		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
-    
+
     		$res = $this->db->query($sql);
     		if ($res)
     		{
@@ -1408,7 +1420,7 @@ class Categorie extends CommonObject
     			return -1;
     		}
         }
-    
+
         return $cats;
 	}
 
@@ -1434,7 +1446,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		// For backward compatibility
-		if (is_numeric( $type )) {
+		if (is_numeric($type)) {
 			// We want to reverse lookup
 			$map_type = array_flip( $this->MAP_ID );
 			$type = $map_type[$type];
@@ -1782,8 +1794,8 @@ class Categorie extends CommonObject
 	{
 	    return '';
 	}
-	
-	
+
+
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

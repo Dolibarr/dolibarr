@@ -25,7 +25,8 @@ create table llx_facture_rec
   titre              varchar(50) NOT NULL,
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
   fk_soc             integer NOT NULL,
-  datec              datetime,  -- date de creation
+  datec              datetime,            -- date de creation
+  tms				 timestamp,           -- date creation/modification
 
   amount             double(24,8)     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,

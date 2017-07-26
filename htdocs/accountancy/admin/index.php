@@ -31,6 +31,7 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -50,8 +51,8 @@ $action = GETPOST('action', 'alpha');
 $list = array (
     'ACCOUNTING_LENGTH_GACCOUNT',
     'ACCOUNTING_LENGTH_AACCOUNT' ,
-    'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
-    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
+//    'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
+//    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
 
 
@@ -64,28 +65,28 @@ $accounting_mode = defined('ACCOUNTING_MODE') ? ACCOUNTING_MODE : 'RECETTES-DEPE
 
 if ($action == 'update') {
 	$error = 0;
-	
+
 	$accounting_modes = array (
 			'RECETTES-DEPENSES',
-			'CREANCES-DETTES' 
+			'CREANCES-DETTES'
 	);
-	
+
 	$accounting_mode = GETPOST('accounting_mode', 'alpha');
-	
+
 	if (in_array($accounting_mode, $accounting_modes)) {
-		
+
 		if (! dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	} else {
 		$error ++;
 	}
-	
+
 	if ($error) {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
-    foreach ($list as $constname) 
+    foreach ($list as $constname)
     {
         $constvalue = GETPOST($constname, 'alpha');
 
@@ -265,11 +266,11 @@ if (! empty($user->admin))
 }
 
 
-// Param a user $user->rights->accountancy->chartofaccount can access
-foreach ($list as $key) 
+// Param a user $user->rights->accounting->chartofaccount can access
+foreach ($list as $key)
 {
     print '<tr class="oddeven value">';
-    
+
     if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
 
     // Param
@@ -279,7 +280,7 @@ foreach ($list as $key)
     print '<td align="right">';
     print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
     print '</td>';
-    
+
     print '</tr>';
 }
 

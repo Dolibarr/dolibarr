@@ -1,6 +1,5 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <year>  <name of author>
+/* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +16,9 @@
  */
 
 /**
- * \file    lib/mymodule.lib.php
+ * \file    htdocs/modulebuilder/template/lib/mymodule.lib.php
  * \ingroup mymodule
- * \brief   Example module library.
- *
- * Put detailed description here.
+ * \brief   Library files with common functions for MyModule
  */
 
 /**

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/bank/various_payment/index.php
- *      \ingroup    bank
- *		\brief     	List of various payments
+ *	\file	    htdocs/compta/bank/various_payment/index.php
+ *	\ingroup	bank
+ *	\brief	 	List of various payments
  */
 
 require '../../../main.inc.php';
@@ -34,6 +35,8 @@ $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '', '', '');
 
+$optioncss = GETPOST('optioncss','alpha');
+
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
@@ -44,17 +47,16 @@ $search_account = GETPOST('search_account','int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }	 // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="v.datep";
 if (! $sortorder) $sortorder="DESC";
-$optioncss = GETPOST('optioncss','alpha');
 
-$filtre=$_GET["filtre"];
+$filtre=GETPOST("filtre",'alpha');
 
-if (empty($_REQUEST['typeid']))
+if (! GETPOST('typeid'))
 {
 	$newfiltre=str_replace('filtre=','',$filtre);
 	$filterarray=explode('-',$newfiltre);
@@ -66,16 +68,16 @@ if (empty($_REQUEST['typeid']))
 }
 else
 {
-	$typeid=$_REQUEST['typeid'];
+	$typeid=GETPOST('typeid');
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
 	$search_amount="";
 	$search_account='';
-    $typeid="";
+	$typeid="";
 }
 
 /*
@@ -103,11 +105,11 @@ if ($search_label) 	$sql.=natural_search(array('v.label'), $search_label);
 if ($search_amount) $sql.=natural_search("v.amount", $search_amount, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
-    $filtre=str_replace(":","=",$filtre);
-    $sql .= " AND ".$filtre;
+	$filtre=str_replace(":","=",$filtre);
+	$sql .= " AND ".$filtre;
 }
 if ($typeid) {
-    $sql .= " AND v.fk_typepayment=".$typeid;
+	$sql .= " AND v.fk_typepayment=".$typeid;
 }
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -116,48 +118,48 @@ $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+	$totalnboflines = $db->num_rows($result);
 }
 $sql.= $db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $total = 0 ;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$total = 0 ;
 	$var=true;
 
 	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
-    
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+
 	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
-	
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"v.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"v.label","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"v.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("BankAccount"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("BankAccount"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Sens"),$_SERVER["PHP_SELF"],"v.sens","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-    print "</tr>\n";
+	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	// Ref
@@ -174,85 +176,88 @@ if ($result)
 	print '</td>';
 	// Account
 	if (! empty($conf->banque->enabled))
-    {
-	    print '<td class="liste_titre">';
-	    $form->select_comptes($search_account,'search_account',0,'',1);
-	    print '</td>';
-    }
+	{
+		print '<td class="liste_titre">';
+		$form->select_comptes($search_account,'search_account',0,'',1);
+		print '</td>';
+	}
 	// Amount
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
 	// Sens
 	print '<td class="liste_titre">&nbsp;</td>';
 
-    print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
-    
+	print '<td class="liste_titre" align="right">';
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+
 	print "</tr>\n";
 
-    while ($i < min($num,$limit))
-    {
-        $obj = $db->fetch_object($result);
-        
-        print '<tr class="oddeven">';
+	while ($i < min($num,$limit))
+	{
+		$obj = $db->fetch_object($result);
 
-        $variousstatic->id=$obj->rowid;
+		print '<tr class="oddeven">';
+
+		$variousstatic->id=$obj->rowid;
 		$variousstatic->ref=$obj->rowid;
-        // Ref
+		// Ref
 		print "<td>".$variousstatic->getNomUrl(1)."</td>\n";
 		// Label payment
-        print "<td>".dol_trunc($obj->label,40)."</td>\n";
+		print "<td>".dol_trunc($obj->label,40)."</td>\n";
 		// Date payment
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
-        // Type
-        print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
+		// Type
+		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Account
-    	if (! empty($conf->banque->enabled))
-	    {
-	        print '<td>';
-	        if ($obj->fk_bank > 0)
-	        {
-	        	//$accountstatic->fetch($obj->fk_bank);
-	            $accountstatic->id=$obj->bid;
-	            $accountstatic->ref=$obj->bref;
-	            $accountstatic->number=$obj->bnumber;
-	            $accountstatic->accountancy_number=$obj->account_number;
-	            $accountstatic->fk_accountancy_journal=$obj->fk_accountancy_journal;
-	            $accountstatic->label=$obj->blabel;
-	        	print $accountstatic->getNomUrl(1);
-	        }
-	        else print '&nbsp;';
-	        print '</td>';
-	    }
-        // Amount
-        print "<td align=\"right\">".price($obj->amount)."</td>";
-        // Sens
+		if (! empty($conf->banque->enabled))
+		{
+			print '<td>';
+			if ($obj->fk_bank > 0)
+			{
+				//$accountstatic->fetch($obj->fk_bank);
+				$accountstatic->id=$obj->bid;
+				$accountstatic->ref=$obj->bref;
+				$accountstatic->number=$obj->bnumber;
+				$accountstatic->accountancy_number=$obj->account_number;
+				$accountstatic->fk_accountancy_journal=$obj->fk_accountancy_journal;
+				$accountstatic->label=$obj->blabel;
+				print $accountstatic->getNomUrl(1);
+			}
+			else print '&nbsp;';
+			print '</td>';
+		}
+		// Amount
+		print "<td align=\"right\">".price($obj->amount)."</td>";
+		// Sens
 		if ($obj->sens == '1') $sens = $langs->trans("Credit"); else $sens = $langs->trans("Debit");
-        print "<td align=\"right\">".$sens."</td>";
-        print "<td></td>";
-        print "</tr>\n";
+		print "<td align=\"right\">".$sens."</td>";
+		print "<td></td>";
+		print "</tr>\n";
 
-        $total = $total + $obj->amount;
+		$total = $total + $obj->amount;
 
-        $i++;
-    }
+		$i++;
+	}
 
-    $colspan=4;
-    if (! empty($conf->banque->enabled)) $colspan++;
-    print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td class="liste_total" align="right">'.price($total)."</td>";
-	print "<td></td></tr>";
+	$colspan=4;
+	if (! empty($conf->banque->enabled)) $colspan++;
+	print '<tr class="liste_total">';
+	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
+	print '<td class="liste_total" align="right">'.price($total)."</td>";
+	print '<td></td>';
+	print '<td></td>';
+	print '</tr>';
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
+	print '</div>';
 	print '</form>';
 
-    $db->free($result);
+	$db->free($result);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 

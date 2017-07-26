@@ -65,7 +65,7 @@ class EcmFiles //extends CommonObject
 
 	/**
 	 */
-	
+
 
 	/**
 	 * Constructor
@@ -88,13 +88,13 @@ class EcmFiles //extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 	    global $conf;
-	    
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->label)) {
 			 $this->label = trim($this->label);
 		}
@@ -135,13 +135,13 @@ class EcmFiles //extends CommonObject
 			 $this->acl = trim($this->acl);
 		}
         if (empty($this->date_c)) $this->date_c = dol_now();
-		
+
         $maxposition=0;
 		if (empty($this->position))   // Get max used
 		{
 		    $sql = "SELECT MAX(position) as maxposition FROM " . MAIN_DB_PREFIX . $this->table_element;
 		    $sql.= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
-		    
+
 		    $resql = $this->db->query($sql);
 		    if ($resql)
 		    {
@@ -204,7 +204,7 @@ class EcmFiles //extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
             $this->position = $maxposition;
-            
+
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
@@ -299,7 +299,7 @@ class EcmFiles //extends CommonObject
 				$this->fk_user_m = $obj->fk_user_m;
 				$this->acl = $obj->acl;
 			}
-			
+
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
 			/*
@@ -309,7 +309,7 @@ class EcmFiles //extends CommonObject
 			$this->fetch_optionals($this->id,$extralabels);
             */
 			// $this->fetch_lines();
-			
+
 			$this->db->free($resql);
 
 			if ($numrows) {
@@ -393,7 +393,7 @@ class EcmFiles //extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-				
+
 				$line->label = $obj->label;
 				$line->entity = $obj->entity;
 				$line->filename = $obj->filename;
@@ -437,7 +437,7 @@ class EcmFiles //extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->label)) {
 			 $this->label = trim($this->label);
 		}
@@ -562,7 +562,7 @@ class EcmFiles //extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
-		
+
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE rowid=' . $this->id;
@@ -651,7 +651,7 @@ class EcmFiles //extends CommonObject
         global $menumanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result = '';
         $companylink = '';
 
@@ -660,7 +660,7 @@ class EcmFiles //extends CommonObject
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
         $url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
-        
+
         $linkclose='';
         if (empty($notooltip))
         {
@@ -673,7 +673,7 @@ class EcmFiles //extends CommonObject
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
-        
+
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
@@ -757,9 +757,9 @@ class EcmFiles //extends CommonObject
 	public function initAsSpecimen()
 	{
 	    global $conf,$user;
-	    
+
 		$this->id = 0;
-		
+
 		$this->label = '0a1b2c3e4f59999999';
 		$this->entity = '1';
 		$this->filename = 'myspecimenfilefile.pdf';
@@ -780,3 +780,23 @@ class EcmFiles //extends CommonObject
 
 }
 
+
+class EcmfilesLine
+{
+	public $label;
+	public $entity;
+	public $filename;
+	public $filepath;
+	public $fullpath_orig;
+	public $description;
+	public $keywords;
+	public $cover;
+	public $position;
+	public $gen_or_uploaded;       // can be 'generated', 'uploaded', 'unknown'
+	public $extraparams;
+	public $date_c = '';
+	public $date_m = '';
+	public $fk_user_c;
+	public $fk_user_m;
+	public $acl;
+}

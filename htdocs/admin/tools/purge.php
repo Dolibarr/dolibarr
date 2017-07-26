@@ -31,7 +31,7 @@ if (! $user->admin)
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$choice=GETPOST('choice');
+$choice=GETPOST('choice','aZ09');
 
 
 // Define filelog to discard it from purge
@@ -83,7 +83,15 @@ if (! empty($conf->syslog->enabled))
 {
 	print '<input type="radio" name="choice" value="logfile"';
 	print ($choice && $choice=='logfile') ? ' checked' : '';
-	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
+	$filelogparam=$filelog;
+	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
+	{
+	   $filelogparam ='<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	   $filelogparam.=basename($filelog);
+	   $filelogparam.='">'.$filelog.'</a>';
+	}
+	print '> '.$langs->trans("PurgeDeleteLogFile", $filelogparam);
+	print '<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';

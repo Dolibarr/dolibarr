@@ -96,12 +96,14 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "canelle";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
+		*/
 
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
@@ -272,12 +274,12 @@ class modFournisseur extends DolibarrModules
 			$this->rights[$r][5] = 'approve2';
 	    }
 
-	    
+
 	    // Menus
 	    //-------
 	    $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-	    
-	    
+
+
 		// Exports
 		//--------
 		$r=0;

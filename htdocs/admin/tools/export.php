@@ -88,6 +88,7 @@ if (!empty($ExecTimeLimit))
     @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
     error_reporting($err);
 }
+$MemoryLimit=0;
 if (!empty($MemoryLimit))
 {
     @ini_set('memory_limit', $MemoryLimit);
@@ -120,10 +121,10 @@ $utils = new Utils($db);
 // MYSQL
 if ($what == 'mysql')
 {
-    
+
     $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
     $cmddump=dol_sanitizePathName($cmddump);
-    
+
     if (! empty($dolibarr_main_restrict_os_commands))
     {
         $arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
@@ -142,13 +143,13 @@ if ($what == 'mysql')
             $errormsg=$langs->trans('CommandIsNotInsideAllowedCommands');
         }
     }
-    
+
     if (! $errormsg && $cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    if (! $errormsg) 
+    if (! $errormsg)
     {
         $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
         $errormsg=$utils->error;
@@ -172,13 +173,13 @@ if ($what == 'postgresql')
 {
     $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
     $cmddump=dol_sanitizePathName($cmddump);
-    
+
     if (! $errormsg && $cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    if (! $errormsg) 
+    if (! $errormsg)
     {
         $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
         $errormsg=$utils->error;

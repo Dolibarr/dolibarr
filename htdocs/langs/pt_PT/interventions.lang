@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervenção
 Interventions=Intervenções
-InterventionCard=Ficha de Intervenção
+InterventionCard=Ficha de intervenção
 NewIntervention=Nova Intervenção
 AddIntervention=Create intervention
 ListOfInterventions=Lista de Intervenções
@@ -41,15 +41,16 @@ InterventionDeletedInDolibarr=Intervention %s deleted
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
 LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contacto do cliente do seguimiento da intervenção
 # Modele numérotation
-PrintProductsOnFichinter=Print also lines of type "product" (not only services) on intervention card
+PrintProductsOnFichinter=Imprimir também linhas do tipo "produto" (não apenas serviços) na ficha de intervenção
 PrintProductsOnFichinterDetails=interventions generated from orders
 UseServicesDurationOnFichinter=Use services duration for interventions generated from orders
 InterventionStatistics=Statistics of interventions
-NbOfinterventions=Nb of intervention cards
-NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
+NbOfinterventions=Número de fichas de intervenção
+NumberOfInterventionsByMonth=Número de fcihas de intervenção por mês (data de validação)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

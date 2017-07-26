@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
 /**
  *	Class to manage customer payment numbering rules Cicada
  */
-class mod_supplier_payment_bronan extends ModeleNumRefPayments
+class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='SPAY';
