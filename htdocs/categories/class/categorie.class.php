@@ -1806,7 +1806,7 @@ class Categorie extends CommonObject
         $this->specimen=1;
         $this->description = 'This is a description';
         $this->socid = 1;
-        $this->type = self::TYPE_PRODUCT;
+        $this->type = $this->MAP_ID[self::TYPE_PRODUCT];
     }
 
 	/**
