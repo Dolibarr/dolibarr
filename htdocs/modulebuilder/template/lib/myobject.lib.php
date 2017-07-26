@@ -40,10 +40,13 @@ function myobjectPrepareHead($object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
-	$head[$h][0] = dol_buildpath("/mymodule/myobject_note.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Notes");
-	$head[$h][2] = 'note';
-	$h++;
+	if (isset($object->fields['note_public']) || isset($object->fields['note_pricate']))
+	{
+		$head[$h][0] = dol_buildpath("/mymodule/myobject_note.php", 1).'?id='.$object->id;
+		$head[$h][1] = $langs->trans("Notes");
+		$head[$h][2] = 'note';
+		$h++;
+	}
 	$head[$h][0] = dol_buildpath("/mymodule/myobject_document.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	$head[$h][2] = 'document';

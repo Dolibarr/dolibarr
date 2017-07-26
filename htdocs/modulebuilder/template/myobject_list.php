@@ -58,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule","other"));
+$langs->loadLangs(array("mymodule@mymodule","other"));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -497,7 +497,7 @@ while ($i < min($num, $limit))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
                 if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'ref') print $object->getNomUrl(1);
+                elseif ($key == 'ref') print $object->getNomUrl(1, '', 0, '', 1);
                 elseif ($key == 'status') print $object->getLibStatut(3);
                 else print $obj->$key;
                 print '</td>';

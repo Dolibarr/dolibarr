@@ -108,6 +108,9 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
         // Delete some files
         dol_delete_file($destdir.'/myobject_card.php');
+        dol_delete_file($destdir.'/myobject_note.php');
+        dol_delete_file($destdir.'/myobject_document.php');
+        dol_delete_file($destdir.'/myobject_agenda.php');
         dol_delete_file($destdir.'/myobject_list.php');
         dol_delete_file($destdir.'/lib/myobject.lib.php');
         dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
@@ -189,7 +192,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
         // Delete some files
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
-            'myobject_list.php'=>strtolower($objectname).'_list.php',
+            'myobject_note.php'=>strtolower($objectname).'_note.php',
+            'myobject_document.php'=>strtolower($objectname).'_document.php',
+            'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+        	'myobject_list.php'=>strtolower($objectname).'_list.php',
             'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
         	'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
@@ -379,7 +385,10 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
         // Delete some files
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
-            'myobject_list.php'=>strtolower($objectname).'_list.php',
+            'myobject_note.php'=>strtolower($objectname).'_note.php',
+            'myobject_document.php'=>strtolower($objectname).'_note.php',
+            'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+        	'myobject_list.php'=>strtolower($objectname).'_list.php',
             'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
         	'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
             'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
@@ -681,43 +690,24 @@ print load_fiche_titre($text, '', 'title_setup');
 
 $listofmodules=array();
 
-/*
-if (!empty($conf->modulebuilder->enabled) && $mainmenu == 'modulebuilder')	// Entry for Module builder
-{
-    global $dolibarr_main_document_root_alt;
-    if (! empty($dolibarr_main_document_root_alt) && is_array($dolibarr_main_document_root_alt))
-    {
-        foreach ($dolibarr_main_document_root_alt as $diralt)
-        {*/
-            $dirsincustom=dol_dir_list($dirins, 'directories');
-
-            if (is_array($dirsincustom) && count($dirsincustom) > 0)
-            {
-                foreach ($dirsincustom as $dircustomcursor)
-                {
-                    $fullname = $dircustomcursor['fullname'];
-                    if (dol_is_file($fullname.'/'.$FILEFLAG))
-                    {
-                    	// Get real name of module (MyModule instead of mymodule)
-                    	$descriptorfiles = dol_dir_list($fullname.'/core/modules/', 'files', 0, 'mod.*\.class\.php$');
-                    	$modulenamewithcase='';
-                    	foreach($descriptorfiles as $descriptorcursor)
-                    	{
-                    		$modulenamewithcase=preg_replace('/^mod/', '', $descriptorcursor['name']);
-                    		$modulenamewithcase=preg_replace('/\.class\.php$/', '', $modulenamewithcase);
-                    	}
-                    	if ($modulenamewithcase) $listofmodules[$dircustomcursor['name']]=$modulenamewithcase;
-                    	//var_dump($listofmodules);
-                    }
-                }
-            }
-/*        }
-    }
-    else
-    {
-        $newmenu->add('', 'NoGeneratedModuleFound', 0, 0);
-    }*/
-
+$dirsincustom=dol_dir_list($dirins, 'directories');
+if (is_array($dirsincustom) && count($dirsincustom) > 0) {
+	foreach ($dirsincustom as $dircustomcursor) {
+		$fullname = $dircustomcursor['fullname'];
+		if (dol_is_file($fullname . '/' . $FILEFLAG)) {
+			// Get real name of module (MyModule instead of mymodule)
+			$descriptorfiles = dol_dir_list($fullname . '/core/modules/', 'files', 0, 'mod.*\.class\.php$');
+			$modulenamewithcase = '';
+			foreach ($descriptorfiles as $descriptorcursor) {
+				$modulenamewithcase = preg_replace('/^mod/', '', $descriptorcursor['name']);
+				$modulenamewithcase = preg_replace('/\.class\.php$/', '', $modulenamewithcase);
+			}
+			if ($modulenamewithcase)
+				$listofmodules[$dircustomcursor['name']] = $modulenamewithcase;
+			// var_dump($listofmodules);
+		}
+	}
+}
 
 // Show description of content
 $newdircustom=$dirins;
@@ -755,7 +745,6 @@ if ($message)
 }
 
 print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
-//print '<br>';
 
 
 // Load module descriptor
@@ -919,6 +908,11 @@ elseif (! empty($module))
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module;
         $head2[$h][1] = $langs->trans("Widgets");
         $head2[$h][2] = 'widgets';
+        $h++;
+
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cron&module='.$module;
+        $head2[$h][1] = $langs->trans("CronList");
+        $head2[$h][2] = 'cron';
         $h++;
 
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module;
@@ -1549,6 +1543,119 @@ elseif (! empty($module))
 
                 print '</form>';
 			}
+        }
+
+        if ($tab == 'cron')
+        {
+        	$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+
+        	$cronjobs = $moduleobj->cronjobs;
+
+        	if ($action != 'editfile' || empty($file))
+        	{
+        		print $langs->trans("CronJobDefDesc", '<a href="'.DOL_URL_ROOT.'/cron/list.php?status=-2">'.$langs->trans('CronList').'</a>').'<br>';
+        		print '<br>';
+
+        		print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+        		print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+        		print '<br>';
+
+        		print '<br>';
+        		print load_fiche_titre($langs->trans("CronJobProfiles"), '', '');
+
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="addproperty">';
+        		print '<input type="hidden" name="tab" value="objects">';
+        		print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+        		print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+        		print '<div class="div-table-responsive">';
+        		print '<table class="noborder">';
+
+        		print '<tr class="liste_titre">';
+        		print_liste_field_titre($langs->trans("CronLabel"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre($langs->trans("CronTask"),'','',"",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre($langs->trans("CronFrequency"),'',"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre($langs->trans("StatusAtInstall"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre($langs->trans("Comment"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print "</tr>\n";
+
+        		foreach ($cronjobs as $cron)
+        		{
+        			print '<tr class="oddeven">';
+
+        			print '<td>';
+        			print $cron['label'];
+        			print '</td>';
+
+        			print '<td>';
+        			if ($cron['jobtype']=='method')
+        			{
+        				$text=$langs->trans("CronClass");
+        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
+        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
+        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
+        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
+        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+        			}
+        			elseif ($cron['jobtype']=='command')
+        			{
+        				$text=$langs->trans('CronCommand');
+        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+        			}
+        			print $form->textwithpicto($text, $texttoshow, 1);
+        			print '</td>';
+
+        			print '<td>';
+        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+        			print '</td>';
+
+        			print '<td>';
+        			print $cron['status'];
+        			print '</td>';
+
+        			print '<td>';
+        			if (!empty($cron['comment'])) {print $cron['comment'];}
+        			print '</td>';
+
+        			print '</tr>';
+        		}
+
+        		print '</table>';
+        		print '</div>';
+        	}
+        	else
+        	{
+        		$fullpathoffile=dol_buildpath($file, 0);
+
+        		$content = file_get_contents($fullpathoffile);
+
+        		// New module
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="savefile">';
+        		print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+        		print '<input type="hidden" name="tab" value="'.$tab.'">';
+        		print '<input type="hidden" name="module" value="'.$module.'">';
+
+        		$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+        		print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
+        		print '<br>';
+        		print '<center>';
+        		print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        		print ' &nbsp; ';
+        		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+        		print '</center>';
+
+        		print '</form>';
+        	}
         }
 
         if ($tab == 'buildpackage')

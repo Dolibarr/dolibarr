@@ -55,7 +55,7 @@ class MyObject extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject
 	 */
-	public $picto = 'myobject';
+	public $picto = 'myobject@mymodule';
 
 
 	/**
@@ -179,13 +179,14 @@ class MyObject extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-     *  @param	int  	$notooltip			1=Disable tooltip
-     *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -200,7 +201,16 @@ class MyObject extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
+        $url='';
+        if ($option != 'nolink')
+        {
+        	$url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
+
+	        // Add param to save lastsearch_values or not
+	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
         $linkclose='';
         if (empty($notooltip))
@@ -288,6 +298,59 @@ class MyObject extends CommonObject
 		}
 	}
 
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
+		$sql.= ' fk_user_creat, fk_user_modif';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql.= ' WHERE t.rowid = '.$id;
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation   = $cuser;
+				}
+
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
+
+				if ($obj->fk_user_cloture)
+				{
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture   = $cluser;
+				}
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 
 	/**
 	 * Initialise object with example values
