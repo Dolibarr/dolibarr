@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013	Florian Henry	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ class Cronjob extends CommonObject
 	public $fk_user_mod;
 	public $nbrun;
 	public $libname;
-
+	public $test;					// A test condition to know if job is visible/qualified
 
     /**
      *  Constructor
