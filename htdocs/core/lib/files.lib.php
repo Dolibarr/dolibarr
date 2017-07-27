@@ -323,6 +323,7 @@ function dol_dir_is_emtpy($folder)
  *
  * 	@param	string	$file		Filename
  * 	@return int					<0 if KO, Number of lines in files if OK
+ *  @see dol_nboflines
  */
 function dol_count_nb_of_line($file)
 {
