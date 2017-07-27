@@ -21,9 +21,18 @@
 
 -- Request to change character set and collation of a varchar column.
 -- utf8 and utf8_unicode_ci is recommended (or even better utf8mb4 and utf8mb4_unicode_ci with mysql 5.5.3+)
--- ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
--- ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- ALTER TABLE name_of_table MODIFY field VARCHAR(20) CHARACTER SET utf8;
+-- ALTER TABLE name_of_table MODIFY field VARCHAR(20) COLLATE utf8_unicode_ci;
 -- You can check with 'show full columns from mytablename';
+
+
+
+-- VMYSQLUTF8UNICODE ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODE ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODE ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODE ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODE ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODE ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 
 
 
@@ -330,7 +339,7 @@ drop table tmp_c_shipment_mode;
 -- Restore id of user on link for payment of expense report
 drop table tmp_bank_url_expense_user;
 create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
-update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where bu.url_id = 0 and bu.type ='user';
+update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
 

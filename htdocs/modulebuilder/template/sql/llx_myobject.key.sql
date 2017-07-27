@@ -14,6 +14,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-ALTER TABLE llx_myobject ADD UNIQUE INDEX uk_fk_othertable (fk_othertable);
---ALTER TABLE llx_myobject ADD CONSTRAINT llx_mytable_field_id FOREIGN KEY (fk_field) REFERENCES llx_myOthertable(rowid);
+-- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_myobject ADD UNIQUE INDEX idx_fieldobject (fieldobject);
+-- END MODULEBUILDER INDEXES
+
+--ALTER TABLE llx_myobject ADD CONSTRAINT llx_myobject_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
 

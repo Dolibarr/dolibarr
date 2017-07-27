@@ -72,15 +72,24 @@ if ($action == "confirm_update") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$error ++;
+	    $error++;
+	    setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+        $action='update';
 	}
+    if (empty($account_number) || $account_number == '-1')
+    {
+        $error++;
+        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+        $action='update';
+    }
 
-	if (empty($error)) {
+	if (! $error)
+	{
 		$book = new BookKeeping($db);
 
 		$result = $book->fetch($id, null, $mode);
 		if ($result < 0) {
+		    $error++;
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
 			$book->numero_compte = $account_number;
@@ -120,12 +129,20 @@ if ($action == "confirm_update") {
 else if ($action == "add") {
 	$error = 0;
 
-	if (empty($debit) && empty($credit)) {
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$error ++;
+	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
+	{
+		$error++;
+	    setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+	    $action='';
+	}
+	if (empty($account_number) || $account_number == '-1')
+	{
+	    $error++;
+	    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+	    $action='';
 	}
 
-	if (empty($error)) {
+	if (! $error) {
 		$book = new BookKeeping($db);
 
 		$book->numero_compte = $account_number;
@@ -567,7 +584,7 @@ if ($action == 'create') {
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<td>';
-						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
+						print $formaccounting->select_account($line->numero_compte, 'account_number', 1, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
     					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
@@ -583,8 +600,8 @@ if ($action == 'create') {
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
-						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
-						print '<td align="right"><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
+						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
+						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
@@ -622,7 +639,7 @@ if ($action == 'create') {
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
-					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
+					print $formaccounting->select_account($account_number, 'account_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
 					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
@@ -638,24 +655,30 @@ if ($action == 'create') {
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 					print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="debit" value="' . ($debit ? price($debit) : '') . '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="credit" value="' . ($credit ? price($credit) : '') . '"/></td>';
+					print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . ($debit ? price($debit) : '') . '"/></td>';
+					print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . ($credit ? price($credit) : '') . '"/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 					print '</tr>';
 				}
 				print '</table>';
 
+
 				if ($mode=='_tmp' && $action=='')
 				{
-					print '<div class="tabsAction">';
+				    print '<br>';
+					print '<div class="center">';
 					if ($total_debit == $total_credit)
 					{
-					   print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+					   print '<a class="button" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
 					}
 					else
 					{
-					    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'">'.$langs->trans("ValidTransaction").'</a>';
+					   print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
+
+					print ' &nbsp; ';
+					print '<a class="button" href="' . DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+
 					print "</div>";
 				}
 				print '</form>';

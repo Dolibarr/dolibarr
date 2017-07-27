@@ -44,5 +44,5 @@ MyPageName = My page name
 #
 # Sample box
 #
-MyBox = My box
-MyBoxDescription = My box description
+MyWidget = My widget
+MyWidgetDescription = My widget description

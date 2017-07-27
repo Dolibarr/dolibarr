@@ -152,7 +152,7 @@ if (empty($reshook))
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
     	$search_name="";
     	$search_contract="";
@@ -332,7 +332,7 @@ if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights-
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
     $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-    $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+    $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
     $moreforfilter.='</div>';
 }
 
@@ -521,7 +521,6 @@ while ($i < min($num,$limit))
 
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-
 
 
 	print '<tr class="oddeven">';

@@ -69,6 +69,7 @@ NoPredefinedProductToDispatch=No predefined products for this object. So no disp
 DispatchVerb=Dispatch
 StockLimitShort=Limit for alert
 StockLimit=Stock limit for alert
+StockLimitDesc="" (empty) default value means no alert. <br>"0" can be used with 'Stock can be negative' configuration.
 PhysicalStock=Physical stock
 RealStock=Real Stock
 RealStockDesc=Physical or real stock is the stock you currently have into your internal warehouses/emplacements. 

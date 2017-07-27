@@ -102,6 +102,7 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_expedition FOR EACH 
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_expensereport FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture_rec FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture_fourn FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_facture_fourn_det_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -162,6 +163,8 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user_extrafields FOR
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_usergroup FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_usergroup_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_price_by_qty FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
 
 -- Add triggers for timestamp fields named date_m

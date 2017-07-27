@@ -231,7 +231,7 @@ class Interfaces
      */
     function getTriggersList($forcedirtriggers=null)
     {
-        global $conf, $langs;
+        global $conf, $langs, $db;
 
         $files = array();
         $fullpath = array();
@@ -311,7 +311,7 @@ class Interfaces
             	continue;
             }
 
-            $objMod = new $modName($this->db);
+            $objMod = new $modName($db);
 
             // Define disabledbyname and disabledbymodule
             $disabledbyname=0;

@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
- * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@zendsi.com>
- * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  *
@@ -407,7 +407,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    {
 	        case 'none':
 	            break;
-	        case 'int':
+	        case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
 	            if (! is_numeric($out)) { $out=''; }
 	            break;
 	        case 'intcomma':
@@ -624,18 +624,26 @@ function dol_buildpath($path, $type=0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  Property that are reference are also new object (true clone)
+ *  With native = 0: Property that are reference are also new object (true clone). This means $this->db is not valid.
+ *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db is still valid.
  *
  * 	@param	object	$object		Object to clone
+ *  @param	int		$native		Native method or true method
  *	@return object				Object clone
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
-function dol_clone($object)
+function dol_clone($object, $native=0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	//$myclone = clone $object;                    // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable
-	$myclone=unserialize(serialize($object));
+	if (empty($native))
+	{
+		$myclone=unserialize(serialize($object));
+	}
+	else
+	{
+		$myclone = clone $object;     // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
+	}
 
 	return $myclone;
 }
@@ -3292,9 +3300,10 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
  *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$disablesortlink	1=Disable sort link
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="")
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0)
 {
 	global $conf, $langs;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
@@ -3318,7 +3327,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -3339,7 +3348,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 	$out.=$langs->trans($name);
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
 		$out.='</a>';
 	}
@@ -4765,22 +4774,57 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
  * Return first line of text. Cut will depends if content is HTML or not.
  *
  * @param 	string	$text		Input text
+ * @param	int		$nboflines  Nb of lines to get (default is 1 = first line only)
  * @return	string				Output text
  * @see dol_nboflines_bis, dol_string_nohtmltag, dol_escape_htmltag
  */
-function dolGetFirstLineOfText($text)
+function dolGetFirstLineOfText($text, $nboflines=1)
 {
-	if (dol_textishtml($text))
+	if ($nboflines == 1)
 	{
-		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
-		$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
+		if (dol_textishtml($text))
+		{
+			$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
+			$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
 
+		}
+		else
+		{
+	    	$firstline=preg_replace('/[\n\r].*/','',$text);
+		}
+    	return $firstline.((strlen($firstline) != strlen($text))?'...':'');
 	}
 	else
 	{
-    	$firstline=preg_replace('/[\n\r].*/','',$text);
+		$ishtml=0;
+		if (dol_textishtml($text))
+		{
+			$text=preg_replace('/\n/','',$text);
+			$ishtml=1;
+			$repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
+		}
+		else
+		{
+			$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
+		}
+
+		$text = strtr($text, $repTable);
+		if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+		else $pattern = '/(<br[^>]*>)/U';							// /U is to have UNGREEDY regex to limit to one html tag.
+		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+		$firstline='';
+		$i=0;
+		$nba = count($a);	// 2x nb of lines in $a because $a contains also a line for each new line separator
+		while (($i < $nba) && ($i < ($nboflines * 2)))
+		{
+			if ($i % 2 == 0) $firstline .= $a[$i];
+			elseif (($i < (($nboflines * 2) - 1)) && ($i < ($nba - 1))) $firstline .= ($ishtml?"<br>\n":"\n");
+			$i++;
+		}
+		unset($a);
+    	return $firstline.(($i < $nba)?'...':'');
 	}
-    return $firstline.((strlen($firstline) != strlen($text))?'...':'');
 }
 
 
@@ -4942,7 +4986,7 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	Return nb of lines of a formated text with \n and <br> (we can't have both \n and br)
+ *	Return nb of lines of a formated text with \n and <br> (WARNING: string must not have mixed \n and br separators)
  *
  *	@param	string	$text      		Text
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
@@ -4978,6 +5022,8 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 			}
 		}
 	}
+
+	unset($a);
 	return $nblines;
 }
 
@@ -6127,7 +6173,7 @@ function dol_getmypid()
  *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
- * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */

@@ -47,7 +47,7 @@ class modModuleBuilder extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "A tool to help developers to build their own module.";
-        $this->version = 'development';                        // 'development', 'experimental' or 'dolibarr' or version
+        $this->version = 'experimental';                        // 'development', 'experimental' or 'dolibarr' or version
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -85,7 +85,7 @@ class modModuleBuilder extends DolibarrModules
         // Main menu entries
         //------------------
         $this->menu = array();
-        
+
         $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
             'type'=>'left',
             'titre'=>'ModuleBuilder',
@@ -98,6 +98,6 @@ class modModuleBuilder extends DolibarrModules
             'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^admintools/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
-        
+
     }
 }

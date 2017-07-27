@@ -176,7 +176,7 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) $this->credit = 0;
 
 		// Check parameters
-		if (empty($this->numero_compte) || $this->numero_compte == '-1')
+		if (empty($this->numero_compte) || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
 		{
 			$langs->load("errors");
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
@@ -803,7 +803,7 @@ class BookKeeping extends CommonObject
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		$this->lines = array ();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1260,7 +1260,7 @@ class BookKeeping extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new Accountingbookkeeping($this->db);
+		$object = new BookKeeping($this->db);
 
 		$this->db->begin();
 

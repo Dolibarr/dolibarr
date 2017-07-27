@@ -49,11 +49,6 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var WebsitePage[]  Lines of all pages
-	 */
-	public $lines = array();
-
-	/**
 	 * @var int
 	 */
 	public $entity;
@@ -85,13 +80,7 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
-	
-	
-	public $records;
-	
-	/**
-	 */
-	
+
 
 	/**
 	 * Constructor
@@ -144,7 +133,7 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create';
+		$sql.= 'fk_user_create,';
 		$sql.= 'date_creation';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
@@ -218,7 +207,7 @@ class Website extends CommonObject
 		$sql .= " t.tms";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+			$sql .= " WHERE t.ref = '" . $this->db->escape($ref) . "'";
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -230,7 +219,7 @@ class Website extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				
+
 				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
 				$this->description = $obj->description;
@@ -297,7 +286,7 @@ class Website extends CommonObject
 		if (count($sqlwhere) > 0) {
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
@@ -314,7 +303,7 @@ class Website extends CommonObject
 				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
-				
+
 				$line->entity = $obj->entity;
 				$line->ref = $obj->ref;
 				$line->description = $obj->description;
@@ -354,7 +343,7 @@ class Website extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -552,7 +541,7 @@ class Website extends CommonObject
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
@@ -607,8 +596,8 @@ class Website extends CommonObject
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -618,9 +607,9 @@ class Website extends CommonObject
 	public function initAsSpecimen()
 	{
 	    global $user;
-	    
+
 		$this->id = 0;
-		
+
 		$this->entity = 1;
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
@@ -632,7 +621,7 @@ class Website extends CommonObject
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();
 
-		
+
 	}
 
 }

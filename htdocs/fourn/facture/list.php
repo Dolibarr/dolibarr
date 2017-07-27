@@ -194,7 +194,7 @@ if (empty($reshook))
 {
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x"))		// All test must be present to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha'))		// All test must be present to be compatible with all browsers
     {
         $search_all="";
         $search_user='';
@@ -426,6 +426,7 @@ if ($resql)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
+		if (empty($search_societe)) $search_societe = $soc->name;
 	}
 
 	$param='&socid='.$socid;
@@ -491,7 +492,7 @@ if ($resql)
 
 	    if (! GETPOST('cancel'))
 	    {
-	        $objecttmp=new FactureFourn($db);
+	    	$objecttmp=new FactureFournisseur($db);
 	        $listofselectedid=array();
 	        $listofselectedthirdparties=array();
 	        $listofselectedref=array();

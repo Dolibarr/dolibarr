@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

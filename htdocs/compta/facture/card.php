@@ -1440,7 +1440,7 @@ if (empty($reshook))
         {
             if (GETPOST('type') < 0 && ! GETPOST('search_idprod'))
             {
-                setEventMessages($langs->trans('ErrorChooseBetweenFreeAntryOrPredefinedProduct'), null, 'errors');
+                setEventMessages($langs->trans('ErrorChooseBetweenFreeEntryOrPredefinedProduct'), null, 'errors');
                 $error ++;
             }
         }
@@ -3075,6 +3075,7 @@ else if ($id > 0 || ! empty($ref))
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -4185,7 +4186,7 @@ else if ($id > 0 || ! empty($ref))
 			{
 				if (! $objectidnext && count($object->lines) > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
 			}
 

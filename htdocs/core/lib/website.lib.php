@@ -64,3 +64,38 @@ function dolWebsiteOutput($content)
     print $content;
 }
 
+
+/**
+ * Clean an HTML page to report only content, so we can include it into another page
+ * It outputs content of file sanitized from html and body part.
+ *
+ * @param 	string	$contentfile		Path to file to include (must include website root. Example: 'mywebsite/mypage.php')
+ * @return  void
+ */
+function dolIncludeHtmlContent($contentfile)
+{
+	global $conf, $db, $langs, $mysoc, $user, $website;
+	global $includehtmlcontentopened;
+
+	$MAXLEVEL=20;
+
+	$fullpathfile=DOL_DATA_ROOT.'/websites/'.$contentfile;
+	//$content = file_get_contents($fullpathfile);
+	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
+
+	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
+	$includehtmlcontentopened++;
+	if ($includehtmlcontentopened > $MAXLEVEL)
+	{
+		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.$MAXLEVEL.".\n";
+		return;
+	}
+	$res = include $fullpathfile;		// Include because we want to execute code content
+	if (! $res)
+	{
+		print 'ERROR: FAILED TO INCLUDE PAGE '.$contentfile.".\n";
+	}
+
+	$includehtmlcontentopened--;
+}
+

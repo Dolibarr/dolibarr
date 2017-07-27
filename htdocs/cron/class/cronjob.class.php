@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013	Florian Henry	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ class Cronjob extends CommonObject
 	public $fk_user_mod;
 	public $nbrun;
 	public $libname;
-
+	public $test;					// A test condition to know if job is visible/qualified
 
     /**
      *  Constructor
@@ -194,12 +194,12 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->md5params)?'NULL':"'".$this->db->escape($this->md5params)."'").",";
 		$sql.= " ".(! isset($this->module_name)?'NULL':"'".$this->db->escape($this->module_name)."'").",";
 		$sql.= " ".(! isset($this->priority)?'0':$this->priority).",";
-		$sql.= " ".(! isset($this->datelastrun) || dol_strlen($this->datelastrun)==0?'NULL':$this->db->idate($this->datelastrun)).",";
-		$sql.= " ".(! isset($this->datenextrun) || dol_strlen($this->datenextrun)==0?'NULL':$this->db->idate($this->datenextrun)).",";
-		$sql.= " ".(! isset($this->dateend) || dol_strlen($this->dateend)==0?'NULL':$this->db->idate($this->dateend)).",";
-		$sql.= " ".(! isset($this->datestart) || dol_strlen($this->datestart)==0?'NULL':$this->db->idate($this->datestart)).",";
+		$sql.= " ".(! isset($this->datelastrun) || dol_strlen($this->datelastrun)==0?'NULL':"'".$this->db->idate($this->datelastrun)."'").",";
+		$sql.= " ".(! isset($this->datenextrun) || dol_strlen($this->datenextrun)==0?'NULL':"'".$this->db->idate($this->datenextrun)."'").",";
+		$sql.= " ".(! isset($this->dateend) || dol_strlen($this->dateend)==0?'NULL':"'".$this->db->idate($this->dateend)."'").",";
+		$sql.= " ".(! isset($this->datestart) || dol_strlen($this->datestart)==0?'NULL':"'".$this->db->idate($this->datestart)."'").",";
 		$sql.= " ".(! isset($this->lastresult)?'NULL':"'".$this->db->escape($this->lastresult)."'").",";
-		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':$this->db->idate($this->datelastresult)).",";
+		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':"'".$this->db->idate($this->datelastresult)."'").",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
 		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
 		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";

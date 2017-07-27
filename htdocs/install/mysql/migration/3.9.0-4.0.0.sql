@@ -548,3 +548,5 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, 
 -- VPGSQL8.2 ALTER TABLE llx_establishment ALTER COLUMN fk_user_mod DROP NOT NULL;
 
 ALTER TABLE llx_multicurrency_rate ADD COLUMN entity integer DEFAULT 1;
+
+ALTER TABLE llx_user MODIFY COLUMN login varchar(50);

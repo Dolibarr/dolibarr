@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
 $error=0;
-$website=GETPOST('website', 'alpha');
+$websitekey=GETPOST('website', 'alpha');
 $pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
 
 $accessallowed = 1;
@@ -69,7 +69,7 @@ if (empty($pageid))
     require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
 
     $object=new Website($db);
-    $object->fetch(0, $website);
+    $object->fetch(0, $websitekey);
     if (empty($object->id))
     {
         if (empty($pageid))
@@ -125,11 +125,11 @@ if ($pageid == 'css')   // No more used ?
     //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
     //else
     header('Cache-Control: no-cache');
-    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css.php';
+    $original_file=$dolibarr_main_data_root.'/websites/'.$websitekey.'/styles.css.php';
 }
 else
 {
-    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/page'.$pageid.'.tpl.php';
+    $original_file=$dolibarr_main_data_root.'/websites/'.$websitekey.'/page'.$pageid.'.tpl.php';
 }
 
 // Find the subdirectory name as the reference
@@ -177,7 +177,7 @@ if (! file_exists($original_file_osencoded))
 
 // Output page content
 define('USEDOLIBARRSERVER', 1);
-print "\n".'<!-- Page content '.$original_file.' : Html with CSS link + Body was saved into tpl -->'."\n";
+print '<!-- Page content '.$original_file.' : Html with CSS link + Body was saved into tpl -->'."\n";
 include_once $original_file_osencoded;
 
 

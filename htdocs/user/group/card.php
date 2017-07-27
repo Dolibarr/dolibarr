@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Herve Prot			<herve.prot@symeos.com>
+ * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-    	$langs->load("errors");
+		$langs->load("errors");
         setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
@@ -132,7 +132,7 @@ if ($action == 'add')
     }
     else
     {
-    	$langs->load("errors");
+		$langs->load("errors");
 	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
@@ -165,7 +165,7 @@ if ($action == 'adduser' || $action =='removeuser')
     }
     else
     {
-    	$langs->load("errors");
+		$langs->load("errors");
 	    setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
     }
 }
@@ -207,7 +207,7 @@ if ($action == 'update')
     }
     else
     {
-    	$langs->load("errors");
+		$langs->load("errors");
         setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
     }
 }
@@ -275,7 +275,7 @@ if ($action == 'create')
     print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
-    	print $object->showOptionals($extrafields,'edit');
+		print $object->showOptionals($extrafields,'edit');
     }
 
     print "</table>\n";
@@ -316,23 +316,26 @@ else
 
 		if ($action != 'edit')
 		{
-        	dol_fiche_head($head, 'group', $title, -1, 'group');
+			dol_fiche_head($head, 'group', $title, -1, 'group');
 
 			dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-        	print '<table class="border" width="100%">';
+			print '<table class="border" width="100%">';
 
-			// Name
-			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-			print '<td class="valeur">'.$object->name;
-			if (empty($object->entity))
-			{
-				print img_picto($langs->trans("GlobalGroup"),'redstar');
-			}
-			print "</td></tr>\n";
+            // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
+            if (! empty($conf->mutlicompany->enabled))
+            {
+    			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+    			print '<td class="valeur">'.$object->name;
+    			if (empty($object->entity))
+    			{
+    				print img_picto($langs->trans("GlobalGroup"),'redstar');
+    			}
+    			print "</td></tr>\n";
+            }
 
 			// Multicompany
 			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
@@ -350,7 +353,7 @@ else
 
 			// Other attributes
             $parameters=array('colspan' => ' colspan="2"');
-    		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print "</table>\n";
             print '</div>';
@@ -435,59 +438,57 @@ else
             print '<td class="liste_titre">'.$langs->trans("Lastname").'</td>';
             print '<td class="liste_titre">'.$langs->trans("Firstname").'</td>';
 			if (! empty($conf->multicompany->enabled) && $conf->entity == 1)
-            {
-            	print '<td class="liste_titre">'.$langs->trans("Entity").'</td>';
+			{
+				print '<td class="liste_titre">'.$langs->trans("Entity").'</td>';
             }
             print '<td class="liste_titre" width="5" align="center">'.$langs->trans("Status").'</td>';
             print '<td class="liste_titre" width="5" align="right">&nbsp;</td>';
             print "</tr>\n";
 
-            if (! empty($object->members))
-            {
-            	foreach($object->members as $useringroup)
-            	{
-
-
-            		print '<tr class="oddeven">';
-            		print '<td>';
-            		print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
-            		if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
-            		else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
-            		print '</td>';
-            		print '<td>'.$useringroup->lastname.'</td>';
-            		print '<td>'.$useringroup->firstname.'</td>';
-            		if (! empty($conf->multicompany->enabled)  && is_object($mc) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-            		{
-            			print '<td class="valeur">';
-            			if (! empty($useringroup->usergroup_entity))
-            			{
-            				$nb=0;
-            				foreach($useringroup->usergroup_entity as $group_entity)
-            				{
-            					$mc->getInfo($group_entity);
-            					print ($nb > 0 ? ', ' : '').$mc->label;
-            					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'&amp;entity='.$group_entity.'">';
-            					print img_delete($langs->trans("RemoveFromGroup"));
-            					print '</a>';
-            					$nb++;
-            				}
-            			}
-            			print '</td>';
-            		}
-            		print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
-            		print '<td align="right">';
-            		if (! empty($user->admin) && empty($conf->multicompany->enabled))
-            		{
-            			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
-            			print img_delete($langs->trans("RemoveFromGroup"));
-            			print '</a>';
-            		}
-            		else
-            		{
-            			print "-";
-            		}
-            		print "</td></tr>\n";
-            	}
+			if (! empty($object->members))
+			{
+				foreach($object->members as $useringroup)
+				{
+					print '<tr class="oddeven">';
+					print '<td>';
+					print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
+					if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
+					else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
+					print '</td>';
+					print '<td>'.$useringroup->lastname.'</td>';
+					print '<td>'.$useringroup->firstname.'</td>';
+					if (! empty($conf->multicompany->enabled)  && is_object($mc) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+					{
+						print '<td class="valeur">';
+						if (! empty($useringroup->usergroup_entity))
+						{
+							$nb=0;
+							foreach($useringroup->usergroup_entity as $group_entity)
+							{
+								$mc->getInfo($group_entity);
+								print ($nb > 0 ? ', ' : '').$mc->label;
+								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'&amp;entity='.$group_entity.'">';
+								print img_delete($langs->trans("RemoveFromGroup"));
+								print '</a>';
+								$nb++;
+							}
+						}
+						print '</td>';
+					}
+					print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
+					print '<td align="right">';
+					if (! empty($user->admin) && empty($conf->multicompany->enabled))
+					{
+						print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
+						print img_delete($langs->trans("RemoveFromGroup"));
+						print '</a>';
+					}
+					else
+					{
+						print "-";
+					}
+					print "</td></tr>\n";
+				}
             }
             else
             {
@@ -547,10 +548,10 @@ else
                     print "<td>".$mc->select_entities($object->entity);
                     print "</td></tr>\n";
                 }
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
+                else
+                {
+					print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+				}
             }
 
             print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
@@ -560,13 +561,13 @@ else
             $doleditor->Create();
             print '</td>';
             print "</tr>\n";
-        	// Other attributes
+			// Other attributes
             $parameters=array();
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	print $object->showOptionals($extrafields,'edit');
+				print $object->showOptionals($extrafields,'edit');
             }
 
             print "</table>\n";

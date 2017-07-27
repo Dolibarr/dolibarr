@@ -2684,7 +2684,7 @@ tr.pair:last-of-type td, tr.impair:last-of-type td {
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-td.nobottom, td.nobottom {
+tr.nobottom td, tr.nobottom , td.nobottom {
     border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
@@ -3428,7 +3428,11 @@ a.websitebuttonsitepreview img {
 .websiteiframenoborder {
 	border: 0px;
 }
-
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */

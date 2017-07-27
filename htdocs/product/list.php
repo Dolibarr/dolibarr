@@ -206,7 +206,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
     	$sall="";
     	$sref="";
@@ -311,7 +311,7 @@ else
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
     if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
-    if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
+    if ($search_accountancy_code_buy)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
     // Add where from extra fields
 
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {

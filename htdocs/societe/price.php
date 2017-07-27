@@ -69,7 +69,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
     {
         $search_prod = '';
     }
@@ -187,7 +187,7 @@ if (! empty($conf->notification->enabled))
 	$langs->load("mails");
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), 0, 'company');
+dol_fiche_head($head, 'price', $langs->trans("ThirdParty"), -1, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -200,11 +200,11 @@ print '<table class="border centpercent">';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
-	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
+	print '<tr><td class="titlefield">' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
 }
 
 if ($object->client) {
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode') . '</td><td colspan="3">';
 	print $object->code_client;
 	if ($object->check_codeclient() != 0)
@@ -213,7 +213,7 @@ if ($object->client) {
 }
 
 if ($object->fournisseur) {
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode') . '</td><td colspan="3">';
 	print $object->code_fournisseur;
 	if ($object->check_codefournisseur() != 0)

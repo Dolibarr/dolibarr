@@ -1539,7 +1539,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       }
       $('.toggleEndpointList', this.el).click(this.callDocs.bind(this, 'toggleEndpointListForResource'));
       $('.collapseResource', this.el).click(this.callDocs.bind(this, 'collapseOperationsForResource'));
-      /* DOL_CHANGE LDR Fix typo error that break expand */
+      /* @CHANGE LDR Fix typo error that break expand */
       $('.expandResource', this.el).click(this.callDocs.bind(this, 'expandOperationsForResource'));
       return this;
     };
