@@ -2,6 +2,7 @@
 IdAgenda=ID udalosti
 Actions=Udalosti
 Agenda=Program rokovania
+TMenuAgenda=Program rokovania
 Agendas=Program
 LocalAgenda=Interný kalendár
 ActionsOwnedBy=Udalosť vytvorená: 
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=Faktúra %s zmazaná
 InvoicePaidInDolibarr=Faktúra %s označená ako zaplatená
 InvoiceCanceledInDolibarr=Faktúra %s zrušená
 MemberValidatedInDolibarr=Užívateľ %s overený
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Užívateľ %s zrušený
 MemberDeletedInDolibarr=Užívateľ %s zmazaný
 MemberSubscriptionAddedInDolibarr=Predplatné pre užívateľa %s pridané
 ShipmentValidatedInDolibarr=Zásielka %s overená
-ShipmentClassifyClosedInDolibarr=Zásielka %s označená ako faktúrovaná
-ShipmentUnClassifyCloseddInDolibarr=Zásielka %s označená ako znovuotvorená
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Zásielka %s zmazaná
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Objednať %s overená
@@ -73,13 +75,17 @@ InterventionSentByEMail=Zákrok %s odoslaný E-mailom
 ProposalDeleted=Ponuka zmazaná
 OrderDeleted=Objednávka zmazaná
 InvoiceDeleted=Faktúra zmazaná
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Dátum začatia
 DateActionEnd=Dátum ukončenia
 AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výstupu:
-AgendaUrlOptions2=<b>login=%s</b> pre obmedzenie výstupu akciám vytvoreným alebo prideleným užívateľom <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> pre obmedzenie výstupu akciam ktoré vlastní užívateľ <b>%s</b>.
-AgendaUrlOptions4=<b>logint = %s</b> obmedziť výstup na akcie priradených užívateľských <b>%s.</b>
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pre obmedzenie výstupu akciam prideleným projektu <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Zobraziť narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť naroodeniny kontaktov

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Florian Henry	      <florian.henry@open-concept.pro>
- * Copyright (C) 2014 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2017 Laurent Destailleur <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $cssclass must be defined by caller. For example cssclass='fieldtitle"
-$module = $object->element;
-$note_public = 'note_public';
+// $permission must be defined by caller.
+// $cssclass   must be defined by caller. For example cssclass='fieldtitle"
+$module       = $object->element;
+$note_public  = 'note_public';
 $note_private = 'note_private';
 
 $colwidth=(isset($colwidth)?$colwidth:(empty($cssclass)?'25':''));
@@ -31,7 +32,7 @@ $value_private=$object->note_private;
 if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
 {
 	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action') == 'edit'.$note_public)
+	if (GETPOST('action','aZ09') == 'edit'.$note_public)
 	{
 		$value_public=dol_concatdesc($value_public, ($value_public?"\n":"")."-- ".$stringtoadd);
 		if (dol_textishtml($value_public)) $value_public.="<br>\n";
@@ -41,7 +42,7 @@ if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
 if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
 {
 	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action') == 'edit'.$note_private)
+	if (GETPOST('action','aZ09') == 'edit'.$note_private)
 	{
 		$value_private=dol_concatdesc($value_private, ($value_private?"\n":"")."-- ".$stringtoadd);
 		if (dol_textishtml($value_private)) $value_private.="<br>\n";

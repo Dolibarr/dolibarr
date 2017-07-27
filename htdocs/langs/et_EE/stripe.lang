@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Dolibarri objektide põhjal maksete sooritamiseks on klientidele pakkuda järgnevate lehtede URLid:
+PaymentForm=Maksmise vorm
+WelcomeOnPaymentPage=Tere tulemast meie online makseteenusesse
+ThisScreenAllowsYouToPay=See ekraan võimaldab teil teha online-makseid üksusele %s.
+ThisIsInformationOnPayment=See on makse sooritamise info
+ToComplete=Lõpuni viia
+YourEMail=E-posti aadress makse kinnituse saamiseks
+STRIPE_PAYONLINE_SENDEMAIL=E-posti aadress pärast makset hoiatuse saatmiseks (õnnestus või mitte)
+Creditor=Kreeditor
+PaymentCode=Makse kood
+StripeDoPayment=Mine maksmisele
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Järgmine
+ToOfferALinkForOnlinePayment=Makse %s URL
+ToOfferALinkForOnlinePaymentOnOrder=Müügitellimuse eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnInvoice=Müügiarve eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnContractLine=Lepingu rea eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=Vaba rea eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Liikmemaksu eest maksmiseks kasutatava %s online makseteenuse URL
+YouCanAddTagOnUrl=Samuti võid lisa URL parameetri <b>&tag=<i>value</i></b> igale nendest URLidest (nõutud vaid vaba makse jaoks) oma loodud makse kommentaari sildi jaoks.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=See lehekülg kinnitab, et makse on registreeritud. Täname!
+YourPaymentHasNotBeenRecorded=Makset ei ole registreeritud ja tehing on tühistatud. Täname!
+AccountParameter=Konto parameetrid
+UsageParameter=Kasutamise parameetrid
+InformationToFindParameters=Abi %s konto info leidmiseks
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Müüja nim
+CSSUrlForPaymentForm=Maksmise vormi CSS stiililehtede URL
+MessageOK=Kinnitatud makse lehel olev sõnum
+MessageKO=Tühistatud makse lehel olev sõnum
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

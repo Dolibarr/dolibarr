@@ -34,19 +34,20 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Opensurveysondage extends CommonObject
 {
-	var $element='opensurvey_sondage';			//!< Id that identify managed objects
-	var $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
-
-	var $id_sondage;
+	public $element='opensurvey_sondage';			//!< Id that identify managed objects
+	public $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
+    public $picto = 'opensurvey';
+    
+	public $id_sondage;
 	/**
 	 * @deprecated
 	 * @see description
 	 */
-	var $commentaires;
+	public $commentaires;
 	public $description;
 
-	var $mail_admin;
-	var $nom_admin;
+	public $mail_admin;
+	public $nom_admin;
 
 	/**
 	 * Id of user author of the poll
@@ -54,11 +55,11 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $fk_user_creat;
 
-	var $titre;
-	var $date_fin='';
-	var $status=1;
-	var $format;
-	var $mailsonde;
+	public $titre;
+	public $date_fin='';
+	public $status=1;
+	public $format;
+	public $mailsonde;
 
 	public $sujet;
 

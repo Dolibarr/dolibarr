@@ -77,6 +77,10 @@ VATIsNotUsed=VAT is not used
 CopyAddressFromSoc=Fill address with third party address
 ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 PaymentBankAccount=Payment bank account
+OverAllProposals=Proposals
+OverAllOrders=Orders
+OverAllInvoices=Invoices
+OverAllSupplierProposals=Price requests
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE is used

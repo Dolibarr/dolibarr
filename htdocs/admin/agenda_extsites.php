@@ -137,7 +137,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), 0, 'action');
+dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";
@@ -155,8 +155,8 @@ print '<td align="center">'.$langs->trans("Value")."</td>";
 print "</tr>";
 
 // Show external agenda
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
 print '<td align="center">';
 if ($conf->use_javascript_ajax)
@@ -178,8 +178,8 @@ print "</td>";
 print "</tr>";
 
 // Nb of agenda
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print '<td align="center">';
 print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="'.$conf->global->AGENDA_EXT_NB.'">';
@@ -210,8 +210,8 @@ while ($i <= $MAXAGENDA)
 	$color='AGENDA_EXT_COLOR'.$key;
 	$enabled='AGENDA_EXT_ENABLED'.$key;
 
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+	
+	print '<tr class="oddeven">';
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name

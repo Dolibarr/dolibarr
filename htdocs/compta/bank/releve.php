@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+//show files
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -44,7 +50,7 @@ $action=GETPOST('action', 'alpha');
 $id=GETPOST('account');
 $ref=GETPOST('ref');
 $dvid=GETPOST('dvid');
-$num=GETPOST('num');
+$numref=GETPOST('num');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
@@ -71,7 +77,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 $pageplusone = GETPOST("pageplusone",'int');
 if ($pageplusone) $page = $pageplusone - 1;
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -88,6 +94,191 @@ if ($id > 0 || ! empty($ref))
 
 // Initialize technical object to manage context to save list fields
 $contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
+
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
+$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+$sql.= " b.fk_bordereau,";
+$sql.= " bc.ref,";
+$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= ", ".MAIN_DB_PREFIX."bank as b";
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
+$sql.= " WHERE b.num_releve='".$db->escape($numref)."'";
+if (!isset($numref))	$sql.= " OR b.num_releve is null";
+$sql.= " AND b.fk_account = ".$object->id;
+$sql.= " AND b.fk_account = ba.rowid";
+$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
+
+$sqlrequestforbankline = $sql;
+
+
+
+/*
+ * Actions
+ */
+
+// ZIP creation
+if ($action=="dl" && $numref > 0)
+{
+	// TODO Replace this with a standard builddoc action that use a document generation module to build the ZIP
+    $log = '';
+
+    $outdir = $conf->bank->dir_temp.'/'.$numref.'-'.$object->label;
+    $outdirinvoices = $outdir.'/'.$langs->trans("BillsCustomers");
+    $outdirsupplierinvoices = $outdir.'/'.$langs->trans("BillsSuppliers");
+
+    dol_mkdir($outdir);
+    dol_mkdir($outdirinvoices);
+    dol_mkdir($outdirsupplierinvoices);
+
+    //$zipname = $object->label.'-'.$numref . '.zip';
+    //$zip = new ZipArchive();
+    //$zip->open($zipname, ZipArchive::OVERWRITE);
+
+    $sql = $sqlrequestforbankline;
+
+    $facturestatic=new Facture($db);
+
+    $resd = $db->query($sql);
+    if ($resd) {
+        $numd = $db->num_rows($resd);
+        $i = 0;
+        if ($numd > 0)
+        {
+            $objd = $db->fetch_object($resd);
+
+            $log.='Transaction '.$objd->rowid;
+            $links = $object->get_url($objd->rowid);
+
+            foreach($links as $key=>$val)
+            {
+                $link = ''; $upload_dir = '';
+
+                switch ($val['type']) {
+                    case "payment":
+                        $payment = new Paiement($db);
+                        $payment->fetch($val['url_id']);
+                        $arraybill = $payment->getBillsArray();
+                        if (count($arraybill) > 0)
+                        {
+                            foreach ($arraybill as $billid)
+                            {
+                                $facturestatic->fetch($billid);
+                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice');
+
+                                $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
+                                // TODO Use get_exdir
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
+                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                // build list of files with full path
+                                $files = array();
+                                foreach($listoffiles as $filefound)
+                                {
+                                    if (strstr($filefound["name"],$facturestatic->ref))
+                                    {
+                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
+                                        break;
+                                    }
+                                }
+                                /*var_dump($files);*/
+                                //var_dump($listoffiles);
+                                foreach($listoffiles as $key => $srcfileobj)
+                                {
+                                    $srcfile = $srcfileobj['fullname'];
+                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
+                                    //var_dump($srcfile.' - '.$destfile);
+                                    dol_copy($srcfile, $destfile);
+                                }
+                            }
+                        }
+                        break;
+                    case "payment_supplier":
+                        $payment = new PaiementFourn($db);
+                        $payment->fetch($val['url_id']);
+                        $arraybill = $payment->getBillsArray();
+                        if (count($arraybill) > 0)
+                        {
+                            foreach ($arraybill as $billid)
+                            {
+                                $facturestatic->fetch($billid);
+                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice_supplier');
+
+                                $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
+                                // TODO Use get_exdir
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
+                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                // build list of files with full path
+                                $files = array();
+                                foreach($listoffiles as $filefound)
+                                {
+                                    if (strstr($filefound["name"],$facturestatic->ref))
+                                    {
+                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
+                                        break;
+                                    }
+                                }
+                                /*var_dump($files);*/
+                                //var_dump($listoffiles);
+                                foreach($listoffiles as $key => $srcfileobj)
+                                {
+                                    $srcfile = $srcfileobj['fullname'];
+                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
+                                    //var_dump($srcfile.' - '.$destfile);
+                                    dol_copy($srcfile, $destfile);
+                                }
+                            }
+                        }
+                        break;
+                    case "payment_expensereport":
+                        /*$subdir = dol_sanitizeFileName($objd->refe);
+                        $upload_dir = $conf->expensereport->dir_output . '/' . $subdir;*/
+                        break;
+                    case "payment_salary":
+                        /*$subdir = dol_sanitizeFileName($objd->ids);
+                        $upload_dir = $conf->salaries->dir_output . '/' . $subdir;*/
+                        break;
+                    case "payment_donation":
+                        /*$subdir = get_exdir(null, 2, 0, 1, $objd, 'donation') . '/' . dol_sanitizeFileName($objd->idd);
+                        $upload_dir = $conf->don->dir_output . '/' . $subdir;*/
+                        break;
+                    default:
+                        break;
+                }
+            }
+            $log.="\n";
+
+            /*if (! empty($upload_dir))
+            {
+                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
+
+                if (is_array($files)) {
+                    foreach ($files as $file) {
+                        $zip->addFile($file["fullname"], $file["name"]); //
+                        $log .= $key . ',' . $file["name"] . "\n";
+                    }
+                } else {
+                    $log .= $key . ',' . $langs->trans("Nofile") . "\n";
+                }
+
+            }*/
+        }
+    }
+
+    $db->free($resd);
+
+
+    //$zip->addFromString('log '.$numref.'.csv', $log);
+    //$zip->close();
+
+    // /Then download the zipped file.
+    /*header('Content-Type: application/zip');
+    header('Content-disposition: attachment; filename=' . $zipname);
+    header('Content-Length: ' . filesize($zipname));
+
+    readfile($zipname);
+
+    exit;*/
+}
 
 
 /*
@@ -116,11 +307,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($id > 0) $param.='&id='.urlencode($id);
 
 
-if (empty($num))
+if (empty($numref))
 {
-	/*
-	 *	Vue liste tous releves confondus
-	 */
+	// List of all standing receipts
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.fk_account = ".$object->id;
@@ -140,18 +329,18 @@ if (empty($num))
 		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
-		
+
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
-		
+
 		dol_fiche_end();
 
-		
+
 		print '<div class="tabsAction">';
 
 		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile'.$param.'">'.$langs->trans("Conciliate").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
 			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
@@ -159,7 +348,7 @@ if (empty($num))
 
 		print '</div>';
 		print '<br><br>';
-		
+
 
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows);
 
@@ -176,14 +365,14 @@ if (empty($num))
 		while ($i < min($numrows,$conf->liste_limit))
 		{
 			$objp = $db->fetch_object($result);
-			$var=!$var;
+
 			if (! isset($objp->numr))
 			{
 				//
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$object->id.'">'.$objp->numr.'</a></td>';
+				print '<tr class="oddeven"><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$object->id.'">'.$objp->numr.'</a></td>';
 
 				// Calculate start amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -240,7 +429,7 @@ else
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
+		$sql.= " WHERE b.num_releve < '".$db->escape($numref)."'";
 		$sql.= " AND b.fk_account = ".$object->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
@@ -252,7 +441,7 @@ else
 			if ($numrows > 0)
 			{
 				$obj = $db->fetch_object($resql);
-				$num = $obj->num;
+				$numref = $obj->num;
 				$found=true;
 			}
 		}
@@ -262,7 +451,7 @@ else
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve > '".$db->escape($num)."'";
+		$sql.= " WHERE b.num_releve > '".$db->escape($numref)."'";
 		$sql.= " AND b.fk_account = ".$object->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
@@ -274,7 +463,7 @@ else
 			if ($numrows > 0)
 			{
 				$obj = $db->fetch_object($resql);
-				$num = $obj->num;
+				$numref = $obj->num;
 				$found=true;
 			}
 		}
@@ -286,13 +475,16 @@ else
 
     $mesprevnext='';
 	$mesprevnext.='<div class="pagination"><ul>';
-	$mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><</a></li>';
+	$mesprevnext.='<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	//$mesprevnext.=' &nbsp; ';
-	$mesprevnext.='<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$num.'</span></li>';
+	$mesprevnext.='<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
 	//$mesprevnext.=' &nbsp; ';
-    $mesprevnext.='<li class="pagination"><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$num.'&amp;ve='.$ve.'&amp;account='.$object->id.'">></a></li>';
+    $mesprevnext.='<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
     $mesprevnext.='</ul></div>';
-	print load_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : '.$object->getNomUrl(0, 'receipts'), $mesprevnext, 'title_bank.png');
+
+    $title=$langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
+	print load_fiche_titre($title, $mesprevnext, 'title_bank.png');
+	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
@@ -315,7 +507,7 @@ else
 	// Calcul du solde de depart du releve
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
+	$sql.= " WHERE b.num_releve < '".$db->escape($numref)."'";
 	$sql.= " AND b.fk_account = ".$object->id;
 
 	$resql=$db->query($sql);
@@ -327,19 +519,7 @@ else
 	}
 
 	// Recherche les ecritures pour le releve
-	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
-	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
-	$sql.= " b.fk_bordereau,";
-    $sql.= " bc.ref,";
-	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
-	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
-	if (!isset($num))	$sql.= " OR b.num_releve is null";
-	$sql.= " AND b.fk_account = ".$object->id;
-	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
+    $sql = $sqlrequestforbankline;
 
 	$result = $db->query($sql);
 	if ($result)
@@ -349,9 +529,9 @@ else
 		$i = 0;
 
 		// Ligne Solde debut releve
-		print "<tr ".$bc[$var]."><td colspan=\"3\"></td>";
-		print "<td colspan=\"3\"><b>".$langs->trans("InitialBankBalance")." :</b></td>";
-		print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
+		print '<tr class="oddeven"><td colspan="3"></td>';
+		print '<td colspan="3"><b>'.$langs->trans("InitialBankBalance")." :</b></td>";
+		print '<td class="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';
 		print "</tr>\n";
 
 		while ($i < $numrows)
@@ -359,8 +539,7 @@ else
 			$objp = $db->fetch_object($result);
 			$total = $total + $objp->amount;
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			// Date operation
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
@@ -368,13 +547,13 @@ else
 			// Date de valeur
 			print '<td align="center" valign="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->dv),"day") .' ';
-			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
-			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add() ."</a>";
 			print "</td>\n";
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
-				
+
 			// Type and num
             if ($objp->fk_type == 'SOLD') {
                 $type_label='&nbsp;';
@@ -434,6 +613,14 @@ else
 					$paymentvatstatic->ref=$langs->trans("Payment");
 					print ' '.$paymentvatstatic->getNomUrl(1);
 				}
+				elseif ($links[$key]['type']=='payment_salary')
+				{
+					print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
+					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+					print $langs->trans("Payment");
+					print '</a>';
+					$newline=0;
+				}
 				elseif ($links[$key]['type']=='banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
 					if ($objp->amount > 0)
@@ -472,6 +659,13 @@ else
 				elseif ($links[$key]['type']=='member') {
 					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowMember'),'user').' ';
+					print $links[$key]['label'];
+					print '</a>';
+					$newline=0;
+				}
+				elseif ($links[$key]['type']=='user') {
+					print '<a href="'.DOL_URL_ROOT.'/user/card.php?rowid='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowUser'),'user').' ';
 					print $links[$key]['label'];
 					print '</a>';
 					$newline=0;
@@ -519,7 +713,6 @@ else
 					dol_print_error($db);
 				}
 			}
-
 			print "</td>";
 
 			if ($objp->amount < 0)
@@ -537,7 +730,7 @@ else
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
-				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$object->id."\">";
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";
 			}
@@ -556,12 +749,19 @@ else
 
 	// Line Balance
 	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
-	print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td>";
+	print '<td class="right"><b>'.price($total)."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
 	print "</div>";
-	
+
 	print "</form>\n";
+
+	// Add a download button
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)   // Started a rewrite to make this feature more Dolibarr compliant. Still need dev to be completed.
+	{
+	    // TODO Replace this with standard box to generate document.
+	   print '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$numref.'&account='.$id.'&action=dl" class="butAction" name="Send" >'.$langs->trans('DownloadPackageWithAllDocuments')." </a>\n";
+	}
 }
 
 

@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Du använder Dolibarr inställningsguiden från DoliWamp, 
 KeepDefaultValuesDeb=Du använder Dolibarr inställningsguiden från en Ubuntu eller Debian, så värden som här föreslås är redan optimerade. Endast lösenord i databasen ägaren för att skapa måste fyllas. Ändra andra parametrar om du vet vad du gör.
 KeepDefaultValuesMamp=Du använder Dolibarr inställningsguiden från DoliMamp, värden så som här föreslås är redan optimerade. Ändra dem bara om du vet vad du gör.
 KeepDefaultValuesProxmox=Du använder Dolibarr inställningsguiden från en Proxmox virtuell apparat, så som föreslås här är redan optimerade. Ändra dem bara om du vet vad du gör.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

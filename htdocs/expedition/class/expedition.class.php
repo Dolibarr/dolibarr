@@ -195,6 +195,7 @@ class Expedition extends CommonObject
 		// Clean parameters
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
+		if (empty($this->fk_project)) $this->fk_project = 0;
 
 		$this->user = $user;
 
@@ -211,6 +212,7 @@ class Expedition extends CommonObject
 		$sql.= ", date_expedition";
 		$sql.= ", date_delivery";
 		$sql.= ", fk_soc";
+		$sql.= ", fk_projet";
 		$sql.= ", fk_address";
 		$sql.= ", fk_shipping_method";
 		$sql.= ", tracking_number";
@@ -234,6 +236,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
 		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".$this->socid;
+		$sql.= ", ".$this->fk_project;
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
@@ -487,9 +490,9 @@ class Expedition extends CommonObject
         $sql.= ', e.fk_incoterms, e.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+		$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
         if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
@@ -713,6 +716,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -726,6 +730,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -1366,8 +1371,13 @@ class Expedition extends CommonObject
                 $line->line_id          = $obj->line_id;
                 $line->rowid            = $obj->line_id;    // TODO deprecated
                 $line->id               = $obj->line_id;
-				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+
+                $line->fk_origin     	= 'orderline';
+                $line->fk_origin_line 	= $obj->fk_origin_line;
+                $line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+
+				$line->fk_expedition    = $this->id;                // id of parent
+
 				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
@@ -1593,7 +1603,7 @@ class Expedition extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1765,10 +1775,10 @@ class Expedition extends CommonObject
         else
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-            $sql.= " code='".$this->update['code']."'";
-            $sql.= ",libelle='".$this->update['libelle']."'";
-            $sql.= ",description='".$this->update['description']."'";
-            $sql.= ",tracking='".$this->update['tracking']."'";
+            $sql.= " code='".$this->db->escape($this->update['code'])."'";
+            $sql.= ",libelle='".$this->db->escape($this->update['libelle'])."'";
+            $sql.= ",description='".$this->db->escape($this->update['description'])."'";
+            $sql.= ",tracking='".$this->db->escape($this->update['tracking'])."'";
             $sql.= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }
@@ -2174,16 +2184,14 @@ class Expedition extends CommonObject
 
 		$langs->load("sendings");
 
-		// Sets the model on the model name to use
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->EXPEDITION_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'rouget';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'rouget';
 			}
 		}
 

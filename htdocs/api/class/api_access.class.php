@@ -80,25 +80,25 @@ class DolibarrApiAccess implements iAuthenticate
 		{
 		    dol_syslog($key.' - '.$val);
 		}*/
-		
+
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
-		if (isset($_GET['api_key'])) 
+		if (isset($_GET['api_key']))
 		{
 		    // TODO Add option to disable use of api key on url. Return errors if used.
 		    $api_key = $_GET['api_key'];                         // For backward compatibility
 		}
-		if (isset($_GET['DOLAPIKEY'])) 
+		if (isset($_GET['DOLAPIKEY']))
 		{
 		    // TODO Add option to disable use of api key on url. Return errors if used.
 		    $api_key = $_GET['DOLAPIKEY'];                     // With GET method
 		}
-		if (isset($_SERVER['HTTP_DOLAPIKEY'])) 
+		if (isset($_SERVER['HTTP_DOLAPIKEY']))         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 		{
 		    $api_key = $_SERVER['HTTP_DOLAPIKEY'];     // With header method (recommanded)
 		}
-		
-		if ($api_key) 
+
+		if ($api_key)
 		{
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql.= " u.tms as date_modification, u.entity";

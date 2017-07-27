@@ -85,8 +85,8 @@ print '<td></td>';
 
 
 // Utilisation formulaire Ajax sur choix produit
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax))
 {
@@ -111,8 +111,8 @@ else
 }
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkUser').'</td>';
 print '<td>';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_USER');
@@ -120,8 +120,8 @@ print '</td>';
 print '<td></td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkContact').'</td>';
 print '<td>';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');

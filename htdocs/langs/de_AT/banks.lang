@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Überweisung/Bar
 BankName=Banknamen
-FinancialAccount=Konto
 BankAccount=Kontonummer
 BankAccounts=Kontonummern
 AccountRef=Referenznummer
@@ -15,6 +14,7 @@ EndBankBalance=Abschlusssaldo
 CurrentBalance=derezitige Bilanz
 FutureBalance=zukünftiger Bilanz
 ShowAllTimeBalance=Eröffnungsbilanz
+RIB=Kontonummer
 AccountStatementShort=Kontenauszug
 AccountStatements=Kontoauszug
 LastAccountStatements=letzter Kontoauszug
@@ -25,6 +25,7 @@ BankType0=Sparkonto\n
 BankType2=Kassa
 Account=Kontonummer
 IncludeClosedAccount=Geschlossene konten miteinbeziehen
+StatusAccountClosed=geschlossen
 WithdrawalPayment=Widerrufsrecht Zahlung
 ShowCheckReceipt=Zeige überprüfen Einzahlungsbeleg
 Graph=Grafik

@@ -87,7 +87,7 @@ if (! is_writable($conffile))
 
 if (! empty($force_install_message))
 {
-    print '<div><table><tr><td valign="middle"><img src="../theme/common/information.png" style="height:40px;"></td><td valign="middle">'.$langs->trans($force_install_message).'</td></tr></table>';
+    print '<div><br>'.$langs->trans($force_install_message).'</div>';
 
     /*print '<script type="text/javascript">';
     print '	jQuery(document).ready(function() {
@@ -110,8 +110,8 @@ if (! empty($force_install_message))
 <table class="nobordernopadding<?php if ($force_install_noedit) print ' hidewhennoedit'; ?>">
 
 	<tr>
-		<td colspan="3" class="label" align="center">
-		<h3><?php echo $langs->trans("WebServer"); ?></h3>
+		<td colspan="3" class="label">
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -126,7 +126,7 @@ if (! empty($force_install_message))
 		$dolibarr_main_document_root = detect_dolibarr_main_document_root();
 	}
 	?>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text"
 			       class="minwidth300"
 			       value="<?php print $dolibarr_main_document_root ?>"
@@ -157,7 +157,7 @@ if (! empty($force_install_message))
 			$dolibarr_main_data_root = detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
 		?>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text"
 			       class="minwidth300"
 			       value="<?php print $dolibarr_main_data_root ?>"
@@ -211,7 +211,7 @@ if (! empty($force_install_message))
 	    ?>
 	<tr>
 		<td class="tdtop label"><?php echo $langs->trans("ForceHttps"); ?></td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="checkbox"
 			       name="main_force_https"
 				<?php if (!empty($force_install_mainforcehttps)) {
@@ -233,15 +233,15 @@ if (! empty($force_install_message))
 	<!-- Dolibarr database -->
 
 	<tr>
-		<td colspan="3" class="label" align="center"><br>
-		<h3><?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<td colspan="3" class="label"><br>
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
 	<tr>
-		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>
+		<td class="label tdtop"><b> <?php echo $langs->trans("DatabaseName"); ?>
 		</b></td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text" id="db_name"
 			       name="db_name"
 			       value="<?php echo (!empty($dolibarr_main_db_name)) ? $dolibarr_main_db_name : ($force_install_database ? $force_install_database : 'dolibarr'); ?>"
@@ -372,9 +372,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><?php echo $langs->trans("DatabasePrefix"); ?>
+		<td class="label tdtop"><?php echo $langs->trans("DatabasePrefix"); ?>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text" id="db_prefix"
 			       name="db_prefix"
 			       value="<?php echo(!empty($force_install_prefix) ? $force_install_prefix : (!empty($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : 'llx_')); ?>"
@@ -387,9 +387,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><?php echo $langs->trans("CreateDatabase"); ?>
+		<td class="label tdtop"><?php echo $langs->trans("CreateDatabase"); ?>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="checkbox"
 			       id="db_create_database"
 			       name="db_create_database"
@@ -406,9 +406,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b>
+		<td class="label tdtop"><b><?php echo $langs->trans("Login"); ?></b>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text" id="db_user"
 			       name="db_user"
 			       value="<?php print (!empty($force_install_databaselogin)) ? $force_install_databaselogin : $dolibarr_main_db_user; ?>"
@@ -421,9 +421,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
+		<td class="label tdtop"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="password" id="db_pass" autocomplete="off"
 			       name="db_pass"
 			       value="<?php
@@ -443,9 +443,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><?php echo $langs->trans("CreateUser"); ?>
+		<td class="label tdtop"><?php echo $langs->trans("CreateUser"); ?>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="checkbox"
 			       id="db_create_user" name="db_create_user"
 				<?php if (!empty($force_install_createuser)) {
@@ -467,14 +467,14 @@ if (! empty($force_install_message))
 	$force_install_databaserootpass = parse_database_pass($force_install_databaserootpass);
 	?>
 	<tr class="hidesqlite hideroot">
-		<td colspan="3" class="label" align="center"><br>
-		<h3><?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<td colspan="3" class="label"><br>
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 
 	<tr class="hidesqlite hideroot">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b></td>
-		<td class="label" valign="top">
+		<td class="label tdtop"><b><?php echo $langs->trans("Login"); ?></b></td>
+		<td class="label tdtop">
 			<input type="text"
 			       id="db_user_root"
 			       name="db_user_root"
@@ -497,10 +497,9 @@ if (! empty($force_install_message))
 
 	</tr>
 	<tr class="hidesqlite hideroot">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
+		<td class="label tdtop"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top">
-
+		<td class="label tdtop">
 			<input type="password"
 			       autocomplete="off"
 			       id="db_pass_root"

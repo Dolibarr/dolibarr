@@ -47,7 +47,7 @@ $langs->load("other");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -141,9 +141,9 @@ if ($savehandler == 'files')
 
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Login
 		print '<td>'.$sessionentry['login'].'</td>';

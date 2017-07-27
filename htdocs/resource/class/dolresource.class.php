@@ -30,18 +30,19 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
  */
 class Dolresource extends CommonObject
 {
-	var $element='dolresource';			//!< Id that identify managed objects
-	var $table_element='resource';	//!< Name of table without prefix where object is stored
-
-	var $resource_id;
-	var $resource_type;
-	var $element_id;
-	var $element_type;
-	var $busy;
-	var $mandatory;
-	var $fk_user_create;
-	var $type_label;
-	var $tms='';
+	public $element='dolresource';			//!< Id that identify managed objects
+	public $table_element='resource';	//!< Name of table without prefix where object is stored
+    public $picto = 'resource';
+    
+	public $resource_id;
+	public $resource_type;
+	public $element_id;
+	public $element_type;
+	public $busy;
+	public $mandatory;
+	public $fk_user_create;
+	public $type_label;
+	public $tms='';
 
     /**
      *  Constructor
@@ -469,7 +470,7 @@ class Dolresource extends CommonObject
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
-    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -554,7 +555,7 @@ class Dolresource extends CommonObject
 		$sql.= " t.fk_user_create,";
 		$sql.= " t.tms";
    		$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-   		$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
+   		$sql.= " WHERE t.entity IN (".getEntity('resource').")";
 
    		//Manage filter
    		if (!empty($filter)){
@@ -636,7 +637,7 @@ class Dolresource extends CommonObject
     	$sql.= " t.fk_user_create,";
     	$sql.= " t.tms";
     	$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -974,4 +975,30 @@ class Dolresource extends CommonObject
         $result.=$link.$this->ref.$linkend;
         return $result;
     }
+    
+    
+    /**
+     *  Retourne le libelle du status d'un user (actif, inactif)
+     *
+     *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return	string 			       Label of status
+     */
+    function getLibStatut($mode=0)
+    {
+        return $this->LibStatut($this->status,$mode);
+    }
+    
+    /**
+     *  Return the status
+     *
+     *  @param	int		$status        	Id status
+     *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
+     *  @return string 			       	Label of status
+     */
+    static function LibStatut($status,$mode=0)
+    {
+        global $langs;
+    
+        return '';
+    }    
 }

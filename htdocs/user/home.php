@@ -62,22 +62,21 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Search User
-$var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td><td'.($canreadperms?' rowspan="2"':'').'><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
+print '<tr><td>';
+print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
 
 // Search Group
 if ($canreadperms)
 {
-	$var=false;
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr><td>';
 	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
 
+print '<tr><td class="center" colspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table><br>\n";
 print '</form>';
 
@@ -101,7 +100,7 @@ $sql.= ", s.code_client";
 $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
@@ -125,9 +124,9 @@ if ($resql)
 	while ($i < $num && $i < $max)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
         $fuserstatic->id = $obj->rowid;
         $fuserstatic->statut = $obj->statut;
@@ -213,7 +212,7 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 	{
 		$sql.= " WHERE g.entity IS NOT NULL";
 	}
@@ -238,9 +237,9 @@ if ($canreadperms)
 		while ($i < $num && (! $max || $i < $max))
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
 			if (! $obj->entity)
 			{

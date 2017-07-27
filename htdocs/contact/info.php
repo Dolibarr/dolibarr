@@ -59,7 +59,7 @@ if ($id > 0)
 
 	$head = contact_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $title, 0, 'contact');
+	dol_fiche_head($head, 'info', $title, -1, 'contact');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
 

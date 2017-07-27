@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 $langs->load('loan');
 
@@ -70,7 +70,7 @@ if ($id > 0)
 
     $head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("Loan"), 0, 'bill');
+    dol_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref='<div class="refidno">';
 	// Ref loan

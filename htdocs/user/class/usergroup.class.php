@@ -37,21 +37,22 @@ class UserGroup extends CommonObject
 	public $element='usergroup';
 	public $table_element='usergroup';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $picto='group';
+	public $entity;		// Entity of group
 
-	var $entity;		// Entity of group
 	/**
 	 * @deprecated
 	 * @see name
 	 */
-	var $nom;			// Name of group
-	var $globalgroup;	// Global group
-	var $datec;			// Creation date of group
-	var $datem;			// Modification date of group
-	var $members=array();	// Array of users
+	public $nom;			// Name of group
+	public $globalgroup;	// Global group
+	public $datec;			// Creation date of group
+	public $datem;			// Modification date of group
+	public $members=array();	// Array of users
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -251,16 +252,19 @@ class UserGroup extends CommonObject
 	/**
 	 *    Add a permission to a group
 	 *
-	 *    @param      int		$rid         id du droit a ajouter
-	 *    @param      string	$allmodule   Ajouter tous les droits du module allmodule
-	 *    @param      string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *    @return     int         			 > 0 if OK, < 0 if KO
+	 *    @param	int		$rid		id du droit a ajouter
+	 *    @param	string	$allmodule	Ajouter tous les droits du module allmodule
+	 *    @param	string	$allperms	Ajouter tous les droits du module allmodule, perms allperms
+	 *    @param	int		$entity		Entity to use
+	 *    @return	int					> 0 if OK, < 0 if KO
 	 */
-	function addrights($rid,$allmodule='',$allperms='')
+	function addrights($rid, $allmodule='', $allperms='', $entity=0)
 	{
 		global $conf, $user, $langs;
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
+		$entity = (! empty($entity)?$entity:$conf->entity);
+
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
 		$error=0;
 		$whereforadd='';
 
@@ -273,7 +277,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -310,7 +314,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $whereforadd";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -322,9 +326,9 @@ class UserGroup extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid." AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (fk_usergroup, fk_id) VALUES ($this->id, $nid)";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -362,17 +366,20 @@ class UserGroup extends CommonObject
 	/**
 	 *    Remove a permission from group
 	 *
-	 *    @param      int		$rid         id du droit a retirer
-	 *    @param      string	$allmodule   Retirer tous les droits du module allmodule
-	 *    @param      string	$allperms    Retirer tous les droits du module allmodule, perms allperms
-	 *    @return     int         			 > 0 if OK, < 0 if OK
+	 *    @param	int		$rid		id du droit a retirer
+	 *    @param	string	$allmodule	Retirer tous les droits du module allmodule
+	 *    @param	string	$allperms	Retirer tous les droits du module allmodule, perms allperms
+	 *    @param	int		$entity		Entity to use
+	 *    @return	int					> 0 if OK, < 0 if OK
 	 */
-	function delrights($rid,$allmodule='',$allperms='')
+	function delrights($rid, $allmodule='', $allperms='', $entity=0)
 	{
 		global $conf, $user, $langs;
 
 		$error=0;
 		$wherefordel='';
+
+		$entity = (! empty($entity)?$entity:$conf->entity);
 
 		$this->db->begin();
 
@@ -383,7 +390,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -420,7 +427,7 @@ class UserGroup extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -434,6 +441,7 @@ class UserGroup extends CommonObject
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
 					$sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+					$sql.= " AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -497,6 +505,7 @@ class UserGroup extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = u.fk_id";
 		$sql.= " AND r.entity = ".$conf->entity;
+		$sql.= " AND u.entity = ".$conf->entity;
 		$sql.= " AND u.fk_usergroup = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -644,22 +653,14 @@ class UserGroup extends CommonObject
 			$action='create';
 
 			// Actions on extra fields (by external module or standard code)
-            // TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('groupdao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -715,22 +716,14 @@ class UserGroup extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-            // TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('groupdao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -761,6 +754,31 @@ class UserGroup extends CommonObject
 
 
 	/**
+	 *  Return label of status of user (active, inactive)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut(0,$mode);
+	}
+
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+	    $langs->load('users');
+	    return '';
+	}
+
+	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
 	 *	@param		array	$info		Info array loaded by _load_ldap_info
@@ -788,6 +806,7 @@ class UserGroup extends CommonObject
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
+
 		$info=array();
 
 		// Object classes
@@ -838,6 +857,40 @@ class UserGroup extends CommonObject
 		$this->members=array(
 				$user->id => $user
 		);
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("user");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->USERGROUP_ADDON_PDF))
+			{
+				$modele = $conf->global->USERGROUP_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'grass';
+			}
+		}
+
+		$modelpath = "core/modules/usergroup/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 }
 

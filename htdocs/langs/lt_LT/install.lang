@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Jūs naudojate Dolibarr nustatymų vedlį iš DoliWamp, to
 KeepDefaultValuesDeb=Naudojate Dolibarr vedlį iš Linux paketo (Ubuntu, Debian, Fedora ...), todėl čia siūlomos reikšmės jau yra optimizuotos. Tik duomenų bazės savininko slaptažodis turi būti pilnai sukurtas. Keiskite kitus parametrus tik jei tikrai žinote, ką darote.
 KeepDefaultValuesMamp=Naudojate Dolibarr vedlį iš DoliMamp, todėl čia siūlomos reikšmės jau yra optimizuotos. Keiskite juos tik jei tikrai žinote, ką darote.
 KeepDefaultValuesProxmox=Naudojate Dolibarr vedlį iš Proxmox virtualaus prietaiso, todėl čia siūlomos reikšmės jau yra optimizuotos. keiskite juos tik jei tikrai žinote, ką darote.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

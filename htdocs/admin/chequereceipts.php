@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
@@ -71,12 +72,12 @@ if ($action == 'updateMask')
 
 if ($action == 'setmod')
 {
-	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON",$value,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON",$value, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -105,7 +106,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"), 0, 'account');
+dol_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"), -1, 'account');
 
 /*
  *  Numbering module
@@ -166,7 +167,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->isEnabled())
 						{
 							$var = !$var;
-							print '<tr '.$bc[$var].'><td width="100">';
+							print '<tr class="oddeven"><td width="100">';
 							print (empty($module->name)?$name:$module->name);
 							print "</td><td>\n";
 
@@ -257,8 +258,14 @@ $var=true;
 
 $var=! $var;
 
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnChequeReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnChequeReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='BANK_CHEQUERECEIPT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -267,7 +274,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';

@@ -42,7 +42,7 @@ if ($sortfield == "")
   $sortfield="s.nom";
 }
 
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -64,7 +64,7 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE n.fk_contact = c.rowid";
 $sql.= " AND a.rowid = n.fk_action";
 $sql.= " AND n.fk_soc = s.rowid";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if ($socid > 0)	$sql.= " AND s.rowid = " . $user->societe_id;
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -90,9 +90,9 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
 		print "<td>".$obj->titre."</td>\n";
