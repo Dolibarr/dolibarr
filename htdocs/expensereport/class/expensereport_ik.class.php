@@ -62,7 +62,8 @@ class ExpenseReportIk extends CoreObject
      * @var array
      */
 	protected $fields=array(
-		'fk_c_exp_tax_cat'=>array('type'=>'integer','index'=>true)
+		'rowid'=>array('type'=>'integer','index'=>true)
+		,'fk_c_exp_tax_cat'=>array('type'=>'integer','index'=>true)
 	    ,'fk_range'=>array('type'=>'integer','index'=>true)
 		,'coef'=>array('type'=>'double')
 		,'offset'=>array('type'=>'double')
@@ -198,7 +199,6 @@ class ExpenseReportIk extends CoreObject
 			{
 				$ik = new ExpenseReportIk($db);
 				if ($obj->fk_expense_ik > 0) $ik->fetch($obj->fk_expense_ik);
-				
 				$obj->ik = $ik;
 				
 				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) $ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,22 +18,23 @@
 
 /**
  *   	\file       htdocs/modulebuilder/template/myobject_card.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ *		\ingroup    mymodule
+ *		\brief      Page to create/edit/view myobject
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+//if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))            define('NOREQUIREDB','1');
+//if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
+//if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
+//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');			// Do not check anti CSRF attack test
+//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
+//if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))          define('NOREQUIREAJAX','1');         // Do not load ajax.lib.php library
+//if (! defined("NOLOGIN"))                define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 // Load Dolibarr environment
 $res=0;
@@ -45,47 +46,55 @@ while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2
 if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
 if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
 // Try main.inc.php using relative path
+if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
 if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
 if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
 if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule","other"));
+$langs->loadLangs(array("mymodule@mymodule","other"));
 
 // Get parameters
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
-$cancel     = GETPOST('cancel');
-$backtopage = GETPOST('backtopage');
-$myparam	= GETPOST('myparam','alpha');
+$id			= GETPOST('id', 'int');
+$ref        = GETPOST('ref', 'alpha');
+$action		= GETPOST('action', 'alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$search_field1=GETPOST("search_field1");
-$search_field2=GETPOST("search_field2");
+// Initialize technical objects
+$object=new MyObject($db);
+$extrafields = new ExtraFields($db);
+$diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('myobjectcard'));     // Note that conf->hooks_modules contains array
+// Fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+// Initialize array of search criterias
+$search_all=trim(GETPOST("search_all",'alpha'));
+$search=array();
+foreach($object->fields as $key => $val)
+{
+    if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+}
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
-}
+// Security check - Protection if external user
+//if ($user->societe_id > 0) access_forbidden();
+//if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'mymodule', $id);
-
-
-$object = new MyObject_Class($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-
-// Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('mymodule'));
 
 
 
@@ -101,11 +110,13 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	$error=0;
+
 	if ($cancel)
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -116,35 +127,29 @@ if (empty($reshook))
 	// Action to add record
 	if ($action == 'add' && ! empty($user->rights->mymodule->create))
 	{
-		if ($cancel)
-		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
-			header("Location: ".$urltogo);
-			exit;
-		}
+        foreach ($object->fields as $key => $val)
+        {
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
-		$error=0;
-
-		/* object_prop_getpost_prop */
-		$object->prop1=GETPOST("field1");
-		$object->prop2=GETPOST("field2");
-
-		if (empty($object->ref))
-		{
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		}
+            $object->$key=GETPOST($key,'alpha');
+            if ($val['notnull'] && $object->$key == '')
+            {
+                $error++;
+                setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+            }
+        }
 
 		if (! $error)
 		{
-			$result=$object->create($user);
+			$result=$object->createCommon($user);
 			if ($result > 0)
 			{
 				// Creation OK
-				$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+				$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
 				header("Location: ".$urltogo);
 				exit;
 			}
+			else
 			{
 				// Creation KO
 				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
@@ -161,20 +166,20 @@ if (empty($reshook))
 	// Action to update record
 	if ($action == 'update' && ! empty($user->rights->mymodule->create))
 	{
-		$error=0;
-
-		$object->prop1=GETPOST("field1");
-		$object->prop2=GETPOST("field2");
-
-		if (empty($object->ref))
-		{
-			$error++;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		}
+	    foreach ($object->fields as $key => $val)
+        {
+            $object->$key=GETPOST($key,'alpha');
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+            if ($val['notnull'] && $object->$key == '')
+            {
+                $error++;
+                setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+            }
+        }
 
 		if (! $error)
 		{
-			$result=$object->update($user);
+			$result=$object->updateCommon($user);
 			if ($result > 0)
 			{
 				$action='view';
@@ -196,12 +201,12 @@ if (empty($reshook))
 	// Action to delete
 	if ($action == 'confirm_delete' && ! empty($user->rights->mymodule->delete))
 	{
-		$result=$object->delete($user);
+		$result=$object->deleteCommon($user);
 		if ($result > 0)
 		{
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/mymodule/list.php',1));
+			header("Location: ".dol_buildpath('/mymodule/myobject_list.php',1));
 			exit;
 		}
 		else
@@ -222,11 +227,9 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
+$formfile=new FormFile($db);
 
-llxHeader('','MyPageName','');
-
-
-// Put here content of your page
+llxHeader('','MyObject','');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -247,22 +250,32 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewMyModule"));
+	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("MyObject")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_CREATE
+	foreach($object->fields as $key => $val)
+	{
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+    	print '<tr id="field_'.$key.'"><td';
+    	print ' class="titlefieldcreate';
+    	if ($val['notnull']) print ' fieldrequired';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '</tr>';
+	}
 	print '</table>'."\n";
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></div>';
 
 	print '</form>';
 }
@@ -282,8 +295,17 @@ if (($id || $ref) && $action == 'edit')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_EDIT
+	foreach($object->fields as $key => $val)
+	{
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+    	print '<tr><td';
+    	print ' class="titlefieldcreate';
+    	if ($val['notnull']) print ' fieldrequired';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '</tr>';
+	}
 	print '</table>';
 
 	dol_fiche_end();
@@ -302,14 +324,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = mymodule_prepare_head($object);
-	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+	$head = myobjectPrepareHead($object);
+	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirmation of action xxxx
@@ -337,12 +359,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 
-
 	// Object card
 	// ------------------------------------------------------------
-
-	$linkback = '<a href="' . DOL_URL_ROOT . '/mymodule/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -396,9 +415,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_VIEW
 
+	foreach($object->fields as $key => $val)
+	{
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+    	print '<tr><td';
+    	print ' class="titlefieldcreate';
+    	if ($val['notnull']) print ' fieldrequired';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '</tr>';
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -410,7 +438,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-
+	// ...
 
 	print '</table>';
 	print '</div>';
@@ -468,7 +496,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -477,7 +505,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'order', $socid);
+	    $somethingshown = $formactions->showactions($object, 'myobject', $socid);
 
 	    print '</div></div></div>';
 	}
@@ -525,7 +553,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print load_fiche_titre($langs->trans('SendOrderByMail'));
+		print load_fiche_titre($langs->trans('SendMyObjectByMail'));
 
 		dol_fiche_head('');
 
@@ -553,9 +581,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formmail->withtocc = $liste;
 		$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 		if (empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+			$formmail->withtopic = $outputlangs->trans('SendMyObjectRef', '__REF__');
 		} else if (! empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
+			$formmail->withtopic = $outputlangs->trans('SendMyObjectRef', '__REF__ (__REFCLIENT__)');
 		}
 		$formmail->withfile = 2;
 		$formmail->withbody = 1;
@@ -563,7 +591,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
-		$formmail->substit ['__ORDERREF__'] = $object->ref;
+		$formmail->substit ['__REF__'] = $object->ref;
 
 		$custcontact = '';
 		$contactarr = array();
@@ -587,9 +615,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'order_send';
+		$formmail->param['models'] = 'myobject_send';
 		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['orderid'] = $object->id;
+		$formmail->param['myobjectid'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 		// Init list of files

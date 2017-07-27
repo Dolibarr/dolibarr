@@ -124,7 +124,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql.= " ".(! isset($this->fk_mailing)?'NULL':"'".$this->fk_mailing."'").",";
 		$sql.= " ".(! isset($this->filtervalue)?'NULL':"'".$this->db->escape($this->filtervalue)."'").",";
 		$sql.= " ".$user->id.",";
-		$sql.= " ".$this->db->idate(dol_now()).",";
+		$sql.= " '".$this->db->idate(dol_now())."',";
 		$sql.= " ".$user->id;
 
 
@@ -474,7 +474,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
 			}
 			if (array_key_exists('cust_categ', $arrayquery)) {
-				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_societe as custcateg ON custcateg.fk_societe=t.rowid ";
+				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
 			}
 
 			if (!empty($arrayquery['cust_name'])) {

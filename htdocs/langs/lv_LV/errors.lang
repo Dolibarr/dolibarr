@@ -44,7 +44,7 @@ ErrorFailedToWriteInDir=Neizdevās ierakstīt direktorijā %s
 ErrorFoundBadEmailInFile=Atrasts nepareiza e-pasta sintakse %s līnijām failā (piemērs line %s ar e-pasta = %s)
 ErrorUserCannotBeDelete=User cannot be deleted. May be it is associated to Dolibarr entities.
 ErrorFieldsRequired=Daži nepieciešamie lauki netika aizpildīti.
-ErrorSubjectIsRequired=The email topic is required
+ErrorSubjectIsRequired=E-pasta tēma ir nepieciešama
 ErrorFailedToCreateDir=Neizdevās izveidot direktoriju. Pārbaudiet, vai Web servera lietotājam ir tiesības rakstīt uz Dolibarr dokumentus direktorijā. Ja parametrs <b>safe_mode</b> ir iespējots uz šo PHP, pārbaudiet, Dolibarr php faili pieder web servera lietotājam (vai grupa).
 ErrorNoMailDefinedForThisUser=Nav definēts e-pasts šim lietotājam
 ErrorFeatureNeedJavascript=Šai funkcijai ir nepieciešams aktivizēt javascript. Mainīt to var iestatījumi - attēlojums.

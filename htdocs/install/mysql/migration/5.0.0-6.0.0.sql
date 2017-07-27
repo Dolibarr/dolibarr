@@ -28,6 +28,7 @@
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- -- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN datefin datetime DEFAULT '2001-01-01 00:00:00';
 -- VMYSQL4.1 update llx_adherent set datefin = NULL where DATE(STR_TO_DATE(datefin, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_adherent set datefin = NULL where DATE(STR_TO_DATE(datefin, '%Y-%m-%d')) IS NULL;
@@ -70,7 +71,11 @@ ALTER TABLE llx_extrafields ADD COLUMN fielddefault varchar(255);
 ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(64); 
 
 
-create table llx_notify_def_object
+ALTER TABLE llx_holiday ADD COLUMN ref	varchar(30) NULL;
+ALTER TABLE llx_holiday ADD COLUMN ref_ext	varchar(255);
+
+
+CREATE TABLE llx_notify_def_object
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
@@ -117,6 +122,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN extraparams			varchar(255);
 
 ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
 
+ALTER TABLE llx_bank ADD COLUMN numero_compte varchar(32) NULL; 
+
 -- VMYSQL4.1 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;
 
@@ -125,14 +132,15 @@ ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);
 -- VMYSQL4.1 ALTER TABLE llx_adherent MODIFY COLUMN country integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_adherent MODIFY COLUMN country integer USING country::integer;
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PRODUCT_CREATE','Product or service created','Executed when a product or sevice is created','product',30);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',30);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PRODUCT_DELETE','Product or service deleted','Executed when a product or sevice is deleted','product',30);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expense_report',201);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expense_report',202);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_APPROVE','Expense report approved','Executed when an expense report is approved','expense_report',203);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_PAYED','Expense report billed','Executed when an expense report is set as billed','expense_report',204);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expense_report',201);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expense_report',201);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expense_report',202);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('EXPENSE_REPORT_APPROVE','Expense report approved','Executed when an expense report is approved','expense_report',203);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('EXPENSE_REPORT_PAYED','Expense report billed','Executed when an expense report is set as billed','expense_report',204);
 
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
 
@@ -152,6 +160,8 @@ ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_user ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_facture_rec ADD COLUMN tms timestamp;
+UPDATE llx_facture_rec SET tms = datec where tms < '2000-01-01';
 
 CREATE TABLE llx_product_attribute
 (
@@ -192,7 +202,7 @@ CREATE TABLE llx_product_attribute_combination
 );
 
 
-ALTER TABLE llx_bank_account drop foreign key bank_fk_accountancy_journal;
+ALTER TABLE llx_bank_account DROP FOREIGN KEY bank_fk_accountancy_journal;
 
 -- Fix missing entity column after init demo
 ALTER TABLE llx_accounting_journal ADD COLUMN entity integer DEFAULT 1;
@@ -205,18 +215,18 @@ INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (5,'AN', 'Has new journal', 9, 1);
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (6,'ER', 'Expense report journal', 5, 1);
 -- Fix old entries
-UPDATE llx_accounting_journal SET nature = 1 where code = 'OD' and nature = 0;
-UPDATE llx_accounting_journal SET nature = 2 where code = 'VT' and nature = 1;
-UPDATE llx_accounting_journal SET nature = 3 where code = 'AC' and nature = 2;
-UPDATE llx_accounting_journal SET nature = 4 where (code = 'BK' or code = 'BQ') and nature = 3;
+UPDATE llx_accounting_journal SET nature = 1 WHERE code = 'OD' AND nature = 0;
+UPDATE llx_accounting_journal SET nature = 2 WHERE code = 'VT' AND nature = 1;
+UPDATE llx_accounting_journal SET nature = 3 WHERE code = 'AC' AND nature = 2;
+UPDATE llx_accounting_journal SET nature = 4 WHERE (code = 'BK' OR code = 'BQ') AND nature = 3;
 
-UPDATE llx_bank_account as ba set accountancy_journal = 'BQ' where accountancy_journal = 'BK';
-UPDATE llx_bank_account as ba set accountancy_journal = 'OD' where accountancy_journal IS NULL;
+UPDATE llx_bank_account SET accountancy_journal = 'BQ' WHERE accountancy_journal = 'BK';
+UPDATE llx_bank_account SET accountancy_journal = 'OD' WHERE accountancy_journal IS NULL;
 
 ALTER TABLE llx_bank_account ADD COLUMN fk_accountancy_journal integer;
 ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountancy_journal);
 
-UPDATE llx_bank_account as ba set fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal as aj where ba.accountancy_journal = aj.code) where accountancy_journal not in ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
+UPDATE llx_bank_account AS ba SET fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal AS aj WHERE ba.accountancy_journal = aj.code) WHERE accountancy_journal NOT IN ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
@@ -229,7 +239,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_account varchar(32);
 ALTER TABLE llx_accounting_bookkeeping CHANGE COLUMN thirdparty_label subledger_label varchar(255);    	-- If field was already created, rename it	
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN subledger_label varchar(255) AFTER subledger_account;	-- If field dod not exists yet
 
-update llx_accounting_bookkeeping set subledger_account = numero_compte where subledger_account IS NULL;
+UPDATE llx_accounting_bookkeeping SET subledger_account = numero_compte WHERE subledger_account IS NULL;
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN label_compte varchar(255);
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN code_journal varchar(32);
@@ -242,6 +252,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lettering datetime AFTER 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN journal_label varchar(255) AFTER code_journal;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_validated datetime AFTER validated;
 
+DROP TABLE llx_accounting_bookkeeping_tmp;
 CREATE TABLE llx_accounting_bookkeeping_tmp 
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -254,14 +265,14 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   thirdparty_code       varchar(32),				-- Third party code (customer or supplier) when record is saved (may help debug) 
   subledger_account     varchar(32),				-- FEC:CompAuxNum	| account number of subledger account
   subledger_label       varchar(255),				-- FEC:CompAuxLib	| label of subledger account
-  numero_compte         varchar(32) NOT NULL,		-- FEC:CompteNum	| account number
+  numero_compte         varchar(32),				-- FEC:CompteNum	| account number
   label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
-  debit                 numeric(24,8) NOT NULL,		-- FEC:Debit
-  credit                numeric(24,8) NOT NULL,		-- FEC:Credit
-  montant               numeric(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
+  debit                 double(24,8) NOT NULL,		-- FEC:Debit
+  credit                double(24,8) NOT NULL,		-- FEC:Credit
+  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
-  multicurrency_amount  numeric(24,8),				-- FEC:Montantdevise
+  multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
@@ -281,6 +292,13 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte);
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal);
+
+
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN debit double(24,8);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN credit double(24,8);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN montant double(24,8);
+ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN multicurrency_amount double(24,8);
+
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
 
@@ -346,9 +364,9 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     d
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
-UPDATE TABLE llx_contrat set ref = rowid where ref is null or ref = '';
+UPDATE llx_contrat SET ref = rowid WHERE ref IS NULL OR ref = '';
 
-create table llx_payment_various
+CREATE TABLE llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
@@ -369,7 +387,7 @@ create table llx_payment_various
 )ENGINE=innodb;
 
 
-create table llx_default_values
+CREATE TABLE llx_default_values
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,		-- multi company id
@@ -429,27 +447,29 @@ ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_tms (tms);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_fk_inventory (fk_inventory);
 
-insert into llx_c_tva(fk_pays,taux,code,recuperableonly,note,active)                                                   values (1, '8.5', '85', '0','VAT standard rate (DOM sauf Guyane et Saint-Martin)',0);
-insert into llx_c_tva(fk_pays,taux,code,recuperableonly,note,active)                                                   values (1, '8.5', '85NPR', '1','VAT standard rate (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par acheteur',0);
-insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,note,active)                          values (1, '8.5', '85NPROM', '1', 2, 3, 'VAT standard rate (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer',0);
-insert into llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (1, '8.5', '85NPROMOMR', '1', 2, 3, 2.5, 3, 'VAT standard rate (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer et Octroi de Mer Regional',0);
+INSERT INTO llx_c_tva(fk_pays,taux,code,recuperableonly,note,active)                                                   VALUES (1, '8.5', '85', '0','VAT standard rate (DOM sauf Guyane et Saint-Martin)',0);
+INSERT INTO llx_c_tva(fk_pays,taux,code,recuperableonly,note,active)                                                   VALUES (1, '8.5', '85NPR', '1','VAT standard rate (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par acheteur',0);
+INSERT INTO llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,note,active)                          VALUES (1, '8.5', '85NPROM', '1', 2, 3, 'VAT standard rate (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer',0);
+INSERT INTO llx_c_tva(fk_pays,taux,code,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) VALUES (1, '8.5', '85NPROMOMR', '1', 2, 3, 2.5, 3, 'VAT standard rate (DOM sauf Guyane et Saint-Martin), NPR, Octroi de Mer et Octroi de Mer Regional',0);
 
 ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
 
 ALTER TABLE llx_facture ADD COLUMN fk_fac_rec_source integer;
 
-DELETE from llx_c_actioncomm where code in ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
+DELETE FROM llx_c_actioncomm WHERE code IN ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV') AND id NOT IN (SELECT DISTINCT fk_action FROM llx_actioncomm);
 
 -- Fix: delete orphelin category.
-delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
-delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
-delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
-delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
-delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
+DELETE FROM llx_categorie_product WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 0);
+DELETE FROM llx_categorie_societe WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type IN (1, 2));
+DELETE FROM llx_categorie_member WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 3);
+DELETE FROM llx_categorie_contact WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 4);
+DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 5);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
-create table llx_loan_schedule
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
+
+CREATE TABLE llx_loan_schedule
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_loan			integer,
@@ -482,6 +502,34 @@ ALTER TABLE llx_usergroup_rights DROP FOREIGN KEY fk_usergroup_rights_fk_usergro
 ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
+
+-- For new module website
+
+CREATE TABLE llx_website_page
+(
+	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	fk_website    integer NOT NULL,
+	pageurl       varchar(16) NOT NULL,
+	title         varchar(255),						
+	description   varchar(255),						
+	keywords      varchar(255),
+	content		  mediumtext,		-- text is not enough in size
+    status        integer,
+    fk_user_create integer,
+    fk_user_modif  integer,
+    date_creation  datetime,
+	tms            timestamp
+) ENGINE=innodb;
+
+ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
+
+ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
+
+
+UPDATE llx_extrafields set elementtype='categorie' where elementtype='categories';
+
+
+-- For new module blockedlog
 
 CREATE TABLE llx_blockedlog 
 ( 
@@ -522,137 +570,13 @@ ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);
 
 UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
 UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';
+UPDATE llx_bank SET label= '(payment_salary)' WHERE label LIKE 'Règlement salaire';
 
-CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
-    rowid           integer  AUTO_INCREMENT PRIMARY KEY,
-    datec           datetime  DEFAULT NULL,
-    tms             timestamp,
-    fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
-    fk_range        integer DEFAULT 0 NOT NULL,	  	  
-    coef            double DEFAULT 0 NOT NULL,  
-    offset          double DEFAULT 0 NOT NULL	          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
 
-CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
-    rowid       integer  AUTO_INCREMENT PRIMARY KEY,
-    label       varchar(48) NOT NULL,
-    entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL	          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
-    rowid       integer  AUTO_INCREMENT PRIMARY KEY,
-    fk_c_exp_tax_cat integer DEFAULT 1 NOT NULL,
-    range_ik    double DEFAULT 0 NOT NULL,   
-    entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL		          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
-
-INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
-('EX_KME', 'ExpLabelKm', 1, '625100'),
-('EX_FUE', 'ExpLabelFuelCV', 0, '606150'),
-('EX_HOT', 'ExpLabelHotel', 0, '625160'),
-('EX_PAR', 'ExpLabelParkingCV', 0, '625160'),
-('EX_TOL', 'ExpLabelTollCV', 0, '625160'),
-('EX_TAX', 'ExpLabelVariousTaxes', 0, '637800'),
-('EX_IND', 'ExpLabelIndemnityTransportationSubscription', 0, '648100'),
-('EX_SUM', 'ExpLabelMaintenanceSupply', 0, '606300'),
-('EX_SUO', 'ExpLabelOfficeSupplies', 0, '606400'),
-('EX_CAR', 'ExpLabelCarRental', 0, '613000'),
-('EX_DOC', 'ExpLabelDocumentation', 0, '618100'),
-('EX_CUR', 'ExpLabelCustomersReceiving', 0, '625710'),
-('EX_OTR', 'ExpLabelOtherReceiving', 0, '625700'),
-('EX_POS', 'ExpLabelPostage', 0, '626100'),
-('EX_CAM', 'ExpLabelMaintenanceRepairCV', 0, '615300'),
-('EX_EMM', 'ExpLabelEmployeesMeal', 0, '625160'),
-('EX_GUM', 'ExpLabelGuestsMeal', 0, '625160'),
-('EX_BRE', 'ExpLabelBreakfast', 0, '625160'),
-('EX_FUE_VP', 'ExpLabelFuelPV', 0, '606150'),
-('EX_TOL_VP', 'ExpLabelTollPV', 0, '625160'),
-('EX_PAR_VP', 'ExpLabelParkingPV', 0, '625160'),
-('EX_CAM_VP', 'ExpLabelMaintenanceRepairPV', 0, '615300');
-
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (1,4, 1, 0.41, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (2,4, 2, 0.244, 824);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (3,4, 3, 0.286, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (4,5, 4, 0.493, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (5,5, 5, 0.277, 1082);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (6,5, 6, 0.332, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (7,6, 7, 0.543, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (8,6, 8, 0.305, 1180); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (9,6, 9, 0.364, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (10,7, 10, 0.568, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (11,7, 11, 0.32, 1244); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (12,7, 12, 0.382, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (13,8, 13, 0.595, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (14,8, 14, 0.337, 1288); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (15,8, 15, 0.401, 0); 
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
 
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (1,'ExpAutoCat', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (2,'ExpCycloCat', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (3,'ExpMotoCat', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (4,'ExpAuto3CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (5,'ExpAuto4CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (6,'ExpAuto5CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (7,'ExpAuto6CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (8,'ExpAuto7CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (9,'ExpAuto8CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (10,'ExpAuto9CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (11,'ExpAuto10CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (12,'ExpAuto11CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (13,'ExpAuto12CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (14,'ExpAuto3PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (15,'ExpAuto4PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (16,'ExpAuto5PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (17,'ExpAuto6PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (18,'ExpAuto7PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (19,'ExpAuto8PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (20,'ExpAuto9PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (21,'ExpAuto10PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (22,'ExpAuto11PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (23,'ExpAuto12PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (24,'ExpAuto13PCV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (25,'ExpCyclo', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (26,'ExpMoto12CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (27,'ExpMoto345CV', 1, 1);
-INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (28,'ExpMoto5PCV', 1, 1);
-
-
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (1,4, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (2,4, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (3,4, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (4,5, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (5,5, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (6,5, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (7,6, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (8,6, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (9,6, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (10,7, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (11,7, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (12,7, 20000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (13,8, 0, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (14,8, 5000, 1, 1);
-INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active) values (15,8, 20000, 1, 1);
-
-CREATE TABLE llx_expensereport_rules (
-    rowid integer AUTO_INCREMENT PRIMARY KEY,
-    datec datetime  DEFAULT NULL,
-    tms timestamp,
-    dates datetime NOT NULL,
-    datee datetime NOT NULL,
-    amount numeric(24,8) NOT NULL,
-    restrictive tinyint NOT NULL,
-    fk_user integer DEFAULT NULL,
-    fk_usergroup integer DEFAULT NULL,
-    fk_c_type_fees integer NOT NULL,
-    code_expense_rules_type varchar(50) NOT NULL,
-    is_for_all tinyint DEFAULT '0',
-    entity integer DEFAULT 1
-);
-
-ALTER TABLE llx_expensereport_det ADD COLUMN rule_warning_message text;
-ALTER TABLE llx_expensereport_det ADD COLUMN fk_c_exp_tax_cat integer;
-
-ALTER TABLE llx_user ADD COLUMN default_range integer;
-ALTER TABLE llx_user ADD COLUMN default_c_exp_tax_cat integer;
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'IGST-CGST', 8, 8, '1', 0, '0', 0, 'IGST-CGST', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'SGST', 0, 0, '0', 16, '1', 0, 'SGST', 1);

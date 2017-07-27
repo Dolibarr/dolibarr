@@ -101,7 +101,8 @@ class ExpenseReportRule extends CoreObject
      * @var array
      */
 	protected $fields=array(
-		'dates'=>array('type'=>'date')
+		'rowid'=>array('type'=>'integer','index'=>true)
+		,'dates'=>array('type'=>'date')
 		,'datee'=>array('type'=>'date')
 	    ,'amount'=>array('type'=>'double')
 		,'restrictive'=>array('type'=>'integer')

@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2017 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  * \file		htdocs/accountancy/bookkeeping/card.php
  * \ingroup		Advanced accountancy
  * \brief		Page to show book-entry
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
@@ -38,7 +40,7 @@ if ($user->societe_id > 0) {
 	accessforbidden();
 }
 $action = GETPOST('action','aZ09');
-$mode = GETPOST('mode');
+$mode = GETPOST('mode','aZ09');         // '' or 'tmp'
 $piece_num = GETPOST("piece_num");
 
 $mesg = '';
@@ -53,29 +55,41 @@ $label_operation= GETPOST('label_operation');
 $debit = price2num(GETPOST('debit'));
 $credit = price2num(GETPOST('credit'));
 
-$save = GETPOST('save');
-if (! empty($save)) {
-	$action = 'add';
-}
-$update = GETPOST('update');
-if (! empty($update)) {
-	$action = 'confirm_update';
-}
+$save = GETPOST('save','alpha');
+if (! empty($save)) $action = 'add';
+$update = GETPOST('update','alpha');
+if (! empty($update)) $action = 'confirm_update';
+
 $object = new BookKeeping($db);
+
+
+/*
+ * Actions
+ */
+
 if ($action == "confirm_update") {
 
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$error ++;
+	    $error++;
+	    setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+        $action='update';
 	}
+    if (empty($account_number) || $account_number == '-1')
+    {
+        $error++;
+        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+        $action='update';
+    }
 
-	if (empty($error)) {
+	if (! $error)
+	{
 		$book = new BookKeeping($db);
 
 		$result = $book->fetch($id, null, $mode);
 		if ($result < 0) {
+		    $error++;
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
 			$book->numero_compte = $account_number;
@@ -98,7 +112,14 @@ if ($action == "confirm_update") {
 			if ($result < 0) {
 				setEventMessages($book->error, $book->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			    if ($mode != '_tmp')
+			    {
+				    setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			    }
+
+			    $debit = 0;
+			    $credit = 0;
+
 				$action = '';
 			}
 		}
@@ -108,12 +129,20 @@ if ($action == "confirm_update") {
 else if ($action == "add") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$error ++;
+	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
+	{
+		$error++;
+	    setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+	    $action='';
+	}
+	if (empty($account_number) || $account_number == '-1')
+	{
+	    $error++;
+	    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+	    $action='';
 	}
 
-	if (empty($error)) {
+	if (! $error) {
 		$book = new BookKeeping($db);
 
 		$book->numero_compte = $account_number;
@@ -144,7 +173,14 @@ else if ($action == "add") {
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
-			setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			if ($mode != '_tmp')
+			{
+                setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			}
+
+			$debit = 0;
+			$credit = 0;
+
 			$action = '';
 		}
 	}
@@ -172,6 +208,11 @@ else if ($action == "confirm_create") {
 
 	$book = new BookKeeping($db);
 
+	if (! GETPOST('code_journal') || GETPOST('code_journal') == '-1') {
+	    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
+	    $action='create';
+	    $error++;
+	}
 	if (! GETPOST('next_num_mvt'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
@@ -196,7 +237,10 @@ else if ($action == "confirm_create") {
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
-			setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		    if ($mode != '_tmp')
+		    {
+                setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		    }
 			$action = 'update';
 			$id=$book->id;
 			$piece_num = $book->piece_num;
@@ -210,39 +254,43 @@ if ($action == 'setdate') {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+	    if ($mode != '_tmp')
+	    {
+    		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+	    }
 		$action = '';
 	}
 }
 
 if ($action == 'setjournal') {
 	$journaldoc = trim(GETPOST('code_journal'));
-	if (!empty($journaldoc)) {
-		$journaldoc='\''.$journaldoc.'\'';
-	}
 	$result = $object->updateByMvt($piece_num,'code_journal',$journaldoc,$mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		if ($mode != '_tmp')
+		{
+	       setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		}
 		$action = '';
 	}
 }
 
 if ($action == 'setdocref') {
 	$refdoc = trim(GETPOST('doc_ref'));
-	if (!empty($refdoc)) {
-		$refdoc='\''.$refdoc.'\'';
-	}
-	$result = $object->updateByMvt(doc_ref,'code_journal',$refdoc,$mode);
+	$result = $object->updateByMvt($piece_num,'doc_ref',$refdoc,$mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		if ($mode != '_tmp')
+		{
+	       setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		}
 		$action = '';
 	}
 }
 
+// Validate transaction
 if ($action == 'valid') {
 	$result = $object->transformTransaction(0,$piece_num);
 	if ($result < 0) {
@@ -253,13 +301,16 @@ if ($action == 'valid') {
 	}
 }
 
+
 /*
  * View
  */
-llxHeader();
+
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 $accountjournal = new AccountingJournal($db);
+
+llxHeader('', $langs->trans("CreateMvts"));
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -300,7 +351,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Codejournal") . '</td>';
-	print '<td>' . $formaccounting->select_journal(GETPOST('code_journal'),'code_journal',0,0,array(),1,1) . '</td>';
+	print '<td>' . $formaccounting->select_journal(GETPOST('code_journal'),'code_journal',0,1,array(),1,1) . '</td>';
 	print '</tr>';
 
 	print '<tr>';
@@ -328,29 +379,45 @@ if ($action == 'create') {
 	if ($result < 0) {
 		setEventMessages($book->error, $book->errors, 'errors');
 	}
+
 	if (! empty($book->piece_num)) {
 
-		print load_fiche_titre($langs->trans("UpdateMvts"), '<a href="list.php">' . $langs->trans('BackToList') . '</a>');
+	    $backlink = '<a href="list.php">' . $langs->trans('BackToList') . '</a>';
 
-		dol_fiche_head();
+		print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
 
+		$head=array();
+		$h=0;
+		$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.$book->piece_num.($mode?'&mode='.$mode:'');
+		$head[$h][1] = $langs->trans("Transaction");
+		$head[$h][2] = 'transaction';
+		$h++;
+
+		dol_fiche_head($head, 'transaction', '', -1);
+
+
+		//dol_banner_tab($book, '', $backlink);
+
+
+		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
+
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// account movement
-		print '<tr class="pair">';
+		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
 
 		// date
-		print '<tr class="impair"><td>';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $book->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $book->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -361,18 +428,18 @@ if ($action == 'create') {
 			$form->select_date($book->doc_date ? $book->doc_date : - 1, 'doc_date', '', '', '', "setdate");
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
-			} else {
-		print $book->doc_date ? dol_print_date($book->doc_date, 'daytext') : '&nbsp;';
+		} else {
+		  print $book->doc_date ? dol_print_date($book->doc_date, 'daytext') : '&nbsp;';
 		}
 		print '</td>';
 		print '</tr>';
 		//journal
-		print '<tr class="pair"><td>';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -389,12 +456,12 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 		//docref
-		print '<tr class="impair"><td>';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Docref');
 		print '</td>';
 		if ($action != 'editdocref')
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -410,21 +477,25 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		print '</tr>';
-		//doctype
-		print '<tr class="pair">';
-		print '<td>' . $langs->trans("Doctype") . '</td>';
-		print '<td>' . $book->doc_type . '</td>';
-		print '</tr>';
+
 		print '</table>';
 
 		print '</div>';
 
 		print '<div class="fichehalfright"><div class="ficheaddleft">';
+
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield" width="100%">';
 
+		// Doc type
+		print '<tr>';
+		print '<td>' . $langs->trans("Doctype") . '</td>';
+		print '<td>' . $book->doc_type . '</td>';
+		print '</tr>';
+
 		// Validate
-		print '<tr class="pair">';
+		/*
+		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans("Status") . '</td>';
 		print '<td>';
 			if (empty($book->validated)) {
@@ -438,10 +509,12 @@ if ($action == 'create') {
 			}
 			print '</td>';
 		print '</tr>';
+		*/
+
 		// check data
-		print '<tr class="impair">';
-		print '<td class="titlefield">' . $langs->trans("Control") . '</td>';
 		/*
+		print '<tr>';
+		print '<td class="titlefield">' . $langs->trans("Control") . '</td>';
 		if ($book->doc_type == 'customer_invoice')
 		{
 		 $sqlmid = 'SELECT rowid as ref';
@@ -457,13 +530,18 @@ if ($action == 'create') {
 			}
 			else dol_print_error($db);
 		}
-		*/
 		print '<td>' . $ref .'</td>';
+		print '</tr>';
+		*/
 		print "</table>\n";
-		print '</div>';
+
 		print '</div></div>';
+		print '</div>';
+
 		print '<div style="clear:both"></div>';
+
 		print '<br>';
+
 
 		$result = $book->fetchAllPerMvt($piece_num, $mode);
 		if ($result < 0) {
@@ -490,11 +568,11 @@ if ($action == 'create') {
 				print '<tr class="liste_titre">';
 
 				print_liste_field_titre($langs->trans("AccountAccountingShort"));
-				print_liste_field_titre($langs->trans("Subledger_account"));
+				print_liste_field_titre($langs->trans("SubledgerAccount"));
 				print_liste_field_titre($langs->trans("Labelcompte"));
-				print_liste_field_titre($langs->trans("Labeloperation"));
-				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="center"');
-				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="center"');
+				print_liste_field_titre($langs->trans("Label"));
+				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="right"');
+				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="right"');
 				print_liste_field_titre($langs->trans("Action"), "", "", "", "", 'width="60" align="center"');
 
 				print "</tr>\n";
@@ -506,15 +584,24 @@ if ($action == 'create') {
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<td>';
-						print $formaccounting->select_account($line->numero_compte, 'account_number', 0, array (), 1, 1, '');
+						print $formaccounting->select_account($line->numero_compte, 'account_number', 1, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
+    					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+    					// use setup of keypress to select thirdparty and this hang browser on large database.
+                        if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+                        {
+                            print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
+                        }
+                        else
+                        {
+                            print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
+                        }
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
-						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
-						print '<td align="right"><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
+						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
+						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
@@ -528,10 +615,14 @@ if ($action == 'create') {
 						print '<td align="right">' . price($line->credit) . '</td>';
 
 						print '<td align="center">';
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '&amp;mode='.$mode.'">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
 						print img_edit();
-						print '</a>&nbsp;';
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '&amp;mode='.$mode.'">';
+						print '</a> &nbsp;';
+
+						$actiontodelete='detele';
+						if ($mode == '_tmp') $actiontodelete='confirm_delete';
+
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?action='.$actiontodelete.'&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
 						print img_delete();
 
 						print '</a>';
@@ -548,22 +639,46 @@ if ($action == 'create') {
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
-					print $formaccounting->select_account($account_number, 'account_number', 0, array (), 1, 1, '');
+					print $formaccounting->select_account($account_number, 'account_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
+					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+					// use setup of keypress to select thirdparty and this hang browser on large database.
+                    if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+                    {
+					   print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
+                    }
+                    else
+                    {
+					   print '<input type="text" name="subledger_account" value="">';
+                    }
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 					print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';
-					print '<td align="right"><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
+					print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . ($debit ? price($debit) : '') . '"/></td>';
+					print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . ($credit ? price($credit) : '') . '"/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 					print '</tr>';
 				}
 				print '</table>';
-				if ($mode=='_tmp' && $total_debit == $total_credit && $action=='') {
-					print '<div class="tabsAction">';
-					print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+
+
+				if ($mode=='_tmp' && $action=='')
+				{
+				    print '<br>';
+					print '<div class="center">';
+					if ($total_debit == $total_credit)
+					{
+					   print '<a class="button" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+					}
+					else
+					{
+					   print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+					}
+
+					print ' &nbsp; ';
+					print '<a class="button" href="' . DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+
 					print "</div>";
 				}
 				print '</form>';

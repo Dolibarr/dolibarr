@@ -43,8 +43,11 @@ LoanCalcDesc=Bu <b>ipotekli borç hesaplayıcısı</b> alınan krediye, ödeme �
 GoToInterest=%s FAİZE gidecek
 GoToPrincipal=%s ANA PARAYA gidecek
 YouWillSpend=%s tutarını %s yılda harcayaksınız
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
 # Admin
 ConfigLoan=Kredi modülünün yapılandırılması
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Créer / Modifier échéancier de pret

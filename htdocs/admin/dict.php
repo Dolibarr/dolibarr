@@ -257,7 +257,7 @@ $tabfield[6] = "code,libelle,type,color,position";
 $tabfield[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfield[8] = "code,libelle,country_id,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfield[9] = "code,label,unicode";
-$tabfield[10]= "country_id,country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle,position";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfield[13]= "code,libelle,type,accountancy_code";
@@ -294,7 +294,7 @@ $tabfieldvalue[6] = "code,libelle,type,color,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[8] = "code,libelle,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10]= "country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[10]= "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle,position";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
@@ -333,7 +333,7 @@ $tabfieldinsert[6] = "code,libelle,type,color,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[8] = "code,libelle,fk_country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10]= "fk_pays,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[10]= "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle,position";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
@@ -1798,8 +1798,9 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		}
 		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
 		{
+			$type = (! empty($obj->type)?$obj->type:'user'); // Check if type is different of 'user' (external module)
 			print '<td>';
-			print 'user<input type="hidden" name="type" value="user">';
+			print $type.'<input type="hidden" name="type" value="'.$type.'">';
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {

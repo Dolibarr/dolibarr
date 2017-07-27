@@ -931,7 +931,8 @@ function unActivateModule($value, $requiredby=1)
     {
         //print $dir.$modFile;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
-        $genericMod = new DolibarrModules($db);
+        include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+    	$genericMod = new DolibarrModules($db);
         $genericMod->name=preg_replace('/^mod/i','',$modName);
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));

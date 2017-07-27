@@ -479,6 +479,7 @@ if (empty($reshook))
 				}
 				*/
 
+
     			// PREPARE SEND
     			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
 
@@ -1105,7 +1106,7 @@ if (empty($reshook))
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
     	}
-		
+
     	// S'il y'a eu au moins une erreur
     	if (! $error)
     	{
@@ -1860,7 +1861,8 @@ else
 				    {
 				        $objp = $db->fetch_object($resql);
 
-				        print '<tr class="oddseven"><td>';
+				        print '<tr class="oddseven">';
+				        print '<td>';
 						$paymentexpensereportstatic->id = $objp->rowid;
 						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
 						$paymentexpensereportstatic->ref = $objp->rowid;
@@ -1891,6 +1893,7 @@ else
 							print '</td>';
 						}
 				        print '<td align="right">'.price($objp->amount)."</td>";
+				        print '<td></td>';
 				        print "</tr>";
 				        $totalpaid += $objp->amount;
 				        $i++;
@@ -1898,21 +1901,21 @@ else
 
 				    if ($object->paid == 0)
 				    {
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td></tr>';
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td></tr>';
+				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
+				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
 				        $remaintopay = $object->total_ttc - $totalpaid;
 
 				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
-				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td></tr>';
+				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td><td></td></tr>';
 				    }
-				    print "</table>";
 				    $db->free($resql);
 				}
 				else
 				{
 				    dol_print_error($db);
 				}
+				print "</table>";
 
 				print '</div>';
 				print '</div>';
@@ -2087,98 +2090,91 @@ else
 
 						$i++;
 					}
-					
-					//print '</div>';
-
-					// Add a line
-					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
-					{
-						print '<tr class="liste_titre">';
-						print '<td></td>';
-						print '<td align="center">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
-						print '<td align="center">'.$langs->trans('Type').'</td>';
-						print '<td>'.$langs->trans('Description').'</td>';
-						print '<td align="right">'.$langs->trans('VAT').'</td>';
-						print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-						print '<td align="right">'.$langs->trans('Qty').'</td>';
-						print '<td colspan="3"></td>';
-						print '</tr>';
-
-
-						print '<tr '.$bc[true].'>';
-
-						print '<td></td>';
-
-						// Select date
-						print '<td align="center">';
-						$form->select_date($date?$date:-1,'date');
-						print '</td>';
-
-						// Select project
-						if (! empty($conf->projet->enabled))
-						{
-							print '<td>';
-							$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
-							print '</td>';
-						}
-						
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-						{
-							print '<td class="fk_c_exp_tax_cat">';
-							$params = array('fk_expense' => $object->id);
-							print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
-							print '</td>';
-						}
-
-						// Select type
-						print '<td align="center">';
-						select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
-						print '</td>';
-
-						// Add comments
-						print '<td>';
-						print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
-						print '</td>';
-
-						// Select VAT
-						print '<td align="right">';
-						$defaultvat=-1;
-						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
-						print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false);
-						print '</td>';
-
-						// Unit price
-						print '<td align="right">';
-						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
-						print '</td>';
-
-						// Quantity
-						print '<td align="right">';
-						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';
-						print '</td>';
-
-						if ($action != 'editline')
-						{
-						    print '<td align="right"></td>';
-						    print '<td align="right"></td>';
-						}
-
-						print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
-
-						print '</tr>';
-					} // Fin si c'est payé/validé
-
-					print '</table>';
-					print '</div>';
-
-					print '</form>';
 				}
-				else
+				
+				// Add a line
+				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 				{
-					dol_print_error($db);
-				}
+					print '<tr class="liste_titre">';
+					print '<td></td>';
+					print '<td align="center">'.$langs->trans('Date').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td align="center">'.$langs->trans('Type').'</td>';
+					print '<td>'.$langs->trans('Description').'</td>';
+					print '<td align="right">'.$langs->trans('VAT').'</td>';
+					print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td colspan="3"></td>';
+					print '</tr>';
+
+					print '<tr '.$bc[true].'>';
+
+					print '<td></td>';
+
+					// Select date
+					print '<td align="center">';
+					$form->select_date($date?$date:-1,'date');
+					print '</td>';
+
+					// Select project
+					if (! empty($conf->projet->enabled))
+					{
+						print '<td>';
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
+						print '</td>';
+					}
+					
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+					{
+						print '<td class="fk_c_exp_tax_cat">';
+						$params = array('fk_expense' => $object->id);
+						print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
+						print '</td>';
+					}
+
+					// Select type
+					print '<td align="center">';
+					select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
+					print '</td>';
+
+					// Add comments
+					print '<td>';
+					print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
+					print '</td>';
+
+					// Select VAT
+					print '<td align="right">';
+					$defaultvat=-1;
+					if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
+					print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
+					print '</td>';
+
+					// Unit price
+					print '<td align="right">';
+					print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
+					print '</td>';
+
+					// Quantity
+					print '<td align="right">';
+					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';    // We must be able to enter decimal qty
+					print '</td>';
+
+					if ($action != 'editline')
+					{
+						print '<td align="right"></td>';
+						print '<td align="right"></td>';
+					}
+
+					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+
+					print '</tr>';
+				} // Fin si c'est payé/validé
+
+				print '</table>';
+				print '</div>';
+
+				print '</form>';
 
 				dol_fiche_end();
 

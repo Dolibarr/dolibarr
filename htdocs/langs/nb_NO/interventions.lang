@@ -41,7 +41,7 @@ InterventionDeletedInDolibarr=Intervensjon %s ble slettet
 InterventionsArea=Område for intervensjoner
 DraftFichinter=Intervensjonskladder
 LastModifiedInterventions=Siste %s endrede intervensjoner
-FichinterToProcess=Interventions to process
+FichinterToProcess=Intervensjoner å prosessere
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Ansvarlig for kundeoppfølging
 # Modele numérotation

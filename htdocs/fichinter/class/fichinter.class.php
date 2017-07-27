@@ -39,7 +39,7 @@ class Fichinter extends CommonObject
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
     public $picto = 'intervention';
-    
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -61,6 +61,23 @@ class Fichinter extends CommonObject
 	var $extraparams=array();
 
 	var $lines = array();
+
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Billed
+	 */
+	const STATUS_BILLED = 2;
+	/**
+	 * Closed
+	 */
+	const STATUS_CLOSED = 3;
 
 	/**
 	 *	Constructor
@@ -361,7 +378,7 @@ class Fichinter extends CommonObject
 				$this->fk_contrat	= $obj->fk_contrat;
 
 				$this->user_creation= $obj->fk_user_author;
-				
+
 				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -546,23 +563,23 @@ class Fichinter extends CommonObject
 	 */
 	function getAmount() {
 		global $db;
-		
+
 		$amount = 0;
-		
+
 		$this->author = new User($db);
 		$this->author->fetch($this->user_creation);
-		
+
 		$thm = $this->author->thm;
-		
+
 		foreach($this->lines as &$line) {
-			
+
 			$amount+=$line->qty * $thm;
-			
+
 		}
-		
+
 		return $amount;
 	}
-	
+
 	/**
 	 *	Returns the label status
 	 *
@@ -599,7 +616,7 @@ class Fichinter extends CommonObject
 			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
 		if ($mode == 6)
 		    return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
-		
+
 		return '';
 	}
 
@@ -949,7 +966,7 @@ class Fichinter extends CommonObject
 		return -2;
 	}
 
-	
+
 
     /**
      *	Load an object from its id and create a new one in database
@@ -1001,7 +1018,7 @@ class Fichinter extends CommonObject
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
-		
+
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
@@ -1013,7 +1030,7 @@ class Fichinter extends CommonObject
             {
             	$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
             }
-            
+
         	// Hook of thirdparty module
             if (is_object($hookmanager))
             {
@@ -1043,8 +1060,8 @@ class Fichinter extends CommonObject
             return -1;
         }
     }
-	
-	
+
+
 	/**
 	 *	Adding a line of intervention into data base
 	 *

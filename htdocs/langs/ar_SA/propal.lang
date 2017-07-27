@@ -3,7 +3,7 @@ Proposals=مقترحات تجارية
 Proposal=اقتراح التجارية
 ProposalShort=اقتراح
 ProposalsDraft=مقترحات مشاريع تجارية
-ProposalsOpened=افتتح مقترحات تجارية
+ProposalsOpened=مقترحات التجارية المفتوحة
 Prop=مقترحات تجارية
 CommercialProposal=اقتراح التجارية
 ProposalCard=اقتراح بطاقة
@@ -26,7 +26,7 @@ AmountOfProposalsByMonthHT=المبلغ في الشهر (بعد خصم الضر�
 NbOfProposals=عدد من المقترحات والتجاري
 ShowPropal=وتظهر اقتراح
 PropalsDraft=المسودات
-PropalsOpened=Opened
+PropalsOpened=فتح
 PropalStatusDraft=مشروع (لا بد من التحقق من صحة)
 PropalStatusValidated=Validated (proposal is opened)
 PropalStatusSigned=وقعت (لمشروع القانون)

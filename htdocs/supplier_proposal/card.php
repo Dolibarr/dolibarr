@@ -511,7 +511,8 @@ if (empty($reshook))
 	    $error = 0;
 
 		// Set if we used free entry or predefined product
-		$predef='';
+	    $predef='';
+	    $ref_fourn = GETPOST('fourn_ref');
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
@@ -599,7 +600,7 @@ if (empty($reshook))
 			        $price_base_type = $productsupplier->fourn_price_base_type;
 			        $type = $productsupplier->type;
 			        $label = $productsupplier->label;
-			        $desc = $productsupplier->description;
+			        $desc = $productsupplier->description;			        
 			        if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 			        $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
@@ -983,7 +984,9 @@ $now = dol_now();
 // Add new askprice
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewAskPrice"));
+    $currency_code = $conf->currency;
+
+    print load_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)

@@ -2044,7 +2044,12 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
 			return 0;
 		}
-
+		if (count($this->lines) <= 0)
+		{
+        	$langs->load("errors");
+			$this->error=$langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
+			return -1;
+		}
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->invoice_advance->validate)))
 		{
@@ -2652,9 +2657,10 @@ class Facture extends CommonInvoice
 	 * 	@param      int         $situation_percent  Situation advance percentage
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=100, $fk_unit = null, $pu_ht_devise = 0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=100, $fk_unit = null, $pu_ht_devise = 0, $notrigger=0)
 	{
 		global $conf,$user;
 		// Deprecation warning
@@ -2812,7 +2818,7 @@ class Facture extends CommonInvoice
 				$this->line->array_options=$array_options;
 			}
 
-			$result=$this->line->update($user);
+			$result=$this->line->update($user, $notrigger);
 			if ($result > 0)
 			{
 				// Reorder if child line
@@ -3848,11 +3854,12 @@ class Facture extends CommonInvoice
 				}
 
 				$this->lines[$xnbp]=$line;
-				$xnbp++;
 
 				$this->total_ht       += $line->total_ht;
 				$this->total_tva      += $line->total_tva;
 				$this->total_ttc      += $line->total_ttc;
+
+				$xnbp++;
 			}
 			$this->revenuestamp = 0;
 

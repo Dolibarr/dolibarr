@@ -108,7 +108,7 @@ class Contact extends CommonObject
 		$this->db = $db;
 		$this->statut = 1;	// By default, status is enabled
 	}
-	
+
 	/**
 	 *  Load indicators into this->nb for board
 	 *
@@ -117,10 +117,10 @@ class Contact extends CommonObject
 	function load_state_board()
 	{
 		global $user;
-	
+
 		$this->nb=array();
 		$clause = "WHERE";
-	
+
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
@@ -133,7 +133,7 @@ class Contact extends CommonObject
 		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
 		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
         if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
-        
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -410,7 +410,9 @@ class Contact extends CommonObject
 	{
 		global $conf,$langs;
 
-		// Object classes
+        $info = array();
+
+        // Object classes
 		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
@@ -486,7 +488,7 @@ class Contact extends CommonObject
 	    $result=false;
 
 	    $this->db->begin();
-	    
+
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
@@ -544,7 +546,7 @@ class Contact extends CommonObject
 		    if ($result < 0) { $error++; }
 		    // End call triggers
 		}
-		
+
 		if (! $error)
 		{
 		    $this->db->commit();
@@ -659,7 +661,7 @@ class Contact extends CommonObject
 				$this->canvas			= $obj->canvas;
 
 				$this->import_key		= $obj->import_key;
-				
+
 				// Define gender according to civility
 				$this->setGenderFromCivility();
 
@@ -735,7 +737,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Set property ->gender from property ->civility_id
-	 * 
+	 *
 	 * @return void
 	 */
 	function setGenderFromCivility()
@@ -746,8 +748,8 @@ class Contact extends CommonObject
     	} else if(in_array($this->civility_id, array('MME','MLE'))) {
     	    $this->gender = 'woman';
     	}
-	}	
-	
+	}
+
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
@@ -1007,13 +1009,13 @@ class Contact extends CommonObject
 	        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
 	        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
 	        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
-	
+
 	        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
 	        $linkclose="";
-	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	        {
 	            $label=$langs->trans("ShowContact");
-	            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+	            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 	        }
 	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 	       	$linkclose.= ' class="classfortooltip">';
@@ -1029,15 +1031,15 @@ class Contact extends CommonObject
 		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
 		$link.=$linkclose;
-		
+
 		$linkend='</a>';
-	
+
 		if ($option == 'xxx')
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 		}
-	
+
 	        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
 			$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
 		return $result;

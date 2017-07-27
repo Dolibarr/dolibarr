@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Api Explorer</title>
-  <!-- DOL_CHANGE LDR Remove external links <link href='//fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>-->
+  <!-- @CHANGE LDR Remove external links <link href='//fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>-->
   <link href='css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/reset.css' media='print' rel='stylesheet' type='text/css'/>
@@ -59,7 +59,7 @@
       var key = $('#input_apiKey')[0].value;
       log("key: " + key);
       if(key && key.trim() != "") {
-        /* DOL_CHANGE LDR We set DOLAPIKEY into header */
+        /* @CHANGE LDR We set DOLAPIKEY into header */
         log("added key " + key);
 
         /* Disabled for security reason. We keep only param in header
@@ -87,7 +87,7 @@
   <div class="swagger-ui-wrap">
     <a id="logo" href="#">API Explorer</a>
     <form id='api_selector'>
-      <!-- DOL_CHANGE LDR
+      <!-- @CHANGE LDR
       <div class='input icon-btn'>
         <img id="show-pet-store-icon" src="images/pet_store_api.png" title="Show Swagger Petstore Example Apis">
       </div>

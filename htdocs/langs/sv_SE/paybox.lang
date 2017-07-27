@@ -11,6 +11,7 @@ YourEMail=E-post för betalning bekräftelse
 Creditor=Borgenär
 PaymentCode=Betalning kod
 PayBoxDoPayment=Gå mot betalning
+ToPay=Gör betalning
 YouWillBeRedirectedOnPayBox=Du kommer att omdirigeras på säkrade Paybox sida för att mata dig kreditkortsinformation
 Continue=Nästa
 ToOfferALinkForOnlinePayment=URL för %s betalning
