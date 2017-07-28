@@ -628,7 +628,7 @@ if ($resql)
     if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($billed != '')			$param.='&billed='.$billed;
-
+	
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
