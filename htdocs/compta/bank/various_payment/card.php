@@ -172,7 +172,7 @@ if (empty($reshook))
 				if ($result >= 0)
 				{
 					$db->commit();
-					header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
 					exit;
 				}
 				else
@@ -411,7 +411,7 @@ if ($id)
 	print '<div class="tabsAction">'."\n";
 	if ($object->rappro == 0)
 	{
-		if (! empty($user->rights->banque->delete))
+		if (! empty($user->rights->banque->modifier))
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
