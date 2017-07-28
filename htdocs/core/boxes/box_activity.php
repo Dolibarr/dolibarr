@@ -83,17 +83,17 @@ class box_activity extends ModeleBoxes
         $cachetime = 3600;
         $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
         $now = dol_now();
-        $nbofyears=2;
+        $nbofperiod=3;
 
-        if (! empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) $nbofyears=$conf->global->MAIN_BOX_ACTIVITY_DURATION;
-        $textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofyears*12);
+        if (! empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) $nbofperiod=$conf->global->MAIN_BOX_ACTIVITY_DURATION;
+        $textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
         $this->info_box_head = array(
             'text' => $textHead,
             'limit'=> dol_strlen($textHead),
         );
 
         // compute the year limit to show
-        $tmpdate= dol_time_plus_duree(dol_now(), -1*$nbofyears, "y");
+        $tmpdate= dol_time_plus_duree(dol_now(), -1*$nbofperiod, "m");
 
         $cumuldata = array();
 
@@ -103,6 +103,7 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $facturestatic=new Facture($db);
 
+            // part 1
             $cachedir = DOL_DATA_ROOT.'/facture/temp';
             $filename = '/boxactivity-invoice'.$fileid;
 
@@ -189,6 +190,7 @@ class box_activity extends ModeleBoxes
                     );
             }
 
+            // part 2
             $cachedir = DOL_DATA_ROOT.'/facture/temp';
             $filename = '/boxactivity-invoice2'.$fileid;
 
