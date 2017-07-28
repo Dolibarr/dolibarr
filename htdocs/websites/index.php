@@ -1304,31 +1304,24 @@ if ($action == 'preview' || $action == 'createpagefromclone')
     {
     	// Ouput page under the Dolibarr top menu
         $objectpage->fetch($pageid);
+        $csscontent = @file_get_contents($filecss);
 
         $out = '<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
 
         $out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
 
-        $csscontent = @file_get_contents($filecss);
+        // REPLACEMENT OF LINKS When page called by website editor
 
         $out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-        $out.=$csscontent;
+        $out.=dolWebsiteReplacementOfLinks($csscontent);
         $out.='</style>'."\n";
 
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
 
-        // Replace php code. Note $objectpage->content come from database and does not contains body tags.
-        $content = preg_replace('/<\?php[^\?]+\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $objectpage->content);
-
-        // Replace relative link / with dolibarr URL
-        $content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageid='.$object->fk_default_home.'"', $content, -1, $nbrep);
-        // Replace relative link /xxx.php with dolibarr URL
-        $content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageref=\2"', $content, -1, $nbrep);
-
-
-        $out.=$content."\n";
+        $out.=dolWebsiteReplacementOfLinks($objectpage->content)."\n";
 
         $out.='</div>';
+
         $out.='</div>';
 
         $out.= "\n".'<!-- End page content '.$filetpl.' -->'."\n\n";
@@ -1371,6 +1364,26 @@ $db->close();
 
 
 
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$content			Content to replace
+ * @return	boolean							True if OK
+ */
+function dolWebsiteReplacementOfLinks($content)
+{
+	// Replace php code. Note $objectpage->content come from database and does not contains body tags.
+	$content = preg_replace('/<\?php[^\?]+\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
+
+	// Replace relative link / with dolibarr URL
+	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageid='.$object->fk_default_home.'"', $content, -1, $nbrep);
+	// Replace relative link /xxx.php with dolibarr URL
+	$content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	return $content;
+}
 
 /**
  * Save content of a page on disk
@@ -1389,7 +1402,6 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 	dol_delete_file($filetpl);
 
-	// TODO Same code than into updatemeta
 	$shortlangcode = '';
 	if ($objectpage->lang) $shortlangcode=preg_replace('/[_-].*$/', '', $objectpage->lang);		// en_US or en-US -> en
 
