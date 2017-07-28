@@ -2805,7 +2805,7 @@ div.tabBar .noborder {
 }
 .boxstats {
     padding: 3px;
-    width: 105px;
+    width: 103px;
 }
 .boxstats130 {
     width: 160px;

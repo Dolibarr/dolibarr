@@ -2889,7 +2889,7 @@ div .tdtop {
 }
 .boxstats {
     padding: 3px;
-    width: 105px;
+    width: 100px;
 }
 .boxstats130 {
     width: 135px;
