@@ -207,5 +207,5 @@ LinkedFichinter=Bir müdahaleye bağlan
 ImportDataset_tax_contrib=Sosyal/mali vergiler
 ImportDataset_tax_vat=Vat payments
 ErrorBankAccountNotFound=Hata: Banka hesabı bulunamadı
-FiscalPeriod=Accounting period
+FiscalPeriod=Muhasebe dönemi
 ListSocialContributionAssociatedProject=List of social contributions associated with the project

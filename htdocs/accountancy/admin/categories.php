@@ -46,7 +46,7 @@ if ($cat_id == 0) {
 }
 
 // Security check
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -104,7 +104,7 @@ $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0
 print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
-if (! empty($cat_id)) 
+if (! empty($cat_id))
 {
 	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
 	if ($return < 0) {

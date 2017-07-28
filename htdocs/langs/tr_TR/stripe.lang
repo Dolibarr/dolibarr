@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe modülü kurulumu
+StripeDesc=Bu modül müşterinin <a href="http://www.stripe.com" target="_blank">Stripe</a> üzerinden ödeme yapmasına izin veren sayfalar sunar. Bu ücretsiz bir ödeme veya belirli bir Dolibarr nesnesinde (fatura, sipariş, ...) ödeme için kullanılabilir.
+StripeOrCBDoPayment=Kredi kartı veya Stripe ile ödeme yapın
+FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesnelerine bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
+PaymentForm=Ödeme Formu
+WelcomeOnPaymentPage=Çevrimiçi ödeme hizmetimize hoşgeldiniz
+ThisScreenAllowsYouToPay=Bu ekran %s için çevrimiçi bir ödeme yapmanızı sağlar
+ThisIsInformationOnPayment=Bu yapılacak ödeme hakkında bilgidir
+ToComplete=Tamamlanacak
+YourEMail=Ödeme alındısı onayı için e-posta adresi
+STRIPE_PAYONLINE_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
+Creditor=Alacaklı
+PaymentCode=Ödeme kodu
+StripeDoPayment=Ödemeye git
+YouWillBeRedirectedOnStripe=Kredi kartı bilgilerini girmek için güvenli Stripe sayfasında yönlendirileceksiniz
+Continue=Sonraki
+ToOfferALinkForOnlinePayment=%s Ödemesi için URL
+ToOfferALinkForOnlinePaymentOnOrder=Bir müşteri siparişi için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnInvoice=Bir müşteri faturası için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnContractLine=Bir sözleşme satırı için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=Bir serbest ödeme için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Bir müşteri üye aboneliği çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+YouCanAddTagOnUrl=Ayrıca; o URL'lerden herhangi birine <b>&tag=<i>value</i></b> url parametresini ekleyerek kendi ödeme açıklamanızın etiketini girebilirsiniz.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Bu sayfa ödeme kaydedilmiş olduğunu onaylar. Teşekkür ederim.
+YourPaymentHasNotBeenRecorded=Ödemeniz kaydedimelmiştir  ve işlem iptal edilmiştir. Teşekkür ederiz.
+AccountParameter=Hesap parametreleri
+UsageParameter=Kullanım parametreleri
+InformationToFindParameters=%s Hesap bilgilerinizi bulmanız için yardım
+STRIPE_CGI_URL_V2=Ödeme için Stripe CGI modülü URL'si
+VendorName=Satıcının Adı
+CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
+MessageOK=Doğrulama sayfası mesajı
+MessageKO=İptal edilen ödeme sayfası mesajı
+NewStripePaymentReceived=Yeni Stripe ödemesi alındı
+NewStripePaymentFailed=Yeni Stripe ödemesi denendi ancak başarısız oldu
+STRIPE_TEST_SECRET_KEY=Gizli test anahtarı
+STRIPE_TEST_PUBLISHABLE_KEY=Yayımlanabilir test anahtarı
+STRIPE_LIVE_SECRET_KEY=Gizli canlı anahtar
+STRIPE_LIVE_PUBLISHABLE_KEY=Yayınlanabilir canlı anahtar
+StripeLiveEnabled=Stripe canlı etkin (aksi takdirde test/sanal alan modu)

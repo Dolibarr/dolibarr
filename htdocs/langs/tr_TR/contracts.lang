@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Bu listede yalnızca satış temsilcisi olarak ata
 StandardContractsTemplate=Standart sözleşme kalıbı
 ContactNameAndSignature=%s için, ad ve imza
 OnlyLinesWithTypeServiceAreUsed=Yalnızca "Hizmet" türündeki satırlar klonlanacaktır.
+CloneContract=Clone contract
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşmeyi imzalalayacak satış temsilcisi

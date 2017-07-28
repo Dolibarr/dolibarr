@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - workflow
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Maak automatisch een klantenfactuur na tekenen van een offerte
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klantenfactuur na validatie van een contract
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Maak automatisch een klantenfactuur na sluiten van een klantenbestelling
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificeer de gekoppelde offerte als gefactureerd wanneer de klantenfactuur gevalideerd werd
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificeer de gekoppelde bestelling als verzonden bij validatie van een verzending waarbij de verzonden hoeveelheid gelijk is aan de hoeveelheid van de bestelling
+AutomaticCreation=Automatische aanmaak
+AutomaticClassification=Automatische classificatie

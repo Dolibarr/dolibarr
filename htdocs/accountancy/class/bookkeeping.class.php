@@ -71,6 +71,7 @@ class BookKeeping extends CommonObject
 	/**
 	 */
 	public $doc_date;
+	public $date_lim_reglement;
 	public $doc_type;
 	public $doc_ref;
 	public $fk_doc;
@@ -176,7 +177,7 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) $this->credit = 0;
 
 		// Check parameters
-		if (empty($this->numero_compte) || $this->numero_compte == '-1')
+		if (empty($this->numero_compte) || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
 		{
 			$langs->load("errors");
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
@@ -255,6 +256,7 @@ class BookKeeping extends CommonObject
 
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
 				$sql .= "doc_date";
+				$sql .= ", date_lim_reglement";
 				$sql .= ", doc_type";
 				$sql .= ", doc_ref";
 				$sql .= ", fk_doc";
@@ -277,6 +279,7 @@ class BookKeeping extends CommonObject
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
 				$sql .= "'" . $this->db->idate($this->doc_date) . "'";
+				$sql .= ",'" . $this->db->idate($this->date_lim_reglement) . "'";
 				$sql .= ",'" . $this->db->escape($this->doc_type) . "'";
 				$sql .= ",'" . $this->db->escape($this->doc_ref) . "'";
 				$sql .= "," . $this->fk_doc;
@@ -430,6 +433,9 @@ class BookKeeping extends CommonObject
 		if (empty($this->debit)) $this->debit = 0;
 		if (empty($this->credit)) $this->credit = 0;
 
+		$this->debit = price2num($this->debit, 'MT');
+		$this->credit = price2num($this->credit, 'MT');
+
 		$now = dol_now();
 		if (empty($this->date_create)) {
 		    $this->date_create = $now;
@@ -441,6 +447,7 @@ class BookKeeping extends CommonObject
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . $mode.'(';
 		$sql .= 'doc_date,';
+		$sql .= 'date_lim_reglement,';
 		$sql .= 'doc_type,';
 		$sql .= 'doc_ref,';
 		$sql .= 'fk_doc,';
@@ -463,6 +470,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
 		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->doc_date) . "'") . ',';
+		$sql .= ' ' . (! isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'" . $this->db->idate($this->date_lim_reglement) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ',';
 		$sql .= ' ' . (empty($this->fk_doc) ? '0' : $this->fk_doc) . ',';
@@ -537,6 +545,7 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.doc_date,";
+		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.doc_type,";
 		$sql .= " t.doc_ref,";
 		$sql .= " t.fk_doc,";
@@ -574,6 +583,7 @@ class BookKeeping extends CommonObject
 				$this->id = $obj->rowid;
 
 				$this->doc_date = $this->db->jdate($obj->doc_date);
+				$this->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$this->doc_type = $obj->doc_type;
 				$this->doc_ref = $obj->doc_ref;
 				$this->fk_doc = $obj->fk_doc;
@@ -608,6 +618,7 @@ class BookKeeping extends CommonObject
 			return - 1;
 		}
 	}
+
 
 	/**
 	 * Load object in memory from the database
@@ -799,7 +810,7 @@ class BookKeeping extends CommonObject
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		$this->lines = array ();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -998,6 +1009,9 @@ class BookKeeping extends CommonObject
 			$this->piece_num = trim($this->piece_num);
 		}
 
+		$this->debit = price2num($this->debit, 'MT');
+		$this->credit = price2num($this->credit, 'MT');
+
 		// Check parameters
 		// Put here code to add a control on parameters values
 
@@ -1068,9 +1082,10 @@ class BookKeeping extends CommonObject
 	public function updateByMvt($piece_num='', $field='', $value='', $mode='') {
 		$this->db->begin();
 		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
-		$sql .= ' SET ab.' . $field . '=' . $value;
+		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$value."'");
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
+
 		if (! $resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
@@ -1093,7 +1108,6 @@ class BookKeeping extends CommonObject
 	 * @param User $user User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 * @param string $mode Mode
-	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false, $mode='') {
@@ -1253,7 +1267,7 @@ class BookKeeping extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new Accountingbookkeeping($this->db);
+		$object = new BookKeeping($this->db);
 
 		$this->db->begin();
 
@@ -1576,6 +1590,7 @@ class BookKeeping extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
+		/*
 		$sql = "DELETE FROM ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte";
@@ -1584,6 +1599,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND asy.rowid = " . $pcgver;
 		$sql .= " AND ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " ORDER BY account_number ASC";
+		*/
 	}
 
 	/**

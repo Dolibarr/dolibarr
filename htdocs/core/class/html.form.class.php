@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2006       Marc Barilley/Ocebo     <marc@ocebo.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
@@ -4417,7 +4417,7 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql  = "SELECT DISTINCT t.rowid, t.code, t.taux, t.recuperableonly";
+        $sql  = "SELECT DISTINCT t.rowid, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active > 0";
@@ -4436,8 +4436,20 @@ class Form
     				$this->cache_vatrates[$i]['rowid']	= $obj->rowid;
     				$this->cache_vatrates[$i]['code']	= $obj->code;
     				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
+    				$this->cache_vatrates[$i]['localtax1']	    = $obj->localtax1;
+    				$this->cache_vatrates[$i]['localtax1_type']	= $obj->localtax1_type;
+    				$this->cache_vatrates[$i]['localtax2']	    = $obj->localtax2;
+    				$this->cache_vatrates[$i]['localtax2_type']	= $obj->localtax1_type;
+
+    				$this->cache_vatrates[$i]['label']	= $obj->taux.'%'.($obj->code?' ('.$obj->code.')':'');   // Label must contains only 0-9 , . % or *
+    				$this->cache_vatrates[$i]['labelallrates'] = $obj->taux.'/'.($obj->localtax1?$obj->localtax1:'0').'/'.($obj->localtax2?$obj->localtax2:'0').($obj->code?' ('.$obj->code.')':'');	// Must never be used as key, only label
+    				$positiverates='';
+    				if ($obj->taux) $positiverates.=($positiverates?'/':'').$obj->taux;
+    				if ($obj->localtax1) $positiverates.=($positiverates?'/':'').$obj->localtax1;
+    				if ($obj->localtax2) $positiverates.=($positiverates?'/':'').$obj->localtax2;
+    				if (empty($positiverates)) $positiverates='0';
+    				$this->cache_vatrates[$i]['labelpositiverates'] = $positiverates.($obj->code?' ('.$obj->code.')':'');	// Must never be used as key, only label
     			}
 
     			return $num;
@@ -4611,7 +4623,16 @@ class Form
                		    $selectedfound=true;
             		}
         		}
-        		$return.= '>'.vatrate($rate['libtva']);
+        		$return.= '>';
+        		//if (! empty($conf->global->MAIN_VAT_SHOW_POSITIVE_RATES))
+        		if ($mysoc->country_code == 'IN' || ! empty($conf->global->MAIN_VAT_LABEL_IS_POSITIVE_RATES))
+        		{
+        			$return.= $rate['labelpositiverates'];
+        		}
+        		else
+        		{
+        			$return.= vatrate($rate['label']);
+        		}
         		//$return.=($rate['code']?' '.$rate['code']:'');
         		$return.= (empty($rate['code']) && $rate['nprtva']) ? ' *': '';         // We show the *  (old behaviour only if new vat code is not used)
 
@@ -5604,6 +5625,14 @@ class Form
 		{
     		$listofidcompanytoscan=$object->thirdparty->id;
     		if (($object->thirdparty->parent > 0) && ! empty($conf->global->THIRDPARTY_INCLUDE_PARENT_IN_LINKTO)) $listofidcompanytoscan.=','.$object->thirdparty->parent;
+			if (($object->fk_project > 0) && ! empty($conf->global->THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$tmpproject=new Project($this->db);
+				$tmpproject->fetch($object->fk_project);
+				if ($tmpproject->socid > 0 && ($tmpproject->socid != $object->thirdparty->id)) $listofidcompanytoscan.=','.$tmpproject->socid;
+				unset($tmpproject);
+			}
 
     		$possiblelinks=array(
     		    'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal').')'),
@@ -5835,7 +5864,7 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
      *    @param	string	$morehtml  		More html content to output just before the nav bar.
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1).
-     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field).
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field). Use 'none' to disable next/prev.
      *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
      *    @param	string	$morehtmlref  	More html to show after ref.
      *    @param	string	$moreparam  	More param to add in nav link url. Must start with '&...'.
@@ -5845,11 +5874,11 @@ class Form
      *	  @param	string	$morehtmlright	More html code to show after ref.
      * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
-    {
-    	global $langs,$conf,$hookmanager;
+	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
+	{
+		global $langs,$conf,$hookmanager;
 
-    	$ret='';
+		$ret='';
         if (empty($fieldid))  $fieldid='rowid';
         if (empty($fieldref)) $fieldref='ref';
 
@@ -5880,10 +5909,10 @@ class Form
         // Right part of banner
 		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
 
-        if ($previous_ref || $next_ref || $morehtml)
-        {
-        	$ret.='<div class="pagination"><ul>';
-        }
+		if ($previous_ref || $next_ref || $morehtml)
+		{
+			$ret.='<div class="pagination"><ul>';
+		}
         if ($morehtml)
         {
             $ret.='<li class="noborder litext">'.$morehtml.'</li>';
@@ -5914,7 +5943,7 @@ class Form
 		{
 		    $ret.=dol_htmlentities($object->name);
 		}
-		else if (in_array($object->element, array('contact', 'user', 'member')))
+		else if (in_array($object->element, array('contact', 'user', 'usergroup', 'member')))
 		{
 		    $ret.=dol_htmlentities($object->getFullName($langs));
 		}
@@ -6098,7 +6127,9 @@ class Form
 	                 */
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,3)).'">';	// gravatar need md5 hash
+                    //$defaultimg=urlencode(dol_buildpath($nophoto,3));
+                    $defaultimg='mm';
+                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.$defaultimg.'">';	// gravatar need md5 hash
                 }
                 else
 				{

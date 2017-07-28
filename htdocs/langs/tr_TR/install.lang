@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=DoliWamp üzerinden Dolibarr kurulum sihirbazını kullan�
 KeepDefaultValuesDeb=Bir Linux paketi (Ubuntu, Debian, Fedora ...) üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca veritabanı sahibinin parolasının tamamlanması gerekir. Yalnızca ne yapacağınızı biliyorsanız parametreleri değiştirin.
 KeepDefaultValuesMamp=DoliMamp üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
 KeepDefaultValuesProxmox=Proxmox sanal aygıt  üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
+UpgradeExternalModule=Harici modüllerin özel yükseltme işlemini çalıştırın
 
 #########
 # upgrade

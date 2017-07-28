@@ -1,10 +1,22 @@
 # Dolibarr language file - Source file is en_US - admin
+VersionProgram=Versión del programa
+VersionLastInstall=Versión de instalación inicial
+VersionLastUpgrade=Actualización a versión más reciente
+VersionUnknown=Desconocido
+VersionRecommanded=Recomendado
+SessionId=ID de sesión
+SessionSaveHandler=Manejador para guardar sesiones
+SessionSavePath=Localización de la sesión de almacenamiento
+GUISetup=Visualización
+SetupArea=Área de configuración
+Space=Espacio
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+AllMenus=Todo
+SetupShort=Configurar
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Cotizaciones
 Module20Desc=Gestión de cotizaciones/propuestas comerciales
-Module1400Name=Contabilidad
 Permission21=Consultar cotizaciones
 Permission22=Crear/modificar cotizaciones
 Permission24=Validar cotizaciones

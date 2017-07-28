@@ -1,15 +1,15 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Configuração do módulo de Ritmo de Trabalho
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifique a fonte ligada como prposta a cobrança quando a ordem do cliente for definida como paga
+WorkflowSetup=Configuração do módulo de Fluxo de Trabalho
+WorkflowDesc=Este módulo foi projetado para modificar o comportamento das ações automáticas na aplicação. Por defeito, o fluxo de trabalho é aberto (você pode fazer as coisas na ordem que deseja). Você pode ativar as ações automáticas do seu interesse.
+ThereIsNoWorkflowToModify=Não há modificações de fluxo de trabalho disponíveis para os módulos ativados.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar automaticamente uma encomenda para o cliente após a assinatura de um orçamento de cliente
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente após a assinatura de um orçamento de cliente
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente após a validação de um contrato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente após o encerramento de uma encomenda de cliente
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifique a fonte ligada como proposta a cobrança quando a ordem do cliente for definida como paga
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifique a fonte ligada como cobrado quando a ordem(s) do cliente for definida como paga
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifique a fonte ligada a ordem(s) de clientes quando a fatura de cliente for validada
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificar o orçamento fonte associado como faturado quando a fatura de cliente é validada
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificar a encomenda fonte associada como enviada quando uma expedição é validada e a quantidade enviada é a mesma que está estipulada na encomenda fonte
+AutomaticCreation=Criação automática
+AutomaticClassification=Classificação automática

@@ -130,7 +130,7 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ttc;
     //! id of source invoice if replacement invoice or credit note
     public $fk_facture_source;
-    
+
     /**
      * Standard invoice
      */
@@ -883,7 +883,7 @@ class FactureFournisseur extends CommonInvoice
             }
             // Fin appel triggers
         }
-        
+
         if (! $error)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
@@ -902,7 +902,7 @@ class FactureFournisseur extends CommonInvoice
             	$error++;
             }
         }
-        
+
 		if (! $error)
 		{
 			// Delete linked object
@@ -1081,20 +1081,29 @@ class FactureFournisseur extends CommonInvoice
     public function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
     {
         global $conf,$langs;
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+        $now=dol_now();
 
         $error=0;
+        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
 
-        // Protection
+        // Check parameters
         if ($this->statut > self::STATUS_DRAFT)	// This is to avoid to validate twice (avoid errors on logs and stock management)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
             return 0;
         }
-
-        // Check parameters
         if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->ref_supplier))
         {
-            $this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
+        	$langs->load("errors");
+        	$this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
+            return -1;
+        }
+        if (count($this->lines) <= 0)
+        {
+        	$langs->load("errors");
+            $this->error=$langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
             return -1;
         }
 
@@ -1116,7 +1125,7 @@ class FactureFournisseur extends CommonInvoice
         $this->newref = $num;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
+        $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -1430,7 +1439,7 @@ class FactureFournisseur extends CommonInvoice
             if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
             // Mise a jour informations denormalisees au niveau de la facture meme
-            $result=$this->update_price(1,'auto',0,$mysoc);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+            $result=$this->update_price(1,'auto',0,$this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
             if ($result > 0)
             {
                 $this->db->commit();
@@ -1951,9 +1960,10 @@ class FactureFournisseur extends CommonInvoice
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
+	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
      *  @return	void
      */
-    public function initAsSpecimen()
+    public function initAsSpecimen($option='')
     {
         global $langs,$conf;
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1993,50 +2003,54 @@ class FactureFournisseur extends CommonInvoice
         $this->mode_reglement_code = 'CHQ';
         $this->note_public='This is a comment (public)';
         $this->note_private='This is a comment (private)';
-        // Lines
-        $nbp = 5;
-        $xnbp = 0;
-        while ($xnbp < $nbp)
-        {
-            $line=new FactureLigne($this->db);
-            $line->desc=$langs->trans("Description")." ".$xnbp;
-            $line->qty=1;
-            $line->subprice=100;
-            $line->pu_ht=100;		// the canelle template use pu_ht and not subprice
-            $line->price=100;
-            $line->tva_tx=19.6;
-            $line->localtax1_tx=0;
-            $line->localtax2_tx=0;
-			if ($xnbp == 2)
-			{
-			    $line->total_ht=50;
-			    $line->total_ttc=59.8;
-			    $line->total_tva=9.8;
-    			$line->remise_percent=50;
-			}
-			else
-			{
-			    $line->total_ht=100;
-			    $line->total_ttc=119.6;
-			    $line->total_tva=19.6;
-    			$line->remise_percent=0;
-			}
 
-            if ($num_prods > 0)
-            {
-				$prodid = mt_rand(1, $num_prods);
-            	$line->fk_product=$prodids[$prodid];
-            }
-            $line->product_type=0;
+		if (empty($option) || $option != 'nolines')
+		{
+	        // Lines
+	        $nbp = 5;
+	        $xnbp = 0;
+	        while ($xnbp < $nbp)
+	        {
+	            $line=new FactureLigne($this->db);
+	            $line->desc=$langs->trans("Description")." ".$xnbp;
+	            $line->qty=1;
+	            $line->subprice=100;
+	            $line->pu_ht=100;		// the canelle template use pu_ht and not subprice
+	            $line->price=100;
+	            $line->tva_tx=19.6;
+	            $line->localtax1_tx=0;
+	            $line->localtax2_tx=0;
+				if ($xnbp == 2)
+				{
+				    $line->total_ht=50;
+				    $line->total_ttc=59.8;
+				    $line->total_tva=9.8;
+	    			$line->remise_percent=50;
+				}
+				else
+				{
+				    $line->total_ht=100;
+				    $line->total_ttc=119.6;
+				    $line->total_tva=19.6;
+	    			$line->remise_percent=0;
+				}
 
-            $this->lines[$xnbp]=$line;
+	            if ($num_prods > 0)
+	            {
+					$prodid = mt_rand(1, $num_prods);
+	            	$line->fk_product=$prodids[$prodid];
+	            }
+	            $line->product_type=0;
 
-    		$this->total_ht       += $line->total_ht;
-    		$this->total_tva      += $line->total_tva;
-    		$this->total_ttc      += $line->total_ttc;
+	            $this->lines[$xnbp]=$line;
 
-            $xnbp++;
-        }
+	    		$this->total_ht       += $line->total_ht;
+	    		$this->total_tva      += $line->total_tva;
+	    		$this->total_ttc      += $line->total_ttc;
+
+	    		$xnbp++;
+	        }
+		}
 
         $this->amount_ht      = $xnbp*100;
         $this->total_ht       = $xnbp*100;

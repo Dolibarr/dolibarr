@@ -50,13 +50,6 @@ if ($result < 0) { $error++; }
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
 
-// Destroy some cookies
-// TODO external module
-if (! empty($conf->phenix->enabled) && ! empty($conf->phenix->cookie))
-{
-	setcookie($conf->phenix->cookie, '', 1, "/");
-}
-
 // Define url to go
 $url=DOL_URL_ROOT."/index.php";		// By default go to login page
 if ($urlfrom) $url=DOL_URL_ROOT.$urlfrom;

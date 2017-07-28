@@ -197,6 +197,7 @@ class ExtraFields
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/",$attrname) && ! is_numeric($attrname))
 		{
@@ -280,7 +281,7 @@ class ExtraFields
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0, $default='', $computed='')
 	{
-		global $conf;
+		global $conf,$user;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -304,7 +305,27 @@ class ExtraFields
 				$params='';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param, alwayseditable, perms, list, ishidden, fielddefault, fieldcomputed)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql.= " name,";
+			$sql.= " label,";
+			$sql.= " type,";
+			$sql.= " pos,";
+			$sql.= " size,";
+			$sql.= " entity,";
+			$sql.= " elementtype,";
+			$sql.= " fieldunique,";
+			$sql.= " fieldrequired,";
+			$sql.= " param,";
+			$sql.= " alwayseditable,";
+			$sql.= " perms,";
+			$sql.= " list,";
+			$sql.= " ishidden,";
+			$sql.= " fielddefault,";
+			$sql.= " fieldcomputed,";
+			$sql.= " fk_user_author,";
+			$sql.= " fk_user_modif,";
+			$sql.= " datec";
+			$sql.= " )";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -320,9 +341,12 @@ class ExtraFields
 			$sql.= " ".$list.",";
 			$sql.= " ".$ishidden.",";
 			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
-			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null");
+			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
+			$sql .= " " . $user->id . ",";
+			$sql .= " " . $user->id . ",";
+			$sql .= "'" . $this->db->idate(dol_now()) . "'";
 			$sql.=')';
-
+			
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
@@ -350,6 +374,7 @@ class ExtraFields
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		$error=0;
 
@@ -460,6 +485,7 @@ class ExtraFields
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
+		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -559,7 +585,7 @@ class ExtraFields
 	 */
 	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='')
 	{
-		global $conf;
+		global $conf, $user;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed);
 
 		// Clean parameters
@@ -600,7 +626,10 @@ class ExtraFields
 			$sql.= " list,";
 			$sql.= " ishidden,";
 			$sql.= " fielddefault,";
-			$sql.= " fieldcomputed";
+			$sql.= " fieldcomputed,";
+			$sql.= " fk_user_author,";
+			$sql.= " fk_user_modif,";
+			$sql.= " datec";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -617,7 +646,10 @@ class ExtraFields
 			$sql.= " ".$list.", ";
 			$sql.= " ".$ishidden.", ";
 			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
-			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null");
+			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
+			$sql .= " " . $user->id . ",";
+			$sql .= " " . $user->id . ",";
+			$sql .= "'" . $this->db->idate(dol_now()) . "'";
 			$sql.= ")";
 
 			$resql2=$this->db->query($sql);

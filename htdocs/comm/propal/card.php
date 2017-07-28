@@ -1250,6 +1250,8 @@ $now = dol_now();
 // Add new proposal
 if ($action == 'create')
 {
+    $currency_code = $conf->currency;
+
 	print load_fiche_titre($langs->trans("NewProp"));
 
 	$soc = new Societe($db);
@@ -1748,6 +1750,7 @@ if ($action == 'create')
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', null, null, '', 1);
     // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherProposals").'</a>)';
     // Project
     if (! empty($conf->projet->enabled))
     {

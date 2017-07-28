@@ -124,6 +124,7 @@ WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
 WeightUnitpound=libra
+WeightUnitounce=unce
 Length=Délka
 LengthUnitm=m
 LengthUnitdm=dm

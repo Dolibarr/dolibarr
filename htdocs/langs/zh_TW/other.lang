@@ -124,6 +124,7 @@ WeightUnitkg=Kg(公斤)
 WeightUnitg=g(克)
 WeightUnitmg=mg(毫克)
 WeightUnitpound=pound(英鎊)
+WeightUnitounce=ounce(盎司)
 Length=長度
 LengthUnitm=m(公尺)
 LengthUnitdm=dm(公寸)

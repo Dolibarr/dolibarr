@@ -124,6 +124,7 @@ WeightUnitkg=キロ
 WeightUnitg=グラム
 WeightUnitmg=ミリグラム
 WeightUnitpound=ポンド
+WeightUnitounce=オンス
 Length=長さ
 LengthUnitm=メートル
 LengthUnitdm=DM
