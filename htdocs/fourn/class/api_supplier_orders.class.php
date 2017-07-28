@@ -18,15 +18,15 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 /**
- * API class for supplier invoices
+ * API class for supplier orders
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class SupplierInvoices extends DolibarrApi
+class SupplierOrders extends DolibarrApi
 {
     /**
      *
@@ -37,9 +37,9 @@ class SupplierInvoices extends DolibarrApi
     );
 
     /**
-     * @var FactureFournisseur $invoice {@type FactureFournisseur}
+     * @var CommandeFournisseur $order {@type CommandeFournisseur}
      */
-    public $invoice;
+    public $order;
 
     /**
      * Constructor
@@ -48,50 +48,50 @@ class SupplierInvoices extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->invoice = new FactureFournisseur($this->db);
+        $this->order = new CommandeFournisseur($this->db);
     }
 
     /**
-     * Get properties of a supplier invoice object
+     * Get properties of a supplier order object
      *
-     * Return an array with supplier invoice information
+     * Return an array with supplier order information
      *
-     * @param 	int 	$id ID of supplier invoice
+     * @param 	int 	$id ID of supplier order
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
     function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
 			throw new RestException(401);
 		}
 
-        $result = $this->invoice->fetch($id);
+        $result = $this->order->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Supplier invoice not found');
+            throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		return $this->_cleanObjectDatas($this->invoice);
+		return $this->_cleanObjectDatas($this->order);
     }
 
     /**
-     * List invoices
+     * List orders
      *
-     * Get a list of supplier invoices
+     * Get a list of supplier orders
      *
      * @param string	$sortfield	      Sort field
      * @param string	$sortorder	      Sort order
      * @param int		$limit		      Limit for list
      * @param int		$page		      Page number
-     * @param string   	$thirdparty_ids	  Thirdparty ids to filter invoices of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
-     * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
+     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string	$status		      Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
-     * @return array                      Array of invoice objects
+     * @return array                      Array of order objects
      *
 	 * @throws RestException
      */
@@ -109,20 +109,24 @@ class SupplierInvoices extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
 
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 
 		// Filter by status
         if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
-        if ($status == 'unpaid')    $sql.= " AND t.fk_statut IN (1)";
-        if ($status == 'paid')      $sql.= " AND t.fk_statut IN (2)";
-        if ($status == 'cancelled') $sql.= " AND t.fk_statut IN (3)";
+        if ($status == 'validated') $sql.= " AND t.fk_statut IN (1)";
+        if ($status == 'approved')  $sql.= " AND t.fk_statut IN (2)";
+        if ($status == 'running')   $sql.= " AND t.fk_statut IN (3)";
+        if ($status == 'received_start') $sql.= " AND t.fk_statut IN (4)";
+        if ($status == 'received_end')   $sql.= " AND t.fk_statut IN (5)";
+        if ($status == 'cancelled') $sql.= " AND t.fk_statut IN (6,7)";
+        if ($status == 'refused')   $sql.= " AND t.fk_statut IN (9)";
         // Insert sale filter
         if ($search_sale > 0)
         {
@@ -159,41 +163,41 @@ class SupplierInvoices extends DolibarrApi
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
-                $invoice_static = new FactureFournisseur($db);
-                if($invoice_static->fetch($obj->rowid)) {
-                    $obj_ret[] = $this->_cleanObjectDatas($invoice_static);
+                $order_static = new CommandeFournisseur($db);
+                if($order_static->fetch($obj->rowid)) {
+                    $obj_ret[] = $this->_cleanObjectDatas($order_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve supplier invoice list : '.$db->lasterror());
+            throw new RestException(503, 'Error when retrieve supplier order list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No supplier invoice found');
+            throw new RestException(404, 'No supplier order found');
         }
 		return $obj_ret;
     }
 
     /**
-     * Create supplier invoice object
+     * Create supplier order object
      *
      * @param array $request_data   Request datas
-     * @return int  ID of supplier invoice
+     * @return int  ID of supplier order
      */
     function post($request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
         foreach($request_data as $field => $value) {
-            $this->invoice->$field = $value;
+            $this->order->$field = $value;
         }
         if(! array_keys($request_data,'date')) {
-            $this->invoice->date = dol_now();
+            $this->order->date = dol_now();
         }
         /* We keep lines as an array
          if (isset($request_data["lines"])) {
@@ -201,69 +205,69 @@ class SupplierInvoices extends DolibarrApi
             foreach ($request_data["lines"] as $line) {
                 array_push($lines, (object) $line);
             }
-            $this->invoice->lines = $lines;
+            $this->order->lines = $lines;
         }*/
 
-        if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
+        if ($this->order->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating order", array_merge(array($this->order->error), $this->order->errors));
         }
-        return $this->invoice->id;
+        return $this->order->id;
     }
 
     /**
-     * Update supplier invoice
+     * Update supplier order
      *
-     * @param int   $id             Id of supplier invoice to update
+     * @param int   $id             Id of supplier order to update
      * @param array $request_data   Datas
      * @return int
      */
     function put($id, $request_data = NULL)
     {
-        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401);
 		}
 
-        $result = $this->invoice->fetch($id);
+        $result = $this->order->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Supplier invoice not found');
+            throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
-            $this->invoice->$field = $value;
+            $this->order->$field = $value;
         }
 
-        if($this->invoice->update($id, DolibarrApiAccess::$user))
+        if($this->order->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
 
         return false;
     }
 
     /**
-     * Delete supplier invoice
+     * Delete supplier order
      *
-     * @param int   $id Supplier invoice ID
+     * @param int   $id Supplier order ID
      * @return type
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
 			throw new RestException(401);
 		}
-        $result = $this->invoice->fetch($id);
+        $result = $this->order->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Supplier invoice not found');
+            throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if( $this->invoice->delete(DolibarrApiAccess::$user) < 0)
+        if( $this->order->delete(DolibarrApiAccess::$user) < 0)
         {
             throw new RestException(500);
         }
@@ -271,7 +275,7 @@ class SupplierInvoices extends DolibarrApi
          return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Supplier invoice deleted'
+                'message' => 'Supplier order deleted'
             )
         );
     }
@@ -297,30 +301,30 @@ class SupplierInvoices extends DolibarrApi
      */
     function validate($id, $idwarehouse=0, $notrigger=0)
     {
-    	if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+    	if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
     		throw new RestException(401);
     	}
-    	$result = $this->invoice->fetch($id);
+    	$result = $this->order->fetch($id);
     	if( ! $result ) {
-    		throw new RestException(404, 'Invoice not found');
+    		throw new RestException(404, 'Order not found');
     	}
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+    	if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
-    	$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
+    	$result = $this->order->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
     	if ($result == 0) {
     		throw new RestException(500, 'Error nothing done. May be object is already validated');
     	}
     	if ($result < 0) {
-    		throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
+    		throw new RestException(500, 'Error when validating Order: '.$this->order->error);
     	}
 
     	return array(
 	    	'success' => array(
 		    	'code' => 200,
-		    	'message' => 'Invoice validated (Ref='.$this->invoice->ref.')'
+		    	'message' => 'Order validated (Ref='.$this->order->ref.')'
 	    	)
     	);
     }
@@ -350,12 +354,12 @@ class SupplierInvoices extends DolibarrApi
      */
     function _validate($data)
     {
-        $invoice = array();
-        foreach (Invoices::$FIELDS as $field) {
+        $order = array();
+        foreach (SupplierOrders::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
-            $invoice[$field] = $data[$field];
+            $order[$field] = $data[$field];
         }
-        return $invoice;
+        return $order;
     }
 }
