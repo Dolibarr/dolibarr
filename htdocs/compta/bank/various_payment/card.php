@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
@@ -70,7 +71,7 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/index.php',1);
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -172,7 +173,7 @@ if (empty($reshook))
 				if ($result >= 0)
 				{
 					$db->commit();
-					header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
 					exit;
 				}
 				else
@@ -339,9 +340,9 @@ if ($id)
 
 	print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-    print "<tr>";
+	print "<tr>";
 	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
@@ -349,11 +350,13 @@ if ($id)
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
+	// Payment date
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
+	// Value date
 	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($object->datev,'day');
 	print '</td></tr>';
@@ -370,11 +373,10 @@ if ($id)
 	print '</td><td>';
 	if (! empty($conf->accounting->enabled))
 	{
-		$accountancyaccount = new AccountingAccount($db);
-		$accountancyaccount->fetch('',$object->accountancy_code);
+		$accountingaccount = new AccountingAccount($db);
+		$accountingaccount->fetch('',$object->accountancy_code);
 
-		print $accountancyaccount->getNomUrl(1);
-		// print length_accountg($object->accountancy_code);
+		print $accountingaccount->getNomUrl(0,1,1,'',1);
 	} else {
 		print $object->accountancy_code;
 	}
@@ -411,7 +413,7 @@ if ($id)
 	print '<div class="tabsAction">'."\n";
 	if ($object->rappro == 0)
 	{
-		if (! empty($user->rights->banque->delete))
+		if (! empty($user->rights->banque->modifier))
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
