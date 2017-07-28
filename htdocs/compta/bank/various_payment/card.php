@@ -373,11 +373,10 @@ if ($id)
 	print '</td><td>';
 	if (! empty($conf->accounting->enabled))
 	{
-		$accountancyaccount = new AccountingAccount($db);
-		$accountancyaccount->fetch('',$object->accountancy_code);
+		$accountingaccount = new AccountingAccount($db);
+		$accountingaccount->fetch('',$object->accountancy_code);
 
-		print $accountancyaccount->getNomUrl(1);
-		// print length_accountg($object->accountancy_code);
+		print $accountingaccount->getNomUrl(0,1,1,'',1);
 	} else {
 		print $object->accountancy_code;
 	}
