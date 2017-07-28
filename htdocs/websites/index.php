@@ -300,7 +300,7 @@ if ($action == 'updatecss')
 
 	    $csscontent.= "<?php // BEGIN PHP\n";
 	    $csscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	    $csscontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	    $csscontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
 	    $csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	    $csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	    $csscontent.= "ob_start();\n";
@@ -1162,19 +1162,19 @@ if ($action == 'editcss')
 
     $csscontent = @file_get_contents($filecss);
     // Clean the php css file to remove php code and get only css part
-    $csscontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $csscontent);
+    $csscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $csscontent);
     $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
     if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n".'body.bodywebsite { margin: 0; }';
 
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php htmlheader file to remove php code and get only html part
-    $htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $htmlheader);
+    $htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheader);
     if (! trim($htmlheader)) $htmlheader='<html>'."\n".'<!-- HTML header content (all pages) -->'."\n".'</html>';
     else $htmlheader='<html>'."\n".$htmlheader."\n".'</html>';
 
     $robotcontent = @file_get_contents($filerobot);
     // Clean the php htmlheader file to remove php code and get only html part
-    $robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $robotcontent);
+    $robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $robotcontent);
     if (! trim($robotcontent))
     {
     	$robotcontent.="# Robot file. Generated with ".DOL_APPLICATION_TITLE."\n";
@@ -1185,7 +1185,7 @@ if ($action == 'editcss')
 
     $htaccesscontent = @file_get_contents($filehtaccess);
     // Clean the php htmlheader file to remove php code and get only html part
-    $htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP.*END PHP \?>\n*/ims', '', $htaccesscontent);
+    $htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htaccesscontent);
     if (! trim($htaccesscontent))
     {
     	$htaccesscontent.="# Order allow,deny\n";
