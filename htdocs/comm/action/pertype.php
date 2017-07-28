@@ -38,7 +38,7 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter = GETPOST("filter",'',3);
+$filter = GETPOST("filter",'alpha',3);
 $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
@@ -82,9 +82,9 @@ $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):date("d");
 $pid=GETPOST("projectid","int",3);
-$status=GETPOST("status");
-$type=GETPOST("type");
-$maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$status=GETPOST("status",'alpha');
+$type=GETPOST("type",'alpha');
+$maxprint=((GETPOST("maxprint",'int')!='')?GETPOST("maxprint",'int'):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('actioncode','array'))
 {
@@ -97,18 +97,18 @@ else
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
-$dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
+$dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth','int'), GETPOST('dateselectday','int'), GETPOST('dateselectyear','int'));
 if ($dateselect > 0)
 {
-	$day=GETPOST('dateselectday');
-	$month=GETPOST('dateselectmonth');
-	$year=GETPOST('dateselectyear');
+	$day=GETPOST('dateselectday','int');
+	$month=GETPOST('dateselectmonth','int');
+	$year=GETPOST('dateselectyear','int');
 }
 
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_HOURS)?'9-18':$conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmparray=explode('-',$tmp);
-$begin_h = GETPOST('begin_h')!=''?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOST('end_h')?GETPOST('end_h'):($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOST('begin_h','int')!=''?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOST('end_h','int')?GETPOST('end_h','int'):($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) $begin_h = 9;
 if ($end_h < 1 || $end_h > 24) $end_h = 18;
 if ($end_h <= $begin_h) $end_h = $begin_h + 1;
@@ -124,13 +124,13 @@ if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $ac
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week' && $action != 'show_peruser')  {
     $action='show_month'; $day='';
 }                                                   // View by month
-if (GETPOST('viewweek') || $action == 'show_week') {
+if (GETPOST('viewweek','alpha') || $action == 'show_week') {
     $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d"));
 }  // View by week
-if (GETPOST('viewday') || $action == 'show_day')  {
+if (GETPOST('viewday','alpha') || $action == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
 }                                  // View by day
-if (GETPOST('viewyear') || $action == 'show_year')  {
+if (GETPOST('viewyear','alpha') || $action == 'show_year')  {
     $action='show_year';
 }                                  // View by year
 
@@ -161,11 +161,11 @@ if ($action =='delete_action')
  * View
  */
 
-$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
-llxHeader('',$langs->trans("Agenda"),$help_url);
-
 $form=new Form($db);
 $companystatic=new Societe($db);
+
+$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $now=dol_now();
 $nowarray=dol_getdate($now);
@@ -456,11 +456,14 @@ if ($resql)
         	continue;
         }
 
+        $datep=$db->jdate($obj->datep);
+        $datep2=$db->jdate($obj->datep2);
+
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
-        $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
-        $event->datef=$db->jdate($obj->datep2);
+        $event->datep=$datep;      // datep and datef are GMT date
+        $event->datef=$datep2;
         $event->type_code=$obj->code;
         $event->type_color=$obj->color;
         //$event->libelle=$obj->label;				// deprecated
@@ -469,7 +472,6 @@ if ($resql)
         //$event->author->id=$obj->fk_user_author;	// user id of creator
         $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
-        $event->fetch_userassigned();				// This load $event->userassigned
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -487,15 +489,15 @@ if ($resql)
         // They are date start and end of action but modified to not be outside calendar view.
         if ($event->percentage <= 0)
         {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
+        	$event->date_start_in_calendar=$datep;
+        	if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar=$datep2;
+        	else $event->date_end_in_calendar=$datep;
         }
         else
-		{
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
+        {
+        	$event->date_start_in_calendar=$datep;
+        	if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar=$datep2;
+        	else $event->date_end_in_calendar=$datep;
         }
         // Define ponctual property
         if ($event->date_start_in_calendar == $event->date_end_in_calendar)
@@ -508,10 +510,14 @@ if ($resql)
         $event->date_start_in_calendar >= $lastdaytoshow)
         {
             // This record is out of visible range
+        	unset($event);
         }
         else
 		{
-            if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
+			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
+			$event->fetch_userassigned();				// This load $event->userassigned
+
+			if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
             if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow - 1);
 
             // Add an entry in actionarray for each day
@@ -928,6 +934,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		}
 	}
 
+	// Now output $casesX
 	for ($h = $begin_h; $h < $end_h; $h++)
 	{
 		$color1='';$color2='';
