@@ -32,6 +32,11 @@ ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
 
+ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
+UPDATE llx_website_page set status = 1 WHERE status IS NULL;
+
+ALTER TABLE llx_website ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_website_page ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_fichinter ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_livraison ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_livraison ADD COLUMN extraparams varchar(255);

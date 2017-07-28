@@ -41,3 +41,5 @@ CloneSite=Clone site
 ConfirmClonePage=Please enter code/alias of new page and if it is a translation of the cloned page.
 PageIsANewTranslation=The new page is a translation of the current page ?
 LanguageMustNotBeSameThanClonedPage=You clone a page as a translation. The language of the new page must be different than language of source page.
+ParentPageId=Parent page ID
+WebsiteId=Website ID

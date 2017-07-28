@@ -363,10 +363,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 
 
-
-
-
-
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -380,6 +376,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
 	// We need constructor into function unActivateModule into admin.lib.php
+
 
     /**
      * Enables a module.
@@ -2161,5 +2158,4 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	{
 		return $this->_remove(array(), $options);
 	}
-
 }
