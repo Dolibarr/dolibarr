@@ -568,7 +568,7 @@ if ($action == 'updatecontent' || GETPOST('refreshsite') || GETPOST('refreshpage
                 $tplcontent ='';
                 $tplcontent.= "<?php // BEGIN PHP\n";
                 $tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-                $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";
+                $tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require './master.inc.php'; } // Not already loaded"."\n";
                 $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
                 $tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
                 $tplcontent.= "ob_start();\n";

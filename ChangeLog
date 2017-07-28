@@ -4,11 +4,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
 
+NEW: Add experimental BlockeLog module (to log business events in a non reversible log file).
 NEW: Add a payment module for Stripe. 
-NEW: Add "Non Reversible Logs" module as experimental (to log business events in a non reversible log file).
-NEW: Add module "Product variant" as experimental (like red, blue for the product shoes)
-NEW: Add module "Website" as experimental
-NEW: Add module "Module Builder" as experimental
+NEW: Add module "Product variant" (like red, blue for the product shoes)
 NEW: Accountancy - Activate multi-journal & Add journal_label to database (FEC)
 NEW: Add a tracking id into mass emailing.
 NEW: Tax system more compatible with the new tax roollout in India (IGST / CGST / SGST).
@@ -117,7 +115,7 @@ NEW: Add hook "formatNotificationMessage"
 NEW: Add index and constraints keys on supplier proposal detail table
 NEW: Add phpunit to check the engine is defined into sql create files.
 NEW: Add project and Hook to Loan
-NEW: Add more REST API (API to push a file, to manage supplier orders, to validate invoices)
+NEW: Add REST API to push a file.
 NEW: Allow extrafields list select to be dependands on other standard list and not only other extrafields list
 NEW: Architecture to manage search criteria persistance (using save_lastsearch_values=1 on exit links and restore_lastsearch_values=1 in entry links)
 NEW: data files are now also parsed by phpunit for sql syntax
