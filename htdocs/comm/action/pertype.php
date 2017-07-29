@@ -30,10 +30,12 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
@@ -55,7 +57,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page","int");
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
@@ -93,7 +95,7 @@ if (GETPOST('actioncode','array'))
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode","alpha")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
@@ -354,7 +356,7 @@ $sql.= ' a.datep2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype,';
+$sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql.= ' ca.code, ca.color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -476,6 +478,8 @@ if ($resql)
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
         $event->transparency=$obj->transparency;
+
+        $event->fk_project=$obj->fk_project;
 
         $event->socid=$obj->fk_soc;
         $event->contactid=$obj->fk_contact;
@@ -887,11 +891,37 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			        		}
 							$cases1[$h][$event->id]['string'].=' - '.$event->label;
 							$cases1[$h][$event->id]['typecode']=$event->type_code;
-							if ($event->socid)
-							{
-								//$cases1[$h][$event->id]['string'].='xxx';
-							}
 							$cases1[$h][$event->id]['color']=$color;
+							if ($event->fk_project > 0)
+							{
+								if (empty($cache_project[$event->fk_project]))
+								{
+									$tmpproj=new Project($db);
+									$tmpproj->fetch($event->fk_project);
+									$cache_project[$event->fk_project]=$tmpproj;
+								}
+								$cases1[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cache_project[$event->fk_project]->ref.' - '.$cache_project[$event->fk_project]->title;
+							}
+							if ($event->socid > 0)
+							{
+								if (empty($cache_thirdparty[$event->socid]))
+								{
+									$tmpthirdparty=new Societe($db);
+									$tmpthirdparty->fetch($event->socid);
+									$cache_thirdparty[$event->socid]=$tmpthirdparty;
+								}
+								$cases1[$h][$event->id]['string'].=', '.$cache_thirdparty[$event->socid]->name;
+							}
+							if ($event->contactid > 0)
+							{
+								if (empty($cache_contact[$event->contactid]))
+								{
+									$tmpcontact=new Contact($db);
+									$tmpcontact->fetch($event->contactid);
+									$cache_contact[$event->contactid]=$tmpcontact;
+								}
+								$cases1[$h][$event->id]['string'].=', '.$cache_contact[$event->contactid]->getFullName($langs);
+							}
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
 						{
@@ -907,11 +937,37 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			        		}
 							$cases2[$h][$event->id]['string'].=' - '.$event->label;
 							$cases2[$h][$event->id]['typecode']=$event->type_code;
-							if ($event->socid)
-							{
-								//$cases2[$h][$event->id]['string'].='xxx';
-							}
 							$cases2[$h][$event->id]['color']=$color;
+							if ($event->fk_project > 0)
+							{
+								if (empty($cache_project[$event->fk_project]))
+								{
+									$tmpproj=new Project($db);
+									$tmpproj->fetch($event->fk_project);
+									$cache_project[$event->fk_project]=$tmpproj;
+								}
+								$cases2[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cache_project[$event->fk_project]->ref.' - '.$cache_project[$event->fk_project]->title;
+							}
+							if ($event->socid > 0)
+							{
+								if (empty($cache_thirdparty[$event->socid]))
+								{
+									$tmpthirdparty=new Societe($db);
+									$tmpthirdparty->fetch($event->socid);
+									$cache_thirdparty[$event->socid]=$tmpthirdparty;
+								}
+								$cases2[$h][$event->id]['string'].=', '.$cache_thirdparty[$event->socid]->name;
+							}
+							if ($event->contactid > 0)
+							{
+								if (empty($cache_contact[$event->contactid]))
+								{
+									$tmpcontact=new Contact($db);
+									$tmpcontact->fetch($event->contactid);
+									$cache_contact[$event->contactid]=$tmpcontact;
+								}
+								$cases2[$h][$event->id]['string'].=', '.$cache_contact[$event->contactid]->getFullName($langs);
+							}
 						}
 					}
 					else
