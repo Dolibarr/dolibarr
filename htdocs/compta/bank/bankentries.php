@@ -605,7 +605,7 @@ if ($resql)
 //	    print '<td>';
 	    print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 	    print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-	    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
+	    print '<input class="flat" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
 	    print '</div>';
 	    if ($options) {
 	        print $langs->trans("EventualyAddCategory").': ';
@@ -649,6 +649,16 @@ if ($resql)
 	    {
 	        dol_print_error($db);
 	    }
+        /**
+         * Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
+         */
+        if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE == 1) {
+            print '
+    <script type="text/javascript">
+    	$("#num_releve").val("' . $last_releve . '");
+    </script>
+    ';
+        }
 	    print '<br><br>';
 //	    print '</td></tr></table>';
 	}
