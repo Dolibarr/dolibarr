@@ -1127,7 +1127,16 @@ if ($resql)
         // Date ope
     	if (! empty($arrayfields['b.dateo']['checked']))
     	{
-    	   print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+    	   print '<td align="center" class="nowrap">';
+    	   print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do),"day")."</span>";
+    	   print '&nbsp;';
+    	   print '<span class="inline-block">';
+    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	   print img_edit_remove() . "</a> ";
+    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	   print img_edit_add() ."</a>";
+    	   print '</span>';
+    	   print "</td>\n";
                 if (! $i) $totalarray['nbfield']++;
     	}
 
