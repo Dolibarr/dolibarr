@@ -1199,7 +1199,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes JS for JQuery -->'."\n";
             if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+            if (! empty($conf->global->MAIN_FEATURES_LEVEL) && ! defined('JS_JQUERY_MIGRATE_DISABLED'))
             {
                 if (defined('JS_JQUERY_MIGRATE') && constant('JS_JQUERY_MIGRATE')) print '<script type="text/javascript" src="'.JS_JQUERY_MIGRATE.'jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
@@ -2002,7 +2002,7 @@ if (! function_exists("llxFooter"))
         }
 
         // Wrapper to manage dropdown
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax) && ! defined('JS_JQUERY_DISABLE_DROPDOWN'))
         {
             print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
             print '<script type="text/javascript">

@@ -32,9 +32,6 @@ if (empty($usedolheader))
 	<!-- Includes for JQuery (Ajax library) -->
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
-	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
-	<?php } ?>
 	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
 	<!-- Includes JS for JQuery -->
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
@@ -43,9 +40,6 @@ if (empty($usedolheader))
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
 	<!-- <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script> -->
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/select2/select2.min.js?version=4.0.0-beta"></script>
-	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
-	<?php } ?>
 	</head>
 
 	<body style="padding: 10px;">
@@ -74,7 +68,7 @@ else
 			'/includes/pdfmake/vfs_fonts.js'
 	);
     */
-    
+
 	llxHeader('','','','',0,0,$arrayjs,$arraycss);
 }
 
@@ -92,7 +86,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 - tablednd<br>
 </h2>
 
-<?php  ?> 
+<?php  ?>
 
 <br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
 
@@ -139,7 +133,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 
 <br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines or for long result tables<br>
 
- 
+
 <script type="text/javascript" language="javascript">
 /*jQuery(document).ready(function() {
 $(document).ready(function() {
@@ -157,7 +151,7 @@ $(document).ready(function() {
 });*/
 </script>
 
- 
+
 <?php
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $productspecimen=new Product($db);
@@ -223,7 +217,7 @@ if (! empty($moreforfilter))
 }
 
 ?>
-    
+
 <table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
 <thead>
 <tr class="liste_titre">
@@ -243,7 +237,7 @@ if (! empty($moreforfilter))
 <br>
 
 
-<!-- 
+<!--
 <br><hr><br>Example 1b : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for short result tables<br>
 
 

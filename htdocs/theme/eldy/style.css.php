@@ -2185,6 +2185,11 @@ span.butAction, span.butActionDelete {
     border: 1px solid #bbb;
 }
 
+.butActionTransparent {
+	color: #222 ! important;
+	background-color: transparent ! important;
+}
+
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
 .butActionRefused {
 	display: none;

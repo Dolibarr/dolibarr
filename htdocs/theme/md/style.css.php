@@ -2158,7 +2158,6 @@ span.butAction, span.butActionDelete {
 }
 
 
-/* Prepare for bootstrap look */
 .button, .butAction, .butActionDelete, .butActionRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
@@ -2254,7 +2253,10 @@ a.butAction:hover, a.butActionDelete:hover {
 	opacity: 0.9;
 }
 
-/* End bootstrap */
+.butActionTransparent {
+	color: #222 ! important;
+	background-color: transparent ! important;
+}
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
 .butActionRefused {
