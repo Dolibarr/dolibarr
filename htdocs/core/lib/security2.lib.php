@@ -166,7 +166,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
-	// Select templates
+	// Select templates dir
 	if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
 	{
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl/'));
@@ -205,6 +205,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Should be an array with differents options in $hookmanager->resArray
 	$parameters=array('entity' => GETPOST('entity','int'));
 	$reshook = $hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks. resArray is filled by hook.
+	$morelogincontent = $hookmanager->resArray['options'];		// TODO Use here a resprints
 
 	// Login
 	$login = (! empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username","alpha") ? GETPOST("username","alpha") : $demologin));
