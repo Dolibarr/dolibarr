@@ -238,6 +238,7 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
     {
         $classfile = str_replace('_', '', $module);
         if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
+        if ($module == 'supplierorders')   $classfile = 'supplier_orders';
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');
         $classname=ucwords($module);
 

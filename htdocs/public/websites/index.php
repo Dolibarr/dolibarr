@@ -190,7 +190,7 @@ if (! file_exists($original_file_osencoded))
 
 // Output page content
 define('USEDOLIBARRSERVER', 1);
-print '<!-- Page content '.$original_file.' : Html with CSS link and html header + Body that was saved into tpl -->'."\n";
+print '<!-- Page content '.$original_file.' : Html with CSS link and html header + Body that was saved into tpl dir -->'."\n";
 include_once $original_file_osencoded;
 
 

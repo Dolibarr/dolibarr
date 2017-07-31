@@ -65,6 +65,7 @@ $day=GETPOST('reday')?GETPOST('reday','int'):(GETPOST("day")?GETPOST("day","int"
 $day = (int) $day;
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 
+$search_categ=GETPOST("search_categ",'alpha');
 $search_usertoprocessid=GETPOST('search_usertoprocessid', 'int');
 $search_task_ref=GETPOST('search_task_ref', 'alpha');
 $search_task_label=GETPOST('search_task_label', 'alpha');
@@ -113,13 +114,14 @@ $object=new Task($db);
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $action = '';
+    $search_categ='';
     $search_usertoprocessid = '';
     $search_task_ref = '';
     $search_task_label = '';
     $search_project_ref = '';
     $search_thirdparty = '';
 }
-if (GETPOST("button_search_x") || GETPOST("button_search.x") || GETPOST("button_search"))
+if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
     $action = '';
 }
@@ -313,6 +315,7 @@ $morewherefilter='';
 if ($search_task_ref) $morewherefilter.=natural_search("t.ref", $search_task_ref);
 if ($search_task_label) $morewherefilter.=natural_search("t.label", $search_task_label);
 if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
+
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
@@ -387,15 +390,42 @@ print '</div>';
 print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
+$moreforfilter='';
+
+// Filter on categories
+/*
+if (! empty($conf->categorie->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
+	$moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 1, 'maxwidth300');
+	$moreforfilter.='</div>';
+}*/
+
+// If the user can view user other than himself
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
+$includeonly='hierachyme';
+if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
+$moreforfilter.=$form->select_dolusers($search_project_user?$search_project_user:$usertoprocess->id, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter.='</div>';
+
+if (! empty($moreforfilter))
+{
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
+}
+
+
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre">';
-$usersettoshow='hierarchyme';
-if ($user->rights->projet->all->lire) $usersettoshow='';
-print $form->select_dolusers($usertoprocess->id, 'search_usertoprocessid', 0, null, 0, $usersettoshow, 0, 0, 0, 1, '', 0, '', 'maxwidth150');
-print '</td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
@@ -416,7 +446,6 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("User").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td>'.$langs->trans("ProjectRef").'</td>';
@@ -453,7 +482,7 @@ if (count($tasksarray) > 0)
 	$level=0;
 	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask);
 
-	$colspan=8;
+	$colspan=7;
 	if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) $colspan++;
 
 	print '<tr class="liste_total">
@@ -470,7 +499,7 @@ if (count($tasksarray) > 0)
 }
 else
 {
-	print '<tr><td colspan="16">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="15">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
 print '</div>';

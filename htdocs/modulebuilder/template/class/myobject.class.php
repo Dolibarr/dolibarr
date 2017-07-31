@@ -61,8 +61,7 @@ class MyObject extends CommonObject
 	/**
 	 *             'type' if the field format, 'label' the translation key, 'enabled' is a condition when the filed must be managed,
 	 *             'visible' says if field is visible in list (-1 means not shown by default but can be aded into list to be viewed)
-	 *             'notnull' if not null in database
-	 *             'index' if we want an index in database
+	 *             'notnull' if not null in database, 'index' if we want an index in database
 	 *             'position' is the sort order of field
 	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button
 	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
@@ -86,7 +85,6 @@ class MyObject extends CommonObject
 		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>true,  'position'=>1000, 'nullifempty'=>1),
 	);
 	// END MODULEBUILDER PROPERTIES
