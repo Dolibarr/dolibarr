@@ -75,7 +75,7 @@ $morehtml='';
 $morehtml.='<form name="projectform">';
 $morehtml.='<SELECT name="mode">';
 $morehtml.='<option name="all" value="all"'.($mine?'':' selected').'>'.$titleall.'</option>';
-$morehtml.='<option name="mine" value="mine"'.($mine?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
