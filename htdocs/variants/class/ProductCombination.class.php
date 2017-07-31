@@ -249,8 +249,8 @@ class ProductCombination
 	/**
 	 * Deletes a product combination
 	 *
-	 * @param User $user
-	 * @return int <0 KO >0 OK
+	 * @param 	User 	$user	Object user
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
 	public function delete(User $user)
 	{
