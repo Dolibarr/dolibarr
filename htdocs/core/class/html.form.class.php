@@ -6327,5 +6327,175 @@ class Form
         }
         return $out;
     }
+	
+	/**
+	 * Return HTML to show the select categories of expense category
+	 * 
+	 * @param	string	$selected              preselected category
+     * @param	string	$htmlname              name of HTML select list
+     * @param	integer	$useempty              1=Add empty line
+     * @param	array	$excludeid             id to exclude
+     * @param	string	$target                htmlname of target select to bind event
+     * @param	int		$default_selected      default category to select if fk_c_type_fees change = EX_KME
+     * @param	array	$params                param to give 
+     * @return	string
+	 */
+	function selectExpenseCategories($selected='', $htmlname='fk_c_exp_tax_cat', $useempty=0, $excludeid=array(), $target='', $default_selected=0, $params=array())
+	{
+		global $db,$conf,$langs;
+		
+		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
+		$sql.= ' AND entity IN (0,'.getEntity('').')';
+		if (!empty($excludeid)) $sql.= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
+		$sql.= ' ORDER BY label';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			if ($useempty) $out.= '<option value="0"></option>';
+			
+			while ($obj = $db->fetch_object($resql))
+			{
+				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
+			}
+			$out.= '</select>';
+			
+			if (!empty($target))
+			{
+				$sql = "SELECT c.id FROM ".MAIN_DB_PREFIX."c_type_fees as c WHERE c.code = 'EX_KME' AND c.active = 1";
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+					if ($db->num_rows($resql) > 0)
+					{
+						$obj = $db->fetch_object($resql);
+						$out.= '<script type="text/javascript">
+							$(function() {
+								$("select[name='.$target.']").on("change", function() {
+									var current_val = $(this).val();
+									if (current_val == '.$obj->id.') {';
+						if (!empty($default_selected) || !empty($selected)) $out.= '$("select[name='.$htmlname.']").val("'.($default_selected > 0 ? $default_selected : $selected).'");';
+								
+						$out.= '
+										$("select[name='.$htmlname.']").change();
+									}
+								});
+
+								$("select[name='.$htmlname.']").change(function() {
+									
+									if ($("select[name='.$target.']").val() == '.$obj->id.') {
+										// get price of kilometer to fill the unit price
+										var data = '.json_encode($params).';
+										data.fk_c_exp_tax_cat = $(this).val();
+										
+										$.ajax({
+											method: "POST",
+											dataType: "json",
+											data: data,
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+										}).done(function( data, textStatus, jqXHR ) {
+											console.log(data);
+											if (typeof data.up != "undefined") {
+												$("input[name=value_unit]").val(data.up);
+												$("select[name='.$htmlname.']").attr("title", data.title);
+											} else {
+												$("input[name=value_unit]").val("");
+												$("select[name='.$htmlname.']").attr("title", "");
+											}
+										});
+									}
+								});
+							});
+						</script>';
+					}
+				}	
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		
+		return $out;
+	}
+	
+	/**
+	 * Return HTML to show the select ranges of expense range
+	 * 
+	 * @param	string	$selected    preselected category
+     * @param	string	$htmlname    name of HTML select list
+     * @param	integer	$useempty    1=Add empty line
+     * @return	string
+	 */
+	function selectExpenseRanges($selected='', $htmlname='fk_range', $useempty=0)
+	{
+		global $db,$conf,$langs;
+		
+		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
+		$sql.= ' WHERE entity = '.$conf->entity.' AND active = 1';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			if ($useempty) $out.= '<option value="0"></option>';
+			
+			while ($obj = $db->fetch_object($resql))
+			{
+				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.price($obj->range_ik, 0, $langs, 1, 0).'</option>';
+			}
+			$out.= '</select>';
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		
+		return $out;
+	}
+	
+	/**
+	 * Return HTML to show a select of expense
+	 * 
+	 * @param	string	$selected    preselected category
+     * @param	string	$htmlname    name of HTML select list
+     * @param	integer	$useempty    1=Add empty choice
+	 * @param	integer	$allchoice   1=Add all choice
+	 * @param	integer	$useid       0=use 'code' as key, 1=use 'id' as key
+     * @return	string
+	 */
+	function selectExpense($selected='', $htmlname='fk_c_type_fees', $useempty=0, $allchoice=1, $useid=0)
+	{
+		global $db,$langs;
+		
+		$sql = 'SELECT id, code, label FROM '.MAIN_DB_PREFIX.'c_type_fees';
+		$sql.= ' WHERE active = 1';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			if ($useempty) $out.= '<option value="0"></option>';
+			if ($allchoice) $out.= '<option value="-1">'.$langs->trans('AllExpenseReport').'</option>';
+			
+			$field = 'code';
+			if ($useid) $field = 'id';
+			
+			while ($obj = $db->fetch_object($resql))
+			{
+				$key = $langs->trans($obj->code);
+				$out.= '<option '.($selected == $obj->{$field} ? 'selected="selected"' : '').' value="'.$obj->{$field}.'">'.($key != $obj->code ? $key : $obj->label).'</option>';
+			}
+			$out.= '</select>';
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		
+		return $out;
+	}
+	
 }
 

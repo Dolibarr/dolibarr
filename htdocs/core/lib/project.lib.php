@@ -629,9 +629,11 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '<tr class="oddeven">'."\n";
 
 				// User
+				/*
 				print '<td class="nowrap">';
 				print $fuser->getNomUrl(1, 'withproject', 'time');
 				print '</td>';
+				*/
 
 				// Ref
 				print '<td>';
@@ -835,9 +837,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print '<tr class="oddeven">'."\n";
 
 				// User
+				/*
 				print '<td class="nowrap">';
 				print $fuser->getNomUrl(1, 'withproject', 'time');
 				print '</td>';
+				*/
 
 				// Ref
 				print '<td class="nowrap">';

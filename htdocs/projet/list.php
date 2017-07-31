@@ -371,6 +371,7 @@ llxHeader("", $title, $help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_all != '') 			$param.='&search_all='.$search_all;
 if ($search_sday)              		    $param.='&search_sday='.$search_sday;
 if ($search_smonth)              		$param.='&search_smonth='.$search_smonth;
 if ($search_syear)               		$param.='&search_syear=' .$search_syear;
@@ -378,7 +379,6 @@ if ($search_eday)               		$param.='&search_eday='.$search_eday;
 if ($search_emonth)              		$param.='&search_emonth='.$search_emonth;
 if ($search_eyear)               		$param.='&search_eyear=' .$search_eyear;
 if ($socid)				        $param.='&socid='.$socid;
-if ($search_all != '') 			$param.='&search_all='.$search_all;
 if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 if ($search_label != '') 		$param.='&search_label='.$search_label;
 if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
@@ -451,7 +451,7 @@ if (! empty($conf->categorie->enabled))
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
-$includeonly='';
+$includeonly='hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_project_user?$search_project_user:'', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
