@@ -875,6 +875,8 @@ DictionaryUnits=Units
 DictionaryProspectStatus=Prospection status
 DictionaryHolidayTypes=Types of leaves
 DictionaryOpportunityStatus=Opportunity status for project/lead
+DictionaryExpenseTaxCat=Expense report categories
+DictionaryExpenseTaxRange=Expense report range by category
 SetupSaved=Setup saved
 SetupNotSaved=Setup not saved
 BackToModuleList=Back to modules list
@@ -1141,6 +1143,8 @@ RuleForGeneratedPasswords=Rule to generate suggested passwords or validate passw
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 UsersSetup=Users module setup
 UserMailRequired=EMail required to create a new user
+DefaultCategoryCar=Default car category
+DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=HRM module setup
 ##### Company setup #####
@@ -1609,6 +1613,8 @@ TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both custome
 IncludePath=Include path (defined into variable %s)
 ExpenseReportsSetup=Setup of module Expense Reports
 TemplatePDFExpenseReports=Document templates to generate expense report document
+ExpenseReportsIkSetup=Setup of module Expense Reports - Milles index
+ExpenseReportsRulesSetup=Setup of module Expense Reports - Rules
 NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.
 YouMayFindNotificationsFeaturesIntoModuleNotification=You may find options for EMail notifications by enabling and configuring the module "Notification".
 ListOfNotificationsPerUser=List of notifications per user*

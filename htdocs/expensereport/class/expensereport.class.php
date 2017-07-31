@@ -24,6 +24,8 @@
  *       \brief      File to manage Expense Reports
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport_ik.class.php';
+require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport_rule.class.php';
 
 /**
  * Class to manage Trips and Expenses
@@ -37,9 +39,9 @@ class ExpenseReport extends CommonObject
     var $picto = 'trip';
 
     var $lignes=array();
-
+    
     public $date_debut;
-
+    
     public $date_fin;
 
     var $fk_user_validator;
@@ -65,7 +67,7 @@ class ExpenseReport extends CommonObject
     // Update
 	var $date_modif;
     var $fk_user_modif;
-
+    
     // Refus
     var $date_refuse;
     var $detail_refuse;
@@ -91,9 +93,35 @@ class ExpenseReport extends CommonObject
     /*
         END ACTIONS
     */
+	
+   /**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
 
+	/**
+	 * Validated (need to be paid)
+	 */
+	const STATUS_VALIDATED = 2;
 
-    /**
+	/**
+	 * Classified approved
+	 */
+	const STATUS_APPROVED = 5;
+	
+	/**
+	 * Classified refused
+	 */
+	const STATUS_REFUSED = 99;
+	
+	/**
+	 * Classified paid.
+	 */
+	const STATUS_CLOSED = 6;
+	
+	
+
+	/**
      *  Constructor
      *
      *  @param  DoliDB  $db     Handler acces base de donnees
@@ -268,6 +296,7 @@ class ExpenseReport extends CommonObject
         if (empty($fk_user_author)) $fk_user_author = $user->id;
 
         $this->context['createfromclone'] = 'createfromclone';
+        
         $this->db->begin();
 
         // get extrafields so they will be clone
@@ -306,7 +335,6 @@ class ExpenseReport extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
-
             if ($result < 0) $error++;
             // End call triggers
         }
@@ -911,7 +939,7 @@ class ExpenseReport extends CommonObject
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
-        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.tva_tx,';
+        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet, de.tva_tx,';
         $sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
         $sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
         $sql.= ' p.ref as ref_projet, p.title as title_projet';
@@ -933,13 +961,16 @@ class ExpenseReport extends CommonObject
                 $deplig = new ExpenseReportLine($this->db);
 
                 $deplig->rowid          = $objp->rowid;
+                $deplig->id             = $objp->id;
                 $deplig->comments       = $objp->comments;
                 $deplig->qty            = $objp->qty;
                 $deplig->value_unit     = $objp->value_unit;
                 $deplig->date           = $objp->date;
+                $deplig->dates          = $this->db->jdate($objp->date);
 
                 $deplig->fk_expensereport = $objp->fk_expensereport;
                 $deplig->fk_c_type_fees = $objp->fk_c_type_fees;
+                $deplig->fk_c_exp_tax_cat = $objp->fk_c_exp_tax_cat;
                 $deplig->fk_projet      = $objp->fk_projet;
 
                 $deplig->total_ht       = $objp->total_ht;
@@ -1570,7 +1601,244 @@ class ExpenseReport extends CommonObject
         endif;
     }
 
+	/**
+	 * addline
+	 * 
+	 * @param    real        $qty                Qty
+	 * @param    double      $up                 Value init
+	 * @param    int         $fk_c_type_fees     Type payment
+	 * @param    double      $vatrate            Vat rate
+	 * @param    string      $date               Date
+	 * @param    string      $comments           Description
+	 * @param    int         $fk_project         Project id
+	 * @param    int         $fk_c_exp_tax_cat   Car category id
+	 * @param    int         $type               Type line
+	 * @return   int                             <0 if KO, >0 if OK
+	 */
+	function addline($qty=0, $up=0, $fk_c_type_fees=0, $vatrate=0, $date='', $comments='', $fk_project=0, $fk_c_exp_tax_cat=0, $type=0)
+	{
+		global $conf,$langs;
 
+        dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
+		
+		if (empty($qty)) $qty = 0;
+		if (empty($fk_c_type_fees) || $fk_c_type_fees < 0) $fk_c_type_fees = 0;
+		if (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) $fk_c_exp_tax_cat = 0;
+		if (empty($vatrate) || $vatrate < 0) $vatrate = 0;
+		if (empty($date)) $date = '';
+		if (empty($fk_project)) $fk_project = 0;
+		
+		$qty = price2num($qty);
+		$vatrate = price2num($vatrate);
+		$up = price2num($up);
+		
+		if ($this->fk_statut == self::STATUS_DRAFT)
+        {
+			$this->db->begin();
+			
+			$this->line = new ExpenseReportLine($this->db);
+
+			$seller = '';  // seller is unknown
+			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
+			
+			$this->line->value_unit = $up;
+			$this->line->vatrate = price2num($vatrate);
+			$this->line->total_ttc = $tmp[2];
+			$this->line->total_ht = $tmp[0];
+			$this->line->total_tva = $tmp[1];
+			
+			$this->line->fk_expensereport = $this->id;
+			$this->line->qty = $qty;
+			$this->line->date = $date;
+			$this->line->fk_c_type_fees = $fk_c_type_fees;
+			$this->line->fk_c_exp_tax_cat = $fk_c_exp_tax_cat;
+			$this->line->comments = $comments;
+			$this->line->fk_projet = $fk_project;
+			
+			$this->applyOffset();
+			$this->checkRules($type, $seller);
+			
+			$result=$this->line->insert(0, true);
+            if ($result > 0)
+            {
+                $result=$this->update_price();	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                if ($result > 0)
+                {
+                    $this->db->commit();
+                    return $this->line->rowid;
+                }
+                else
+                {
+                    $this->db->rollback();
+                    return -1;
+                }
+            }
+            else
+            {
+                $this->error=$this->line->error;
+                dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
+                $this->db->rollback();
+                return -2;
+            }
+		}
+		else
+        {
+            dol_syslog(get_class($this)."::addline status of expense report must be Draft to allow use of ->addline()", LOG_ERR);
+			$this->error = 'ErrorExpenseNotDraft';
+            return -3;
+        }
+		
+		
+	}
+	
+	/**
+	 * Check constraint of rules and update price if needed
+	 * 
+	 * @param	int		$type		type of line 
+	 * @param	string	$seller		seller, but actually he is unknown
+	 * @return true or false
+	 */
+	function checkRules($type=0, $seller='')
+	{
+		global $user,$conf,$db,$langs;
+		
+		$langs->load('trips');
+		
+		if (empty($conf->global->MAIN_USE_EXPENSE_RULE)) return true; // if don't use rules
+		
+		$rulestocheck = ExpenseReportRule::getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
+		
+		$violation = 0;
+		$rule_warning_message_tab = array();
+		
+		$current_total_ttc = $this->line->total_ttc;
+		$new_current_total_ttc = $this->line->total_ttc;
+		
+		// check if one is violated
+		foreach ($rulestocheck as $rule)
+		{
+			if (in_array($rule->code_expense_rules_type, array('EX_DAY', 'EX_MON', 'EX_YEA'))) $amount_to_test = $this->line->getExpAmount($rule, $this->fk_user_author, $rule->code_expense_rules_type);
+			else $amount_to_test = $current_total_ttc; // EX_EXP
+			
+			$amount_to_test = $amount_to_test - $current_total_ttc + $new_current_total_ttc; // if amount as been modified by a previous rule
+			
+			if ($amount_to_test > $rule->amount)
+			{
+				$violation++;
+				
+				if ($rule->restrictive)
+				{
+					$this->error = 'ExpenseReportConstraintViolationError';
+					$this->errors[] = $this->error;
+					
+					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test,0,$langs,1,-1,-1,$conf->currency), price($rule->amount,0,$langs,1,-1,-1,$conf->currency), $langs->trans('by'.$rule->code_expense_rules_type, price($new_current_total_ttc,0,$langs,1,-1,-1,$conf->currency)));
+				}
+				else
+				{
+					$this->error = 'ExpenseReportConstraintViolationWarning';
+					$this->errors[] = $this->error;
+					
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test,0,$langs,1,-1,-1,$conf->currency), price($rule->amount,0,$langs,1,-1,-1,$conf->currency), $langs->trans('nolimitby'.$rule->code_expense_rules_type));
+				}
+				
+				// No break, we sould test if another rule is violated
+			}
+		}
+		
+		$this->line->rule_warning_message = implode('\n', $rule_warning_message_tab);
+		
+		if ($violation > 0)
+		{
+			$tmp = calcul_price_total($this->line->qty, $new_current_total_ttc/$this->line->qty, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
+			
+			$this->line->value_unit = $tmp[5];
+			$this->line->total_ttc = $tmp[2];
+			$this->line->total_ht = $tmp[0];
+			$this->line->total_tva = $tmp[1];
+			
+			return false;
+		}
+		else return true;
+	}
+
+	/**
+	 * Method to apply the offset if needed
+	 * 
+	 * @return boolean		true=applied, false=not applied
+	 */
+	function applyOffset()
+	{
+		global $conf;
+		
+		if (empty($conf->global->MAIN_USE_EXPENSE_IK)) return false;
+		
+		$userauthor = new User($this->db);
+		if ($userauthor->fetch($this->fk_user_author) <= 0)
+		{
+			$this->error = 'ErrorCantFetchUser';
+			$this->errors[] = 'ErrorCantFetchUser';
+			return false;
+		}
+		
+		$range = ExpenseReportIk::getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
+		
+		if (empty($range))
+		{
+			$this->error = 'ErrorNoRangeAvailable';
+			$this->errors[] = 'ErrorNoRangeAvailable';
+			return false;
+		}
+		
+		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $offset = $range->offset;
+		else $offset = $range->offset / 12; // The amount of offset is a global value for the year
+		
+		// Test if offset has been applied for the current month
+		if (!$this->offsetAlreadyGiven())
+		{
+			$new_up = $range->coef + ($offset / $this->line->qty);
+			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
+			
+			$this->line->value_unit = $tmp[5];
+			$this->line->total_ttc = $tmp[2];
+			$this->line->total_ht = $tmp[0];
+			$this->line->total_tva = $tmp[1];
+			
+			return true;
+		}
+
+		return false;
+	}
+	
+	/**
+	 * If the sql find any rows then the offset is already given (offset is applied at the first expense report line)
+	 * 
+	 * @return bool
+	 */
+	function offsetAlreadyGiven()
+	{
+		$sql = 'SELECT e.rowid FROM '.MAIN_DB_PREFIX.'expensereport e';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport_det d ON (e.rowid = d.fk_expensereport)';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees f ON (d.fk_c_type_fees = f.id AND f.code = "EX_KME")';
+		$sql.= ' WHERE e.fk_user_author = '.(int) $this->fk_user_author;
+		$sql.= ' AND YEAR(d.date) = "'.dol_print_date($this->line->date, '%Y').'" AND MONTH(d.date) = "'.dol_print_date($this->line->date, '%m').'"';
+		if (!empty($this->line->id)) $sql.= ' AND d.rowid <> '.$this->line->id;
+		
+		dol_syslog(get_class($this)."::offsetAlreadyGiven sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) return true;
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+		
+		return false;
+	}
+	
     /**
      * updateline
      *
@@ -1583,9 +1851,10 @@ class ExpenseReport extends CommonObject
      * @param   double      $value_unit             Value init
      * @param   int         $date                   Date
      * @param   int         $expensereport_id       Expense report id
+     * @param   int         $fk_c_exp_tax_cat       id of category of car
      * @return  int                                 <0 if KO, >0 if OK
      */
-    function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id)
+    function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat=0)
     {
         global $user, $mysoc;
 
@@ -1623,34 +1892,29 @@ class ExpenseReport extends CommonObject
             $total_tva = price2num($total_ttc - $total_ht, 'MT');
             // fin calculs
 
-            $ligne = new ExpenseReportLine($this->db);
+            $this->line = new ExpenseReportLine($this->db);
+            $this->line->comments        = $comments;
+            $this->line->qty             = $qty;
+            $this->line->value_unit      = $value_unit;
+            $this->line->date            = $date;
 
-            $ligne->rowid           = $rowid;
+            $this->line->fk_expensereport= $expensereport_id;
+            $this->line->fk_c_type_fees  = $type_fees_id;
+            $this->line->fk_c_exp_tax_cat  = $fk_c_exp_tax_cat;
+            $this->line->fk_projet       = $projet_id;
 
-            $ligne->comments        = $comments;
-            $ligne->qty             = $qty;
-            $ligne->value_unit      = $value_unit;
-            $ligne->date            = $date;
+            $this->line->vat_src_code = $vat_src_code;
+            $this->line->vatrate = price2num($vatrate);
+            $this->line->total_ttc = $tmp[2];
+            $this->line->total_ht = $tmp[0];
+            $this->line->total_tva = $tmp[1];
+            $this->line->localtax1_tx = $localtaxes_type[1];
+            $this->line->localtax2_tx = $localtaxes_type[3];
+            $this->line->localtax1_type = $localtaxes_type[0];
+            $this->line->localtax2_type = $localtaxes_type[2];
 
-            $ligne->fk_expensereport= $expensereport_id;
-            $ligne->fk_c_type_fees  = $type_fees_id;
-            $ligne->fk_projet       = $projet_id;
-
-            //$ligne->total_ht        = $total_ht;
-            //$ligne->total_tva       = $total_tva;
-            //$ligne->total_ttc       = $total_ttc;
-            //$ligne->vatrate         = price2num($vatrate);
-
-            $ligne->vat_src_code = $vat_src_code;
-            $ligne->vatrate = price2num($vatrate);
-            $ligne->total_ttc = $tmp[2];
-            $ligne->total_ht = $tmp[0];
-            $ligne->total_tva = $tmp[1];
-            $ligne->localtax1_tx = $localtaxes_type[1];
-            $ligne->localtax2_tx = $localtaxes_type[3];
-            $ligne->localtax1_type = $localtaxes_type[0];
-            $ligne->localtax2_type = $localtaxes_type[2];
-
+            $this->line->rowid           = $rowid;
+            $this->line->id              = $rowid;
 
             // Select des infos sur le type fees
             $sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
@@ -1658,8 +1922,8 @@ class ExpenseReport extends CommonObject
             $sql.= " WHERE c.id = ".$type_fees_id;
             $result = $this->db->query($sql);
             $objp_fees = $this->db->fetch_object($result);
-            $ligne->type_fees_code      = $objp_fees->code_type_fees;
-            $ligne->type_fees_libelle   = $objp_fees->libelle_type_fees;
+            $this->line->type_fees_code      = $objp_fees->code_type_fees;
+            $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
 
             // Select des informations du projet
             $sql = "SELECT p.ref as ref_projet, p.title as title_projet";
@@ -1669,10 +1933,13 @@ class ExpenseReport extends CommonObject
             if ($result) {
             	$objp_projet = $this->db->fetch_object($result);
             }
-            $ligne->projet_ref          = $objp_projet->ref_projet;
-            $ligne->projet_title        = $objp_projet->title_projet;
+            $this->line->projet_ref          = $objp_projet->ref_projet;
+            $this->line->projet_title        = $objp_projet->title_projet;
 
-            $result = $ligne->update($user);
+			$this->applyOffset();
+			$this->checkRules();
+			
+            $result = $this->line->update($user);
             if ($result > 0)
             {
                 $this->db->commit();
@@ -1680,8 +1947,8 @@ class ExpenseReport extends CommonObject
             }
             else
             {
-                $this->error=$ligne->error;
-                $this->errors=$ligne->errors;
+                $this->error=$this->line->error;
+                $this->errors=$this->line->errors;
                 $this->db->rollback();
                 return -2;
             }
@@ -2025,6 +2292,7 @@ class ExpenseReportLine
     var $date;
 
     var $fk_c_type_fees;
+    var $fk_c_exp_tax_cat;
     var $fk_projet;
     var $fk_expensereport;
 
@@ -2057,7 +2325,7 @@ class ExpenseReportLine
      */
     function fetch($rowid)
     {
-        $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
+        $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet, fde.date,';
         $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
         $sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
         $sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
@@ -2079,8 +2347,10 @@ class ExpenseReportLine
             $this->comments = $objp->comments;
             $this->qty = $objp->qty;
             $this->date = $objp->date;
+            $this->dates = $this->db->jdate($objp->date);
             $this->value_unit = $objp->value_unit;
             $this->fk_c_type_fees = $objp->fk_c_type_fees;
+            $this->fk_c_exp_tax_cat = $objp->fk_c_exp_tax_cat;
             $this->fk_projet = $objp->fk_projet;
             $this->type_fees_code = $objp->type_fees_code;
             $this->type_fees_libelle = $objp->type_fees_libelle;
@@ -2102,9 +2372,10 @@ class ExpenseReportLine
      * insert
      *
      * @param   int     $notrigger      1=No trigger
+     * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
      * @return  int                     <0 if KO, >0 if OK
      */
-    function insert($notrigger=0)
+    function insert($notrigger=0,$fromaddline=false)
     {
         global $langs,$user,$conf;
 
@@ -2117,12 +2388,13 @@ class ExpenseReportLine
         if (!$this->value_unit_HT) $this->value_unit_HT=0;
         $this->qty = price2num($this->qty);
         $this->vatrate = price2num($this->vatrate);
-
+		if (empty($this->fk_c_exp_tax_cat)) $this->fk_c_exp_tax_cat = 0;
+		
         $this->db->begin();
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
         $sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
+        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat)';
         $sql.= " VALUES (".$this->fk_expensereport.",";
         $sql.= " ".$this->fk_c_type_fees.",";
         $sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
@@ -2134,7 +2406,9 @@ class ExpenseReportLine
         $sql.= " ".$this->total_ht.",";
         $sql.= " ".$this->total_tva.",";
         $sql.= " ".$this->total_ttc.",";
-        $sql.= "'".$this->db->idate($this->date)."'";
+        $sql.= "'".$this->db->idate($this->date)."',";
+		$sql.= " '".$this->db->escape($this->rule_warning_message)."',";
+		$sql.= " ".$this->fk_c_exp_tax_cat;
         $sql.= ")";
 
         dol_syslog("ExpenseReportLine::insert sql=".$sql);
@@ -2144,16 +2418,23 @@ class ExpenseReportLine
         {
             $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
 
-            $tmpparent=new ExpenseReport($this->db);
-            $tmpparent->fetch($this->fk_expensereport);
-            $result = $tmpparent->update_price();
-            if ($result < 0)
-            {
-                $error++;
-                $this->error = $tmpparent->error;
-                $this->errors = $tmpparent->errors;
-            }
+			if (! $fromaddline)
+			{
+				$tmpparent=new ExpenseReport($this->db);
+				$tmpparent->fetch($this->fk_expensereport);
+				$result = $tmpparent->update_price();
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $tmpparent->error;
+					$this->errors = $tmpparent->errors;
+				}	
+			}
         }
+		else
+		{
+			$error++;
+		}
 
         if (! $error)
         {
@@ -2168,7 +2449,50 @@ class ExpenseReportLine
             return -2;
         }
     }
+	
+	/**
+	 * Function to get total amount in expense reports for a same rule
+	 * 
+	 * @param ExpenseReportRule $rule		object rule to check
+	 * @param int				$fk_user	user author id
+	 * @param string			$mode		day|EX_DAY / month|EX_MON / year|EX_YEA to get amount
+	 * @return amount
+	 */
+	public function getExpAmount(ExpenseReportRule $rule, $fk_user, $mode='day')
+	{
+		$amount = 0;
+		
+		$sql = 'SELECT SUM(d.total_ttc) as total_amount';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det d';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport e ON (d.fk_expensereport = e.rowid)';
+		$sql .= ' WHERE e.fk_user_author = '.$fk_user;
+		if (!empty($this->id)) $sql.= ' AND d.rowid <> '.$this->id;
+		$sql .= ' AND d.fk_c_type_fees = '.$rule->fk_c_type_fees;
+		if ($mode == 'day' || $mode == 'EX_DAY') $sql .= ' AND d.date = \''.dol_print_date($this->date, '%Y-%m-%d').'\'';
+		elseif ($mode == 'mon' || $mode == 'EX_MON') $sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\'';
+		elseif ($mode == 'year' || $mode == 'EX_YEA') $sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\'';
+		
+		dol_syslog('ExpenseReportLine::getExpAmountByDay sql='.$sql);
+		
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num > 0)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$amount = (double) $obj->total_amount;
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+		
 
+		return $amount + $this->total_ttc;
+	}
+	
     /**
      * update
      *
@@ -2185,6 +2509,7 @@ class ExpenseReportLine
         $this->comments=trim($this->comments);
         $this->vatrate = price2num($this->vatrate);
         $this->value_unit = price2num($this->value_unit);
+		if (empty($this->fk_c_exp_tax_cat)) $this->fk_c_exp_tax_cat = 0;
 
         $this->db->begin();
 
@@ -2198,7 +2523,9 @@ class ExpenseReportLine
         $sql.= ",total_tva=".$this->total_tva."";
         $sql.= ",total_ttc=".$this->total_ttc."";
         $sql.= ",tva_tx=".$this->vatrate;
-        $sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
+		$sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
+        $sql.= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
+		$sql.= ",fk_c_exp_tax_cat=".$this->fk_c_exp_tax_cat;
         if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->fk_c_type_fees;
         else $sql.= ",fk_c_type_fees=null";
         if ($this->fk_projet) $sql.= ",fk_projet=".$this->fk_projet;
