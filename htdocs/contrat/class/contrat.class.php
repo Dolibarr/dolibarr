@@ -1278,7 +1278,7 @@ class Contrat extends CommonObject
 				//// End call triggers
 				}
 			}
-			
+
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
@@ -1831,13 +1831,13 @@ class Contrat extends CommonObject
 				$text.=': &nbsp; &nbsp; ';
 			}
 			$text.=($mode == 7?'<div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? $this->nbofserviceswait.' '.$line->LibStatut(0,3).(($this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.$line->LibStatut(0,3)).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? $this->nbofservicesopened.' '.$line->LibStatut(4,3,0).(($this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? ($this->nbofservicesopened.$line->LibStatut(4,3,0)).(($mode != 7 || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? $this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).(($this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? ($this->nbofservicesexpired.$line->LibStatut(4,3,1)).(($mode != 7 || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? $this->nbofservicesclosed.' '.$line->LibStatut(5,3) : '';
+			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.$line->LibStatut(5,3)) : '';
 			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}
