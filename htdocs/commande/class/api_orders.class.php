@@ -80,8 +80,8 @@ class Orders extends DolibarrApi
 		return $this->_cleanObjectDatas($this->commande);
     }
 
-    
-   
+
+
     /**
      * List orders
      *
@@ -101,7 +101,7 @@ class Orders extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
-        
+
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
 
@@ -125,7 +125,7 @@ class Orders extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -134,7 +134,7 @@ class Orders extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -490,7 +490,7 @@ class Orders extends DolibarrApi
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Order validated'
+                'message' => 'Order validated (Ref='.$this->commande->ref.')'
             )
         );
     }
@@ -502,14 +502,14 @@ class Orders extends DolibarrApi
      * @return    array    Array of cleaned object properties
      */
     function _cleanObjectDatas($object) {
-    
+
         $object = parent::_cleanObjectDatas($object);
-    
+
         unset($object->address);
-    
+
         return $object;
     }
-    
+
     /**
      * Validate fields before create or update object
      *

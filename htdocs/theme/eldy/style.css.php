@@ -2188,6 +2188,11 @@ span.butAction, span.butActionDelete {
     border: 1px solid #bbb;
 }
 
+.butActionTransparent {
+	color: #222 ! important;
+	background-color: transparent ! important;
+}
+
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
 .butActionRefused {
 	display: none;
@@ -2656,7 +2661,6 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
-/*	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'ddd'); ?>; */
 	border-bottom: 1px solid #888;
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
@@ -2782,6 +2786,13 @@ div.tabBar .noborder {
 	border-bottom: 1px solid #ddd;
 }
 
+ul.noborder li:nth-child(even):not(.liste_titre) {
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+}
 
 
 /*
@@ -2808,7 +2819,7 @@ div.tabBar .noborder {
 }
 .boxstats {
     padding: 3px;
-    width: 105px;
+    width: 103px;
 }
 .boxstats130 {
     width: 160px;
@@ -3430,6 +3441,15 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	       height:18px;
 	       cursor:pointer;
 	     }
+
+/* ============================================================================== */
+/* Gantt
+/* ============================================================================== */
+
+td.gtaskname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 
 /* ============================================================================== */
