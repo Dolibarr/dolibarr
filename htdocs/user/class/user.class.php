@@ -221,7 +221,7 @@ class User extends CommonObject
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			else
-				$sql.= " WHERE u.entity IN (0, ".($entity!=''?$entity:$conf->entity).")";   // search in entity provided in parameter
+				$sql.= " WHERE u.entity IN (0, ".(($entity!='' && $entity >= 0)?$entity:$conf->entity).")";   // search in entity provided in parameter
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
@@ -236,8 +236,8 @@ class User extends CommonObject
 		{
 			$sql.= " AND u.rowid = ".$id;
 		}
-        $sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
-
+		$sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
+		
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -662,7 +662,14 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND ur.entity = ".$conf->entity;
+		if (! empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY))
+		{
+			$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?"1,":"").$conf->entity.")";
+		}
+		else
+		{
+			$sql.= " AND ur.entity = ".$conf->entity;
+		}
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -708,8 +715,19 @@ class User extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id";
-		$sql.= " AND gr.entity = ".$conf->entity;
-		$sql.= " AND r.entity = ".$conf->entity;
+		if (! empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY))
+		{
+			if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+			} else {
+				$sql.= " AND r.entity = ".$conf->entity;
+			}
+		}
+		else
+		{
+			$sql.= " AND gr.entity = ".$conf->entity;
+			$sql.= " AND r.entity = ".$conf->entity;
+		}
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql.= " AND gu.fk_user = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
