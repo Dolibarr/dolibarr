@@ -17,6 +17,8 @@
  */
 
 // Need global variable $title to be defined by caller (like dol_loginfunction)
+// Caller can also set 	$theResArray = array(['options']=>array('js'=>..., 'table'=>...);
+
 
 
 header('Cache-Control: Public, must-revalidate');
@@ -249,7 +251,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 	} else {
 		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
 	}
-    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') 
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
         $little = $xml->channel->item[0]->children('content',true);
