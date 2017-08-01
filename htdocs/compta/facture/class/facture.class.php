@@ -748,6 +748,15 @@ class Facture extends CommonInvoice
 
 		// Charge facture source
 		$facture=new Facture($this->db);
+                
+                $this->fetch_optionals();
+                if(!empty($this->array_options)){
+                    $facture->array_options = $this->array_options;
+                }
+           
+                foreach($this->lines as &$line){
+                    $line->fetch_optionals();//fetch extrafields
+                }
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;

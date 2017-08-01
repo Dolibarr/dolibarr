@@ -17,7 +17,7 @@
  */
 
 // Need global variable $title to be defined by caller (like dol_loginfunction)
-
+// Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -123,8 +123,8 @@ if ($disablenofollow) echo '</a>';
 </span>
 </td></tr>
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
+if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'table') {
 			echo '<!-- Option by hook -->';
@@ -249,7 +249,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 	} else {
 		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
 	}
-    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') 
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
         $little = $xml->channel->item[0]->children('content',true);
@@ -278,8 +278,8 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 <?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
 
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
+if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'js') {
 			echo "\n".'<!-- Javascript by hook -->';

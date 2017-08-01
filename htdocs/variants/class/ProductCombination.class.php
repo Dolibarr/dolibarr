@@ -186,7 +186,7 @@ class ProductCombination
 	{
 	    $nb = 0;
 	    $sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
-	
+
 	    $resql = $this->db->query($sql);
 	    if ($resql) {
 	        $obj = $this->db->fetch_object($resql);
@@ -195,7 +195,7 @@ class ProductCombination
 
 	    return $nb;
 	}
-	
+
 	/**
 	 * Creates a product attribute combination
 	 *
@@ -249,9 +249,10 @@ class ProductCombination
 	/**
 	 * Deletes a product combination
 	 *
-	 * @return int <0 KO >0 OK
+	 * @param 	User 	$user	Object user
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	public function delete()
+	public function delete(User $user)
 	{
 		$this->db->begin();
 
