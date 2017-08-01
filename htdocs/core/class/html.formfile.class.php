@@ -1007,9 +1007,9 @@ class FormFile
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 
 			print '<tr class="liste_titre nodrag nodrop">';
-			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+			print_liste_field_titre('Size',$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre('Date',$url,"date","",$param,'align="center"',$sortfield,$sortorder);
 			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');

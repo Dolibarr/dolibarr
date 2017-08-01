@@ -5890,18 +5890,22 @@ class Form
             $object->next_prev_filter.=$hookmanager->resPrint;
         }
 
-        //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
-        $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-
-        $navurl = $_SERVER["PHP_SELF"];
-        // Special case for project/task page
-        if ($paramid == 'project_ref')
+        $previous_ref = $next_ref = '';
+        if ($shownav)
         {
-            $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document).php/','/tasks.php',$navurl);
-            $paramid='ref';
+	        //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
+	        $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
+
+        	$navurl = $_SERVER["PHP_SELF"];
+	        // Special case for project/task page
+	        if ($paramid == 'project_ref')
+	        {
+	            $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document)\.php/','/tasks.php',$navurl);
+	            $paramid='ref';
+	        }
+	        $previous_ref = $object->ref_previous?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+	        $next_ref     = $object->ref_next?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
         }
-        $previous_ref = $object->ref_previous?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-        $next_ref     = $object->ref_next?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<!-- Start banner content --><div style="vertical-align: middle">';
@@ -5954,6 +5958,10 @@ class Form
 		else if (in_array($object->element, array('adherent_type')))
 		{
 			$ret.=$object->label;
+		}
+		else if ($object->element == 'ecm_directories')
+		{
+			$ret.='';
 		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
 
