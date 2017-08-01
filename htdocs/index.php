@@ -118,7 +118,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
@@ -541,7 +541,7 @@ if ($showweather)
     $boxwork.='</tr>';
 }
 
-$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer">';
+$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
 
 // Show dashboard
 $nbworkboardempty=0;

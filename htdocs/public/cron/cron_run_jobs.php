@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <forian.henry@open-cocnept.pro>
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012		Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
+ * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,11 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOLOGIN'))   define('NOLOGIN','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 // librarie core
 // Dolibarr environment

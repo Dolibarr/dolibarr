@@ -95,13 +95,18 @@ $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
     $usertoprocess=$user;
+	$search_usertoprocessid=$usertoprocess->id;
 }
-else
+elseif (search_usertoprocessid > 0)
 {
     $usertoprocess=new User($db);
     $usertoprocess->fetch($search_usertoprocessid);
+	$search_usertoprocessid=$usertoprocess->id;
 }
-$search_usertoprocessid=$usertoprocess->id;
+else
+{
+	$usertoprocess=new User($db);
+}
 
 $object=new Task($db);
 
@@ -300,9 +305,9 @@ $taskstatic = new Task($db);
 $thirdpartystatic = new Societe($db);
 
 $title=$langs->trans("TimeSpent");
-if ($mine) $title=$langs->trans("MyTimeSpent");
+if ($mine || $usertoprocess->id == $user->id) $title=$langs->trans("MyTimeSpent");
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on (assigned to me+public). I want my tasks and some of my task may be on a public projet that is not my project
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,(empty($usertoprocess->id)?2:0),1);  // Return all project i have permission on (assigned to me+public). I want my tasks and some of my task may be on a public projet that is not my project
 //var_dump($projectsListId);
 if ($id)
 {
@@ -316,7 +321,7 @@ if ($search_task_ref) $morewherefilter.=natural_search("t.ref", $search_task_ref
 if ($search_task_label) $morewherefilter.=natural_search("t.label", $search_task_label);
 if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 
-$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
@@ -356,13 +361,16 @@ dol_fiche_head($head, 'inputperweek', '', -1, 'task');
 
 // Show description of content
 print '<div class="hideonsmartphone">';
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	if (empty($usertoprocess->id) || $usertoprocess->id < 0)
+	{
+		if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+		else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	}
 }
-if ($mine)
+if ($mine || ($usertoprocess->id == $user->id))
 {
 	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
 }
@@ -408,7 +416,7 @@ $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
 $includeonly='hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
-$moreforfilter.=$form->select_dolusers($search_project_user?$search_project_user:$usertoprocess->id, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))

@@ -48,6 +48,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
 
 CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     rowid           integer  AUTO_INCREMENT PRIMARY KEY,

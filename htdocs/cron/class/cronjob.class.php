@@ -924,16 +924,16 @@ class Cronjob extends CommonObject
 			// load classes
 			if (! $error)
 			{
-    			$ret=dol_include_once($this->classesname);
-    			if ($ret===false || (! class_exists($this->objectname)))
-    			{
-    			    $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
-    				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-    				$this->lastoutput = $this->error;
-    				$this->lastresult = -1;
-                    $retval = $this->lastresult;
-                    $error++;
-    			}
+				$ret=dol_include_once($this->classesname);
+				if ($ret===false || (! class_exists($this->objectname)))
+				{
+					$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+					$this->lastoutput = $this->error;
+					$this->lastresult = -1;
+					$retval = $this->lastresult;
+					$error++;
+				}
 			}
 
 			// test if method exists
@@ -973,6 +973,7 @@ class Cronjob extends CommonObject
 				$object = new $this->objectname($this->db);
 
 				$params_arr = array_map('trim', explode(",",$this->params));
+
 				if (!is_array($params_arr))
 				{
 					$result = call_user_func(array($object, $this->methodename), $this->params);
@@ -982,7 +983,7 @@ class Cronjob extends CommonObject
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
 
-				if ($result===false || $result != 0)
+				if ($result === false || (! is_bool($result) && $result != 0))
 				{
 				    $langs->load("errors");
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$object->error, LOG_ERR);
@@ -1031,7 +1032,7 @@ class Cronjob extends CommonObject
 				$result = call_user_func_array($this->methodename, $params_arr);
 			}
 
-			if ($result === false || $result != 0)
+			if ($result === false || (! is_bool($result) && $result != 0))
 			{
 			    $langs->load("errors");
 			    dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
