@@ -90,6 +90,7 @@ foreach($filearray as $keyf => $valf)
 	{
 		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";
 
+		// Create small thumbs for image
 		// Used on logon for example
 		$imgThumbSmall = vignette($vali['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
 		if (preg_match('/Error/', $imgThumbSmall)) print $imgThumbSmall."\n";
