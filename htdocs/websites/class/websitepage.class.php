@@ -22,8 +22,7 @@
 /**
  * \file    websites/websitepage.class.php
  * \ingroup websites
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \brief   File for the CRUD class of websitepage (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -518,6 +517,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
+	 * @param	User	$user				User making the clone
 	 * @param 	int 	$fromid 			Id of object to clone
 	 * @param	string	$newref				New ref/alias of page
 	 * @param	string	$newlang			New language
@@ -525,13 +525,13 @@ class WebsitePage extends CommonObject
 	 * @param	int		$newwebsite			0=Same web site, 1=New web site
 	 * @return 	int 						New id of clone
 	 */
-	public function createFromClone($fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
-		global $user, $langs;
+		global $hookmanager, $langs;
+		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$error = 0;
 		$object = new self($this->db);
 
 		$this->db->begin();
@@ -551,9 +551,8 @@ class WebsitePage extends CommonObject
 		if (! empty($newwebsite)) $object->fk_website=$newwebsite;
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
-
-		// Other options
 		if ($result < 0) {
 			$error++;
 			$this->error = $object->error;

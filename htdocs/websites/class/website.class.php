@@ -22,8 +22,7 @@
 /**
  * \file    websites/website.class.php
  * \ingroup websites
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \brief   File for the CRUD class of website (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -33,9 +32,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 
 /**
  * Class Website
- *
- * Put here description of your class
- * @see CommonObject
  */
 class Website extends CommonObject
 {
@@ -137,16 +133,16 @@ class Website extends CommonObject
 		$sql.= 'virtualhost,';
 		$sql.= 'fk_user_create,';
 		$sql.= 'date_creation,';
-		$sql.= 'tmps';
+		$sql.= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
-		$sql .= ' '.(! isset($this->virtualhost)?'NULL':$this->virtualhost).',';
+		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->virtualhost)."',";
 		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
-		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
+		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
 
@@ -237,7 +233,15 @@ class Website extends CommonObject
 			}
 			$this->db->free($resql);
 
-			if ($numrows) {
+			if ($numrows > 0) {
+				// Lines
+				$this->fetch_lines();
+				{
+					return -3;
+				}
+			}
+
+			if ($numrows > 0) {
 				return 1;
 			} else {
 				return 0;
@@ -249,6 +253,21 @@ class Website extends CommonObject
 			return - 1;
 		}
 	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch_lines()
+	{
+		$this->lines=array();
+
+		// Load lines with object MyObjectLine
+
+		return count($this->lines)?1:0;
+	}
+
 
 	/**
 	 * Load object in memory from the database
@@ -463,32 +482,37 @@ class Website extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param 	int 	$fromid 	Id of object to clone
+	 * @param	string	$newref		New ref
+	 * @return 	int 				New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone($user, $fromid, $newref='')
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+        global $hookmanager, $langs;
+        $error=0;
 
-		global $user;
-		$error = 0;
-		$object = new Website($this->db);
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$object = new self($this->db);
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		// Reset object
-		$object->id = 0;
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
 
 		// Clear fields
-		// ...
+		$object->ref=$newref;
+		$object->fk_default_home=0;
+		$object->virtualhost='';
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
-
-		// Other options
 		if ($result < 0) {
 			$error ++;
 			$this->errors = $object->errors;
