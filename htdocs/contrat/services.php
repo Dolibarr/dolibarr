@@ -223,7 +223,7 @@ if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
 if ($filter == "notexpired") $sql.= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 if ($search_name)     $sql.= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
-if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
+if ($search_contract) $sql.= " AND c.ref LIKE '%".$db->escape($search_contract)."%' ";
 if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $filter_dateouvertureprevue=dol_mktime(0,0,0,$opouvertureprevuemonth,$opouvertureprevueday,$opouvertureprevueyear);
