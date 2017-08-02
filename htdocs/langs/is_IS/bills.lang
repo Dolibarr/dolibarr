@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Invoice kort
 PredefinedInvoices=Fyrirfram ákveðnum Reikningar
 Invoice=Invoice
+PdfInvoiceTitle=Invoice
 Invoices=Kvittanir
 InvoiceLine=Invoice línu
 InvoiceCustomer=Viðskiptavinur Reikningar

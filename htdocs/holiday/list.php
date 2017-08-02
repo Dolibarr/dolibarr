@@ -387,15 +387,15 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("DateDebCP",$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("DateFinCP",$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 

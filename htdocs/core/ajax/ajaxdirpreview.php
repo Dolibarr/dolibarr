@@ -202,7 +202,7 @@ if ($type == 'directory')
         $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
         // If $section defined with value 0
-        if ($section === '0')
+		if ($section === '0' || empty($section))
         {
             $filearray=array();
         }
@@ -216,7 +216,7 @@ if ($type == 'directory')
         else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-        $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
+		$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
     }
 }
 

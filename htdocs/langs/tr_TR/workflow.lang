@@ -2,14 +2,16 @@
 WorkflowSetup=İş Akışı modülü kurulumu
 WorkflowDesc=Bu modül, uygulamadaki otomatik eylemlerin davranışlarını değiştirilmek için tasarlanmıştır. Varsayılan olarak, iş akışı açıktır (işleri istediğiniz sıraya göre yapabilirsiniz). İlgilendiğiniz otomatik eylemleri etkinleştirebilirsiniz.
 ThereIsNoWorkflowToModify=Etkin modüllerde hiç iş akışı değişikliği yok.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Bir teklif imzalandıktan sonra kendiliğinden müşteri siparişi oluşturulsun
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Bir teklif imzalandıktan sonra kendiliğinden bir müşteri faturası oluştur
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra kendiliğinden bir müşteri faturası oluştur
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişi kapatıldıktan sonra kendiliğinden bir müşteri faturası oluştur
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Bir müşteri siparişi ödenmiş olarak güncellendiğinde ilgili kaynak teklif faturalandı olarak dosyalansın
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Müşteri faturası ödendi olarak ayarlandığında bağlantılı kaynak sipariş(ler)ini faturalandı olarak sınıflandır
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Müşteri faturası doğrulandığında bağlantılı kaynak sipariş(ler)ini faturalandı olarak sınıflandır
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Müşteri faturası doğrulandığında  bağlantılı teklif kaynağını faturalandı olarak sınıflandır
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bir gönderi doğrulandığında ve sevk edilen miktar siparişteki ile aynı ise bağlantılı kaynak siparişini sevk edilecek şekilde sınıflandır.
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+# Autoclassify
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 AutomaticCreation=Otomatik oluşturma
 AutomaticClassification=Otomatik sınıflandırma

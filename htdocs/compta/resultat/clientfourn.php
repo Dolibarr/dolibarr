@@ -177,12 +177,12 @@ if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre('');
-print_liste_field_titre($langs->trans("Name"), $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Name", $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
 if ($modecompta == 'CREANCES-DETTES')
 {
-	print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
 }
-print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 /*
@@ -234,7 +234,7 @@ if ($result) {
     while ($i < $num)
     {
         $objp = $db->fetch_object($result);
-        
+
         print '<tr class="oddeven"><td>&nbsp;</td>';
         print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->name."</td>\n";
 
@@ -278,7 +278,7 @@ if ($modecompta != 'CREANCES-DETTES')
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                
+
 
                 print '<tr class="oddeven"><td>&nbsp;</td>';
                 print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
@@ -301,7 +301,7 @@ if ($modecompta != 'CREANCES-DETTES')
 }
 
 if ($total_ttc == 0)
-{    
+{
     print '<tr class="oddeven"><td>&nbsp;</td>';
     print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
@@ -363,7 +363,7 @@ if ($result) {
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
-            
+
             print '<tr class="oddeven"><td>&nbsp;</td>';
             print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
 
@@ -381,7 +381,7 @@ if ($result) {
         }
     }
     else
-    {        
+    {
         print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
@@ -581,7 +581,7 @@ if (! empty($conf->salaries->enabled))
 	    $column = 'p.datep';
 	}
 
-	print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';    
+	print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 	$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
@@ -595,7 +595,7 @@ if (! empty($conf->salaries->enabled))
     if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
     if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
 	$sql.= $db->order($newsortfield, $sortorder);
-	
+
 	dol_syslog("get payment salaries");
 	$result=$db->query($sql);
 	$subtotal_ht = 0;
@@ -676,7 +676,7 @@ if (! empty($conf->expensereport->enabled))
 	{
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 	}
-	
+
 	$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
     $newsortfield = $sortfield;
     if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'p.ref';
@@ -746,7 +746,7 @@ if (! empty($conf->don->enabled))
 	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 	    $sql.= " WHERE p.entity = ".getEntity('donation');
-	    $sql.= " AND fk_statut >= 2";	 
+	    $sql.= " AND fk_statut >= 2";
 	}
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";

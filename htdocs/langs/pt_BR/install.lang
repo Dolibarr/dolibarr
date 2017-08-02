@@ -46,7 +46,6 @@ AdminPassword=Password para o administrador da base de dados Dolibarr. Deixar em
 CreateDatabase=Criar uma base de dados
 DatabaseSuperUserAccess=Base de dados - Acesso Superuser
 CheckToCreateDatabase=Verifique se o banco de dados não existe e deve ser criado. <br> Neste caso, você deve preencher o login / senha para a conta de superuser, na parte inferior desta página.
-CheckToCreateUser=Marque esta opção se o dono do banco de dados não existe e deve ser criado. <br> Neste caso, você deve preencher o login / senha para o superusuário em conta, na parte inferior desta página.
 DatabaseRootLoginDescription=Login do usuário que possui permissão para criar novas bases de dados ou de novos usuários em banco de dados, inútil se o seu banco de dados e seu banco de dados já existe login (como quando você está hospedado por um provedor de hospedagem da web).
 KeepEmptyIfNoPassword=Deixar em branco se o usuário não tiver password
 SaveConfigurationFile=Gravar configuração

@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Karta faktury
 PredefinedInvoices=Predefiniowane Faktury
 Invoice=Faktura
+PdfInvoiceTitle=Faktura
 Invoices=Faktury
 InvoiceLine=Pole faktury
 InvoiceCustomer=Faktura klienta

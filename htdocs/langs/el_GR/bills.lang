@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Καρτέλα Τιμολογίου
 PredefinedInvoices=Προκαθορισμένα τιμολόγια
 Invoice=Τιμολόγιο
+PdfInvoiceTitle=Τιμολόγιο
 Invoices=Τιμολόγια
 InvoiceLine=Γραμμή Τιμολογίου
 InvoiceCustomer=Τιμολόγιο Πελάτη

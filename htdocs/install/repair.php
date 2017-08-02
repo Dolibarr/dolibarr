@@ -78,7 +78,7 @@ print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(G
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
 print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
 print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
-print 'Option force_utf8_on_tables, for mysql/mariadb only(0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';

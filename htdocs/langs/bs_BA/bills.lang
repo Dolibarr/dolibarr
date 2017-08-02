@@ -45,6 +45,7 @@ InvoiceHasAvoir=je bila izvor jedne ili više knjižnih obavijesti
 CardBill=Kartica fakture
 PredefinedInvoices=Predefinisane fakture
 Invoice=Faktura
+PdfInvoiceTitle=Faktura
 Invoices=Fakture
 InvoiceLine=Tekst fakture
 InvoiceCustomer=Faktura kupca

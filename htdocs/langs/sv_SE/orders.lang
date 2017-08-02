@@ -4,6 +4,7 @@ SuppliersOrdersArea=Leverantörer order område
 OrderCard=Beställ kort
 OrderId=Order Id
 Order=Beställ
+PdfOrderTitle=Beställ
 Orders=Beställningar
 OrderLine=Orderrad
 OrderDate=Beställ datum

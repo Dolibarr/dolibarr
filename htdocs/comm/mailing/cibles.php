@@ -184,12 +184,12 @@ if ($object->fetch($id) >= 0)
 
 	$morehtmlright='';
 	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
-	
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
@@ -221,7 +221,7 @@ if ($object->fetch($id) >= 0)
 	print "</div>";
 
 	dol_fiche_end();
-	
+
 
 	$allowaddtarget=($object->statut == 0);
 
@@ -232,7 +232,7 @@ if ($object->fetch($id) >= 0)
 
 		//print '<table class="noborder" width="100%">';
 		print '<div class="tagtable centpercent liste_titre_bydiv" id="tablelines">';
-		
+
 		//print '<tr class="liste_titre">';
 		print '<div class="tagtr liste_titre">';
 		//print '<td class="liste_titre">'.$langs->trans("RecipientSelectionModules").'</td>';
@@ -245,11 +245,11 @@ if ($object->fetch($id) >= 0)
 		print '<div class="tagtd">&nbsp;</div>';
 		//print "</tr>\n";
 		print '</div>';
-		
+
 		clearstatcache();
 
 		$var = true;
-		
+
 		foreach ($modulesdir as $dir)
 		{
 		    $modulenames=array();
@@ -324,7 +324,7 @@ if ($object->fetch($id) >= 0)
 					print $obj->getDesc();
 					//print '</td>';
 					print '</div>';
-						
+
 					try {
 						$nbofrecipient=$obj->getNbOfRecipients('');
 					}
@@ -345,7 +345,7 @@ if ($object->fetch($id) >= 0)
 					}
 					//print '</td>';
 					print '</div>';
-						
+
 					//print '<td align="left">';
 					print '<div class="tagtd" align="left">';
 					if ($allowaddtarget)
@@ -362,7 +362,7 @@ if ($object->fetch($id) >= 0)
 					}
 					//print '</td>';
 					print '</div>';
-						
+
 					//print '<td align="right">';
 					print '<div class="tagtd" align="right">';
 					if ($allowaddtarget)
@@ -377,10 +377,10 @@ if ($object->fetch($id) >= 0)
 					}
 					//print '</td>';
 					print '</div>';
-						
+
 					if ($allowaddtarget) print '</form>';
 					else print '</div>';
-						
+
 					//print "</tr>\n";
 //					print '</div>'."\n";
 				}
@@ -389,7 +389,7 @@ if ($object->fetch($id) >= 0)
 
 		//print '</table>';
 		print '</div>';
-		
+
 		print '<br><br>';
 	}
 
@@ -412,11 +412,11 @@ if ($object->fetch($id) >= 0)
 	}
 	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
 	$sql .= $db->plimit($limit+1, $offset);
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-	    
+
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
@@ -436,7 +436,7 @@ if ($object->fetch($id) >= 0)
 		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
 		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','',$limit);
-		
+
 		print '</form>';
 
 		print "\n<!-- Liste destinataires selectionnes -->\n";
@@ -447,12 +447,12 @@ if ($object->fetch($id) >= 0)
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
-		
+
 
 		if ($page)	$param.= "&amp;page=".$page;
-		
+
 		print '<table class="noborder" width="100%">';
-		
+
 		// Ligne des champs de filtres
 		print '<tr class="liste_titre_filter">';
 		// EMail
@@ -475,7 +475,7 @@ if ($object->fetch($id) >= 0)
 		print '<td class="liste_titre">';
 		print '&nbsp';
 		print '</td>';
-		
+
 		// Date sending
 		print '<td class="liste_titre">';
 		print '&nbsp';
@@ -490,13 +490,13 @@ if ($object->fetch($id) >= 0)
 		print $searchpicto;
 		print '</td>';
 		print '</tr>';
-		
+
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.lastname",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.firstname",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$param,"",'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"mc.email",$param,"","",$sortfield,$sortorder);
+		print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"mc.lastname",$param,"","",$sortfield,$sortorder);
+		print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"mc.firstname",$param,"","",$sortfield,$sortorder);
+		print_liste_field_titre("OtherInformations",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+		print_liste_field_titre("Source",$_SERVER["PHP_SELF"],"",$param,"",'align="center"',$sortfield,$sortorder);
 		// Date sending
 		if ($object->statut < 2)
 		{
@@ -504,9 +504,9 @@ if ($object->fetch($id) >= 0)
 		}
 		else
 		{
-			print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$param,'','align="center"',$sortfield,$sortorder);
+			print_liste_field_titre("DateSending",$_SERVER["PHP_SELF"],"mc.date_envoi",$param,'','align="center"',$sortfield,$sortorder);
 		}
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$param,'','align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"mc.statut",$param,'','align="right"',$sortfield,$sortorder);
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print '</tr>';
 
@@ -590,7 +590,7 @@ if ($object->fetch($id) >= 0)
 		}
 		else
 		{
-			if ($object->statut < 2) 
+			if ($object->statut < 2)
 			{
 			    print '<tr><td colspan="8" class="opacitymedium">';
     			print $langs->trans("NoTargetYet");

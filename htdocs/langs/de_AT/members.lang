@@ -14,6 +14,7 @@ SubscriptionEndDate=Abonnementauslaufdatum
 SubscriptionLate=Versätet
 NewMemberType=Neues Mitgliedsrt
 WelcomeEMail=Willkommens-E-Mail
+DeleteType=Löschen
 Physical=Physisch
 Moral=Rechtlich
 MorPhy=Physisch/Rechtlich
