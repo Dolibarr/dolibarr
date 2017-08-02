@@ -649,12 +649,12 @@ if ($resql)
 
         if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("StockCorrection").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
         }
 
         if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("StockTransfer").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
         }
 
         print '</div><br>';
@@ -756,20 +756,20 @@ if ($resql)
     {
 	    // Product Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="6" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
+	    print '<input class="flat maxwidth100" type="text" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['p.label']['checked']))
     {
 	    // Product label
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="10" name="search_product" value="'.dol_escape_htmltag($idproduct?$product->label:$search_product).'">';
+	    print '<input class="flat maxwidth100" type="text" name="search_product" value="'.dol_escape_htmltag($idproduct?$product->label:$search_product).'">';
 	    print '</td>';
     }
     // Batch
     if (! empty($arrayfields['m.batch']['checked']))
     {
-    	print '<td class="liste_titre" align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
+    	print '<td class="liste_titre" align="center"><input class="flat maxwidth100" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
