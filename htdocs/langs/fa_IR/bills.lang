@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=کارت فاکتور
 PredefinedInvoices=فاکتورها از پیش تعریف شده
 Invoice=صورت حساب
+PdfInvoiceTitle=صورت حساب
 Invoices=صورت حساب
 InvoiceLine=خط فاکتور
 InvoiceCustomer=صورت حساب به مشتری

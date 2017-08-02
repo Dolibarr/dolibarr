@@ -4,6 +4,7 @@ SuppliersOrdersArea=Tavarantoimittajien tilausalue
 OrderCard=Tilauskortti
 OrderId=Tilausnumero
 Order=Tilaus
+PdfOrderTitle=Tilaus
 Orders=Tilaukset
 OrderLine=Tilaus linja
 OrderDate=Tilauspäivämäärä

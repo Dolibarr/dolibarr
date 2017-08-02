@@ -45,6 +45,7 @@ InvoiceHasAvoir=Diese Rechnung ist bereits Gegenstand einer oder mehrerer Gutsch
 CardBill=Rechnung - Karte
 PredefinedInvoices=Vordefinierte Rechnungen
 Invoice=Rechnung
+PdfInvoiceTitle=Rechnung
 Invoices=Rechnungen
 InvoiceLine=Rechnungszeile
 InvoiceCustomer=Kundenrechnung

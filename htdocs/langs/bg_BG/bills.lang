@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Фактурна карта
 PredefinedInvoices=Предварително-дефинирани Фактури
 Invoice=Фактура
+PdfInvoiceTitle=Фактура
 Invoices=Фактури
 InvoiceLine=Фактурен ред
 InvoiceCustomer=Продажна фактура

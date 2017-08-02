@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Feil, duplikat utløsernavn %s. Allerede lastet fra %s.
 ErrorNoWarehouseDefined=Feil, ingen lagre definert.
 ErrorBadLinkSourceSetButBadValueForRef=Lenken du bruker er ikke gyldig. En 'kilde' for betaling er definert, men verdien for 'ref' er ikke gyldig.
 ErrorTooManyErrorsProcessStopped=For mange feil. Prosessen ble stoppet.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Massvalidering er ikke mulig når alternativet for å øke/redusere lager er satt til denne handlingen (du må validere en etter en slik at du kan definere varehuset for å øke/redusere)
+ErrorObjectMustHaveStatusDraftToBeValidated=Objekt %s må ha status 'Kladd' for å kunne valideres.
+ErrorObjectMustHaveLinesToBeValidated=Objekt %s må ha linjer for å kunne valideres.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.

@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Sąskaitos-faktūros kortelė
 PredefinedInvoices=Iš anksto apibrėžtos sąskaitos-faktūros
 Invoice=Sąskaita-faktūra
+PdfInvoiceTitle=Sąskaita-faktūra
 Invoices=Sąskaitos-faktūros
 InvoiceLine=Sąskaitos-faktūros linija
 InvoiceCustomer=Kliento sąskaita-faktūra

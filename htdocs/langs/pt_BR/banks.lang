@@ -121,7 +121,3 @@ CheckRejectedAndInvoicesReopened=Cheque devolvido e faturas reabertas
 BankAccountModelModule=Temas de documentos para as contas bancárias.
 DocumentModelSepaMandate=Tema do mandato SEPA. Útil somente para os países europeus na Comunidade Europeia.
 DocumentModelBan=Tema para imprimir a página com a informação BAN.
-NewVariousPayment=Novo pagamento variado
-VariousPayment=Vários pagamentos
-VariousPayments=Vários pagamentos
-ShowVariousPayment=Mostrar vários pagamentos

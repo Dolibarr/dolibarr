@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak eposta adresi de kullanılabilir.

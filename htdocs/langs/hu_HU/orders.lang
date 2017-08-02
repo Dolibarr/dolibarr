@@ -4,6 +4,7 @@ SuppliersOrdersArea=Beszállítói rendelések
 OrderCard=Megrendelőlap
 OrderId=Megrendelés azonosító
 Order=Megrendelés
+PdfOrderTitle=Megrendelés
 Orders=Megrendelések
 OrderLine=Rendelés vonal
 OrderDate=Megrendelés dátuma
