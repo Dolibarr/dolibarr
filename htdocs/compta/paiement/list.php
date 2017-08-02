@@ -177,7 +177,7 @@ else
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
-    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1); 
+    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
 	$parameters=array();
@@ -211,7 +211,7 @@ if ($resql)
     $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
     $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-    
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -220,9 +220,9 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-    
+
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -266,26 +266,26 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
     if (! empty($conf->banque->enabled))
     {
-        print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+        print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
-    
+    print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
+    //print_liste_field_titre("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
+
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
+
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
-    
+
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
@@ -314,7 +314,7 @@ if ($resql)
 
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
-        
+
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
 

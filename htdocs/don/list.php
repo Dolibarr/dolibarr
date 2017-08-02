@@ -72,7 +72,7 @@ $fieldstosearchall = array(
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
 );
-        
+
 /*
  * View
  */
@@ -157,7 +157,7 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -190,20 +190,20 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
+	    print_liste_field_titre("Project",$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
-	
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);

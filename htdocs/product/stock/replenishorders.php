@@ -186,7 +186,7 @@ if ($resql)
 
          print '<tr class="liste_titre">';
          print_liste_field_titre(
-             $langs->trans('Ref'),
+             'Ref',
              $_SERVER['PHP_SELF'],
              'cf.ref',
              '',
@@ -196,7 +196,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('Company'),
+             'Company',
              $_SERVER['PHP_SELF'],
              's.nom',
              '',
@@ -206,7 +206,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('Author'),
+             'Author',
              $_SERVER['PHP_SELF'],
              'u.login',
              '',
@@ -216,7 +216,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('AmountTTC'),
+             'AmountTTC',
              $_SERVER['PHP_SELF'],
              'cf.total_ttc',
              '',
@@ -226,7 +226,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('OrderCreation'),
+             'OrderCreation',
              $_SERVER['PHP_SELF'],
              'cf.date_creation',
              '',
@@ -236,7 +236,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('Status'),
+             'Status',
              $_SERVER['PHP_SELF'],
              'cf.fk_statut',
              '',
@@ -246,7 +246,7 @@ if ($resql)
              $sortorder
              );
          print '</tr>';
-          
+
     $userstatic = new User($db);
 
     while ($i < min($num,$conf->liste_limit))

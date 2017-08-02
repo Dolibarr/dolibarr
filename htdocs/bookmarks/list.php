@@ -101,19 +101,19 @@ if ($resql)
     if ($optioncss != '') $param ='&optioncss='.$optioncss;
 
     $moreforfilter='';
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-    
+
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"title","", $param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Link"),'','');
-    print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
-    print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"title","", $param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("Link",'','');
+    print_liste_field_titre("Target",'','','','','align="center"');
+    print_liste_field_titre("Owner",$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -122,7 +122,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        
+
         print '<tr class="oddeven">';
 
         // Id
@@ -209,7 +209,7 @@ if ($resql)
     }
     print "</table>";
     print '</div>';
-    
+
     $db->free($resql);
 }
 else

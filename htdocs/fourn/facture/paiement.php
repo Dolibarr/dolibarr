@@ -850,14 +850,14 @@ if (empty($action))
         print "</tr>\n";
 
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('RefPayment'),$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('ThirdParty'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Account'),$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre('RefPayment',$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre('Date',$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre('ThirdParty',$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre('Type',$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+        print_liste_field_titre('Account',$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre('Amount',$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
+        //print_liste_field_titre('Invoice',$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
         print_liste_field_titre('');
         print "</tr>\n";
 

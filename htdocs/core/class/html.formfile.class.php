@@ -1309,10 +1309,10 @@ class FormFile
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';
-        print_liste_field_titre($langs->trans("Ref"),$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre("Ref",$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre("Documents2",$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre("Size",$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre("Date",$url,"date","",$param,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre('','','');
         print '</tr>'."\n";
 

@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 /**
  *		File that defines the balance of paid holiday of users.
@@ -265,7 +265,7 @@ else
     print '</tr>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Employee'), $_SERVER["PHP_SELF"]);
+    print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
     if (count($typeleaves))
     {
         foreach($typeleaves as $key => $val)

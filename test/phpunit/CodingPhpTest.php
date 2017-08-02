@@ -207,6 +207,20 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             }
             $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
 
+
+            // Test that first param of print_liste_field_titre is a translation key and not the translated value
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+           		$ok=false;
+           		break;
+            }
+            $this->assertTrue($ok, 'Found a use of print_liste_field_titre with fist parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
+
+
             // Test that output of $_SERVER\[\'PHP_SELF\'\] is escaped (not done for the moment, did not found a way to forge value of $_SERVER['PHP_SELF'] by extern access).
             /*$ok=true;
             $matches=array();
