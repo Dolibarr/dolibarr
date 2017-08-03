@@ -1498,5 +1498,22 @@ class ActionComm extends CommonObject
         return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
     }
 
+
+    /**
+     * Send reminders by emails
+     * CAN BE A CRON TASK
+     *
+     * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+     */
+    public function sendEmailsReminder()
+    {
+    	global $conf, $langs;
+
+    	dol_syslog(__METHOD__, LOG_DEBUG);
+
+
+    	return 0;
+    }
+
 }
 
