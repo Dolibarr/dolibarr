@@ -269,7 +269,7 @@ if ($objMod->isCoreOrExternalModule() == 'external')
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-
+$moduledir=strtolower(preg_replace('/^mod/i','',get_class($objMod)));
 
 
 print '<div class="centpercent">';
@@ -458,7 +458,17 @@ if ($mode == 'feature')
     {
     	$yesno='No';
     }
-    // TODO Try autodetection by scanning all triggers files for a file interface_99_modModule_xxx.class.php to set $moreinfoontriggerfile
+    require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+    $interfaces = new Interfaces($db);
+    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$moduledir:'').'/core/triggers'));
+	foreach($triggers as $triggercursor)
+	{
+		if ($triggercursor['module'] == $moduledir)
+		{
+			$yesno='Yes';
+			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
+		}
+	}
 
     $text.=$langs->trans($yesno).$moreinfoontriggerfile;
 
