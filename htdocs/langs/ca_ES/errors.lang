@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, nom de disparador %s duplicat. Ja es troba carregat
 ErrorNoWarehouseDefined=Error, no hi ha magatzems definits.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=No és possible la validació massiva quan s'estableix l'opció d'augmentar/disminuir l'estoc en aquesta acció (cal validar-ho un per un per poder definir el magatzem a augmentar/disminuir)
+ErrorObjectMustHaveStatusDraftToBeValidated=L'objecte %s ha de tenir l'estat 'Esborrany' per ser validat.
+ErrorObjectMustHaveLinesToBeValidated=L'objecte %s ha de tenir línies per ser validat.
 
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí

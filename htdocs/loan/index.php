@@ -119,7 +119,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-    
+
     print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<div class="div-table-responsive">';
@@ -139,14 +139,14 @@ if ($resql)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LoanCapital"),$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("LoanCapital",$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
-	
+
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
@@ -172,7 +172,7 @@ if ($resql)
 		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
 		print '<td></td>';
-		
+
         print "</tr>\n";
 
 		$i++;

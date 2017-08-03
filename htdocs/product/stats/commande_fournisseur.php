@@ -210,13 +210,13 @@ if ($id > 0 || ! empty($ref)) {
                 print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
-				print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("SupplierCode"), $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("OrderDate"), $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("SupplierCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("OrderDate", $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if ($num > 0) {

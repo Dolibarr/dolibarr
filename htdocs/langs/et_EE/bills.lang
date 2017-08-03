@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Arve kaart
 PredefinedInvoices=Eelmääratletud arved
 Invoice=Arve
+PdfInvoiceTitle=Arve
 Invoices=Arved
 InvoiceLine=Arve rida
 InvoiceCustomer=Müügiarve

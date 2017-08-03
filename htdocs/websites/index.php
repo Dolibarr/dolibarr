@@ -555,10 +555,22 @@ if ($action == 'updatemeta')
 }
 
 // Update page
-if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createpagefromclone')
+if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createfromclone' || $action == 'confirm_createpagefromclone')
 	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
     $object->fetch(0, $website);
+
+	if ($action == 'confirm_createfromclone')
+	{
+		$objectnew = new Website($db);
+		$result = $objectnew->createFromClone($user, $object->id, GETPOST('siteref','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''));
+		if ($result < 0)
+		{
+			$error++;
+			setEventMessages($objectnew->error, $objectnew->errors, 'errors');
+			$action='createfromclone';
+		}
+	}
 
 	if ($action == 'confirm_createpagefromclone')
 	{
@@ -576,7 +588,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		if (! $error)
 		{
 	    	$objectpage = new WebsitePage($db);
-			$result = $objectpage->createFromClone($pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation, GETPOST('newwebsite','int'));
+			$result = $objectpage->createFromClone($user, $pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation, GETPOST('newwebsite','int'));
 			if ($result < 0)
 			{
 				$error++;
@@ -825,7 +837,7 @@ if (count($object->records) > 0)
         if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
     }
 
-    if ($website && $action == 'preview')
+    if ($website && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
     {
         $disabled='';
         if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
@@ -835,7 +847,7 @@ if (count($object->records) > 0)
         //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
     }
 
     print '</div>';
@@ -843,7 +855,7 @@ if (count($object->records) > 0)
     // Button for websites
     print '<div class="websitetools">';
 
-    if ($action == 'preview')
+    if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
     {
         print '<div class="websiteinputurl" id="websiteinputurl">';
         print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
@@ -933,14 +945,29 @@ if (count($object->records) > 0)
 
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 
-        if ($action == 'preview' || $action == 'createpagefromclone')
+        if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
         {
             $disabled='';
             if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
 
+            // Confirmation to clone
+            if ($action == 'createfromclone') {
+            	// Create an array for form
+            	$formquestion = array(
+            	array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("Website")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
+            	//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
+            	//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+            	//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+            	);
+
+            	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
+
+            	print $formconfirm;
+            }
+
             if ($pageid > 0)
             {
-                // Confirmation to delete
+                // Confirmation to clone
                 if ($action == 'createpagefromclone') {
 	                // Create an array for form
 					$formquestion = array(
@@ -971,7 +998,7 @@ if (count($object->records) > 0)
 
         print '<div class="websitetools">';
 
-        if ($website && $pageid > 0 && ($action == 'preview' || $action == 'createpagefromclone'))
+        if ($website && $pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
         {
             $websitepage = new WebSitePage($db);
             $websitepage->fetch($pageid);
@@ -1017,7 +1044,7 @@ if (count($object->records) > 0)
 
 
 
-        if ($action == 'preview' || $action == 'createpagefromclone')
+        if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
         {
             // Adding jquery code to change on the fly url of preview ext
             if (! empty($conf->use_javascript_ajax))
@@ -1181,14 +1208,42 @@ if ($action == 'editmeta' || $action == 'create')
 
     print '<br>';
 
-    dol_fiche_head();
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = dol_buildpath('/websites/index.php',1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("AddPage");
+   	$head[$h][2] = 'card';
+	$h++;
+
+    //dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
+	if ($action == 'create') print_fiche_titre($langs->trans("AddPage"));
 
     print '<!-- Edit Meta -->'."\n";
+    //print '<div class="fichecenter">';
+
+    if ($action == 'create')
+    {
+    	print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br>';
+    	print '<table class="border" width="100%">';
+    	print '<tr><td class="titlefieldcreate">';
+    	print $langs->trans("URL");
+    	print '</td><td>';
+    	print '<input class="flat minwidth300" type="text" name="externalurl" value="" placeholder="http://externalsite/pagetofetch"> ';
+		print '<input class="button" type="submit" name="fetchexternalurl" value="'.$langs->trans("FetchAndCreate").'">';
+    	print '</td></tr>';
+    	print '</table>';
+
+    	print '<br>';
+
+    	print ' * '.$langs->trans("OrEnterPageInfoManually").'<br>';
+    }
+
     print '<table class="border" width="100%">';
 
     if ($action != 'create')
     {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('WEBSITE_PAGEURL');
         print '</td><td>';
         print '/public/websites/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
@@ -1208,25 +1263,25 @@ if ($action == 'editmeta' || $action == 'create')
     print '<tr><td class="titlefieldcreate fieldrequired">';
     print $langs->trans('WEBSITE_PAGENAME');
     print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+    print '<input type="text" class="flat maxwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">';
     print $langs->trans('WEBSITE_TITLE');
     print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
+    print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
     print '</td></tr>';
 
     print '<tr><td>';
     print $langs->trans('WEBSITE_DESCRIPTION');
     print '</td><td>';
-    print '<input type="text" class="flat" size="96" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
+    print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
     print '</td></tr>';
 
     print '<tr><td>';
     print $langs->trans('WEBSITE_KEYWORDS');
     print '</td><td>';
-    print '<input type="text" class="flat" size="128" name="WEBSITE_KEYWORDS" value="'.dol_escape_htmltag($pagekeywords).'">';
+    print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_KEYWORDS" value="'.dol_escape_htmltag($pagekeywords).'">';
     print '</td></tr>';
 
     print '<tr><td>';
@@ -1236,8 +1291,9 @@ if ($action == 'editmeta' || $action == 'create')
     print '</td></tr>';
 
     print '</table>';
+	//print '</div>';
 
-    dol_fiche_end();
+    //dol_fiche_end();
 
     print '</div>';
 
@@ -1298,7 +1354,7 @@ print "</div>\n</form>\n";
 
 
 
-if ($action == 'preview' || $action == 'createpagefromclone')
+if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 {
     if ($pageid > 0)
     {

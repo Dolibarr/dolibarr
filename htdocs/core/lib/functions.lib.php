@@ -1342,7 +1342,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if ($object->element != 'product' && $object->element != 'bookmark')
+	if ($object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories')
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);

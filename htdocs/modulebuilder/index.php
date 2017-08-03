@@ -13,6 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You can also make a direct call the page with parameter like this:
+ * htdocs/modulebuilder/index.php?module=Inventory@/pathtodolibarr/htdocs/product
  */
 
 /**
@@ -54,6 +57,16 @@ if (! $user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessfor
 // Dir for custom dirs
 $tmp=explode(',', $dolibarr_main_document_root_alt);
 $dirins = $tmp[0];
+$dirread = $dirins;
+$forceddirread = 0;
+
+$tmpdir = explode('@', $module);
+if (! empty($tmpdir[1]))
+{
+	$module=$tmpdir[0];
+	$dirread=$tmpdir[1];
+	$forceddirread=1;
+}
 
 $FILEFLAG='modulebuilder.txt';
 
@@ -686,9 +699,10 @@ $text=$langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
+// Search modules to edit
 $listofmodules=array();
 
-$dirsincustom=dol_dir_list($dirins, 'directories');
+$dirsincustom=dol_dir_list($dirread, 'directories');
 if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 	foreach ($dirsincustom as $dircustomcursor) {
 		$fullname = $dircustomcursor['fullname'];
@@ -701,10 +715,16 @@ if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 				$modulenamewithcase = preg_replace('/\.class\.php$/', '', $modulenamewithcase);
 			}
 			if ($modulenamewithcase)
+			{
 				$listofmodules[$dircustomcursor['name']] = $modulenamewithcase;
-			// var_dump($listofmodules);
+			}
+			//var_dump($listofmodules);
 		}
 	}
+}
+if ($forceddirread && empty($listofmodules))
+{
+	$listofmodules[strtolower($module)] = $module;
 }
 
 // Show description of content
@@ -712,6 +732,9 @@ $newdircustom=$dirins;
 if (empty($newdircustom)) $newdircustom=img_warning();
 print $langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'<br>';
 print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'<br>';
+// If dirread was forced to somewhere else, by using URL
+// htdocs/modulebuilder/index.php?module=Inventory@/home/ldestailleur/git/dolibarr/htdocs/product
+if ($forceddirread) print $langs->trans("DirScanned").' : <strong>'.$dirread.'</strong><br>';
 
 $message='';
 if (! $dirins)
@@ -770,9 +793,9 @@ if (! empty($module) && $module != 'initmodule' && $module != 'deletemodule')
     }
     else
     {
-        $error++;
+    	if (empty($forceddirread)) $error++;
         $langs->load("errors");
-        print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module);
+        print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
     }
 }
 
@@ -833,7 +856,7 @@ elseif ($module == 'deletemodule')
 }
 elseif (! empty($module))
 {
-    // Tabs for module
+	// Tabs for module
     if (! $error)
     {
         $head2 = array();
@@ -868,52 +891,52 @@ elseif (! empty($module))
         	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
         }
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Description");
         $head2[$h][2] = 'description';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Specifications");
         $head2[$h][2] = 'specifications';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Objects");
         $head2[$h][2] = 'objects';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Menus");
         $head2[$h][2] = 'menus';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Permissions");
         $head2[$h][2] = 'permissions';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=hooks&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=hooks&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Hooks");
         $head2[$h][2] = 'hooks';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Triggers");
         $head2[$h][2] = 'triggers';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Widgets");
         $head2[$h][2] = 'widgets';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cron&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cron&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("CronList");
         $head2[$h][2] = 'cron';
         $h++;
 
-        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module;
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("BuildPackage");
         $head2[$h][2] = 'buildpackage';
         $h++;
@@ -1121,27 +1144,36 @@ elseif (! empty($module))
             $h=0;
 
             // Dir for module
-            $dir = $dirins.'/'.$modulelowercase.'/class';
+            $dir = $dirread.'/'.$modulelowercase.'/class';
 
-            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj=newobject';
+            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj=newobject';
             $head3[$h][1] = $langs->trans("NewObject");
             $head3[$h][2] = 'newobject';
             $h++;
 
-            $listofobject = dol_dir_list($dir, 'files', 0, '\.txt$');
+            // Scan for object class files
+            $listofobject = dol_dir_list($dir, 'files', 0, '\.class\.php$');
+
             $firstobjectname='';
             foreach($listofobject as $fileobj)
             {
-                $objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
-                if (empty($firstobjectname)) $firstobjectname = $objectname;
+            	if (preg_match('/^api_/',$fileobj['name'])) continue;
 
-                $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj='.$objectname;
+            	$tmpcontent=file_get_contents($fileobj['fullname']);
+            	if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims',$tmpcontent,$reg))
+            	{
+		        	//$objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
+            		$objectname = $reg[1];
+	                if (empty($firstobjectname)) $firstobjectname = $objectname;
+            	}
+
+                $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj='.$objectname;
                 $head3[$h][1] = $objectname;
                 $head3[$h][2] = $objectname;
                 $h++;
             }
 
-            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.'&tabobj=deleteobject';
+            $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj=deleteobject';
             $head3[$h][1] = $langs->trans("DangerZone");
             $head3[$h][2] = 'deleteobject';
             $h++;
@@ -1157,7 +1189,7 @@ elseif (! empty($module))
 
             if ($tabobj == 'newobject')
             {
-                // New module
+                // New object tab
                 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="initobject">';
@@ -1172,7 +1204,7 @@ elseif (! empty($module))
             }
             elseif ($tabobj == 'deleteobject')
             {
-                // New module
+                // Delete object tab
                 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="action" value="confirm_deleteobject">';
@@ -1186,7 +1218,7 @@ elseif (! empty($module))
                 print '</form>';
             }
             else
-            {
+            {	// tabobj = module
                 if ($action == 'deleteproperty')
                 {
                     $formconfirm = $form->formconfirm(
@@ -1211,34 +1243,41 @@ elseif (! empty($module))
                         $pathtosqlkey = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.$pathtophpunit.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.$pathtosql.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.$pathtosqlextra.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.$pathtosqlkey.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '</div>';
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong>'.$pathtocard.'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '</div>';
 
                         print '<br><br><br>';
 
-                        $result = dol_include_once($pathtoclass);
+                        if (empty($forceddirread))
+                        {
+                        	$result = dol_include_once($pathtoclass);
+                        }
+                        else
+                        {
+                        	$result = @include_once($dirread.'/'.$pathtoclass);
+                        }
                         if (class_exists($tabobj)) $tmpobjet = new $tabobj($db);
 
                         $reflector = new ReflectionClass($tabobj);
@@ -1378,7 +1417,14 @@ elseif (! empty($module))
                 }
                 else
                 {
-                    $fullpathoffile=dol_buildpath($file, 0);
+                	if (empty($forceddirread))
+                	{
+                		$fullpathoffile=dol_buildpath($file, 0);
+                	}
+                	else
+                	{
+                		$fullpathoffile=$dirread.'/'.$file;
+                	}
 
                     $content = file_get_contents($fullpathoffile);
 
@@ -1388,7 +1434,7 @@ elseif (! empty($module))
                     print '<input type="hidden" name="action" value="savefile">';
                     print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
                     print '<input type="hidden" name="tab" value="'.$tab.'">';
-                    print '<input type="hidden" name="module" value="'.$module.'">';
+                    print '<input type="hidden" name="module" value="'.$module.($forceddirread?'@'.$dirread:'').'">';
 
                     $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
                     print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
@@ -1572,11 +1618,11 @@ elseif (! empty($module))
         		print '<table class="noborder">';
 
         		print '<tr class="liste_titre">';
-        		print_liste_field_titre($langs->trans("CronLabel"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("CronTask"),'','',"",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("CronFrequency"),'',"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("StatusAtInstall"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("Comment"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
         		print "</tr>\n";
 
         		foreach ($cronjobs as $cron)

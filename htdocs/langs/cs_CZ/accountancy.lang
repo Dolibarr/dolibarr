@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Přehled množství linek již vázán na účetnic
 OtherInfo=Jiná informace
 DeleteCptCategory=Odebrat účtování účet ze skupiny
 ConfirmDeleteCptCategory=Jste si jisti, že chcete odstranit tento účetní účet ze skupiny účetního účtu?
+JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
+NotYetInGeneralLedger=Not yet journalized in ledgers
+
+MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
+MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
 AccountancyArea=Oblast účetnictví
 AccountancyAreaDescIntro=Využití evidence modulu se provádí v několika kroku:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Define default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=KROK %s: Definovat účetní účty pro každou banku a finančních účtů. Za tímto účelem přejděte na kartu každého finančního účtu. Můžete začít od strana %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
@@ -83,7 +90,7 @@ ValidTransaction=Validate transaction
 WriteBookKeeping=Journalize transactions in Ledger
 Bookkeeping=Ledger
 AccountBalance=Zůstatek na účtu
-
+ObjectsRef=Source object ref
 CAHTF=Celkový nákup dodavatele před zdaněním
 TotalExpenseReport=Celkové náklady zpráva
 InvoiceLines=Řádky faktury, které mají být prověřeny
@@ -103,7 +110,7 @@ LineOfExpenseReport=Zpráva o výdajích
 NoAccountSelected=Není vybrán žádný účetní účet
 VentilatedinAccount=Úspěšně prověření v účetním účtu
 NotVentilatedinAccount=Neprověřeno v účetním účtu
-XLineSuccessfullyBinded=%s produkty / služby úspěšně vázána k účetnímu účtu
+XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s produkty / služby nebyly vázány na kterémkoli účetním účtu
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvků pro kontrolu zobrazených na stránce (maximální doporučeno: 50)
@@ -154,7 +161,7 @@ DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finanční deník
 ExpenseReportsJournal=Výdajové zprávy journal
 DescFinanceJournal=Finanční deník včetně všech typů plateb prostřednictvím bankovního účtu
-DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Účet pro DPH není definován
 ThirdpartyAccountNotDefined=Účet pro třetí stranu není definováno
 ProductAccountNotDefined=Účet pro výrobek není definován
@@ -170,6 +177,8 @@ AddCompteFromBK=Přidat účetní účty do skupiny
 ReportThirdParty=Seznam účtů třetí strany
 DescThirdPartyReport=Konzultujte zde seznam třetích stran, zákazníky a dodavateli a jejich účetní účty
 ListAccounts=Seznam účetních účtů
+UnknownAccountForThirdparty=Unknown third party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Třída účtu
 Pcgsubtype=Subclass of account
@@ -194,7 +203,7 @@ ValidateHistory=Ověřit automaticky
 AutomaticBindingDone=Automatická vazba provádí
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
-MvtNotCorrectlyBalanced=Pohyb není správně vyrovnán. Kredit = %s. Debet = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Ověřovací karta
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
@@ -210,7 +219,6 @@ AccountingJournals=účetní deníky
 AccountingJournal=Účetní deník
 NewAccountingJournal=Nový účetní deník
 ShowAccoutingJournal=Zobrazit účetní deník
-Code=Kód
 Nature=Příroda
 AccountingJournalType1=Různé operace
 AccountingJournalType2=Odbyt
@@ -221,8 +229,6 @@ AccountingJournalType9=Má-new
 ErrorAccountingJournalIsAlreadyUse=Tento deník se již používá
 
 ## Export
-Exports=Exporty
-Export=Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Model exportu
 OptionsDeactivatedForThisExportModel=Možnosti pro tento exportní model jsou deaktivovány

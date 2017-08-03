@@ -16,7 +16,8 @@ PreviousMonthOfInvoice=Mois précédent (numéro 1-12) la date de facturation
 TextPreviousMonthOfInvoice=Mois précédent (texte) de la date de facturation
 NextMonthOfInvoice=Le mois suivant (numéro 1-12) la date de facturation
 TextNextMonthOfInvoice=Le mois suivant (texte)  la date de facturation
-ZipFileGeneratedInto=Zip file generated into <b>%s</b>.
+ZipFileGeneratedInto=Fichier zip généré dans <b>%s</b>
+DocFileGeneratedInto=Fichier doc généré dans <b>%s</b>.
 
 YearOfInvoice=Année de la date de facturation
 PreviousYearOfInvoice=Année précédente de la date de facturation

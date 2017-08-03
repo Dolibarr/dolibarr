@@ -106,14 +106,14 @@ if ($resql)
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
-	
+
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Bill"), $_SERVER["PHP_SELF"]);
-	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"]);
-    print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "", "", $param, 'align="right"');
-	print_liste_field_titre($langs->trans("DateRequest"), $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
+	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"');
+	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
 	print_liste_field_titre('');
 	print '</tr>';
 
@@ -136,7 +136,7 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		print '<tr class="oddeven">';
 
 		// Ref facture
@@ -157,7 +157,7 @@ if ($resql)
         print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
 
         print '<td align="right"></td>';
-        
+
 		print '</tr>';
 		$i++;
 	}

@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Lasku-kortti
 PredefinedInvoices=Ennalta Laskut
 Invoice=Lasku
+PdfInvoiceTitle=Lasku
 Invoices=Laskut
 InvoiceLine=Laskun linja
 InvoiceCustomer=Asiakas lasku

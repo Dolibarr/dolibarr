@@ -4,6 +4,7 @@ SuppliersOrdersArea=Område for leverandørordre
 OrderCard=Ordrekort
 OrderId=Ordre-ID
 Order=Ordre
+PdfOrderTitle=Ordre
 Orders=Ordre
 OrderLine=Ordrelinje
 OrderDate=Ordredato

@@ -4,6 +4,7 @@ SuppliersOrdersArea=Area ordini dei fornitori
 OrderCard=Scheda ordine
 OrderId=Identificativo ordine
 Order=Ordine
+PdfOrderTitle=Ordine
 Orders=Ordini
 OrderLine=Riga Ordine
 OrderDate=Data ordine

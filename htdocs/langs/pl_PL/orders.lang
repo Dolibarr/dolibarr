@@ -4,6 +4,7 @@ SuppliersOrdersArea=Obszar zamówień od dostawców
 OrderCard=Karta zamówienia
 OrderId=ID zamówienia
 Order=Zamówienie
+PdfOrderTitle=Zamówienie
 Orders=Zamówienia
 OrderLine=Pozycja w zamówieniu
 OrderDate=Data zamówienia

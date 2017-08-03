@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=發票卡
 PredefinedInvoices=預定義的發票
 Invoice=發票
+PdfInvoiceTitle=發票
 Invoices=發票
 InvoiceLine=發票線
 InvoiceCustomer=客戶發票

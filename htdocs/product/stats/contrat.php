@@ -163,11 +163,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
-			//print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');

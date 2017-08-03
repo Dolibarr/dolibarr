@@ -45,6 +45,7 @@ InvoiceHasAvoir=Byl zdrojem jednoho nebo několika dobropisy
 CardBill=Karta faktury
 PredefinedInvoices=Předdefinované faktury
 Invoice=Faktura
+PdfInvoiceTitle=Faktura
 Invoices=Faktury
 InvoiceLine=Faktura linka
 InvoiceCustomer=Faktura zákazníka

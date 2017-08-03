@@ -336,17 +336,17 @@ if ($result)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("OnSell"), $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
-   	print_liste_field_titre($langs->trans("OnBuy"), $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
+    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
+   	print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
    	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
    	    $fieldtosortaccount="p.accountancy_code_buy";
    	}
    	else $fieldtosortaccount="p.accountancy_code_sell";
-   	print_liste_field_titre($langs->trans("CurrentDedicatedAccountingAccount"), $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AssignDedicatedAccountingAccount"));
+   	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco=$form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($clickpitco, '', '', '', '', 'align="center"');
 	print '</tr>';

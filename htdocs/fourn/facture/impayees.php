@@ -189,15 +189,15 @@ if ($user->rights->fournisseur->facture->lire)
 
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.rowid","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.ref_supplier","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AlreadyPaid"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"f.rowid","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("RefSupplier",$_SERVER["PHP_SELF"],"f.ref_supplier","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("DateDue",$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("AmountHT",$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("AmountTTC",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("AlreadyPaid",$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
 		// Lines with filter fields
@@ -235,7 +235,7 @@ if ($user->rights->fournisseur->facture->lire)
 				$facturestatic->statut = $objp->fk_statut;
 				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
 
-				
+
 
 				print '<tr class="oddeven">';
 				$classname = "impayee";

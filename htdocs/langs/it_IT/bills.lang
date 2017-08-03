@@ -45,6 +45,7 @@ InvoiceHasAvoir=Rettificata da una o più fatture
 CardBill=Scheda fattura
 PredefinedInvoices=Fatture predefinite
 Invoice=Fattura
+PdfInvoiceTitle=Fattura
 Invoices=Fatture
 InvoiceLine=Riga fattura
 InvoiceCustomer=Fattura attiva

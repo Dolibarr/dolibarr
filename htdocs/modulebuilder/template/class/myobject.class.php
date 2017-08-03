@@ -143,6 +143,55 @@ class MyObject extends CommonObject
 	}
 
 	/**
+	 * Clone and object into another one
+	 *
+	 * @param  User $user      	User that creates
+	 * @param  int 	$fromid     Id of object to clone
+	 * @return int             	New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		global $hookmanager, $langs;
+	    $error = 0;
+
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+
+	    $object = new self($this->db);
+
+	    $this->db->begin();
+
+	    // Load source object
+	    $object->fetchCommon($fromid);
+	    // Reset some properties
+	    unset($object->id);
+	    unset($object->fk_user_creat);
+	    unset($object->import_key);
+
+	    // Clear fields
+	    $object->ref = "copy_of_".$object->ref;
+	    $object->title = $langs->trans("CopyOf")." ".$object->title;
+	    // ...
+
+	    // Create clone
+		$object->context['createfromclone'] = 'createfromclone';
+	    $result = $object->createCommon($user);
+	    if ($result < 0) {
+	        $error++;
+	        $this->error = $object->error;
+	        $this->errors = $object->errors;
+	    }
+
+	    // End
+	    if (!$error) {
+	        $this->db->commit();
+	        return $object->id;
+	    } else {
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id   Id object
@@ -151,7 +200,25 @@ class MyObject extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		return $this->fetchCommon($id, $ref);
+		$result = $this->fetchCommon($id, $ref);
+		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		return $result;
+	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines($id, $ref = null)
+	{
+		$this->lines=array();
+
+		// Load lines with object MyObjectLine
+
+		return count($this->lines)?1:0;
 	}
 
 	/**
@@ -368,20 +435,16 @@ class MyObject extends CommonObject
 }
 
 /**
- * Class MyModuleObjectLine
+ * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class MyModuleObjectLine
+/*
+class MyObjectLine
 {
-	/**
-	 * @var int ID
-	 */
+	// @var int ID
 	public $id;
-	/**
-	 * @var mixed Sample line property 1
-	 */
+	// @var mixed Sample line property 1
 	public $prop1;
-	/**
-	 * @var mixed Sample line property 2
-	 */
+	// @var mixed Sample line property 2
 	public $prop2;
 }
+*/

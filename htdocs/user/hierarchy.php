@@ -156,9 +156,9 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("HierarchicView"));
+print_liste_field_titre("HierarchicView");
 print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>',$_SERVER['PHP_SELF'],"",'',"",'align="center"');
-print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
+print_liste_field_titre("Status",$_SERVER['PHP_SELF'],"",'',"",'align="right"');
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
 print '</tr>';
 
