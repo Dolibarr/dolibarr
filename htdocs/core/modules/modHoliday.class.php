@@ -69,9 +69,6 @@ class modHoliday extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='holiday';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 0;
-
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
@@ -173,11 +170,11 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 
 		// Exports
 		$r=1;

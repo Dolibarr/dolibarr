@@ -269,7 +269,7 @@ if ($objMod->isCoreOrExternalModule() == 'external')
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-
+$moduledir=strtolower(preg_replace('/^mod/i','',get_class($objMod)));
 
 
 print '<div class="centpercent">';
@@ -449,11 +449,28 @@ if ($mode == 'feature')
     $text.='<br>';
 
     $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+    $moreinfoontriggerfile='';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
-        $text.=$langs->trans("Yes");
+    	$yesno='Yes';
     }
-    else $text.=$langs->trans("No");
+    else
+    {
+    	$yesno='No';
+    }
+    require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+    $interfaces = new Interfaces($db);
+    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$moduledir:'').'/core/triggers'));
+	foreach($triggers as $triggercursor)
+	{
+		if ($triggercursor['module'] == $moduledir)
+		{
+			$yesno='Yes';
+			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
+		}
+	}
+
+    $text.=$langs->trans($yesno).$moreinfoontriggerfile;
 
     $text.='<br>';
 
