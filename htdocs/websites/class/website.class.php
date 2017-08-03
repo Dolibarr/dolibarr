@@ -235,7 +235,7 @@ class Website extends CommonObject
 
 			if ($numrows > 0) {
 				// Lines
-				$this->fetch_lines();
+				$this->fetchLines();
 				{
 					return -3;
 				}
@@ -259,7 +259,7 @@ class Website extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch_lines()
+	public function fetchLines()
 	{
 		$this->lines=array();
 

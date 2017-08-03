@@ -201,7 +201,7 @@ class MyObject extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetch_lines();
+		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -212,7 +212,7 @@ class MyObject extends CommonObject
 	 * @param string $ref  Ref
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch_lines($id, $ref = null)
+	public function fetchLines($id, $ref = null)
 	{
 		$this->lines=array();
 
