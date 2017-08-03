@@ -449,11 +449,18 @@ if ($mode == 'feature')
     $text.='<br>';
 
     $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+    $moreinfoontriggerfile='';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
-        $text.=$langs->trans("Yes");
+    	$yesno='Yes';
     }
-    else $text.=$langs->trans("No");
+    else
+    {
+    	$yesno='No';
+    }
+    // TODO Try autodetection by scanning all triggers files for a file interface_99_modModule_xxx.class.php to set $moreinfoontriggerfile
+
+    $text.=$langs->trans($yesno).$moreinfoontriggerfile;
 
     $text.='<br>';
 
