@@ -1618,11 +1618,11 @@ elseif (! empty($module))
         		print '<table class="noborder">';
 
         		print '<tr class="liste_titre">';
-        		print_liste_field_titre($langs->trans("CronLabel"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("CronTask"),'','',"",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("CronFrequency"),'',"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("StatusAtInstall"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre($langs->trans("Comment"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
         		print "</tr>\n";
 
         		foreach ($cronjobs as $cron)
