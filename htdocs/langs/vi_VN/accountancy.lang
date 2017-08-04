@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accoun
 OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
+JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
+NotYetInGeneralLedger=Not yet journalized in ledgers
+
+MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
+MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
 AccountancyArea=Accountancy area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Define default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts for each bank and financial accounts. For this, go on the card of each financial account. You can start from page %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
@@ -83,7 +90,7 @@ ValidTransaction=Validate transaction
 WriteBookKeeping=Journalize transactions in Ledger
 Bookkeeping=Ledger
 AccountBalance=Account balance
-
+ObjectsRef=Source object ref
 CAHTF=Total purchase supplier before tax
 TotalExpenseReport=Total expense report
 InvoiceLines=Lines of invoices to bind
@@ -103,7 +110,7 @@ LineOfExpenseReport=Line of expense report
 NoAccountSelected=No accounting account selected
 VentilatedinAccount=Binded successfully to the accounting account
 NotVentilatedinAccount=Not bound to the accounting account
-XLineSuccessfullyBinded=%s products/services successfuly bound to an accounting account
+XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
@@ -154,7 +161,7 @@ DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
@@ -170,6 +177,8 @@ AddCompteFromBK=Add accounting accounts to the group
 ReportThirdParty=List third party account
 DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
 ListAccounts=Danh sách các tài khoản kế toán
+UnknownAccountForThirdparty=Unknown third party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Lớp tài khoản
 Pcgsubtype=Subclass of account
@@ -194,7 +203,7 @@ ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
@@ -210,7 +219,6 @@ AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
-Code=Mã
 Nature=Tự nhiên
 AccountingJournalType1=Various operation
 AccountingJournalType2=Bán
@@ -221,8 +229,6 @@ AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 
 ## Export
-Exports=Xuất khẩu
-Export=Xuất dữ liệu
 ExportDraftJournal=Export draft journal
 Modelcsv=Mô hình xuất khẩu
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated

@@ -6,6 +6,7 @@ RemainingAmountPayment=Leistende Zahlung übrig:
 VATReceived=Eingehobene MwSt.
 VATToCollect=Einzuhebende MwSt.
 VATSummary=MwSt. Zahllast
+VATPaid=VAT paid
 VATCollected=Eingehobene MwSt.
 MenuSpecialExpenses=Steuern, Sozialbeiträge und Dividenden
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
@@ -21,3 +22,4 @@ SellsJournal=Vertrieb Journal
 PurchasesJournal=Käufe Journal
 DescSellsJournal=Vertrieb Journal
 DescPurchasesJournal=Käufe Journal
+LinkedOrder==> Bestellung

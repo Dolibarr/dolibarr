@@ -429,13 +429,13 @@ else
 
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("Product","", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
+			print_liste_field_titre("Label","", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
+            print_liste_field_titre("Units","", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre("AverageUnitPricePMPShort","", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("EstimatedStockValueShort","", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("SellPriceMin","", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("EstimatedStockValueSellShort","", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
 			if ($user->rights->stock->creer)            print_liste_field_titre('');
 			print "</tr>\n";

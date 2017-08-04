@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Fişă Factură
 PredefinedInvoices=Facturi Predefinite
 Invoice=Factură
+PdfInvoiceTitle=Factură
 Invoices=Facturi
 InvoiceLine=Linie Factură
 InvoiceCustomer=Factură Client

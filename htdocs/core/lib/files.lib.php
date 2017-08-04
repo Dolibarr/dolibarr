@@ -1349,14 +1349,15 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  *
  * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
+ * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index.
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
+ * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
  * @return	int                             <=0 if KO, >0 if OK
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='', $generatethumbs=1)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1407,16 +1408,19 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					// Generate thumbs.
-					if (image_format_supported($destfull) == 1)
+					if ($generatethumbs)
 					{
-					    // Create thumbs
-					    // We can't use $object->addThumbs here because there is no $object known
+						if (image_format_supported($destfull) == 1)
+						{
+						    // Create thumbs
+						    // We can't use $object->addThumbs here because there is no $object known
 
-					    // Used on logon for example
-					    $imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-					    // Create mini thumbs for image (Ratio is near 16/9)
-					    // Used on menu or for setup page for example
-					    $imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+						    // Used on logon for example
+						    $imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+						    // Create mini thumbs for image (Ratio is near 16/9)
+						    // Used on menu or for setup page for example
+						    $imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+						}
 					}
 
 					// Update session

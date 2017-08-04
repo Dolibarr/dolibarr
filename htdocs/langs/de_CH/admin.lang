@@ -24,7 +24,6 @@ MaxNbOfLinesForBoxes=Maximale Zeilenanzahl für Boxen
 MenusDesc=In der Menüverwaltung können Sie den Inhalt der beiden Menüleisten (Horizontal und Vertikal) festlegen
 MenusEditorDesc=Über den Menü-Editor können Sie Ihre Menüeinträge personalisieren. Gehen Sie dabei sorgfältig vor um die Stabilität des Systems zu gewährleisten und zu verhindern, dass einzelne Module gänzlich unerreichbar werden.<br>Einige Module erzeugen einen Menüeintrag (in den meisten Fällen im Menü <b>Alle</b>). Sollten Sie einen oder mehrere dieser Einträge unabsichtlich entfernt haben, können Sie diese durch das Deaktivieren und neuerliche Aktivieren des Moduls beheben.
 PurgeAreaDesc=Hier können Sie alle vom System erzeugten und gespeicherten Dateien löschen (temporäre Dateien oder alle Dateien im Verzeichnis <b>%s</b>). Diese Funktion ist richtet sich vorwiegend an Benutzer ohne Zugriff auf das Dateisystem des Webservers (z.B. Hostingpakete)
-PurgeDeleteLogFile=Löschen der Protokolldatei <b>%s</b> des Systemprotokollmoduls (kein Risiko des Datenverlusts)
 PurgeDeleteTemporaryFiles=Alle temporären Dateien löschen (kein Datenverlustrisiko)
 PurgeDeleteTemporaryFilesShort=Temporärdateien löschen
 PurgeDeleteAllFilesInDocumentsDir=Alle Datein im Verzeichnis <b>%s</b> löschen. Dies beinhaltet temporäre Dateien ebenso wie Datenbanksicherungen, Dokumente (Geschäftspartner, Rechnungen, ...) und alle Inhalte des ECM-Moduls.

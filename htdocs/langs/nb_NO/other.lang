@@ -17,6 +17,7 @@ TextPreviousMonthOfInvoice=Forrige måned (tekst) av fakturadato
 NextMonthOfInvoice=Følgende måned (nummer 1-12) på fakturadato
 TextNextMonthOfInvoice=Følgende måned (tekst) på fakturadato
 ZipFileGeneratedInto=Zip-fil generert til <b> %s</b>.
+DocFileGeneratedInto=Doc-fil generert til <b> %s</b>.
 
 YearOfInvoice=År av fakturadato
 PreviousYearOfInvoice=Forrige års fakturadato
@@ -172,7 +173,7 @@ NumberOfSupplierInvoices=Antall leverandørfakturaer
 NumberOfUnitsProposals=Antall enheter i tilbud
 NumberOfUnitsCustomerOrders=Antall enheter i kundeordre
 NumberOfUnitsCustomerInvoices=Antall enheter i kundefakturaer
-NumberOfUnitsSupplierProposals=Antall enheter på leverandørtilbud
+NumberOfUnitsSupplierProposals=Antall enheter i leverandørtilbud
 NumberOfUnitsSupplierOrders=Antall enheter på leverandørordre
 NumberOfUnitsSupplierInvoices=Antall enheter i leverandørfakturaer
 EMailTextInterventionAddedContact=En ny intervensjon %s er blitt tildelt deg.

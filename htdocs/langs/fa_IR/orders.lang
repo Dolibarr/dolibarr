@@ -4,6 +4,7 @@ SuppliersOrdersArea=منطقه سفارشات تولید کنندگان
 OrderCard=کارت منظور
 OrderId=سفارش کد سفارش
 Order=سفارش
+PdfOrderTitle=سفارش
 Orders=سفارشات
 OrderLine=خط منظور
 OrderDate=تاریخ سفارش

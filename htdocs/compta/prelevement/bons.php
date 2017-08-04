@@ -125,9 +125,9 @@ if ($result)
   print '</tr>';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
-  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
-  print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"","","",'align="center"');
+  print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
+  print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
+  print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"","","",'align="center"');
   print "</tr>\n";
 
   while ($i < min($num,$limit))

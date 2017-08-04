@@ -120,7 +120,7 @@ class Interfaces
 
                         if (! $qualified)
                         {
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
+                            //dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
                             continue;
                         }
 

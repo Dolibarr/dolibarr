@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=請求書カード
 PredefinedInvoices=事前に定義された請求書
 Invoice=請求書
+PdfInvoiceTitle=請求書
 Invoices=請求書
 InvoiceLine=請求書の行
 InvoiceCustomer=得意先請求書

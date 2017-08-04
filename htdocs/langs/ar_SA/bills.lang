@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=فاتورة بطاقة
 PredefinedInvoices=الفواتير مسبقا
 Invoice=فاتورة
+PdfInvoiceTitle=فاتورة
 Invoices=فواتير
 InvoiceLine=فاتورة الخط
 InvoiceCustomer=الزبون فاتورة

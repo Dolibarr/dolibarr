@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Visão geral da quantidade de linhas já vinculadas
 OtherInfo=Outra informação
 DeleteCptCategory=Remover conta contabilistica do grupo
 ConfirmDeleteCptCategory=Tem a certeza que deseja remover esta conta contabilística deste grupo?
-AlreadyInGeneralLedger=Already journalized in ledgers
+JournalizationInLedgerStatus=Status of journalization
+AlreadyInGeneralLedger=Já foi registado nos diários contabilísticos
+NotYetInGeneralLedger=Not yet journalized in ledgers
+
+MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
+MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
 AccountancyArea=Área de contabilidade
 AccountancyAreaDescIntro=O uso do módulo de contabilidade é feito em várias etapas:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=PASSO %s: Defina a conta contabilística para o
 AccountancyAreaDescSal=PASSO %s: Defina a conta contabilística para o pagamento de salários. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescContrib=PASSO %s: Defina a conta contabilística para despesas especiais (outros impostos). Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescDonation=PASSO %s: Defina a conta contabilística para donativos. Para tal pode usar a entrada do menu %s.
-AccountancyAreaDescMisc=PASSO %s: Defina a conta contabilística para transações diversas. Para tal pode usar a entrada %s do menu.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=PASSO %s: Defina a conta contabilística para empréstimos. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescBank=PASSO %s: Defina a conta contabilística para cada conta bancária e financeira. Para tal vá à ficha de cada conta bancária ou financeira. Comece na página %s.
 AccountancyAreaDescProd=PASSO %s: Defina a contas contabilística para os seus produtos. Para tal pode usar a entrada %s do menu.
@@ -79,11 +86,11 @@ SuppliersVentilation=Fornecedor de ligação factura
 ExpenseReportsVentilation=Vinculação do relatório de despesas
 CreateMvts=Criar nova transação
 UpdateMvts=Modificação de uma transação
-ValidTransaction=Validate transaction
+ValidTransaction=Validar transação
 WriteBookKeeping=Registar transações no Livro Razão
 Bookkeeping=Livro Razão
 AccountBalance=Saldo da conta
-
+ObjectsRef=Source object ref
 CAHTF=Total de compras em fornecedores sem impostos
 TotalExpenseReport=Relatório da despesa total
 InvoiceLines=Linhas de facturas a vincular
@@ -103,7 +110,7 @@ LineOfExpenseReport=Linha de relatório de despesas
 NoAccountSelected=Nenhuma conta contabilística selecionada
 VentilatedinAccount=Vinculado com sucesso a conta de contabilística
 NotVentilatedinAccount=Não vinculado à conta contabilística
-XLineSuccessfullyBinded=%s produtos/serviços vinculados com sucesso a uma conta contabilística
+XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s produtos/serviços não foram vinculados a uma conta contabilística
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos para vincular, mostrado por página (máximo recomendado: 50)
@@ -143,7 +150,7 @@ NumPiece=Número da peça
 TransactionNumShort=Núm. de transação
 AccountingCategory=Grupos de contas contabilísticas
 GroupByAccountAccounting=Agrupar por conta contabilística
-ByAccounts=By accounts
+ByAccounts=Por contas
 NotMatch=Não configurado
 DeleteMvt=Eliminar as linhas do Livro Razão
 DelYear=Ano a apagar
@@ -154,7 +161,7 @@ DelBookKeeping=Eliminar entrada do Livro Razão
 FinanceJournal=Diário financeiro
 ExpenseReportsJournal=Diário de relatórios de despesas
 DescFinanceJournal=Diário financeiro incluindo todos os tipos de pagamentos por conta bancária
-DescJournalOnlyBindedVisible=Esta é uma visão de registos que estão vinculados a um conta de contabilidade de  produtos/serviços e pode ser registada no Livro Razão.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Conta para efeitos de IVA não definido
 ThirdpartyAccountNotDefined=Conta para terceiros não definido
 ProductAccountNotDefined=Conta para o produto não definido
@@ -170,6 +177,8 @@ AddCompteFromBK=Adicionar contas contabilisticas ao grupo
 ReportThirdParty=Lista de contas de terceiros
 DescThirdPartyReport=Consulte aqui a lista de clientes e fornecedores e as suas contas contabilísticas
 ListAccounts=Lista de contas contabilísticas
+UnknownAccountForThirdparty=Unknown third party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Classe de conta
 Pcgsubtype=Sub-classe de conta
@@ -194,7 +203,7 @@ ValidateHistory=Vincular automaticamente
 AutomaticBindingDone=Vinculação automática efetuada
 
 ErrorAccountancyCodeIsAlreadyUse=Erro, não pode apagar esta conta contabilística porque está a ser utilizada
-MvtNotCorrectlyBalanced=O movimento não foi balanceado corretamente. Crédito = %s. Débito = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Cartão de vinculação
 GeneralLedgerIsWritten=As transações são escritas no Livro Razão
 GeneralLedgerSomeRecordWasNotRecorded=Algumas das transações não puderam ser gravadas. Se não existir outra mensagem de erro, então é provável que as transações já tenham sido gravadas.
@@ -210,20 +219,17 @@ AccountingJournals=Diários contabilisticos
 AccountingJournal=Diário contabilistico
 NewAccountingJournal=Novo diário contabilistico
 ShowAccoutingJournal=Mostrar diário contabilistico
-Code=Código
 Nature=Natureza
 AccountingJournalType1=Várias operações
 AccountingJournalType2=Vendas
 AccountingJournalType3=Compras
 AccountingJournalType4=Banco
-AccountingJournalType5=Expenses report
+AccountingJournalType5=Relatório de despesas
 AccountingJournalType9=Contém novo
 ErrorAccountingJournalIsAlreadyUse=Este diário já está a ser utilizado
 
 ## Export
-Exports=Exportados
-Export=Exportar
-ExportDraftJournal=Export draft journal
+ExportDraftJournal=Exportar o diário rascunho
 Modelcsv=Modelo de exportação
 OptionsDeactivatedForThisExportModel=Para este modelo de exportação, as opções estão desativadas
 Selectmodelcsv=Selecione um modelo de exportação

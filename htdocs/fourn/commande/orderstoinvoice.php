@@ -501,12 +501,12 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'), 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
-		print_liste_field_titre($langs->trans('RefSupplier'), 'orderstoinvoice.php', 'c.ref_supplier', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
-		print_liste_field_titre($langs->trans('OrderDate'), 'orderstoinvoice.php', 'c.date_commande', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre($langs->trans('DeliveryDate'), 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre($langs->trans('Status'), '', '', '', '', 'align="right"');
-		print_liste_field_titre($langs->trans('GenerateBill'), '', '', '', '', 'align="center"');
+		print_liste_field_titre('Ref', 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
+		print_liste_field_titre('RefSupplier', 'orderstoinvoice.php', 'c.ref_supplier', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
+		print_liste_field_titre('OrderDate', 'orderstoinvoice.php', 'c.date_commande', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre('DeliveryDate', 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre('Status', '', '', '', '', 'align="right"');
+		print_liste_field_titre('GenerateBill', '', '', '', '', 'align="center"');
 		print "</tr>\n";
 
 		// Lignes des champs de filtre

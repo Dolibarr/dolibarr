@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, nombre de trigger %s duplicado. Ya se encuentra car
 ErrorNoWarehouseDefined=Error, no hay definidos almacenes.
 ErrorBadLinkSourceSetButBadValueForRef=El enlace que utiliza no es válido. Hay definido un 'origen para el pago, pero el valor de 'ref' no es válido.
 ErrorTooManyErrorsProcessStopped=Demasiados errores. El proceso ha sido detenido
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.

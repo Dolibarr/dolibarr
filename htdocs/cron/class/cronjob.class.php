@@ -439,7 +439,6 @@ class Cronjob extends CommonObject
     		{
 	    		while ($i < $num)
 	    		{
-
 	    			$line = new Cronjobline();
 
 	    			$obj = $this->db->fetch_object($resql);
@@ -480,7 +479,6 @@ class Cronjob extends CommonObject
 	    			$this->lines[]=$line;
 
 	    			$i++;
-
 	    		}
     		}
     		$this->db->free($resql);
