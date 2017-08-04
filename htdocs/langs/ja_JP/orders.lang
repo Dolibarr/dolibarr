@@ -4,6 +4,7 @@ SuppliersOrdersArea=仕入先の受注エリア
 OrderCard=注文カード
 OrderId=Order Id
 Order=オーダー
+PdfOrderTitle=オーダー
 Orders=受注
 OrderLine=注文明細行
 OrderDate=注文日

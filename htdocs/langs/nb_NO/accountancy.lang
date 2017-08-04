@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Oversikt over antall linjer som allerede er bundet 
 OtherInfo=Annen informasjon
 DeleteCptCategory=Fjern regnskapskonto fra gruppe
 ConfirmDeleteCptCategory=Er du sikker på at du vil fjerne denne regnskapskontoen fra gruppen?
+JournalizationInLedgerStatus=Status for journalisering
 AlreadyInGeneralLedger=Allerede journalført i hovedbøker
+NotYetInGeneralLedger=Ikke ennå journalisert i ledgers
+
+MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
+MainAccountForSuppliersNotDefined=Hoved regnskapskonto for leverandører som ikke er definert i oppsettet
+MainAccountForUsersNotDefined=Hoved regnskapskonto for brukere som ikke er definert i oppsettet
+MainAccountForVatPaymentNotDefined=Hoved regnskapskonto for MVA-betaling ikke definert i oppsettet
 
 AccountancyArea=Område for regnskap
 AccountancyAreaDescIntro=Bruk av regnskapsmodulen er gjort i flere skritt:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=TRINN %s: Definer standard regnskapskontoer for
 AccountancyAreaDescSal=TRINN %s: Definer standard regnskapskonto for betaling av lønn. Bruk menyoppføring %s.
 AccountancyAreaDescContrib=TRINN %s: Definer standard regnskapskonto for spesialutgifter (diverse avgifter). Bruk menyoppføringen %s.
 AccountancyAreaDescDonation=TRINN %s: Definer standard regnskapskonto for donasjoner. Bruk menyoppføringen %s.
-AccountancyAreaDescMisc=TRINN %s: Definer standard regnskapskontoer for diverse transaksjoner. Bruk menyoppføringen %s.
+AccountancyAreaDescMisc=TRINN %s: Definer obligatorisk standardkonto og standard regnskapskontoer for diverse transaksjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescLoan=TRINN %s: Definer standard regnskapskonto for lån. Bruk menyoppføringen %s.
 AccountancyAreaDescBank=TRINN %s: Definer regnskapskontoer for hver bank- og finanskonto. Gå til kortet for hver finansiell konto for å gjøre dette. Du kan starte fra side %s.
 AccountancyAreaDescProd=TRINN %s: Definer regnskapskontoer for dine varer/tjenester. Bruk menyoppføringen %s.
@@ -79,11 +86,11 @@ SuppliersVentilation=Binding av leverandørfakturaer
 ExpenseReportsVentilation=Utgiftsrapport-binding
 CreateMvts=Opprett ny transaksjon
 UpdateMvts=Endre en transaksjon
-ValidTransaction=Validate transaction
+ValidTransaction=Valider transaksjonen
 WriteBookKeeping=Før transaksjoner inn i hovedboken
 Bookkeeping=Hovedbok
 AccountBalance=Kontobalanse
-
+ObjectsRef=Kildeobjekt ref
 CAHTF=Totalt leverandørkjøp eks. MVA
 TotalExpenseReport=Total utgiftsrapport
 InvoiceLines=Binding av fakturalinjer
@@ -154,7 +161,7 @@ DelBookKeeping=Slett post fra hovedboken
 FinanceJournal=Finansjournal
 ExpenseReportsJournal=Journal for utgiftsrapporter
 DescFinanceJournal=Finansjournal med alle typer betalinger etter bankkonto
-DescJournalOnlyBindedVisible=Dette er en oversikt over posten som er bundet til varer-/tjenester-regnskapskontoen og kan registreres i regnskapsboken.
+DescJournalOnlyBindedVisible=Dette er en oversikt over postene som er bundet til regnskapskonto og kan registreres i hovedboken.
 VATAccountNotDefined=MVA-konto er ikke definert
 ThirdpartyAccountNotDefined=Konto for tredjepart er ikke definert
 ProductAccountNotDefined=Konto for vare er ikke definert
@@ -170,6 +177,8 @@ AddCompteFromBK=Legg til regnskapskontoer til gruppen
 ReportThirdParty=List tredjepartskonto
 DescThirdPartyReport=Liste over kunder og leverandører og deres regnskapskontoer
 ListAccounts=Liste over regnskapskontoer
+UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
+UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
 
 Pcgtype=Kontoklasse
 Pcgsubtype=Subklasse av konto
@@ -194,7 +203,7 @@ ValidateHistory=Bind automatisk
 AutomaticBindingDone=Automatisk binding utført
 
 ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
-MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
+MvtNotCorrectlyBalanced=Bevegelsen er ikke riktig balansert. Kreditt = %s. Debet = %s
 FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjoner blir skrevet inn i hovedboken
 GeneralLedgerSomeRecordWasNotRecorded=Noen av transaksjonene kunne ikke sendes. Hvis det ikke er noen annen feilmelding, er dette trolig fordi de allerede var sendt.
@@ -210,7 +219,6 @@ AccountingJournals=Regnskapsjournaler
 AccountingJournal=Regnskapsjournal
 NewAccountingJournal=Ny regnskapsjourna
 ShowAccoutingJournal=Vis regnskapsjournal
-Code=Kode
 Nature=Natur
 AccountingJournalType1=Ulike operasjoner
 AccountingJournalType2=Salg
@@ -221,8 +229,6 @@ AccountingJournalType9=Har nye
 ErrorAccountingJournalIsAlreadyUse=Denne journalen er allerede i bruk
 
 ## Export
-Exports=Eksporter
-Export=Eksport
 ExportDraftJournal=Eksporter utkastjournal
 Modelcsv=Eksportmodell
 OptionsDeactivatedForThisExportModel=For denne eksportmodellen er opsjoner deaktivert

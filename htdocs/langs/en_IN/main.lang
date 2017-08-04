@@ -24,7 +24,3 @@ LinkToProposal=Link to quotation
 LinkToSupplierProposal=Link to supplier quotation
 SearchIntoCustomerProposals=Customer quotations
 SearchIntoSupplierProposals=Supplier quotations
-
-AmountVAT=Amount tax IGST
-AmountLT1=Amount tax CGST
-AmountLT2=Amount tax SGST

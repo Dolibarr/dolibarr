@@ -45,6 +45,7 @@ InvoiceHasAvoir=Era la font d'un o diversos abonaments
 CardBill=Fitxa factura
 PredefinedInvoices=Factura predefinida
 Invoice=Factura
+PdfInvoiceTitle=Factura
 Invoices=Factures
 InvoiceLine=Línia de factura
 InvoiceCustomer=Factura a client

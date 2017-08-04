@@ -2,14 +2,16 @@
 WorkflowSetup=Workflow Moduleinstellungen
 WorkflowDesc=Dieses Modul ermöglicht, das Verhalten von automatischen Aktionen in den Anwendungen zu verändern. Standardmäßig wird der Prozess offen sein (Sie können die Dinge in der gewünschten Reihenfolge tun). Sie können automatische Aktionen aktivieren, die Sie interessieren.
 ThereIsNoWorkflowToModify=Es sind keine Workflow-Änderungen möglich mit den aktivierten Modulen.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstelle einen Kundenauftrag automatisch, nachdem ein Angebot unterzeichnet wurde
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem das Angebot bestätigt wurde.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung,  nachdem ein Auftrag abgeschlossen wurde.
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kennzeichne verknüpftes Angebot als in Rechnung gestellt, wenn der Kundenauftrag als bezahlt markiert wird
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung als bezahlt markiert wird
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als verrechnet, wenn die Kundenrechnung bestätigt wird
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kennzeichne das verknüpfte Angebot als abgerechnet, wenn die Kundenrechnung erstellt wurde.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne verknüpfte Aufträge als geliefert, wenn die Lieferung verbucht wurde und die Liefermenge der Bestellmenge entspricht
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+# Autoclassify
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation

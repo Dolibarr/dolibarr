@@ -125,19 +125,25 @@ if ($result<0)
 	exit;
 }
 
+$qualifiedjobs = array();
+foreach($object->lines as $val)
+{
+	if (! verifCond($val->test)) continue;
+	$qualifiedjobs[] = $val;
+}
 
 // TODO Duplicate code. This sequence of code must be shared with code into cron_run_jobs.php script.
 
 // current date
 $now=dol_now();
-$nbofjobs=count($object->lines);
+$nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
 $nbofjobslaunchedko=0;
 
-if (is_array($object->lines) && (count($object->lines)>0))
+if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 {
 	// Loop over job
-	foreach($object->lines as $line)
+	foreach($qualifiedjobs as $line)
 	{
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id, LOG_WARNING);
 
@@ -150,16 +156,16 @@ if (is_array($object->lines) && (count($object->lines)>0))
 			$result=$cronjob->fetch($line->id);
 			if ($result<0)
 			{
-				echo "Error:".$cronjob->error."<br>\n";
-				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+				echo "Error cronjob->fetch: ".$cronjob->error."<br>\n";
+				dol_syslog("cron_run_jobs.php::fetch Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
 			// Execut job
 			$result=$cronjob->run_jobs($userlogin);
 			if ($result < 0)
 			{
-				echo "Error:".$cronjob->error."<br>\n";
-				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
+				echo "Error cronjob->run_job: ".$cronjob->error."<br>\n";
+				dol_syslog("cron_run_jobs.php::run_jobs Error".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
 			}
 			else
@@ -171,8 +177,8 @@ if (is_array($object->lines) && (count($object->lines)>0))
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0)
 			{
-				echo "Error:".$cronjob->error."<br>\n";
-				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
+				echo "Error cronjob->reprogram_job: ".$cronjob->error."<br>\n";
+				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
 

@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Faktura kortet
 PredefinedInvoices=Foruddefinerede Fakturaer
 Invoice=Faktura
+PdfInvoiceTitle=Faktura
 Invoices=Fakturaer
 InvoiceLine=Faktura linje
 InvoiceCustomer=Kunden faktura

@@ -353,7 +353,7 @@ if ($num > 0)
 	{
 		$obj = $db->fetch_object($result);
 
-
+		if (empty($obj)) break;
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
 
 		// title profil

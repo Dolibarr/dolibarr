@@ -4,6 +4,7 @@ SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
 OrderId=Order Id
 Order=Narudžba
+PdfOrderTitle=Narudžba
 Orders=Narudžbe
 OrderLine=Order line
 OrderDate=Datum narudžbe

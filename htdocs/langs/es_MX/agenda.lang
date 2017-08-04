@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 ActionsOwnedBy=Evento propiedad de
+AffectedTo=Asignado a
 Event=Evento
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento de todo el día(s)
@@ -35,9 +36,13 @@ SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por correo electróni
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
 InterventionSentByEMail=Intervención %s enviada por correo electrónico
+PRODUCT_CREATEInDolibarr=Producto %s creado
+PRODUCT_MODIFYInDolibarr=Producto %s modificado
+PRODUCT_DELETEInDolibarr=Producto %s eliminado
 DateActionEnd=Fecha de finalización
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<B> logina =!%s </b> para restringir la salida a acciones que no pertenecen al usuario <b> %s </b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir la salida a acciones asociadas al proyecto <b>PROJECT_ID</b>.
 ExportDataset_event1=Lista de eventos de la agenda

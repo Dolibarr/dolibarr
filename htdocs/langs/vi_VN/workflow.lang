@@ -2,14 +2,16 @@
 WorkflowSetup=Thiết lập mô-đun quy trình
 WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
 ThereIsNoWorkflowToModify=Chưa có sử đổi quy trình nào với những mô đun đang hoạt động
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tự động tạo đơn đặt hàng cho khách hàng sau một đề xuất thương mại được ký
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tạo hóa đơn khách hàng tự động sau 1 đề xuất thương mại được ký kết
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tạo một khóa đơn khách hàng tự động sau khi hợp đồng được thông qua
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Tự động tạo 1 hóa đơn khách hàng sau khi đơn đặt hàng được đóng
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Phân loại đề xuất nguồn liên quan đến hóa đơn khi đơn đặt hàng được thiết lập để trả
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Phân loại đơn đặt hàng nguồn liên kết (s) để tính tiền khi hóa đơn khách hàng được thiết lập để trả
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Phân loại theo thứ tự liên kết nguồn khách hàng (s) để tính tiền khi hóa đơn của khách hàng được xác nhận
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+# Autoclassify
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 AutomaticCreation=Tạo tự động
 AutomaticClassification=Phân loại tự động

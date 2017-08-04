@@ -45,6 +45,7 @@ InvoiceHasAvoir=Cette facture a déjà fait l'objet d'un ou plusieurs avoirs.
 CardBill=Fiche facture
 PredefinedInvoices=Facture modèles
 Invoice=Facture
+PdfInvoiceTitle=Facture
 Invoices=Factures
 InvoiceLine=Ligne de facture
 InvoiceCustomer=Facture client
