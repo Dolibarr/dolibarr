@@ -492,12 +492,10 @@ foreach ($accounts as $key=>$type)
     // Account number
     if (! empty($arrayfields['b.account_number']['checked']))
     {
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-
 		$accountingaccount = new AccountingAccount($db);
 		$accountingaccount->fetch('',$acc->account_number);
 
-		print '<td>'.length_accountg($accountingaccount->getNomUrl(0,1,1,'',1)).'</td>';
+		print '<td>'.$accountingaccount->getNomUrl(0,1,1,'',1).'</td>';
 
 	    if (! $i) $totalarray['nbfield']++;
     }
