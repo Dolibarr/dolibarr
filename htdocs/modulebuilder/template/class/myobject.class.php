@@ -443,8 +443,12 @@ class MyObject extends CommonObject
 	{
 		global $conf, $langs;
 
+		$this->output = '';
+		$this->error='';
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		// ...
 
 		return 0;
 	}
