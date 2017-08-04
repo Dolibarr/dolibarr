@@ -174,7 +174,9 @@ if ($action == 'add')
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	(GETPOST('list', 'alpha')?1:0),
 					(GETPOST('ishidden', 'alpha')?1:0),
-                    GETPOST('computed_value','alpha')
+                    GETPOST('computed_value','alpha'),
+                	(GETPOST('entitycurrentorall', 'alpha')?0:'')
+                		
                 );
     			if ($result > 0)
     			{
