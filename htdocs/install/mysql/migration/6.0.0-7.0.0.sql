@@ -183,3 +183,8 @@ ALTER TABLE llx_expensereport_det ADD COLUMN fk_c_exp_tax_cat integer;
 
 ALTER TABLE llx_user ADD COLUMN default_range integer;
 ALTER TABLE llx_user ADD COLUMN default_c_exp_tax_cat integer;
+
+ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
+ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
+ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;

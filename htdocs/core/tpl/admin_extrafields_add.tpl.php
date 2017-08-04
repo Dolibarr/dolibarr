@@ -173,6 +173,9 @@
 <?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
 <tr class="extra_ishidden"><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo (GETPOST('ishidden') ?' checked' : ''); ?>></td></tr>
 <?php } ?>
+<?php if ($conf->multicompany->enabled) { ?>
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (GETPOST('entitycurrentorall') ? '':' checked'); ?>></td></tr>
+<?php } ?>
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
 <!-- By default visible into list -->
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
