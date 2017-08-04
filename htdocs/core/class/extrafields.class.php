@@ -721,6 +721,8 @@ class ExtraFields
 					{
 						$array_name_label[$tab->name]=$tab->label;
 					}
+					
+					
 
 					// Old usage
 					$this->attribute_type[$tab->name]=$tab->type;
@@ -737,7 +739,9 @@ class ExtraFields
 					$this->attribute_perms[$tab->name]=$tab->perms;
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_hidden[$tab->name]=$tab->ishidden;
-					$this->attribute_entity[$tab->name]=$tab->entity;
+					$this->attribute_entityid[$tab->name]=$tab->entity;
+					
+					
 
 					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
@@ -754,7 +758,29 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
 					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
-					$this->attributes[$tab->elementtype]['entity'][$tab->name]=$tab->entity;
+					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
+					
+					
+					if (!empty($conf->multicompany->enabled)) {
+						$sql_entity_name='SELECT label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid='.$tab->entity;
+						$resql_entity_name=$this->db->query($sql_entity_name);
+						if ($resql_entity_name)
+						{
+							if ($this->db->num_rows($resql_entity_name))
+							{
+								if ($obj = $this->db->fetch_object($resql_entity_name))
+								{
+									$this->attribute_entitylabel[$tab->name]=$obj->label;
+									$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=$obj->label;
+								}
+							}
+						}
+					}
+					else
+					{
+						$this->error=$this->db->lasterror();
+						dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
+					}
 				}
 			}
 			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;
