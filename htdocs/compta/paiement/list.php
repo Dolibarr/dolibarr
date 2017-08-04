@@ -334,7 +334,7 @@ if ($resql)
             
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($objp->accountancy_journal);
-				$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+				$accountstatic->accountancy_journal = $accountingjournal->code;
 
 	            print $accountstatic->getNomUrl(1);
 	        }
