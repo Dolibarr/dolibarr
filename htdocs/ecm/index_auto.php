@@ -50,10 +50,11 @@ $result = restrictedArea($user, 'ecm', 0);
 // Get parameters
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','aZ09');
-$section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
-$module=GETPOST("module");
+$section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
+$module=GETPOST('module','alpha');
 if (! $section) $section=0;
-$section_dir=GETPOST('section_dir');
+$section_dir=GETPOST('section_dir','alpha');
+$search_doc_ref=GETPOST('search_doc_ref','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -87,6 +88,12 @@ $error=0;
 /*
  *	Actions
  */
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+{
+	$search_doc_ref='';
+}
 
 // Upload file
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))

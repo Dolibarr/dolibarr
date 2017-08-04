@@ -922,9 +922,10 @@ class FormFile
      *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
      *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
      *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
+     *  @param	 int	$addfilterfields	Add line with filters
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1)
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc,$bcdd;
@@ -1005,6 +1006,18 @@ class FormFile
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
+
+			if (! empty($addfilterfields))
+			{
+				print '<tr class="liste_titre nodrag nodrop">';
+				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref','alpha')).'"></td>';
+				print '<td></td>';
+				print '<td></td>';
+				if (empty($useinecm)) print '<td></td>';
+				print '<td></td>';
+				if (! $disablemove) print '<td></td>';
+				print "</tr>\n";
+			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
 			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
@@ -1291,21 +1304,47 @@ class FormFile
      *  @param  int		$useinecm           Change output for use in ecm module
      *  @param  int		$textifempty        Text to show if filearray is empty
      *  @param  int		$maxlength          Maximum length of file name shown
-     *  @param	string $url				Full url to use for click links ('' = autodetect)
+     *  @param	string 	$url				Full url to use for click links ('' = autodetect)
+     *  @param	int		$addfilterfields	Add line with filters
      *  @return int                 		<0 if KO, nb of files shown if OK
      */
-    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='')
+    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='',$addfilterfields=0)
     {
-        global $user, $conf, $langs;
+        global $user, $conf, $langs, $form;
         global $bc;
         global $sortfield, $sortorder;
+		global $search_doc_ref;
 
         dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
+
+        if (! empty($addfilterfields))
+        {
+        	print '<form action="'.$_SERVER['PHP_SELF'].'">';
+        	print '<input type="hidden" name="module" value="'.$modulepart.'">';
+        }
+
+		print '<div class="div-table-responsive-no-min">';
         print '<table width="100%" class="noborder">'."\n";
+
+        if (! empty($addfilterfields))
+        {
+        	print '<tr class="liste_titre nodrag nodrop">';
+        	print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+        	print '<td></td>';
+        	print '<td></td>';
+        	print '<td></td>';
+			// Action column
+			print '<td class="liste_titre" align="middle">';
+			$searchpicto=$form->showFilterButtons();
+			print $searchpicto;
+			print '</td>';
+        	print "</tr>\n";
+        }
+
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';
@@ -1490,12 +1529,15 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[false].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="5">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
         }
         print "</table>";
+        print '</div>';
+
+        if (! empty($addfilterfields)) print '</form>';
         // Fin de zone
     }
 
