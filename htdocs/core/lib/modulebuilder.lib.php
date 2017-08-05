@@ -144,6 +144,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
     if (empty($objectname)) return -1;
     if (empty($readdir)) $readdir=$destdir;
 
+    $pathoffiletoclasssrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
+
     // Edit .sql file
     $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($objectname).'.sql';
     $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
@@ -156,7 +158,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
 
     try
     {
-    	include_once $pathoffiletoeditsrc;
+    	include_once $pathoffiletoclasssrc;
         if (class_exists($objectname)) $object=new $objectname($db);
         else return -1;
     }
@@ -168,7 +170,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
     // Backup old file
     dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-    $contentsql = file_get_contents(dol_os_encode($pathoffiletoeditsrc), 'r');
+    $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
     $i=0;
     $texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -197,7 +199,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
     $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql';
     $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
 
-    $contentsql = file_get_contents(dol_os_encode($pathoffiletoeditsrc), 'r');
+    $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
     $i=0;
     $texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";

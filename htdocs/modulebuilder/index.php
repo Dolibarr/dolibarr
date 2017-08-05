@@ -132,7 +132,6 @@ if ($dirins && $action == 'initmodule' && $modulename)
         dol_delete_file($destdir.'/img/object_myobject.png');
         dol_delete_file($destdir.'/class/myobject.class.php');
         dol_delete_file($destdir.'/class/api_myobject.class.php');
-        dol_delete_file($destdir.'/class/MyObject.txt');
     }
 
     // Edit PHP files
@@ -215,8 +214,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
         	'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
             'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
             'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-            'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
-            'class/MyObject.txt'=>'class/'.$objectname.'.txt'
+            'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
         );
 
         foreach($filetogenerate as $srcfile => $destfile)
@@ -418,8 +416,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
         	'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
             'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
             'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-            'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php',
-            'class/MyObject.txt'=>'class/'.$objectname.'.txt'
+            'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
         );
 
         $resultko = 0;
