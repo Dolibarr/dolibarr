@@ -328,15 +328,25 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 {
     $objectname = $tabobj;
 
+    $srcdir = $dirread.'/'.strtolower($module);
     $destdir = $dirins.'/'.strtolower($module);
+    dol_mkdir($destdir);
 
     // TODO Complete list of fields with new one
 
     // Edit the class file to write properties
-    rebuildObjectClass($destdir, $module, $objectname, $newmask);
+    $result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir);
+	if ($result <= 0)
+	{
+		$error++;
+	}
 
     // Edit sql with new properties
-    rebuildObjectSql($destdir, $module, $objectname, $newmask);
+    rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
+	if ($result <= 0)
+	{
+		$error++;
+	}
 
     if (! $error)
     {
