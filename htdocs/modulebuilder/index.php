@@ -813,7 +813,7 @@ $h++;
 
 foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
 {
-    $head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulewithcase;
+    $head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulewithcase.($forceddirread?'@'.$dirread:'');
     $head[$h][1] = $tmpmodulewithcase;
     $head[$h][2] = $tmpmodulewithcase;
     $h++;
@@ -958,15 +958,15 @@ elseif (! empty($module))
             	print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
 
             	print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
-                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                 print '<br>';
 
                 print '<span class="fa fa-file"></span> '.$langs->trans("ReadmeFile").' : <strong>'.$pathtofilereadme.'</strong>';
-                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=markdown&file='.urlencode($pathtofilereadme).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=markdown&file='.urlencode($pathtofilereadme).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                 print '<br>';
 
                 print '<span class="fa fa-file"></span> '.$langs->trans("ChangeLog").' : <strong>'.$pathtochangelog.'</strong>';
-                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=markdown&file='.urlencode($pathtochangelog).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=markdown&file='.urlencode($pathtochangelog).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                 print '<br>';
 
                 print '<br>';
@@ -974,84 +974,90 @@ elseif (! empty($module))
 
             	print_fiche_titre($langs->trans("DescriptorFile"));
 
-                print '<div class="underbanner clearboth"></div>';
-            	print '<div class="fichecenter">';
+	            if (! empty($moduleobj))
+	            {
+	            	print '<div class="underbanner clearboth"></div>';
+	            	print '<div class="fichecenter">';
 
-            	print '<table class="border centpercent">';
-            	print '<tr class="liste_titre"><td class="titlefield">';
-            	print $langs->trans("Parameter");
-            	print '</td><td>';
-            	print $langs->trans("Value");
-            	print '</td></tr>';
+	            	print '<table class="border centpercent">';
+	            	print '<tr class="liste_titre"><td class="titlefield">';
+	            	print $langs->trans("Parameter");
+	            	print '</td><td>';
+	            	print $langs->trans("Value");
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("Numero");
-            	print ' (<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeHere").'</a>)';
-            	print '</td><td>';
-            	print $moduleobj->numero;
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("Numero");
+	            	print ' (<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeHere").'</a>)';
+	            	print '</td><td>';
+	            	print $moduleobj->numero;
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("Name");
-            	print '</td><td>';
-            	print $moduleobj->getName();
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("Name");
+	            	print '</td><td>';
+	            	print $moduleobj->getName();
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("Version");
-            	print '</td><td>';
-            	print $moduleobj->getVersion();
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("Version");
+	            	print '</td><td>';
+	            	print $moduleobj->getVersion();
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("Family");
-            	//print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
-            	print '</td><td>';
-            	print $moduleobj->family;
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("Family");
+	            	//print "<br>'crm','financial','hr','projects','products','ecm','technic','interface','other'";
+	            	print '</td><td>';
+	            	print $moduleobj->family;
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("EditorName");
-            	print '</td><td>';
-            	print $moduleobj->editor_name;
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("EditorName");
+	            	print '</td><td>';
+	            	print $moduleobj->editor_name;
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("EditorUrl");
-            	print '</td><td>';
-            	print $moduleobj->editor_url;
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("EditorUrl");
+	            	print '</td><td>';
+	            	print $moduleobj->editor_url;
+	            	print '</td></tr>';
 
-            	print '<tr><td>';
-            	print $langs->trans("Description");
-            	print '</td><td>';
-            	print $moduleobj->getDesc();
-            	print '</td></tr>';
+	            	print '<tr><td>';
+	            	print $langs->trans("Description");
+	            	print '</td><td>';
+	            	print $moduleobj->getDesc();
+	            	print '</td></tr>';
 
-            	print '</table>';
+	            	print '</table>';
 
+	            	print '<br><br>';
 
-            	print '<br><br>';
+					// Readme file
+	            	print_fiche_titre($langs->trans("ReadmeFile"));
 
-				// Readme file
-            	print_fiche_titre($langs->trans("ReadmeFile"));
+	            	print '<div class="underbanner clearboth"></div>';
+	            	print '<div class="fichecenter">';
 
-            	print '<div class="underbanner clearboth"></div>';
-            	print '<div class="fichecenter">';
+	            	print $moduleobj->getDescLong();
 
-            	print $moduleobj->getDescLong();
+	            	print '<br><br>';
 
-            	print '<br><br>';
+	            	// ChangeLog
+	            	print_fiche_titre($langs->trans("ChangeLog"));
 
-            	// ChangeLog
-            	print_fiche_titre($langs->trans("ChangeLog"));
+	            	print '<div class="underbanner clearboth"></div>';
+	            	print '<div class="fichecenter">';
 
-            	print '<div class="underbanner clearboth"></div>';
-            	print '<div class="fichecenter">';
+	            	print $moduleobj->getChangeLog();
 
-            	print $moduleobj->getChangeLog();
-
-            	print '</div>';
+	            	print '</div>';
+            	}
+            	else
+            	{
+            		print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
+            	}
 
             	dol_fiche_end();
             }
@@ -1291,7 +1297,7 @@ elseif (! empty($module))
                         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                         print '<input type="hidden" name="action" value="addproperty">';
                         print '<input type="hidden" name="tab" value="objects">';
-                        print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+                        print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread?'@'.$dirread:'')).'">';
                         print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
                         print '<table class="noborder">';
