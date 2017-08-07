@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
@@ -32,15 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("bills");
 $langs->load("compta");
 
 // Security check
-$facid =GETPOST('facid','int');
-$socid =GETPOST('socid','int');
-$userid=GETPOST('userid','int');
+$facid	= GETPOST('facid','int');
+$socid	= GETPOST('socid','int');
+$userid	= GETPOST('userid','int');
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
@@ -334,7 +334,7 @@ if ($resql)
 
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($objp->accountancy_journal);
-				$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+				$accountstatic->accountancy_journal = $accountingjournal->code;
 
 	            print $accountstatic->getNomUrl(1);
 	        }

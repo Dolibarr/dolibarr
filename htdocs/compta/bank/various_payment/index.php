@@ -28,9 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("compta","banks","bills","accountancy"));
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -43,7 +41,8 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');
-$search_amount = GETPOST('search_amount','alpha');
+$search_amount_deb = GETPOST('search_amount_deb','alpha');
+$search_amount_cred = GETPOST('search_amount_cred','alpha');
 $search_account = GETPOST('search_account','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -77,7 +76,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
 	$search_ref="";
 	$search_label="";
-	$search_amount="";
+	$search_amount_deb="";
+	$search_amount_cred="";
 	$search_account='';
 	$typeid="";
 }
@@ -104,7 +104,8 @@ $sql.= " WHERE v.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql.=" AND v.rowid=".$search_ref;
 if ($search_label) 	$sql.=natural_search(array('v.label'), $search_label);
-if ($search_amount) $sql.=natural_search("v.amount", $search_amount, 1);
+if ($search_amount_deb) $sql.=natural_search("v.amount", $search_amount_deb, 1);
+if ($search_amount_cred) $sql.=natural_search("v.amount", $search_amount_cred, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
 	$filtre=str_replace(":","=",$filtre);
@@ -158,8 +159,8 @@ if ($result)
 	print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
 	if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("AccountAccounting",$_SERVER["PHP_SELF"],"v.accountancy_code","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("Sens",$_SERVER["PHP_SELF"],"v.sens","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Debit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Credit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -192,11 +193,11 @@ if ($result)
 	// Accounting account
 	if (! empty($conf->accounting->enabled)) print '<td class="liste_titre">&nbsp;</td>';
 
-	// Amount
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+	// Debit
+	print '<td class="liste_titre" align="right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
 
-	// Sens
-	print '<td class="liste_titre">&nbsp;</td>';
+	// Credit
+	print '<td class="liste_titre" align="right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
 
 	print '<td class="liste_titre" align="right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -205,6 +206,7 @@ if ($result)
 
 	print "</tr>\n";
 
+	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
@@ -241,7 +243,7 @@ if ($result)
 
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($obj->accountancy_journal);
-					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+					$accountstatic->accountancy_journal = $accountingjournal->code;
 				}
 
 				$accountstatic->label=$obj->blabel;
@@ -259,16 +261,25 @@ if ($result)
 			print '<td>'.$accountingaccount->getNomUrl(0,1,1,'',1).'</td>';
 		}
 
-		// Amount
-		print "<td align=\"right\">".price($obj->amount)."</td>";
+		// Debit
+		print "<td align=\"right\">";
+		if ($obj->sens == 0)
+		{
+			print price($obj->amount);
+			$totalarray['totaldeb'] += $obj->amount;
+		}
+		print "</td>";
 
-		// Sens
-		if ($obj->sens == '1') $sens = $langs->trans("Credit"); else $sens = $langs->trans("Debit");
-		print "<td align=\"right\">".$sens."</td>";
+		// Credit
+		print "<td align=\"right\">";
+		if ($obj->sens == 1)
+		{
+			print price($obj->amount);
+			$totalarray['totalcred'] += $obj->amount;
+		}
+		print "</td>";
+
 		print "<td></td>";
-		print "</tr>\n";
-
-		$total = $total + $obj->amount;
 
 		$i++;
 	}
@@ -277,7 +288,8 @@ if ($result)
 	if (! empty($conf->banque->enabled)) $colspan++;
 	print '<tr class="liste_total">';
 	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td class="liste_total" align="right">'.price($total)."</td>";
+	print '<td class="liste_total" align="right">'.price($totalarray['totaldeb'])."</td>";
+	print '<td class="liste_total" align="right">'.price($totalarray['totalcred'])."</td>";
 	print '<td></td>';
 	print '<td></td>';
 	print '</tr>';
