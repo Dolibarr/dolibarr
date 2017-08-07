@@ -58,6 +58,9 @@ if( ! $user->rights->resource->read)
 	accessforbidden();
 
 $object = new Dolresource($db);
+$objectFetchRes = $object->fetch($id);
+if ( !$objectFetchRes> 0 ) dol_print_error();
+
 
 $extrafields = new ExtraFields($db);
 
@@ -162,7 +165,7 @@ llxHeader('',$pagetitle,'');
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ( $object->fetch($id) > 0 )
+if ( $objectFetchRes > 0 )
 {
 	$head=resource_prepare_head($object);
 
