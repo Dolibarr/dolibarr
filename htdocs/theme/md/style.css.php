@@ -54,7 +54,7 @@ else header('Cache-Control: no-cache');
 // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
 if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on URL
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
@@ -520,7 +520,7 @@ div.divsearchfield {
 	margin-<?php print $left; ?>: 2px;
 	margin-top: 4px;
     margin-bottom: 4px;
-  	padding-left: 2px;	
+  	padding-left: 2px;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -545,8 +545,8 @@ div.myavailability {
 }
 .checkallactions {
 	vertical-align: top;
-    margin-top: 6px;	
-    margin-left: 4px;	
+    margin-top: 6px;
+    margin-left: 4px;
 }
 .selectlimit {
 	margin-right: 10px !important;
@@ -713,7 +713,7 @@ td.showDragHandle {
 <?php if (GETPOST("optioncss") != 'print') { ?>
 	padding-left: 229px;
 	padding-top: 12px;
-<?php } ?>	
+<?php } ?>
 }
 
 .side-nav {
@@ -919,7 +919,7 @@ table.noborder tr.liste_titre td {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	width: 44px; 
+	width: 44px;
 }
 div.attacharea {
 	padding-top: 10px;
@@ -934,7 +934,7 @@ div.arearef {
 	margin-bottom: 10px;
 }
 div.heightref {
-	min-height: 74px; 
+	min-height: 74px;
 }
 div.divphotoref {
 	padding-right: 20px;
@@ -1131,7 +1131,7 @@ div.tmenucenter
 div.menu_titre {
 	padding-bottom: 2px;
 	overflow: hidden;
-    text-overflow: ellipsis;	
+    text-overflow: ellipsis;
 }
 .mainmenuaspan
 {
@@ -1493,8 +1493,8 @@ div.vmenu, td.vmenu {
 	width: 202px;
 }
 
-.menu_contenu { 
-	padding-top: 4px; 
+.menu_contenu {
+	padding-top: 4px;
 	padding-bottom: 3px;
 	overflow: hidden;
     text-overflow: ellipsis;
@@ -2005,8 +2005,8 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { 
-	margin-bottom: 1.4em; 
+div.divButAction {
+	margin-bottom: 1.4em;
 	vertical-align: top;
 }
 
@@ -2072,16 +2072,16 @@ span.butAction, span.butActionDelete {
     text-shadow: none;
     border-color: #555;
     cursor: not-allowed;
-    
+
     background-color: #f5f5f5;
     background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
     background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
     background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
     background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-    background-repeat: repeat-x    
+    background-repeat: repeat-x
 }
-   
+
 .butActionDelete, .buttonDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2231,7 +2231,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
-	
+
 	margin: 0px 0px 8px 0px;
     /*
 	-moz-box-shadow: 2px 2px 4px #CCC;
@@ -2239,7 +2239,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	box-shadow: 2px 2px 4px #CCC;
     */
 	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
-	
+
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -2495,7 +2495,7 @@ div.pagination li.paginationafterarrows {
 	margin-bottom: 1px;
 	color: #202020;
 	min-height: 18px; /* seems to not be used */
-	
+
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
@@ -2562,7 +2562,7 @@ div.liste_titre_bydiv {
 	border-top-width: <?php echo $borderwith; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
-    
+
 	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
@@ -2589,7 +2589,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
-	
+
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
     border-bottom: 1px solid #FDFFFF;
@@ -2745,7 +2745,7 @@ span.dashboardlineko {
 
 tr.box_titre {
     height: 26px !important;
-    
+
     /* TO MATCH BOOTSTRAP */
 	/*background: #ddd;
 	color: #000 !important; */
@@ -2760,7 +2760,7 @@ tr.box_titre {
 	<?php } else { ?>
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
-	
+
     background-repeat: repeat-x;
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>, sans-serif;
@@ -3184,7 +3184,7 @@ td.hidden {
 	border-bottom: 1px solid #888;
 	background: #eee;
 }
-.websitebar .button, .websitebar .buttonDelete 
+.websitebar .button, .websitebar .buttonDelete
 {
 	padding: 2px 4px 2px 4px !important;
 	margin: 2px 4px 2px 4px  !important;
@@ -3193,7 +3193,7 @@ td.hidden {
 .websiteselection {
 	display: inline-block;
 	padding-left: 10px;
-	vertical-align: middle; 
+	vertical-align: middle;
 	line-height: 29px;
 }
 .websitetools {
@@ -4297,7 +4297,7 @@ img.demothumb {
 @media only screen and (max-width: 767px)
 {
 	.imgopensurveywizard { width:95%; height: auto; }
-	
+
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
@@ -4375,7 +4375,7 @@ img.demothumb {
 	div.mainmenu {
     	min-width: 20px;
     }
-    
+
 	#tooltip {
 		position: absolute;
 		width: <?php print dol_size(300,'width'); ?>px;

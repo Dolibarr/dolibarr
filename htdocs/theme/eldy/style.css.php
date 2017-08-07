@@ -53,7 +53,7 @@ else header('Cache-Control: no-cache');
 // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang', 'alpha'));	// If language was forced on URL
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
 if (GETPOST('theme')) $conf->theme=GETPOST('theme', 'alpha');  // If theme was forced on URL
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
@@ -1101,7 +1101,7 @@ div.menu_titre {
 	padding-top: 4px;
 	padding-bottom: 4px;
 	overflow: hidden;
-    text-overflow: ellipsis;	
+    text-overflow: ellipsis;
 }
 .mainmenuaspan
 {
@@ -1488,7 +1488,7 @@ a.vsmenu.addbookmarkpicto {
 {
 /*	border-bottom: 1px solid #BBB; */
 }
-div.blockvmenusearchphone 
+div.blockvmenusearchphone
 {
 	border-bottom: none !important;
 }
@@ -2681,7 +2681,7 @@ div.liste_titre_bydiv {
 	border-top-width: <?php echo $borderwith ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
-    
+
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
@@ -3288,7 +3288,7 @@ td.hidden {
 	border-bottom: 1px solid #888;
 	background: #eee;
 }
-.websitebar .button, .websitebar .buttonDelete 
+.websitebar .button, .websitebar .buttonDelete
 {
 	padding: 2px 5px 3px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
@@ -3297,7 +3297,7 @@ td.hidden {
 .websiteselection {
 	display: inline-block;
 	padding-left: 10px;
-	vertical-align: middle; 
+	vertical-align: middle;
 	line-height: 29px;
 }
 .websitetools {

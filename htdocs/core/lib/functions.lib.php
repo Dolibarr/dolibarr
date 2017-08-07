@@ -191,7 +191,7 @@ function getBrowserInfo($user_agent)
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))    { $name='opera';     $version=$reg[2]; }
 	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
 	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) { $name='lynxlinks'; $version=$reg[4]; }
-	
+
 	if ($tablet) {
 		$layout = 'tablet';
 	} elseif ($phone) {
@@ -250,6 +250,9 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	        case 'int':
 	            if (! is_numeric($out)) { $out=''; }
 	            break;
+	        case 'intcomma':
+	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
+	            break;
 	        case 'alpha':
 	            $out=trim($out);
 	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
@@ -266,7 +269,7 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            break;
 	        case 'aZ09':
 	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9]+/i',$out)) $out='';
+	            if (preg_match('/[^a-z0-9_\-]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
@@ -287,13 +290,13 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
  *  This prefix is unique for instance and avoid conflict between multi-instances,
  *  even when having two instances with one root dir or two instances in virtual servers
  *
- *  @param  string  $mode       '' or 'email'              
+ *  @param  string  $mode       '' or 'email'
  *  @return	string      		A calculated prefix
  */
 function dol_getprefix($mode='')
 {
     global $conf;
-    
+
     // If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
     if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
     {
@@ -375,15 +378,15 @@ function dol_buildpath($path, $type=0)
 		if ($type == 1) $res = DOL_URL_ROOT.'/'.$path;			// Standard value
 		if ($type == 2) $res = DOL_MAIN_URL_ROOT.'/'.$path;		// Standard value
 		if ($type == 3) $res = DOL_URL_ROOT.'/'.$path;
-		
+
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			if ($key == 'main') 
+			if ($key == 'main')
 			{
 			    if ($type == 3)
 			    {
 			        global $dolibarr_main_url_root;
-			        	
+
 			        // Define $urlwithroot
 			        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 			        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -410,12 +413,12 @@ function dol_buildpath($path, $type=0)
 					if ($type == 3)
 					{
 					    global $dolibarr_main_url_root;
-					    
+
 					    // Define $urlwithroot
 					    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 					    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 					    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-					    					
+
 					    $res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).$conf->file->dol_url_root[$key].'/'.$path;     // Test on start with http is for old conf syntax
 					}
 					break;
@@ -954,7 +957,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    $maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
 		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
-        else 
+        else
         {
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
 				$nophoto='';
@@ -964,17 +967,17 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
-            
+
         }
 	}
-	else 
+	else
 	{
         if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
-	} 
+	}
 	elseif ($object->element == 'product')
 	{
 	    //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
@@ -996,7 +999,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
-	if ($object->element != 'product') 
+	if ($object->element != 'product')
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -1181,9 +1184,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','dayhour')))?1:0;
 	$formatwithoutreduce = preg_replace('/reduceformat/','',$format);
 	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat=1; }  // so format 'dayreduceformat' is processed like day
-    
+
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
-	// TODO Add format daysmallyear and dayhoursmallyear 
+	// TODO Add format daysmallyear and dayhoursmallyear
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
 	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
 	else if ($format == 'hourduration')	$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
@@ -1954,7 +1957,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 	    print '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
 	    return;
 	}
-	
+
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
@@ -2123,7 +2126,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	global $conf;
 
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
-	
+
 	if (empty($stringencoding)) $stringencoding='UTF-8';
 	// reduce for small screen
 	if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
@@ -3073,7 +3076,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	string	    $options         	parametres complementaires lien ('' par defaut)
  *	@param	string    	$sortfield       	champ de tri ('' par defaut)
  *	@param	string	    $sortorder       	ordre de tri ('' par defaut)
- *	@param	string	    $center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	string	    $center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction()
  *	@param	int		    $num				number of records found by select with limit+1
  *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to no show number.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
@@ -3087,11 +3090,11 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
-	
+
 	$savlimit = $limit;
     $savtotalnboflines = $totalnboflines;
     $totalnboflines=abs($totalnboflines);
-    
+
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
@@ -3104,7 +3107,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		$nextpage = 0;
 	}
 	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
-	
+
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
@@ -3203,7 +3206,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	    //$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 	    //$pagesizechoices.=',2:2';
 	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
-	     
+
         print '<li class="pagination">';
         print '<select class="flat selectlimit" name="limit">';
         $tmpchoice=explode(',',$pagesizechoices);
@@ -3243,7 +3246,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
             		</script>
                 ';
         }
-        print '</li>';	    
+        print '</li>';
 	}
 	if ($page > 0)
 	{
@@ -3282,7 +3285,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 {
     $morelabel='';
-    
+
     if (preg_match('/%/',$rate))
 	{
 		$rate=str_replace('%','',$rate);
@@ -3485,7 +3488,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 
 /**
  * Output a dimension with best unit
- *  
+ *
  * @param   float       $dimension      Dimension
  * @param   int         $unit           Unit of dimension (0, -3, ...)
  * @param   string      $type           'weight', 'volume', ...
@@ -3497,16 +3500,16 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitoutput='no')
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-    
-    if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6)) 
+
+    if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6))
     {
         $dimension = $dimension * 1000000;
-        $unit = $unit - 6; 
+        $unit = $unit - 6;
     }
     elseif (($forceunitoutput == 'no' && $dimension < 1/10) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
     {
         $dimension = $dimension * 1000;
-        $unit = $unit - 3; 
+        $unit = $unit - 3;
     }
     elseif (($forceunitoutput == 'no' && $dimension > 100000000) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
     {
@@ -3518,9 +3521,9 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=
         $dimension = $dimension / 1000;
         $unit = $unit + 3;
     }
-    
+
     $ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
-    
+
     return $ret;
 }
 
@@ -3551,12 +3554,12 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
         $vatratecleaned = trim($reg[1]);
 	    $vatratecode = $reg[2];
 	}
-	
+
 	/*if ($thirdparty_buyer->country_code != $thirdparty_seller->country_code)
 	{
 		return 0;
 	}*/
-	
+
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
@@ -3597,7 +3600,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 	{
 	    $conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY = 1;
 	}
-	    
+
 	// Search local taxes
 	if (! empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
@@ -3654,7 +3657,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
    		if ($local==1) return $obj->localtax1;
    		elseif ($local==2) return $obj->localtax2;
 	}
-	
+
 	return 0;
 }
 
@@ -3714,7 +3717,7 @@ function get_localtax_by_third($local)
 
 /**
  *  Get vat rate and npr from id.
- *  You can call getLocalTaxesFromRate after to get other fields 
+ *  You can call getLocalTaxesFromRate after to get other fields
  *
  *  @param	int      $vatrowid			Line ID into vat rate table.
  *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
@@ -3768,7 +3771,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	    $vatratecleaned = $reg[1];
 	    $vatratecode = $reg[2];
 	}
-	
+
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
@@ -3781,7 +3784,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
     	$sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
     	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
 	}
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -4188,7 +4191,7 @@ function yn($yesno, $case=1, $color=0)
 /**
  *	Return a path to have a directory according to object.
  *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
- *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/" 
+ *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -4205,7 +4208,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 	$path = '';
 
 	$arrayforoldpath=array('cheque','user','category','holiday','shipment', 'member','don','donation','supplier_invoice','invoice_supplier','mailing');
-	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';	
+	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
@@ -4357,7 +4360,7 @@ function dolGetFirstLineOfText($text)
 	{
 		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
 		$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
-		
+
 	}
 	else
 	{
@@ -5383,11 +5386,11 @@ function printCommonFooter($zone='private')
 	{
 		print '<!-- Reposition management (does not work if a redirect is done after action of submission) -->'."\n";
     	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
-    	
+
     	print '<!-- If page_y set, we set scollbar with it -->'."\n";
     	print "page_y=getParameterByName('page_y', 0);";
     	print "if (page_y > 0) $('html, body').scrollTop(page_y);\n";
-    	
+
     	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
     	print 'jQuery(".reposition").click(function() {
     	           var page_y = $(document).scrollTop();
@@ -5395,7 +5398,7 @@ function printCommonFooter($zone='private')
     	           this.href=this.href+\'&page_y=\'+page_y;
     	           });'."\n";
     	print '});'."\n";
-    	
+
     	if (empty($conf->dol_use_jmobile))
     	{
         	print '<!-- Set handler to switch left menu page -->'."\n";
@@ -5404,10 +5407,10 @@ function printCommonFooter($zone='private')
         	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
         	print '});'."\n";
     	}
-    	
+
     	print '</script>'."\n";
 	}
-	
+
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
@@ -5620,15 +5623,15 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 	            	$tmpcrit=trim($tmpcrit);
 	            	$tmpcrit2=$tmpcrit;
 	            	$tmpbefore='%'; $tmpafter='%';
-	            	if (preg_match('/^[\^\$]/', $tmpcrit)) 
-	            	{ 
+	            	if (preg_match('/^[\^\$]/', $tmpcrit))
+	            	{
 	            	    $tmpbefore='';
-	            	    $tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2); 
+	            	    $tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
 	            	}
-					if (preg_match('/[\^\$]$/', $tmpcrit)) 
-	            	{ 
+					if (preg_match('/[\^\$]$/', $tmpcrit))
+	            	{
 	            	    $tmpafter='';
-	            	    $tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2); 
+	            	    $tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
 	            	}
 	            	$newres .= $tmpbefore;
 	            	$newres .= $db->escape($tmpcrit2);

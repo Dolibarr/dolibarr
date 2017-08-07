@@ -100,7 +100,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
@@ -116,9 +116,9 @@ $search_gender=GETPOST('search_gender','alpha');
 $search_employee=GETPOST('search_employee','alpha');
 $search_accountancy_code=GETPOST('search_accountancy_code','alpha');
 $search_email=GETPOST('search_email','alpha');
-$search_statut=GETPOST('search_statut','alpha');
+$search_statut=GETPOST('search_statut','intcomma');
 $search_thirdparty=GETPOST('search_thirdparty','alpha');
-$search_supervisor=GETPOST('search_supervisor','alpha');
+$search_supervisor=GETPOST('search_supervisor','intcomma');
 $search_previousconn=GETPOST('search_previousconn','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -131,7 +131,7 @@ if ($mode == 'employee') $search_employee=1;
 /*
  * Actions
  */
- 
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -196,8 +196,8 @@ else
 }
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
-if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
-if ($search_thirdparty != '') $sql.=natural_search(array('s.nom'), $search_thirdparty);
+if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$db->escape($search_supervisor);
+if ($search_thirdparty != '') $sql.= natural_search(array('s.nom'), $search_thirdparty);
 if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql.= natural_search("u.firstname", $search_firstname);
@@ -206,9 +206,9 @@ if (is_numeric($search_employee) && $search_employee >= 0)    {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
 if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
-if ($search_email != '')  $sql.= natural_search("u.email", $search_email);
-if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
-if ($sall)                    $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_email != '')             $sql.= natural_search("u.email", $search_email);
+if ($search_statut != '' && $search_statut >= 0) $sql.= " AND u.statut IN (".$db->escape($search_statut).")";
+if ($sall)                           $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -217,7 +217,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -265,27 +265,27 @@ if ($result)
         $crit=$val;
         $tmpkey=preg_replace('/search_options_/','',$key);
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-    } 	
-    
-    
+    }
+
+
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-	
+
     $moreforfilter='';
-    
+
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    
+
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['u.login']['checked']))          print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
@@ -303,9 +303,9 @@ if ($result)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
 				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
@@ -340,7 +340,7 @@ if ($result)
     {
         print '<td>';
         $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-        print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
+        print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
         print '</td>';
     }
     if (! empty($arrayfields['u.employee']['checked']))
@@ -380,9 +380,9 @@ if ($result)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
                 $align=$extrafields->getAlignFlag($key);
                 $typeofextrafield=$extrafields->attribute_type[$key];
@@ -428,7 +428,7 @@ if ($result)
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
-	
+
     print "</tr>\n";
 
     $user2=new User($db);
@@ -451,7 +451,7 @@ if ($result)
 		$userstatic->lastname=$obj->lastname;
 		$userstatic->employee=$obj->employee;
 		$userstatic->photo=$obj->photo;
-        
+
 		$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
 
         print "<tr ".$bc[$var].">";
@@ -564,8 +564,8 @@ if ($result)
                 }
             }
             print '</td>';
-		}		
-        
+		}
+
         // Date last login
         if (! empty($arrayfields['u.datelastlogin']['checked']))
     	{
@@ -576,13 +576,13 @@ if ($result)
     	{
             print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datepreviouslogin),"dayhour").'</td>';
     	}
-        
+
     	// Extra fields
 		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 		{
-		   foreach($extrafields->attribute_label as $key => $val) 
+		   foreach($extrafields->attribute_label as $key => $val)
 		   {
-				if (! empty($arrayfields["ef.".$key]['checked'])) 
+				if (! empty($arrayfields["ef.".$key]['checked']))
 				{
 					print '<td';
 					$align=$extrafields->getAlignFlag($key);
