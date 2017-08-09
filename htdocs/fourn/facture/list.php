@@ -427,6 +427,7 @@ if ($resql)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
+		if (empty($search_societe)) $search_societe = $soc->name;
 	}
 
 	$param='&socid='.$socid;
@@ -493,7 +494,7 @@ if ($resql)
 
 	    if (! GETPOST('cancel'))
 	    {
-	        $objecttmp=new FactureFourn($db);
+	    	$objecttmp=new FactureFournisseur($db);
 	        $listofselectedid=array();
 	        $listofselectedthirdparties=array();
 	        $listofselectedref=array();

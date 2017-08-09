@@ -34,13 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 
-$id=GETPOST('id','int');
-$label=GETPOST('label');
-$type=GETPOST('type');
+$id   = GETPOST('id','int');
+$label= GETPOST('label','alpha');
+$type = GETPOST('type','az09');
 $action=GETPOST('action','aZ09');
-$confirm=GETPOST('confirm');
+$confirm    = GETPOST('confirm','alpha');
 $removeelem = GETPOST('removeelem','int');
-$elemid=GETPOST('elemid');
+$elemid     = GETPOST('elemid','alpha');
 
 if ($id == "" && $label == "")
 {
@@ -61,6 +61,7 @@ if ($result <= 0)
 }
 
 $type=$object->type;
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -187,6 +188,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategor
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);

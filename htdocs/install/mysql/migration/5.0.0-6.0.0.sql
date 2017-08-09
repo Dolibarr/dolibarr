@@ -467,6 +467,8 @@ DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM l
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
+
 CREATE TABLE llx_loan_schedule
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
@@ -571,3 +573,10 @@ UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement c
 UPDATE llx_bank SET label= '(payment_salary)' WHERE label LIKE 'Règlement salaire';
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
+
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
+
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'IGST-CGST', 8, 8, '1', 0, '0', 0, 'IGST-CGST', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'SGST', 0, 0, '0', 16, '1', 0, 'SGST', 1);

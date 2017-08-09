@@ -18,6 +18,7 @@ NextMonthOfInvoice=Following month (number 1-12) of invoice date
 TextNextMonthOfInvoice=Following month (text) of invoice date
 ZipFileGeneratedInto=Zip file generated into <b>%s</b>.
 DocFileGeneratedInto=Doc file generated into <b>%s</b>.
+JumpToLogin=Disconnected. Go to login page...
 
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date

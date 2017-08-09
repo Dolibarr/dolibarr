@@ -49,11 +49,6 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var WebsitePage[]  Lines of all pages
-	 */
-	public $lines = array();
-
-	/**
 	 * @var int
 	 */
 	public $entity;
@@ -85,12 +80,6 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
-
-
-	public $records;
-
-	/**
-	 */
 
 
 	/**
@@ -146,8 +135,8 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create';
-		$sql.= 'date_creation';
+		$sql.= 'fk_user_create,';
+		$sql.= 'date_creation,';
 		$sql.= 'tmps';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
@@ -219,10 +208,10 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+			$sql .= " WHERE t.ref = '" . $this->db->escape($ref) . "'";
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -244,7 +233,7 @@ class Website extends CommonObject
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->tms = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
 			$this->db->free($resql);
 
@@ -288,7 +277,7 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -328,7 +317,7 @@ class Website extends CommonObject
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
-				$line->tms = $this->db->jdate($obj->tms);
+				$line->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->records[$line->id] = $line;
 			}
@@ -384,8 +373,8 @@ class Website extends CommonObject
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '')?"'".$this->db->escape($this->virtualhost)."'":"null").',';
 		$sql .= ' fk_user_modif = '.(! isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
+		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
