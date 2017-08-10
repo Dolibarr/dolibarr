@@ -331,9 +331,16 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     // is linked to a company allowed to $user.
     if (! empty($objectid) && $objectid > 0)
     {
-    	$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
-		return $ok ? 1 : accessforbidden();
+    	if (!checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select))
+			accessforbidden();
     }
+
+	// get more permissions checks from hooks
+	global $hookmanager;
+	$hookmanager->initHooks(array('permissions'));
+	$parameters=array('features'=>$features,'objectid'=>preg_replace("/'/", '', $objectid),'idtype'=>$dbt_select);
+	$reshook=$hookmanager->executeHooks('restricted',$parameters);
+	if ($reshook < 0) accessforbidden();
 
     return 1;
 }
