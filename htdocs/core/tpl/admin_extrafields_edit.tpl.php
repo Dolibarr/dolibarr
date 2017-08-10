@@ -144,7 +144,7 @@ if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) {
 	$ishidden=$extrafields->attribute_hidden[$attrname];
 }
 if ($conf->multicompany->enabled)  {
-	$entitycurrentorall=$extrafields->attribute_entity[$attrname];
+	$entitycurrentorall=$extrafields->attribute_entityid[$attrname];
 }
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
