@@ -86,9 +86,9 @@ class PaymentVarious extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_various SET";
 
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " datep=".$this->db->idate($this->datep).",";
-		$sql.= " datev=".$this->db->idate($this->datev).",";
+		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		$sql.= " datep='".$this->db->idate($this->datep)."',";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
 		$sql.= " sens=".$this->sens.",";
 		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " fk_typepayment=".$this->fk_typepayment."',";

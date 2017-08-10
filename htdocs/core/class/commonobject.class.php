@@ -5030,57 +5030,6 @@ abstract class CommonObject
 		}
 	}
 
-	/**
-	 * Load an object from its id and create a new one in database
-	 *
-	 * @param  User $user      User that creates
-	 * @param  int $fromid     Id of object to clone
-	 * @return int             New id of clone
-	 */
-	public function createFromCloneCommon(User $user, $fromid)
-	{
-	    global $user, $langs;
-
-	    $error = 0;
-
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-
-	    $object = new self($this->db);
-
-	    $this->db->begin();
-
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
-
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
-
-	    // Create clone
-	    $result = $object->createCommon($user);
-
-	    // Other options
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	        dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-	    }
-
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object->id;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
-	}
 
 	/**
 	 * Load object in memory from the database

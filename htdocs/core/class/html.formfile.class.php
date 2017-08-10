@@ -835,9 +835,9 @@ class FormFile
     	$out='';
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
-    	//if (! empty($conf->dol_use_jmobile)) return '';
+    	$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
+    	$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
 		$out.= '<!-- html.formfile::getDocumentsLink -->'."\n";
@@ -922,9 +922,10 @@ class FormFile
      *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
      *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
      *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
+     *  @param	 int	$addfilterfields	Add line with filters
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1)
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc,$bcdd;
@@ -1006,10 +1007,22 @@ class FormFile
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 
+			if (! empty($addfilterfields))
+			{
+				print '<tr class="liste_titre nodrag nodrop">';
+				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref','alpha')).'"></td>';
+				print '<td></td>';
+				print '<td></td>';
+				if (empty($useinecm)) print '<td></td>';
+				print '<td></td>';
+				if (! $disablemove) print '<td></td>';
+				print "</tr>\n";
+			}
+
 			print '<tr class="liste_titre nodrag nodrop">';
-			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+			print_liste_field_titre('Size',$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre('Date',$url,"date","",$param,'align="center"',$sortfield,$sortorder);
 			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');
@@ -1291,28 +1304,54 @@ class FormFile
      *  @param  int		$useinecm           Change output for use in ecm module
      *  @param  int		$textifempty        Text to show if filearray is empty
      *  @param  int		$maxlength          Maximum length of file name shown
-     *  @param	string $url				Full url to use for click links ('' = autodetect)
+     *  @param	string 	$url				Full url to use for click links ('' = autodetect)
+     *  @param	int		$addfilterfields	Add line with filters
      *  @return int                 		<0 if KO, nb of files shown if OK
      */
-    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='')
+    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='',$addfilterfields=0)
     {
-        global $user, $conf, $langs;
+        global $user, $conf, $langs, $form;
         global $bc;
         global $sortfield, $sortorder;
+		global $search_doc_ref;
 
         dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
+
+        if (! empty($addfilterfields))
+        {
+        	print '<form action="'.$_SERVER['PHP_SELF'].'">';
+        	print '<input type="hidden" name="module" value="'.$modulepart.'">';
+        }
+
+		print '<div class="div-table-responsive-no-min">';
         print '<table width="100%" class="noborder">'."\n";
+
+        if (! empty($addfilterfields))
+        {
+        	print '<tr class="liste_titre nodrag nodrop">';
+        	print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+        	print '<td></td>';
+        	print '<td></td>';
+        	print '<td></td>';
+			// Action column
+			print '<td class="liste_titre" align="middle">';
+			$searchpicto=$form->showFilterButtons();
+			print $searchpicto;
+			print '</td>';
+        	print "</tr>\n";
+        }
+
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';
-        print_liste_field_titre($langs->trans("Ref"),$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre("Ref",$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre("Documents2",$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre("Size",$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre("Date",$url,"date","",$param,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre('','','');
         print '</tr>'."\n";
 
@@ -1404,20 +1443,20 @@ class FormFile
                 $id=0; $ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
-                if ($modulepart == 'company')          { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
-                if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'company')           { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'invoice')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'invoice_supplier')  { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
+                if ($modulepart == 'propal')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
 				if ($modulepart == 'supplier_proposal') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'product')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'project')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
-                if ($modulepart == 'fichinter')        { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
-                if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
-                if ($modulepart == 'expensereport')    { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'order')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'order_supplier')    { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'contract')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'product')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'tax')               { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'project')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'fichinter')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'user')              { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'expensereport')     { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
                 $found=0;
@@ -1449,20 +1488,23 @@ class FormFile
 
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
 
-
                 print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
                 print '<tr class="oddeven">';
                 print '<td>';
                 if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1,'document');
                 else print $langs->trans("ObjectDeleted",($id?$id:$ref));
 
-                $filename=dol_sanitizeFileName($ref);
+                //$modulesubdir=dol_sanitizeFileName($ref);
+                $modulesubdir=dirname($relativefile);
+
                 //$filedir=$conf->$modulepart->dir_output . '/' . dol_sanitizeFileName($obj->ref);
                 $filedir=$file['path'];
                 //$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
                 //print $formfile->getDocumentsLink($modulepart, $filename, $filedir);
 
                 print '</td>';
+
+                // File
                 print '<td>';
                 //print "XX".$file['name']; //$file['name'] must be utf8
                 print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
@@ -1472,7 +1514,7 @@ class FormFile
                 print dol_trunc($file['name'],$maxlength,'middle');
                 print '</a>';
 
-                print $this->getDocumentsLink($modulepart, $filename, $filedir);
+                print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
 
                 print "</td>\n";
                 print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
@@ -1490,12 +1532,15 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[false].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="5">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
         }
         print "</table>";
+        print '</div>';
+
+        if (! empty($addfilterfields)) print '</form>';
         // Fin de zone
     }
 

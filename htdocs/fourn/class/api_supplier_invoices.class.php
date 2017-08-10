@@ -23,14 +23,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 /**
  * API class for supplier invoices
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class SupplierInvoices extends DolibarrApi
 {
     /**
      *
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
         'socid'
@@ -55,24 +55,24 @@ class SupplierInvoices extends DolibarrApi
      * Get properties of a supplier invoice object
      *
      * Return an array with supplier invoice information
-     * 
+     *
      * @param 	int 	$id ID of supplier invoice
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
     function get($id)
-    {		
+    {
 		if(! DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
 			throw new RestException(401);
 		}
-			
+
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Supplier invoice not found');
         }
-		
-		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -81,9 +81,9 @@ class SupplierInvoices extends DolibarrApi
 
     /**
      * List invoices
-     * 
+     *
      * Get a list of supplier invoices
-     * 
+     *
      * @param string	$sortfield	      Sort field
      * @param string	$sortorder	      Sort order
      * @param int		$limit		      Limit for list
@@ -97,12 +97,12 @@ class SupplierInvoices extends DolibarrApi
      */
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
         global $db, $conf;
-        
+
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
-            
+
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
@@ -110,14 +110,14 @@ class SupplierInvoices extends DolibarrApi
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as t";
-        
+
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
         $sql.= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-        
+
 		// Filter by status
         if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
         if ($status == 'unpaid')    $sql.= " AND t.fk_statut IN (1)";
@@ -129,7 +129,7 @@ class SupplierInvoices extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -138,7 +138,7 @@ class SupplierInvoices extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -174,10 +174,10 @@ class SupplierInvoices extends DolibarrApi
         }
 		return $obj_ret;
     }
-    
+
     /**
      * Create supplier invoice object
-     * 
+     *
      * @param array $request_data   Request datas
      * @return int  ID of supplier invoice
      */
@@ -188,7 +188,7 @@ class SupplierInvoices extends DolibarrApi
 		}
         // Check mandatory fields
         $result = $this->_validate($request_data);
-        
+
         foreach($request_data as $field => $value) {
             $this->invoice->$field = $value;
         }
@@ -203,7 +203,7 @@ class SupplierInvoices extends DolibarrApi
             }
             $this->invoice->lines = $lines;
         }*/
-        
+
         if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
         }
@@ -214,21 +214,21 @@ class SupplierInvoices extends DolibarrApi
      * Update supplier invoice
      *
      * @param int   $id             Id of supplier invoice to update
-     * @param array $request_data   Datas   
-     * @return int 
+     * @param array $request_data   Datas
+     * @return int
      */
     function put($id, $request_data = NULL)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401);
 		}
-        
+
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Supplier invoice not found');
         }
-		
-		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -236,13 +236,13 @@ class SupplierInvoices extends DolibarrApi
             if ($field == 'id') continue;
             $this->invoice->$field = $value;
         }
-        
+
         if($this->invoice->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
-        
+
         return false;
     }
-    
+
     /**
      * Delete supplier invoice
      *
@@ -258,16 +258,16 @@ class SupplierInvoices extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'Supplier invoice not found');
         }
-		
-		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         if( $this->invoice->delete(DolibarrApiAccess::$user) < 0)
         {
             throw new RestException(500);
         }
-        
+
          return array(
             'success' => array(
                 'code' => 200,
@@ -275,8 +275,56 @@ class SupplierInvoices extends DolibarrApi
             )
         );
     }
-    
-    
+
+
+    /**
+     * Validate an order
+     *
+     * @param   int $id             Order ID
+     * @param   int $idwarehouse    Warehouse ID
+     * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+     *
+     * @url POST    {id}/validate
+     *
+     * @return  array
+     * FIXME An error 403 is returned if the request has an empty body.
+     * Error message: "Forbidden: Content type `text/plain` is not supported."
+     * Workaround: send this in the body
+     * {
+     *   "idwarehouse": 0,
+     *   "notrigger": 0
+     * }
+     */
+    function validate($id, $idwarehouse=0, $notrigger=0)
+    {
+    	if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+    		throw new RestException(401);
+    	}
+    	$result = $this->invoice->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Invoice not found');
+    	}
+
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
+    	if ($result == 0) {
+    		throw new RestException(500, 'Error nothing done. May be object is already validated');
+    	}
+    	if ($result < 0) {
+    		throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
+    	}
+
+    	return array(
+	    	'success' => array(
+		    	'code' => 200,
+		    	'message' => 'Invoice validated (Ref='.$this->invoice->ref.')'
+	    	)
+    	);
+    }
+
     /**
      * Clean sensible object datas
      *
@@ -284,20 +332,20 @@ class SupplierInvoices extends DolibarrApi
      * @return  array              Array of cleaned object properties
      */
     function _cleanObjectDatas($object) {
-    
+
         $object = parent::_cleanObjectDatas($object);
-    
+
         unset($object->rowid);
-    
+
         return $object;
     }
-    
+
     /**
      * Validate fields before create or update object
-     * 
+     *
      * @param array $data   Datas to validate
      * @return array
-     * 
+     *
      * @throws RestException
      */
     function _validate($data)

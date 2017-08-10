@@ -1342,7 +1342,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if ($object->element != 'product' && $object->element != 'bookmark')
+	if ($object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories')
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -6174,7 +6174,7 @@ function dol_getmypid()
  *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
- * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
@@ -6452,3 +6452,43 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
     return $mime;
 }
 
+/**
+ * Return value from dictionary
+ * 
+ * @param string	$tablename		name of dictionary
+ * @param string	$field			the value to return
+ * @param int		$id				id of line
+ * @param bool		$checkentity	add filter on entity
+ * @param string	$rowidfield		name of the column rowid
+ */
+function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
+{
+	global $dictvalues,$db,$langs;
+	
+	if (!isset($dictvalues[$tablename]))
+	{
+		$dictvalues[$tablename] = array();
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
+		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql))
+			{
+				$dictvalues[$tablename][$obj->{$rowidfield}] = $obj;
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	if (!empty($dictvalues[$tablename][$id])) return $dictvalues[$tablename][$id]->{$field}; // Found
+	else // Not found
+	{
+		if ($id > 0) return $id;
+		return '';
+	}
+}

@@ -4,6 +4,7 @@ SuppliersOrdersArea=Tedarikçi siparişleri alanı
 OrderCard=Sipariş kartı
 OrderId=Sipariş Kimliği
 Order=Sipariş
+PdfOrderTitle=Sipariş
 Orders=Siparişler
 OrderLine=Sipariş kalemi
 OrderDate=Sipariş Tarihi

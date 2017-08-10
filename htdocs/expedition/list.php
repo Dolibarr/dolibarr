@@ -50,6 +50,7 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
+$search_billed=GETPOST("search_billed",'int');
 $sall = GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -100,7 +101,8 @@ $arrayfields=array(
     'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
     'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>$conf->livraison_bon->enabled),
-    'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>$conf->livraison_bon->enabled)
+    'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>$conf->livraison_bon->enabled),
+    'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
 
 // Extra fields
@@ -138,6 +140,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
+	$search_billed='';
     $viewstatut='';
     $search_array_options=array();
 }
@@ -174,7 +177,7 @@ $formcompany=new FormCompany($db);
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut,";
+$sql = "SELECT e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -210,6 +213,7 @@ if ($socid)
 if ($viewstatut <> '' && $viewstatut >= 0) {
 	$sql.= " AND e.fk_statut = ".$viewstatut;
 }
+if ($search_billed != '' && $search_billed >= 0) $sql.=' AND e.billed = '.$search_billed;
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
@@ -420,6 +424,13 @@ if ($resql)
 	    print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
 	    print '</td>';
 	}
+	// Status billed
+	if (! empty($arrayfields['e.billed']['checked']))
+	{
+	    print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	    print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+	    print '</td>';
+	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -449,7 +460,7 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}
@@ -460,7 +471,7 @@ if ($resql)
 	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'],$_SERVER["PHP_SELF"],"e.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['e.tms']['checked']))    print_liste_field_titre($arrayfields['e.tms']['label'],$_SERVER["PHP_SELF"],"e.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['e.fk_statut']['checked'])) print_liste_field_titre($arrayfields['e.fk_statut']['label'],$_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['l.fk_statut']['checked'])) print_liste_field_titre($arrayfields['l.fk_statut']['label'], $_SERVER["PHP_SELF"],"l.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['e.billed']['checked'])) print_liste_field_titre($arrayfields['e.billed']['label'],$_SERVER["PHP_SELF"],"e.billed","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -477,7 +488,6 @@ if ($resql)
     	$companystatic->id=$obj->socid;
     	$companystatic->ref=$obj->name;
     	$companystatic->name=$obj->name;
-
 
 
     	print '<tr class="oddeven">';
@@ -628,6 +638,13 @@ if ($resql)
 		    print '<td align="right" class="nowrap">'.$shipment->LibStatut($obj->fk_statut,5).'</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
+		// Billed
+		if (! empty($arrayfields['e.billed']['checked']))
+		{
+			print '<td align="center">'.yn($obj->billed).'</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
 		// Action column
 		print '<td></td>';
 		if (! $i) $totalarray['nbfield']++;

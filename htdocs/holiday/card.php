@@ -60,7 +60,7 @@ if ($action == 'create')
 	$object = new Holiday($db);
 
     // If no right to create a request
-    $fuserid = GETPOST('fuserid');
+    $fuserid = GETPOST('fuserid','int');
     if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
@@ -118,7 +118,7 @@ if ($action == 'create')
 	    }
 
 	    // Check if there is already holiday for this period
-	    $verifCP = $object->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
+	    $verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
 	        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
@@ -144,11 +144,9 @@ if ($action == 'create')
 
 	    $result = 0;
 
-	    $result = 0;
-
 	    if (! $error)
 	    {
-    	    $object->fk_user = $userid;
+    	    $object->fk_user = $fuserid;
     	    $object->description = $description;
     	    $object->date_debut = $date_debut;
     	    $object->date_fin = $date_fin;
@@ -157,10 +155,15 @@ if ($action == 'create')
     		$object->fk_type = $type;
 
     		$result = $object->create($user);
+    		if ($result <= 0)
+    		{
+    			setEventMessages($object->error, $object->errors, 'errors');
+    			$error++;
+    		}
 	    }
 
 	    // If no SQL error we redirect to the request card
-	    if (! $error && $result > 0)
+	    if (! $error)
 	    {
 			$db->commit();
 
@@ -834,7 +837,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid')?GETPOST('fuserid'):$user->id,'fuserid',0,'',0);
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id,'fuserid',0,'',0);
         print '</td>';
         print '</tr>';
 

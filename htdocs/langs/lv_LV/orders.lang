@@ -4,6 +4,7 @@ SuppliersOrdersArea=Piegādātāji pasūtījumi platība
 OrderCard=Pasūtījumu kartiņa
 OrderId=Pasūtījuma ID
 Order=Rīkojums
+PdfOrderTitle=Pasūtījums
 Orders=Pasūtījumi
 OrderLine=Lai līnija
 OrderDate=Pasūtīt datumu

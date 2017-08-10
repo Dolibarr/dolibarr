@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Hasło zostało ustawione dla tego użytkownika. Jednakże nie Konto użytkownika zostało utworzone. Więc to hasło jest przechowywane, ale nie mogą być używane do logowania do Dolibarr. Może być stosowany przez zewnętrzny moduł / interfejsu, ale jeśli nie trzeba definiować dowolną logowania ani hasła do członka, można wyłączyć opcję "Zarządzaj login dla każdego członka" od konfiguracji modułu użytkownika. Jeśli potrzebujesz zarządzać logowanie, ale nie wymagają hasła, możesz zachować to pole puste, aby uniknąć tego ostrzeżenia. Uwaga: E może być również stosowany jako login, jeśli element jest połączony do użytkownika.

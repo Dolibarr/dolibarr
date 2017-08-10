@@ -29,5 +29,6 @@ CREATE TABLE llx_website
     fk_user_create integer,
     fk_user_modif  integer,
     date_creation  datetime,
-	tms            timestamp
+	tms            timestamp,
+    import_key     varchar(14)      -- import key	
 ) ENGINE=innodb;

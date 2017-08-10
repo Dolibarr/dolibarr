@@ -143,6 +143,9 @@ $list=$extrafields->attribute_list[$attrname];
 if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) {
 	$ishidden=$extrafields->attribute_hidden[$attrname];
 }
+if ($conf->multicompany->enabled)  {
+	$entitycurrentorall=$extrafields->attribute_entity[$attrname];
+}
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -231,6 +234,9 @@ else
 <!-- Is visible or not -->
 <?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
     <tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo ($ishidden ?' checked':''); ?>></td></tr>
+<?php } ?>
+<?php if ($conf->multicompany->enabled) { ?>
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
 <!-- By default visible into list -->
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>

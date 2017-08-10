@@ -629,9 +629,11 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '<tr class="oddeven">'."\n";
 
 				// User
+				/*
 				print '<td class="nowrap">';
 				print $fuser->getNomUrl(1, 'withproject', 'time');
 				print '</td>';
+				*/
 
 				// Ref
 				print '<td>';
@@ -835,9 +837,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print '<tr class="oddeven">'."\n";
 
 				// User
+				/*
 				print '<td class="nowrap">';
 				print $fuser->getNomUrl(1, 'withproject', 'time');
 				print '</td>';
+				*/
 
 				// Ref
 				print '<td class="nowrap">';
@@ -1136,19 +1140,19 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 
     	print '<tr class="liste_titre">';
     	print_liste_field_titre($title.' <span class="badge">'.$num.'</span>',$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+    	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     	{
-    		print_liste_field_titre($langs->trans("OpportunityAmount"),"","","","",'align="right"',$sortfield,$sortorder);
-    		print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("OpportunityAmount","","","","",'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("OpportunityStatus","","","","",'align="right"',$sortfield,$sortorder);
     	}
     	if (empty($conf->global->PROJECT_HIDE_TASKS))
     	{
-            print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
-            if (! in_array('plannedworkload', $hiddenfields))  print_liste_field_titre($langs->trans("PlannedWorkload"),"","","","",'align="right"',$sortfield,$sortorder);
-            if (! in_array('declaredprogress', $hiddenfields)) print_liste_field_titre($langs->trans("ProgressDeclared"),"","","","",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre("Tasks","","","","",'align="right"',$sortfield,$sortorder);
+            if (! in_array('plannedworkload', $hiddenfields))  print_liste_field_titre("PlannedWorkload","","","","",'align="right"',$sortfield,$sortorder);
+            if (! in_array('declaredprogress', $hiddenfields)) print_liste_field_titre("ProgressDeclared","","","","",'align="right"',$sortfield,$sortorder);
     	}
-    	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Status","","","","",'align="right"',$sortfield,$sortorder);
     	print "</tr>\n";
 
 		while ($i < $num)

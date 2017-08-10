@@ -4,6 +4,7 @@ SuppliersOrdersArea=Übersicht Lieferantenbestellungen
 OrderCard=Bestellung - Karte
 OrderId=Bestell-ID
 Order=Bestellung
+PdfOrderTitle=Bestellung
 Orders=Bestellungen
 OrderLine=Bestellservice
 OrderDate=Bestelldatum

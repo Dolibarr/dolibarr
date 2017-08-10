@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Kartu tagihan
 PredefinedInvoices=Tagihan tetap sementara
 Invoice=Tagihan
+PdfInvoiceTitle=Tagihan
 Invoices=Tagihan - tagihan
 InvoiceLine=Baris tagihan
 InvoiceCustomer=Tagihan pelanggan

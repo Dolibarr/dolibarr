@@ -46,6 +46,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 {
     if (empty($minLength)) $minLength=1;
 
+    $dataforrenderITem='ui-autocomplete';
+    $dataforitem='ui-autocomplete-item';
+    // Allow two constant to use other values for backward compatibility
+    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem=constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem=constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+
     // Input search_htmlname is original field
     // Input htmlname is a second input field used when using ajax autocomplete.
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
@@ -185,10 +191,10 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
 
 						return $("<li>")
-						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};

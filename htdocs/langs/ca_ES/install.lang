@@ -53,10 +53,10 @@ AdminLogin=Usuari de l'administrador de la base de dades Dolibarr.
 PasswordAgain=Verificació de la contrasenya
 AdminPassword=Contrasenya de l'administrador de la base de dades Dolibarr.
 CreateDatabase=Crear la base de dades
-CreateUser=Crear el propietari
+CreateUser=Crea el propietari o concedeix-li permís en la base de dades
 DatabaseSuperUserAccess=Base de dades - Accés super usuari
 CheckToCreateDatabase=Seleccioneu aquesta opció si la base de dades no existeix i s'ha de crear. En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
-CheckToCreateUser=Seleccioneu aquesta opció si l'usuari no existeix i s'ha de crear.<br>En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
+CheckToCreateUser=Marca la casella de verificació si el propietari de la base de dades no existeix i s'ha de crear, o si existeix, però la base de dades no existeix i els permisos s'han de concedir. <br>En aquest cas, has de triar el seu nom d'usuari i contrasenya i també omplir el nom d'usuari i contrasenya del compte superusuari al final d'aquesta pàgina.  Si aquesta casella no està activada, el propietari de la base de dades i les seves contrasenyes han d'existir.
 DatabaseRootLoginDescription=Usuari de la base que té els drets de creació de bases de dades o compte per a la base de dades, inútil si la base de dades i el seu usuari ja existeixen (com quan estan en un amfitrió).
 KeepEmptyIfNoPassword=Deixa-ho en blanc si l'usuari no té contrasenya (evita-ho)
 SaveConfigurationFile=Gravació del fitxer de configuració
@@ -138,7 +138,7 @@ KeepDefaultValuesWamp=Estàs utilitzant l'assistent d'instal·lació de DoliWamp
 KeepDefaultValuesDeb=Estàs utilitzant l'assistent d'instal·lació Dolibarr d'un paquet Linux (Ubuntu, Debian, Fedora...) amb els valors proposats més òptims. Només cal completar la contrasenya del propietari de la base de dades a crear. Canvia els altres paràmetres només si estàs segur del que estàs fent.
 KeepDefaultValuesMamp=Estàs utilitzant l'assistent d'instal·lació de DoliMamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesProxmox=Estàs utilitzant l'assistent d'instal·lació de Dolibarr des d'una màquina virtual Proxmox amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
-UpgradeExternalModule=Run dedicated upgrade process of external modules
+UpgradeExternalModule=Executa el procés d'actualització dedicat de mòduls externs
 
 #########
 # upgrade

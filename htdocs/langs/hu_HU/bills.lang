@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Számla kártya
 PredefinedInvoices=Előre definiált számlák
 Invoice=Számla
+PdfInvoiceTitle=Számla
 Invoices=Számlák
 InvoiceLine=Számla tételsor
 InvoiceCustomer=Vásárlói számla

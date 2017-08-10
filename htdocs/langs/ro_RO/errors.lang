@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 

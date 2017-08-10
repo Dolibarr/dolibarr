@@ -52,7 +52,7 @@ function product_prepare_head($object)
     	$head[$h][2] = 'price';
     	$h++;
 	}
-	
+
 	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
     	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
@@ -102,7 +102,7 @@ function product_prepare_head($object)
 
 		$prodcomb = new ProductCombination($db);
 
-		if ($prodcomb->fetchByFkProductChild($object->id) == -1) 
+		if ($prodcomb->fetchByFkProductChild($object->id) == -1)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
@@ -184,7 +184,7 @@ function productlot_prepare_head($object)
     global $db, $langs, $conf, $user;
     $langs->load("products");
     $langs->load("productbatch");
-    
+
     $h = 0;
     $head = array();
 
@@ -208,7 +208,7 @@ function productlot_prepare_head($object)
     $head[$h][2] = 'info';
     $h++;
     */
-    
+
     return $head;
 }
 
@@ -301,9 +301,9 @@ function show_stats_for_company($product,$socid)
 	global $conf,$langs,$user,$db;
 
 	$nblines = 0;
-	
-	print '<tr>';
-	print '<td align="left" width="25%" valign="top">'.$langs->trans("Referers").'</td>';
+
+	print '<tr class="liste_titre">';
+	print '<td align="left" class="tdtop" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';

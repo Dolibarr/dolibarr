@@ -45,6 +45,7 @@ InvoiceHasAvoir=Is een factuur van een of meerdere kredietnota's.
 CardBill=Factuurdetails
 PredefinedInvoices=Voorgedefinieerde Facturen
 Invoice=Factuur
+PdfInvoiceTitle=Factuur
 Invoices=Facturen
 InvoiceLine=Factuur online
 InvoiceCustomer=Afnemersfactuur

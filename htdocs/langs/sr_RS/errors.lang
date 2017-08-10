@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.

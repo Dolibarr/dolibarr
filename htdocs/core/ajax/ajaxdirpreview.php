@@ -32,7 +32,6 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-
 if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
     require_once '../../main.inc.php';
@@ -45,6 +44,7 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     $section=GETPOST("section");
     $module=GETPOST("module");
     $urlsource=GETPOST("urlsource");
+    $search_doc_ref=GETPOST('search_doc_ref','alpha');
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
@@ -188,12 +188,16 @@ if ($type == 'directory')
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
+        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
         if ($module == 'company') $excludefiles[]='^contact$';   // The subdir 'contact' contains files of contacts with no id of thirdparty.
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
-        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
+        $filter=preg_quote($search_doc_ref, '/');
+        $filearray=dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting,1);
+
+        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url,1);
     }
     // Manual list
     else
@@ -202,7 +206,7 @@ if ($type == 'directory')
         $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
         // If $section defined with value 0
-        if ($section === '0')
+		if ($section === '0' || empty($section))
         {
             $filearray=array();
         }
@@ -211,12 +215,14 @@ if ($type == 'directory')
         if ($section)
         {
             $param.='&section='.$section;
+        	if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+
             $textifempty = $langs->trans('NoFileFound');
         }
         else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-        $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
+		$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
     }
 }
 

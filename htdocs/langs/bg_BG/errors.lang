@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.

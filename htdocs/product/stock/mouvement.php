@@ -649,12 +649,12 @@ if ($resql)
 
         if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("StockCorrection").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
         }
 
         if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("StockTransfer").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
         }
 
         print '</div><br>';
@@ -756,20 +756,20 @@ if ($resql)
     {
 	    // Product Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="6" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
+	    print '<input class="flat maxwidth100" type="text" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['p.label']['checked']))
     {
 	    // Product label
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" type="text" size="10" name="search_product" value="'.dol_escape_htmltag($idproduct?$product->label:$search_product).'">';
+	    print '<input class="flat maxwidth100" type="text" name="search_product" value="'.dol_escape_htmltag($idproduct?$product->label:$search_product).'">';
 	    print '</td>';
     }
     // Batch
     if (! empty($arrayfields['m.batch']['checked']))
     {
-    	print '<td class="liste_titre" align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
+    	print '<td class="liste_titre" align="center"><input class="flat maxwidth100" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
@@ -878,12 +878,12 @@ if ($resql)
     if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],$_SERVER["PHP_SELF"],'pl.eatby','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'],$_SERVER["PHP_SELF"],'pl.sellby','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['e.label']['checked']))        print_liste_field_titre($arrayfields['e.label']['label'],$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! empty($arrayfields['e.label']['checked']))        	print_liste_field_titre($arrayfields['e.label']['label'],$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -894,7 +894,7 @@ if ($resql)
 				$align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}

@@ -101,8 +101,8 @@ if ($_POST) {
 
 		if (!$features) {
 			setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
-		} 
-		else 
+		}
+		else
 		{
 			$weight_impact = price2num($weight_impact);
 			$price_impact = price2num($price_impact);
@@ -149,8 +149,8 @@ if ($_POST) {
 
 			$db->rollback();
 		}
-	} 
-	elseif (! empty($massaction)) 
+	}
+	elseif (! empty($massaction))
 	{
 		$bulkaction = $massaction;
 		$error = 0;
@@ -203,7 +203,7 @@ if ($_POST) {
 			setEventMessage($langs->trans('RecordSaved'));
 		}
 
-	} 
+	}
 	elseif ($valueid > 0) {
 
 		if ($prodcomb->fetch($valueid) < 0) {
@@ -234,7 +234,7 @@ if ($action === 'confirm_deletecombination') {
 
 		$db->begin();
 
-		if ($prodcomb->delete() > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete() > 0) {
+		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
 			$db->commit();
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
@@ -288,26 +288,26 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-if (! empty($id) || ! empty($ref)) 
+if (! empty($id) || ! empty($ref))
 {
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
     $showbarcode=empty($conf->barcode->enabled)?0:1;
     if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-    
+
     $head=product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
     dol_fiche_head($head, 'combinations', $titre, 0, $picto);
-    
+
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
-    
+
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
-     
+
 	dol_fiche_end();
 
-	
+
 	// Create or edit a varian
 	if ($action == 'add' || ($action == 'edit')) {
 
@@ -343,7 +343,7 @@ if (! empty($id) || ! empty($ref))
 				info: []
 			};
 
-			<?php 
+			<?php
 			foreach ($productCombination2ValuePairs1 as $pc2v) {
                 $prodattr_val->fetch($pc2v->fk_prod_attr_val);
 			?>
@@ -355,8 +355,8 @@ if (! empty($id) || ! empty($ref))
     					label: '<?php echo $prodattr_val->value ?>'
     				}
     			};
-			<?php 
-		    } 
+			<?php
+		    }
 		    ?>
 
 			restoreAttributes = function() {
@@ -369,7 +369,7 @@ if (! empty($id) || ! empty($ref))
 				});
 			};
 
-			
+
 			jQuery(document).ready(function() {
 				jQuery("select#attribute").change(function () {
 					console.log("Change of field variant attribute");
@@ -404,18 +404,18 @@ if (! empty($id) || ! empty($ref))
 				});
 			});
 		</script>
-		
-		<?php 
+
+		<?php
 		}
-		
+
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'#parttoaddvariant">'."\n";
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 		print '<input type="hidden" name="action" value="add">'."\n";
-		
+
 		print dol_fiche_head();
-		
+
 		?>
-		
+
 		<table class="border" style="width: 100%">
 			<?php if ($action == 'add') { ?>
 			<!--  Variant -->
@@ -445,7 +445,7 @@ if (! empty($id) || ! empty($ref))
 			</tr>
 		</table>
 		<hr>
-			<?php } 
+			<?php }
 			?>
 		<table class="border" style="width: 100%">
 			<tr>
@@ -495,12 +495,12 @@ if (! empty($id) || ! empty($ref))
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
 		</div>
-		
+
 		<?php
 
         print '</form>';
 	}
-	else 
+	else
 	{
 		if ($action === 'delete') {
 
@@ -538,7 +538,7 @@ if (! empty($id) || ! empty($ref))
 
 		$comb2val = new ProductCombination2ValuePair($db);
 
-		if ($productCombinations) 
+		if ($productCombinations)
 		{
 		?>
 
@@ -563,36 +563,36 @@ if (! empty($id) || ! empty($ref))
 				});
 			</script>
 
-		<?php } 
-		
+		<?php }
+
         // Buttons
 		print '<div class="tabsAction">';
-		
+
 		print '	<div class="inline-block divButAction">';
 		if ($productCombinations) {
 		    print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
-		
+
 		print '<a href="combinations.php?id='.$object->id.'&action=add#parttoaddvariant" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
-		
+
 		// Too much bugged page.
 		/*
 		print '<a href="generator.php?id='.$object->id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
 		*/
-		
+
 		print '	</div>';
-		
+
 		print '</div>';
-		
-		
-		
+
+
+
 		$arrayofselected=is_array($toselect)?$toselect:array();
-		
-		
+
+
 		// List of variants
 		print '<form method="POST" action="#parttoaddvariant">';
-		
-		
+
+
 		// List of mass actions available
 		/*
 		$arrayofmassactions =  array(
@@ -603,7 +603,7 @@ if (! empty($id) || ! empty($ref))
 		if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/
-		
+
 		$aaa='';
 		if (count($productCombinations))
 		{
@@ -620,11 +620,11 @@ if (! empty($id) || ! empty($ref))
     		$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
 		}
 		$massactionbutton = $aaa;
-		
+
 		$title = $langs->trans("ProductCombinations");
-		
+
 		print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $aaa, 0);
-		
+
 		print '<div class="div-table-responsive">';
 		?>
 		<table class="liste">
@@ -636,7 +636,7 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre center"><?php echo $langs->trans('OnSell') ?></td>
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
-        		<?php 
+        		<?php
         		print '<td class="liste_titre" align="middle">';
         		$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
         		print $searchpicto;
@@ -644,23 +644,23 @@ if (! empty($id) || ! empty($ref))
                 ?>
 			</tr>
 			<?php
-			
+
 			if (count($productCombinations))
 			{
     			foreach ($productCombinations as $currcomb) {
-    				$prodstatic->fetch($currcomb->fk_product_child); 
+    				$prodstatic->fetch($currcomb->fk_product_child);
     				?>
     				<tr class="oddeven">
     				<td><?php echo $prodstatic->getNomUrl(1) ?></td>
     				<td>
     					<?php
-    
+
     					$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
     					$iMax = count($productCombination2ValuePairs);
-    
+
     					for ($i = 0; $i < $iMax; $i++) {
     						echo dol_htmlentities($productCombination2ValuePairs[$i]);
-    
+
     						if ($i !== ($iMax - 1)) {
     							echo ', ';
     						}
@@ -674,7 +674,7 @@ if (! empty($id) || ! empty($ref))
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
     				</td>
-    				<?php 
+    				<?php
     				print '<td class="nowrap" align="center">';
     				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     				{
@@ -690,7 +690,7 @@ if (! empty($id) || ! empty($ref))
 			}
 			else
 			{
-			     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';   
+			     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			?>
 		</table>

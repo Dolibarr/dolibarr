@@ -61,8 +61,7 @@ class MyObject extends CommonObject
 	/**
 	 *             'type' if the field format, 'label' the translation key, 'enabled' is a condition when the filed must be managed,
 	 *             'visible' says if field is visible in list (-1 means not shown by default but can be aded into list to be viewed)
-	 *             'notnull' if not null in database
-	 *             'index' if we want an index in database
+	 *             'notnull' if not null in database, 'index' if we want an index in database
 	 *             'position' is the sort order of field
 	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button
 	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
@@ -71,7 +70,7 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-     * @var array  Array with all fields and their property
+     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
 	public $fields=array(
 	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'index'=>true, 'position'=>1,  'comment'=>'Id'),
@@ -86,7 +85,6 @@ class MyObject extends CommonObject
 		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>true,  'position'=>1000, 'nullifempty'=>1),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -125,7 +123,11 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $conf;
+
 		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $fields['rowid']['visible']=0;
 	}
 
 	/**
@@ -141,6 +143,55 @@ class MyObject extends CommonObject
 	}
 
 	/**
+	 * Clone and object into another one
+	 *
+	 * @param  User $user      	User that creates
+	 * @param  int 	$fromid     Id of object to clone
+	 * @return int             	New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		global $hookmanager, $langs;
+	    $error = 0;
+
+	    dol_syslog(__METHOD__, LOG_DEBUG);
+
+	    $object = new self($this->db);
+
+	    $this->db->begin();
+
+	    // Load source object
+	    $object->fetchCommon($fromid);
+	    // Reset some properties
+	    unset($object->id);
+	    unset($object->fk_user_creat);
+	    unset($object->import_key);
+
+	    // Clear fields
+	    $object->ref = "copy_of_".$object->ref;
+	    $object->title = $langs->trans("CopyOf")." ".$object->title;
+	    // ...
+
+	    // Create clone
+		$object->context['createfromclone'] = 'createfromclone';
+	    $result = $object->createCommon($user);
+	    if ($result < 0) {
+	        $error++;
+	        $this->error = $object->error;
+	        $this->errors = $object->errors;
+	    }
+
+	    // End
+	    if (!$error) {
+	        $this->db->commit();
+	        return $object->id;
+	    } else {
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id   Id object
@@ -149,7 +200,25 @@ class MyObject extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		return $this->fetchCommon($id, $ref);
+		$result = $this->fetchCommon($id, $ref);
+		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		return $result;
+	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines($id, $ref = null)
+	{
+		$this->lines=array();
+
+		// Load lines with object MyObjectLine
+
+		return count($this->lines)?1:0;
 	}
 
 	/**
@@ -363,23 +432,39 @@ class MyObject extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
+
+	/**
+	 * Action executed by scheduler
+	 * CAN BE A CRON TASK
+	 *
+	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function doScheduledJob()
+	{
+		global $conf, $langs;
+
+		$this->output = '';
+		$this->error='';
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		// ...
+
+		return 0;
+	}
 }
 
 /**
- * Class MyModuleObjectLine
+ * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class MyModuleObjectLine
+/*
+class MyObjectLine
 {
-	/**
-	 * @var int ID
-	 */
+	// @var int ID
 	public $id;
-	/**
-	 * @var mixed Sample line property 1
-	 */
+	// @var mixed Sample line property 1
 	public $prop1;
-	/**
-	 * @var mixed Sample line property 2
-	 */
+	// @var mixed Sample line property 2
 	public $prop2;
 }
+*/

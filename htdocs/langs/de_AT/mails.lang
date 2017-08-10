@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
+MailTitle=Beschreibung
 ResetMailing=E-Mail-Kampagne erneut senden
 MailingStatusValidated=Bestätigt
 CloneEMailing=E-Mail-Kampagne duplizieren

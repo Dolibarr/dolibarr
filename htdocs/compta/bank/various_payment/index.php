@@ -17,18 +17,18 @@
  */
 
 /**
- *	\file	    htdocs/compta/bank/various_payment/index.php
+ *	\file		htdocs/compta/bank/various_payment/index.php
  *	\ingroup	bank
- *	\brief	 	List of various payments
+ *	\brief		List of various payments
  */
 
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("compta","banks","bills","accountancy"));
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -41,7 +41,8 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');
-$search_amount = GETPOST('search_amount','alpha');
+$search_amount_deb = GETPOST('search_amount_deb','alpha');
+$search_amount_cred = GETPOST('search_amount_cred','alpha');
 $search_account = GETPOST('search_account','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -75,7 +76,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
 	$search_ref="";
 	$search_label="";
-	$search_amount="";
+	$search_amount_deb="";
+	$search_amount_cred="";
 	$search_account='';
 	$typeid="";
 }
@@ -90,8 +92,8 @@ $form = new Form($db);
 $variousstatic = new PaymentVarious($db);
 $accountstatic = new Account($db);
 
-$sql = "SELECT v.rowid, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank,";
-$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
+$sql = "SELECT v.rowid, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code,";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id";
@@ -102,7 +104,8 @@ $sql.= " WHERE v.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql.=" AND v.rowid=".$search_ref;
 if ($search_label) 	$sql.=natural_search(array('v.label'), $search_label);
-if ($search_amount) $sql.=natural_search("v.amount", $search_amount, 1);
+if ($search_amount_deb) $sql.=natural_search("v.amount", $search_amount_deb, 1);
+if ($search_amount_cred) $sql.=natural_search("v.amount", $search_amount_cred, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
 	$filtre=str_replace(":","=",$filtre);
@@ -113,7 +116,6 @@ if ($typeid) {
 }
 $sql.= $db->order($sortfield,$sortorder);
 
-//$sql.= " GROUP BY u.rowid, u.lastname, u.firstname, v.rowid, v.fk_user, v.amount, v.label, v.datev, v.fk_typepayment, v.num_payment, pst.code";
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
@@ -151,29 +153,35 @@ if ($result)
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"v.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"v.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"v.datep","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-	if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("BankAccount"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Sens"),$_SERVER["PHP_SELF"],"v.sens","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"v.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"v.label","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"v.datep","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+	if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("AccountAccounting",$_SERVER["PHP_SELF"],"v.accountancy_code","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Debit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Credit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+
 	// Ref
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
+
 	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
+
 	// Date
 	print '<td class="liste_titre">&nbsp;</td>';
+
 	// Type
 	print '<td class="liste_titre" align="left">';
 	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
 	print '</td>';
+
 	// Account
 	if (! empty($conf->banque->enabled))
 	{
@@ -181,10 +189,15 @@ if ($result)
 		$form->select_comptes($search_account,'search_account',0,'',1);
 		print '</td>';
 	}
-	// Amount
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-	// Sens
-	print '<td class="liste_titre">&nbsp;</td>';
+
+	// Accounting account
+	if (! empty($conf->accounting->enabled)) print '<td class="liste_titre">&nbsp;</td>';
+
+	// Debit
+	print '<td class="liste_titre" align="right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
+
+	// Credit
+	print '<td class="liste_titre" align="right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
 
 	print '<td class="liste_titre" align="right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -193,6 +206,7 @@ if ($result)
 
 	print "</tr>\n";
 
+	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
@@ -201,50 +215,81 @@ if ($result)
 
 		$variousstatic->id=$obj->rowid;
 		$variousstatic->ref=$obj->rowid;
+
 		// Ref
 		print "<td>".$variousstatic->getNomUrl(1)."</td>\n";
+
 		// Label payment
 		print "<td>".dol_trunc($obj->label,40)."</td>\n";
+
 		// Date payment
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
+
 		// Type
 		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+
 		// Account
 		if (! empty($conf->banque->enabled))
 		{
 			print '<td>';
 			if ($obj->fk_bank > 0)
 			{
-				//$accountstatic->fetch($obj->fk_bank);
 				$accountstatic->id=$obj->bid;
 				$accountstatic->ref=$obj->bref;
 				$accountstatic->number=$obj->bnumber;
-				$accountstatic->accountancy_number=$obj->account_number;
-				$accountstatic->fk_accountancy_journal=$obj->fk_accountancy_journal;
+
+				if (! empty($conf->accounting->enabled)) {
+					$accountstatic->account_number=$obj->bank_account_number;
+
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($obj->accountancy_journal);
+					$accountstatic->accountancy_journal = $accountingjournal->code;
+				}
+
 				$accountstatic->label=$obj->blabel;
 				print $accountstatic->getNomUrl(1);
 			}
 			else print '&nbsp;';
 			print '</td>';
 		}
-		// Amount
-		print "<td align=\"right\">".price($obj->amount)."</td>";
-		// Sens
-		if ($obj->sens == '1') $sens = $langs->trans("Credit"); else $sens = $langs->trans("Debit");
-		print "<td align=\"right\">".$sens."</td>";
-		print "<td></td>";
-		print "</tr>\n";
 
-		$total = $total + $obj->amount;
+		// Accounting account
+		if (! empty($conf->accounting->enabled)) {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('',$obj->accountancy_code);
+
+			print '<td>'.$accountingaccount->getNomUrl(0,1,1,'',1).'</td>';
+		}
+
+		// Debit
+		print "<td align=\"right\">";
+		if ($obj->sens == 0)
+		{
+			print price($obj->amount);
+			$totalarray['totaldeb'] += $obj->amount;
+		}
+		print "</td>";
+
+		// Credit
+		print "<td align=\"right\">";
+		if ($obj->sens == 1)
+		{
+			print price($obj->amount);
+			$totalarray['totalcred'] += $obj->amount;
+		}
+		print "</td>";
+
+		print "<td></td>";
 
 		$i++;
 	}
 
-	$colspan=4;
+	$colspan=5;
 	if (! empty($conf->banque->enabled)) $colspan++;
 	print '<tr class="liste_total">';
 	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td class="liste_total" align="right">'.price($total)."</td>";
+	print '<td class="liste_total" align="right">'.price($totalarray['totaldeb'])."</td>";
+	print '<td class="liste_total" align="right">'.price($totalarray['totalcred'])."</td>";
 	print '<td></td>';
 	print '<td></td>';
 	print '</tr>';
