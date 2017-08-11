@@ -134,7 +134,7 @@ class AdherentType extends CommonObject
         $sql.= "note = '".$this->db->escape($this->note)."',";
         $sql.= "vote = '".$this->db->escape($this->vote)."',";
         $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
-        $sql .= " WHERE rowid =".$this->id;
+        $sql.= " WHERE rowid =".$this->id;
 
         $result = $this->db->query($sql);
         if ($result)
@@ -252,7 +252,7 @@ class AdherentType extends CommonObject
 
         $sql = "SELECT rowid, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-        $sql.= " WHERE entity = ".$conf->entity;
+	$sql.= " WHERE entity IN (".getEntity('adherent').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
