@@ -274,7 +274,7 @@ if (empty($reshook))
 	}
 
 	// Set supplier ref
-	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
+	if ($action == 'setref_supplier' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 
@@ -302,13 +302,13 @@ if (empty($reshook))
 	}
 
 	// payments conditions
-	if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
+	if ($action == 'setconditions' && $user->rights->fournisseur->facture->creer)
 	{
 	    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	}
 
 	// payment mode
-	else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
+	else if ($action == 'setmode' && $user->rights->fournisseur->facture->creer)
 	{
 	    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	}
@@ -1996,8 +1996,8 @@ else
 
     	$morehtmlref='<div class="refidno">';
     	// Ref supplier
-    	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
-    	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
+    	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->facture->creer, 'string', '', 0, 1);
+    	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->facture->creer, 'string', '', null, null, '', 1);
     	// Thirdparty
     	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     	// Project
@@ -2005,7 +2005,7 @@ else
     	{
     	    $langs->load("projects");
     	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    	    if ($user->rights->fournisseur->commande->creer)
+    	    if ($user->rights->fournisseur->facture->creer)
     	    {
     	        if ($action != 'classify')
     	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
