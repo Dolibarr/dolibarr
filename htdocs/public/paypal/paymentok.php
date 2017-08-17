@@ -109,6 +109,33 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
+// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
+$width=0;
+// Define logo and logosmall
+$logosmall=$mysoc->logo_small;
+$logo=$mysoc->logo;
+$paramlogo='PAYBOX_LOGO_'.$suffix;
+if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
+else if (! empty($conf->global->PAYBOX_LOGO)) $logosmall=$conf->global->PAYBOX_LOGO;
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+// Define urllogo
+$urllogo='';
+if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+{
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$logosmall);
+}
+elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+{
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($logo);
+	$width=96;
+}
+// Output html code for logo
+if ($urllogo)
+{
+	print '<img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+}
+
 
 // Show message
 print '<span id="dolpaymentspan"></span>'."\n";
