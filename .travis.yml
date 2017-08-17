@@ -2,6 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+dist: precise
 sudo: required
 
 language: php
