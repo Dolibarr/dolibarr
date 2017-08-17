@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017		Eric Seigne			<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -872,14 +873,33 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
-		print ' ('.$langs->trans("ToComplete");
-		if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
-		print ')';
+	    print ' (';
+	    //check if user can change the amount ...
+	    if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+	      print $langs->trans("ToComplete");
+	    }
+	    if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+	    print ')';
 	}
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
 	    $valtoshow=GETPOST("newamount",'int');
+	    //check default subscription amount ...
+	    if ($conf->global->MEMBER_NEWFORM_EDITAMOUNT == true) {
+	      if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+		$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+	      }
+	    }
+	    else {
+	      if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+	      }
+	    }
+	  }
+
+	if (empty($amount) || ! is_numeric($amount))
+	{
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
 	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
