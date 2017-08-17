@@ -1,4 +1,7 @@
-FROM php:5.6-apache
+FROM php:7.0-apache
+
+ENV HOST_USER_ID 33
+ENV PHP_INI_DATE_TIMEZONE 'UTC'
 
 RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libldap2-dev \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -9,11 +12,9 @@ RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libldap2-dev \
         && docker-php-ext-install mysqli \
         && apt-get purge -y libpng12-dev libjpeg-dev libldap2-dev
 
-COPY htdocs/ /var/www/html/
-
-RUN chown -hR www-data:www-data /var/www/html
-
-VOLUME /var/www/html/conf
-VOLUME /var/www/html/documents
+COPY docker-run.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-run.sh
 
 EXPOSE 80
+
+ENTRYPOINT ["docker-run.sh"]
