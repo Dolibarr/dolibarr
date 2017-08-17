@@ -51,6 +51,7 @@ $result = restrictedArea($user,'societe',$socid,'');
 $search_all=trim(GETPOST('sall', 'alphanohtml'));
 $search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
 
+$search_id=trim(GETPOST("search_id","int"));
 $search_nom=trim(GETPOST("search_nom"));
 $search_alias=trim(GETPOST("search_alias"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
@@ -80,6 +81,7 @@ $search_type=GETPOST('search_type','alpha');
 $search_level_from = GETPOST("search_level_from","alpha");
 $search_level_to   = GETPOST("search_level_to","alpha");
 $search_stcomm=GETPOST('search_stcomm','int');
+$search_import_key  = GETPOST("search_import_key","alpha");
 
 $type=GETPOST('type');
 $optioncss=GETPOST('optioncss','alpha');
@@ -154,6 +156,7 @@ $checkedprofid6=0;
 $checkprospectlevel=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm=(in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields=array(
+	's.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0)),
     's.nom'=>array('label'=>"ThirdPartyName", 'checked'=>1),
     's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
     's.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
@@ -181,6 +184,7 @@ $arrayfields=array(
     's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
     's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
     's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -213,6 +217,7 @@ if (empty($reshook))
     // Did we click on purge search criteria ?
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
+    	$search_id='';
         $search_nom='';
         $search_alias='';
         $search_categ=0;
@@ -241,6 +246,7 @@ if (empty($reshook))
     	$search_stcomm='';
      	$search_level_from='';
      	$search_level_to='';
+     	$search_import_key='';
      	$toselect='';
     	$search_array_options=array();
     }
@@ -413,6 +419,7 @@ if ($search_categ == -2)   $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_all)           $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if (strlen($search_cti))   $sql.= natural_search('s.phone', $search_cti);
 
+if ($search_id > 0)        $sql.= natural_search("s.rowid",$search_id,1);
 if ($search_nom)           $sql.= natural_search("s.nom",$search_nom);
 if ($search_alias)         $sql.= natural_search("s.name_alias",$search_alias);
 if ($search_nom_only)      $sql.= natural_search("s.nom",$search_nom_only);
@@ -442,6 +449,7 @@ if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= natural_search("s
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
 if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
+if ($search_import_key)    $sql.= natural_search("s.import_key",$search_import_key);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -501,6 +509,7 @@ if ($search_all != '') $param = "&sall=".urlencode($search_all);
 if ($sall != '') $param .= "&sall=".urlencode($sall);
 if ($search_categ > 0) $param.='&search_categ='.urlencode($search_categ);
 if ($search_sale > 0)	$param.='&search_sale='.urlencode($search_sale);
+if ($search_id > 0) $param.= "&search_id=".urlencode($search_id);
 if ($search_nom != '') $param.= "&search_nom=".urlencode($search_nom);
 if ($search_alias != '') $param.= "&search_alias=".urlencode($search_alias);
 if ($search_town != '') $param.= "&search_town=".urlencode($search_town);
@@ -525,9 +534,10 @@ if ($search_country != '') $param.='&search_country='.urlencode($search_country)
 if ($search_type_thirdparty != '') $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 if ($search_status != '') $param.='&search_status='.urlencode($search_status);
-if ($search_stcomm != '') $param.='&search_stcomm='.$search_stcomm;
-if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
-if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
+if ($search_stcomm != '') $param.='&search_stcomm='.urlencode($search_stcomm);
+if ($search_level_from != '') $param.='&search_level_from='.urlencode($search_level_from);
+if ($search_level_to != '')   $param.='&search_level_to='.urlencode($search_level_to);
+if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($type != '') $param.='&type='.urlencode($type);
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
@@ -636,6 +646,12 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
+if (! empty($arrayfields['s.rowid']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '</td>';
+}
 if (! empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -884,9 +900,15 @@ if (! empty($arrayfields['s.tms']['checked']))
 // Status
 if (! empty($arrayfields['s.status']['checked']))
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+    print '<td class="liste_titre maxwidthonsmartphone center">';
     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $search_status, 1);
     print '</td>';
+}
+if (! empty($arrayfields['s.import_key']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print '<input class="flat searchstring" type="text" name="search_import_key" size="3" value="'.dol_escape_htmltag($search_import_key).'">';
+	print '</td>';
 }
 // Action column
 print '<td class="liste_titre" align="right">';
@@ -897,6 +919,7 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (! empty($arrayfields['s.rowid']['checked']))                   print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['s.nom']['checked']))                     print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['s.name_alias']['checked']))              print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"],"s.name_alias","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['s.barcode']['checked']))                 print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode",$param,'','',$sortfield,$sortorder);
@@ -942,6 +965,7 @@ print $hookmanager->resPrint;
 if (! empty($arrayfields['s.datec']['checked']))  print_liste_field_titre($arrayfields['s.datec']['label'],$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.tms']['checked']))    print_liste_field_titre($arrayfields['s.tms']['label'],$_SERVER["PHP_SELF"],"s.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($arrayfields['s.status']['label'],$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['s.import_key']['checked'])) print_liste_field_titre($arrayfields['s.import_key']['label'],$_SERVER["PHP_SELF"],"s.import_key","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -967,6 +991,13 @@ while ($i < min($num, $limit))
    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
 
 	print '<tr class="oddeven">';
+	if (! empty($arrayfields['s.rowid']['checked']))
+	{
+		print '<td class="tdoverflowmax50">';
+		print $obj->rowid;
+		print "</td>\n";
+        if (! $i) $totalarray['nbfield']++;
+	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="tdoverflowmax200">';
@@ -1190,6 +1221,13 @@ while ($i < min($num, $limit))
     {
         print '<td align="center" class="nowrap">'.$companystatic->getLibStatut(3).'</td>';
         if (! $i) $totalarray['nbfield']++;
+    }
+    if (! empty($arrayfields['s.import_key']['checked']))
+    {
+    	print '<td class="tdoverflowmax100">';
+    	print $obj->import_key;
+    	print "</td>\n";
+    	if (! $i) $totalarray['nbfield']++;
     }
 
     // Action column

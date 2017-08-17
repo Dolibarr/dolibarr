@@ -56,9 +56,6 @@ class modAccounting extends DolibarrModules
 		$this->special = 0;
 		$this->picto = 'accounting';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		// $this->triggers = 1;
-
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');
 

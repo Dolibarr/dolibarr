@@ -1135,7 +1135,7 @@ function dol_get_fiche_end($notab=0)
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
- *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+ *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
  *  @param	string	$morehtmlref  	More html to show after ref
  *  @param	string	$moreparam  	More param to add in nav link url.
@@ -1286,7 +1286,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
     				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
                 }
-                $morehtmlleft.='<!-- No photo to show --><div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+                $morehtmlleft.='<!-- No photo to show -->';
+                $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
                 $morehtmlleft.='</div>';
             }
         }
@@ -6451,3 +6452,43 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
     return $mime;
 }
 
+/**
+ * Return value from dictionary
+ * 
+ * @param string	$tablename		name of dictionary
+ * @param string	$field			the value to return
+ * @param int		$id				id of line
+ * @param bool		$checkentity	add filter on entity
+ * @param string	$rowidfield		name of the column rowid
+ */
+function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
+{
+	global $dictvalues,$db,$langs;
+	
+	if (!isset($dictvalues[$tablename]))
+	{
+		$dictvalues[$tablename] = array();
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
+		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql))
+			{
+				$dictvalues[$tablename][$obj->{$rowidfield}] = $obj;
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	if (!empty($dictvalues[$tablename][$id])) return $dictvalues[$tablename][$id]->{$field}; // Found
+	else // Not found
+	{
+		if ($id > 0) return $id;
+		return '';
+	}
+}

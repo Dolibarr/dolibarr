@@ -58,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule","other"));
+$langs->loadLangs(array("mymodule@mymodule","other"));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -216,7 +216,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " WHERE t.entity IN (".getEntity('myobject').")";
 foreach($search as $key => $val)
 {
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:($object->fields[$key]['type'] == 'integer'?1:0)));
+	$mode=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
+	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -306,9 +307,10 @@ foreach ($search_array_options as $key => $val)
     if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 }
 
+// List of mass actions available
 $arrayofmassactions =  array(
-    'presend'=>$langs->trans("SendByMail"),
-    'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
 if ($massaction == 'presend') $arrayofmassactions=array();
@@ -324,7 +326,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
 if ($sall)
 {
@@ -366,6 +368,7 @@ foreach($object->fields as $key => $val)
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Extra fields
@@ -402,6 +405,7 @@ foreach($object->fields as $key => $val)
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Action column
@@ -421,6 +425,7 @@ foreach($object->fields as $key => $val)
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 }
 // Extra fields
@@ -448,6 +453,7 @@ foreach($object->fields as $key => $val)
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+    if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 }
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
@@ -491,7 +497,7 @@ while ($i < min($num, $limit))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
                 if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'ref') print $object->getNomUrl(1);
+                elseif ($key == 'ref') print $object->getNomUrl(1, '', 0, '', 1);
                 elseif ($key == 'status') print $object->getLibStatut(3);
                 else print $obj->$key;
                 print '</td>';

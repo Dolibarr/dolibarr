@@ -22,8 +22,8 @@
 
 /**
  * \file    accounting/bookkeeping/thirdparty_lettrage.php
- * \ingroup Accounting Expert
- * \brief   Onglet de gestion de parametrages des ventilations
+ * \ingroup Advanced accountancy
+ * \brief   Tab to setup lettering
  */
 
 // Dolibarr environment

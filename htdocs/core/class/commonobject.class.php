@@ -1309,7 +1309,7 @@ abstract class CommonObject
      *      Load properties id_previous and id_next
      *
      *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
-     *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
      *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
@@ -1322,6 +1322,7 @@ abstract class CommonObject
             dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
             return -1;
         }
+		if ($fieldid == 'none') return 1;
 
         // this->ismultientitymanaged contains
         // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -4736,19 +4737,6 @@ abstract class CommonObject
 
 
 
-
-	/**
-	 * Function test if type is date
-	 *
-	 * @param   array   $info   content informations of field
-	 * @return                  bool
-	 */
-	protected function isDate($info)
-	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		else return false;
-	}
-
 	/**
 	 * Function test if type is array
 	 *
@@ -4781,13 +4769,26 @@ abstract class CommonObject
 		else return false;
 	}
 
+
+	/**
+	 * Function test if type is date
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	public function isDate($info)
+	{
+		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
+		else return false;
+	}
+
 	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isInt($info)
+	public function isInt($info)
 	{
 		if(is_array($info))
 		{
@@ -4803,7 +4804,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isFloat($info)
+	public function isFloat($info)
 	{
 		if(is_array($info))
 		{
@@ -4819,7 +4820,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isText($info)
+	public function isText($info)
 	{
 		if(is_array($info))
 		{
@@ -4905,7 +4906,7 @@ abstract class CommonObject
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
-	private function set_vars_by_db(&$obj)
+	private function setVarsFromFetchObj(&$obj)
 	{
 	    foreach ($this->fields as $field => $info)
 	    {
@@ -4922,7 +4923,8 @@ abstract class CommonObject
 	        }
 	        elseif($this->isInt($info))
 	        {
-	            $this->{$field} = (int) $obj->{$field};
+	        	if ($field == 'rowid') $this->id = (int) $obj->{$field};
+	            else $this->{$field} = (int) $obj->{$field};
 	        }
 	        elseif($this->isFloat($info))
 	        {
@@ -4982,6 +4984,7 @@ abstract class CommonObject
 
 	    $fieldvalues = $this->set_save_query();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
+		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// We suppose the field rowid is reserved field for autoincrement field.
 
 	    $keys=array();
@@ -5011,7 +5014,7 @@ abstract class CommonObject
 
             if (!$notrigger) {
                 // Call triggers
-                $result=$this->call_trigger(strtoupper(get_class(self)).'_CREATE',$user);
+                $result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -5027,55 +5030,6 @@ abstract class CommonObject
 		}
 	}
 
-	/**
-	 * Load an object from its id and create a new one in database
-	 *
-	 * @param  User $user      User that creates
-	 * @param  int $fromid     Id of object to clone
-	 * @return int             New id of clone
-	 */
-	public function createFromCloneCommon(User $user, $fromid)
-	{
-	    global $user, $langs;
-
-	    $error = 0;
-
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-
-	    $object = new self($this->db);
-
-	    $this->db->begin();
-
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset object
-	    $object->id = 0;
-
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
-
-	    // Create clone
-	    $result = $object->createCommon($user);
-
-	    // Other options
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	        dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-	    }
-
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object->id;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
-	}
 
 	/**
 	 * Load object in memory from the database
@@ -5088,7 +5042,7 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref)) return false;
 
-		$sql = 'SELECT '.$this->get_field_list().', date_creation, tms';
+		$sql = 'SELECT '.$this->get_field_list();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
@@ -5101,12 +5055,7 @@ abstract class CommonObject
     		{
     		    if ($obj)
     		    {
-        			$this->id = $id;
-        			$this->set_vars_by_db($obj);
-
-        			$this->date_creation = $this->db->idate($obj->date_creation);
-        			$this->tms = $this->db->idate($obj->tms);
-
+        			$this->setVarsFromFetchObj($obj);
         			return $this->id;
     		    }
     		    else
@@ -5173,7 +5122,7 @@ abstract class CommonObject
 
 		if (! $error && ! $notrigger) {
 		    // Call triggers
-		    $result=$this->call_trigger(strtoupper(get_class(self)).'_MODIFY',$user);
+		    $result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 		    if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 		    // End call triggers
 		}
@@ -5204,7 +5153,7 @@ abstract class CommonObject
 	    if (! $error) {
 	        if (! $notrigger) {
 	            // Call triggers
-	            $result=$this->call_trigger(strtoupper(get_class(self)).'_DELETE', $user);
+	            $result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 	            // End call triggers
 	        }

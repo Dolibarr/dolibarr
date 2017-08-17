@@ -22,8 +22,7 @@
 /**
  * \file    websites/websitepage.class.php
  * \ingroup websites
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \brief   File for the CRUD class of websitepage (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -58,8 +57,30 @@ class WebsitePage extends CommonObject
 	public $date_creation;
 	public $date_modification;
 
+	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 */
+     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+     */
+	public $fields=array(
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'index'=>true, 'position'=>1,  'comment'=>'Id'),
+		'pageurl'       =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>true, 'index'=>true, 'position'=>10, 'searchall'=>1, 'comment'=>'Alias of page'),
+	    'title'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+	    'description'   =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+	    'keywords'      =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+	    'content'       =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+	    'lang'          =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
+	    'fk_website'    =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'position'=>40,  'searchall'=>0),
+	    'fk_page'       =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+	    //'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		//'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
+		//'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>true,  'position'=>1000, 'nullifempty'=>1),
+	);
+	// END MODULEBUILDER PROPERTIES
 
 
 	/**
@@ -109,10 +130,10 @@ class WebsitePage extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-		if (isset($this->date_creation)) {
+		if (empty($this->date_creation)) {
 			 $this->date_creation = $now;
 		}
-		if (isset($this->date_modification)) {
+		if (empty($this->date_modification)) {
 			 $this->date_modification = $now;
 		}
 
@@ -127,6 +148,8 @@ class WebsitePage extends CommonObject
 		$sql.= 'description,';
 		$sql.= 'keywords,';
 		$sql.= 'content,';
+		$sql.= 'lang,';
+		$sql.= 'fk_page,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
@@ -137,8 +160,10 @@ class WebsitePage extends CommonObject
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->keywords)?'NULL':"'".$this->db->escape($this->keywords)."'").',';
 		$sql .= ' '.(! isset($this->content)?'NULL':"'".$this->db->escape($this->content)."'").',';
+		$sql .= ' '.(! isset($this->lang)?'NULL':"'".$this->db->escape($this->lang)."'").',';
+		$sql .= ' '.(empty($this->fk_page)?'NULL':$this->db->escape($this->fk_page)).',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
-		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
+		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?"'".$this->db->idate($now)."'":"'".$this->db->idate($this->date_creation)."'").',';
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
@@ -181,9 +206,9 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one. found
-	 * @param string $website_id   Web site id
-	 * @param string $page         Page name
+	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one found.
+	 * @param string $website_id   Web site id (page name must also be filled if this parameter is used)
+	 * @param string $page         Page name (website id must also be filled if this parameter is used)
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -199,17 +224,24 @@ class WebsitePage extends CommonObject
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
 		$sql .= " t.content,";
+		$sql .= " t.lang,";
+		$sql .= " t.fk_page,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
-		if (null !== $website_id) {
-		    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
-		    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
-		} else {
+		if ($id > 0)
+		{
 			$sql .= ' AND t.rowid = ' . $id;
+		}
+		else
+		{
+			if (null !== $website_id) {
+			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
+			    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
+			}
 		}
         $sql .= $this->db->plimit(1);
 
@@ -227,6 +259,8 @@ class WebsitePage extends CommonObject
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
 				$this->content = $obj->content;
+				$this->lang = $obj->lang;
+				$this->fk_page = $obj->fk_page;
 				$this->status = $obj->status;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -272,6 +306,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
 		$sql .= " t.content,";
+		$sql .= " t.lang,";
+		$sql .= " t.fk_page,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -314,6 +350,8 @@ class WebsitePage extends CommonObject
 				$record->description = $obj->description;
 				$record->keywords = $obj->keywords;
 				$record->content = $obj->content;
+				$record->lang = $obj->lang;
+				$record->fk_page = $obj->fk_page;
 				$record->status = $obj->status;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
@@ -380,9 +418,11 @@ class WebsitePage extends CommonObject
 		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
 		$sql .= ' keywords = '.(isset($this->keywords)?"'".$this->db->escape($this->keywords)."'":"null").',';
 		$sql .= ' content = '.(isset($this->content)?"'".$this->db->escape($this->content)."'":"null").',';
+		$sql .= ' lang = '.(isset($this->lang)?"'".$this->db->escape($this->lang)."'":"null").',';
+		$sql .= ' fk_page = '.(empty($this->fk_page)?"null":$this->db->escape($this->fk_page)).',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
+		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -477,17 +517,22 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user				User making the clone
+	 * @param 	int 	$fromid 			Id of object to clone
+	 * @param	string	$newref				New ref/alias of page
+	 * @param	string	$newlang			New language
+	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
+	 * @param	int		$newwebsite			0=Same web site, 1=New web site
+	 * @return 	int 						New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
+		global $hookmanager, $langs;
+		$error = 0;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		global $user;
-		$error = 0;
-		$object = new Websitepage($this->db);
+		$object = new self($this->db);
 
 		$this->db->begin();
 
@@ -497,14 +542,20 @@ class WebsitePage extends CommonObject
 		$object->id = 0;
 
 		// Clear fields
-		// ...
+		$object->ref = $newref;
+		$object->pageurl = $newref;
+		$object->title = $langs->trans("CopyOf").' '.$object->title;
+		if (! empty($newlang)) $object->lang=$newlang;
+		if ($istranslation) $object->fk_page = $fromid;
+		else $object->fk_page = 0;
+		if (! empty($newwebsite)) $object->fk_website=$newwebsite;
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
-
-		// Other options
 		if ($result < 0) {
-			$error ++;
+			$error++;
+			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
@@ -517,7 +568,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 

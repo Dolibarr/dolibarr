@@ -376,7 +376,7 @@ if ($id)
 		$accountingaccount = new AccountingAccount($db);
 		$accountingaccount->fetch('',$object->accountancy_code);
 
-		print $accountingaccount->getNomUrl(1);
+		print $accountingaccount->getNomUrl(0,1,1,'',1);
 	} else {
 		print $object->accountancy_code;
 	}

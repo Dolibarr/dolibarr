@@ -110,7 +110,7 @@ if (! empty($canvas))
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
-$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+$fieldtype = (! empty($id) ? 'rowid' : 'ref');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -990,11 +990,11 @@ else
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
-            print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
+            print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
             print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td>';
             // Stock desired level
-            print '<td>'.$langs->trans("DesiredStock").'</td><td>';
+            print '<td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
             print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
             print '</td></tr>';
         }

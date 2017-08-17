@@ -47,7 +47,7 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/l
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
+if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -367,6 +367,9 @@ if (empty($reshook)) {
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 				$object->dateemployment = $dateemployment;
 
+				$object->default_range = GETPOST('default_range');
+				$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
+				
 				if (! empty($conf->multicompany->enabled))
 				{
 					if (! empty($_POST["superadmin"]))
@@ -1108,7 +1111,21 @@ if ($action == 'create' || $action == 'adduserldap')
 			null, '90%' );
 		print "</td></tr>";
 	}
+	
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+	{
+		print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+		print '<td>';
+		print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+		print '</td></tr>';
 
+		print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+		print '<td>';
+		$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+		print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+		print '</td></tr>';
+	}
+	
     // Other attributes
     $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1126,7 +1143,7 @@ if ($action == 'create' || $action == 'adduserldap')
     $doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,'90%');
     $doleditor->Create();
     print "</td></tr>\n";
-
+			
     // Signature
     print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
     print '<td>';
@@ -1498,6 +1515,19 @@ else
 		    print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 		    print "</tr>\n";
 
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td class="fk_c_exp_tax_cat">';
+				print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				print $object->default_range;
+				print '</td></tr>';
+			}
+	
 		    // Other attributes
     		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
@@ -2392,6 +2422,20 @@ else
                 print "</tr>\n";
             }
 
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td>';
+				print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+				print '</td></tr>';
+				
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+				print '</td></tr>';
+			}
+			
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

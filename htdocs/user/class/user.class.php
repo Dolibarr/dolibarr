@@ -130,7 +130,8 @@ class User extends CommonObject
 
 	public $dateemployment;			// Define date of employment by company
 
-
+	public $default_c_exp_tax_cat;
+	public $default_range;
 
 	/**
 	 *    Constructor de la classe
@@ -199,6 +200,7 @@ class User extends CommonObject
 		$sql.= " u.color,";
 		$sql.= " u.dateemployment,";
 		$sql.= " u.ref_int, u.ref_ext,";
+		$sql.= " u.default_range, u.default_c_exp_tax_cat,";
         $sql.= " c.code as country_code, c.label as country,";
         $sql.= " d.code_departement as state_code, d.nom as state";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -310,6 +312,9 @@ class User extends CommonObject
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
+				
+				$this->default_range		= $obj->default_range;
+				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -1338,7 +1343,7 @@ class User extends CommonObject
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
-
+		
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
@@ -1389,6 +1394,9 @@ class User extends CommonObject
 		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
 		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
+		$sql.= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
+		$sql.= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
+		
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

@@ -2,6 +2,11 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 7.0.0 compared to 6.0.* *****
+
+
+
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
 
 NEW: Add experimental BlockeLog module (to log business events in a non reversible log file).
