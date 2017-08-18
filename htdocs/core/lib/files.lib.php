@@ -328,7 +328,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			$filearray[$key]['acl']='';
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filearray[$key]['fullname']);
-			if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
+			if (! preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
 			{
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -826,7 +826,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvi
             // Rename entry into ecm database
             $rel_filetorenamebefore = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $srcfile);
             $rel_filetorenameafter = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $destfile);
-            if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
+            if (! preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
             {
                 $rel_filetorenamebefore = preg_replace('/^[\\/]/', '', $rel_filetorenamebefore);
                 $rel_filetorenameafter = preg_replace('/^[\\/]/', '', $rel_filetorenameafter);
@@ -1324,16 +1324,17 @@ function dol_delete_preview($object)
 
 /**
  *	Create a meta file with document file into same directory.
- *	This should allow "grep" search.
- *  This feature is enabled only if option MAIN_DOC_CREATE_METAFILE is set.
+ *	This make "grep" search possible.
+ *  This feature to generate the meta file is enabled only if option MAIN_DOC_CREATE_METAFILE is set.
  *
  *	@param	CommonObject	$object		Object
- *	@return	int					0 if we did nothing, >0 success, <0 error
+ *	@return	int							0 if do nothing, >0 if we update meta file too, <0 if KO
  */
 function dol_meta_create($object)
 {
 	global $conf;
 
+	// Create meta file		
 	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;	// By default, no metafile.
 
 	// Define parent dir of elements
@@ -1351,9 +1352,9 @@ function dol_meta_create($object)
 	{
 		$object->fetch_thirdparty();
 
-		$facref = dol_sanitizeFileName($object->ref);
-		$dir = $dir . "/" . $facref;
-		$file = $dir . "/" . $facref . ".meta";
+		$objectref = dol_sanitizeFileName($object->ref);
+		$dir = $dir . "/" . $objectref;
+		$file = $dir . "/" . $objectref . ".meta";
 
 		if (! is_dir($dir))
 		{
@@ -1368,15 +1369,15 @@ function dol_meta_create($object)
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
 			CLIENT=\"" . $client . "\"
-			TOTAL_HT=\"" . $object->total_ht . "\"
-			TOTAL_TTC=\"" . $object->total_ttc . "\"\n";
+			AMOUNT_WO_TAX=\"" . $object->total_ht . "\"
+			AMOUNT_INC_TAX=\"" . $object->total_ttc . "\"\n";
 
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				//Pour les articles
 				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
-				ITEM_" . $i . "_TOTAL_HT=\"" . $object->lines[$i]->total_ht . "\"
-				ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
+				ITEM_" . $i . "_AMOUNT_WO_TAX=\"" . $object->lines[$i]->total_ht . "\"
+				ITEM_" . $i . "_VAT=\"" .$object->lines[$i]->tva_tx . "\"
 				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
 				";
 			}
@@ -1389,6 +1390,10 @@ function dol_meta_create($object)
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 		return 1;
+	}
+	else 
+	{
+		dol_syslog('FailedToDetectDirInDolMetaCreateFor'.$object->element, LOG_WARNING);
 	}
 
 	return 0;
@@ -1428,7 +1433,7 @@ function dol_init_file_process($pathtoscan='', $trackid='')
 
 
 /**
- * Get and save an upload file (for example after submitting a new file a mail form).
+ * Get and save an upload file (for example after submitting a new file a mail form). Database index of file is also updated if donotupdatesession is set.
  * All information used are in db, conf, langs, user and _FILES.
  * Note: This function can be used only into a HTML page context.
  *
@@ -1522,7 +1527,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					{
 					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
 
-					    if (! preg_match('/[\\/]temp[\\/]/', $rel_dir))     // If not a tmp dir
+					    if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
 					    {
 					        $filename = basename($destfile);
 					        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);

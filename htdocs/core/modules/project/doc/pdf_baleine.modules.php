@@ -329,6 +329,8 @@ class pdf_baleine extends ModelePDFProjects
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+		$		this->result = array('fullpath'=>$file);
+
 				return 1;   // Pas d'erreur
 			}
 			else
