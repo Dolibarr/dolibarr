@@ -71,13 +71,20 @@ if ($cancel)
     }
 }
 
-if ($user->rights->banque->consolidate && $action == 'dvnext')
+
+if ($user->rights->banque->consolidate && $action == 'donext')
+{
+    $al = new AccountLine($db);
+    $al->dateo_next($_GET["rowid"]);
+}elseif ($user->rights->banque->consolidate && $action == 'doprev')
+{
+    $al = new AccountLine($db);
+    $al->dateo_previous($_GET["rowid"]);
+}elseif ($user->rights->banque->consolidate && $action == 'dvnext')
 {
     $al = new AccountLine($db);
     $al->datev_next($_GET["rowid"]);
-}
-
-if ($user->rights->banque->consolidate && $action == 'dvprev')
+}elseif ($user->rights->banque->consolidate && $action == 'dvprev')
 {
     $al = new AccountLine($db);
     $al->datev_previous($_GET["rowid"]);
@@ -479,6 +486,14 @@ if ($result)
         {
             print '<td>';
             print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            if (! $objp->rappro)
+            {
+                print ' &nbsp; ';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+                print img_edit_remove() . "</a> ";
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+                print img_edit_add() ."</a>";
+            }
             print '</td>';
         }
         else
