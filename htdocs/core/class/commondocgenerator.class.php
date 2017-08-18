@@ -374,13 +374,12 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
-		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
+
 		$array_key.'_total_ht'=>price2num($object->total_ht),
 		$array_key.'_total_vat'=>(! empty($object->total_vat)?price2num($object->total_vat):price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
-		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
 
 		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
@@ -410,6 +409,14 @@ abstract class CommonDocGenerator
 		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT'), 0, $outputlangs),
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
 		);
+
+		if (method_exists($object, 'getTotalDiscount')) {
+			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
+			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
+		} else {
+			$resarray[$array_key.'_total_discount_ht_locale'] = '';
+			$resarray[$array_key.'_total_discount_ht'] = '';
+		}
 
 		// Add vat by rates
 		foreach ($object->lines as $line)
