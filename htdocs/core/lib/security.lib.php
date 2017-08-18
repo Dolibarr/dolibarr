@@ -339,8 +339,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 	global $hookmanager;
 	$hookmanager->initHooks(array('permissions'));
 	$parameters=array('features'=>$features,'objectid'=>preg_replace("/'/", '', $objectid),'idtype'=>$dbt_select);
-	$reshook=$hookmanager->executeHooks('restricted',$parameters);
-	if ($reshook < 0) accessforbidden();
+	$hookmanager->executeHooks('restricted',$parameters);
+	if ($hookmanager->resArray['restricted'] == 1) accessforbidden();
 
     return 1;
 }
