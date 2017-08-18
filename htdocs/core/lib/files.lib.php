@@ -285,6 +285,90 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
 
 
 /**
+ * Complete $filearray with data from database.
+ * This will call doldir_list_indatabase to complate filearray.
+ * 
+ * @param	$filearray		Array of files get using dol_dir_list
+ * @param	$relativedir	Relative dir from DOL_DATA_ROOT
+ * @return	void
+ */
+function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
+{
+	global $db, $user;
+	
+	$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+
+	//var_dump($filearray);
+	//var_dump($filearrayindatabase);
+
+	// Complete filearray with properties found into $filearrayindatabase
+	foreach($filearray as $key => $val)
+	{
+		$found=0;
+		// Search if it exists into $filearrayindatabase
+		foreach($filearrayindatabase as $key2 => $val2)
+		{
+			if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
+			{
+				$filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
+				$filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
+				$filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
+				$filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
+				$filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
+				$filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
+				$found=1;
+				break;
+			}
+		}
+
+		if (! $found)    // This happen in transition toward version 6, or if files were added manually into os dir.
+		{
+			$filearray[$key]['position']='999999';     // File not indexed are at end. So if we add a file, it will not replace an existing position
+			$filearray[$key]['cover']=0;
+			$filearray[$key]['acl']='';
+
+			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filearray[$key]['fullname']);
+			if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
+			{
+				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
+				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+				$ecmfile=new EcmFiles($db);
+
+				// Add entry into database
+				$filename = basename($rel_filename);
+				$rel_dir = dirname($rel_filename);
+				$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+				$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+				$ecmfile->filepath = $rel_dir;
+				$ecmfile->filename = $filename;
+				$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname']));        // $destfile is a full path to file
+				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
+				$ecmfile->gen_or_uploaded = 'unknown';
+				$ecmfile->description = '';    // indexed content
+				$ecmfile->keyword = '';        // keyword content
+				$result = $ecmfile->create($user);
+				if ($result < 0)
+				{
+					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+				}
+				else
+				{
+					$filearray[$key]['rowid']=$result;
+				}
+			}
+			else
+			{
+				$filearray[$key]['rowid']=0;     // Should not happened
+			}
+		}
+	}
+
+	/*var_dump($filearray);*/
+}
+
+
+/**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
  *
  * @param	string 	$a		File 1
@@ -679,7 +763,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * Move a file into another name.
  * Note:
  *  - This function differs from dol_move_uploaded_file, because it can be called in any context.
- *  - Database of files is updated.
+ *  - Database indexes for files are updated.
  *  - Test on antivirus is done only if param testvirus is provided and an antivirus was set.
  *
  * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
@@ -999,7 +1083,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 }
 
 /**
- *  Remove a file or several files with a mask
+ *  Remove a file or several files with a mask.
+ *  This delete file physically but also database indexes. 
  *
  *  @param	string	$file           File to delete or mask of files to delete
  *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found

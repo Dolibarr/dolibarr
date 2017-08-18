@@ -554,10 +554,17 @@ function security_prepare_head()
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
-    $head[$h][1] = $langs->trans("Files");
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Upload").')';
     $head[$h][2] = 'file';
     $h++;
 
+    /*
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file_download.php";
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Download").')';
+    $head[$h][2] = 'filedownload';
+    $h++;
+	*/
+    
     $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
     $head[$h][1] = $langs->trans("ExternalAccess");
     $head[$h][2] = 'proxy';
