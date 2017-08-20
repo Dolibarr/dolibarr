@@ -96,7 +96,7 @@ $action=GETPOST('action','alpha');
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('create')) { $action='create'; }
-if (GETPOST('editmedia')) { $action='editmedia'; }
+if (GETPOST('editmedias')) { $action='editmedias'; }
 if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
@@ -573,7 +573,7 @@ if ($action == 'updatemeta')
             }
 
    		    $aliascontent = '<?php'."\n";
-   		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
+   		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
    		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
    		    $aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
    		    $aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
@@ -746,7 +746,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
                 }
 
     		    $aliascontent = '<?php'."\n";
-    		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a copy of database page content\n";
+    		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
     		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
     		    $aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\';';
     		    $aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
@@ -899,10 +899,13 @@ if (count($object->records) > 0)
 
         print ' &nbsp; ';
 
-        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+
+		print ' &nbsp; ';
+
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedias">';
     }
 
     print '</div>';
@@ -930,10 +933,10 @@ if (count($object->records) > 0)
         print '</a>';
     }
 
-    if (in_array($action, array('editcss','editmenu')))
+    if (in_array($action, array('editcss','editmenu','editmedias')))
     {
-        if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-        if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^create/',$action) && $action != 'editmedias') print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^edit/',$action) && $action != 'editmedias') print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
     }
 
@@ -942,7 +945,7 @@ if (count($object->records) > 0)
 
     // ***** Part for pages
 
-    if ($website && ! in_array($action, array('editcss','editmenu')))
+    if ($website && ! in_array($action, array('editcss','editmenu','editmedias')))
     {
         print '</div>';	// Close current websitebar to open a new one
 
@@ -1080,7 +1083,7 @@ if (count($object->records) > 0)
 
             // TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
         }
-        if (! in_array($action, array('editcss','editmenu','create','createpagefromclone')))
+        if (! in_array($action, array('editcss','editmenu','editmedias','create','createpagefromclone')))
         {
             if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
             if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -1172,8 +1175,8 @@ if ($action == 'editcss')
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php htmlheader file to remove php code and get only html part
     $htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheader);
-    if (! trim($htmlheader)) $htmlheader='<html>'."\n".'<!-- HTML header content (all pages) -->'."\n".'</html>';
-    else $htmlheader='<html>'."\n".$htmlheader."\n".'</html>';
+    if (! trim($htmlheader)) $htmlheader='<!-- HTML header content (common for all pages) -->';
+    else $htmlheader='<html>'."\n".trim($htmlheader)."\n".'</html>';
 
     $robotcontent = @file_get_contents($filerobot);
     // Clean the php htmlheader file to remove php code and get only html part
@@ -1378,7 +1381,7 @@ if ($action == 'editmeta' || $action == 'create')
     print '<br>';
 }
 
-if ($action == 'editmedia')
+if ($action == 'editmedias')
 {
     print '<!-- Edit Media -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';

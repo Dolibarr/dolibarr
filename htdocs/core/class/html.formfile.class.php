@@ -68,7 +68,7 @@ class FormFile
      *  @param	integer	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
      *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
      *  @param	integer	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
-     *  @param	string	$htmlname		Name and id of HTML form
+     *  @param	string	$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
      * 	@return	int						<0 if KO, >0 if OK
      */
     function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile')
@@ -212,7 +212,7 @@ class FormFile
 
             if (empty($res))
             {
-        		print '<div class="attacharea">';
+        		print '<div class="attacharea attacharea'.$htmlname.'">';
             	print $out;
             	print '</div>';
             }
@@ -904,7 +904,7 @@ class FormFile
     /**
      *  Show list of documents in $filearray (may be they are all in same directory but may not)
      *  This also sync database if $upload_dir is defined.
-     *  
+     *
      *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
      * 	@param	 Object	$object				Object on which document is linked to.
      * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper.

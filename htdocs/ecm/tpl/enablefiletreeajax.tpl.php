@@ -24,6 +24,8 @@
 <script type="text/javascript">
 
 <?php
+print 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working2.gif".'\';'."\n";
+
 $openeddir='/';
 ?>
 
@@ -43,9 +45,9 @@ $(document).ready(function() {
 		// Called if we click on a dir (not a file)
 		function(elem) {
 			id=elem.attr('id').substr(12);	// We get id that is 'fmdirlia_id_xxx' (id we want is xxx)
-			jQuery("#formuserfile_section_dir").val(elem.attr('rel'));
-   			jQuery("#formuserfile_section_id").val(id);
-			jQuery('#formuserfile').show();
+			jQuery("#<?php echo $nameforformuserfile ?>_section_dir").val(elem.attr('rel'));
+   			jQuery("#<?php echo $nameforformuserfile ?>_section_id").val(id);
+			jQuery('#<?php echo $nameforformuserfile ?>').show();
 		}
 	);
 

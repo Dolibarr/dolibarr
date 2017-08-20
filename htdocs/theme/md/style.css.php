@@ -1171,6 +1171,10 @@ div.attacharea {
 	padding-top: 18px;
 	padding-bottom: 10px;
 }
+div.attachareaformuserfileecm {
+	padding-top: 0;
+	padding-bottom: 0;
+}
 div.arearef {
 	padding-top: 2px;
 	padding-bottom: 5px;
