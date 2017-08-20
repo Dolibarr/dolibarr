@@ -1311,7 +1311,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! defined('DISABLE_BROWSER_NOTIF'))
             {
                 $enablebrowsernotif=false;
-                if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_NOTIFICATION)) $enablebrowsernotif=true;
+                if (! empty($conf->agenda->enabled) && ! empty($conf->global->AGENDA_REMINDER_BROWSER)) $enablebrowsernotif=true;
                 if ($conf->browser->layout == 'phone') $enablebrowsernotif=false;
                 if ($enablebrowsernotif)
                 {
