@@ -882,7 +882,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	{
 	    $valtoshow=GETPOST("newamount",'int');
 	    //check default subscription amount ...
-	    if ($conf->global->MEMBER_NEWFORM_EDITAMOUNT == true) {
+	    if ($conf->global->MEMBER_NEWFORM_EDITAMOUNT) {
 	      if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
 	      }
