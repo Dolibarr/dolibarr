@@ -714,9 +714,9 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
         $dir_handle=opendir($ossrcfile);
         while ($file=readdir($dir_handle))
         {
-            if ($file!="." && $file!="..")
+            if ($file != "." && $file != ".." && ! is_link($ossrcfile."/".$file))
             {
-                if (is_dir($ossrcfile."/".$file) && ! is_link($ossrcfile."/".$file))
+                if (is_dir($ossrcfile."/".$file))
                 {
                     //var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
                     $tmpresult=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists, $arrayreplacement);
