@@ -609,7 +609,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 	if ($action == 'confirm_createfromclone')
 	{
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, $object->id, GETPOST('siteref','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''));
+		$result = $objectnew->createFromClone($user, GETPOST('id','int'), GETPOST('siteref','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''));
 		if ($result < 0)
 		{
 			$error++;
@@ -1005,7 +1005,7 @@ if (count($object->records) > 0)
             	//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
             	);
 
-            	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
+            	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id='.$object->id, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
 
             	print $formconfirm;
             }
