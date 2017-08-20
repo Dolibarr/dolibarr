@@ -149,9 +149,9 @@ class MyObject extends CommonObject
 	/**
 	 * Clone and object into another one
 	 *
-	 * @param  User $user      	User that creates
-	 * @param  int 	$fromid     Id of object to clone
-	 * @return int             	New id of clone
+	 * @param  	User 	$user      	User that creates
+	 * @param  	int 	$fromid     Id of object to clone
+	 * @return 	mixed 				New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -188,7 +188,7 @@ class MyObject extends CommonObject
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
-	        return $object->id;
+	        return $object;
 	    } else {
 	        $this->db->rollback();
 	        return -1;

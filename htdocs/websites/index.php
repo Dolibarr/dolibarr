@@ -466,7 +466,7 @@ if ($action == 'setashome')
     if (! $res > 0)
     {
         $error++;
-        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 
     if (! $error)
@@ -572,21 +572,12 @@ if ($action == 'updatemeta')
                 dol_delete_file($fileoldalias);
             }
 
-   		    $aliascontent = '<?php'."\n";
-   		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
-   		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
-   		    $aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
-   		    $aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
-   		    $aliascontent.= '?>'."\n";
-   		    $result = file_put_contents($filealias, $aliascontent);
-            if (! empty($conf->global->MAIN_UMASK))
-                @chmod($filealias, octdec($conf->global->MAIN_UMASK));
-
+            // Save page alias
+            $result=dolSavePageAlias($filealias, $object, $objectpage);
             if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
 			// Save page of content
             $result=dolSavePageContent($filetpl, $object, $objectpage);
-
             if ($result)
             {
                 setEventMessages($langs->trans("Saved"), null, 'mesgs');
@@ -623,7 +614,13 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		{
 			$error++;
 			setEventMessages($objectnew->error, $objectnew->errors, 'errors');
-			$action='createfromclone';
+			$action='preview';
+		}
+		else
+		{
+			$object = $objectnew;
+			$id = $object->id;
+			$pageid = $object->fk_default_home;
 		}
 	}
 
@@ -745,22 +742,12 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
         		    dol_delete_file($fileoldalias);
                 }
 
-    		    $aliascontent = '<?php'."\n";
-    		    $aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
-    		    $aliascontent.= 'global $dolibarr_main_data_root;'."\n";
-    		    $aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\';';
-    		    $aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
-    		    $aliascontent.= '?>'."\n";
-    		    $result = file_put_contents($filealias, $aliascontent);
-    		    if (! empty($conf->global->MAIN_UMASK))
-    		        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
-
+                // Save page alias
+                $result=dolSavePageAlias($filealias, $object, $objectpage);
                 if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
-
 
 				// Save page content
         	    $result=dolSavePageContent($filetpl, $object, $objectpage);
-
         	    if ($result)
         	    {
         	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
@@ -1012,7 +999,7 @@ if (count($object->records) > 0)
             if ($action == 'createfromclone') {
             	// Create an array for form
             	$formquestion = array(
-            	array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("Website")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
+            	array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("Website")  ,'value'=> 'copy_of_'.$object->ref),
             	//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
             	//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
             	//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
@@ -1522,6 +1509,38 @@ function dolWebsiteReplacementOfLinks($website, $content)
 
 	return $content;
 }
+
+
+
+
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$filealias			Full path of filename to generate
+ * @param	Website		$object				Object website
+ * @param	WebsitePage	$objectpage			Object websitepage
+ * @return	boolean							True if OK
+ */
+function dolSavePageAlias($filealias, $object, $objectpage)
+{
+	global $conf;
+
+	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
+	dol_syslog("We regenerate the alias page filealias=".$filealias);
+
+	$aliascontent = '<?php'."\n";
+	$aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
+	$aliascontent.= 'global $dolibarr_main_data_root;'."\n";
+	$aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
+	$aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+	$aliascontent.= '?>'."\n";
+	$result = file_put_contents($filealias, $aliascontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+
+	return ($result?true:false);
+}
+
 
 /**
  * Save content of a page on disk

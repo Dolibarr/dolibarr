@@ -309,7 +309,7 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
 	 * @param	int		$newwebsite			0=Same web site, 1=New web site
-	 * @return 	int 						New id of clone
+	 * @return 	mixed 						New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
@@ -350,7 +350,7 @@ class WebsitePage extends CommonObject
 		if (!$error) {
 			$this->db->commit();
 
-			return $object->id;
+			return $object;
 		} else {
 			$this->db->rollback();
 
