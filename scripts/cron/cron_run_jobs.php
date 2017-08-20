@@ -116,7 +116,6 @@ else
 		exit(-1);
 	}
 }
-//erics cf https://www.dolibarr.org/forum/12-howto-help/26035-cron-run-jobs-php-error-permission-denied
 $user->getrights();
  
 if (isset($argv[3]) || $argv[3])
