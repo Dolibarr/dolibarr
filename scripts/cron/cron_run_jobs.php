@@ -68,9 +68,11 @@ $error=0;
 /*
  * Main
  */
+// current date
+$now=dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . $now . " *****\n";
 
 // Check security key
 if ($key != $conf->global->CRON_KEY)
@@ -114,7 +116,9 @@ else
 		exit(-1);
 	}
 }
-
+//erics cf https://www.dolibarr.org/forum/12-howto-help/26035-cron-run-jobs-php-error-permission-denied
+$user->getrights();
+ 
 if (isset($argv[3]) || $argv[3])
 {
 	$id = $argv[3];
@@ -137,9 +141,6 @@ if ($result<0)
 }
 
 // TODO This sequence of code must be shared with code into cron_run_jobs.php php page.
-
-// current date
-$now=dol_now();
 
 if(is_array($object->lines) && (count($object->lines)>0))
 {
