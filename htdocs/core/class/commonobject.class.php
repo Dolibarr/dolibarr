@@ -3994,7 +3994,7 @@ abstract class CommonObject
 			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
 			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			}
-			else 
+			else
 			{
 				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 			}
@@ -4014,13 +4014,13 @@ abstract class CommonObject
 					$upload_dir = dirname($destfull);
 					$destfile = basename($destfull);
 					$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
-			
+
 					if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
 					{
 						$filename = basename($destfile);
 						$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 						$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-			
+
 						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 						$ecmfile=new EcmFiles($this->db);
 						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
@@ -4935,7 +4935,7 @@ abstract class CommonObject
 				else
 				{
 					$queryarray[$field] = (int) price2num($this->{$field});
-					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be rest to null later if property 'nullifempty' is on for this field.
+					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
 				}
 			}
 			else if($this->isFloat($info))
@@ -4949,7 +4949,7 @@ abstract class CommonObject
 			}
 
 			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
-			if (! empty($info['nullifempty']) && empty($queryarray[$field])) $queryarray[$field] = null;
+			if (! empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;
 		}
 
 		return $queryarray;
@@ -5039,7 +5039,7 @@ abstract class CommonObject
 	    $fieldvalues = $this->set_save_query();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
-		unset($fieldvalues['rowid']);	// We suppose the field rowid is reserved field for autoincrement field.
+		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
 	    $keys=array();
 	    $values = array();
@@ -5056,7 +5056,7 @@ abstract class CommonObject
     		$sql.= ' ('.implode( ", ", $keys ).')';
     		$sql.= ' VALUES ('.implode( ", ", $values ).')';
 
-			$res = $this->db->query( $sql );
+			$res = $this->db->query($sql);
     	    if ($res===false) {
     	        $error++;
     	        $this->errors[] = $this->db->lasterror();

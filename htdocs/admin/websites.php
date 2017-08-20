@@ -133,7 +133,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             $fieldnamekey=$listfield[$f];
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
-		if ($value == 'ref' && ! preg_match('/^[a-z0-9]+$/i', $_POST[$value]))
+		if ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
         {
 			$ok=0;
             $fieldnamekey=$listfield[$f];

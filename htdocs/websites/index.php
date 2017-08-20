@@ -163,30 +163,85 @@ if ($action == 'add')
     $db->begin();
 
     $objectpage->fk_website = $object->id;
-
-    $objectpage->title = GETPOST('WEBSITE_TITLE');
-    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-    $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
-    $objectpage->lang = GETPOST('WEBSITE_LANG');
-
-    if (empty($objectpage->pageurl))
+    if (GETPOST('fetchexternalurl','alpha'))
     {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
-        $error++;
-        $action='create';
+    	$urltograb=GETPOST('externalurl','alpha');
     }
-    else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
+
+    if ($urltograb)
     {
-    	setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
-    	$error++;
-    	$action='create';
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+    	$tmp = getURLContent($urltograb);
+    	if ($tmp['curl_error_no'])
+    	{
+    		$error++;
+    		setEventMessages($tmp['curl_error_msg'], null, 'errors');
+    		$action='create';
+    	}
+    	else
+    	{
+    		preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
+    		$head = $reg[1];
+
+    		$urltograbwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograbwithoutdomain);
+   			$objectpage->pageurl = basename($urltograbwithoutdomain);
+   			if (empty($objectpage->pageurl)) $objectpage->pageurl='home';
+
+    		if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
+    		{
+    			$objectpage->title = $regtmp[1];
+    		}
+    		if (preg_match('/<meta name="description"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+    		{
+    			$objectpage->description = $regtmp[1];
+    		}
+    		if (preg_match('/<meta name="keywords"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+    		{
+    			$objectpage->keywords = $regtmp[1];
+    		}
+    		if (preg_match('/<html\s+lang="([^"]+)"/ims', $tmp['content'], $regtmp))
+    		{
+    			$tmplang=explode('-', $regtmp[1]);
+    			$objectpage->lang = $tmplang[0].($tmplang[1] ? '_'.strtoupper($tmplang[1]) : '');
+    		}
+
+    		$objectpage->content = $tmp['content'];
+    		$objectpage->content = preg_replace('/^.*<body[^>]*>/ims', '', $objectpage->content);
+    		$objectpage->content = preg_replace('/<\/body[^>]*>.*$/ims', '', $objectpage->content);
+
+    		$objectpage->grabbed_from = $urltograb;
+    	}
     }
-    if (empty($objectpage->title))
+    else
     {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE")), null, 'errors');
-        $error++;
-        $action='create';
+	    $objectpage->title = GETPOST('WEBSITE_TITLE');
+	    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+	    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
+	    $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
+	    $objectpage->lang = GETPOST('WEBSITE_LANG');
+    }
+
+    if (! $error)
+    {
+	    if (empty($objectpage->pageurl))
+	    {
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
+	        $error++;
+	        $action='create';
+	    }
+	    else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
+	    {
+	    	setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
+	    	$error++;
+	    	$action='create';
+	    }
+	    if (empty($objectpage->title))
+	    {
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE")), null, 'errors');
+	        $error++;
+	        $action='create';
+	    }
     }
 
     if (! $error)
@@ -212,7 +267,7 @@ if ($action == 'add')
 	if (! $error)
 	{
 	   $action = 'preview';
-	   $id = $objectpage->id;
+	   $pageid = $objectpage->id;
 	}
 }
 
@@ -875,7 +930,7 @@ if (count($object->records) > 0)
         print '</a>';
     }
 
-    if (in_array($action, array('editcss','editmenu','create')))
+    if (in_array($action, array('editcss','editmenu')))
     {
         if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -887,9 +942,9 @@ if (count($object->records) > 0)
 
     // ***** Part for pages
 
-    if ($website)
+    if ($website && ! in_array($action, array('editcss','editmenu')))
     {
-        print '</div>';
+        print '</div>';	// Close current websitebar to open a new one
 
         $array=$objectpage->fetchAll($object->id);
         if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
@@ -984,9 +1039,9 @@ if (count($object->records) > 0)
 
                 print ' &nbsp; ';
 
+                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageSource")).'" name="editsource">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
-                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
         		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
@@ -994,7 +1049,7 @@ if (count($object->records) > 0)
             }
         }
 
-        print '</div>';
+        print '</div>';	// end website selection
 
         print '<div class="websitetools">';
 
@@ -1032,7 +1087,7 @@ if (count($object->records) > 0)
             if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
         }
 
-        print '</div>';
+        print '</div>';	// end websitetools
 
         print '<div class="websitehelp">';
         if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
@@ -1040,7 +1095,7 @@ if (count($object->records) > 0)
         	$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
         	print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 0, 2, 'tooltipsubstitution');
         }
-        print '</div>';
+        print '</div>';	// end websitehelp
 
 
 
@@ -1093,7 +1148,7 @@ else
 }
 
 
-print '</div>';
+print '</div>';	// end current websitebar
 
 $head = array();
 
@@ -1224,19 +1279,21 @@ if ($action == 'editmeta' || $action == 'create')
 
     if ($action == 'create')
     {
-    	print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br>';
+    	print '<br>';
+
+    	print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
     	print '<table class="border" width="100%">';
     	print '<tr><td class="titlefieldcreate">';
     	print $langs->trans("URL");
     	print '</td><td>';
-    	print '<input class="flat minwidth300" type="text" name="externalurl" value="" placeholder="http://externalsite/pagetofetch"> ';
-		print '<input class="button" type="submit" name="fetchexternalurl" value="'.$langs->trans("FetchAndCreate").'">';
+    	print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="http://externalsite/pagetofetch"> ';
+		print '<input class="button" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
     	print '</td></tr>';
     	print '</table>';
 
     	print '<br>';
 
-    	print ' * '.$langs->trans("OrEnterPageInfoManually").'<br>';
+    	print ' * '.$langs->trans("OrEnterPageInfoManually").'<br><hr>';
     }
 
     print '<table class="border" width="100%">';
@@ -1291,6 +1348,18 @@ if ($action == 'editmeta' || $action == 'create')
     print '</td></tr>';
 
     print '</table>';
+
+    if ($action == 'create')
+    {
+    	print '<div class="center">';
+
+	    print '<input class="button" type="submit" name="add" value="'.$langs->trans("Create").'">';
+    	print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+
+    	print '</div>';
+    }
+
+
 	//print '</div>';
 
     //dol_fiche_end();
@@ -1369,12 +1438,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
         // REPLACEMENT OF LINKS When page called by website editor
 
         $out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-        $out.=dolWebsiteReplacementOfLinks($csscontent);
+        $out.=dolWebsiteReplacementOfLinks($object, $csscontent);
         $out.='</style>'."\n";
 
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
 
-        $out.=dolWebsiteReplacementOfLinks($objectpage->content)."\n";
+        $out.=dolWebsiteReplacementOfLinks($object, $objectpage->content)."\n";
 
         $out.='</div>';
 
@@ -1423,18 +1492,19 @@ $db->close();
 /**
  * Save content of a page on disk
  *
+ * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
  * @return	boolean							True if OK
  */
-function dolWebsiteReplacementOfLinks($content)
+function dolWebsiteReplacementOfLinks($website, $content)
 {
-	// Replace php code. Note $objectpage->content come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contains body tags.
 	$content = preg_replace('/<\?php[^\?]+\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
 
 	// Replace relative link / with dolibarr URL
-	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageid='.$object->fk_default_home.'"', $content, -1, $nbrep);
+	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
 	// Replace relative link /xxx.php with dolibarr URL
-	$content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$object->ref.'&pageref=\2"', $content, -1, $nbrep);
+	$content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 
 	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 

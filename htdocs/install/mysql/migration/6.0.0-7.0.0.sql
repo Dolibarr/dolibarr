@@ -28,9 +28,11 @@
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
+ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
+ALTER TABLE llx_website_page ADD COLUMN grabbed_from varchar(255);
 
 ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
 UPDATE llx_website_page set status = 1 WHERE status IS NULL;
