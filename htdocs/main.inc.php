@@ -1214,15 +1214,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
-            // jQuery blockUI
-            if (! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI) || defined('REQUIRE_JQUERY_BLOCKUI'))
-            {
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/blockUI/jquery.blockUI.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            	print '<script type="text/javascript">'."\n";
-            	print 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working2.gif".'\';'."\n";
-            	print '</script>'."\n";
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/blockUI.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            }
             // Flot
             if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && ! defined('DISABLE_JQUERY_FLOT'))
             {
