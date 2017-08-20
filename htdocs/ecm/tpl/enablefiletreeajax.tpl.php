@@ -24,6 +24,8 @@
 <script type="text/javascript">
 
 <?php
+if (empty($module)) $module='ecm';
+
 print 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working2.gif".'\';'."\n";
 
 $openeddir='/';
@@ -34,7 +36,7 @@ $(document).ready(function() {
 	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
 		// Ajax called if we click to expand a dir (not a file). Parameter of dir is provided as a POST parameter.
-		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart='.$module.'&openeddir='.urlencode($openeddir); ?>',
 		folderEvent: 'click',	// 'dblclick'
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)
@@ -73,7 +75,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);
+	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname);
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="fullname";
-if ($module == 'invoice_supplier' && $sortfield == "fullname") $sortfield="level1name";
 
 $ecmdir = new EcmDirectory($db);
 if ($section)
@@ -346,16 +345,11 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 
 }
 
-//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-//else $classviewhide='visible';
-$classviewhide='inline-block';
-
-
-
-
-$head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
-
+if ($module != 'medias')
+{
+	$head = ecm_prepare_dasboard_head('');
+	dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
+}
 
 // Start container of all panels
 ?>
@@ -394,7 +388,7 @@ print '<div class="inline-block valignmiddle floatright">';
 // To attach new file
 if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section))
 {
-	if (empty($section) || $section == -1)
+	if ((empty($section) || $section == -1) && ($module != 'medias'))
 	{
 		?>
 		<script type="text/javascript">
@@ -419,7 +413,7 @@ print '</div>';
 
 ?>
 </div>
-<div id="ecm-layout-west" class="<?php echo $classviewhide; ?>">
+<div id="ecm-layout-west" class="inline-block">
 <?php
 // Start left area
 
@@ -631,7 +625,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 // End left panel
 ?>
 </div>
-<div id="ecm-layout-center" class="<?php echo $classviewhide; ?>">
+<div id="ecm-layout-center" class="inline-block">
 <div class="pane-in ecm-in-layout-center">
 <div id="ecmfileview" class="ecmfileview">
 <?php
@@ -654,8 +648,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 // End of page
 
 
-dol_fiche_end(1);
-
+if ($module != 'medias')
+{
+	dol_fiche_end();
+}
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';

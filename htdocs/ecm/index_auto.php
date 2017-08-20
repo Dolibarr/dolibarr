@@ -357,7 +357,7 @@ $classviewhide='inline-block';
 
 
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
+dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
 
 // Start container of all panels
@@ -484,7 +484,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 // End of page
 
 
-dol_fiche_end(1);
+dol_fiche_end();
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
