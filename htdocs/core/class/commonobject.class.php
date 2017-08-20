@@ -3876,7 +3876,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
 	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
-	 * @param 	Translate 	$outputlangs 	Language to use
+	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
 	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
@@ -3885,7 +3885,7 @@ abstract class CommonObject
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams=null)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$srctemplatepath='';
 
@@ -3902,7 +3902,6 @@ abstract class CommonObject
 			$modele=$tmp[0];
 			$srctemplatepath=$tmp[1];
 		}
-
 
 		// Search template files
 		$file=''; $classname=''; $filefound=0;
@@ -3995,7 +3994,10 @@ abstract class CommonObject
 			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
 			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			}
-			else $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			else 
+			{
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			}
 
 			if ($resultwritefile > 0)
 			{
@@ -4004,6 +4006,58 @@ abstract class CommonObject
 				// We delete old preview
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_delete_preview($this);
+
+				// Index file in database
+				if (! empty($obj->result['fullpath']))
+				{
+					$destfull = $obj->result['fullpath'];
+					$upload_dir = dirname($destfull);
+					$destfile = basename($destfull);
+					$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+			
+					if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+					{
+						$filename = basename($destfile);
+						$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+						$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+			
+						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+						$ecmfile=new EcmFiles($this->db);
+						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
+						if ($result > 0)
+						{
+							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->fullpath_orig = '';
+							$ecmfile->gen_or_uploaded = 'generated';
+							$ecmfile->description = '';    // indexed content
+							$ecmfile->keyword = '';        // keyword content
+							$result = $ecmfile->update($user);
+							if ($result < 0)
+							{
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+						else
+						{
+							$ecmfile->filepath = $rel_dir;
+							$ecmfile->filename = $filename;
+							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->fullpath_orig = '';
+							$ecmfile->gen_or_uploaded = 'generated';
+							$ecmfile->description = '';    // indexed content
+							$ecmfile->keyword = '';        // keyword content
+							$result = $ecmfile->create($user);
+							if ($result < 0)
+							{
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+					}
+				}
+				else
+				{
+					dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+				}
 
 				// Success in building document. We build meta file.
 				dol_meta_create($this);
