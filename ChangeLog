@@ -23,7 +23,7 @@ NEW: add property to show warnings when activating modules
 NEW: add rapport file for supplier paiement
 NEW: Add statistics on supplier tab.
 NEW: Add tooltip help on shipment weight and volume calculation
-NEW: An external module can hook and add mass actions
+NEW: An external module can hook and add mass actions.
 NEW: Better reponsive design
 NEW: Bookmarks are into a combo list.
 NEW: Bulk actions available on supplier orders
