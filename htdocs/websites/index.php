@@ -1305,6 +1305,15 @@ if ($action == 'editmeta' || $action == 'create')
         print '</td><td>';
         print '/public/websites/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
         print '</td></tr>';
+
+        /*
+        print '<tr><td class="titlefield">';
+        print $langs->trans('InitiallyGrabbedFrom');
+        print '</td><td>';
+        print $objectpage->grabbed_from;
+        print '</td></tr>';
+        */
+
         $pageurl=$objectpage->pageurl;
         $pagetitle=$objectpage->title;
         $pagedescription=$objectpage->description;
