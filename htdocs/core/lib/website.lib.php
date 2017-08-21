@@ -27,6 +27,7 @@
  *
  * @param   string  $content    Content string
  * @return  void
+ * @see	dolWebsiteSaveContent
  */
 function dolWebsiteOutput($content)
 {
@@ -87,7 +88,61 @@ function dolWebsiteOutput($content)
 
 
 /**
- * Clean an HTML page to report only content, so we can include it into another page
+ * Convert a page content to have correct links into a new html content.
+ * Used to ouput the page on the Preview.
+ *
+ * @param	Website		$website			Web site object
+ * @param	string		$content			Content to replace
+ * @return	boolean							True if OK
+ */
+function dolWebsiteReplacementOfLinks($website, $content)
+{
+	// Replace php code. Note $content may come from database and does not contains body tags.
+	$content = preg_replace('/<\?php[^\?]+\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
+
+	// Replace relative link / with dolibarr URL
+	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+	// Replace relative link /xxx.php with dolibarr URL
+	$content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
+	$content = preg_replace('/(<img.*src=")(?!(http|'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	return $content;
+}
+
+
+/**
+ * Format img tags to introduce viewimage on img src.
+ *
+ * @param   string  $content    Content string
+ * @return  void
+ * @see	dolWebsiteOutput
+ */
+/*
+function dolWebsiteSaveContent($content)
+{
+	global $db, $langs, $conf, $user;
+	global $dolibarr_main_url_root, $dolibarr_main_data_root;
+
+	//dol_syslog("dolWebsiteSaveContent start (mode=".(defined('USEDOLIBARRSERVER')?'USEDOLIBARRSERVER':'').')');
+
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	//$content = preg_replace('/(<img.*src=")(?!(http|'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	return $content;
+}
+*/
+
+
+/**
+ * Clean an HTML page to report only content, so we can include it into another page.
  * It outputs content of file sanitized from html and body part.
  *
  * @param 	string	$contentfile		Path to file to include (must include website root. Example: 'mywebsite/mypage.php')
@@ -101,8 +156,6 @@ function dolIncludeHtmlContent($contentfile)
 	$MAXLEVEL=20;
 
 	$fullpathfile=DOL_DATA_ROOT.'/websites/'.$contentfile;
-	//$content = file_get_contents($fullpathfile);
-	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
 	$includehtmlcontentopened++;
@@ -111,6 +164,9 @@ function dolIncludeHtmlContent($contentfile)
 		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.$MAXLEVEL.".\n";
 		return;
 	}
+	// TODO Remove body and html if included
+	//$content = file_get_contents($fullpathfile);
+	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 	$res = include $fullpathfile;		// Include because we want to execute code content
 	if (! $res)
 	{

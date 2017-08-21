@@ -69,6 +69,7 @@ function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
@@ -701,6 +702,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
             // Clean data. We remove all the head section.
             $objectpage->content = preg_replace('/<head>.*<\/head>/s', '', $objectpage->content);
             /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
+
 
             $res = $objectpage->update($user);
             if ($res < 0)
@@ -1413,6 +1415,8 @@ if ($action == 'editcontent')
     $contentforedit.='</style>'."\n";*/
     $contentforedit .= $objectpage->content;
 
+    $contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
+
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
     $doleditor->Create(0, '', false);
@@ -1485,30 +1489,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 llxFooter();
 
 $db->close();
-
-
-
-/**
- * Save content of a page on disk
- *
- * @param	Website		$website			Web site object
- * @param	string		$content			Content to replace
- * @return	boolean							True if OK
- */
-function dolWebsiteReplacementOfLinks($website, $content)
-{
-	// Replace php code. Note $content may come from database and does not contains body tags.
-	$content = preg_replace('/<\?php[^\?]+\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
-
-	// Replace relative link / with dolibarr URL
-	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
-	// Replace relative link /xxx.php with dolibarr URL
-	$content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/websites/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
-
-	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-
-	return $content;
-}
 
 
 
