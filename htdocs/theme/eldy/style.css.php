@@ -2264,7 +2264,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 8px !important;
+	/* padding-top: 8px !important; */
 	padding-bottom: 2px !important;
 	padding-bottom: 0px;
 }
@@ -3006,7 +3006,7 @@ div.info {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #788;
+  background: #798080;
 }
 
 div.warning a, div.info a, div.error a {
