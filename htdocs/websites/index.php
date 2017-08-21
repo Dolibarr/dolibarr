@@ -323,6 +323,7 @@ if ($action == 'updatecss')
 	    // Html header file
 	    $htmlheadercontent ='';
 
+	    /* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
 	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
 	    $htmlheadercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
 	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
@@ -330,15 +331,17 @@ if ($action == 'updatecss')
 	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	    $htmlheadercontent.= "ob_start();\n";
 	    // $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
-	    $htmlheadercontent.= "// END PHP ?>\n";
+	    $htmlheadercontent.= "// END PHP ?>\n";*/
 
 	    $htmlheadercontent.= preg_replace(array('/<html>\n*/ims','/<\/html>\n*/ims'),array('',''),GETPOST('WEBSITE_HTML_HEADER'));
 
-	    $htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
+	    /*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
 	    $htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-	    $htmlheadercontent.= "// END PHP ?>"."\n";
+	    $htmlheadercontent.= "// END PHP ?>"."\n";*/
 
-	    dol_syslog("Save file css into ".$filehtmlheader);
+	    $htmlheadercontent = trim($htmlheadercontent)."\n";
+
+	    dol_syslog("Save html header into ".$filehtmlheader);
 
 	    dol_mkdir($pathofwebsite);
 	    $result = file_put_contents($filehtmlheader, $htmlheadercontent);
@@ -369,7 +372,7 @@ if ($action == 'updatecss')
 	    $csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
 	    $csscontent.= "// END PHP ?>"."\n";
 
-	    dol_syslog("Save file css into ".$filecss);
+	    dol_syslog("Save css content into ".$filecss);
 
 	    dol_mkdir($pathofwebsite);
 	    $result = file_put_contents($filecss, $csscontent);
@@ -1179,7 +1182,7 @@ if ($action == 'editcss')
     }
 
     $htaccesscontent = @file_get_contents($filehtaccess);
-    // Clean the php htmlheader file to remove php code and get only html part
+    // Clean the php htaccesscontent file to remove php code and get only html part
     $htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htaccesscontent);
     if (! trim($htaccesscontent))
     {
