@@ -603,11 +603,17 @@ if ($id > 0)
 		if ($link) $boxstat.='</a>';
 	}
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreBoxStatsCustomer', $parameters, $object, $action);
+	if(empty($reshook)){
+		$boxstat.= $hookmanager->resPrint;
+	}
+	
 	$boxstat.='</td></tr>';
 	$boxstat.='</table>';
 	$boxstat.='</div>';
 
-    print $boxstat;
+	print $boxstat;
 
 	$now=dol_now();
 

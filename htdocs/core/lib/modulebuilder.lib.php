@@ -31,19 +31,21 @@
  * 	@param	string		$module			Module name
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
- * 	@return	int							<0 if KO, >0 if OK
+ *  @param	string      $readdir		Directory source (use $destdir when not defined)
+ * 	@return	int							<=0 if KO, >0 if OK
  */
-function rebuildObjectClass($destdir, $module, $objectname, $newmask)
+function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='')
 {
     global $db, $langs;
 
     if (empty($objectname)) return -1;
+    if (empty($readdir)) $readdir=$destdir;
 
-    $pathoffiletoeditsrc=$destdir.'/class/'.strtolower($objectname).'.class.php';
-    $pathoffiletoedittarget=$destdir.'/class/'.strtolower($objectname).'.class.php';
+    $pathoffiletoeditsrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
+    $pathoffiletoedittarget=$destdir.'/class/'.strtolower($objectname).'.class.php'.($readdir != $destdir ? '.new' : '');
     if (! dol_is_file($pathoffiletoeditsrc))
     {
-        //$pathoffiletoeditsrc=DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/myobject.class.php';
+    	$langs->load("errors");
         setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
         return -1;
     }
@@ -58,7 +60,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
         else return -1;
 
         // Backup old file
-        dol_copy($pathoffiletoeditsrc, $pathoffiletoeditsrc.'.back', $newmask, 1);
+        dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
         // Edit class files
         $contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
@@ -77,6 +79,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
                 $i++;
                 $typephp='';
                 $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
+                $texttoinsert.= " 'visible'=>".($val['visible']?$val['visible']:0).",";
+                $texttoinsert.= " 'enabled'=>".($val['enabled']?$val['enabled']:0).",";
                 if ($val['position']) $texttoinsert.= " 'position'=>".$val['position'].",";
                 if ($val['notnull']) $texttoinsert.= " 'notnull'=>".$val['notnull'].",";
                 if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
@@ -108,6 +112,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
 
         $contentclass = preg_replace('/\/\/ BEGIN MODULEBUILDER PROPERTIES.*END MODULEBUILDER PROPERTIES/ims', $texttoinsert, $contentclass);
 
+        dol_mkdir(dirname($pathoffiletoedittarget));
+
         //file_put_contents($pathoffiletoedittmp, $contentclass);
         file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
         @chmod($pathoffiletoedittarget, octdec($newmask));
@@ -128,17 +134,31 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask)
  * 	@param	string		$module			Module name
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
- * 	@return	int							<0 if KO, >0 if OK
+ *  @param	string      $readdir		Directory source (use $destdir when not defined)
+ * 	@return	int							<=0 if KO, >0 if OK
  */
-function rebuildObjectSql($destdir, $module, $objectname, $newmask)
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
 {
     global $db, $langs;
 
     if (empty($objectname)) return -1;
+    if (empty($readdir)) $readdir=$destdir;
+
+    $pathoffiletoclasssrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
+
+    // Edit .sql file
+    $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($objectname).'.sql';
+    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	if (! dol_is_file($pathoffiletoeditsrc))
+    {
+    	$langs->load("errors");
+    	setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
+    	return -1;
+    }
 
     try
     {
-        dol_include_once(strtolower($module).'/class/'.strtolower($objectname).'.class.php');
+    	include_once $pathoffiletoclasssrc;
         if (class_exists($objectname)) $object=new $objectname($db);
         else return -1;
     }
@@ -147,11 +167,10 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask)
         print $e->getMessage();
     }
 
-    // Edit .sql file
-    $pathoffiletoeditsrc=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.sql');
-    $pathoffiletoedittarget=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.sql');
+    // Backup old file
+    dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-    $contentsql = file_get_contents($pathoffiletoeditsrc, 'r');
+    $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
     $i=0;
     $texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -177,10 +196,10 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask)
 
 
     // Edit .key.sql file
-    $pathoffiletoeditsrc=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.key.sql');
-    $pathoffiletoedittarget=dol_osencode($destdir.'/sql/llx_'.strtolower($objectname).'.key.sql');
+    $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql';
+    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
 
-    $contentsql = file_get_contents($pathoffiletoeditsrc, 'r');
+    $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
     $i=0;
     $texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -199,6 +218,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask)
     $texttoinsert.= '-- END MODULEBUILDER INDEXES';
 
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
+
+    dol_mkdir(dirname($pathoffiletoedittarget));
 
     file_put_contents($pathoffiletoedittarget, $contentsql);
     @chmod($pathoffiletoedittarget, octdec($newmask));

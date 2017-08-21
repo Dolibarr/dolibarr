@@ -971,6 +971,7 @@ class Project extends CommonObject
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateEnd') . ': </b>' . dol_print_date($this->datee, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
         if ($moreinpopup) $label.='<br>'.$moreinpopup;
 
+        $url='';
         if ($option != 'nolink')
         {
             if (preg_match('/\.php$/',$option)) {
@@ -1000,6 +1001,17 @@ class Project extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
+
+		if (! is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('projectdao'));
+		$parameters=array('id'=>$this->id);
+		// Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
+		if ($reshook > 0)
+			$linkclose = $hookmanager->resPrint;
         }
 
         $picto = 'projectpub';

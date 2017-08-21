@@ -211,7 +211,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Contract($this->db);
+				$object = new Contrat($this->db);
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
@@ -454,6 +454,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

@@ -413,15 +413,19 @@ ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_s
 CREATE TABLE llx_inventory 
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+entity integer DEFAULT 0, 
+ref varchar(48),
 datec datetime DEFAULT NULL,
 tms timestamp, 
+fk_user_author	integer,
+fk_user_modif     integer,
+fk_user_valid		integer,
 fk_warehouse integer DEFAULT 0, 
-entity integer DEFAULT 0, 
 status integer DEFAULT 0, 
 title varchar(255) NOT NULL, 
-date_inventory datetime DEFAULT NULL
-) 
-ENGINE=InnoDB;
+date_inventory datetime DEFAULT NULL,
+import_key  varchar(14)
+)ENGINE=InnoDB;
 
 CREATE TABLE llx_inventorydet 
 ( 
@@ -438,8 +442,9 @@ qty_regulated double DEFAULT NULL,
 pmp double DEFAULT 0, 
 pa double DEFAULT 0, 
 new_pmp double DEFAULT 0
-) 
-ENGINE=InnoDB;
+)ENGINE=InnoDB;
+
+ALTER TABLE llx_inventory ADD COLUMN datec datetime DEFAULT NULL;
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
@@ -466,6 +471,8 @@ DELETE FROM llx_categorie_contact WHERE fk_categorie NOT IN (SELECT rowid FROM l
 DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 5);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
+
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
 
 CREATE TABLE llx_loan_schedule
 (
@@ -571,3 +578,10 @@ UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement c
 UPDATE llx_bank SET label= '(payment_salary)' WHERE label LIKE 'Règlement salaire';
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
+
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
+
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'IGST-CGST', 8, 8, '1', 0, '0', 0, 'IGST-CGST', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'SGST', 0, 0, '0', 16, '1', 0, 'SGST', 1);

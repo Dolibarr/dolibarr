@@ -32,7 +32,6 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-
 if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
     require_once '../../main.inc.php';
@@ -40,11 +39,12 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-	$action=GETPOST('action','aZ09');
-    $file=urldecode(GETPOST('file'));
-    $section=GETPOST("section");
-    $module=GETPOST("module");
-    $urlsource=GETPOST("urlsource");
+    $action=GETPOST('action','aZ09');
+    $file=urldecode(GETPOST('file','alpha'));
+    $section=GETPOST("section",'alpha');
+    $module=GETPOST("module",'alpha');
+    $urlsource=GETPOST("urlsource",'alpha');
+    $search_doc_ref=GETPOST('search_doc_ref','alpha');
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
@@ -56,7 +56,9 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="name";
 
-    $upload_dir = dirname(str_replace("../","/", $conf->ecm->dir_output.'/'.$file));
+	$rootdirfordoc = $conf->ecm->dir_output;
+
+	$upload_dir = dirname(str_replace("../", "/", $rootdirfordoc.'/'.$file));
 
     $ecmdir = new EcmDirectory($db);
     $result=$ecmdir->fetch($section);
@@ -68,7 +70,9 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
 }
 else    // For no ajax call
 {
-    $ecmdir = new EcmDirectory($db);
+	$rootdirfordoc = $conf->ecm->dir_output;
+
+	$ecmdir = new EcmDirectory($db);
     $relativepath='';
     if ($section > 0)
     {
@@ -80,7 +84,7 @@ else    // For no ajax call
         }
     }
     $relativepath=$ecmdir->getRelativePath();
-    $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    $upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 
@@ -95,14 +99,23 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 //print 'xxx'.$upload_dir;
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
 {
     dol_syslog("Refused to deliver file ".$upload_dir);
     // Do no show plain path in shown error message
     dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$upload_dir));
     exit;
+}
+
+// Check permissions
+if ($modulepart == 'ecm')
+{
+	if (! $user->rights->ecm->read) accessforbidden();
+}
+if ($modulepart == 'medias')
+{
+	// Always allowed
 }
 
 
@@ -153,7 +166,7 @@ if ($type == 'directory')
     $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
-    // Right area. If module is defined, we are in automatic ecm.
+    // Right area. If module is defined here, we are in automatic ecm.
     $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
 
     // TODO change for multicompany sharing
@@ -188,35 +201,65 @@ if ($type == 'directory')
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
+        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
         if ($module == 'company') $excludefiles[]='^contact$';   // The subdir 'contact' contains files of contacts with no id of thirdparty.
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
-        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
+        $filter=preg_quote($search_doc_ref, '/');
+        $filearray=dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting,1);
+
+        $perm=$user->rights->ecm->upload;
+
+        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$perm,1,$textifempty,$maxlengthname,$url,1);
     }
     // Manual list
     else
     {
-        $relativepath=$ecmdir->getRelativePath();
-        $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    	if ($module == 'medias')
+    	{
+    		$relativepath=GETPOST('file','alpha');
+    		$upload_dir = $dolibarr_main_data_root.'/medias/'.$relativepath;
+    	}
+    	else
+    	{
+        	$relativepath=$ecmdir->getRelativePath();
+        	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    	}
 
         // If $section defined with value 0
-        if ($section === '0')
+		if (($section === '0' || empty($section)) && ($module != 'medias'))
         {
             $filearray=array();
         }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        else
+        {
+        	$filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        }
 
         if ($section)
         {
             $param.='&section='.$section;
+        	if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+
             $textifempty = $langs->trans('NoFileFound');
         }
         else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-        $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
+    	if ($module == 'medias')
+    	{
+    		$modulepart='medias';
+        	$perm=($user->rights->websites->creer || $user->rights->emailing->creer);
+    	}
+    	else
+    	{
+    		$modulepart='ecm';
+        	$perm=$user->rights->ecm->upload;
+    	}
+
+		$formfile->list_of_documents($filearray,'',$modulepart,$param,1,$relativepath,$perm,1,$textifempty,$maxlengthname,'',$url);
     }
 }
 

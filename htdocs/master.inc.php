@@ -160,10 +160,6 @@ else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page wit
 {
 	$conf->entity = DOLENTITY;
 }
-else if (!empty($_COOKIE['DOLENTITY']))						    // For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
-{
-	$conf->entity = $_COOKIE['DOLENTITY'];
-}
 
 // Sanitize entity
 if (! is_numeric($conf->entity)) $conf->entity=1;

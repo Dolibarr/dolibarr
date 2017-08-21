@@ -63,7 +63,7 @@ require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
-if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);
+if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login'],'',1);
 
 
 // Define css type
@@ -550,6 +550,9 @@ textarea.centpercent {
 }
 .cursormove {
 	cursor: move;
+}
+.cursornotallowed {
+	cursor: not-allowed;
 }
 .badge {
 	display: inline-block;
@@ -1129,6 +1132,10 @@ div.nopadding {
 div.attacharea {
 	padding-top: 18px;
 	padding-bottom: 10px;
+}
+div.attachareaformuserfileecm {
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
 div.arearef {
@@ -1943,26 +1950,8 @@ td.ecmroot {
 }
 
 .largebutton {
-    /*background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -ms-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-
-    background: #FFF;
-    background-repeat: repeat-x !important;
-    */
-	border-top: 1px solid #CCC !important;
-
-    /*-moz-border-radius: 4px 4px 4px 4px !important;
-	-webkit-border-radius: 4px 4px 4px 4px !important;
-	border-radius: 4px 4px 4px 4px !important;
-    -moz-box-shadow: 2px 2px 4px #DDD;
-    -webkit-box-shadow: 2px 2px 4px #DDD;
-    box-shadow: 2px 2px 4px #DDD;
-	*/
-
-    padding: 10px 4px 14px 4px !important;
+	/* border-top: 1px solid #CCC !important; */
+    padding: 0px 4px 14px 4px !important;
     min-height: 32px;
 }
 
@@ -2183,6 +2172,11 @@ span.butAction, span.butActionDelete {
     cursor: pointer;
     color: #999 !important;
     border: 1px solid #bbb;
+}
+
+.butActionTransparent {
+	color: #222 ! important;
+	background-color: transparent ! important;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
@@ -2653,7 +2647,6 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
-/*	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'ddd'); ?>; */
 	border-bottom: 1px solid #888;
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
@@ -2779,6 +2772,13 @@ div.tabBar .noborder {
 	border-bottom: 1px solid #ddd;
 }
 
+ul.noborder li:nth-child(even):not(.liste_titre) {
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+}
 
 
 /*
@@ -2805,7 +2805,7 @@ div.tabBar .noborder {
 }
 .boxstats {
     padding: 3px;
-    width: 105px;
+    width: 103px;
 }
 .boxstats130 {
     width: 160px;
@@ -2991,12 +2991,11 @@ div.info {
   color: #fff;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #806090;
-  /* text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5); */
+  background: #788;
 }
 
 div.warning a, div.info a, div.error a {
@@ -3347,6 +3346,14 @@ a.websitebuttonsitepreview img {
 	width: 26px;
 	display: inline-block;
 }
+a.websitebuttonsitepreviewdisabled img {
+	opacity: 0.2;
+}
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 
 /* ============================================================================== */
@@ -3419,6 +3426,15 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	       height:18px;
 	       cursor:pointer;
 	     }
+
+/* ============================================================================== */
+/* Gantt
+/* ============================================================================== */
+
+td.gtaskname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 
 /* ============================================================================== */
@@ -3664,7 +3680,7 @@ a.cke_dialog_ui_button_ok span {
     border: 1px solid #ddd;
 	margin: 0;
 }
-#statusBar {
+.aceeditorstatusbar {
         margin: 0;
         padding: 0;
         left: 0;

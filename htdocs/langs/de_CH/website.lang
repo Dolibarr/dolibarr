@@ -6,7 +6,5 @@ WEBSITE_CSS_URL=URL zu externer CSS Datei
 EditPageMeta=Metadaten bearbeiten
 Website=Website
 PreviewOfSiteNotYetAvailable=Vorschau des Webauftritt <strong>%s</strong> noch nicht verfügbar. Sie müssen zuerst eine Seite hinzufügen.
-PageDeleted=Seite '%s' des Webauftritt %s gelöscht
-PageAdded=Seite '%s' hinzugefügt
 ViewSiteInNewTab=Webauftritt in neuem Tab anzeigen
 SetAsHomePage=Als Startseite definieren

@@ -261,8 +261,8 @@ if ($search_project_user > 0)
 }
 $sql.= " WHERE p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
-// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-if ($socid) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+// No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
+if ($socid > 0) $sql.= " AND (p.fk_soc = ".$socid.")";
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
@@ -371,6 +371,7 @@ llxHeader("", $title, $help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_all != '') 			$param.='&search_all='.$search_all;
 if ($search_sday)              		    $param.='&search_sday='.$search_sday;
 if ($search_smonth)              		$param.='&search_smonth='.$search_smonth;
 if ($search_syear)               		$param.='&search_syear=' .$search_syear;
@@ -378,7 +379,6 @@ if ($search_eday)               		$param.='&search_eday='.$search_eday;
 if ($search_emonth)              		$param.='&search_emonth='.$search_emonth;
 if ($search_eyear)               		$param.='&search_eyear=' .$search_eyear;
 if ($socid)				        $param.='&socid='.$socid;
-if ($search_all != '') 			$param.='&search_all='.$search_all;
 if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 if ($search_label != '') 		$param.='&search_label='.$search_label;
 if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
@@ -451,7 +451,7 @@ if (! empty($conf->categorie->enabled))
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
-$includeonly='';
+$includeonly='hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_project_user?$search_project_user:'', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
@@ -487,19 +487,25 @@ print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['p.ref']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
+	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="6">';
 	print '</td>';
 }
 if (! empty($arrayfields['p.title']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_label" size="8" value="'.$search_label.'">';
+	print '<input type="text" class="flat" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_societe" size="8" value="'.$search_societe.'">';
+	if ($socid > 0)
+	{
+		$tmpthirdparty=new Societe($db);
+		$tmpthirdparty->fetch($socid);
+		$search_societe=$tmpthirdparty->nom;
+	}
+	print '<input type="text" class="flat" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
 	print '</td>';
 }
 // Sale representative
@@ -511,8 +517,8 @@ if (! empty($arrayfields['commercial']['checked']))
 if (! empty($arrayfields['p.dateo']['checked']))
 {
 	print '<td class="liste_titre center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
 	$formother->select_year($search_syear?$search_syear:-1,'search_syear',1, 20, 5);
 	print '</td>';
 }
@@ -520,8 +526,8 @@ if (! empty($arrayfields['p.dateo']['checked']))
 if (! empty($arrayfields['p.datee']['checked']))
 {
 	print '<td class="liste_titre center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
 	$formother->select_year($search_eyear?$search_eyear:-1,'search_eyear',1, 20, 5);
 	print '</td>';
 }
@@ -634,7 +640,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $sortonfield = "ef.".$key;
             if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+            print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }

@@ -1960,6 +1960,67 @@ class AccountLine extends CommonObject
 
 
     /**
+     * 	Increase/decrease operation date of a rowid
+     *
+     *	@param	int		$rowid		Id of line
+     *	@param	int		$sign		1 or -1
+     *	@return	int					>0 if OK, 0 if KO
+     */
+    function dateo_change($rowid,$sign=1)
+    {
+        $sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $obj=$this->db->fetch_object($resql);
+            $newdate=$this->db->jdate($obj->dateo)+(3600*24*$sign);
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+            $sql.= " dateo = '".$this->db->idate($newdate)."'";
+            $sql.= " WHERE rowid = ".$rowid;
+
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+                if ($this->db->affected_rows($result))
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                dol_print_error($this->db);
+                return 0;
+            }
+        }
+        else dol_print_error($this->db);
+        return 0;
+    }
+
+    /**
+     * 	Increase operation date of a rowid
+     *
+     *	@param	int		$id		Id of line to change
+     *	@return	int				>0 if OK, 0 if KO
+     */
+    function dateo_next($id)
+    {
+        return $this->dateo_change($id,1);
+    }
+
+    /**
+     * 	Decrease operation date of a rowid
+     *
+     *	@param	int		$id		Id of line to change
+     *	@return	int				>0 if OK, 0 if KO
+     */
+    function dateo_previous($id)
+    {
+        return $this->dateo_change($id,-1);
+    }
+
+
+    /**
      *	Load miscellaneous information for tab "Info"
      *
      *	@param  int		$id		Id of object to load

@@ -260,11 +260,11 @@ if ($result)
 
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Code"),$_SERVER["PHP_SELF"],"e.type","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("IP"),$_SERVER["PHP_SELF"],"e.ip","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.login","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"e.description","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"e.dateevent","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Code",$_SERVER["PHP_SELF"],"e.type","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("IP",$_SERVER["PHP_SELF"],"e.ip","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("User",$_SERVER["PHP_SELF"],"u.login","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Description",$_SERVER["PHP_SELF"],"e.description","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 

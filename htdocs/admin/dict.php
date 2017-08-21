@@ -88,7 +88,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,26,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,35,36,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,26,0,);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -126,6 +126,8 @@ $tabname[30]= MAIN_DB_PREFIX."c_format_cards";
 //$tabname[32]= MAIN_DB_PREFIX."c_accounting_category";
 $tabname[33]= MAIN_DB_PREFIX."c_hrm_department";
 $tabname[34]= MAIN_DB_PREFIX."c_hrm_function";
+$tabname[35]= MAIN_DB_PREFIX."c_exp_tax_cat";
+$tabname[36]= MAIN_DB_PREFIX."c_exp_tax_range";
 
 // Dictionary labels
 $tablib=array();
@@ -163,6 +165,8 @@ $tablib[30]= "DictionaryFormatCards";
 //$tablib[32]= "DictionaryAccountancyCategory";
 $tablib[33]= "DictionaryDepartment";
 $tablib[34]= "DictionaryFunction";
+$tablib[35]= "DictionaryExpenseTaxCat";
+$tablib[36]= "DictionaryExpenseTaxRange";
 
 // Requests to extract data
 $tabsql=array();
@@ -200,6 +204,8 @@ $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmar
 //$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
+$tabsql[35]= "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
+$tabsql[36]= "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -237,6 +243,8 @@ $tabsqlsort[30]="code ASC";
 //$tabsqlsort[32]="position ASC";
 $tabsqlsort[33]="code ASC";
 $tabsqlsort[34]="code ASC";
+$tabsqlsort[35]="c.label ASC";
+$tabsqlsort[36]="r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -249,7 +257,7 @@ $tabfield[6] = "code,libelle,type,color,position";
 $tabfield[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfield[8] = "code,libelle,country_id,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfield[9] = "code,label,unicode";
-$tabfield[10]= "country_id,country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle,position";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfield[13]= "code,libelle,type,accountancy_code";
@@ -272,8 +280,8 @@ $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
 //$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
-$tabfield[33]= "code,label";
-$tabfield[34]= "code,label";
+$tabfield[35]= "label";
+$tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -286,7 +294,7 @@ $tabfieldvalue[6] = "code,libelle,type,color,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[8] = "code,libelle,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10]= "country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[10]= "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle,position";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
@@ -311,6 +319,8 @@ $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargi
 //$tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
+$tabfieldvalue[35]= "label";
+$tabfieldvalue[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -323,7 +333,7 @@ $tabfieldinsert[6] = "code,libelle,type,color,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[8] = "code,libelle,fk_country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10]= "fk_pays,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[10]= "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle,position";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
@@ -348,6 +358,8 @@ $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmarg
 //$tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
+$tabfieldinsert[35]= "label";
+$tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -387,6 +399,8 @@ $tabrowid[30]= "";
 //$tabrowid[32]= "";
 $tabrowid[33]= "rowid";
 $tabrowid[34]= "rowid";
+$tabrowid[35]= "";
+$tabrowid[36]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -424,6 +438,8 @@ $tabcond[30]= ! empty($conf->label->enabled);
 //$tabcond[32]= ! empty($conf->accounting->enabled);
 $tabcond[33]= ! empty($conf->hrm->enabled);
 $tabcond[34]= ! empty($conf->hrm->enabled);
+$tabcond[35]= ! empty($conf->expensereport->enabled);
+$tabcond[36]= ! empty($conf->expensereport->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -461,6 +477,8 @@ $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->tran
 //$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[35]= array();
+$tabhelp[36]= array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -498,6 +516,8 @@ $tabfieldcheck[30] = array();
 //$tabfieldcheck[32] = array();
 $tabfieldcheck[33] = array();
 $tabfieldcheck[34] = array();
+$tabfieldcheck[35]= array();
+$tabfieldcheck[36]= array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
@@ -1065,6 +1085,9 @@ if ($id)
 			if ($fieldlist[$field]=='affect')          { $valuetoshow=$langs->trans("WithCounter"); }
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
+			if ($fieldlist[$field]=='fk_tva')          { $valuetoshow=$langs->trans("VAT"); }
+			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
+			if ($fieldlist[$field]=='fk_c_exp_tax_cat'){ $valuetoshow=$langs->trans("CarCategory"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1284,6 +1307,9 @@ if ($id)
 			if ($fieldlist[$field]=='affect')          { $valuetoshow=$langs->trans("WithCounter"); }
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
+			if ($fieldlist[$field]=='fk_tva')          { $valuetoshow=$langs->trans("VAT"); }
+			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
+			if ($fieldlist[$field]=='fk_c_exp_tax_cat'){ $valuetoshow=$langs->trans("CarCategory"); }
 
             // Affiche nom du champ
             if ($showfield)
@@ -1501,6 +1527,26 @@ if ($id)
 							else if ($fieldlist[$field]=='accountancy_code' || $fieldlist[$field]=='accountancy_code_sell' || $fieldlist[$field]=='accountancy_code_buy') {
                                 $valuetoshow = length_accountg($valuetoshow);
                             }
+							elseif ($fieldlist[$field] == 'fk_tva')
+							{
+								foreach ($form->cache_vatrates as $key => $Tab)
+								{
+									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow)
+									{
+										$valuetoshow = $form->cache_vatrates[$key]['libtva'];
+										break;
+									}
+								}
+							}
+							elseif ($fieldlist[$field] == 'fk_c_exp_tax_cat')
+							{
+								$valuetoshow = getDictvalue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
+								$valuetoshow = $langs->trans($valuetoshow);
+							}
+							elseif ($tabname[$id] == MAIN_DB_PREFIX.'c_exp_tax_cat')
+							{
+								$valuetoshow = $langs->trans($valuetoshow);
+							}
 
                             $class='tddict';
                             if ($fieldlist[$field] == 'note' && $id == 10) $class.=' tdoverflowmax200';
@@ -1667,7 +1713,7 @@ $db->close();
  */
 function fieldList($fieldlist, $obj='', $tabname='', $context='')
 {
-	global $conf,$langs,$db;
+	global $conf,$langs,$db,$mysoc;
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
@@ -1832,6 +1878,24 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			    $fieldname = $fieldlist[$field];
 			    print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldname)?$obj->$fieldname:'').'" name="'.$fieldlist[$field].'">';
 			}
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'fk_tva')
+		{
+			print '<td>';
+			print $form->load_tva('fk_tva', $obj->taux, $mysoc, new Societe($db), 0, 0, '', false, -1);
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'fk_c_exp_tax_cat')
+		{
+			print '<td>';
+			print $form->selectExpenseCategories($obj->fk_c_exp_tax_cat);
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'fk_range')
+		{
+			print '<td>';
+			print $form->selectExpenseRanges($obj->fk_range);
 			print '</td>';
 		}
 		else

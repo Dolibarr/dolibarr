@@ -118,7 +118,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
@@ -448,7 +448,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->supplier_invoice->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
+if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fournisseur->facture->lire))
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);
@@ -541,12 +541,11 @@ if ($showweather)
     $boxwork.='</tr>';
 }
 
-$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer">';
-
 // Show dashboard
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
+	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
         if (empty($boad->nbtodo)) $nbworkboardempty++;
@@ -581,11 +580,12 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='</td></tr>';
 }
 else
 {
     $boxwork.='<tr class="nohover">';
-    $boxwork.='<td colspan="4" class="nohover valignmiddle opacitymedium">';
+    $boxwork.='<td class="nohover valignmiddle opacitymedium">';
     $boxwork.=$langs->trans("NoOpenedElementToProcess");
     $boxwork.='</td>';
     $boxwork.='</tr>';

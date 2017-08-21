@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Übersicht über die Anzahl der bereits an ein Buch
 OtherInfo=Zusatzinformationen
 DeleteCptCategory=Buchhaltungskonto aus Gruppe entfernen
 ConfirmDeleteCptCategory=Soll dieses Buchhaltungskonto wirklich aus der Gruppe entfernt werden?
+JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
+NotYetInGeneralLedger=Not yet journalized in ledgers
+
+MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
+MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
 AccountancyArea=Buchhaltung
 AccountancyAreaDescIntro=Die Verwendung des Buchhaltungsmoduls erfolgt in mehreren Schritten:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=SCHRITT %s: Definition der Buchhaltungskonten f
 AccountancyAreaDescSal=SCHRITT %s: Buchhaltungskonto für Lohnzahlungen definieren. Kann im Menü %s geändert werden.
 AccountancyAreaDescContrib=SCHRITT %s: Definition der Buchhaltungskonten für besondere Aufwendungen (Sonstige Steuern) . Kann im Menü %s geändert werden.
 AccountancyAreaDescDonation=SCHRITT %s: Definition der Buchhaltungskonten für Spenden. Kann im Menü %s geändert werden.
-AccountancyAreaDescMisc=SCHRITT %s: Buchhaltungskonto für nicht zugeordnete Buchungen. Kann im Menü %s geändert werden.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=SCHRITT %s: Definitiond der Buchhaltungskonten für Darlehenszahlungen. Kann im Menü %s geändert werden.
 AccountancyAreaDescBank=SCHRITT %s: Definition der Buchhaltungskonten für jede Bank und Finanzkonten. Gehen Sie zum jeweiligen Finanzkonto. Kann im Menü %s geändert werden.
 AccountancyAreaDescProd=SCHRITT %s: Definition der Buchhaltungskonten für Ihre Produkte/Dienstleistungen. Kann im Menü %s geändert werden.
@@ -83,7 +90,7 @@ ValidTransaction=Validate transaction
 WriteBookKeeping=Buchungen ins Hauptbuch übernehmen
 Bookkeeping=Hauptbuch
 AccountBalance=Saldo Sachkonto
-
+ObjectsRef=Source object ref
 CAHTF=Einkaufssume pro Lieferant ohne Steuer
 TotalExpenseReport=Gesamtausgaben Bericht
 InvoiceLines=Zeilen der Rechnungen zu verbinden
@@ -103,7 +110,7 @@ LineOfExpenseReport=Zeilen der Spesenabrechnung
 NoAccountSelected=Kein Buchhaltungskonto ausgewählt
 VentilatedinAccount=erfolgreich zu dem Buchhaltungskonto zugeordnet
 NotVentilatedinAccount=Nicht zugeordnet, zu einem Buchhaltungskonto
-XLineSuccessfullyBinded=%s Produkte/Leistungen erfolgreich an ein Buchhaltungskonto zugeordnet
+XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s Produkte/Leistungen waren an kein Buchhaltungskonto zugeordnet
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Anzahl der Elemente, die beim Kontieren angezeigt werden  (empfohlen Max.: 50)
@@ -154,7 +161,7 @@ DelBookKeeping=Eintrag im Hauptbuch löschen
 FinanceJournal=Finanzjournal
 ExpenseReportsJournal=Spesenabrechnungsjournal
 DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
-DescJournalOnlyBindedVisible=Dies ist eine Ansicht der Datensätze, die an ein Produkt- / Dienstleistungskonto gebunden sind und in das Hauptbuch übernommen werden können.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Steuerkonto nicht definiert
 ThirdpartyAccountNotDefined=Konto für Adresse nicht definiert
 ProductAccountNotDefined=Konto für Produkt nicht definiert
@@ -170,6 +177,8 @@ AddCompteFromBK=Buchhaltungskonten zur Gruppe hinzufügen
 ReportThirdParty=Zeige Partner
 DescThirdPartyReport=Kontieren Sie hier die Liste der Kunden und Lieferanten zu Ihrem Buchhaltungs-Konten
 ListAccounts=Liste der Abrechnungskonten
+UnknownAccountForThirdparty=Unknown third party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Kontenklasse
 Pcgsubtype=Unterkontenklasse
@@ -194,7 +203,7 @@ ValidateHistory=automatisch verbinden
 AutomaticBindingDone=automatische Zuordnung erledigt
 
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchhaltungskonto nicht löschen, da es benutzt wird.
-MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s. Soll = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Zuordnungs Karte
 GeneralLedgerIsWritten=Operationen werden ins Hauptbuch geschrieben
 GeneralLedgerSomeRecordWasNotRecorded=Einige der Buchungen konnten nicht übernommen werden. Es gab keine Fehler, vermutlich wurden diese Buchungen schon früher übernommen.
@@ -210,7 +219,6 @@ AccountingJournals=Buchhaltungsjournale
 AccountingJournal=Buchhaltungsjournal
 NewAccountingJournal=Neues Buchhaltungsjournal
 ShowAccoutingJournal=Buchhaltungsjournal anzeigen
-Code=Code
 Nature=Art
 AccountingJournalType1=Verschiedene Aktionen
 AccountingJournalType2=Verkauf
@@ -221,8 +229,6 @@ AccountingJournalType9=Hat neue
 ErrorAccountingJournalIsAlreadyUse=Dieses Journal wird bereits verwendet
 
 ## Export
-Exports=Exporte
-Export=Exportieren
 ExportDraftJournal=Export draft journal
 Modelcsv=Exportmodell
 OptionsDeactivatedForThisExportModel=Für dieses Exportmodell sind die Einstellungen deaktiviert

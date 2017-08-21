@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_myobject(
@@ -19,8 +19,10 @@ CREATE TABLE llx_myobject(
 	-- BEGIN MODULEBUILDER FIELDS
 	entity INTEGER DEFAULT 1 NOT NULL,
 	label VARCHAR(255),
-	datec DATETIME NOT NULL,
+	qty INTEGER,
+	status INTEGER,
+	date_creation DATETIME NOT NULL,
 	tms TIMESTAMP NOT NULL,
-	status INTEGER
+	import_key VARCHAR(14)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

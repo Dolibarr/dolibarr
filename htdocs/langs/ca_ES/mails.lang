@@ -79,8 +79,8 @@ MailingModuleDescContactsWithThirdpartyFilter=Contacte amb filtres de client
 MailingModuleDescContactsByCompanyCategory=Contactes per categoria de tercer
 MailingModuleDescContactsByCategory=Contactes per categories
 MailingModuleDescContactsByFunction=Contactes per càrrec
-MailingModuleDescEmailsFromFile=Emails from file
-MailingModuleDescEmailsFromUser=Emails input by user
+MailingModuleDescEmailsFromFile=Correus electrònics desde fitxer
+MailingModuleDescEmailsFromUser=Entrada de correus electrònics per usuari
 MailingModuleDescDolibarrUsers=Usuaris amb correus electrònics
 MailingModuleDescThirdPartiesByCategories=Tercers (per categories)
 

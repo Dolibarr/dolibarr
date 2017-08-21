@@ -33,7 +33,7 @@ create table llx_user
   tms               timestamp,
   fk_user_creat     integer,
   fk_user_modif     integer,
-  login             varchar(24) NOT NULL,
+  login             varchar(50) NOT NULL,
   pass              varchar(128),
   pass_crypted      varchar(128),
   pass_temp         varchar(128),			    -- temporary password when asked for forget password
@@ -85,5 +85,7 @@ create table llx_user
   dateemployment	date,					-- denormalized value coming from llx_user_employment
   weeklyhours		double(16,8),			-- denormalized value coming from llx_user_employment
 
-  import_key        varchar(14)                          		-- import key
+  import_key        varchar(14),                          		-- import key
+  default_range     integer,
+  default_c_exp_tax_cat     integer
 )ENGINE=innodb;

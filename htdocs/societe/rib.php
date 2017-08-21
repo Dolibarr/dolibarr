@@ -204,7 +204,8 @@ if (empty($reshook))
     		$account->proprio         = GETPOST('proprio','alpha');
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur');
-
+    		$account->rum             = GETPOST('rum','alpha');
+    
     		// This test can be done only once properties were set
     		if ($account->needIBAN() == 1)
     		{
@@ -443,17 +444,17 @@ if ($socid && $action != 'edit' && $action != "create")
         print '<table class="liste" width="100%">';
 
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("LabelRIB"));
-        print_liste_field_titre($langs->trans("Bank"));
-        print_liste_field_titre($langs->trans("RIB"));
-        print_liste_field_titre($langs->trans("IBAN"));
-        print_liste_field_titre($langs->trans("BIC"));
+        print_liste_field_titre("LabelRIB");
+        print_liste_field_titre("Bank");
+        print_liste_field_titre("RIB");
+        print_liste_field_titre("IBAN");
+        print_liste_field_titre("BIC");
         if (! empty($conf->prelevement->enabled))
         {
-			print print_liste_field_titre($langs->trans("RUM"));
-			print print_liste_field_titre($langs->trans("WithdrawMode"));
+			print print_liste_field_titre("RUM");
+			print print_liste_field_titre("WithdrawMode");
         }
-        print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
+        print_liste_field_titre("DefaultRIB", '', '', '', '', 'align="center"');
         print_liste_field_titre('', '', '', '', '', 'align="center"');
         print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
@@ -868,7 +869,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-    	print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"><br>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
     	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
     	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));

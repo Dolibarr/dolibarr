@@ -334,23 +334,23 @@ abstract class CommonObject
     // No constructor as it is an abstract class
 
 
-    /**
-     * Check an object id/ref exists
-     * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
-     *
+	/**
+	 * Check an object id/ref exists
+	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
+	 *
 	 *  @param	string	$element   	String of element ('product', 'facture', ...)
 	 *  @param	int		$id      	Id of object
 	 *  @param  string	$ref     	Ref of object to check
 	 *  @param	string	$ref_ext	Ref ext of object to check
 	 *  @return int     			<0 if KO, 0 if OK but not found, >0 if OK and exists
-     */
-    static function isExistingObject($element, $id, $ref='', $ref_ext='')
-    {
-    	global $db,$conf;
+	 */
+	static function isExistingObject($element, $id, $ref='', $ref_ext='')
+	{
+		global $db,$conf;
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		$sql.= " WHERE entity IN (".getEntity($element, true).")" ;
+		$sql.= " WHERE entity IN (".getEntity($element).")" ;
 
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
@@ -371,17 +371,17 @@ abstract class CommonObject
 			else return 0;
 		}
 		return -1;
-    }
+	}
 
-    /**
-     * Method to output saved errors
-     *
-     * @return	string		String with errors
-     */
-    function errorsToString()
-    {
-    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
-    }
+	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	function errorsToString()
+	{
+		return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
+	}
 
     /**
      *	Return full name (civility+' '+name+' '+lastname)
@@ -1309,7 +1309,7 @@ abstract class CommonObject
      *      Load properties id_previous and id_next
      *
      *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
-     *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
+     *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
      *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
@@ -1322,6 +1322,7 @@ abstract class CommonObject
             dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
             return -1;
         }
+		if ($fieldid == 'none') return 1;
 
         // this->ismultientitymanaged contains
         // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -3875,7 +3876,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
 	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
-	 * @param 	Translate 	$outputlangs 	Language to use
+	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
 	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
@@ -3884,7 +3885,7 @@ abstract class CommonObject
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams=null)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$srctemplatepath='';
 
@@ -3901,7 +3902,6 @@ abstract class CommonObject
 			$modele=$tmp[0];
 			$srctemplatepath=$tmp[1];
 		}
-
 
 		// Search template files
 		$file=''; $classname=''; $filefound=0;
@@ -3947,7 +3947,7 @@ abstract class CommonObject
 
 					// Now we add first model found in directories scanned
 	                $listofdir=explode(',',$dirtoscan);
-	                foreach($listofdir as $key=>$tmpdir)
+	                foreach($listofdir as $key => $tmpdir)
 	                {
 	                    $tmpdir=trim($tmpdir);
 	                    $tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
@@ -3994,7 +3994,10 @@ abstract class CommonObject
 			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
 			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			}
-			else $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			else
+			{
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			}
 
 			if ($resultwritefile > 0)
 			{
@@ -4003,6 +4006,58 @@ abstract class CommonObject
 				// We delete old preview
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_delete_preview($this);
+
+				// Index file in database
+				if (! empty($obj->result['fullpath']))
+				{
+					$destfull = $obj->result['fullpath'];
+					$upload_dir = dirname($destfull);
+					$destfile = basename($destfull);
+					$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+
+					if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+					{
+						$filename = basename($destfile);
+						$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+						$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+						$ecmfile=new EcmFiles($this->db);
+						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
+						if ($result > 0)
+						{
+							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->fullpath_orig = '';
+							$ecmfile->gen_or_uploaded = 'generated';
+							$ecmfile->description = '';    // indexed content
+							$ecmfile->keyword = '';        // keyword content
+							$result = $ecmfile->update($user);
+							if ($result < 0)
+							{
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+						else
+						{
+							$ecmfile->filepath = $rel_dir;
+							$ecmfile->filename = $filename;
+							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->fullpath_orig = '';
+							$ecmfile->gen_or_uploaded = 'generated';
+							$ecmfile->description = '';    // indexed content
+							$ecmfile->keyword = '';        // keyword content
+							$result = $ecmfile->create($user);
+							if ($result < 0)
+							{
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+					}
+				}
+				else
+				{
+					dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+				}
 
 				// Success in building document. We build meta file.
 				dol_meta_create($this);
@@ -4736,19 +4791,6 @@ abstract class CommonObject
 
 
 
-
-	/**
-	 * Function test if type is date
-	 *
-	 * @param   array   $info   content informations of field
-	 * @return                  bool
-	 */
-	protected function isDate($info)
-	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		else return false;
-	}
-
 	/**
 	 * Function test if type is array
 	 *
@@ -4781,13 +4823,26 @@ abstract class CommonObject
 		else return false;
 	}
 
+
+	/**
+	 * Function test if type is date
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	public function isDate($info)
+	{
+		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
+		else return false;
+	}
+
 	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isInt($info)
+	public function isInt($info)
 	{
 		if(is_array($info))
 		{
@@ -4803,11 +4858,11 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isFloat($info)
+	public function isFloat($info)
 	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && $info['type']=='float') return true;
+			if (isset($info['type']) && (preg_match('/^(double|real)/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;
@@ -4819,7 +4874,7 @@ abstract class CommonObject
 	 * @param   array   $info   content informations of field
 	 * @return                  bool
 	 */
-	protected function isText($info)
+	public function isText($info)
 	{
 		if(is_array($info))
 		{
@@ -4846,49 +4901,58 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Function to prepare the values to insert
+	 * Function to prepare the values to insert.
+	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
 	 *
 	 * @return array
 	 */
 	private function set_save_query()
 	{
-		$query=array();
-		foreach ($this->fields as $field=>$info)
+		global $conf;
+
+		$queryarray=array();
+		foreach ($this->fields as $field=>$info)	// Loop on definition of fields
 		{
+			// Depending on field type ('datetime', ...)
 			if($this->isDate($info))
 			{
 				if(empty($this->{$field}))
 				{
-					$query[$field] = NULL;
+					$queryarray[$field] = NULL;
 				}
 				else
 				{
-					$query[$field] = $this->db->idate($this->{$field});
+					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
 			}
 			else if($this->isArray($info))
 			{
-				$query[$field] = serialize($this->{$field});
+				$queryarray[$field] = serialize($this->{$field});
 			}
 			else if($this->isInt($info))
 			{
-				$query[$field] = (int) price2num($this->{$field});
+				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
+				else
+				{
+					$queryarray[$field] = (int) price2num($this->{$field});
+					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
+				}
 			}
 			else if($this->isFloat($info))
 			{
-				$query[$field] = (double) price2num($this->{$field});
-			}
-			elseif($this->isNull($info))
-			{
-				$query[$field] = (is_null($this->{$field}) || (empty($this->{$field}) && $this->{$field}!==0 && $this->{$field}!=='0') ? null : $this->{$field});
+				$queryarray[$field] = (double) price2num($this->{$field});
+				if (empty($queryarray[$field])) $queryarray[$field]=0;
 			}
 			else
 			{
-				$query[$field] = $this->{$field};
+				$queryarray[$field] = $this->{$field};
 			}
+
+			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
+			if (! empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;
 		}
 
-		return $query;
+		return $queryarray;
 	}
 
 	/**
@@ -4896,7 +4960,7 @@ abstract class CommonObject
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
-	private function set_vars_by_db(&$obj)
+	private function setVarsFromFetchObj(&$obj)
 	{
 	    foreach ($this->fields as $field => $info)
 	    {
@@ -4913,7 +4977,8 @@ abstract class CommonObject
 	        }
 	        elseif($this->isInt($info))
 	        {
-	            $this->{$field} = (int) $obj->{$field};
+	        	if ($field == 'rowid') $this->id = (int) $obj->{$field};
+	            else $this->{$field} = (int) $obj->{$field};
 	        }
 	        elseif($this->isFloat($info))
 	        {
@@ -4947,15 +5012,14 @@ abstract class CommonObject
 	/**
 	 * Add quote to field value if necessary
 	 *
-	 * @param string|int	$value	value to protect
-	 * @return string|int
+	 * @param 	string|int	$value			Value to protect
+	 * @param	array		$fieldsentry	Properties of field
+	 * @return 	string
 	 */
-	protected function quote($value) {
-
-	    if(is_null($value)) return 'NULL';
-	    else if(is_numeric($value)) return $value;
-	    else return "'".$this->db->escape( $value )."'";
-
+	protected function quote($value, $fieldsentry) {
+	    if (is_null($value)) return 'NULL';
+	    else if (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+	    else return "'".$this->db->escape($value)."'";
 	}
 
 
@@ -4970,23 +5034,29 @@ abstract class CommonObject
 	{
         $error = 0;
 
-	    $fields = array_merge(array('datec'=>$this->db->idate(dol_now())), $this->set_save_query());
+        $now=dol_now();
+
+	    $fieldvalues = $this->set_save_query();
+		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
+		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
+		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
 	    $keys=array();
 	    $values = array();
-	    foreach ($fields as $k => $v) {
+	    foreach ($fieldvalues as $k => $v) {
 	    	$keys[] = $k;
-	    	$values[] = $this->quote($v);
+	    	$values[] = $this->quote($v, $this->fields[$k]);
 	    }
 
 	    $this->db->begin();
 
 	    if (! $error)
 	    {
-    	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'
-    					( '.implode( ",", $keys ).' )
-    					VALUES ( '.implode( ",", $values ).' ) ';
-    	    $res = $this->db->query( $sql );
+    	    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql.= ' ('.implode( ", ", $keys ).')';
+    		$sql.= ' VALUES ('.implode( ", ", $values ).')';
+
+			$res = $this->db->query($sql);
     	    if ($res===false) {
     	        $error++;
     	        $this->errors[] = $this->db->lasterror();
@@ -4998,7 +5068,7 @@ abstract class CommonObject
 
             if (!$notrigger) {
                 // Call triggers
-                $result=$this->call_trigger(strtoupper(get_class(self)).'_CREATE',$user);
+                $result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -5014,52 +5084,6 @@ abstract class CommonObject
 		}
 	}
 
-	/**
-	 * Load an object from its id and create a new one in database
-	 *
-	 * @param  User $user      User that creates
-	 * @param  int $fromid     Id of object to clone
-	 * @return int             New id of clone
-	 */
-	public function createFromCloneCommon(User $user, $fromid)
-	{
-	    global $user;
-
-	    $error = 0;
-
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-
-	    $object = new self($this->db);
-
-	    $this->db->begin();
-
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset object
-	    $object->id = 0;
-
-	    // Clear fields
-	    // ...
-
-	    // Create clone
-	    $result = $object->createCommon($user);
-
-	    // Other options
-	    if ($result < 0) {
-	        $error ++;
-	        $this->errors = $object->errors;
-	        dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-	    }
-
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object->id;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
-	}
 
 	/**
 	 * Load object in memory from the database
@@ -5072,11 +5096,11 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref)) return false;
 
-		$sql = 'SELECT '.$this->get_field_list().', datec, tms';
+		$sql = 'SELECT '.$this->get_field_list();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
-		else  $sql.= ' WHERE ref = \''.$this->quote($ref).'\'';
+		else $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -5085,12 +5109,7 @@ abstract class CommonObject
     		{
     		    if ($obj)
     		    {
-        			$this->id = $id;
-        			$this->set_vars_by_db($obj);
-
-        			$this->datec = $this->db->idate($obj->datec);
-        			$this->tms = $this->db->idate($obj->tms);
-
+        			$this->setVarsFromFetchObj($obj);
         			return $this->id;
     		    }
     		    else
@@ -5124,27 +5143,27 @@ abstract class CommonObject
 	{
 	    $error = 0;
 
-		$fields = $this->set_save_query();
+		$fieldvalues = $this->set_save_query();
+		unset($fieldvalues['rowid']);	// We don't update this field, it is the key to define which record to update.
 
-		foreach ($fields as $k => $v) {
+		foreach ($fieldvalues as $k => $v) {
 			if (is_array($key)){
 				$i=array_search($k, $key);
 				if ( $i !== false) {
-					$where[] = $key[$i].'=' . $this->quote( $v ) ;
+					$where[] = $key[$i].'=' . $this->quote($v, $this->fields[$k]);
 					continue;
 				}
 			} else {
 				if ( $k == $key) {
-					$where[] = $k.'=' .$this->quote( $v ) ;
+					$where[] = $k.'=' .$this->quote($v, $this->fields[$k]);
 					continue;
 				}
 			}
-			$tmp[] = $k.'='.$this->quote($v);
+			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
 
 		$this->db->begin();
-
 		if (! $error)
 		{
     		$res = $this->db->query($sql);
@@ -5157,7 +5176,7 @@ abstract class CommonObject
 
 		if (! $error && ! $notrigger) {
 		    // Call triggers
-		    $result=$this->call_trigger(strtoupper(get_class(self)).'_MODIFY',$user);
+		    $result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 		    if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 		    // End call triggers
 		}
@@ -5188,7 +5207,7 @@ abstract class CommonObject
 	    if (! $error) {
 	        if (! $notrigger) {
 	            // Call triggers
-	            $result=$this->call_trigger(strtoupper(get_class(self)).'_DELETE', $user);
+	            $result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 	            // End call triggers
 	        }

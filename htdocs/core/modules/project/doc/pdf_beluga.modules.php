@@ -33,16 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
-if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-if (! empty($conf->commande->enabled))    require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (! empty($conf->contrat->enabled))     require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (! empty($conf->ficheinter->enabled))  require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if (! empty($conf->propal->enabled))        require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->facture->enabled))       require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->facture->enabled))       require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+if (! empty($conf->commande->enabled))      require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->fournisseur->enabled))   require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if (! empty($conf->fournisseur->enabled))   require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (! empty($conf->contrat->enabled))       require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (! empty($conf->ficheinter->enabled))    require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->deplacement->enabled))   require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 
 
@@ -223,7 +224,7 @@ class pdf_beluga extends ModelePDFProjects
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
-                                    
+
                 $listofreferent=array(
                     'propal'=>array(
                     	'name'=>"Proposals",
@@ -311,7 +312,7 @@ class pdf_beluga extends ModelePDFProjects
                     	'margin'=>'minus',
                     	'disableamount'=>1,
                     	'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
-                        'lang'=>'trip'),                    
+                        'lang'=>'trip'),
                     'agenda'=>array(
                     	'name'=>"Agenda",
                     	'title'=>"ListActionsAssociatedProject",
@@ -322,8 +323,8 @@ class pdf_beluga extends ModelePDFProjects
                     	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
                         'lang'=>'agenda')
                 );
-                
-                
+
+
                 foreach ($listofreferent as $key => $value)
                 {
                 	$title=$value['title'];
@@ -333,13 +334,13 @@ class pdf_beluga extends ModelePDFProjects
                 	$qualified=$value['test'];
                 	$langstoload=$value['lang'];
                 	$langs->load($langstoload);
-                	
+
                     if ($qualified)
                     {
                         //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
                         $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
                         //var_dump($elementarray);
-                        
+
                         $num = count($elementarray);
                         if ($num >= 0)
                         {
@@ -347,7 +348,7 @@ class pdf_beluga extends ModelePDFProjects
                             $curY = $nexY;
                             $pdf->SetXY($this->posxref, $curY);
                             $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
-                            
+
                             $selectList = $formproject->select_element($tablename, $project->thirdparty->id);
                             $nexY = $pdf->GetY() + 1;
                             $curY = $nexY;
@@ -356,7 +357,9 @@ class pdf_beluga extends ModelePDFProjects
                             $pdf->SetXY($this->posxdate, $curY);
                             $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, $outputlangs->transnoentities("Date"), 1, 'C');
                             $pdf->SetXY($this->posxsociety, $curY);
-                            $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $outputlangs->transnoentities("ThirdParty"), 1, 'L');
+                            $titlethirdparty=$outputlangs->transnoentities("ThirdParty");
+                            if ($classname == 'ExpenseReport') $titlethirdparty=$langs->trans("User");
+                            $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $titlethirdparty, 1, 'L');
                             if (empty($value['disableamount'])) {
                                 $pdf->SetXY($this->posxamountht, $curY);
                                 $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, $outputlangs->transnoentities("AmountHTShort"), 1, 'R');
@@ -368,30 +371,39 @@ class pdf_beluga extends ModelePDFProjects
                             }
                             $pdf->SetXY($this->posxstatut, $curY);
                             $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
-                            
+
                             if (is_array($elementarray) && count($elementarray) > 0)
                             {
                                 $nexY = $pdf->GetY();
                                 $curY = $nexY;
-                                
+
                                 $total_ht = 0;
                                 $total_ttc = 0;
                                 $num = count($elementarray);
                                 for ($i = 0; $i < $num; $i ++) {
+                                	$idofelement=$elementarray[$i];
+                                	if ($classname == 'ExpenseReport')
+                                	{
+                                		// We get id of expense report
+                                		$expensereportline=new ExpenseReportLine($this->db);
+                                		$expensereportline->fetch($idofelement);
+                                		$idofelement = $expensereportline->fk_expensereport;
+                                	}
+
                                     $element = new $classname($this->db);
-                                    $element->fetch($elementarray[$i]);
+                                    $element->fetch($idofelement);
                                     $element->fetch_thirdparty();
                                     // print $classname;
-                                    
+
                                     $qualifiedfortotal = true;
                                     if ($key == 'invoice') {
                                         if ($element->close_code == 'replaced')
                                             $qualifiedfortotal = false; // Replacement invoice
                                     }
-                                    
+
                                     $pdf->SetXY($this->posxref, $curY);
                                     $pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
-                                    
+
                                     // Date
                                     if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
                                         $date = $element->date_commande;
@@ -404,15 +416,23 @@ class pdf_beluga extends ModelePDFProjects
                                         if (empty($date))
                                             $date = $element->datev; // Fiche inter
                                     }
-                                    
+
                                     $pdf->SetXY($this->posxdate, $curY);
                                     $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, dol_print_date($date, 'day'), 1, 'C');
-                                    
+
                                     $pdf->SetXY($this->posxsociety, $curY);
                                     if (is_object($element->thirdparty))
+                                    {
                                         $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $element->thirdparty->name, 1, 'L');
-                                        
-                                        // Amount without tax
+                                    }
+									elseif ($classname == 'ExpenseReport')
+									{
+										$fuser=new User($this->db);
+										$fuser->fetch($element->fk_user_author);
+										$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $fuser->getFullName($outputlangs), 1, 'L');
+									}
+
+                                    // Amount without tax
                                     if (empty($value['disableamount'])) {
                                         $pdf->SetXY($this->posxamountht, $curY);
                                         $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : '&nbsp;'), 1, 'R');
@@ -422,7 +442,7 @@ class pdf_beluga extends ModelePDFProjects
                                         $pdf->SetXY($this->posxamountht, $curY);
                                         $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
                                     }
-                                    
+
                                     // Status
                                     if ($element instanceof CommonInvoice) {
                                         // This applies for Facture and FactureFournisseur
@@ -432,7 +452,7 @@ class pdf_beluga extends ModelePDFProjects
                                     }
                                     $pdf->SetXY($this->posxstatut, $curY);
                                     $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
-                                    
+
                                     if ($qualifiedfortotal) {
                                         $total_ht = $total_ht + $element->total_ht;
                                         $total_ttc = $total_ttc + $element->total_ttc;
@@ -440,7 +460,7 @@ class pdf_beluga extends ModelePDFProjects
                                     $nexY = $pdf->GetY();
                                     $curY = $nexY;
                                 }
-                                
+
                                 if (empty($value['disableamount'])) {
                                     $curY = $nexY;
                                     $pdf->SetXY($this->posxref, $curY);
@@ -483,6 +503,8 @@ class pdf_beluga extends ModelePDFProjects
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Pas d'erreur
 			}
 			else

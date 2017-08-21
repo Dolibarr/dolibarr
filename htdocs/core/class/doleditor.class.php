@@ -52,7 +52,7 @@ class DolEditor
      *      @param 	string	$content		        Content of WYSIWIG field
      *      @param	int		$width					Width in pixel of edit area (auto by default)
      *      @param 	int		$height			        Height in pixel of edit area (200px by default)
-     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly')
+     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly', 'ace').
      *      @param  string	$toolbarlocation       	Where bar is stored :
      *                       		             	'In' each window has its own toolbar
      *                              		      	'Out:name' share toolbar into the div called 'name'
@@ -82,7 +82,7 @@ class DolEditor
         // Check if extended editor is ok. If not we force textarea
         if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) $this->tool = 'textarea';
 		if ($okforextendededitor === 'ace') $this->tool='ace';
-        if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // TODO ckeditor ko with mobile ? ace ko with mobile ?
+        //if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')
@@ -145,9 +145,10 @@ class DolEditor
      *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
      *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
      *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
+     *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
      *  @return	void|string
      */
-    function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='')
+    function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='', $option='')
     {
     	global $conf,$langs;
 
@@ -254,21 +255,21 @@ class DolEditor
         if (preg_match('/^ace/', $this->tool))
         {
         	$found=1;
-			$format=(GETPOST('format','aZ09')?GETPOST('format','aZ09'):'php');
+			$format=$option;
 
-            $out.= '<!-- Output Ace editor -->'."\n";
+            $out.= "\n".'<!-- Output Ace editor -->'."\n";
 
 			if ($titlecontent)
 			{
-	            $out.= '<div class="aceeditorstatusbar" id="statusBar">'.$titlecontent;
-	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+	            $out.= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
+	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.'">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
 	            $out.= '</div>';
 	            $out.= '<script type="text/javascript" language="javascript">'."\n";
 	            $out.= 'jQuery(document).ready(function() {'."\n";
 	            $out.= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
-	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;					// Init status bar. Need lib ext-statusbar
-	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar"));		// Init status bar. Need lib ext-statusbar
-	            			jQuery("#morelines").click(function() {
+	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
+	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
+	            			jQuery(".morelines'.$this->htmlname.'").click(function() {
 									console.log("We click on more lines");
 	        	    				var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 	        	    				aceEditor.setOptions({ maxLines: 500 });
@@ -297,8 +298,8 @@ class DolEditor
 					   enableLiveAutocompletion: false, // the editor completes the statement while you are typing. Need lib ext-language_tools.js
 					   showPrintMargin: false, // hides the vertical limiting strip
 					   minLines: 10,
-					   maxLines: 34,
-					   fontSize: "110%" // ensures that the editor fits in the environment
+					   maxLines: '.(empty($this->height)?'34':(round($this->height/10))).',
+				       fontSize: "110%" // ensures that the editor fits in the environment
 					});
 
 					// defines the style of the editor
@@ -311,10 +312,12 @@ class DolEditor
 
         	$out.= 'jQuery(document).ready(function() {
 						jQuery("#savefile").click(function() {
-        					console.log("We click on savefile button");
+        					console.log("We click on savefile button for component '.$this->htmlname.'");
+        					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid")
+        					console.log(aceEditor.getSession().getValue());
 							jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
-							if (strlen(jQuery("#'.$this->htmlname.'").html()) > 0) return true;
-							else return false;
+							/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
+							else return false;*/
 	        			});
 					})';
         	$out.= '</script>'."\n";

@@ -41,13 +41,13 @@ if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-if (! $user->rights->mymodule->read) accessforbidden();
-
-$langs->load("mymodule@mymodule");
+$langs->loadLangs(array("mymodule@mymodule"));
 
 $action=GETPOST('action', 'alpha');
 
+
 // Securite acces client
+if (! $user->rights->mymodule->read) accessforbidden();
 $socid=GETPOST('socid','int');
 if (isset($user->societe_id) && $user->societe_id > 0)
 {

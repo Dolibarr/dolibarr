@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Faktúra karty
 PredefinedInvoices=Preddefinované Faktúry
 Invoice=Faktúra
+PdfInvoiceTitle=Faktúra
 Invoices=Faktúry
 InvoiceLine=Faktúra linka
 InvoiceCustomer=Zákazník faktúra

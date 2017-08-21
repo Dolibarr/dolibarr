@@ -130,7 +130,8 @@ class User extends CommonObject
 
 	public $dateemployment;			// Define date of employment by company
 
-
+	public $default_c_exp_tax_cat;
+	public $default_range;
 
 	/**
 	 *    Constructor de la classe
@@ -199,6 +200,7 @@ class User extends CommonObject
 		$sql.= " u.color,";
 		$sql.= " u.dateemployment,";
 		$sql.= " u.ref_int, u.ref_ext,";
+		$sql.= " u.default_range, u.default_c_exp_tax_cat,";
         $sql.= " c.code as country_code, c.label as country,";
         $sql.= " d.code_departement as state_code, d.nom as state";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -221,7 +223,7 @@ class User extends CommonObject
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			else
-				$sql.= " WHERE u.entity IN (0, ".($entity!=''?$entity:$conf->entity).")";   // search in entity provided in parameter
+				$sql.= " WHERE u.entity IN (0, ".(($entity!='' && $entity >= 0)?$entity:$conf->entity).")";   // search in entity provided in parameter
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
@@ -236,8 +238,8 @@ class User extends CommonObject
 		{
 			$sql.= " AND u.rowid = ".$id;
 		}
-        $sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
-
+		$sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
+		
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -310,6 +312,9 @@ class User extends CommonObject
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
+				
+				$this->default_range		= $obj->default_range;
+				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -662,7 +667,14 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND ur.entity = ".$conf->entity;
+		if (! empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY))
+		{
+			$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?"1,":"").$conf->entity.")";
+		}
+		else
+		{
+			$sql.= " AND ur.entity = ".$conf->entity;
+		}
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -708,8 +720,19 @@ class User extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id";
-		$sql.= " AND gr.entity = ".$conf->entity;
-		$sql.= " AND r.entity = ".$conf->entity;
+		if (! empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY))
+		{
+			if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+			} else {
+				$sql.= " AND r.entity = ".$conf->entity;
+			}
+		}
+		else
+		{
+			$sql.= " AND gr.entity = ".$conf->entity;
+			$sql.= " AND r.entity = ".$conf->entity;
+		}
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql.= " AND gu.fk_user = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
@@ -1320,7 +1343,7 @@ class User extends CommonObject
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
-
+		
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
@@ -1371,6 +1394,9 @@ class User extends CommonObject
 		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
 		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
+		$sql.= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
+		$sql.= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
+		
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Vue d'ensemble du nombre de lignes liées à un com
 OtherInfo=Autre information
 DeleteCptCategory=Supprimer le code comptable du groupe
 ConfirmDeleteCptCategory=Êtes-vous sur de vouloir supprimer ce compte comptable du groupe comptable ?
+JournalizationInLedgerStatus=Statut de journalisation
 AlreadyInGeneralLedger=Enregistrement déjà présent dans le grand livre
+NotYetInGeneralLedger=non encore envoyé dans le grand livre
+
+MainAccountForCustomersNotDefined=Compte comptable général pour les clients sans compte dédié
+MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs sans compte dédié
+MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs sans compte dédié
+MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA sans compte dédié
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables 
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDonation=Étape %s : Définissez le compte comptable par défaut des dons. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescMisc=Étape %s : Définissez les comptes comptables par défaut. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescMisc=ÉTAPE 1%s : définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu 1%s.
 AccountancyAreaDescLoan=Étape %s : Définissez les comptes comptables par défaut des emprunts. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescBank=Étape %s : Définissez les comptes comptables de chaque compte bancaire ou financier. Vous pouvez commencer à partir de la page %s.
 AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, suivez le menu suivant %s.
@@ -79,11 +86,11 @@ SuppliersVentilation=Liaison factures fournisseur
 ExpenseReportsVentilation=Liaison notes de frais
 CreateMvts=Créer nouvelle transaction
 UpdateMvts=Modification d'une transaction
-ValidTransaction=Validate transaction
+ValidTransaction=Valider la traduction
 WriteBookKeeping=Inscrire les transactions dans le grand livre
 Bookkeeping=Grand livre
 AccountBalance=Balance des comptes
-
+ObjectsRef=Référence de l'objet source
 CAHTF=Total achat fournisseur HT
 TotalExpenseReport=Total note de frais
 InvoiceLines=Lignes de factures à ventiler
@@ -103,7 +110,7 @@ LineOfExpenseReport=Ligne de note de frais
 NoAccountSelected=Pas de compte comptable sélectionné
 VentilatedinAccount=Liée avec succès sur compte comptable
 NotVentilatedinAccount=Non lié au compte comptable
-XLineSuccessfullyBinded=%s produits/services liés avec succès à un compte comptable
+XLineSuccessfullyBinded=%s produits/service correctement liés à un compte comptable
 XLineFailedToBeBinded=%s produits/services n'ont pu être liés à un compte comptable
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à lier représentés par page (maximum recommandé: 50)
@@ -154,7 +161,7 @@ DelBookKeeping=Supprimer l'enregistrement du grand livre
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
-DescJournalOnlyBindedVisible=Ceci est une vue des enregistrements qui sont liés à un compte comptable produits/services et qui peuvent être enregistrés dans le grand livre.
+DescJournalOnlyBindedVisible=Vue des enregistrements liés à des comptes comptable qui peuvent être enregistrés dans le grand livre.
 VATAccountNotDefined=Compte de la TVA non défini
 ThirdpartyAccountNotDefined=Compte pour le tiers non défini
 ProductAccountNotDefined=Compte pour le produit non défini
@@ -170,6 +177,8 @@ AddCompteFromBK=Ajouter un code comptable au groupe
 ReportThirdParty=Liste des comptes tiers
 DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et leurs codes comptables
 ListAccounts=Liste des comptes comptables
+UnknownAccountForThirdparty=Compte de tiers inconnu. %s sera utilisé
+UnknownAccountForThirdpartyBlocking=Compte de tiers inconnu. Erreur bloquante.
 
 Pcgtype=Classe de compte
 Pcgsubtype=Sous-classe de compte
@@ -194,7 +203,7 @@ ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaison automatique faite
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
-MvtNotCorrectlyBalanced=Le mouvement n'est pas équilibré. Crédit = %s. Débit = %s
+MvtNotCorrectlyBalanced=Mouvement non équilibré. Crédit = %s. Débit = %s
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être enregistrées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà enregistrées.
@@ -210,7 +219,6 @@ AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
 NewAccountingJournal=Nouveau journal comptable
 ShowAccoutingJournal=Afficher le journal
-Code=Code
 Nature=Nature
 AccountingJournalType1=Opérations Diverses
 AccountingJournalType2=Ventes
@@ -221,9 +229,7 @@ AccountingJournalType9=A-nouveaux
 ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
 
 ## Export
-Exports=Exports
-Export=Exporter
-ExportDraftJournal=Exporter le brouillard
+ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
 OptionsDeactivatedForThisExportModel=Pour ce modèle d'export, les options sont désactivées
 Selectmodelcsv=Sélectionner un modèle d'export

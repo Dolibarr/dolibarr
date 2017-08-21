@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->load("projects");
 $langs->load("companies");
 
-$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
 $search_project_user = GETPOST('search_project_user','int');
+$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
@@ -122,7 +123,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_project']=array('text'=>'Project');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -138,7 +139,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -160,8 +161,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
+print_liste_field_titre("NbOfProjects","","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
@@ -185,7 +186,7 @@ if ( $resql )
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
 		if ($obj->socid)
@@ -217,9 +218,9 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 {
     // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
     // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
-    
+
     print '<br>';
-    
+
     print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 

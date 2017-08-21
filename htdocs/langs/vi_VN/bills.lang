@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Thẻ hóa đơn
 PredefinedInvoices=Hoá đơn định sẵn
 Invoice=Hoá đơn
+PdfInvoiceTitle=Hoá đơn
 Invoices=Hoá đơn
 InvoiceLine=Dòng hóa đơn
 InvoiceCustomer=Hóa đơn khách hàng

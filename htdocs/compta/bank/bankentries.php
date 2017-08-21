@@ -605,7 +605,7 @@ if ($resql)
 //	    print '<td>';
 	    print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 	    print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
-	    print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
+	    print '<input class="flat" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
 	    print '</div>';
 	    if ($options) {
 	        print $langs->trans("EventualyAddCategory").': ';
@@ -649,6 +649,16 @@ if ($resql)
 	    {
 	        dol_print_error($db);
 	    }
+        /**
+         * Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
+         */
+        if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE == 1) {
+            print '
+    <script type="text/javascript">
+    	$("#num_releve").val("' . $last_releve . '");
+    </script>
+    ';
+        }
 	    print '<br><br>';
 //	    print '</td></tr></table>';
 	}
@@ -896,7 +906,7 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}
@@ -1117,7 +1127,16 @@ if ($resql)
         // Date ope
     	if (! empty($arrayfields['b.dateo']['checked']))
     	{
-    	   print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+    	   print '<td align="center" class="nowrap">';
+    	   print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do),"day")."</span>";
+    	   print '&nbsp;';
+    	   print '<span class="inline-block">';
+    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	   print img_edit_remove() . "</a> ";
+    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	   print img_edit_add() ."</a>";
+    	   print '</span>';
+    	   print "</td>\n";
                 if (! $i) $totalarray['nbfield']++;
     	}
 

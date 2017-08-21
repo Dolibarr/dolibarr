@@ -110,6 +110,7 @@ ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0
 ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
 
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
 
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime;
 

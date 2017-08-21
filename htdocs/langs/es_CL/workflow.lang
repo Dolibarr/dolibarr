@@ -2,12 +2,4 @@
 WorkflowSetup=Configuración del módulo de flujo de trabajo
 WorkflowDesc=Este módulo está diseñado para modificar el comportamiento de las acciones automáticas en la aplicación. Por defecto, el flujo de trabajo está abierto (puede hacer las cosas en el orden que desee). Usted puede activar las acciones automáticas que le interesen.
 ThereIsNoWorkflowToModify=No hay modificaciones de flujo de trabajo disponibles con los módulos activados.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear un pedido de cliente automáticamente a la firma de una cotización
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente después de que una propuesta comercial es fimada
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente después de que un contrato es validado
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente después de cerrar una orden de cliente
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturada la cotización cuando el pedido de cliente relacionado se clasifique como pagado
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar órden(es) fuente vinculadas del cliente a facturar cuando la factura del cliente se establece a pago
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar órden(es) fuente vinculadas del cliente a facturar cuando se valida la factura del cliente
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar propuesta de fuente vinculada a facturar cuando  la factura del cliente es validada
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar orden de origen vinculado a enviar cuando un envío es validado y la cantidad enviada es la misma que en la orden

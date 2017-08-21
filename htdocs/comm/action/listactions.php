@@ -394,17 +394,17 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-    if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print_liste_field_titre($langs->trans("LinkedObject"),$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ActionsOwnedByShort"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
+    if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print_liste_field_titre("LinkedObject",$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre("ActionsOwnedByShort",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("");
 	print "</tr>\n";
 
