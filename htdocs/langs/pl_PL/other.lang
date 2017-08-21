@@ -226,7 +226,7 @@ ExportableDatas=Eksport danych
 NoExportableData=Nr eksport danych (bez modułów z eksportowane dane załadowane lub brakujące uprawnienia)
 ##### External sites #####
 WebsiteSetup=Setup of module website
-WEBSITE_PAGEURL=URL of page
+WEBSITE_PAGEURL=Link strony
 WEBSITE_TITLE=Tytuł
 WEBSITE_DESCRIPTION=Opis
 WEBSITE_KEYWORDS=Keywords
