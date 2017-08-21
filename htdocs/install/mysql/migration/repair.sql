@@ -257,3 +257,14 @@ delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or f
 delete from llx_menu where menu_handler = 'smartphone';
 
 
+-- Clean product prices
+--delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 
+-- Set product prices into llx_product with last price into llx_product_prices
+--update llx_product as p set 
+-- p.price = (select pp.price from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_ttc = (select pp.price_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_min = (select pp.price_min from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_min_ttc = (select pp.price_min_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.tva_tx = 0
+-- where price = 17.5
+

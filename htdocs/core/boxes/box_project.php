@@ -2,6 +2,7 @@
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +80,10 @@ class box_project extends ModeleBoxes
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+            if($user->socid) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=p.fk_soc";
 			$sql.= " WHERE p.entity = ".$conf->entity;
-			$sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
+            if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
+            $sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
 			$sql.= " ORDER BY p.datec DESC";
 			$sql.= $db->plimit($max, 0);
 

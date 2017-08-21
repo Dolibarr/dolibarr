@@ -35,8 +35,8 @@ abstract class CommonDocGenerator
 {
 	var $error='';
 	protected $db;
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -59,6 +59,8 @@ abstract class CommonDocGenerator
     {
         global $conf;
 
+        $logotouse=$conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
+
         return array(
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
@@ -75,7 +77,7 @@ abstract class CommonDocGenerator
         	'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
-        	'myuser_logo'=>$user->photo,
+        	'myuser_logo'=>$logotouse,
         	'myuser_job'=>$user->job,
             'myuser_web'=>''	// url not exist in $user object
         );
@@ -390,7 +392,7 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		foreach ($object->lines as $line)
 		{
-		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility 
+		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
 			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
 			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
 			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
@@ -582,7 +584,7 @@ abstract class CommonDocGenerator
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
 			}
 			else if($extrafields->attribute_type[$key] == 'date')
-			{	
+			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
 					$object->array_options['options_'.$key] = dol_print_date($object->array_options['options_'.$key],'day');                                       // using company output language

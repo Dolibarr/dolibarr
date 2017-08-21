@@ -928,7 +928,14 @@ if (count($listofextcals))
 // Complete $eventarray with events coming from external module
 $parameters=array(); $object=null;
 $reshook=$hookmanager->executeHooks('getCalendarEvents',$parameters,$object,$action);
-if (! empty($hookmanager->resArray['eventarray'])) $eventarray=array_merge($eventarray, $hookmanager->resArray['eventarray']);
+if (! empty($hookmanager->resArray['eventarray'])) {
+    foreach ($hookmanager->resArray['eventarray'] as $keyDate => $events) {
+        if (!isset($eventarray[$keyDate])) {
+            $eventarray[$keyDate]=array();
+        }
+        $eventarray[$keyDate]=array_merge($eventarray[$keyDate], $events);
+    }
+}
 
 
 

@@ -585,6 +585,7 @@ TextUsedInTheMessageBody=Email body
 SendAcknowledgementByMail=Send Ack. by email
 EMail=E-mail
 NoEMail=No email
+Email=Email
 NoMobilePhone=No mobile phone
 Owner=Owner
 DetectedVersion=Detected version

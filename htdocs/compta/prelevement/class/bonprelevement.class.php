@@ -1265,18 +1265,6 @@ class BonPrelevement extends CommonObject
 			 * section Debiteur (sepa Debiteurs bloc lines)
 			 */
 
-			$tmp_invoices = array();
-
-			$sql = "SELECT f.facnumber as fac FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."prelevement_facture as pf, ".MAIN_DB_PREFIX."societe as soc, ".MAIN_DB_PREFIX."c_country as p, ".MAIN_DB_PREFIX."societe_rib as rib WHERE pl.fk_prelevement_bons = ".$this->id." AND pl.rowid = pf.fk_prelevement_lignes AND pf.fk_facture = f.rowid AND soc.fk_pays = p.rowid AND soc.rowid = f.fk_soc AND rib.fk_soc = f.fk_soc AND rib.default_rib = 1";
-			$resql=$this->db->query($sql);
-			if ($resql) {
-				while ($objfac = $this->db->fetch_object($resql)) {
-					$tmp_invoices[] = $objfac->fac;
-				}
-			}
-
-	        $ListOfFactures = implode($tmp_invoices);
-
 			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 			$sql.= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 			$sql.= " f.facnumber as fac, pf.fk_facture as idfac, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum";
@@ -1303,7 +1291,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures, $obj->idfac, $obj->iban, $obj->bic, $this->db->jdate($obj->datec), $obj->drum);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $this->db->jdate($obj->datec), $obj->drum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}
@@ -1574,11 +1562,11 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='					</FinInstnId>'.$CrLf;
 		$XML_DEBITOR .='				</DbtrAgt>'.$CrLf;
 		$XML_DEBITOR .='				<Dbtr>'.$CrLf;
-		$XML_DEBITOR .='					<Nm>'.strtoupper(dol_string_unaccent($row_nom)).'</Nm>'.$CrLf;
+		$XML_DEBITOR .='					<Nm>'.strtoupper(dolEscapeXML(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
 		$XML_DEBITOR .='					<PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-		$XML_DEBITOR .='						<AdrLine>'.dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""))).'</AdrLine>'.$CrLf;
-		$XML_DEBITOR .='						<AdrLine>'.dol_string_unaccent($row_zip.' '.$row_town).'</AdrLine>'.$CrLf;
+		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")))),70,'right','UTF-8',true).'</AdrLine>'.$CrLf;
+		$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_string_unaccent($row_zip.' '.$row_town)).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='					</PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='				</Dbtr>'.$CrLf;
 		$XML_DEBITOR .='				<DbtrAcct>'.$CrLf;
