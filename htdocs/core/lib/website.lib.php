@@ -166,7 +166,10 @@ function dolIncludeHtmlContent($contentfile)
 	}
 	// TODO Remove body and html if included
 	//$content = file_get_contents($fullpathfile);
+
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
+
+	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
 	$res = include $fullpathfile;		// Include because we want to execute code content
 	if (! $res)
 	{
