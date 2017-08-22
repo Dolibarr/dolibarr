@@ -288,8 +288,8 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complate filearray.
  *
- * @param	$filearray		Array of files get using dol_dir_list
- * @param	$relativedir	Relative dir from DOL_DATA_ROOT
+ * @param	array	$filearray		Array of files get using dol_dir_list
+ * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
 function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
