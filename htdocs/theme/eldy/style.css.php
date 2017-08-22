@@ -4756,5 +4756,13 @@ div.tabsElem a.tab {
     }
 }
 
+.ui-dialog-content.ui-widget-content > object {
+    max-height: 100%;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
 <?php
 if (is_object($db)) $db->close();
