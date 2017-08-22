@@ -983,6 +983,8 @@ function newpopup(url,title) {
 function document_preview(file, type, title)
 {
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+	var showOriginalSizeButton = false;
+
 	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
@@ -991,7 +993,7 @@ function document_preview(file, type, title)
 		var height = $( window ).height()*0.90;
 		var object_height='98%';
 
-		show_preview();
+		show_preview('notimage');
 
 	} else {
 		var object_width=0;
@@ -1005,22 +1007,37 @@ function document_preview(file, type, title)
 
 			width = $( window ).width()*0.90;
 			if(object_width < width){
+				console.log("Object width is small, we set width of popup according to image width.");
 				width = object_width + 30
 			}
 			height = $( window ).height()*0.85;
 			if(object_height < height){
+				console.log("Object height is small, we set height of popup according to image height.");
 				height = object_height + 80
 			}
+			else
+			{
+				showOriginalSizeButton = true;
+			}
 
-			show_preview();
+			show_preview('image');
 
 		};
 		img.src = file;
 
 	}
-	function show_preview(){
-		/* console.log("file="+file+" type="+type+" width="+width+" height="+height); */
+	function show_preview(mode) {
+		console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height);
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+
+		optionsbuttons = {}
+		if (mode == 'image' && showOriginalSizeButton)
+		{
+			optionsbuttons = {
+			    "<?php echo dol_escape_js($langs->trans("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->trans("Close")); ?>": function() { $( this ).dialog( "close" ); }
+				};
+		}
 
 		$("#dialogforpopup").html(newElem);
 		$("#dialogforpopup").dialog({
@@ -1029,8 +1046,14 @@ function document_preview(file, type, title)
 			width: width,
 			height: height,
 			modal: true,
-			title: title
+			title: title,
+			buttons: optionsbuttons
 		});
+
+		if (showOriginalSizeButton)
+		{
+			jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "100%", "width": "auto", "margin-left": "auto", "margin-right": "auto", "display": "block" });
+		}
 	}
 }
 

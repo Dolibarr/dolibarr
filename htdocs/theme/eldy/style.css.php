@@ -3148,6 +3148,19 @@ div.titre {
     font-size: <?php print $fontsize; ?>px !important;
 }
 
+
+/* ============================================================================== */
+/* For content of image preview                                                   */
+/* ============================================================================== */
+
+/*
+.ui-dialog-content.ui-widget-content > object {
+     max-height: none;
+     width: auto; margin-left: auto; margin-right: auto; display: block;
+}
+*/
+
+
 /* ============================================================================== */
 /* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
