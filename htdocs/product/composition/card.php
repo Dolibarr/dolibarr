@@ -86,8 +86,8 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 				$action = 're-edit';
 				if ($object->error == "isFatherOfThis") {
 					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
-				} 
-				else 
+				}
+				else
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -148,7 +148,7 @@ if ($action == 'search')
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
-	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 	if ($key != "")
 	{
 		// For natural search
@@ -193,7 +193,7 @@ llxHeader('', $title, $helpurl);
 $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
 $picto=($object->type==Product::TYPE_SERVICE?'service':'product');
-dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
+dol_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 
 if ($id > 0 || ! empty($ref))
@@ -204,63 +204,66 @@ if ($id > 0 || ! empty($ref))
 	if ($user->rights->produit->lire || $user->rights->service->lire)
 	{
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-	    
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
-		
-        if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
-        {
-    	    print '<div class="underbanner clearboth"></div>';	
-            print '<table class="border tableforfield" width="100%">';
-        }
-        
-		// Nature
-		if ($object->type!=Product::TYPE_SERVICE)
-		{
-			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
-			print $object->getLibFinished();
-			print '</td></tr>';
-		}
 
-		if (empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-		    // Price
-			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-			if ($object->price_base_type == 'TTC')
-			{
-				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-			}
-			else
-			{
-				print price($object->price).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
-			}
-			print '</td></tr>';
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-			// Price minimum
-			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-			if ($object->price_base_type == 'TTC')
-			{
-				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-			}
-			else
-			{
-				print price($object->price_min).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
-			}
-			print '</td></tr>';
-		}
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
 
         if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
         {
-		  print '</table>';
+            print '<div class="fichecenter">';
+    	    print '<div class="underbanner clearboth"></div>';
+
+    	    print '<table class="border tableforfield" width="100%">';
+
+    		// Nature
+    		if ($object->type!=Product::TYPE_SERVICE)
+    		{
+    			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+    			print $object->getLibFinished();
+    			print '</td></tr>';
+    		}
+
+    		if (empty($conf->global->PRODUIT_MULTIPRICES))
+    		{
+    		    // Price
+    			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+    			if ($object->price_base_type == 'TTC')
+    			{
+    				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
+    			}
+    			else
+    			{
+    				print price($object->price).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
+    			}
+    			print '</td></tr>';
+
+    			// Price minimum
+    			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+    			if ($object->price_base_type == 'TTC')
+    			{
+    				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
+    			}
+    			else
+    			{
+    				print price($object->price_min).' '.$langs->trans($object->price_base_type?$object->price_base_type:'HT');
+    			}
+    			print '</td></tr>';
+    		}
+
+            print '</table>';
+            print '</div>';
         }
 
 		dol_fiche_end();
 
         print '<br>';
-        
+
 		$prodsfather = $object->getFather(); 		// Parent Products
 		$object->get_sousproduits_arbo();			// Load $object->sousprods
-		$prods_arbo=$object->get_arbo_each_prod();		
-		
+		$prods_arbo=$object->get_arbo_each_prod();
+
 		$nbofsubsubproducts=count($prods_arbo);		// This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id,1);
 		$nbofsubproducts=count($prodschild);		// This include only first level of childs
@@ -271,7 +274,7 @@ if ($id > 0 || ! empty($ref))
 
 		//if (count($prodsfather) > 0)
 		//{
-			print load_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
+			print load_fiche_titre($langs->trans("ProductParentList"),'','');
 			print '<table class="centpercent noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ParentProducts').'</td>';
@@ -320,7 +323,7 @@ if ($id > 0 || ! empty($ref))
 		//if (count($prods_arbo) > 0)
 		//{
 			$atleastonenotdefined=0;
-			print load_fiche_titre($langs->trans("ProductAssociationList"),'','').'<br>';
+			print load_fiche_titre($langs->trans("ProductAssociationList"),'','');
 
 			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="action" value="save_composed_product" />';
@@ -369,7 +372,7 @@ if ($id > 0 || ! empty($ref))
 
 					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise), 'MT');
 						$total+=$totalline;
-						
+
 						print '<td align="right">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));
 						print '</td>';
@@ -385,7 +388,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td align="right" colspan="2">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($pricesell,'','',0,0,-1,$conf->currency));
 						print '</td>';
-						
+
 						// Stock
 						if (! empty($conf->stock->enabled)) print '<td align="right">'.$value['stock'].'</td>';	// Real stock
 
@@ -424,7 +427,7 @@ if ($id > 0 || ! empty($ref))
 						// Best selling price
 						print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
-						
+
 						if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
 						print '<td align="center">'.$value['nb'].'</td>';
 						print '<td>&nbsp;</td>';
@@ -456,7 +459,7 @@ if ($id > 0 || ! empty($ref))
 				if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 				print ($atleastonenotdefined?'':price($totalsell,'','',0,0,-1,$conf->currency));
 				print '</td>';
-				
+
 				// Stock
 				if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 
@@ -571,7 +574,7 @@ if ($id > 0 || ! empty($ref))
 								continue;
 							}
 						}
-						$var=!$var;
+
 						print "\n<tr ".$bc[$var].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;

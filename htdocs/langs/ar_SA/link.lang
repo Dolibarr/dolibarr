@@ -2,9 +2,9 @@
 LinkANewFile=ربط ملف جديد/ وثيقة
 LinkedFiles=الملفات والمستندات المرتبطة
 NoLinkFound=لا روابط مسجلة
-LinkComplete= تم ربط الملف بنجاح
+LinkComplete=تم ربط الملف بنجاح
 ErrorFileNotLinked=لا يمكن ربط الملف
-LinkRemoved=تم إزالة الارتباط  %s 
+LinkRemoved=تم إزالة الارتباط  %s
 ErrorFailedToDeleteLink= فشل في إزالة رابط <b>' %s '</b>
 ErrorFailedToUpdateLink= فشل تحديث رابط <b> %s </b>
 URLToLink=URL لربط

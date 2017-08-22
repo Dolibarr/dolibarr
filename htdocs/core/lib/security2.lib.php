@@ -144,19 +144,14 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$dol_url_root = DOL_URL_ROOT;
 
-	$php_self = $_SERVER['PHP_SELF'];
-	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-	if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
-
 	// Title
 	$appli=constant('DOL_APPLICATION_TITLE');
-	$title=$appli.' '.DOL_VERSION;
+	$title=$appli.' '.constant('DOL_VERSION');
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
-	$titletruedolibarrversion=DOL_VERSION;	// $title used by login template after the @ to inform of true Dolibarr version
+	$titletruedolibarrversion=constant('DOL_VERSION');	// $title used by login template after the @ to inform of true Dolibarr version
 
 	// Note: $conf->css looks like '/theme/eldy/style.css.php'
-	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
-	//$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+	$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
 	$themepath=dol_buildpath($conf->css,1);
 	if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
 	{
@@ -171,7 +166,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
-	// Select templates
+	// Select templates dir
 	if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
 	{
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl/'));
@@ -197,12 +192,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! GETPOST("username")) $focus_element='username';
 	else $focus_element='password';
 
-	$login_background=DOL_URL_ROOT.'/theme/login_background.png';
-	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
-	{
-		$login_background=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
-	}
-
 	$demologin='';
 	$demopassword='';
 	if (! empty($dolibarr_main_demo))
@@ -216,6 +205,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Should be an array with differents options in $hookmanager->resArray
 	$parameters=array('entity' => GETPOST('entity','int'));
 	$reshook = $hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks. resArray is filled by hook.
+	$morelogincontent = $hookmanager->resArray['options'];		// TODO Use here a resprints
 
 	// Login
 	$login = (! empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username","alpha") ? GETPOST("username","alpha") : $demologin));
@@ -227,11 +217,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
 	}
 	elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo);
 		$width=128;
 	}
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
@@ -272,15 +262,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$main_home='';
 	if (! empty($conf->global->MAIN_HOME))
 	{
-		$i=0;
-		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
-		{
-			$tmp=explode('|',$reg[1]);
-			if (! empty($tmp[1])) $langs->load($tmp[1]);
-			$conf->global->MAIN_HOME=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_HOME);
-			$i++;
-		}
-		$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
+	    $substitutionarray=getCommonSubstitutionArray($langs);
+	    complete_substitutions_array($substitutionarray, $langs);
+	    $texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+
+		$main_home=dol_htmlcleanlastbr($texttoshow);
 	}
 
 	// Google AD
@@ -422,7 +408,7 @@ function encodedecode_dbpassconf($level=0)
 			fflush($fp);
 			fclose($fp);
 			clearstatcache();
-			
+
 			// It's config file, so we set read permission for creator only.
 			// Should set permission to web user and groups for users used by batch
 			//@chmod($file, octdec('0600'));

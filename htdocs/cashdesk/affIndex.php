@@ -27,6 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 
+$error=GETPOST('error');
+
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
 {
@@ -45,9 +47,6 @@ $langs->load("cashdesk");
 
 $form = new Form($db);
 
-//header("Content-type: text/html; charset=UTF-8");
-//header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
 
@@ -57,9 +56,7 @@ print '<body>'."\n";
 
 if (!empty($error))
 {
-	print $error;
-	print '</body></html>';
-	exit;
+	dol_htmloutput_events();
 }
 
 print '<div class="conteneur">'."\n";

@@ -44,11 +44,11 @@ if ($user->societe_id > 0) accessforbidden();
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -166,20 +166,21 @@ if ($result)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	$massactionbutton='';
-	
+
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
-  	
+
   	print"\n<!-- debut table -->\n";
   	print '<table class="liste" width="100%">';
   	print '<tr class="liste_titre">';
-  	print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("StatusDebitCredit"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+  	print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
+  	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
+  	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre("StatusDebitCredit",$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -193,12 +194,12 @@ if ($result)
 
      	$invoicetmp->id = $obj->facid;
      	$invoicetmp->ref = $obj->ref;
-     	
+
      	$thirdpartytmp->id = $obj->socid;
      	$thirdpartytmp->name = $obj->name;
-     	
-      	print "<tr ".$bc[$var].">";
-      	
+
+      	print '<tr class="oddeven">';
+
       	print "<td>";
       	print $invoicetmp->getNomUrl(1);
         print "</td>\n";
@@ -227,13 +228,13 @@ if ($result)
 		}
 
       	print "</td>";
-      	
+
       	print "<td></td>";
-      	
+
       	print "</tr>\n";
 
       	$total += $obj->total_ttc;
-      	$var=!$var;
+
       	$i++;
     }
 

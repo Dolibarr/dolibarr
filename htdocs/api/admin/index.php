@@ -34,7 +34,7 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 //Activate ProfId
 if ($action == 'setproductionmode')
@@ -43,12 +43,29 @@ if ($action == 'setproductionmode')
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-	    $result = dol_mkdir($conf->api->dir_temp);
-	    if ($result < 0)
-	    {
-	        setEventMessages($langs->trans("ErrorFaildToCreateDir", $conf->api->dir_temp), null, 'errors');
-	    }
-	    else
+		$error=0;
+
+		if ($status == 1)
+		{
+			$result = dol_mkdir($conf->api->dir_temp);
+			if ($result < 0)
+			{
+				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
+				$error++;
+			}
+		}
+		else
+		{
+			// Delete the cache file otherwise it does not update
+			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+			if ($result < 0)
+			{
+				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
+				$error++;
+			}
+		}
+
+	    if (!$error)
 	    {
     		header("Location: ".$_SERVER["PHP_SELF"]);
 	   	    exit;
@@ -111,7 +128,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 // Show message
 $message='';
-$url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
+$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&userpassword=<strong>thepassword</strong>[&reset=1]';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
 $message.=img_picto('','object_globe.png').' '.$url;
 print $message;

@@ -19,7 +19,7 @@ require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 $id = GETPOST('id');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $object = new ProductAttribute($db);
 
 
@@ -88,7 +88,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 						},
 						function() {
 							if (reloadpage == 1) {
-								location.href = '<?php echo $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']; ?>';
+								location.href = '<?php echo dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']); ?>';
 							} else {
 								$("#tablelines .drag").each(
 									function( intIndex ) {

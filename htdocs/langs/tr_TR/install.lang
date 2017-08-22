@@ -53,10 +53,10 @@ AdminLogin=Dolibarr veritabanı kullanıcı adı.
 PasswordAgain=Parolayı ikinci kez yeniden yaz
 AdminPassword=Dolibarr veritabanı sahibi parolası.
 CreateDatabase=Veritabanı oluştur
-CreateUser=Kullanıcı oluştur
+CreateUser=Sahip oluşturun ve veritabanında ona izin verin
 DatabaseSuperUserAccess=Veritabanı sunucusu - süperkullanıcı erişimi
 CheckToCreateDatabase=Eğer veritabanı yoksa ve oluşturulması gerekiyorsa kutuyu işaretleyin.<br>Bu durumda, bu sayfanın altına süperkullanıcı hesabı için kullanıcı adı/parola girmelisiniz.
-CheckToCreateUser=Veritabanı sahibi yoksa ve oluşturulması gerekiyorsa kutuyu işaretleyin.<br>Bu durumda, kullanıcı adı ve parola seçmelisiniz ve bu sayfanın altına süperkullanıcı hesabı için kullanıcı adı/parola girmelisiniz. Bu kutu işaretlenmemiş ise, veritabanı sahibi ve parolaları vardır.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Yeni veritabanı ve yeni kullanıcı oluşturabilecek kullanıcı girişi, veritabanınız ve veritabanı girişiniz zaten varsa gereksizdir (sanki bir web sağlayıcı tarafından barındırılıyor gibi).
 KeepEmptyIfNoPassword=Eğer kullanıcının herhangi bir parolası yoksa boş bırakın (bundan kaçının)
 SaveConfigurationFile=Değerleri saklayın
@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=DoliWamp üzerinden Dolibarr kurulum sihirbazını kullan�
 KeepDefaultValuesDeb=Bir Linux paketi (Ubuntu, Debian, Fedora ...) üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca veritabanı sahibinin parolasının tamamlanması gerekir. Yalnızca ne yapacağınızı biliyorsanız parametreleri değiştirin.
 KeepDefaultValuesMamp=DoliMamp üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
 KeepDefaultValuesProxmox=Proxmox sanal aygıt  üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
+UpgradeExternalModule=Harici modüllerin özel yükseltme işlemini çalıştırın
 
 #########
 # upgrade

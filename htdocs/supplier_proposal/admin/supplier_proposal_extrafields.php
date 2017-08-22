@@ -90,8 +90,8 @@ print "</tr>\n";
 $var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
-    $var=!$var;
-    print "<tr ".$bc[$var].">";
+    
+    print '<tr class="oddeven">';
     print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
     print "<td>".$key."</td>\n";

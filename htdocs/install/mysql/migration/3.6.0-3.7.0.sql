@@ -1106,6 +1106,7 @@ ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_d
 ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
   
+-- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
 
 -- add extrafield on ficheinter lines
 CREATE TABLE llx_fichinterdet_extrafields

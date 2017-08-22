@@ -75,6 +75,9 @@ class UserTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
+
+        if (! empty($conf->global->MAIN_MODULE_LDAP)) { print "\n".__METHOD__." module LDAP must be disabled.\n"; die(); }
+        
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
@@ -187,7 +190,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         $newlocalobject=new User($this->savdb);
         $newlocalobject->initAsSpecimen();
         $this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('id','socid','societe_id','ref','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
+        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('id','socid','societe_id','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
 
         return $localobject;
     }

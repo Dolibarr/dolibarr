@@ -35,7 +35,7 @@
 $form=new Form($db);
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
-if ( GETPOST('filtre') ) {
+if ( GETPOST('filtre','alpha') ) {
 
 	// Avec filtre
 	$ret=array(); $i=0;
@@ -44,25 +44,26 @@ if ( GETPOST('filtre') ) {
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+	$sql.= " WHERE p.entity IN (".getEntity('product').")";
 	$sql.= " AND p.tosell = 1";
 	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
-	$sql.= " AND (p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
-	if (! empty($conf->barcode->enabled)) {
-
-		$filtre = GETPOST('filtre');
+	$sql.= " AND (";
+	$sql.= "p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
+	if (! empty($conf->barcode->enabled))
+	{
+		$filtre = GETPOST('filtre','alpha');
 
 		//If the barcode looks like an EAN13 format and the last digit is included in it,
 		//then whe look for the 12-digit too
 		//As the twelve-digit string will also hit the 13-digit code, we only look for this one
 		if (strlen($filtre) == 13) {
 			$crit_12digit = substr($filtre, 0, 12);
-			$sql .= " OR p.barcode LIKE '%".$db->escape($crit_12digit)."%')";
+			$sql .= " OR p.barcode LIKE '%".$db->escape($crit_12digit)."%'";
 		} else {
-			$sql.= " OR p.barcode LIKE '%".$db->escape($filtre)."%')";
+			$sql.= " OR p.barcode LIKE '%".$db->escape($filtre)."%'";
 		}
 	}
-	else $sql.= ")";
+	$sql.= ")";
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation.php", LOG_DEBUG);
@@ -96,7 +97,7 @@ if ( GETPOST('filtre') ) {
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+	$sql.= " WHERE p.entity IN (".getEntity('product').")";
 	$sql.= " AND p.tosell = 1";
 	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
 	$sql.= " ORDER BY p.label";
@@ -153,34 +154,6 @@ global $mysoc;
 
 $ret=array();
 $i=0;
-
-$sql = "SELECT t.rowid, t.taux";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-$sql.= ", ".MAIN_DB_PREFIX."c_country as c";
-$sql.= " WHERE t.fk_pays = c.rowid";
-$sql.= " AND t.active = 1";
-$sql.= " AND c.code = '".$mysoc->country_code."'";
-//print $sql;
-
-$resql = $db->query($sql);
-if ($resql)
-{
-	while ( $tab = $db->fetch_array($resql) )
-	{
-		foreach ( $tab as $cle => $valeur )
-		{
-			$ret[$i][$cle] = $valeur;
-		}
-		$i++;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
-}
-$tab_tva = $ret;
-
 
 // Reinitialisation du mode de paiement, en cas de retour aux achats apres validation
 $obj_facturation->getSetPaymentMode('RESET');

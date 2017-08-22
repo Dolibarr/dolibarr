@@ -76,7 +76,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
 		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
-		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print $form->select_dolusers($filtert, 'filtert', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		print '</td></tr>';
@@ -85,7 +85,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
 		    include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
 		    $formresource=new FormResource($db);
-		    
+
     		// Resource
     		print '<tr>';
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
@@ -94,7 +94,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
-		
+
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 
@@ -118,7 +118,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid', '', 1);
+		print $form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0);
 		print '</td></tr>';
 	}
 
@@ -135,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
-	if ($canedit)
+	if ($canedit && ! preg_match('/listaction/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
 		print '<tr>';
@@ -251,9 +251,9 @@ function show_array_actions_to_do($max=5)
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
 
-            print '<tr '.$bc[$var].'>';
+
+            print '<tr class="oddeven">';
 
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
@@ -347,9 +347,9 @@ function show_array_last_actions_done($max=5)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
 
-			print '<tr '.$bc[$var].'>';
+
+			print '<tr class="oddeven">';
 
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
@@ -412,6 +412,14 @@ function agenda_prepare_head()
 	$head[$h][2] = 'autoactions';
 	$h++;
 
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	$head[$h][1] = $langs->trans("Reminders");
+	$head[$h][2] = 'reminders';
+	$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("ExportCal");
 	$head[$h][2] = 'xcal';
@@ -458,7 +466,7 @@ function actions_prepare_head($object)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 	    $resource=new DolResource($db);
-	    
+
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
         $nbResources=count($listofresourcelinked);
@@ -472,7 +480,7 @@ function actions_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -506,6 +514,11 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewList");
+    $head[$h][2] = 'cardlist';
+    $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
     $head[$h][1] = $langs->trans("ViewDay");
     $head[$h][2] = 'cardday';
@@ -529,16 +542,12 @@ function calendars_prepare_head($param)
         $head[$h][2] = 'cardpertype';
         $h++;
     }
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
-    $head[$h][1] = $langs->trans("ViewList");
-    $head[$h][2] = 'cardlist';
-    $h++;
 
 	$object=new stdClass();
 

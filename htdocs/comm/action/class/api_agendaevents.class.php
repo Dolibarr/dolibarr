@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -23,14 +23,14 @@
 /**
  * API class for Agenda Events
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class AgendaEvents extends DolibarrApi
 {
 
     /**
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
     );
@@ -40,7 +40,7 @@ class AgendaEvents extends DolibarrApi
      */
     public $actioncomm;
 
-    
+
     /**
      * Constructor
      */
@@ -55,64 +55,71 @@ class AgendaEvents extends DolibarrApi
      * Get properties of a Agenda Events object
      *
      * Return an array with Agenda Events informations
-     * 
+     *
      * @param       int         $id         ID of Agenda Events
      * @return 	    array|mixed             Data without useless information
 	 *
      * @throws 	RestException
      */
     function get($id)
-    {		
-        if(! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+    {
+        if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
             throw new RestException(401, "Insuffisant rights to read an event");
         }
-        
+
         $result = $this->actioncomm->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'Agenda Events not found');
         }
-		
-        if(! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->ownerid != DolibarrApiAccess::$user->id) {
+
+        if (! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->ownerid != DolibarrApiAccess::$user->id) {
             throw new RestException(401, "Insuffisant rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
-        
-		if( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id)) {
+
+		if ( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         $this->actioncomm->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->actioncomm);
     }
 
     /**
      * List Agenda Events
-     * 
+     *
      * Get a list of Agenda Events
-     * 
+     *
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
      * @return  array               Array of Agenda Events objects
      */
-    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
+    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
         global $db, $conf;
-        
+
         $obj_ret = array();
+
+        if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+        	throw new RestException(401, "Insuffisant rights to read events");
+        }
 
         // case of external user
         $socid = 0;
-        if (! empty(DolibarrApiAccess::$user->societe_id)) $socid = DolibarrApiAccess::$user->societe_id;
-        
+        if (! empty(DolibarrApiAccess::$user->socid)) $socid = DolibarrApiAccess::$user->socid;
+
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
-        
+
         $sql = "SELECT t.id as rowid";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('agenda', 1).')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        $sql.= ' WHERE t.entity IN ('.getEntity('agenda').')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
         if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
         // Insert sale filter
@@ -121,7 +128,7 @@ class AgendaEvents extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -130,7 +137,7 @@ class AgendaEvents extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -143,15 +150,16 @@ class AgendaEvents extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        
+
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $actioncomm_static = new ActionComm($db);
-                if($actioncomm_static->fetch($obj->rowid)) {
+                if ($actioncomm_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
                 }
                 $i++;
@@ -160,7 +168,7 @@ class AgendaEvents extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve Agenda Event list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if ( ! count($obj_ret)) {
             throw new RestException(404, 'No Agenda Event found');
         }
 		return $obj_ret;
@@ -174,13 +182,13 @@ class AgendaEvents extends DolibarrApi
      */
     function post($request_data = NULL)
     {
-      if(! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+      if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
-      if(! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
+      if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
-		  
+
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -197,53 +205,53 @@ class AgendaEvents extends DolibarrApi
         if ($this->actioncomm->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating event", array_merge(array($this->actioncomm->error), $this->actioncomm->errors));
         }
-        
+
         return $this->actioncomm->id;
     }
 
-    
+
     /**
      * Update Agenda Event general fields (won't touch lines of expensereport)
      *
      * @param int   $id             Id of Agenda Event to update
-     * @param array $request_data   Datas   
-     * 
-     * @return int 
+     * @param array $request_data   Datas
+     *
+     * @return int
      */
     /*
     function put($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+      if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
-      if(! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
+      if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
 		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
-        
+
         $result = $this->expensereport->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'expensereport not found');
         }
-		
-		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
+
+		if ( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->expensereport->$field = $value;
         }
-        
-        if($this->expensereport->update($id, DolibarrApiAccess::$user,1,'','','update'))
+
+        if ($this->expensereport->update($id, DolibarrApiAccess::$user,1,'','','update'))
             return $this->get($id);
-        
+
         return false;
     }
     */
-        
+
     /**
      * Delete Agenda Event
      *
      * @param   int     $id         Agenda Event ID
-     * 
+     *
      * @return  array
      */
     function delete($id)
@@ -251,50 +259,104 @@ class AgendaEvents extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
 			  throw new RestException(401, "Insuffisant rights to delete your Agenda Event");
 		}
-        
+
 		$result = $this->actioncomm->fetch($id);
-		  
+
         if(! DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
 		      throw new RestException(401, "Insuffisant rights to delete an Agenda Event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		}
-		
+
 		if( ! $result ) {
             throw new RestException(404, 'Agenda Event not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('actioncomm',$this->actioncomm->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         if( ! $this->actioncomm->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->error);
         }
-        
+
         return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Agenda Event deleted'
             )
         );
-        
+
     }
-    
+
     /**
      * Validate fields before create or update object
-     * 
+     *
      * @param   array           $data   Array with data to verify
-     * @return  array           
+     * @return  array
      * @throws  RestException
      */
     function _validate($data)
     {
         $event = array();
-        foreach (Events::$FIELDS as $field) {
+        foreach (AgendaEvents::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $event[$field] = $data[$field];
-            
+
         }
         return $event;
+    }
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param	object	$object		Object to clean
+     * @return	array				Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->usermod);
+    	unset($object->libelle);
+    	unset($object->array_options);
+    	unset($object->context);
+    	unset($object->canvas);
+    	unset($object->contact);
+    	unset($object->contact_id);
+    	unset($object->thirdparty);
+    	unset($object->user);
+    	unset($object->origin);
+    	unset($object->origin_id);
+    	unset($object->ref_ext);
+    	unset($object->statut);
+    	unset($object->country);
+    	unset($object->country_id);
+    	unset($object->country_code);
+    	unset($object->barcode_type);
+    	unset($object->barcode_type_code);
+    	unset($object->barcode_type_label);
+    	unset($object->barcode_type_coder);
+    	unset($object->mode_reglement_id);
+    	unset($object->cond_reglement_id);
+    	unset($object->cond_reglement);
+    	unset($object->fk_delivery_address);
+    	unset($object->shipping_method_id);
+    	unset($object->fk_account);
+    	unset($object->total_ht);
+    	unset($object->total_tva);
+    	unset($object->total_localtax1);
+    	unset($object->total_localtax2);
+    	unset($object->total_ttc);
+    	unset($object->fk_incoterms);
+    	unset($object->libelle_incoterms);
+    	unset($object->location_incoterms);
+    	unset($object->name);
+    	unset($object->lastname);
+    	unset($object->firstname);
+    	unset($object->civility_id);
+    	unset($object->contact);
+    	unset($object->societe);
+
+    	return $object;
     }
 }

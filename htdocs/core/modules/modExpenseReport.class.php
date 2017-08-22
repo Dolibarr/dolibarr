@@ -54,9 +54,6 @@ class modExpenseReport extends DolibarrModules
 		$this->special = 0;
 		$this->picto='trip';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 0;
-
 		// Data directories to create when module is enabled.
 		$this->dirs = array("/expensereport/temp");
 		$r=0;
@@ -114,56 +111,56 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 		$r++;
-		
+
 		$this->rights[$r][0] = 772;
 		$this->rights[$r][1] = 'Create/modify expense reports';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 		$r++;
-		
+
 		$this->rights[$r][0] = 773;
 		$this->rights[$r][1] = 'Delete expense reports';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
-		
+
 		$this->rights[$r][0] = 775;
 		$this->rights[$r][1] = 'Approve expense reports';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'approve';
 		$r++;
-		
+
 		$this->rights[$r][0] = 776;
 		$this->rights[$r][1] = 'Pay expense reports';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'to_paid';
 		$r++;
-		
+
 		$this->rights[$r][0] = 777;
 		$this->rights[$r][1] = 'Read expense reports of everybody';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'readall';
 		$r++;
-		
+
 		$this->rights[$r][0] = 778;
 		$this->rights[$r][1] = 'Create expense reports for everybody';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'writeall_advance';
 		$r++;
-		
+
 		$this->rights[$r][0] = 779;
 		$this->rights[$r][1] = 'Export expense reports';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 		$r++;
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
@@ -186,7 +183,7 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expensereport_det as ed LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as tf ON ed.fk_c_type_fees = tf.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport',1).')';
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport').')';
 	}
 
 	/**

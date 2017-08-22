@@ -328,9 +328,9 @@ llxHeader('', $title);
 print load_fiche_titre($langs->trans("MassStockTransferShort"));
 
 $titletoadd=$langs->trans("Select");
-$titletoaddnoent=$langs->transnoentitiesnoconv("Select");
 $buttonrecord=$langs->trans("RecordMovement");
-$buttonrecordnoent=$langs->trans("RecordMovement");
+$titletoaddnoent=$langs->transnoentitiesnoconv("Select");
+$buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
 print $langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'<br>';
 print '<br>'."\n";
 
@@ -361,7 +361,7 @@ print getTitleFieldOfList('',0);
 print '</tr>';
 
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 // Product
 print '<td class="titlefield">';
 $filtertype=0;
@@ -402,13 +402,13 @@ print '</tr>';
 
 foreach($listofdata as $key => $val)
 {
-	$var=!$var;
+
 
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>';
 	print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 	print '</td>';
@@ -444,7 +444,7 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$codemove=GETPOST('codemove');
+$codemove=(isset($_POST["codemove"])?GETPOST("codemove",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S'));
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
 
 print '<table class="border" width="100%">';

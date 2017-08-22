@@ -67,7 +67,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr class="oddeven"><td>';
     print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print "</form></table><br>\n";
 }
@@ -82,7 +82,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.fk_soc = s.rowid";
-$sql.= " AND f.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND f.entity IN (".getEntity('societe').")";
 if ($user->societe_id) $sql.=' AND f.fk_soc = '.$user->societe_id;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY f.fk_statut";
@@ -138,8 +138,8 @@ if ($resql)
     {
         if (! $conf->use_javascript_ajax)
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             print '<td>'.$fichinterstatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $fichinterstatic->LibStatut($status,$bool,3);
@@ -171,7 +171,7 @@ if (! empty($conf->ficheinter->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('intervention', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('intervention').")";
 	$sql.= " AND f.fk_statut = 0";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -190,9 +190,9 @@ if (! empty($conf->ficheinter->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"),"intervention").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
@@ -219,7 +219,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.fk_soc = s.rowid";
-$sql.= " AND f.entity IN (".getEntity('commande', 1).")";
+$sql.= " AND f.entity IN (".getEntity('commande').")";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -240,10 +240,10 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-			$var=!$var;
+			
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$fichinterstatic->id=$obj->rowid;
@@ -290,7 +290,7 @@ if (! empty($conf->ficheinter->enabled))
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE f.fk_soc = s.rowid";
-	$sql.= " AND f.entity IN (".getEntity('intervention', 1).")";
+	$sql.= " AND f.entity IN (".getEntity('intervention').")";
 	$sql.= " AND f.fk_statut = 1";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -311,9 +311,9 @@ if (! empty($conf->ficheinter->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
 
 				$fichinterstatic->id=$obj->rowid;

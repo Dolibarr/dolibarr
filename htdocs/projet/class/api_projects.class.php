@@ -20,7 +20,7 @@
 
  require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
- 
+
 /**
  * API class for projects
  *
@@ -83,8 +83,8 @@ class Projects extends DolibarrApi
 		return $this->_cleanObjectDatas($this->project);
     }
 
-    
-   
+
+
     /**
      * List projects
      *
@@ -102,7 +102,7 @@ class Projects extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
-        
+
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
 
@@ -116,7 +116,7 @@ class Projects extends DolibarrApi
 
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('project', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('project').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -126,7 +126,7 @@ class Projects extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -135,7 +135,7 @@ class Projects extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -153,7 +153,8 @@ class Projects extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $project_static = new Project($db);
@@ -227,7 +228,7 @@ class Projects extends DolibarrApi
       }
       $this->project->getLinesArray(DolibarrApiAccess::$user);
       $result = array();
-      foreach ($this->project->lines as $line)      // $line is a task 
+      foreach ($this->project->lines as $line)      // $line is a task
       {
           if ($includetimespent == 1)
           {
@@ -243,7 +244,7 @@ class Projects extends DolibarrApi
       return $result;
     }
 
-    
+
     /**
      * Get roles a user is assigned to a project with
      *
@@ -256,20 +257,20 @@ class Projects extends DolibarrApi
      */
     function getRoles($id, $userid=0) {
         global $db;
-        
+
         if(! DolibarrApiAccess::$user->rights->projet->lire) {
             throw new RestException(401);
         }
-    
+
         $result = $this->project->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Project not found');
         }
-    
+
         if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        
+
         require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
         $taskstatic=new Task($this->db);
         $userp = DolibarrApiAccess::$user;
@@ -285,8 +286,8 @@ class Projects extends DolibarrApi
         }
         return $result;
     }
-    
-    
+
+
     /**
      * Add a task to given project
      *
@@ -347,7 +348,7 @@ class Projects extends DolibarrApi
       return false;
     }
     */
-    
+
     /**
      * Update a task to given project
      *
@@ -405,9 +406,9 @@ class Projects extends DolibarrApi
       }
       return false;
     }*/
-    
 
-    
+
+
     /**
      * Update project general fields (won't touch lines of project)
      *
@@ -482,7 +483,7 @@ class Projects extends DolibarrApi
      * Validate a project.
      * You can test this API with the following input message
      * { "notrigger": 0 }
-     * 
+     *
      * @param   int $id             Project ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
@@ -526,7 +527,7 @@ class Projects extends DolibarrApi
         );
     }
 
-    
+
     /**
      * Clean sensible object datas
      *
@@ -534,9 +535,12 @@ class Projects extends DolibarrApi
      * @return    array    Array of cleaned object properties
      */
     function _cleanObjectDatas($object) {
-    
+
         $object = parent::_cleanObjectDatas($object);
-    
+
+        unset($object->titre);
+        unset($object->datec);
+        unset($object->datem);
         unset($object->barcode_type);
         unset($object->barcode_type_code);
         unset($object->barcode_type_label);
@@ -558,21 +562,21 @@ class Projects extends DolibarrApi
         unset($object->country);
         unset($object->country_id);
         unset($object->country_code);
-        
+
         unset($object->weekWorkLoad);
         unset($object->weekWorkLoad);
-        
+
         //unset($object->lines);            // for task we use timespent_lines, but for project we use lines
-        
+
         unset($object->total_ht);
         unset($object->total_tva);
         unset($object->total_localtax1);
         unset($object->total_localtax2);
         unset($object->total_ttc);
-        
+
         return $object;
     }
-    
+
     /**
      * Validate fields before create or update object
      *
@@ -591,8 +595,8 @@ class Projects extends DolibarrApi
         }
         return $object;
     }
-    
-    
+
+
     // TODO
     // getSummaryOfTimeSpent
 }

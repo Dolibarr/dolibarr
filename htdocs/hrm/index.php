@@ -109,7 +109,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -150,7 +150,7 @@ $langs->load("boxes");
 
 
 
-// Last leave requests
+// Latest leave requests
 if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 {
     $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.photo, u.statut, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
@@ -171,12 +171,13 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
         $holidaystatic=new Holiday($db);
         $userstatic=new User($db);
-        
+
         $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
         $typeleaves=$holidaystatic->getTypes(1,-1);
-        
+
         $i = 0;
 
+        print '<div class="div-table-responsive">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</th>';
@@ -198,29 +199,29 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->login=$obj->login;
                 $userstatic->photo=$obj->photo;
                 $userstatic->statut=$obj->statut;
-                print '<tr '.$bc[$var].'>';
+                print '<tr class="oddeven">';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
-                
+
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
                 $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
-                
-                print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$endhalfday]);
+
+                print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$starthalfday]);
                 print '<td>'.dol_print_date($obj->date_end,'day').' '.$langs->trans($listhalfday[$endhalfday]);
                 print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
                 print '<td>'.$holidaystatic->LibStatut($obj->status,3).'</td>';
                 print '</tr>';
-                $var=!$var;
+
                 $i++;
             }
 
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
-        print '</table><br>';
+        print '</table></div><br>';
     }
     else dol_print_error($db);
 }
@@ -272,21 +273,21 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.$obj->km.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
 				print '</tr>';
-				$var=!$var;
+
 				$i++;
 			}
 
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -339,21 +340,21 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status,3).'</td>';
 				print '</tr>';
-				$var=!$var;
+
 				$i++;
 			}
 
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';
 	}

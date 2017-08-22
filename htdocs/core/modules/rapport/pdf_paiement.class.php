@@ -199,7 +199,7 @@ class pdf_paiement
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-				$var=!$var;
+				
 
 				$lines[$i][0] = $objp->facnumber;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);
@@ -275,7 +275,9 @@ class pdf_paiement
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
-
+		
+		$this->result = array('fullpath'=>$file);
+		
 		return 1;
 	}
 

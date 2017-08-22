@@ -58,6 +58,8 @@ class box_clients extends ModeleBoxes
 
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
+
+		$this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
 	}
 
 	/**
@@ -90,7 +92,7 @@ class box_clients extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (1, 3)";
-			$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+			$sql.= " AND s.entity IN (".getEntity('societe').")";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
 			$sql.= " ORDER BY s.tms DESC";
@@ -146,8 +148,10 @@ class box_clients extends ModeleBoxes
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 
 	}
@@ -158,11 +162,11 @@ class box_clients extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

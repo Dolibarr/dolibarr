@@ -1,12 +1,6 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +69,7 @@ llxHeader('',$langs->trans("Setup"),$help_url);
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {
     width: 100%;
-} 
+}
 </style>';
 
 $arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
@@ -172,6 +166,7 @@ foreach ($modulesdir as $dir)
 
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
+		    			            	if (!is_array($familyinfo)) $familyinfo=array();
 		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 		    			            	$familykey = key($objMod->familyinfo);
 		    			            } else {
@@ -230,20 +225,6 @@ asort($orders);
 //var_dump($modules);
 
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
-$head[$h][1] = $langs->trans("Description");
-$head[$h][2] = 'desc';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
-$head[$h][1] = $langs->trans("TechnicalServicesProvided");
-$head[$h][2] = 'feature';
-$h++;
-
-
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
@@ -262,11 +243,33 @@ $special = $objMod->special;
 $tab=explode('_',$value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
+
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
+$head[$h][1] = $langs->trans("Description");
+$head[$h][2] = 'desc';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
+$head[$h][1] = $langs->trans("TechnicalServicesProvided");
+$head[$h][2] = 'feature';
+$h++;
+
+if ($objMod->isCoreOrExternalModule() == 'external')
+{
+    $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=changelog';
+    $head[$h][1] = $langs->trans("ChangeLog");
+    $head[$h][2] = 'changelog';
+    $h++;
+}
+
 // Check filters
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-
+$moduledir=strtolower(preg_replace('/^mod/i','',get_class($objMod)));
 
 
 print '<div class="centpercent">';
@@ -292,7 +295,7 @@ if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 	}
 }
 
-$var=!$var;
+
 
 
 // Version (with picto warning or not)
@@ -312,13 +315,13 @@ if ($objMod->isCoreOrExternalModule() == 'external')
 
 // Define text of description of module
 $text='';
-   
+
 if ($mode == 'desc')
 {
     if ($moduledesc) $text.=$moduledesc.'<br><br>';
-    
+
     $text.='<strong>'.$langs->trans("Version").':</strong> '.$version;
-    
+
     $textexternal='';
     if ($objMod->isCoreOrExternalModule() == 'external')
     {
@@ -337,12 +340,39 @@ if ($mode == 'desc')
     else $text.=$langs->trans("Disabled");
     $text.='<br>';
 
+    $tmp = $objMod->getLastActivationInfo();
+    $authorid = $tmp['authorid'];
+    if ($authorid > 0)
+    {
+        $tmpuser = new User($db);
+        $tmpuser->fetch($authorid);
+        $text.='<strong>'.$langs->trans("LastActivationAuthor").':</strong> ';
+        $text.= $tmpuser->getNomUrl(1);
+        $text.='<br>';
+    }
+    $ip = $tmp['ip'];
+    if ($ip)
+    {
+        $text.='<strong>'.$langs->trans("LastActivationIP").':</strong> ';
+        $text.= $ip;
+        $text.='<br>';
+    }
+
     $moduledesclong=$objMod->getDescLong();
     if ($moduledesclong) $text.='<br><hr><div class="moduledesclong">'.$moduledesclong.'<div>';
 }
 
 if ($mode == 'feature')
 {
+    $text.='<br><strong>'.$langs->trans("DependsOn").':</strong> ';
+    if (count($objMod->requiredby)) $text.=join(',', $objMod->depends);
+	else $text.=$langs->trans("None");
+    $text.='<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
+	if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
+	else $text.=$langs->trans("None");
+
+    $text.='<br><br><br>';
+
     $text.='<strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
     if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
     {
@@ -355,9 +385,9 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
     if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
     {
@@ -369,9 +399,9 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
     if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
     {
@@ -383,27 +413,27 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
     {
         $text.=$langs->trans("Yes");
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
     {
         $text.=$langs->trans("Yes");
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
     if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
     {
@@ -415,55 +445,89 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+    $moreinfoontriggerfile='';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
-        $text.=$langs->trans("Yes");
+    	$yesno='Yes';
     }
-    else $text.=$langs->trans("No");
-    
+    else
+    {
+    	$yesno='No';
+    }
+    require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+    $interfaces = new Interfaces($db);
+    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$moduledir:'').'/core/triggers'));
+	foreach($triggers as $triggercursor)
+	{
+		if ($triggercursor['module'] == $moduledir)
+		{
+			$yesno='Yes';
+			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
+		}
+	}
+
+    $text.=$langs->trans($yesno).$moreinfoontriggerfile;
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
     if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
     {
-        $i=0;
-        foreach($objMod->module_parts['hooks'] as $val)
+    	$i=0;
+        foreach($objMod->module_parts['hooks'] as $key => $val)
         {
-            $text.=($i?', ':'').($val);
-            $i++;
+        	if ($key == 'entity') continue;
+
+        	// For special values
+        	if ($key == 'data')
+        	{
+        		if (is_array($val))
+        		{
+        			foreach($val as $value)
+        			{
+        				$text.=($i?', ':'').($value);
+        				$i++;
+        			}
+
+        			continue;
+        		}
+        	}
+
+        	$text.=($i?', ':'').($val);
+        	$i++;
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
     if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
     {
         $i=0;
         foreach($objMod->rights as $val)
         {
-            $text.=($i?', ':'').($val[1]);
-            $i++;
+        	$text.=($i?', ':'').($val[1]);
+        	$i++;
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
     if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
     {
         $text.=$langs->trans("Yes");
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
     if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
     {
@@ -475,9 +539,9 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
     if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
     {
@@ -489,13 +553,20 @@ if ($mode == 'feature')
         }
     }
     else $text.=$langs->trans("No");
-    
+
     $text.='<br>';
-    
+
     $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
     $text.=$langs->trans("DetectionNotPossible");
 }
 
+
+if ($mode == 'changelog')
+{
+    $changelog=$objMod->getChangeLog();
+    if ($changelog) $text.='<div class="moduledesclong">'.$changelog.'<div>';
+    else $text.='<div class="moduledesclong">'.$langs->trans("NotAvailable").'</div>';
+}
 
 print $text;
 

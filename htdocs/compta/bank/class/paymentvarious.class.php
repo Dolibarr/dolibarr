@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017 		Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *      \file       htdocs/compta/bank/class/paymentvarious.class.php
- *      \ingroup    salaries
- *      \brief		Class for salaries module payment
+ *  \file		htdocs/compta/bank/class/paymentvarious.class.php
+ *  \ingroup	bank
+ *  \brief		Class for various payment
  */
 
 // Put here all includes required by your class file
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentVarious extends CommonObject
 {
-	//public $element='payment_various';			//!< Id that identify managed objects
+	//public $element='payment_various';		//!< Id that identify managed objects
 	//public $table_element='payment_various';	//!< Name of table without prefix where object is stored
 
 	var $tms;
@@ -74,7 +74,6 @@ class PaymentVarious extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		$this->fk_user=trim($this->fk_user);
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
@@ -85,22 +84,21 @@ class PaymentVarious extends CommonObject
 		$this->db->begin();
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_various SET";
 
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " fk_user='".$this->fk_user."',";
-		$sql.= " datep=".$this->db->idate($this->datep).",";
-		$sql.= " datev=".$this->db->idate($this->datev).",";
+		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		$sql.= " datep='".$this->db->idate($this->datep)."',";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
 		$sql.= " sens=".$this->sens.",";
-		$sql.= " amount='".$this->amount."',";
+		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " fk_typepayment=".$this->fk_typepayment."',";
-		$sql.= " num_payment='".$this->num_payment."',";
+		$sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
-		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
-		$sql.= " fk_user_author='".$this->fk_user_author."',";
-		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
+		$sql.= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank:"null").",";
+		$sql.= " fk_user_author=".$this->fk_user_author.",";
+		$sql.= " fk_user_modif=".$this->fk_user_modif;
 
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -114,10 +112,10 @@ class PaymentVarious extends CommonObject
 
 		if (! $notrigger)
 		{
-            // Call trigger
-            $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
-            if ($result < 0) $error++;
-            // End call triggers
+			// Call trigger
+			$result=$this->call_trigger('PAYMENT_VARIOUS_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		if (! $error)
@@ -178,7 +176,6 @@ class PaymentVarious extends CommonObject
 				$this->id				= $obj->rowid;
 				$this->ref				= $obj->rowid;
 				$this->tms				= $this->db->jdate($obj->tms);
-				$this->fk_user			= $obj->fk_user;
 				$this->datep			= $this->db->jdate($obj->datep);
 				$this->datev			= $this->db->jdate($obj->datev);
 				$this->sens				= $obj->sens;
@@ -252,12 +249,12 @@ class PaymentVarious extends CommonObject
 		$this->id=0;
 
 		$this->tms='';
-		$this->fk_user='';
 		$this->datep='';
 		$this->datev='';
 		$this->sens='';
 		$this->amount='';
 		$this->label='';
+		$this->accountancy_code='';
 		$this->note='';
 		$this->fk_bank='';
 		$this->fk_user_author='';
@@ -328,14 +325,14 @@ class PaymentVarious extends CommonObject
 		$sql.= " VALUES (";
 		$sql.= "'".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
-		$sql.= ", '".$this->sens."'";
+		$sql.= ", '".$this->db->escape($this->sens)."'";
 		$sql.= ", ".$this->amount;
-		$sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+		$sql.= ", '".$this->db->escape($this->type_payment)."'";
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
-		$sql.= ", '".$this->accountancy_code."'";
-		$sql.= ", '".$user->id."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", ".$user->id;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
@@ -345,7 +342,6 @@ class PaymentVarious extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
 
 			if ($this->id > 0)

@@ -34,69 +34,94 @@ $langs->load("bills");
 $langs->load("products");
 $langs->load("margins");
 
-// Security check
-
-if ($user->rights->margins->creer) {
-	$agentid = $user->id;
-} else {
-	accessforbidden();
-}
-
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-if (! $sortorder)
-	$sortorder = "DESC";
-if (! $sortfield) {
-	$sortfield = 'f.rowid';
-}
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-// Both test are required to be compatible with all browsers
-if (GETPOST("button_search_x") || GETPOST("button_search")) {
-	$action = 'search';
-} elseif (GETPOST("button_updatemagins_x") || GETPOST("button_updatemagins")) {
-	$action = 'update';
-}
-
-if ($action == 'update') {
-	$datapost = $_POST;
-	
-	foreach ( $datapost as $key => $value ) {
-		if (strpos($key, 'buyingprice_') !== false) {
-			$tmp_array = explode('_', $key);
-			if (count($tmp_array) > 0) {
-				$invoicedet_id = $tmp_array[1];
-				if (! empty($invoicedet_id)) {
-					$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facturedet';
-					$sql .= ' SET buy_price_ht=\'' . price2num($value) . '\'';
-					$sql .= ' WHERE rowid=' . $invoicedet_id;
-					$result = $db->query($sql);
-					if (!$result) {
-						setEventMessages($db->lasterror, null, 'errors');
-					}
-				}
-			}
-		}
-	}
-}
+if (! $sortorder) $sortorder = "DESC";
+if (! $sortfield) $sortfield = 'f.facnumber';
 
 $startdate = $enddate = '';
 
 $startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
 $enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear', 'int'));
 
-if (! empty($startdate)) {
-	$options .= '&amp;startdatemonth=' . GETPOST('startdatemonth', 'int') . '&amp;startdateday=' . GETPOST('startdateday', 'int') . '&amp;startdateyear=' . GETPOST('startdateyear', 'int');
+$search_ref = GETPOST('search_ref','alpha');
+
+// Security check
+$result=restrictedArea($user,'margins');
+
+// Both test are required to be compatible with all browsers
+if (GETPOST("button_search_x") || GETPOST("button_search")) {
+    $action = 'search';
+} elseif (GETPOST("button_updatemagins_x") || GETPOST("button_updatemagins")) {
+    $action = 'update';
 }
-if (! empty($enddate)) {
-	$options .= '&amp;enddatemonth=' . GETPOST('enddatemonth', 'int') . '&amp;enddateday=' . GETPOST('enddateday', 'int') . '&amp;enddateyear=' . GETPOST('enddateyear', 'int');
+
+
+/*
+ * Actions
+ */
+
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
+{
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+    if ($action == 'update') {
+        $datapost = $_POST;
+
+        foreach ( $datapost as $key => $value ) {
+            if (strpos($key, 'buyingprice_') !== false) {
+                $tmp_array = explode('_', $key);
+                if (count($tmp_array) > 0) {
+                    $invoicedet_id = $tmp_array[1];
+                    if (! empty($invoicedet_id)) {
+                        $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facturedet';
+                        $sql .= ' SET buy_price_ht=\'' . price2num($value) . '\'';
+                        $sql .= ' WHERE rowid=' . $invoicedet_id;
+                        $result = $db->query($sql);
+                        if (!$result) {
+                            setEventMessages($db->lasterror, null, 'errors');
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Purge search criteria
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    {
+        $search_ref='';
+        $search_array_options=array();
+    }
+
+    // Mass actions
+    /*
+    $objectclass='Product';
+    if ((string) $type == '1') { $objectlabel='Services'; }
+    if ((string) $type == '0') { $objectlabel='Products'; }
+
+    $permtoread = $user->rights->produit->lire;
+    $permtodelete = $user->rights->produit->supprimer;
+    $uploaddir = $conf->product->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    */
 }
+
 
 /*
  * View
@@ -115,6 +140,17 @@ llxHeader('', $title);
 
 // print_fiche_titre($text);
 
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($startdate)) {
+    $param .= '&startdatemonth=' . GETPOST('startdatemonth', 'int') . '&startdateday=' . GETPOST('startdateday', 'int') . '&startdateyear=' . GETPOST('startdateyear', 'int');
+}
+if (! empty($enddate)) {
+    $param .= '&enddatemonth=' . GETPOST('enddatemonth', 'int') . '&enddateday=' . GETPOST('enddateday', 'int') . '&enddateyear=' . GETPOST('enddateyear', 'int');
+}
+if ($optioncss != '') $param.='&optioncss='.$optioncss;
+
 // Show tabs
 $head = marges_prepare_head($user);
 $picto = 'margin';
@@ -125,8 +161,7 @@ dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
 
 print '<table class="border" width="100%">';
 
-// Start date
-print '<td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
+print '<tr><td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
 $form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
@@ -136,10 +171,15 @@ $form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
-print '</td></tr>';
+print '</td>';
+print '</tr>';
 print "</table>";
 
 dol_fiche_end();
+
+
+$arrayfields=array();
+$massactionbutton='';
 
 
 $sql = "SELECT";
@@ -149,17 +189,16 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut > 0";
-$sql .= " AND f.entity = " . getEntity('facture', 1);
-if (! empty($startdate))
-	$sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
-if (! empty($enddate))
-	$sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
+$sql .= " AND f.entity = " . getEntity('facture');
+if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
+if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
+if ($search_ref) $sql.=natural_search('f.facnumber', $search_ref);
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	
+
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result) {
@@ -169,94 +208,110 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	}
 }
 
-$sql .= $db->plimit($conf->liste_limit + 1, $offset);
+$sql .= $db->plimit($limit+1, $offset);
 
-dol_syslog(__FILE__, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	
+
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-	
+	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice=$langs->trans('BuyingPrice');
+	    $labelcostprice='BuyingPrice';
 	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice=$langs->trans('CostPrice');
-	
+	    $labelcostprice='CostPrice';
+
 	$moreforfilter='';
-	
+
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+	$selectedfields='';
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	
-	print '<tr class="liste_titre">';
-	
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "f.ref", "", $options, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "", "", $options, 'width=20%', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("UnitPriceHT"), $_SERVER["PHP_SELF"], "d.subprice", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"], "d.total_ht", "", $options, 'align="right"', $sortfield, $sortorder);
-	
+
+	print '<tr class="liste_titre liste_titre_search">';
+	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+	print '<td></td>';
+    print '<td class="liste_titre" align="middle">';
+    $searchpitco=$form->showFilterButtons();
+    print $searchpitco;
+    print '</td>';
 	print "</tr>\n";
-	
-	if ($num > 0) {
-		$var = true;
-		
-		while ( $objp = $db->fetch_object($result) ) {
-			$var = ! $var;
-			
-			print "<tr " . $bc[$var] . ">";
-			print '<td>';
-			$result_inner = $invoicestatic->fetch($objp->invoiceid);
-			if ($result_inner < 0) {
-				setEventMessages($invoicestatic->error, null, 'errors');
-			} else {
-				print $invoicestatic->getNomUrl(1);
-			}
-			print '</td>';
-			print '<td>';
-			if (! empty($objp->fk_product)) {
-				$result_inner = $productstatic->fetch($objp->fk_product);
-				if ($result_inner < 0) {
-					setEventMessages($productstatic->error, null, 'errors');
-				} else {
-					print $productstatic->getNomUrl(1);
-				}
-			} else {
-				print $objp->label;
-				print '&nbsp;';
-				print $objp->description;
-			}
-			print '</td>';
-			print '<td align="right">';
-			print price($objp->subprice);
-			print '</td>';
-			print '<td align="right">';
-			print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="flat">';
-			print '</td>';
-			print '<td align="right">';
-			print $objp->qty;
-			print '</td>';
-			print '<td align="right">';
-			print price($objp->total_ht);
-			print '</td>';
-			
-			print "</tr>\n";
-			
-			$i ++;
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
+	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+
+    $i=0;
+	while ($i < min($num, $limit))
+	{
+	    $objp = $db->fetch_object($result);
+
+		print '<tr class="oddeven">';
+		print '<td>';
+		$result_inner = $invoicestatic->fetch($objp->invoiceid);
+		if ($result_inner < 0) {
+			setEventMessages($invoicestatic->error, null, 'errors');
+		} else {
+			print $invoicestatic->getNomUrl(1);
 		}
+		print '</td>';
+		print '<td>';
+		if (! empty($objp->fk_product)) {
+			$result_inner = $productstatic->fetch($objp->fk_product);
+			if ($result_inner < 0) {
+				setEventMessages($productstatic->error, null, 'errors');
+			} else {
+				print $productstatic->getNomUrl(1);
+			}
+		} else {
+			print $objp->label;
+			print '&nbsp;';
+			print $objp->description;
+		}
+		print '</td>';
+		print '<td align="right">';
+		print price($objp->subprice);
+		print '</td>';
+		print '<td align="right">';
+		print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
+		print '</td>';
+		print '<td align="right">';
+		print $objp->qty;
+		print '</td>';
+		print '<td align="right">';
+		print price($objp->total_ht);
+		print '</td>';
+		print '<td></td>';
+
+		print "</tr>\n";
+
+		$i ++;
 	}
+
 	print "</table>";
-	
+
 	print "</div>";
 } else {
 	dol_print_error($db);
 }
 
 
-print '<div class="tabsAction">' . "\n";
-print '<div class="inline-block divButAction"><input type="submit"  name="button_updatemagins" id="button_updatemagins" class="butAction" value="' . $langs->trans("Update") . '" /></div>';
+print '<div class="center">' . "\n";
+print '<input type="submit" class="button" name="button_updatemagins" id="button_updatemagins" value="' . $langs->trans("Update") . '">';
 print '</div>';
 
 print '</form>';

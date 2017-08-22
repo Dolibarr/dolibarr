@@ -78,7 +78,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql .= " ".MAIN_DB_PREF
 $sql.= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND p.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND p.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($type == "c") $sql.= " AND s.client IN (1, 3)";
 if ($type == "p") $sql.= " AND s.client IN (2, 3)";
@@ -126,14 +126,14 @@ if ($resql)
 	print_barre_liste($title.($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,"",$num);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Email"));
-	print_liste_field_titre($langs->trans("Phone"));
+	print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Email");
+	print_liste_field_titre("Phone");
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -150,9 +150,9 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
 		print "<td>$obj->firstname</TD>";
@@ -168,9 +168,9 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-	
+
 	print '</form>';
-	
+
 	$db->free($resql);
 }
 else

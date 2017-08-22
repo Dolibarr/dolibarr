@@ -53,7 +53,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr class="oddeven"><td>';
     print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print "</table></form><br>\n";
 }
@@ -77,7 +77,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
-$sql.= " AND e.entity IN (".getEntity('expedition', 1).")";
+$sql.= " AND e.entity IN (".getEntity('expedition').")";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
@@ -90,17 +90,15 @@ if ($resql)
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 			
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;
-				
-			$var=!$var;
-			print "<tr ".$bc[$var].'><td class="nowrap">';
+			$shipment->ref_customer=$obj->ref_customer;				
+			
+			print '<tr class="oddeven"><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
 			print '<td>';
@@ -142,7 +140,6 @@ if ($resql)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
-		$var = True;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -154,10 +151,9 @@ if ($resql)
 			$orderstatic->facturee=0;
 			
 			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
+			$companystatic->id=$obj->socid;			
 			
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -204,7 +200,6 @@ if ( $resql )
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
-		$var = True;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -216,10 +211,9 @@ if ( $resql )
             $orderstatic->facturee=$obj->billed;
 			
             $companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
-				
-			$var=!$var;
-			print "<tr ".$bc[$var]."><td>";
+			$companystatic->id=$obj->socid;				
+			
+			print '<tr class="oddeven"><td>';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
@@ -248,7 +242,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_ta
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user = " .$user->id;
 $sql.= " AND e.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
@@ -264,18 +258,16 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("LastSendings",$num).'</th></tr>';
-		$var = True;
+		print '<th colspan="3">'.$langs->trans("LastSendings", $num).'</th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 		    
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;
-				
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td>';
+			$shipment->ref_customer=$obj->ref_customer;				
+			
+			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';

@@ -36,7 +36,7 @@ $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk', 'array');
 $cpt_id = GETPOST('cptid');
@@ -46,7 +46,7 @@ if ($cat_id == 0) {
 }
 
 // Security check
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -104,7 +104,7 @@ $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0
 print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
-if (! empty($cat_id)) 
+if (! empty($cat_id))
 {
 	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
 	if ($return < 0) {
@@ -146,8 +146,7 @@ if ($action == 'display' || $action == 'delete') {
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
 			foreach ( $accountingcategory->lines_display as $cpt ) {
-				$var = ! $var;
-				print '<tr ' . $bc[$var] . '>';
+				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print '<td align="right">';

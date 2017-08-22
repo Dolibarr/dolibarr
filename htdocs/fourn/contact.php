@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -64,7 +64,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PRE
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.fournisseur = 1";
 $sql.= " AND s.rowid = p.fk_soc";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (dol_strlen($stcomm)) {
@@ -98,11 +98,11 @@ if ($result)
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Email"));
-    print_liste_field_titre($langs->trans("Phone"));
+    print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre("Email");
+    print_liste_field_titre("Phone");
     print "</tr>\n";
 
     $var=True;
@@ -111,9 +111,9 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
 
-        $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
 
         print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->lastname.'</a></td>';
         print '<td>'.$obj->firstname.'</td>';

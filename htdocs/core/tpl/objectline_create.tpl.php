@@ -52,13 +52,15 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
-<?php 
+<?php
 $nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 ?>
-<tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add') ?> nodrag nodrop">
-<tr id="addline" class="liste_titre liste_titre_add nodrag nodrop">
-	<td class="linecoldescription" <?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+<tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add_') ?> nodrag nodrop">
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<td class="linecolnum" align="center"></td>
+	<?php } ?>
+	<td class="linecoldescription minwidth500imp">
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
 	<?php if ($object->element == 'supplier_proposal') { ?>
@@ -112,15 +114,20 @@ if ($nolinesbefore) {
 <?php
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
+<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay=2; }
+	$coldisplay=2;
+	?>
+	<td class="linecolnum" align="center" width="5">
+	<?php
+}
 else {
-	$coldisplay=0; }
+	$coldisplay=0;
+}
 ?>
 
-	<td class="nobottom linecoldescription"<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
 
@@ -271,13 +278,13 @@ else {
 	<td class="nobottom linecoluht" align="right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
-	
+
 	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
 	<td class="nobottom linecoluht_currency" align="right">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
 	<?php } ?>
-	
+
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td class="nobottom linecoluttc" align="right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc",'alpha',2):''); ?>">
@@ -731,9 +738,10 @@ function setforfree() {
 function setforpredef() {
 	console.log("Call setforpredef. We hide some fields");
 	jQuery("#select_type").val(-1);
+
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	jQuery("#price_ht").hide();
+	jQuery("#price_ht").val('').hide();
 	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();

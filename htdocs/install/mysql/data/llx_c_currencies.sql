@@ -41,6 +41,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'AZN'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BHD', NULL, 1,					'Bahrain');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BSD', '[36]', 1,				'Bahamas Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BBD', '[36]', 1,				'Barbados Dollar');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BDT', '[2547]', 1,			    'Bangladeshi Taka');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BYR', '[112,46]', 1,			'Belarus Ruble');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BZD', '[66,90,36]', 1,			'Belize Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BMD', '[36]', 1,				'Bermuda Dollar');

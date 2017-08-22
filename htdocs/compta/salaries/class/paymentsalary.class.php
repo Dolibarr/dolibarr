@@ -33,20 +33,21 @@ class PaymentSalary extends CommonObject
 {
 	//public $element='payment_salary';			//!< Id that identify managed objects
 	//public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
+    public $picto='payment';
 
-	var $tms;
-	var $fk_user;
-	var $datep;
-	var $datev;
-	var $amount;
-	var $type_payment;
-	var $num_payment;
-	var $label;
-	var $datesp;
-	var $dateep;
-	var $fk_bank;
-	var $fk_user_author;
-	var $fk_user_modif;
+	public $tms;
+	public $fk_user;
+	public $datep;
+	public $datev;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
+	public $label;
+	public $datesp;
+	public $dateep;
+	public $fk_bank;
+	public $fk_user_author;
+	public $fk_user_modif;
 
 
 	/**
@@ -96,20 +97,20 @@ class PaymentSalary extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " fk_user='".$this->fk_user."',";
-		$sql.= " datep=".$this->db->idate($this->datep).",";
-		$sql.= " datev=".$this->db->idate($this->datev).",";
-		$sql.= " amount='".$this->amount."',";
+		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		$sql.= " fk_user=".$this->fk_user.",";
+		$sql.= " datep='".$this->db->idate($this->datep)."',";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
+		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " fk_typepayment=".$this->fk_typepayment."',";
-		$sql.= " num_payment='".$this->num_payment."',";
+		$sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
-		$sql.= " datesp=".$this->db->idate($this->datesp).",";
-		$sql.= " dateep=".$this->db->idate($this->dateep).",";
+		$sql.= " datesp='".$this->db->idate($this->datesp)."',";
+		$sql.= " dateep='".$this->db->idate($this->dateep)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
-		$sql.= " fk_user_author='".$this->fk_user_author."',";
-		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
+		$sql.= " fk_user_author=".$this->fk_user_author.",";
+		$sql.= " fk_user_modif=".$this->fk_user_modif;
 
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -545,6 +546,68 @@ class PaymentSalary extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+	    $langs->load('compta');
+	    /*if ($mode == 0)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate');
+	        if ($status == 1) return $langs->trans('Validated');
+	    }
+	    if ($mode == 1)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate');
+	        if ($status == 1) return $langs->trans('Validated');
+	    }
+	    if ($mode == 2)
+	    {
+	        if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+	        if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+	    }
+	    if ($mode == 3)
+	    {
+	        if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+	    }
+	    if ($mode == 4)
+	    {
+	        if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+	        if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+	    }
+	    if ($mode == 5)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }
+		if ($mode == 6)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }*/
+	    return '';
 	}
 
 }

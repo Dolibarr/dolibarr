@@ -21,13 +21,19 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
 
+
+/*
+ * View
+ */
+
+top_httphead('text/html');  // TODO Use a json mime type
+
 global $user, $db, $langs, $conf;
 
-$time = (int) GETPOST('time');    // Use the time parameter that is always increased by time_update, even if call is late
+$time = (int) GETPOST('time','int');    // Use the time parameter that is always increased by time_update, even if call is late
 //$time=dol_now();
 
 
@@ -88,9 +94,11 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
         while ($obj = $db->fetch_object($resql)) 
         {
             $langs->load("agenda");
+            $langs->load("commercial");
             
             $actionmod->fetch($obj->id);
 
+            // Message must be formated and translated to be used with javascript directly
             $event = array();
             $event['type'] = 'agenda';
             $event['id'] = $actionmod->id;
@@ -100,6 +108,10 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             
             $eventfound[] = $event;
         }
+    }
+    else
+    {
+        dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
     }
 
 }

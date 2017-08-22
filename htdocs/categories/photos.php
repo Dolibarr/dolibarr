@@ -39,8 +39,10 @@ $langs->load("bills");
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
+
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 if ($id == "")
 {
@@ -100,15 +102,16 @@ if ($object->id)
 	elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 	elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 	elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
-    else                                        $title=$langs->trans("Category");
+	elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
+	else                                        $title=$langs->trans("Category");
 
 	$head = categories_prepare_head($object,$type);
 
 
-	dol_fiche_head($head, 'photos', $title, 0, 'category');
-	
+	dol_fiche_head($head, 'photos', $title, -1, 'category');
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$object->ref = $object->label;
 	$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -117,9 +120,9 @@ if ($object->id)
 	    $morehtmlref.=$way."<br>\n";
 	}
 	$morehtmlref.='</div>';
-	
+
 	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
-	
+
 	/*
 	 * Confirmation de la suppression de photo
 	*/
@@ -129,7 +132,8 @@ if ($object->id)
 	}
 
 	print '<br>';
-	
+
+	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
@@ -146,6 +150,7 @@ if ($object->id)
 	print '</td></tr>';
 
 	print "</table>\n";
+    print '</div>';
 
 	print dol_fiche_end();
 
@@ -198,7 +203,7 @@ if ($object->id)
 		$dir = $upload_dir.'/'.$pdir;
 
 		print '<br>';
-		print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+		print '<table width="100%" valign="top" align="center">';
 
 		foreach ($object->liste_photos($dir) as $key => $obj)
 		{
@@ -255,14 +260,12 @@ if ($object->id)
 			$nbphoto++;
 		}
 
+		print '</table>';
+
 		if ($nbphoto < 1)
 		{
-			print '<tr align=center valign=middle border=1><td class="photo">';
-			print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
-			print '</td></tr>';
+			print '<div class="opacitymedium">'.$langs->trans("NoPhotoYet")."</div>";
 		}
-
-		print '</table>';
 	}
 }
 else

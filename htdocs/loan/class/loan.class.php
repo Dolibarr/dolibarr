@@ -129,7 +129,7 @@ class Loan extends CommonObject
      */
     function create($user)
     {
-    	global $conf;
+    	global $conf, $langs;
 
 		$error=0;
 
@@ -155,7 +155,7 @@ class Loan extends CommonObject
         }
 		if (($conf->accounting->enabled) && empty($this->account_capital) && empty($this->account_insurance) && empty($this->account_interest))
 		{
-            $this->error="ErrorAccountingParameter";
+            $this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Accounting"));
             return -2;
 		}
 
@@ -236,7 +236,7 @@ class Loan extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -248,7 +248,7 @@ class Loan extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)

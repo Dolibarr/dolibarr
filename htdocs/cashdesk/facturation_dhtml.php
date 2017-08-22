@@ -39,8 +39,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
-//header("Content-type: text/html; charset=UTF-8");
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+top_httphead('text/html');
 
 $search = GETPOST("code", "alpha");
 
@@ -51,7 +50,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+	$sql.= " WHERE p.entity IN (".getEntity('product').")";
 	$sql.= " AND p.tosell = 1";
 	$sql.= " AND p.fk_product_type = 0";
 	// Add criteria on ref/label

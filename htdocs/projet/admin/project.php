@@ -51,6 +51,8 @@ $type='project';
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'setmainoptions')
 {
 	if (GETPOST('PROJECT_USE_OPPORTUNITIES')) dolibarr_set_const($db, "PROJECT_USE_OPPORTUNITIES",GETPOST('PROJECT_USE_OPPORTUNITIES'),'chaine',0,'',$conf->entity);
@@ -104,7 +106,7 @@ else if ($action == 'specimen')
 
 	$project = new Project($db);
 	$project->initAsSpecimen();
-    
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
@@ -185,35 +187,6 @@ else if ($action == 'specimentask')
 	{
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
-}
-
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-	{
-		if (array_key_exists('param'.$i,$_POST))
-		{
-			$param=GETPOST("param".$i,'alpha');
-			$value=GETPOST("value".$i,'alpha');
-			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -318,7 +291,7 @@ print load_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
 
 $head=project_admin_prepare_head();
 
-dol_fiche_head($head, 'project', $langs->trans("Projects"), 0, 'project');
+dol_fiche_head($head, 'project', $langs->trans("Projects"), -1, 'project');
 
 
 
@@ -337,8 +310,8 @@ print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
 print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
@@ -350,8 +323,8 @@ print '<input type="submit" class="button" name="modifyPROJECT_USE_OPPORTUNITIES
 print "</td>";
 print '</tr>';
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageTasks").'</td>';
 print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
@@ -414,8 +387,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->name."</td><td>\n";
+
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -518,8 +491,8 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 						if ($module->isEnabled())
 						{
-							$var=!$var;
-							print '<tr '.$bc[$var].'><td>'.$module->name."</td><td>\n";
+
+							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 							print $module->info();
 							print '</td>';
 
@@ -660,8 +633,8 @@ foreach ($dirmodels as $reldir)
 
 							if ($modulequalified)
 							{
-								$var=!$var;
-								print '<tr '.$bc[$var].'><td width="100">';
+
+								print '<tr class="oddeven"><td width="100">';
 								print (empty($module->name)?$name:$module->name);
 								print "</td><td>\n";
 								if (method_exists($module,'info')) print $module->info($langs);
@@ -820,7 +793,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 								if ($modulequalified)
 								{
 									$var = !$var;
-									print '<tr '.$bc[$var].'><td width="100">';
+									print '<tr class="oddeven"><td width="100">';
 									print (empty($module->name)?$name:$module->name);
 									print "</td><td>\n";
 									if (method_exists($module,'info')) print $module->info($langs);
@@ -911,8 +884,8 @@ print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectProject").'</td>';
 if (! $conf->use_javascript_ajax)
 {
@@ -935,8 +908,8 @@ else
 }
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
 print '<td align="center" width="300">';

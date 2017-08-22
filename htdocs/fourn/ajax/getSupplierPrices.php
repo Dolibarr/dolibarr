@@ -46,7 +46,7 @@ $langs->load('margins');
 
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if ($idprod > 0)
 {
@@ -55,7 +55,7 @@ if ($idprod > 0)
 
 	$sorttouse = 's.nom, pfp.quantity, pfp.price';
 	if (GETPOST('bestpricefirst')) $sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
-	
+
 	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse);    // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if ( is_array($productSupplierArray))
 	{
@@ -63,40 +63,34 @@ if ($idprod > 0)
 		{
 			$price = $productSupplier->fourn_price * (1 - $productSupplier->fourn_remise_percent / 100);
 			$unitprice = $productSupplier->fourn_unitprice * (1 - $productSupplier->fourn_remise_percent / 100);
-			
+
 			$title = $productSupplier->fourn_name.' - '.$productSupplier->fourn_ref.' - ';
-			
+
 			if ($productSupplier->fourn_qty == 1)
 			{
 				$title.= price($price,0,$langs,0,0,-1,$conf->currency)."/";
 			}
 			$title.= $productSupplier->fourn_qty.' '.($productSupplier->fourn_qty == 1 ? $langs->trans("Unit") : $langs->trans("Units"));
-			
+
 			if ($productSupplier->fourn_qty > 1)
 			{
 				$title.=" - ";
 				$title.= price($unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 				$price = $unitprice;
 			}
-			if ($productSupplier->fourn_unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2"))
-			{
-				$title.=" + ";
-				$title.= price($productSupplier->fourn_unitcharges,0,$langs,0,0,-1,$conf->currency);
-				$price += $productSupplier->fourn_unitcharges;
-			}
-			
+
 			$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 			if ($productSupplier->fourn_ref) $label.=' ('.$productSupplier->fourn_ref.')';
-			
+
 			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price,0,'',0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()
 		}
 	}
-	
+
 	// Add price for costprice
 	$price=$producttmp->cost_price;
 	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));  // For price field, we must use price2num(), for label or title, price()
 
-	if(!empty($conf->stock->enabled)) 
+	if(!empty($conf->stock->enabled))
 	{
 		// Add price for pmp
 		$price=$producttmp->pmp;

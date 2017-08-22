@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Consegna
 DeliveryRef=Rif. consegna
-DeliveryCard=Receipt card
+DeliveryCard=Scheda ricevuta di consegna
 DeliveryOrder=Ordine di consegna
 DeliveryDate=Data di consegna
-CreateDeliveryOrder=Generate delivery receipt
+CreateDeliveryOrder=Genera la ricevuta di consegna
 DeliveryStateSaved=Stato di consegna salvato
 SetDeliveryDate=Imposta la data di spedizione
 ValidateDeliveryReceipt=Convalida la ricevuta di consegna
-ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+ValidateDeliveryReceiptConfirm=Vuoi davvero convalidare la ricevuta di consegna?
 DeleteDeliveryReceipt=Eliminare ricevuta di consegna
-DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeleteDeliveryReceiptConfirm=Vuoi davvero eliminare la ricevuta di consegna <b>%s</b>?
 DeliveryMethod=Metodo di consegna
 TrackingNumber=Numero di tracking
 DeliveryNotValidated=Consegna non convalidata

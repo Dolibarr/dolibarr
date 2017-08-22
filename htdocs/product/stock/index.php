@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 $sql = "SELECT e.label, e.rowid, e.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.statut in (0,1)";
-$sql.= " AND e.entity IN (".getEntity('stock', 1).")";
+$sql.= " AND e.entity IN (".getEntity('stock').")";
 $sql.= $db->order('e.statut','DESC');
 $sql.= $db->plimit(15, 0);
 
@@ -87,8 +87,8 @@ if ($result)
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
             print "</tr>\n";
@@ -119,7 +119,7 @@ $sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = e.rowid";
-$sql.= " AND e.entity IN (".getEntity('stock', 1).")";
+$sql.= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
 $sql.= $db->order("datem","DESC");
 $sql.= $db->plimit($max,0);
@@ -149,8 +149,8 @@ if ($resql)
 	while ($i < min($num,$max))
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
 		print "<td><a href=\"../card.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;

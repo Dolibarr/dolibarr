@@ -52,7 +52,7 @@ $result=restrictedArea($user,'adherent',$id);
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -96,7 +96,7 @@ if ($id > 0)
 	{
 			
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -108,7 +108,7 @@ if ($id > 0)
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
+		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
     	

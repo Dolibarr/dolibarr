@@ -43,6 +43,8 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
  *	View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $object = new SupplierProposal($db);
@@ -57,8 +59,8 @@ dol_fiche_head($head, 'info', $langs->trans('CommRequest'), -1, 'supplier_propos
 
 // Supplier proposal card
 $linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
-	
+
+
 $morehtmlref='<div class="refidno">';
 // Ref supplier
 //$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
@@ -99,11 +101,11 @@ if (! empty($conf->projet->enabled))
     }
 }
 $morehtmlref.='</div>';
-	
-	
+
+
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	
+
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 

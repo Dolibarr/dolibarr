@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,6 @@ class modAccounting extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = 'accounting';
-
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		// $this->triggers = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');
@@ -224,7 +221,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'chartofaccount';
 		$this->rights[$r][5] = '';
 		$r++;
-		
+
 		$this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
@@ -242,9 +239,9 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'dispatch_advanced';
 		$r++;
         */
-		
+
 		$this->rights[$r][0] = 50411;
-		$this->rights[$r][1] = 'Read operations in General Ledger';
+		$this->rights[$r][1] = 'Read operations in Ledger';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -252,7 +249,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50412;
-		$this->rights[$r][1] = 'Write/Edit operations in General Ledger';
+		$this->rights[$r][1] = 'Write/Edit operations in Ledger';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -260,7 +257,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50420;
-		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, general ledger)';
+		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, ledger)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
@@ -279,7 +276,7 @@ class modAccounting extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 		// Exports
         //--------
         $r=0;
@@ -295,7 +292,7 @@ class modAccounting extends DolibarrModules
 
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
-        $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting', 1).') ';
+        $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
 
 	}
 }

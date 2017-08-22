@@ -20,7 +20,6 @@
  *     	\file       htdocs/public/paybox/paymentok.php
  *		\ingroup    paybox
  *		\brief      File to show page after a successful payment
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
@@ -35,6 +34,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
@@ -46,6 +46,7 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
+$langs->load("stripe");
 
 /*$source=GETPOST('source');
 $ref=GETPOST('ref');
@@ -54,8 +55,13 @@ if (empty($PAYBOXTOKEN)) $PAYBOXTOKEN=GETPOST('token');
 $PAYBOXPAYERID=GETPOST('PAYERID');
 if (empty($PAYBOXPAYERID)) $PAYBOXPAYERID=GETPOST('PayerID');
 */
-$PAYBOXFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYBOXFULLTAG)) $PAYBOXFULLTAG=GETPOST('fulltag');
+$FULLTAG=GETPOST('FULLTAG');
+if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
+
+
+$object = new stdClass();   // For triggers
+
+$paymentmethod='paybox';
 
 
 /*
@@ -70,13 +76,20 @@ if (empty($PAYBOXFULLTAG)) $PAYBOXFULLTAG=GETPOST('fulltag');
  * View
  */
 
-dol_syslog("Callback url when a PayBox payment was done. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_paybox');
+dol_syslog("Callback url when a PayBox payment was done. query_string=".(dol_escape_htmltag($_SERVER["QUERY_STRING"])?dol_escape_htmltag($_SERVER["QUERY_STRING"]):'')." script_uri=".(dol_escape_htmltag($_SERVER["SCRIPT_URI"])?dol_escape_htmltag($_SERVER["SCRIPT_URI"]):''), LOG_DEBUG, 0, '_paybox');
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paybox');
 
-llxHeaderPayBox($langs->trans("PaymentForm"));
+
+$head='';
+if (! empty($conf->global->PAYBOX_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
 // Show message
@@ -85,9 +98,9 @@ print '<div id="dolpaymentdiv" align="center">'."\n";
 
 // Get on url call
 /*
-$token              = $PAYBOXTOKEN;
+$onlinetoken              = $PAYBOXTOKEN;
 */
-$fulltag            = $PAYBOXFULLTAG;
+$fulltag            = $FULLTAG;
 /*$payerID            = $PAYBOXPAYERID;
 // Set by newpayment.php
 $paymentType        = $_SESSION['PaymentType'];
@@ -96,13 +109,14 @@ $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
 // From env
 $ipaddress          = $_SESSION['ipaddress'];
 
-dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
+dol_syslog("Call newpaymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
 */
 
 
 print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
 
 if (! empty($conf->global->PAYBOX_MESSAGE_OK)) print $conf->global->PAYBOX_MESSAGE_OK;
+
 
 // Appel des triggers
 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -122,8 +136,21 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
+	// Define link to login card
+	$appli=constant('DOL_APPLICATION_TITLE');
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+	{
+	    $appli=$conf->global->MAIN_APPLICATION_TITLE;
+	    if (preg_match('/\d\.\d/', $appli))
+	    {
+	        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+	    }
+	    else $appli.=" ".DOL_VERSION;
+	}
+	else $appli.=" ".DOL_VERSION;
+	
 	$urlback=$_SERVER["REQUEST_URI"];
-	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentReceived");
+	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 	$content="";
 	if (! empty($tmptag['MEM']))
@@ -136,10 +163,11 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	}
 	else
 	{
-		$content.=$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."<br>\n";
+		$content.=$langs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
 	}
 	$content.="<br>\n";
 	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+    $content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
 	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 	$content.="tag=".$fulltag."<br>\n";
 
@@ -164,9 +192,9 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 
 print "\n</div>\n";
 
-html_print_paybox_footer($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs);
 
 
-llxFooterPayBox();
+llxFooter('', 'public');
 
 $db->close();

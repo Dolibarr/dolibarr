@@ -47,7 +47,8 @@ if (! defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2',1);
 
 require_once '../main.inc.php';
 
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL by the main.inc.php
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
+
 $langs->load("main");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
@@ -92,11 +93,25 @@ print '
         background-position-y: 16px;
         padding: 1em 15px 1em 40px;
     }
+    li.lilevel0 font.vsmenudisabled {
+        /* background-image: url(/dolibarr_dev/htdocs/theme/eldy/img/next.png) !important; */
+        background-repeat: no-repeat !important;
+        background-position-x: 10px;
+        background-position-y: 16px;
+        padding: 1em 15px 1em 40px;
+        background: #f8f8f8;
+        display: block;
+        font-size: 16px !important;
+    }
     li.lilevel1 {
-        padding: 1em 15px 0.5em 20px;
-        border-top: 1px solid #ccc;
+        padding: 1em 15px 0.5em 40px;
+        border-top: 1px solid #aaa;
         margin-right: 20px;
         border-right: 0px ! important;
+    }
+    li.lilevel1:first-child {
+        margin-right: 0px;
+        margin-left: 0px;
     }
     li.lilevel1 a {
         padding-bottom: 5px;
@@ -120,7 +135,7 @@ print '
     }
     li.lilevel3:last-child {
         padding-bottom: 10px;
-    }            
+    }
     a.alilevel0, li.lilevel1 a {
         text-overflow: ellipsis;
         overflow: hidden;
@@ -128,7 +143,7 @@ print '
         display: block;
     }
 </style>
-    
+
 <script type="text/javascript">
 $(document).ready(function(){
     $("body ul").click(function(){
@@ -142,12 +157,12 @@ $(document).ready(function(){
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);
-            
+
     })
 });
 </script>
 ';
-    
+
 
 if (empty($user->societe_id))	// If internal user or not defined
 {
@@ -179,7 +194,7 @@ if (! class_exists('MenuManager'))
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 $menumanager->loadMenu('all','all');
-//var_dump($menumanager->tabMenu);exit;
+//var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');
 
 print '</body>';
