@@ -49,7 +49,8 @@ class modDon extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des dons";
-		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
@@ -135,12 +136,12 @@ class modDon extends DolibarrModules
 		$this->rights[3][2] = 'd';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
-		
-		
+
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 	}
 
 
