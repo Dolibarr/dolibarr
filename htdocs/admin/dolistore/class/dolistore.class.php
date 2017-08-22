@@ -200,7 +200,9 @@ class DolistoreModel
             $html = '';
         }
 
-        for ($i = 0; $i < count($this->categories); $i++) {
+        $nbofcateg = count($this->categories);
+        for ($i = 0; $i < $nbofcateg; $i++)
+        {
             $cat = $this->categories[$i];
             if ($cat->is_root_category == 1 && $parent == 0) {
                 $html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" '
