@@ -826,7 +826,7 @@ class User extends CommonObject
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
-		$sql.= " AND entity IN (0,".$this->db->escape($conf->entity).")";
+		$sql.= " AND entity IN (0,".$this->db->escape($this->entity).")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
