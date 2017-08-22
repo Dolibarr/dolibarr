@@ -164,13 +164,18 @@ function dolIncludeHtmlContent($contentfile)
 		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.$MAXLEVEL.".\n";
 		return;
 	}
-	// TODO Remove body and html if included
+	// file_get_contents is not possible. We must execute code with include
 	//$content = file_get_contents($fullpathfile);
-
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
-	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
+	ob_start();
 	$res = include $fullpathfile;		// Include because we want to execute code content
+	$tmpoutput = ob_get_contents();
+	ob_end_clean();
+
+	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
+	print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $tmpoutput);
+
 	if (! $res)
 	{
 		print 'ERROR: FAILED TO INCLUDE PAGE '.$contentfile.".\n";
