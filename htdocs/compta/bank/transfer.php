@@ -55,7 +55,7 @@ if ($action == 'add_confirm')
 
 	if (! $label)
 	{
-
+		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Description")), null, 'errors');
 	}
 	if (! $amount)
