@@ -121,7 +121,7 @@ class DolEditor
         		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
     		}
     	}
-var_dump($content);exit;
+
     	// Define some properties
         if (in_array($this->tool,array('textarea','ckeditor','ace')))
         {
