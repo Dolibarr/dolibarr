@@ -18,6 +18,8 @@
 --
 -- ============================================================================
 
+-- To log changes of prices per customer (llx_product_customer_price)
+
 create table llx_product_customer_price_log
 (
   rowid                       integer AUTO_INCREMENT PRIMARY KEY,
@@ -25,7 +27,6 @@ create table llx_product_customer_price_log
   datec                       datetime,
   fk_product			integer NOT NULL,
   fk_soc				integer DEFAULT 0 NOT NULL,	
-    price_level		smallint NULL DEFAULT 1,
   price						double(24,8) DEFAULT 0,
   price_ttc					double(24,8) DEFAULT 0,
   price_min					double(24,8) DEFAULT 0,
