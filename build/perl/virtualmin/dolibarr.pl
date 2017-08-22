@@ -168,7 +168,7 @@ return ("tar", "gunzip");
 }
 
 # script_dolibarr_install(&domain, version, &opts, &files, &upgrade-info)
-# Actually installs joomla, and returns either 1 and an informational
+# Actually installs dolibarr, and returns either 1 and an informational
 # message, or 0 and an error
 sub script_dolibarr_install
 {
