@@ -45,8 +45,8 @@ class PrestaShopWebservice
 	protected $version;
 
 	/** @var array compatible versions of PrestaShop Webservice */
-	const psCompatibleVersionsMin = '1.4.0.0';
-	const psCompatibleVersionsMax = '1.6.99.99';
+	const PSCOMPATIBLEVERSIONMIN = '1.4.0.0';
+	const PSCOMPATIBLEVERSIONMAX = '1.6.99.99';
 
 	/**
 	 * PrestaShopWebservice constructor. Throw an exception when CURL is not installed/activated
@@ -152,8 +152,8 @@ class PrestaShopWebservice
 		{
 			$this->version = $headerArray['PSWS-Version'];
 			if (
-				version_compare(PrestaShopWebservice::psCompatibleVersionsMin, $headerArray['PSWS-Version']) == 1 ||
-				version_compare(PrestaShopWebservice::psCompatibleVersionsMax, $headerArray['PSWS-Version']) == -1
+				version_compare(PrestaShopWebservice::PSCOMPATIBLEVERSIONMIN, $headerArray['PSWS-Version']) == 1 ||
+				version_compare(PrestaShopWebservice::PSCOMPATIBLEVERSIONMAX, $headerArray['PSWS-Version']) == -1
 			)
 			throw new PrestaShopWebserviceException('This library is not compatible with this version of PrestaShop. Please upgrade/downgrade this library');
 		}
@@ -218,8 +218,9 @@ class PrestaShopWebservice
 	 * 'resource' => Resource name<br>
 	 * 'postXml' => Full XML string to add resource<br><br>
 	 * Examples are given in the tutorial</p>
-	 * @param array $options
-	 * @return SimpleXMLElement status_code, response
+	 *
+	 * @param 	array 				$options	Options
+	 * @return 	SimpleXMLElement 				status_code, response
 	 */
 	public function add($options)
 	{
@@ -406,4 +407,7 @@ class PrestaShopWebservice
 /**
  * @package PrestaShopWebservice
  */
-class PrestaShopWebserviceException extends Exception { }
+class PrestaShopWebserviceException extends Exception
+{
+
+}
