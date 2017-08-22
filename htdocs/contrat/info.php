@@ -39,8 +39,10 @@ $result = restrictedArea($user, 'contrat', $id, '');
 
 
 /*
-* View
-*/
+ * View
+ */
+
+$form = new Form($db);
 
 llxHeader('',$langs->trans("Contract"),"");
 
