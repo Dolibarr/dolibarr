@@ -451,8 +451,6 @@ class pdf_azur extends ModelePDFPropales
 					// Description of product line
 					$curX = $this->posxdesc-1;
 
-					$showpricebeforepagebreak=1;
-
 					$pdf->startTransaction();
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 					$pageposafter=$pdf->getPage();
@@ -761,6 +759,8 @@ class pdf_azur extends ModelePDFPropales
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Pas d'erreur
 			}
 			else

@@ -194,6 +194,9 @@ ErrorDuplicateTrigger=Chyba, spoušť název %s duplikát. Již vložen z %s.
 ErrorNoWarehouseDefined=Chyba, nejsou definovány žádné sklady.
 ErrorBadLinkSourceSetButBadValueForRef=The link you use is not valid. A 'source' for payment is defined, but value for 'ref' is not valid.
 ErrorTooManyErrorsProcessStopped=Too many errors. Process was stopped.
+ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Mass validation is not possible when option to increase/decrease stock is set on this action (you must validate one by one so you can define the warehouse to increase/decrease)
+ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' to be validated.
+ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Heslo bylo nastaveno pro tohoto člena. Nicméně, žádný uživatelský účet byl vytvořen. Takže toto heslo uloženo, ale nemůže být použit pro přihlášení do Dolibarr. Může být použit externí modulu / rozhraní, ale pokud nepotřebujete definovat libovolné přihlašovací jméno ani heslo pro členem, můžete možnost vypnout „Správa přihlášení pro každého člena“ z nastavení člen modulu. Pokud potřebujete ke správě přihlášení, ale nepotřebují žádné heslo, můžete mít toto pole prázdné, aby se zabránilo toto upozornění. Poznámka: E-mail může být také použit jako přihlášení v případě, že člen je připojen k uživateli.

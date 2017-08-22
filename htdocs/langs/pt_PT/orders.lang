@@ -4,6 +4,7 @@ SuppliersOrdersArea=Área de encomendas a fornecedores
 OrderCard=Ficha da encomenda
 OrderId=Id da encomenda
 Order=Encomenda
+PdfOrderTitle=Encomenda
 Orders=Encomendas
 OrderLine=Linha da encomenda
 OrderDate=Data da encomenda

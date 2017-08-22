@@ -177,12 +177,12 @@ if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre('');
-print_liste_field_titre($langs->trans("Name"), $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Name", $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
 if ($modecompta == 'CREANCES-DETTES')
 {
-	print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
 }
-print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 /*

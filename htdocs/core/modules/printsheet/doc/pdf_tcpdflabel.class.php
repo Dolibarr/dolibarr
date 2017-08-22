@@ -367,8 +367,6 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-
-
 		// Output to http stream
 		clearstatcache();
 
@@ -386,6 +384,8 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		header('Pragma: public');
 
 		readfile($file);
+
+		$this->result = array('fullpath'=>$file);
 
 		return 1;
 	}

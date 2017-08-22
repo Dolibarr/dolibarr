@@ -2,6 +2,10 @@
 Param=Configurar
 Debit=Débito
 Credit=Crédito
+VATReceived=VAT received
+VATToCollect=VAT purchases
+VATSummary=VAT Balance
+VATPaid=VAT paid
 ProposalStats=Estadísticas de cotizaciones
 Dispatched=Despachado
 ToDispatch=Para despachar

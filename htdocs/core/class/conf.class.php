@@ -579,6 +579,9 @@ class Conf
 		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
 		}
 
+		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
 		if (isset($this->facture))   $this->invoice=$this->facture;

@@ -171,3 +171,4 @@ VATToUseForSubscriptions=VAT rate to use for subscriptions
 NoVatOnSubscription=No TVA for subscriptions
 MEMBER_PAYONLINE_SENDEMAIL=Email to use for email warning when Dolibarr receive a confirmation of a validated payment for a subscription (Example: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for subscription line into invoice: %s
+NameOrCompany=Name or company

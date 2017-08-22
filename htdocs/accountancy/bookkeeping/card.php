@@ -567,13 +567,13 @@ if ($action == 'create') {
 
 				print '<tr class="liste_titre">';
 
-				print_liste_field_titre($langs->trans("AccountAccountingShort"));
-				print_liste_field_titre($langs->trans("SubledgerAccount"));
-				print_liste_field_titre($langs->trans("Labelcompte"));
-				print_liste_field_titre($langs->trans("Label"));
-				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="right"');
-				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="right"');
-				print_liste_field_titre($langs->trans("Action"), "", "", "", "", 'width="60" align="center"');
+				print_liste_field_titre("AccountAccountingShort");
+				print_liste_field_titre("SubledgerAccount");
+				print_liste_field_titre("Labelcompte");
+				print_liste_field_titre("Label");
+				print_liste_field_titre("Debit", "", "", "", "", 'align="right"');
+				print_liste_field_titre("Credit", "", "", "", "", 'align="right"');
+				print_liste_field_titre("Action", "", "", "", "", 'width="60" align="center"');
 
 				print "</tr>\n";
 

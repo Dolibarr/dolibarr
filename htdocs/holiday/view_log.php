@@ -91,14 +91,14 @@ print '<td class="liste_titre"></td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans('ID'));
-print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
-print_liste_field_titre($langs->trans('ActionByCP'));
-print_liste_field_titre($langs->trans('UserUpdateCP'));
-print_liste_field_titre($langs->trans('Description'));
-print_liste_field_titre($langs->trans('Type'));
-print_liste_field_titre($langs->trans('PrevSoldeCP'), $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
-print_liste_field_titre($langs->trans('NewSoldeCP'), $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
+print_liste_field_titre('ID');
+print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+print_liste_field_titre('ActionByCP');
+print_liste_field_titre('UserUpdateCP');
+print_liste_field_titre('Description');
+print_liste_field_titre('Type');
+print_liste_field_titre('PrevSoldeCP', $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
+print_liste_field_titre('NewSoldeCP', $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
 print '</tr>';
 
 

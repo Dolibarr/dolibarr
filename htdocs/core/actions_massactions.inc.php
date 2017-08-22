@@ -91,6 +91,8 @@ if (! $error && $massaction == 'confirm_presend')
         }
         //var_dump($listofobjectthirdparties);exit;
 
+
+        // Loop on each thirdparty
         foreach ($listofobjectthirdparties as $thirdpartyid)
         {
             $result = $thirdparty->fetch($thirdpartyid);
@@ -100,62 +102,90 @@ if (! $error && $massaction == 'confirm_presend')
                 exit;
             }
 
-            // Define recipient $sendto and $sendtocc
+            $sendto='';
+            $sendtocc='';
+            $sendtobcc='';
+            $sendtoid = array();
+
+            // Define $sendto
+            $receiver=$_POST['receiver'];
+            if (! is_array($receiver))
+            {
+            	if ($receiver == '-1') $receiver=array();
+            	else $receiver=array($receiver);
+            }
+            $tmparray=array();
             if (trim($_POST['sendto']))
             {
-                // Recipient is provided into free text
-                $sendto = trim($_POST['sendto']);
-                $sendtoid = 0;
+            	// Recipients are provided into free text
+            	$tmparray[] = trim($_POST['sendto']);
             }
-            elseif ($_POST['receiver'] != '-1')
+            if (count($receiver)>0)
             {
-                // Recipient was provided from combo list
-                if ($_POST['receiver'] == 'thirdparty') // Id of third party
-                {
-                    $sendto = $thirdparty->email;
-                    $sendtoid = 0;
-                }
-                else	// Id du contact
-                {
-                    $sendto = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
-                    $sendtoid = $_POST['receiver'];
-                }
+            	foreach($receiver as $key=>$val)
+            	{
+            		// Recipient was provided from combo list
+            		if ($val == 'thirdparty') // Id of third party
+            		{
+            			$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+            		}
+            		elseif ($val)	// Id du contact
+            		{
+            			$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
+            			$sendtoid[] = $val;
+            		}
+            	}
             }
+            $sendto=implode(',',$tmparray);
+
+            // Define $sendtocc
+            $receivercc=$_POST['receivercc'];
+            if (! is_array($receivercc))
+            {
+            	if ($receivercc == '-1') $receivercc=array();
+            	else $receivercc=array($receivercc);
+            }
+            $tmparray=array();
             if (trim($_POST['sendtocc']))
             {
-                $sendtocc = trim($_POST['sendtocc']);
+            	$tmparray[] = trim($_POST['sendtocc']);
             }
-            elseif ($_POST['receivercc'] != '-1')
+            if (count($receivercc) > 0)
             {
-                // Recipient was provided from combo list
-                if ($_POST['receivercc'] == 'thirdparty')	// Id of third party
-                {
-                    $sendtocc = $thirdparty->email;
-                }
-                else	// Id du contact
-                {
-                    $sendtocc = $thirdparty->contact_get_property((int) $_POST['receivercc'],'email');
-                }
+            	foreach($receivercc as $key=>$val)
+            	{
+            		// Recipient was provided from combo list
+            		if ($val == 'thirdparty') // Id of third party
+            		{
+            			$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+            		}
+            		elseif ($val)	// Id du contact
+            		{
+            			$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
+            			//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+            		}
+            	}
             }
+            $sendtocc=implode(',',$tmparray);
 
-            //var_dump($listofobjectref[$thirdpartyid]);	// Array of invoice for this thirdparty
-
+            //var_dump($listofobjectref);exit;
             $attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
             $listofqualifiedinvoice=array();
             $listofqualifiedref=array();
             foreach($listofobjectref[$thirdpartyid] as $objectid => $object)
             {
-                //var_dump($object);
                 //var_dump($thirdpartyid.' - '.$objectid.' - '.$object->statut);
 
                 if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
                 {
+                	$langs->load("errors");
                     $nbignored++;
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue; // Payment done or started or canceled
                 }
                 if ($objectclass == 'Commande' && $object->statut == Commande::STATUS_DRAFT)
                 {
+                	$langs->load("errors");
                     $nbignored++;
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue;
@@ -209,6 +239,7 @@ if (! $error && $massaction == 'confirm_presend')
                 //var_dump($listofqualifiedref);
             }
 
+            // Loop on each qualified invoice of the thirdparty
             if (count($listofqualifiedinvoice) > 0)
             {
                 $langs->load("commercial");
@@ -409,26 +440,26 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $outputlangs->setDefaultLang($newlang);
     }
 
-    if(!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT)) {
+    if (!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT)) 
+    {
     	// Create output dir if not exists
-	dol_mkdir($diroutputmassaction);
-
-	// Defined name of merged file
-	$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
-	$filename=preg_replace('/\s/','_',$filename);
-
-	// Save merged file
-	if ($filter=='paye:0')
-	{
-	if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
-	else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
-	}
-	if ($year) $filename.='_'.$year;
-	if ($month) $filename.='_'.$month;
+		dol_mkdir($diroutputmassaction);
+	
+		// Defined name of merged file
+		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename=preg_replace('/\s/','_',$filename);
+	
+		// Save merged file
+		if ($filter=='paye:0')
+		{
+			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+		}
+		if ($year) $filename.='_'.$year;
+		if ($month) $filename.='_'.$month;
 
     	if (count($files)>0)
     	{
-
     		$now=dol_now();
     		$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
 
@@ -443,14 +474,13 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     		if (! empty($conf->global->MAIN_UMASK))
     			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-    			$langs->load("exports");
-    			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+    		$langs->load("exports");
+    		setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
     	}
     	else
     	{
     		setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
     	}
-
     }
     else {
 	    // Create empty PDF
@@ -488,18 +518,18 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    // Save merged file
 	    if ($filter=='paye:0')
 	    {
-		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
-		else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 	    }
 	    if ($year) $filename.='_'.$year;
 	    if ($month) $filename.='_'.$month;
 	    if ($pagecount)
 	    {
-		$now=dol_now();
-		$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
-		$pdf->Output($file,'F');
-		if (! empty($conf->global->MAIN_UMASK))
-		    @chmod($file, octdec($conf->global->MAIN_UMASK));
+			$now=dol_now();
+			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+			$pdf->Output($file,'F');
+			if (! empty($conf->global->MAIN_UMASK))
+			    @chmod($file, octdec($conf->global->MAIN_UMASK));
 
 		    $langs->load("exports");
 		    setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');

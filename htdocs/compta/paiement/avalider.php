@@ -102,10 +102,10 @@ if ($resql)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
+    print_liste_field_titre("AmountTTC",$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 

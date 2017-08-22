@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Kartica računa
 PredefinedInvoices=Vnaprej določeni računi
 Invoice=Račun
+PdfInvoiceTitle=Račun
 Invoices=Računi
 InvoiceLine=Vrstica računa
 InvoiceCustomer=Račun za kupca

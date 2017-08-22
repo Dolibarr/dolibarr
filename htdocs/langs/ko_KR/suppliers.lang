@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - suppliers
-Suppliers=Suppliers
+Suppliers=공급 업체
 SuppliersInvoice=Suppliers invoice
 ShowSupplierInvoice=Show Supplier Invoice
-NewSupplier=New supplier
+NewSupplier=신규 공급업체
 History=History
-ListOfSuppliers=List of suppliers
+ListOfSuppliers=공급 업체 목록
 ShowSupplier=Show supplier
 OrderDate=Order date
 BuyingPriceMin=Best buying price
@@ -19,7 +19,7 @@ ReferenceSupplierIsAlreadyAssociatedWithAProduct=This reference supplier is alre
 NoRecordedSuppliers=No suppliers recorded
 SupplierPayment=Supplier payment
 SuppliersArea=Suppliers area
-RefSupplierShort=Ref. supplier
+RefSupplierShort=참조 공급자
 Availability=Availability
 ExportDataset_fournisseur_1=Supplier invoices list and invoice lines
 ExportDataset_fournisseur_2=Supplier invoices and payments

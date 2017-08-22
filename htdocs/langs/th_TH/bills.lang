@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=การ์ดใบแจ้งหนี้
 PredefinedInvoices=ใบแจ้งหนี้ที่กำหนดไว้ล่วงหน้า
 Invoice=ใบกำกับสินค้า
+PdfInvoiceTitle=ใบกำกับสินค้า
 Invoices=ใบแจ้งหนี้
 InvoiceLine=เส้นใบแจ้งหนี้
 InvoiceCustomer=ใบแจ้งหนี้ของลูกค้า

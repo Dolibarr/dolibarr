@@ -1000,7 +1000,7 @@ class Commande extends CommonOrder
 
         $this->db->begin();
 
-		// get extrafields so they will be clone
+		// get lines so they will be clone
 		foreach($this->lines as $line)
 			$line->fetch_optionals($line->rowid);
 

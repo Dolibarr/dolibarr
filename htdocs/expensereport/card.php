@@ -1059,17 +1059,17 @@ if (empty($reshook))
     if ($action == "addline" && $user->rights->expensereport->creer)
     {
     	$error = 0;
-		
+
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
     	$vatrate = price2num($vatrate);
-		
+
 		$value_unit=price2num(GETPOST('value_unit'),'MU');
     	$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
-		
+
     	$qty  = GETPOST('qty','int');
     	if (empty($qty)) $qty=1;
-		
+
     	if (! $fk_c_type_fees > 0)
     	{
     		$error++;
@@ -1139,7 +1139,7 @@ if (empty($reshook))
 				unset($fk_projet);
 
 				unset($date);
-				
+
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1848,7 +1848,7 @@ else
 				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 				$sql.= " WHERE e.rowid = '".$id."'";
 				$sql.= " AND p.fk_expensereport = e.rowid";
-				$sql.= " AND e.entity = ".$conf->entity;
+				$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 				$sql.= " AND p.fk_typepayment = c.id";
 				$sql.= " AND c.entity = " . getEntity('c_paiement', 2);
 				$sql.= " ORDER BY dp";
@@ -2092,7 +2092,7 @@ else
 						$i++;
 					}
 				}
-				
+
 				// Add a line
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 				{
@@ -2125,7 +2125,7 @@ else
 						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
 						print '</td>';
 					}
-					
+
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 					{
 						print '<td class="fk_c_exp_tax_cat">';

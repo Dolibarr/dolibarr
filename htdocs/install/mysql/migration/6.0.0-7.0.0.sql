@@ -28,9 +28,11 @@
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
+ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
+ALTER TABLE llx_website_page ADD COLUMN grabbed_from varchar(255);
 
 ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
 UPDATE llx_website_page set status = 1 WHERE status IS NULL;
@@ -48,6 +50,7 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
 
 CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     rowid           integer  AUTO_INCREMENT PRIMARY KEY,
@@ -182,6 +185,11 @@ ALTER TABLE llx_expensereport_det ADD COLUMN fk_c_exp_tax_cat integer;
 
 ALTER TABLE llx_user ADD COLUMN default_range integer;
 ALTER TABLE llx_user ADD COLUMN default_c_exp_tax_cat integer;
+
+ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
+ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
+ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
 ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;

@@ -55,5 +55,5 @@ ErrorOpenSurveyFillFirstSection=Nie zapełnione pierwszą część tworzenia ank
 ErrorOpenSurveyOneChoice=Wprowadź co najmniej jeden wybór
 ErrorInsertingComment=Wystąpił błąd podczas wstawiania komentarz
 MoreChoices=Wprowadź więcej możliwości dla głosujących
-SurveyExpiredInfo=The poll has been closed or voting delay has expired.
+SurveyExpiredInfo=Ankieta została zamknięta lub upłynął termin ważności oddawania głosów.
 EmailSomeoneVoted=% S napełnił linię. Możesz znaleźć ankietę na link:% s

@@ -191,15 +191,15 @@ if ($action == 'update' && ! GETPOST('cancel'))
 
 
 /*******************************************************************
-* PAGE
-*
-* Put here all code to do according to value of "action" parameter
+* View
 ********************************************************************/
-
-llxHeader();
 
 $form=new Form($db);
 
+$object=new EcmDirectory($db);	// Need to create a new one
+$object->fetch($ecmdir->id);
+
+llxHeader();
 
 // Built the file List
 $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -211,7 +211,8 @@ foreach($filearray as $key => $file)
 
 
 $head = ecm_prepare_head($ecmdir);
-dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), '', 'dir');
+dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
+
 
 if ($action == 'edit')
 {
@@ -221,13 +222,11 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 }
 
-print '<table class="border" width="100%">';
-print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 $s='';
-$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
-$tmpecmdir->fetch($ecmdir->id);
 $result = 1;
 $i=0;
+$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
+$tmpecmdir->fetch($ecmdir->id);
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
@@ -248,10 +247,21 @@ while ($tmpecmdir && $result > 0)
 	$i++;
 }
 
+$morehtml='';
+
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
+
+dol_banner_tab($object, '', $morehtml, 0, '', '', $morehtmlref);
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border" width="100%">';
+/*print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
-print '</td></tr>';
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+print '</td></tr>';*/
+print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 if ($action == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';
@@ -283,20 +293,24 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
 print '</td></tr>';
+print '</table>';
+
 if ($action == 'edit')
 {
-	print '<tr><td colspan="2" align="center">';
+	print '<br><div align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
+	print '</div>';
 }
-print '</table>';
+
+print '</div>';
 if ($action == 'edit')
 {
 	print '</form>';
 }
-print '</div>';
+
+dol_fiche_end();
 
 
 
@@ -341,7 +355,7 @@ if ($action != 'edit' && $action != 'delete')
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-	
+
 }
 
 // Confirm remove file
@@ -349,7 +363,7 @@ if ($action == 'delete_dir')
 {
 	$relativepathwithoutslash=preg_replace('/[\/]$/','',$relativepath);
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', '', 1, 1);
-	
+
 }
 
 $formfile=new FormFile($db);

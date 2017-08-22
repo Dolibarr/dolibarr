@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Карта рахунка-фактури
 PredefinedInvoices=Predefined Invoices
 Invoice=Рахунок-фактура
+PdfInvoiceTitle=Рахунок-фактура
 Invoices=Рахунки-фактури
 InvoiceLine=Рядок рахунку-фактури
 InvoiceCustomer=Рахунок клієнта

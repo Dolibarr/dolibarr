@@ -1194,7 +1194,7 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend;
+            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="valigntextbottom"':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend;
         }
         if ($withpicto==1) $result.=' ';
         $result.=$linkstart.$libelleshort.$linkend;
@@ -1496,6 +1496,33 @@ class ActionComm extends CommonObject
         $now = dol_now();
 
         return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
+    }
+
+
+    /**
+     * Send reminders by emails
+     * CAN BE A CRON TASK
+     *
+     * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+     */
+    public function sendEmailsReminder()
+    {
+    	global $conf, $langs;
+
+		$this->output = '';
+		$this->error='';
+
+    	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
+    	{
+    		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+    		return 0;
+    	}
+
+    	dol_syslog(__METHOD__, LOG_DEBUG);
+
+
+
+    	return 0;
     }
 
 }

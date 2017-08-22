@@ -45,6 +45,7 @@ InvoiceHasAvoir=Var kilde til en eller flere kreditnotaer
 CardBill=Fakturakort
 PredefinedInvoices=Forhåndsdefinerte fakturaer
 Invoice=Faktura
+PdfInvoiceTitle=Faktura
 Invoices=Fakturaer
 InvoiceLine=Fakturalinje
 InvoiceCustomer=Kundefaktura
