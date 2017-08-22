@@ -55,9 +55,9 @@ $key=$argv[1];
 if (! isset($argv[2]) || ! $argv[2]) {
 	usage($path,$script_file);
 	exit(-1);
-} else {
-	$userlogin=$argv[2];
-}
+} 
+
+$userlogin=$argv[2];
 
 
 // Global variables
