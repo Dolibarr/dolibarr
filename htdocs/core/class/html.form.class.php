@@ -4729,8 +4729,8 @@ class Form
 
         // You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
         $usecalendar='combo';
-        if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'eldy':$conf->global->MAIN_POPUP_CALENDAR;
-		if ($conf->browser->phone) $usecalendar='combo';
+        if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'jquery':$conf->global->MAIN_POPUP_CALENDAR;
+		//if (! empty($conf->browser->phone)) $usecalendar='combo';
 
         if ($d)
         {
@@ -4772,9 +4772,21 @@ class Form
                 {
                 	if (! $disabled)
                 	{
-                		print "<script type='text/javascript'>";
-                		print "$(function(){ $('#".$prefix."').datepicker({ dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."', autoclose: true, todayHighlight: true }) });";
-                		print "</script>";
+                		$retstring.="<script type='text/javascript'>";
+                		$retstring.="$(function(){ $('#".$prefix."').datepicker({
+            				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
+                			autoclose: true,
+                			todayHighlight: true,";
+                		if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
+                		{
+                		$retstring.="
+                			showOn: 'button',
+							buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
+							buttonImageOnly: true";
+                		}
+                		$retstring.="
+                			}) });";
+                		$retstring.="</script>";
                 	}
 
                 	// Zone de saisie manuelle de la date
@@ -4786,14 +4798,20 @@ class Form
                 	// Icone calendrier
                 	if (! $disabled)
                 	{
-                		//$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
-                		//$base=DOL_URL_ROOT.'/core/';
-                		//$retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\',\''.$langs->defaultlang.'\');"';
-                		//$retstring.='>';
-                		$retstring.=img_object($langs->trans("SelectDate"),'calendarday','class="datecallink"');
-                		//$retstring.='</button>';
+                		/* Not required. Managed by option buttonImage of jquery
+                		$retstring.=img_object($langs->trans("SelectDate"),'calendarday','id="'.$prefix.'id" class="datecallink"');
+                		$retstring.="<script type='text/javascript'>";
+                		$retstring.="jQuery(document).ready(function() {";
+                		$retstring.='	jQuery("#'.$prefix.'id").click(function() {';
+                		$retstring.="    	jQuery('#".$prefix."').focus();";
+                		$retstring.='    });';
+                		$retstring.='});';
+                		$retstring.="</script>";*/
                 	}
-                	else $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
+                	else
+                	{
+                		$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
+                	}
 
                 	$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
                 	$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
@@ -4801,7 +4819,7 @@ class Form
                 }
                 else
                 {
-                    print "Bad value of MAIN_POPUP_CALENDAR";
+                    $retstring.="Bad value of MAIN_POPUP_CALENDAR";
                 }
             }
             // Show date with combo selects
