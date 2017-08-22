@@ -274,7 +274,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td align="center">';
-		print $formbarcode->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i);
+		print $formbarcode->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i, $obj->encoding);
 		print "</td></tr>\n";
 		$var=!$var;
 		$i++;
