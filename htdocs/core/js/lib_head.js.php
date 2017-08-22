@@ -1027,7 +1027,7 @@ function document_preview(file, type, title)
 
 	}
 	function show_preview(mode) {
-		console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height);
+		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
