@@ -203,14 +203,14 @@ class DolistoreModel
         for ($i = 0; $i < count($this->categories); $i++) {
             $cat = $this->categories[$i];
             if ($cat->is_root_category == 1 && $parent == 0) {
-                $html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?categorie='.$cat->id.'" '
+                $html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" '
                     .'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang])).'"'
                     .'>'.$cat->name->language[$this->lang].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
                 $html .= self::get_categories($cat->id);
                 $html .= "</li>\n";
             } elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
                 $select = ($cat->id == $this->categorie) ? ' selected' : '';
-                $html   .= '<li><a class="link2cat'.$select.'" href="?categorie='.$cat->id.'"'
+                $html   .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"'
                     .' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang])).'" '
                     .'>'.$cat->name->language[$this->lang].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
                 $html   .= self::get_categories($cat->id);
