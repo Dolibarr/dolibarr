@@ -856,7 +856,7 @@ if ($id > 0)
 		$object->label       = GETPOST("label");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
-		$object->percentage  = $percentage;
+		$object->percentage  = $object->percentage;
 		$object->priority    = GETPOST("priority");
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
