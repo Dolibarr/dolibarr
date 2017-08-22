@@ -830,7 +830,7 @@ if ($mode == 'marketplace')
 
     print '<br>';
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+    if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
     {
 	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span>';
 
