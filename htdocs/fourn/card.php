@@ -66,7 +66,7 @@ $hookmanager->initHooks(array('suppliercard','globalcard'));
  * Action
  */
 
-$parameters=array('socid'=>$socid);
+$parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
