@@ -2322,10 +2322,6 @@ class Form
                 unset($producttmpselect);
             }
 
-        	if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
-			{
-				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
-			}
 			// mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
@@ -2333,11 +2329,6 @@ class Form
         }
         else
         {
-            if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
-			{
-				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
-				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';
-			}
         	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
         }
     }

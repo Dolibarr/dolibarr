@@ -28,6 +28,7 @@
  * \ingroup commande
  * \brief Page to dispatch receiving
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -84,17 +85,33 @@ if ($id > 0 || ! empty($ref)) {
  * Actions
  */
 
-if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(1);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(1);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error++;
+			$action = '';
+		}
+	}
+
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -102,19 +119,42 @@ if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED
 			$action = '';
 		}
 	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
-if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(0);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(0);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error ++;
+			$action = '';
+		}
+	}
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -122,25 +162,56 @@ if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANC
 			$action = '';
 		}
 	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
-if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(2);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(2);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error ++;
+			$action = '';
+		}
+	}
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 			$action = '';
 		}
+	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -743,7 +814,8 @@ if ($id > 0 || ! empty($ref)) {
 
 					// Add button to check/uncheck disaptching
 					print '<td align="center">';
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))) {
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+					{
 						if (empty($objp->status)) {
 							print '<a class="button buttonRefused" href="#">' . $langs->trans("Approve") . '</a>';
 							print '<a class="button buttonRefused" href="#">' . $langs->trans("Deny") . '</a>';

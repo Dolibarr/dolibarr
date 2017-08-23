@@ -924,8 +924,8 @@ function updateOrder($authentication,$order)
 					{
 						// Define output language
 						$outputlangs = $langs;
-						$order->generateDocument($order->modelpdf, $outputlangs);
-					
+						$object->generateDocument($order->modelpdf, $outputlangs);
+
 					}
 				}
 				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
