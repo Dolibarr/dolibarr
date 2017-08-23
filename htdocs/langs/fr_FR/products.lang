@@ -322,3 +322,4 @@ ProductVolume=Volume for 1 product
 WeightUnits=Unité de poids
 VolumeUnits=Volume unit
 SizeUnits=Unité de taille
+BlockProductIfNotForSell = Bloquer la validation et clonage des commandes si un produit est "Hors vente"

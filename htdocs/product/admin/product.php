@@ -174,6 +174,11 @@ if ($action == 'other')
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
 }
+if($action == 'other')
+{
+	$value = GETPOST('activate_BlockProductIfNotForSell','alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_BLOCK_NOT_FOR_SELL_PRODUCT", $value,'chaine',0,'',$conf->entity);
+}
 if ($action == 'set')
 {
 	$const = "PRODUCT_SPECIAL_".strtoupper(GETPOST('spe','alpha'));
@@ -422,6 +427,14 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print '</td>';
+print '</tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("BlockProductIfNotForSell").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_BlockProductIfNotForSell",$conf->global->PRODUIT_BLOCK_NOT_FOR_SELL_PRODUCT,1);
 print '</td>';
 print '</tr>';
 
