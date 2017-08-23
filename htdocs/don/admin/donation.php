@@ -42,6 +42,8 @@ $typeconst=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 
 $type='donation';
 
@@ -420,7 +422,7 @@ if (is_resource($handle))
                     print "<td align=\"center\">";
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					print '</td>';
-				}                
+				}
 
                 // Info
                 $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;

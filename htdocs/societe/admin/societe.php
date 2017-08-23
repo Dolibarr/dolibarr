@@ -547,7 +547,7 @@ foreach ($dirsociete as $dirroot)
 						print "<td align=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'switch_on');
 							print '</a>';
 						//}
@@ -568,7 +568,7 @@ foreach ($dirsociete as $dirroot)
 						else
 						{
 							print "<td align=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 							print "</td>";
 						}
 					}
