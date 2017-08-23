@@ -56,13 +56,11 @@ class Dolistore extends DolistoreModel
             $this->end = $this->per_page;
         }
 
-        $lang       = explode('_', $langs->defaultlang);
-        $lang       = $lang[0];
-        $lang_array = ['fr', 'en', 'es', 'it', 'de'];
-        if (!in_array($lang, $lang_array)) {
-            $lang = 'en';
-        }
-        $this->lang = array_search($lang, $lang_array) + 1; // 1=fr 2=en ...
+        $langtmp    = explode('_', $langs->defaultlang);
+        $lang       = $langtmp[0];
+        $lang_array = array('fr'=>1, 'en'=>2, 'es'=>3, 'it'=>4, 'de'=>5);
+        if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
+        $this->lang = $lang_array[$lang]; // 1=fr 2=en ...
 
         try {
             $this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
