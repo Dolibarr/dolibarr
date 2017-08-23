@@ -976,21 +976,30 @@ if (empty($reshook))
 
 		if ($prod_entry_mode != 'free' && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 	    {
-	    	$idprod=0;
 	    	$productsupplier=new ProductFournisseur($db);
 
-	        if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-2;	// Same behaviour than with combolist. When not select idprodfournprice is now -2 (to avoid conflict with next action that may return -1)
+	    	$idprod=0;
+	    	if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
-	    	if (GETPOST('idprodfournprice') > 0)
+			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			{
+				$idprod=$reg[1];
+				$res=$productsupplier->fetch($idprod);
+				// Call to init properties of $productsupplier
+				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
+				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+			}
+	    	elseif (GETPOST('idprodfournprice') > 0)
 	    	{
-	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
+	    		$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
+	    		//$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+	    		$res=$productsupplier->fetch($idprod);
 	    	}
 
 		    //Replaces $fk_unit with the product's
 	        if ($idprod > 0)
 	        {
-	            $result=$productsupplier->fetch($idprod);
-
 	            $label = $productsupplier->label;
 
 	            $desc = $productsupplier->description;
@@ -1005,10 +1014,29 @@ if (empty($reshook))
 	            $type = $productsupplier->type;
 	            $price_base_type = 'HT';
 
-	            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
+	            // TODO Save the product supplier ref into database (like done for supplier propal and order) into field ref_supplier (must rename field ref into ref_supplier first)
+	            $result=$object->addline(
+	            	$desc,
+	            	$productsupplier->fourn_pu,
+	            	$tva_tx,
+	            	$localtax1_tx,
+	            	$localtax2_tx,
+	            	$qty,
+	            	$idprod,
+	            	$remise_percent,
+	            	$date_start,
+	            	$date_end,
+	            	0,
+	            	$tva_npr,
+	            	$price_base_type,
+	            	$type,
+	            	-1,
+	            	0,
+	            	$array_options,
+	            	$productsupplier->fk_unit
+	            );
 	        }
-	    	if ($idprod == -2 || $idprod == 0)
+	    	if ($idprod == -99 || $idprod == 0)
 	        {
 	            // Product not selected
 	            $error++;

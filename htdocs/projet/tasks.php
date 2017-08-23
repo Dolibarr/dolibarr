@@ -494,6 +494,7 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
+	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	if (count($tasksarray) > 0)
@@ -536,6 +537,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print "</table>";
+	print '</div>';
 
 	print '</form>';
 

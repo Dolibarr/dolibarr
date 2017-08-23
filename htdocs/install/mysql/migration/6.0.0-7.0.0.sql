@@ -191,6 +191,9 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
+ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
+
 ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
@@ -199,3 +202,4 @@ ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
 ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
+
