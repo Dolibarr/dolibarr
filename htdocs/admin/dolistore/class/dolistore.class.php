@@ -306,11 +306,11 @@ class DolistoreModel
 
     function get_previous_link($text = '<<')
     {
-        return "<a href='".$this->get_previous_url()."' class='button'>$text</a>";
+        return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
     }
 
     function get_next_link($text = '>>')
     {
-        return "<a href='".$this->get_next_url()."' class='button'>$text</a>";
+        return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
     }
 }
