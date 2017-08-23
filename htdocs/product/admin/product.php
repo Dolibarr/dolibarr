@@ -46,7 +46,7 @@ $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $type = GETPOST('type','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 
 // Pricing Rules
 $select_pricing_rules=array(

@@ -134,7 +134,7 @@ if ($action == 'setModuleOptions')
 if ($action == 'set')
 {
 	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	$scandir = GETPOST('scan_dir','alpha');
 
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -161,7 +161,7 @@ if ($action== 'del')
 if ($action == 'setdoc')
 {
 	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	$scandir = GETPOST('scan_dir','alpha');
 
 	$db->begin();
 
