@@ -707,7 +707,7 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-    display: inline-flex;
+    <?php if (in_array($conf->browser->browsername, array('chrome','firefox'))) echo 'display: inline-flex;' ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -717,10 +717,11 @@ div.fiche>form>div.div-table-responsive {
 .thumbstat150 {
 	flex: 1 1 150px;
 }
-.thumbstat, thumbstat150 {
+.thumbstat, .thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
+	display: inline;
     width: 100%;
     justify-content: flex-start;
     align-self: flex-start;

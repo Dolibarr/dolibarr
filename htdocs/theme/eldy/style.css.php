@@ -706,7 +706,7 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-    display: inline-flex;
+    <?php if (in_array($conf->browser->name, array('chrome','firefox'))) echo 'display: inline-flex;'."\n"; ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -716,10 +716,11 @@ div.fiche>form>div.div-table-responsive {
 .thumbstat150 {
 	flex: 1 1 170px;
 }
-.thumbstat, thumbstat150 {
+.thumbstat, .thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
+	display: inline;
     width: 100%;
     justify-content: flex-start;
     align-self: flex-start;
@@ -2819,7 +2820,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     width: 103px;
 }
 .boxstats130 {
-    width: 160px;
+    width: 158px;
     height: 48px;
     padding: 3px
 }
