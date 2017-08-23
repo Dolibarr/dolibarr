@@ -40,6 +40,7 @@
  *                                          Ex: array('disabled'=>
  *                                          Ex: array('show'=>
  *                                          Ex: array('update_textarea'=>
+ *                                          Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
@@ -140,6 +141,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
+    							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
     							if (ui.item.disabled) {
 									$("#" + options.option_disabled).prop("disabled", true);
     								if (options.error) {
@@ -148,28 +150,32 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     								if (options.warning) {
     									$.jnotify(options.warning, "warning", false);		// Output with jnotify the warning message
     								}
-							} else {
+								} else {
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
     						if (options.disabled) {
+    							console.log("Make action disabled on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
 									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
+    							console.log("Make action show on each "+options.show)
     							$.each(options.show, function(key, value) {
     								$("#" + value).show().trigger("show");
     							});
     						}
     						// Update an input
     						if (ui.item.update) {
+    							console.log("Make action update on each ui.item.update")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
     								$("#" + key).val(value).trigger("change");
     							});
     						}
     						if (ui.item.textarea) {
+    							console.log("Make action textarea on each ui.item.textarea")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
@@ -181,12 +187,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
-							
+
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
-						  
+
 						return $("<li>")
 						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
