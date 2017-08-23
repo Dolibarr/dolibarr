@@ -131,8 +131,10 @@ if (empty($reshook))
 			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
-
-				$result=$object->createFromClone($socid);
+				if(!$object->hasProductNotForSell())
+					$result=$object->createFromClone($socid);
+				else
+					setEventMessage ($langs->trans("OrderHasProductNotForSell"),'errors');
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -978,6 +980,11 @@ if (empty($reshook))
 				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 				$action='';
 			}
+		}
+		if($object->hasProductNotForSell()){
+			$error++;
+			setEventMessage ($langs->trans("OrderHasProductNotForSell"),'errors');
+			
 		}
 
 		if (! $error) {
