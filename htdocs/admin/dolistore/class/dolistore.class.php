@@ -58,6 +58,7 @@ class Dolistore extends DolistoreModel
 
         $lang       = explode('_', $langs->defaultlang);
         $lang       = $lang[0];
+        $lang_array = array();
         $lang_array = ['fr', 'en', 'es', 'it', 'de'];
         if (!in_array($lang, $lang_array)) {
             $lang = 'en';
