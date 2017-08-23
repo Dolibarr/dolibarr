@@ -657,7 +657,7 @@ NEW: Disabled users are striked.
 NEW: Enhance navigation of project module
 NEW: fichinter lines ordered by rang AND DATE
 NEW: hidden conf to use input file multiple from mail form
-NEW: hidden feature: SUPPLIERORDER_WITH_NOPRICEDEFINED allow supplier order even if no supplier price defined
+NEW: hidden feature: SUPPLIER_ORDER_WITH_NOPRICEDEFINED allow supplier order even if no supplier price defined
 NEW: Hidden option MAIN_LANDING_PAGE to choose the first page to show after login works as a "global" option (llx_const) and as a "per user" option (llx_user_param).
 NEW: Holiday is a now a RH module. All RH module provides by default visilibity on users of its hierarchy.
 NEW: If error is reported during migration process, you can ignore it to avoid to be locked.
