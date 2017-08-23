@@ -58,6 +58,7 @@ class Dolistore extends DolistoreModel
 
         $lang       = explode('_', $langs->defaultlang);
         $lang       = $lang[0];
+        $lang_array = array();
         $lang_array = ['fr', 'en', 'es', 'it', 'de'];
         if (!in_array($lang, $lang_array)) {
             $lang = 'en';
@@ -306,13 +307,15 @@ class DolistoreModel
         return $html;
     }
 
-    function get_previous_link($text = '<<')
-    {
-        return "<a href='".$this->get_previous_url()."' class='button'>$text</a>";
-    }
+	function get_previous_link($text = '<<')
+	{
+		$previous_url = $this->get_previous_url();
+		return "<a href='".$previous_url."' class='button'>$text</a>";
+	}
 
-    function get_next_link($text = '>>')
-    {
-        return "<a href='".$this->get_next_url()."' class='button'>$text</a>";
-    }
+	function get_next_link($text = '>>')
+	{
+		$next_url = $this->get_next_url();
+		return "<a href='".$next_url."' class='button'>$text</a>";
+	}
 }
