@@ -190,3 +190,9 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
+
+ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
+
+
+
