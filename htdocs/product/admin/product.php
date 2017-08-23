@@ -46,7 +46,7 @@ $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $type = GETPOST('type','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 
 // Pricing Rules
 $select_pricing_rules=array(
@@ -479,7 +479,7 @@ if ($resql)
         					if (in_array($name, $def))
         					{
         						print "<td align=\"center\">\n";
-        						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&type=product&scandir='.$module->scandir.'&label='.urlencode($module->name).'">';
+        						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&type=product&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
         						print img_picto($langs->trans("Enabled"),'switch_on');
         						print '</a>';
         						print "</td>";
@@ -495,7 +495,7 @@ if ($resql)
         						else
         						{
         							print "<td align=\"center\">\n";
-        							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&type=product&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&type=product&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         							print "</td>";
         						}
         					}
