@@ -154,6 +154,7 @@ if (empty($reshook))
 
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
+   		$search_product_category=0;
     	$search_name="";
     	$search_contract="";
     	$search_service="";
@@ -176,6 +177,8 @@ if (empty($reshook))
     	$filter_opcloture="";
     	$mode='';
     	$filter='';
+    	$toselect='';
+    	$search_array_options=array();
     }
 }
 
