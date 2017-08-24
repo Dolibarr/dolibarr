@@ -882,10 +882,10 @@ class ExtraFields
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
-			    if ($key == '') continue;
+				if ((string) $key == '') continue;
 				list($val, $parent) = explode('|', $val);
 				$out.='<option value="'.$key.'"';
-				$out.= ($value==$key?' selected':'');
+				$out.= (((string) $value == (string) $key)?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 				$out.='>'.$val.'</option>';
 			}

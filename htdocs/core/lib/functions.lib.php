@@ -6264,7 +6264,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 	            	$newres .= $db->escape($tmpcrit2);
 	            	$newres .= $tmpafter;
 	            	$newres .= "'";
-	            	if (empty($tmpcrit2))
+	            	if ($tmpcrit2 == '')
 	            	{
 	            	    $newres .= ' OR ' . $field . " IS NULL";
 	            	}

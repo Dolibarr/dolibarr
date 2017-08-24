@@ -4297,6 +4297,12 @@ abstract class CommonObject
                				$this->array_options[$key] = null;
                			}
              			break;
+             		/*case 'select':	// Not required, we chosed value='0' for undefined values
+             			if ($value=='-1')
+             			{
+             				$this->array_options[$key] = null;
+             			}
+             			break;*/
             		case 'price':
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
@@ -4430,6 +4436,12 @@ abstract class CommonObject
                         $this->array_options["options_".$key] = null;
                     }
                     break;
+             	/*case 'select':	// Not required, we chosed value='0' for undefined values
+             		if ($value=='-1')
+             		{
+             			$this->array_options[$key] = null;
+             		}
+             		break;*/
                 case 'price':
                     $this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
                     break;
