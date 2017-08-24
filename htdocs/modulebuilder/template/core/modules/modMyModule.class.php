@@ -95,7 +95,7 @@ class modMyModule extends DolibarrModules
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 									'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
 	 								'js' => array('/mymodule/js/mymodule.js.php'),          // Set this to relative path of js file if module must load a js on all pages
-									'hooks' => array('hookcontext1','hookcontext2') 	// Set here all hooks context managed by module. You can also set hook context 'all'
+									'hooks' => array('hookcontext1','hookcontext2') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 		                        );
 
 		// Data directories to create when module is enabled.
@@ -305,15 +305,18 @@ class modMyModule extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$sql = array();
-
 		$this->_load_tables('/mymodule/sql/');
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
+
 		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1, 3, 'thirdparty');
 		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'string', 1, 10, 'project');
+		//$param=array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3'));
+		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'select', 1, 3, 'thirdparty', 0, 1, '', $param, 1);
+
+		$sql = array();
 
 		return $this->_init($sql, $options);
 	}

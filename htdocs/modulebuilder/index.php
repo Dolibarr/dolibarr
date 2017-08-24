@@ -146,7 +146,10 @@ if ($dirins && $action == 'initmodule' && $modulename)
 	        	'MyModule'=>$modulename,
 	        	'MYMODULE'=>strtoupper($modulename),
 	        	'My module'=>$modulename,
-	        	'htdocs/modulebuilder/template/'=>strtolower($modulename),
+	        	'my module'=>$modulename,
+	        	'Mon module'=>$modulename,
+	        	'mon module'=>$modulename,
+	    		'htdocs/modulebuilder/template/'=>strtolower($modulename),
                 '---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 	    	);
 
@@ -293,7 +296,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
                 'MyModule'=>$module,
                 'MYMODULE'=>strtoupper($module),
                 'My module'=>$module,
-                'htdocs/modulebuilder/template/'=>strtolower($modulename),
+                'my module'=>$module,
+                'mon module'=>$module,
+            	'Mon module'=>$module,
+            	'htdocs/modulebuilder/template/'=>strtolower($modulename),
                 'myobject'=>strtolower($objectname),
                 'MyObject'=>$objectname
             );
@@ -908,6 +914,11 @@ elseif (! empty($module))
         $head2[$h][2] = 'specifications';
         $h++;
 
+        $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread?'@'.$dirread:'');
+        $head2[$h][1] = $langs->trans("Languages");
+        $head2[$h][2] = 'languages';
+        $h++;
+
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'');
         $head2[$h][1] = $langs->trans("Objects");
         $head2[$h][2] = 'objects';
@@ -1149,6 +1160,51 @@ elseif (! empty($module))
 
                 print '</form>';
             }
+        }
+
+        if ($tab == 'languages')
+        {
+        	if ($action != 'editfile' || empty($file))
+        	{
+        		$langfiles=dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
+
+        		foreach ($langfiles as $langfile)
+        		{
+        			$pathtofile = $modulelowercase.'/langs/'.$langfile['relativename'];
+        			print '<span class="fa fa-file"></span> '.$langs->trans("LanguageFile").' '.basename(dirname($pathtofile)).' : <strong>'.$pathtofile.'</strong>';
+        			print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format='.$format.'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+        			print '<br>';
+        		}
+        	}
+        	else
+        	{
+        		// Edit text language file
+
+        		//print $langs->trans("UseAsciiDocFormat").'<br>';
+
+        		$fullpathoffile=dol_buildpath($file, 0);
+
+        		$content = file_get_contents($fullpathoffile);
+
+        		// New module
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="savefile">';
+        		print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+        		print '<input type="hidden" name="tab" value="'.$tab.'">';
+        		print '<input type="hidden" name="module" value="'.$module.'">';
+
+        		$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+        		print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'text'));
+        		print '<br>';
+        		print '<center>';
+        		print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        		print ' &nbsp; ';
+        		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+        		print '</center>';
+
+        		print '</form>';
+        	}
         }
 
         if ($tab == 'objects')
