@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "commercial"));
+$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
