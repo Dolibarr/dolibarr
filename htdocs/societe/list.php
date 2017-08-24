@@ -591,28 +591,28 @@ if ($search_all)
 
 // Filter on categories
 $moreforfilter='';
-//if ($type == 'c' || $type == 'p')
-//{
+if (empty($type) || $type == 'c' || $type == 'p')
+{
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';
-	 	$moreforfilter.=$langs->trans('Categories'). ' ('.$langs->trans("Customer").'): ';
+	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
 		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
 	 	$moreforfilter.='</div>';
 	}
-//}
-//if ($type == 'f')
-//{
+}
+if (empty($type) || $type == 'f')
+{
     if (! empty($conf->categorie->enabled))
     {
         require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $moreforfilter.='<div class="divsearchfield">';
-        $moreforfilter.=$langs->trans('Categories'). ' ('.$langs->trans("Supplier").'): ';
+        $moreforfilter.=$langs->trans('SuppliersCategoriesShort').': ';
         $moreforfilter.=$formother->select_categories('supplier',$search_categ_sup,'search_categ_sup',1);
         $moreforfilter.='</div>';
     }
-//}
+}
 
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid)
