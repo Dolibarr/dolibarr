@@ -16,10 +16,5 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_holiday_config 
-(
-rowid    integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-name     VARCHAR(128) NOT NULL,
-value    TEXT NULL
-) 
-ENGINE=innodb;
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
+

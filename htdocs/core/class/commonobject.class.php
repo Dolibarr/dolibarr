@@ -4207,7 +4207,7 @@ abstract class CommonObject
 
         if (! is_array($optionsArray))
         {
-            // $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
+            // If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
             // TODO Use of existing extrafield is not yet ready (must mutualize code that use extrafields in form first)
             // global $extrafields;
             //if (! is_object($extrafields))
@@ -4228,7 +4228,7 @@ abstract class CommonObject
         if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
 
         // Request to get complementary values
-        if (count($optionsArray) > 0)
+        if (is_array($optionsArray) && count($optionsArray) > 0)
         {
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
@@ -4352,6 +4352,12 @@ abstract class CommonObject
                				$this->array_options[$key] = null;
                			}
              			break;
+             		/*case 'select':	// Not required, we chosed value='0' for undefined values
+             			if ($value=='-1')
+             			{
+             				$this->array_options[$key] = null;
+             			}
+             			break;*/
             		case 'price':
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
@@ -4485,6 +4491,12 @@ abstract class CommonObject
                         $this->array_options["options_".$key] = null;
                     }
                     break;
+             	/*case 'select':	// Not required, we chosed value='0' for undefined values
+             		if ($value=='-1')
+             		{
+             			$this->array_options[$key] = null;
+             		}
+             		break;*/
                 case 'price':
                     $this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
                     break;

@@ -1157,7 +1157,7 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-	                $result = $this->addline(              // This include test on qty if option SUPPLIERORDER_WITH_NOPRICEDEFINED is not set
+	                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
 	                    $this->lines[$i]->qty,
@@ -1393,7 +1393,7 @@ class CommandeFournisseur extends CommonOrder
 
             if ($fk_product > 0)
             {
-                if (empty($conf->global->SUPPLIERORDER_WITH_NOPRICEDEFINED))
+                if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
                 {
                     // Check quantity is enough
                     dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." fourn_ref=".$fourn_ref);
@@ -2842,8 +2842,9 @@ class CommandeFournisseur extends CommonOrder
     		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
     		$filter=array('t.fk_commande'=>$this->id);
     		if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
-    			$filter['t.status']=1;
+    			$filter['t.status']=1;	// Restrict to lines with status validated
     		}
+
     		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
     		if ($ret<0)
     		{
@@ -2854,20 +2855,27 @@ class CommandeFournisseur extends CommonOrder
     		{
     			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0)
     			{
-    				//Build array with quantity deliverd by product
+    				$date_liv = dol_now();
+
+    				// Build array with quantity deliverd by product
     				foreach($supplierorderdispatch->lines as $line) {
     					$qtydelivered[$line->fk_product]+=$line->qty;
     				}
     				foreach($this->lines as $line) {
     					$qtywished[$line->fk_product]+=$line->qty;
     				}
-
-    				$date_liv = dol_now();
-
     				//Compare array
-    				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
+    				$diff_array=array_diff_assoc($qtydelivered,$qtywished);		// Warning: $diff_array is done only on common keys.
+    				$keysinwishednotindelivered=array_diff(array_keys($qtywished),array_keys($qtydelivered));		// To check we also have same number of keys
+    				$keysindeliverednotinwished=array_diff(array_keys($qtydelivered),array_keys($qtywished));		// To check we also have same number of keys
+    				/*var_dump(array_keys($qtydelivered));
+    				var_dump(array_keys($qtywished));
+    				var_dump($diff_array);
+    				var_dump($keysinwishednotindelivered);
+    				var_dump($keysindeliverednotinwished);
+    				exit;*/
 
-    				if (count($diff_array)==0) //No diff => mean everythings is received
+    				if (count($diff_array)==0 && count($keysinwishednotindelivered)==0 && count($keysindeliverednotinwished)==0) //No diff => mean everythings is received
     				{
     					if ($closeopenorder)
     					{

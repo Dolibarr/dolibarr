@@ -133,7 +133,7 @@ class ExtraFields
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param	string	$default_value		Defaulted value (In database. use the default_value feature for default value on screen. Example: '', '0', 'null', 'avalue')
-	 *  @param  array	$param				Params for field
+	 *  @param  array	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
@@ -348,7 +348,7 @@ class ExtraFields
 			$sql .= " " . $user->id . ",";
 			$sql .= "'" . $this->db->idate(dol_now()) . "'";
 			$sql.=')';
-			
+
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
@@ -466,13 +466,13 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	int		$length				Length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param	int		$pos				Position of attribute
-	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  array	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
@@ -721,8 +721,8 @@ class ExtraFields
 					{
 						$array_name_label[$tab->name]=$tab->label;
 					}
-					
-					
+
+
 
 					// Old usage
 					$this->attribute_type[$tab->name]=$tab->type;
@@ -740,8 +740,8 @@ class ExtraFields
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_hidden[$tab->name]=$tab->ishidden;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
-					
-					
+
+
 
 					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
@@ -759,8 +759,8 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
 					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
-					
-					
+
+
 					if (!empty($conf->multicompany->enabled)) {
 						$sql_entity_name='SELECT label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid='.$tab->entity;
 						$resql_entity_name=$this->db->query($sql_entity_name);
@@ -944,10 +944,10 @@ class ExtraFields
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
-			    if ($key == '') continue;
+				if ((string) $key == '') continue;
 				list($val, $parent) = explode('|', $val);
 				$out.='<option value="'.$key.'"';
-				$out.= ($value==$key?' selected':'');
+				$out.= (((string) $value == (string) $key)?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 				$out.='>'.$val.'</option>';
 			}

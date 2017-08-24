@@ -709,7 +709,7 @@ if ($action == 'create')
     // Location
     if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     {
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
     }
 
 	// Assigned to
@@ -965,7 +965,7 @@ if ($id > 0)
 		}
 
 		// Title
-		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
+		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="minwidth100" value="'.$object->label.'"></td></tr>';
 
         // Full day event
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
@@ -1049,7 +1049,7 @@ if ($id > 0)
         // Location
 	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
 	    {
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.$object->location.'"></td></tr>';
 	    }
 
 		// Assigned to
