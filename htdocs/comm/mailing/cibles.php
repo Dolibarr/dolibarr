@@ -91,8 +91,7 @@ if ($action == 'add')
 		{
 			require_once $file;
 
-			// We fill $filtersarray. Using this variable is now deprecated.
-			// Kept for backward compatibility.
+			// We fill $filtersarray. Using this variable is now deprecated. Kept for backward compatibility.
 			$filtersarray=array();
 			if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
 
@@ -157,11 +156,13 @@ if ($action == 'delete')
 	}
 }
 
-if ($_POST["button_removefilter"])
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_lastname='';
 	$search_firstname='';
 	$search_email='';
+	$search_other='';
 	$search_dest_status='';
 }
 
@@ -304,12 +305,10 @@ if ($object->fetch($id) >= 0)
 				if ($qualified)
 				{
 					$var = !$var;
-					//print '<tr class="oddeven">';
-//					print '<div '.$bctag[$var].'>';
 
 					if ($allowaddtarget)
 					{
-						print '<form aa '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
@@ -317,13 +316,11 @@ if ($object->fetch($id) >= 0)
 					    print '<div '.$bctag[$var].'>';
 					}
 
-					//print '<td>';
 					print '<div class="tagtd">';
 					if (empty($obj->picto)) $obj->picto='generic';
-					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto);
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj),$obj->picto);
 					print ' ';
 					print $obj->getDesc();
-					//print '</td>';
 					print '</div>';
 
 					try {
@@ -334,7 +331,6 @@ if ($object->fetch($id) >= 0)
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
 
-					//print '<td align="center">';
 					print '<div class="tagtd center">';
 					if ($nbofrecipient >= 0)
 					{
@@ -344,10 +340,8 @@ if ($object->fetch($id) >= 0)
 					{
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
-					//print '</td>';
 					print '</div>';
 
-					//print '<td align="left">';
 					print '<div class="tagtd" align="left">';
 					if ($allowaddtarget)
 					{
@@ -361,10 +355,8 @@ if ($object->fetch($id) >= 0)
     					if ($filter) print $filter;
     					else print $langs->trans("None");
 					}
-					//print '</td>';
 					print '</div>';
 
-					//print '<td align="right">';
 					print '<div class="tagtd" align="right">';
 					if ($allowaddtarget)
 					{
@@ -376,19 +368,14 @@ if ($object->fetch($id) >= 0)
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
-					//print '</td>';
 					print '</div>';
 
 					if ($allowaddtarget) print '</form>';
 					else print '</div>';
-
-					//print "</tr>\n";
-//					print '</div>'."\n";
 				}
 			}
 		}	// End foreach dir
 
-		//print '</table>';
 		print '</div>';
 
 		print '<br><br>';
