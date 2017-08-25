@@ -56,6 +56,7 @@ $action=GETPOST('action','aZ09');
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_email=GETPOST("search_email");
+$search_other=GETPOST("search_other");
 $search_dest_status=GETPOST('search_dest_status');
 
 // Search modules dirs
@@ -397,9 +398,10 @@ if ($object->fetch($id) >= 0)
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
-	if ($search_lastname)    $sql.= " AND mc.lastname    LIKE '%".$db->escape($search_lastname)."%'";
-	if ($search_firstname) $sql.= " AND mc.firstname LIKE '%".$db->escape($search_firstname)."%'";
-	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
+	if ($search_lastname)  $sql.= natural_search("mc.lastname", $search_lastname);
+	if ($search_firstname) $sql.= natural_search("mc.firstname", $search_firstname);
+	if ($search_email)     $sql.= natural_search("mc.email", $search_email);
+	if ($search_other)     $sql.= natural_search("mc.other", $search_other);
 	if ($search_dest_status != '' && $search_dest_status >= -1) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
 
@@ -423,6 +425,7 @@ if ($object->fetch($id) >= 0)
 		if ($search_lastname)  $param.= "&amp;search_lastname=".urlencode($search_lastname);
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
+		if ($search_other)     $param.= "&amp;search_other=".urlencode($search_other);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -469,7 +472,7 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		// Other
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '<input class="flat maxwidth100" type="text" name="search_other" value="'.dol_escape_htmltag($search_other).'">';
 		print '</td>';
 		// Source
 		print '<td class="liste_titre">';
