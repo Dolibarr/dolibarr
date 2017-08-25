@@ -185,7 +185,7 @@ class mailing_contacts1 extends MailingTargets
 			}
 			else
 			{
-				$s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
+				$s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
 			}
 		}
 		else dol_print_error($this->db);
