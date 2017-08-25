@@ -205,7 +205,7 @@ if (empty($reshook))
             if ($value == 'content') $value='content-'.$rowid;
             if ($value == 'content_lines') $value='content_lines-'.$rowid;
 
-            if (! isset($_POST[$value]) || ($_POST[$value]=='' && $value!='lang'))
+            if ((! isset($_POST[$value]) || $_POST[$value]=='') && $value != 'lang')
             {
                 $ok=0;
                 $fieldnamekey=$listfield[$f];
@@ -254,15 +254,16 @@ if (empty($reshook))
             $i=0;
             foreach ($listfieldinsert as $f => $value)
             {
-                //var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
-                if ($value == 'entity') {
-                	$_POST[$listfieldvalue[$i]] = $conf->entity;
-                }
+            	$keycode=$listfieldvalue[$i];
+            	if ($value == 'lang') $keycode='langcode';
+
+            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
+                if ($value == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
-                if ($value == 'private' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='0';
-                if ($value == 'position' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='1';
-                if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
-                else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+                if ($value == 'private' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='0';
+                if ($value == 'position' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='1';
+                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  												// For vat, we want/accept code = ''
+                else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
             $sql.=",1)";
@@ -302,15 +303,16 @@ if (empty($reshook))
             $i = 0;
             foreach ($listfieldmodify as $field)
             {
+            	$keycode=$listfieldvalue[$i];
+            	if ($field == 'lang') $keycode='langcode';
+
                 if ($field == 'content') $_POST['content']=$_POST['content-'.$rowid];
                 if ($field == 'content_lines') $_POST['content_lines']=$_POST['content_lines-'.$rowid];
-                if ($field == 'entity') {
-                	$_POST[$listfieldvalue[$i]] = $conf->entity;
-                }
+                if ($field == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
                 $sql.= $field."=";
-                if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
-                else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  // For vat, we want/accept code = ''
+                else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
             $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
@@ -698,6 +700,7 @@ if ($resql)
             $obj = $db->fetch_object($resql);
             //print_r($obj);
             print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
             if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
             {
                 $tmpaction='edit';
@@ -889,12 +892,19 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print '<td>';
 			if (! empty($conf->global->MAIN_MULTILANGS))
 			{
-				print $formadmin->select_language($langs->defaultlang,'lang');
+				$selectedlang = $langs->defaultlang;
+				if ($context == 'edit') $selectedlang = $obj->{$fieldlist[$field]};
+				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1);
 			}
 			else
 			{
-				//print $langs->defaultlang.' - '.$langs->trans('Language_'.$langs->defaultlang);
-				print '<input type="hidden" value="" name="'.$fieldlist[$field].'">';
+				if (! empty($obj->{$fieldlist[$field]}))
+				{
+					print $obj->{$fieldlist[$field]}.' - '.$langs->trans('Language_'.$obj->{$fieldlist[$field]});
+				}
+				$keyname=$fieldlist[$field];
+				if ($keyname == 'lang') $keyname='langcode';	// Avoid conflict with lang param
+				print '<input type="hidden" value="'.$obj->{$fieldlist[$field]}.'" name="'.$keyname.'">';
 			}
 			print '</td>';
 		}

@@ -69,7 +69,7 @@ class FormAdmin
 		$out.= '<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
 		if ($showempty)
 		{
-			$out.= '<option value=""';
+			$out.= '<option value="0"';
 			if ($selected == '') $out.= ' selected';
 			$out.= '>';
 			if ($showempty != '1') $out.=$showempty;
