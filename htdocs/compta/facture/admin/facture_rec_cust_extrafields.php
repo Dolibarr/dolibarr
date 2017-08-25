@@ -4,7 +4,7 @@
 * Copyright (C) 2004-2011 Laurent Destailleur <eldy@users.sourceforge.net>
 * Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
 * Copyright (C) 2013 Jean-Francois FERRY <jfefe@aternatik.fr>
-* Copyright (C) 2017 ATM-CONSULTING <contact@atm-consulting.fr>
+* Copyright (C) 2017 John BOTELLA <contact@atm-consulting.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
