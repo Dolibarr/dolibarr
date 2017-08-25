@@ -1305,7 +1305,7 @@ class FactureLigneRec extends CommonInvoiceLine
     
     /**
      *	Recupere les lignes de factures predefinies dans this->lines
-     *
+     *	@param		int 	$rowid 
      *	@return     int         1 if OK, < 0 if KO
      */
     function fetch($rowid)
