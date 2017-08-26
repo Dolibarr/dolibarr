@@ -25,7 +25,7 @@
 
 /**
  * Class to build graphs.
- * Usage is: 
+ * Usage is:
  *    $dolgraph=new DolGraph();
  *    $dolgraph->SetTitle($langs->transnoentities('Tracking_Projects_Pourcent').'<br>'.$langs->transnoentities('Tracking_IndicatorDefGraph').'%');
  *    $dolgraph->SetMaxValue(50);
@@ -570,6 +570,7 @@ class DolGraph
 	function GetFloorMinValue()
 	{
 		$min = $this->GetMinValueInData();
+		if ($min == '') $min=0;
 		if ($min != 0) $min--;
 		$size=dol_strlen(abs(floor($min)));
 		$factor=1;
@@ -868,7 +869,7 @@ class DolGraph
 		  return;
 		}
 		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
-		
+
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
