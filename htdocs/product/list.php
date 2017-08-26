@@ -834,7 +834,7 @@ else
 					print  '<td align="right">';
 					if ($obj->tobuy)
 					{
-						if (($productFournList = $product_fourn->list_product_fournisseur_price($product_fourn->id)) > 0)
+						if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0)
 						{
 							$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
 							print $form->textwithpicto(count($productFournList),$htmltext);
