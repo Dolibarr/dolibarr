@@ -374,6 +374,23 @@ if ($mode == 'feature')
 
     $text.='<br><br>';
 
+    $text.='<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
+	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
+    if (count($sqlfiles) > 0)
+    {
+    	$text.=$langs->trans("Yes").' (';
+    	$i=0;
+    	foreach($sqlfiles as $val)
+    	{
+    		$text.=($i?', ':'').preg_replace('/\.sql$/','',preg_replace('/llx_/','',$val['name']));
+    		$i++;
+    	}
+    	$text.=')';
+    }
+    else $text.=$langs->trans("No");
+
+    $text.='<br>';
+
     $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
     if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
     {
