@@ -32,6 +32,7 @@ FIX: User id correction on holiday request
 FIX: value of user id filled to 0 in llx_bank_url when recording an expense report.
 FIX: we have to check if contact doesn't already exist on add_contact() function
 FIX: We should be able to insert data with value '0' into const
+FIX: install process with DoliWamp
 
 ***** ChangeLog for 5.0.4 compared to 5.0.3 *****
 FIX: #5640 Prices of a predefined product/service were incorrect under certain circumstances
