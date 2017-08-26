@@ -189,7 +189,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             // Add line buf to buffer if not a comment
             if (! preg_match('/^--/',$buf))
             {
-                $buf=preg_replace('/--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
+                $buf=preg_replace('/[,;]\s*--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
