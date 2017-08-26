@@ -1014,21 +1014,6 @@ if ($action == 'create' || $action == 'adduserldap')
     }
     print '</td></tr>';
 
-    // Multicompany
-    if (! empty($conf->multicompany->enabled) && is_object($mc))
-    {
-    	if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-        {
-            print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-            print "<td>".$mc->select_entities($conf->entity);
-            print "</td></tr>\n";
-        }
-        else
-        {
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-        }
-    }
-
     // Accountancy code
     if ($conf->accounting->enabled)
     {
@@ -1112,6 +1097,24 @@ if ($action == 'create' || $action == 'adduserldap')
 			null, '90%' );
 		print "</td></tr>";
 	}
+
+	// Multicompany
+	// This is now done with hook formObjectOptions
+	/*
+	 if (! empty($conf->multicompany->enabled) && is_object($mc))
+	 {
+	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+	 {
+	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+	 print "<td>".$mc->select_entities($conf->entity);
+	 print "</td></tr>\n";
+	 }
+	 else
+	 {
+	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+	 }
+	 }
+	 */
 
 	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 	{
@@ -1528,6 +1531,24 @@ else
 				print $object->default_range;
 				print '</td></tr>';
 			}
+
+		    // Multicompany
+		    // This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
+		    /*
+		     if (! empty($conf->multicompany->enabled) && is_object($mc))
+		     {
+		     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		     {
+		     print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
+		     if (empty($object->entity)) {
+		     print $langs->trans("AllEntities");
+		     } else {
+		     $mc->getInfo($object->entity);
+		     print $mc->label;
+		     }
+		     print "</td></tr>\n";
+		     }
+		     }*/
 
 		    // Other attributes
     		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -2436,6 +2457,25 @@ else
 				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 				print '</td></tr>';
 			}
+
+            // Multicompany
+            // This is now done with hook formObjectOptions
+            /*
+            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+            if (! empty($conf->multicompany->enabled) && is_object($mc))
+            {
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	{
+            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
+            }
+            */
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
