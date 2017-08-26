@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012       Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
