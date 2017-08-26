@@ -149,7 +149,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 	        	'my module'=>$modulename,
 	        	'Mon module'=>$modulename,
 	        	'mon module'=>$modulename,
-	    		'htdocs/modulebuilder/template/'=>strtolower($modulename),
+	    		'htdocs/modulebuilder/template'=>strtolower($modulename),
                 '---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 	    	);
 
@@ -508,11 +508,11 @@ if ($dirins && $action == 'generatepackage')
         $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
 
         $dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
-        $outputfile = $dirofmodule.'/'.$FILENAMEZIP;
+        $outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
 		if ($dirofmodule)
 		{
 	        if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
-	        $result = dol_compress_dir($dir, $outputfile, 'zip');
+	        $result = dol_compress_dir($dir, $outputfilezip, 'zip');
 		}
 		else
 		{
@@ -521,13 +521,13 @@ if ($dirins && $action == 'generatepackage')
 
         if ($result > 0)
         {
-            setEventMessages($langs->trans("ZipFileGeneratedInto", $outputfile), null);
+            setEventMessages($langs->trans("ZipFileGeneratedInto", $outputfilezip), null);
         }
         else
         {
             $error++;
             $langs->load("errors");
-            setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfile), null, 'errors');
+            setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfilezip), null, 'errors');
         }
     }
     else
@@ -576,7 +576,7 @@ if ($dirins && $action == 'generatedoc')
 		$FILENAMEDOC=$modulelowercase.'.html';
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/doc';
-		$outputfile = $dirofmodule.'/'.$FILENAMEDOC;
+		$outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
 		if ($dirofmodule)
 		{
 			if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
@@ -591,13 +591,13 @@ if ($dirins && $action == 'generatedoc')
 
 		if ($result > 0)
 		{
-			setEventMessages($langs->trans("DocFileGeneratedInto", $outputfile), null);
+			setEventMessages($langs->trans("DocFileGeneratedInto", $outputfiledoc), null);
 		}
 		else
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfile), null, 'errors');
+			setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfiledoc), null, 'errors');
 		}
 	}
 	else
@@ -1578,14 +1578,21 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-    			foreach ($triggers as $trigger)
-    			{
-    			    $pathtofile = $trigger['relpath'];
+				if (! empty($triggers))
+				{
+	    			foreach ($triggers as $trigger)
+	    			{
+	    			    $pathtofile = $trigger['relpath'];
 
-    			    print '<span class="fa fa-file"></span> '.$langs->trans("TriggersFile").' : <strong>'.$pathtofile.'</strong>';
-    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-    			    print '<br>';
-    			}
+	    			    print '<span class="fa fa-file"></span> '.$langs->trans("TriggersFile").' : <strong>'.$pathtofile.'</strong>';
+	    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+	    			    print '<br>';
+	    			}
+				}
+				else
+				{
+					print $langs->trans("NoTrigger");
+				}
 			}
 			else
 			{
@@ -1622,13 +1629,20 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-    			foreach ($widgets as $widget)
-    			{
-    			    $pathtofile = $widget['relpath'];
+				if (! empty($widget))
+				{
+	    			foreach ($widgets as $widget)
+	    			{
+	    			    $pathtofile = $widget['relpath'];
 
-    			    print '<span class="fa fa-file"></span> '.$langs->trans("WidgetFile").' : <strong>'.$pathtofile.'</strong>';
-    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-    			    print '<br>';
+	    			    print '<span class="fa fa-file"></span> '.$langs->trans("WidgetFile").' : <strong>'.$pathtofile.'</strong>';
+	    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+	    			    print '<br>';
+	    			}
+    			}
+    			else
+    			{
+    				print $langs->trans("NoWidget");
     			}
 			}
 			else
@@ -1811,7 +1825,7 @@ elseif (! empty($module))
             if (count($arrayversion))
             {
                 $FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
-                $outputfile = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
+                $outputfilezip = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
 
                 $FILENAMEDOC=$modulelowercase.'.html';
                 $outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
@@ -1820,10 +1834,11 @@ elseif (! empty($module))
             print '<br>';
 
             print '<span class="fa fa-file"></span> '. $langs->trans("PathToModulePackage") . ' : ';
-            if (! dol_is_file($outputfile)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+            if (! dol_is_file($outputfilezip)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
             else {
-                print '<strong>'.$outputfile.'</strong>';
-                print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfile), 'dayhour').')';
+            	$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;
+                print '<strong><a href="'.DOL_URL_ROOT.'/document.php?modulepart=packages&file='.urlencode($relativepath).'">'.$outputfilezip.'</a></strong>';
+                print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfilezip), 'dayhour').')';
             }
             print '</strong><br>';
 

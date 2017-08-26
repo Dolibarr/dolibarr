@@ -59,3 +59,5 @@ AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this n
 UseAsciiDocFormat=You can use Markdown format, but it is recommanded to use Asciidoc format (Comparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 IsAMeasure=Is a measure
 DirScanned=Directory scanned
+NoTrigger=No trigger
+NoWidget=No widget
