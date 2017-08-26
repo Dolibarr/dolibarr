@@ -77,6 +77,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			if ($object->element=='shipping')         $permok=$user->rights->expedition->creer;
 			if ($object->element=='delivery')         $permok=$user->rights->expedition->livraison->creer;
 			if ($object->element=='productlot')       $permok=$user->rights->stock->creer;
+			if ($object->element=='facturerec') 	  $permok=$user->rights->facture->creer;
 
 			if (($object->statut == 0 || ! empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
 				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key)
