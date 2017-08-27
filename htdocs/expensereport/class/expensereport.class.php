@@ -1457,36 +1457,51 @@ class ExpenseReport extends CommonObject
      */
     function getNextNumRef()
     {
-        global $conf;
+        global $langs, $conf;
+        $langs->load("trips");
 
-        $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
-        $num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
+        if (! empty($conf->global->EXPENSEREPORT_ADDON))
+        {
+        	$mybool=false;
 
-        $sql = 'SELECT MAX(de.ref_number_int) as max';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' de';
+        	$file = $conf->global->EXPENSEREPORT_ADDON.".php";
+			$classname = $conf->global->EXPENSEREPORT_ADDON;
 
-        $result = $this->db->query($sql);
+			// Include file with class
+			$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+                $dir = dol_buildpath($reldir."core/modules/expensereport/");
 
-        if($this->db->num_rows($result) > 0):
-        $objp = $this->db->fetch_object($result);
-        $this->ref = $objp->max;
-        $this->ref++;
-        while(strlen($this->ref) < $num_car):
-        $this->ref = "0".$this->ref;
-        endwhile;
-        else:
-        $this->ref = 1;
-        while(strlen($this->ref) < $num_car):
-        $this->ref = "0".$this->ref;
-        endwhile;
-        endif;
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
 
-        if ($result):
-        return 1;
-        else:
-        $this->error=$this->db->error();
-        return -1;
-        endif;
+            if (! $mybool)
+            {
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
+            }
+
+            $obj = new $classname();
+            $numref = $obj->getNextValue($this);
+
+            if ($numref != "")
+            {
+            	return $numref;
+            }
+            else
+			{
+				$this->error=$obj->error;
+            	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+            	return "";
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
+            return "";
+        }
     }
 
     /**
