@@ -25,7 +25,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
-ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
+ALTER TABLE llx_mailing MODIFY COLUMN titre varchar(128);
+ALTER TABLE llx_mailing MODIFY COLUMN sujet varchar(128);
+
+ALTER TABLE llx_mailing MODIFY COLUMN langs varchar(64);
 
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
