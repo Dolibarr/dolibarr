@@ -281,7 +281,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 <?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
 
 <?php
-if (! empty($morelogincontent) && is_array($morelogincontent)) {
+/*if (! empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'js') {
@@ -289,7 +289,7 @@ if (! empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
+}*/
 if (! empty($moreloginextracontent)) {
 	echo $moreloginextracontent;
 }
