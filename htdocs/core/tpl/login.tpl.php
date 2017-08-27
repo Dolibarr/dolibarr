@@ -133,6 +133,7 @@ if ($disablenofollow) echo '</a>';
 	}
 }*/
 if (! empty($morelogincontent)) {
+	echo '<!-- Option by hook -->';
 	echo $morelogincontent;
 }
 ?>
@@ -291,6 +292,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 	}
 }*/
 if (! empty($moreloginextracontent)) {
+	echo '<!-- Extra option by hook -->';
 	echo $moreloginextracontent;
 }
 ?>
