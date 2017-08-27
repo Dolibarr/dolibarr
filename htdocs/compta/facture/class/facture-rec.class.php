@@ -1276,7 +1276,6 @@ class FactureLigneRec extends CommonInvoiceLine
 
         $this->db->begin();
 
-
         $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".($this->rowid > 0 ? $this->rowid : $this->id);
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
@@ -1302,15 +1301,14 @@ class FactureLigneRec extends CommonInvoiceLine
     }
 
 
-
     /**
      *	Recupere les lignes de factures predefinies dans this->lines
-     *	@param		int 	$rowid
-     *	@return     int         1 if OK, < 0 if KO
+     *
+     *	@param		int 	$rowid		Id of invoice
+     *	@return     int         		1 if OK, < 0 if KO
      */
     function fetch($rowid)
     {
-
     	$sql = 'SELECT l.rowid, l.fk_facture ,l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
     	$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
     	$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
@@ -1322,7 +1320,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ' WHERE l.rowid = '.$rowid;
     	$sql.= ' ORDER BY l.rang';
 
-    	dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
+    	dol_syslog('FactureRec::fetch', LOG_DEBUG);
     	$result = $this->db->query($sql);
     	if ($result)
     	{
@@ -1376,11 +1374,14 @@ class FactureLigneRec extends CommonInvoiceLine
 
 
     /**
-     * 	Update a line to invoice_rec
+     * 	Update a line to invoice_rec.
+     *
      *	@return    	int             				<0 if KO, Id of line if OK
      */
     function update()
     {
+    	global $user;
+
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
     	if ($fk_product)
@@ -1453,7 +1454,5 @@ class FactureLigneRec extends CommonInvoiceLine
     	}
 
     }
-
-
 
 }
