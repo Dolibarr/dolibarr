@@ -1486,7 +1486,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
-					$this->db->query($sql);
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$err++;
+						$this->error = $this->db->lasterror();
+						$this->errors[] = $this->db->lasterror();
+						break;
+					}
 				}
 				$i++;
 			}
