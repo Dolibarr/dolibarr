@@ -2322,10 +2322,6 @@ class Form
                 unset($producttmpselect);
             }
 
-        	if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
-			{
-				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
-			}
 			// mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
@@ -2333,11 +2329,6 @@ class Form
         }
         else
         {
-            if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
-			{
-				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
-				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';
-			}
         	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
         }
     }
@@ -3410,12 +3401,12 @@ class Form
     /**
      *    Return list of categories having choosed type
      *
-     *    @param	int		$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-     *    @param    string	$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-     *    @param    string	$htmlname			HTML field name
-     *    @param    int		$maxlength      	Maximum length for labels
-     *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
-     *    @param	int		$outputmode			0=HTML select string, 1=Array
+     *    @param	string|int	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+     *    @param    string		$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+     *    @param    string		$htmlname			HTML field name
+     *    @param    int			$maxlength      	Maximum length for labels
+     *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
+     *    @param	int			$outputmode			0=HTML select string, 1=Array
      *    @return	string
      *    @see select_categories
      */
@@ -3458,7 +3449,7 @@ class Form
 		else
 		{
             $cat = new Categorie($this->db);
-            $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
+            $cate_arbo = $cat->get_full_arbo($type, $excludeafterid);
 		}
 
         $output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -4729,8 +4720,8 @@ class Form
 
         // You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
         $usecalendar='combo';
-        if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'eldy':$conf->global->MAIN_POPUP_CALENDAR;
-		if ($conf->browser->phone) $usecalendar='combo';
+        if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'jquery':$conf->global->MAIN_POPUP_CALENDAR;
+		//if (! empty($conf->browser->phone)) $usecalendar='combo';
 
         if ($d)
         {
@@ -4772,9 +4763,21 @@ class Form
                 {
                 	if (! $disabled)
                 	{
-                		print "<script type='text/javascript'>";
-                		print "$(function(){ $('#".$prefix."').datepicker({ dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."', autoclose: true, todayHighlight: true }) });";
-                		print "</script>";
+                		$retstring.="<script type='text/javascript'>";
+                		$retstring.="$(function(){ $('#".$prefix."').datepicker({
+            				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
+                			autoclose: true,
+                			todayHighlight: true,";
+                		if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
+                		{
+                		$retstring.="
+                			showOn: 'button',
+							buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
+							buttonImageOnly: true";
+                		}
+                		$retstring.="
+                			}) });";
+                		$retstring.="</script>";
                 	}
 
                 	// Zone de saisie manuelle de la date
@@ -4786,14 +4789,20 @@ class Form
                 	// Icone calendrier
                 	if (! $disabled)
                 	{
-                		//$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
-                		//$base=DOL_URL_ROOT.'/core/';
-                		//$retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\',\''.$langs->defaultlang.'\');"';
-                		//$retstring.='>';
-                		$retstring.=img_object($langs->trans("SelectDate"),'calendarday','class="datecallink"');
-                		//$retstring.='</button>';
+                		/* Not required. Managed by option buttonImage of jquery
+                		$retstring.=img_object($langs->trans("SelectDate"),'calendarday','id="'.$prefix.'id" class="datecallink"');
+                		$retstring.="<script type='text/javascript'>";
+                		$retstring.="jQuery(document).ready(function() {";
+                		$retstring.='	jQuery("#'.$prefix.'id").click(function() {';
+                		$retstring.="    	jQuery('#".$prefix."').focus();";
+                		$retstring.='    });';
+                		$retstring.='});';
+                		$retstring.="</script>";*/
                 	}
-                	else $retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
+                	else
+                	{
+                		$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
+                	}
 
                 	$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
                 	$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
@@ -4801,7 +4810,7 @@ class Form
                 }
                 else
                 {
-                    print "Bad value of MAIN_POPUP_CALENDAR";
+                    $retstring.="Bad value of MAIN_POPUP_CALENDAR";
                 }
             }
             // Show date with combo selects
@@ -5071,7 +5080,7 @@ class Form
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
      *	@param	array			$array          Array (key => value)
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-     *	@param	int				$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (value is '' or '&nbsp;' if 1), <0 to add an empty value with key that is this value.
+     *	@param	int|string		$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 to show key into label with format "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container

@@ -412,6 +412,14 @@ function agenda_prepare_head()
 	$head[$h][2] = 'autoactions';
 	$h++;
 
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	$head[$h][1] = $langs->trans("Reminders");
+	$head[$h][2] = 'reminders';
+	$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("ExportCal");
 	$head[$h][2] = 'xcal';

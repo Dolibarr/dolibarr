@@ -52,6 +52,8 @@ if (! $object->fetch($id, $ref) > 0)
  *	View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans("Intervention"));
 
 $object->fetch_thirdparty();

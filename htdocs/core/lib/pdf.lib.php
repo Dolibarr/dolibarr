@@ -748,7 +748,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', 0);
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
-				$pdf->SetFont('', 'B', $default_font_size - 4);
+				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', 0);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
@@ -794,6 +794,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
+		$cur+=1;
 	}
 
 	else if (! $usedetailedbban) $cury+=1;

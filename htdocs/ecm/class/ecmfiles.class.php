@@ -231,12 +231,12 @@ class EcmFiles //extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param  int    $id          Id object
-	 * @param  string $ref         Not used yet. Will contains a hash id from filename+filepath
-	 * @param  string $fullpath    Full path of file (relative path to document directory)
-	 * @return int                 <0 if KO, 0 if not found, >0 if OK
+	 * @param  int    $id          	   Id object
+	 * @param  string $ref         	   Not used yet. Will contains a hash id from filename+filepath
+	 * @param  string $relativepath    Relative path of file from document directory. Example: path/path2/file
+	 * @return int                 	   <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $fullpath = '')
+	public function fetch($id, $ref = null, $relativepath = '')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -265,8 +265,8 @@ class EcmFiles //extends CommonObject
 		if (! empty($conf->multicompany->enabled)) {
 		    $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		}*/
-		if ($fullpath) {
-			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($fullpath)) . "' AND t.filename = '".$this->db->escape(basename($fullpath))."'";
+		if ($relativepath) {
+			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
 		}
 		elseif (null !== $ref) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
