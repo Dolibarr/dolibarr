@@ -283,20 +283,18 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 <?php
 if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
 
-if (! empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'js') {
-				echo "\n".'<!-- Javascript by hook -->';
-				echo $option."\n";
-			}
+if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
+	{
+		if ($format == 'js') {
+			echo "\n".'<!-- Javascript by hook -->';
+			echo $option."\n";
 		}
 	}
-	else {
-		echo '<!-- Javascript by hook -->';
-		echo $moreloginextracontent;
-	}
+}
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
 }
 
 // Google Analytics (need Google module)
