@@ -658,7 +658,7 @@ else
         // Categories
         if ($conf->categorie->enabled) {
             print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-            print $form->showCategories($object->id,'account',1);
+            print $form->showCategories($object->id,'bank_account',1);
             print "</td></tr>";
         }
 

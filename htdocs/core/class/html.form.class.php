@@ -3401,12 +3401,12 @@ class Form
     /**
      *    Return list of categories having choosed type
      *
-     *    @param	int		$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-     *    @param    string	$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-     *    @param    string	$htmlname			HTML field name
-     *    @param    int		$maxlength      	Maximum length for labels
-     *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
-     *    @param	int		$outputmode			0=HTML select string, 1=Array
+     *    @param	string|int	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+     *    @param    string		$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+     *    @param    string		$htmlname			HTML field name
+     *    @param    int			$maxlength      	Maximum length for labels
+     *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
+     *    @param	int			$outputmode			0=HTML select string, 1=Array
      *    @return	string
      *    @see select_categories
      */
@@ -3449,7 +3449,7 @@ class Form
 		else
 		{
             $cat = new Categorie($this->db);
-            $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
+            $cate_arbo = $cat->get_full_arbo($type, $excludeafterid);
 		}
 
         $output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
