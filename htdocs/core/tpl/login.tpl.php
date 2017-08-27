@@ -123,7 +123,7 @@ if ($disablenofollow) echo '</a>';
 </span>
 </td></tr>
 <?php
-if (! empty($morelogincontent) && is_array($morelogincontent)) {
+/*if (! empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'table') {
@@ -131,6 +131,9 @@ if (! empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option;
 		}
 	}
+}*/
+if (! empty($morelogincontent)) {
+	echo $morelogincontent;
 }
 ?>
 <?php
@@ -286,6 +289,9 @@ if (! empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
+}
+if (! empty($moreloginextracontent)) {
+	echo $moreloginextracontent;
 }
 ?>
 
