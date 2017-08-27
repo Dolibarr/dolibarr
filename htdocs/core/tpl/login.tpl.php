@@ -123,27 +123,28 @@ if ($disablenofollow) echo '</a>';
 </span>
 </td></tr>
 <?php
-/*if (! empty($morelogincontent) && is_array($morelogincontent)) {
-	foreach ($morelogincontent as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
 	}
-}*/
-if (! empty($morelogincontent)) {
-	echo '<!-- Option by hook -->';
-	echo $morelogincontent;
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
+	}
 }
-?>
-<?php
-	if ($captcha) {
-		// Add a variable param to force not using cache (jmobile)
-		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
-		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
-		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
-		// TODO: provide accessible captcha variants
+
+if ($captcha) {
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
+	if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
+	else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
 	<tr>
@@ -279,25 +280,25 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
-<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
-
 <?php
-/*if (! empty($morelogincontent) && is_array($morelogincontent)) {
-	foreach ($morelogincontent as $format => $option)
-	{
-		if ($format == 'js') {
-			echo "\n".'<!-- Javascript by hook -->';
-			echo $option."\n";
+if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
+
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'js') {
+				echo "\n".'<!-- Javascript by hook -->';
+				echo $option."\n";
+			}
 		}
 	}
-}*/
-if (! empty($moreloginextracontent)) {
-	echo '<!-- Extra option by hook -->';
-	echo $moreloginextracontent;
+	else {
+		echo '<!-- Javascript by hook -->';
+		echo $moreloginextracontent;
+	}
 }
-?>
 
-<?php
 // Google Analytics (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
@@ -317,9 +318,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID)
 		print '</script>'."\n";
 	}
 }
-?>
 
-<?php
 // Google Adsense
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {

@@ -204,7 +204,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Execute hook getLoginPageOptions (for table)
 	$parameters=array('entity' => GETPOST('entity','int'));
 	$reshook = $hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks.
-	$morelogincontent = $hookmanager->resPrint;
+	if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {
+		$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
+	} else {
+		$morelogincontent = $hookmanager->resPrint;
+	}
 
 	// Execute hook getLoginPageExtraOptions (eg for js)
 	$parameters=array('entity' => GETPOST('entity','int'));
