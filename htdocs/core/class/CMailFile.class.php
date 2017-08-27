@@ -170,6 +170,16 @@ class CMailFile
 			$this->msgishtml = $msgishtml;
 		}
 
+		global $dolibarr_main_url_root;
+
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		// Replace relative /viewimage to absolute path
+		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage\.php/', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
+
 		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
 
 		// Detect images
