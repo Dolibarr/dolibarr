@@ -1489,10 +1489,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$resql = $this->db->query($sql);
 					if (! $resql)
 					{
-						$err++;
-						$this->error = $this->db->lasterror();
-						$this->errors[] = $this->db->lasterror();
-						break;
+						dol_syslog($this->db->lasterror(), LOG_ERR);
+						if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
+						{
+							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->db->lasterror();
+							$err++;
+							break;
+						}
 					}
 				}
 				$i++;
