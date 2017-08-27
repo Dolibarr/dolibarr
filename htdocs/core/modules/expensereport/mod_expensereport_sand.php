@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expenserepo
 
 
 /**
- *	Class to manage customer order numbering rules Sand
+ *	Class to manage expense report numbering rules Sand
  */
 class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
@@ -52,18 +52,18 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstorder" value="EXPENSEREPORT_SAND_MASK">';
+		$texte.= '<input type="hidden" name="maskconst" value="EXPENSEREPORT_SAND_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ExpenseReport"),$langs->transnoentities("ExpenseReport"));
+		//$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("ExpenseReport"),$langs->transnoentities("ExpenseReport"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
