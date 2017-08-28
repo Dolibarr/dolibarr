@@ -146,7 +146,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             $buf = fgets($fp, 4096);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
-            if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
+            if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
             {
             	$qualified=1;
 
@@ -159,20 +159,29 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             	// restrict on version
             	if ($qualified)
             	{
-
-	                $versionrequest=explode('.',$reg[2]);
-	                //print var_dump($versionrequest);
-	                //print var_dump($versionarray);
-	                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
-	                {
-	                	$qualified=0;
-	                }
+            		if (! empty($reg[2]))
+            		{
+            			if (is_numeric($reg[2]))	// This is a version
+            			{
+			                $versionrequest=explode('.',$reg[2]);
+			                //print var_dump($versionrequest);
+			                //print var_dump($versionarray);
+			                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
+			                {
+			                	$qualified=0;
+			                }
+            			}
+            			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+            			{
+							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation)))) $qualified=0;
+            			}
+            		}
             	}
 
                 if ($qualified)
                 {
                     // Version qualified, delete SQL comments
-                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i','',$buf);
+                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i','',$buf);
                     //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
                 }
             }
@@ -769,7 +778,7 @@ function activateModule($value,$withdeps=1)
     }
 
     $result=$objMod->init();
-    if ($result <= 0) 
+    if ($result <= 0)
     {
         $ret['errors'][]=$objMod->error;
     }
@@ -799,19 +808,19 @@ function activateModule($value,$withdeps=1)
     						break;
                 		}
                 	}
-    				
+
     				if ($activate)
     				{
     				    $ret['nbmodules']+=$resarray['nbmodules'];
     				    $ret['nbperms']+=$resarray['nbperms'];
     				}
-    				else 
+    				else
     				{
     				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
     				}
                 }
             }
-    
+
             if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
             {
                 // Desactivation des modules qui entrent en conflit
@@ -830,12 +839,12 @@ function activateModule($value,$withdeps=1)
         }
     }
 
-    if (! count($ret['errors'])) 
+    if (! count($ret['errors']))
     {
         $ret['nbmodules']++;
         $ret['nbperms']+=count($objMod->rights);
     }
-    
+
     return $ret;
 }
 
@@ -1307,7 +1316,7 @@ function showModulesExludedForExternal($modules)
 			//if (empty($conf->global->$moduleconst)) continue;
 			if (! in_array($modulename,$listofmodules)) continue;
 			//var_dump($modulename.'eee'.$langs->trans('Module'.$module->numero.'Name'));
-				
+
 			if ($i > 0) $text.=', ';
 			else $text.=' ';
 			$i++;
