@@ -62,14 +62,15 @@ class Categorie extends CommonObject
 	 * @note This array should be remove in future, once previous constants are moved to the string value. Deprecated
 	 */
 	private $MAP_ID = array(
-		'product'  => 0,
-		'supplier' => 1,
-		'customer' => 2,
-		'member'   => 3,
-		'contact'  => 4,
-        'account'  => 5,
-        'project'  => 6,
-		'user'     => 7,
+		'product'      => 0,
+		'supplier'     => 1,
+		'customer'     => 2,
+		'member'       => 3,
+		'contact'      => 4,
+		'bank_account' => 5,
+        'project'      => 6,
+		'user'         => 7,
+		'bank_line'    => 8,
 	);
 	public static $MAP_ID_TO_CODE = array(
 		0 => 'product',
@@ -77,9 +78,10 @@ class Categorie extends CommonObject
 		2 => 'customer',
 		3 => 'member',
 		4 => 'contact',
-		5 => 'account',
+		5 => 'bank_account',
 		6 => 'project',
 		7 => 'user',
+		8 => 'bank_line',
 	);
 
 	/**
@@ -94,7 +96,8 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'account',
+        'account'  => 'account',		// old for bank_account
+        'bank_account' => 'account',
         'project'  => 'project',
 	);
 	/**
@@ -109,7 +112,8 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'     => 'user',
-        'account'  => 'account',
+        'account'  => 'account',		// old for bank_account
+        'bank_account'=> 'account',
         'project'  => 'project',
 	);
 	/**
@@ -124,7 +128,8 @@ class Categorie extends CommonObject
 		'member'   => 'Adherent',
 		'contact'  => 'Contact',
 		'user'     => 'User',
-        'account'  => 'Account',
+		'account'  => 'Account',		// old for bank account
+		'bank_account'  => 'Account',
         'project'  => 'Project',
 	);
 	/**
@@ -947,8 +952,8 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string $type        	Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
-	 * @param   int    $markafterid 	Removed all categories including the leaf $markafterid in category tree.
+	 * @param   string 	$type        	Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   int    	$markafterid 	Removed all categories including the leaf $markafterid in category tree.
 	 *
 	 * @return  array               	Array of categories. this->cats and this->motherof are set.
 	 */
@@ -1340,11 +1345,11 @@ class Categorie extends CommonObject
 	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
 	 * Should be named getListOfCategForObject
 	 *
-	 * @param   int    	$id     Id of element
-	 * @param   int		$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
-	 * @param   string 	$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                          labels, 'id'= Get array of category IDs
-	 * @return  mixed           Array of category objects or < 0 if KO
+	 * @param   int    		$id     Id of element
+	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
+	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
+	 *                      	    labels, 'id'= Get array of category IDs
+	 * @return  mixed           	Array of category objects or < 0 if KO
 	 */
 	function containing($id, $type, $mode='object')
 	{
@@ -1352,7 +1357,7 @@ class Categorie extends CommonObject
 
 		if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type];
 
-		if ($type == Categorie::TYPE_BANK_LINE)   // TODO Remove this with standard category code
+		if ($type === Categorie::TYPE_BANK_LINE)   // TODO Remove this with standard category code
 		{
 		    // Load bank groups
 		    $sql = "SELECT c.label, c.rowid";

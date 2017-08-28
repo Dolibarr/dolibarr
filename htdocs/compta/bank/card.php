@@ -560,11 +560,7 @@ else
 			$_GET["id"]=$object->id;
 		}
 
-		/*
-		* Affichage onglets
-		*/
-
-		// Onglets
+		// Show tabs
 		$head=bank_prepare_head($object);
 		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
 
@@ -592,18 +588,6 @@ else
 
 		print '<table class="border" width="100%">';
 
-
-		// Ref
-		/*
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-		print '<td>';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
-		print '</td></tr>';*/
-
-		// Label
-		/*print '<tr><td class="titlefield">'.$langs->trans("Label").'</td>';
-		print '<td>'.$object->label.'</td></tr>';*/
-
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("AccountType").'</td>';
 		print '<td>'.$object->type_lib[$object->type].'</td></tr>';
@@ -615,26 +599,6 @@ else
 		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $langs->trans("Currency".$selectedcode);
 		print '</td></tr>';
-
-		// Status
-		/*print '<tr><td>'.$langs->trans("Status").'</td>';
-		print '<td>'.$object->getLibStatut(4).'</td></tr>';*/
-
-		// Country
-		/*
-		print '<tr><td>'.$langs->trans("BankAccountCountry").'</td><td>';
-		if ($object->country_id > 0)
-		{
-			$img=picto_from_langcode($object->country_code);
-			print $img?$img.' ':'';
-			print getCountry($object->getCountryCode(),0,$db);
-		}
-		print '</td></tr>';
-
-		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td>';
-		if ($object->state_id > 0) print getState($object->state_id);
-		print '</td></tr>';*/
 
 		// Conciliate
 		print '<tr><td>'.$langs->trans("Conciliable").'</td>';
@@ -694,7 +658,7 @@ else
         // Categories
         if ($conf->categorie->enabled) {
             print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-            print $form->showCategories($object->id,'account',1);
+            print $form->showCategories($object->id,'bank_account',1);
             print "</td></tr>";
         }
 

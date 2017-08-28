@@ -268,10 +268,12 @@ $filepath=$relativepath.$file->label;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
 print img_picto('','object_globe.png').' ';
-print '<input type="text" class="quatrevingtpercent" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
-print ' <a data-ajax="false" href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
+print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
 print '</td></tr>';
 print '</table>';
+
+print ajax_autoselect('downloadlink');
 
 dol_fiche_end();
 

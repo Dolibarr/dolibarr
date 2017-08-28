@@ -411,7 +411,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
         $filetogenerate = array(
             'myobject_card.php'=>strtolower($objectname).'_card.php',
             'myobject_note.php'=>strtolower($objectname).'_note.php',
-            'myobject_document.php'=>strtolower($objectname).'_note.php',
+            'myobject_document.php'=>strtolower($objectname).'_document.php',
             'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
         	'myobject_list.php'=>strtolower($objectname).'_list.php',
             'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
@@ -1227,6 +1227,7 @@ elseif (! empty($module))
             foreach($listofobject as $fileobj)
             {
             	if (preg_match('/^api_/',$fileobj['name'])) continue;
+            	if (preg_match('/^actions_/',$fileobj['name'])) continue;
 
             	$tmpcontent=file_get_contents($fileobj['fullname']);
             	if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims',$tmpcontent,$reg))
@@ -1236,7 +1237,7 @@ elseif (! empty($module))
 	                if (empty($firstobjectname)) $firstobjectname = $objectname;
             	}
 
-                $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj='.$objectname;
+            	$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj='.$objectname;
                 $head3[$h][1] = $objectname;
                 $head3[$h][2] = $objectname;
                 $h++;
@@ -1302,14 +1303,17 @@ elseif (! empty($module))
                 if ($action != 'editfile' || empty($file))
                 {
                     try {
-                        $pathtoclass = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
-                        $pathtoapi = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
-                        $pathtolist = strtolower($module).'/'.strtolower($tabobj).'_list.php';
-                        $pathtocard = strtolower($module).'/'.strtolower($tabobj).'_card.php';
-                        $pathtophpunit = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
-                        $pathtosql = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
+                        $pathtoclass    = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
+                        $pathtoapi      = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
+                        $pathtoagenda   = strtolower($module).'/'.strtolower($tabobj).'_agenda.php';
+                        $pathtocard     = strtolower($module).'/'.strtolower($tabobj).'_card.php';
+                        $pathtodocument = strtolower($module).'/'.strtolower($tabobj).'_document.php';
+                        $pathtolist     = strtolower($module).'/'.strtolower($tabobj).'_list.php';
+                        $pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
+                        $pathtophpunit  = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
+                        $pathtosql      = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
                         $pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
-                        $pathtosqlkey = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
+                        $pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
@@ -1335,6 +1339,15 @@ elseif (! empty($module))
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong>'.$pathtocard.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.$pathtoagenda.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.$pathtodocument.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.$pathtonote.'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '</div>';
 
                         print '<br><br><br>';
@@ -1708,51 +1721,58 @@ elseif (! empty($module))
         		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
         		print "</tr>\n";
 
-        		foreach ($cronjobs as $cron)
+        		if (count($cronjobs))
         		{
-        			print '<tr class="oddeven">';
+	        		foreach ($cronjobs as $cron)
+	        		{
+	        			print '<tr class="oddeven">';
 
-        			print '<td>';
-        			print $cron['label'];
-        			print '</td>';
+	        			print '<td>';
+	        			print $cron['label'];
+	        			print '</td>';
 
-        			print '<td>';
-        			if ($cron['jobtype']=='method')
-        			{
-        				$text=$langs->trans("CronClass");
-        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
-        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
-        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
-        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
-        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-        			}
-        			elseif ($cron['jobtype']=='command')
-        			{
-        				$text=$langs->trans('CronCommand');
-        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
-        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-        			}
-        			print $form->textwithpicto($text, $texttoshow, 1);
-        			print '</td>';
+	        			print '<td>';
+	        			if ($cron['jobtype']=='method')
+	        			{
+	        				$text=$langs->trans("CronClass");
+	        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
+	        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
+	        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
+	        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
+	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+	        			}
+	        			elseif ($cron['jobtype']=='command')
+	        			{
+	        				$text=$langs->trans('CronCommand');
+	        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+	        			}
+	        			print $form->textwithpicto($text, $texttoshow, 1);
+	        			print '</td>';
 
-        			print '<td>';
-        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
-        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
-        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
-        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
-        			print '</td>';
+	        			print '<td>';
+	        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+	        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+	        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+	        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+	        			print '</td>';
 
-        			print '<td>';
-        			print $cron['status'];
-        			print '</td>';
+	        			print '<td>';
+	        			print $cron['status'];
+	        			print '</td>';
 
-        			print '<td>';
-        			if (!empty($cron['comment'])) {print $cron['comment'];}
-        			print '</td>';
+	        			print '<td>';
+	        			if (!empty($cron['comment'])) {print $cron['comment'];}
+	        			print '</td>';
 
-        			print '</tr>';
+	        			print '</tr>';
+	        		}
+        		}
+        		else
+        		{
+        			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
         		}
 
         		print '</table>';
