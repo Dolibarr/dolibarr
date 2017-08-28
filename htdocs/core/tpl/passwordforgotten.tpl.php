@@ -88,13 +88,19 @@ if ($disablenofollow) echo '</a>';
 </tr>
 
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
+	}
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
 	}
 }
 ?>
@@ -175,6 +181,20 @@ if (! empty($hookmanager->resArray['options'])) {
 	</div>
 <?php } ?>
 
+<?php if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
+	{
+		if ($format == 'js') {
+			echo "\n".'<!-- Javascript by hook -->';
+			echo $option."\n";
+		}
+	}
+}
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
+}
+?>
 
 </div>
 </div>	<!-- end of center -->
