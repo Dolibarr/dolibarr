@@ -26,7 +26,7 @@
  * $langs
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $senderissupplier (0 by default, 1 for supplier invoices/orders)
+ * $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
@@ -208,12 +208,13 @@ else {
 		}
 		else
 		{
+			// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
 		    if ($senderissupplier != 2)
 		    {
     			$ajaxoptions=array(
     					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
-    					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
-    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
+    					'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
+    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for exemple shown we select a disabled option into combo)
     			);
     			$alsoproductwithnosupplierprice=0;
 		    }
@@ -222,6 +223,7 @@ else {
 		        $ajaxoptions = array();
 		        $alsoproductwithnosupplierprice=1;
 		    }
+
 			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
 		}
 		echo '</span>';
@@ -369,6 +371,9 @@ else {
 		}
 		elseif ($this->table_element_line=='facture_fourn_det') {
 			$newline = new SupplierInvoiceLine($this->db);
+		}
+		elseif ($this->table_element_line=='facturedet_rec') {
+			$newline = new FactureLigneRec($this->db);
 		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));

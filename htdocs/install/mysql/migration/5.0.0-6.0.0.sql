@@ -413,15 +413,19 @@ ALTER TABLE llx_supplier_proposaldet ADD CONSTRAINT fk_supplier_proposaldet_fk_s
 CREATE TABLE llx_inventory 
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+entity integer DEFAULT 0, 
+ref varchar(48),
 datec datetime DEFAULT NULL,
 tms timestamp, 
+fk_user_author	integer,
+fk_user_modif     integer,
+fk_user_valid		integer,
 fk_warehouse integer DEFAULT 0, 
-entity integer DEFAULT 0, 
 status integer DEFAULT 0, 
 title varchar(255) NOT NULL, 
-date_inventory datetime DEFAULT NULL
-) 
-ENGINE=InnoDB;
+date_inventory datetime DEFAULT NULL,
+import_key  varchar(14)
+)ENGINE=InnoDB;
 
 CREATE TABLE llx_inventorydet 
 ( 
@@ -438,8 +442,9 @@ qty_regulated double DEFAULT NULL,
 pmp double DEFAULT 0, 
 pa double DEFAULT 0, 
 new_pmp double DEFAULT 0
-) 
-ENGINE=InnoDB;
+)ENGINE=InnoDB;
+
+ALTER TABLE llx_inventory ADD COLUMN datec datetime DEFAULT NULL;
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
@@ -580,3 +585,23 @@ ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
 
 insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'IGST-CGST', 8, 8, '1', 0, '0', 0, 'IGST-CGST', 1);
 insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'SGST', 0, 0, '0', 16, '1', 0, 'SGST', 1);
+
+CREATE TABLE llx_facture_rec_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+
+CREATE TABLE llx_facturedet_rec_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,
+  import_key       varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);

@@ -4023,6 +4023,10 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
@@ -4036,6 +4040,7 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
     DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
     DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
+
     );
 
     foreach ($filetodeletearray as $filetodelete)

@@ -108,7 +108,7 @@ if ($action == 'updateoptions')
 if ($action == 'set')
 {
 	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	$scandir = GETPOST('scan_dir','alpha');
 
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -135,7 +135,7 @@ if ($action== 'del')
 if ($action == 'setdoc')
 {
 	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	$scandir = GETPOST('scan_dir','alpha');
 
 	$db->begin();
 
@@ -521,7 +521,7 @@ foreach ($dirsociete as $dirroot)
 						print "<td align=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'switch_on');
 							print '</a>';
 						//}
@@ -542,7 +542,7 @@ foreach ($dirsociete as $dirroot)
 						else
 						{
 							print "<td align=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 							print "</td>";
 						}
 					}

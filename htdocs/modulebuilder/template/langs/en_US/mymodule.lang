@@ -28,6 +28,11 @@ ModuleMyModuleDesc = My module description
 MyModuleSetup = My module setup
 Settings = Settings
 MyModuleSetupPage = My module setup page
+MYMODULE_MYPARAM1 = My param 1
+MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
+MYMODULE_MYPARAM2=My param 2
+MYMODULE_MYPARAM2Tooltip=My param 2 tooltip
+
 
 #
 # About page

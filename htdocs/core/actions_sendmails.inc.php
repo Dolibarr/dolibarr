@@ -345,7 +345,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 
 			// Send mail
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
+			if (empty($sendcontext)) $sendcontext = 'standard';
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid,'',$sendcontext);
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');

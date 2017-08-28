@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -45,6 +46,17 @@ $search_keyword=GETPOST('search_keyword','alpha');
 $search_status=GETPOST('search_status','alpha');
 $search_nature=GETPOST('search_nature','alpha');
 $search_version=GETPOST('search_version','alpha');
+
+
+// For dolistore search
+$options              = array();
+$options['per_page']  = 20;
+$options['categorie'] = GETPOST('categorie', 'int') + 0;
+$options['start']     = GETPOST('start', 'int') + 0;
+$options['end']       = GETPOST('end', 'int') + 0;
+$options['search']    = GETPOST('search_keyword', 'alpha');
+$dolistore            = new Dolistore($options);
+
 
 if (! $user->admin)
 	accessforbidden();
@@ -240,6 +252,11 @@ if ($action == 'reset' && $user->admin)
  * View
  */
 
+$form = new Form($db);
+
+$morejs  = array("/admin/dolistore/js/dolistore.js.php");
+$morecss = array("/admin/dolistore/css/dolistore.css");
+
 // Set dir where external modules are installed
 if (! dol_is_dir($dirins))
 {
@@ -247,10 +264,8 @@ if (! dol_is_dir($dirins))
 }
 $dirins_ok=(dol_is_dir($dirins));
 
-$form = new Form($db);
-
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('',$langs->trans("Setup"),$help_url);
+llxHeader('',$langs->trans("Setup"),$help_url, '', '', '', $morejs, $morecss, 0, 0);
 
 $arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
 $arrayofwarnings=array();    // Array of warning each module want to show when activated
@@ -423,24 +438,9 @@ print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 if ($mode=='common')      print '<span class="opacitymedium">'.$langs->trans("ModulesDesc")."</span><br>\n";
 if ($mode=='marketplace') print '<span class="opacitymedium">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
 if ($mode=='deploy')      print '<span class="opacitymedium">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
+if ($mode=='develop')     print '<span class="opacitymedium">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=common";
-$head[$h][1] = $langs->trans("AvailableModules");
-$head[$h][2] = 'common';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
-$head[$h][1] = $langs->trans("ModulesMarketPlaces");
-$head[$h][2] = 'marketplace';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
-$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
-$head[$h][2] = 'deploy';
-$h++;
+$head = modules_prepare_head();
 
 
 print "<br>\n";
@@ -817,7 +817,6 @@ if ($mode == 'marketplace')
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
-
     print "<tr class=\"oddeven\">\n";
     $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
@@ -825,17 +824,57 @@ if ($mode == 'marketplace')
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
-
-    print "<tr class=\"oddeven\">\n";
-    $url='https://partners.dolibarr.org';
-    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
-    print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
-    print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
-    print '</tr>';
-
     print "</table>\n";
 
     dol_fiche_end();
+
+    print '<br>';
+
+    if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+    {
+	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span>';
+
+
+	    ?>
+	    	<br><br>
+
+	        <div class="tabBar">
+	            <form method="POST" id="searchFormList" action="<?php echo $dolistore->url ?>">
+	            	<input type="hidden" name="mode" value="marketplace" />
+	                <div class="divsearchfield"><?php echo $langs->trans('Mot-cle') ?>:
+	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
+	                </div>
+	                <div class="divsearchfield">
+	                    <input class="button butAction searchDolistore" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
+	                    <a class="button butActionDelete" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Tout afficher') ?></a>
+	                </div><br><br><br style="clear: both">
+	            </form>
+	        </div>
+	        <div id="category-tree-left">
+	            <ul class="tree">
+	                <?php echo $dolistore->get_categories(); ?>
+	            </ul>
+	        </div>
+	        <div id="listing-content">
+	            <table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">
+	                <thead>
+	                    <tr class="liste_titre">
+	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
+	                    </tr>
+	                </thead>
+	                <tbody id="listOfModules">
+	                    <?php echo $dolistore->get_products($categorie); ?>
+	                </tbody>
+	                <tfoot>
+	                    <tr class="liste_titre">
+	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
+	                    </tr>
+	                </tfoot>
+	            </table>
+	        </div>
+
+	    <?php
+    }
 }
 
 
@@ -948,6 +987,32 @@ if ($mode == 'deploy')
     }
 
     dol_fiche_end();
+}
+
+
+
+if ($mode == 'develop')
+{
+	dol_fiche_head($head, $mode, '', -1);
+
+	// Marketplace
+	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
+	print "<tr class=\"liste_titre\">\n";
+	//print '<td>'.$langs->trans("Logo").'</td>';
+	print '<td colspan="2">'.$langs->trans("DevelopYourModuleDesc").'</td>';
+	print '<td>'.$langs->trans("URL").'</td>';
+	print '</tr>';
+
+	print "<tr class=\"oddeven\">\n";
+	$url='https://partners.dolibarr.org';
+	print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
+	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+	print '</tr>';
+
+	print "</table>\n";
+
+	dol_fiche_end();
 }
 
 

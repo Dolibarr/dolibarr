@@ -467,6 +467,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

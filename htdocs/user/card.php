@@ -369,7 +369,7 @@ if (empty($reshook)) {
 
 				$object->default_range = GETPOST('default_range');
 				$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-				
+
 				if (! empty($conf->multicompany->enabled))
 				{
 					if (! empty($_POST["superadmin"]))
@@ -718,6 +718,7 @@ if ($action == 'create' || $action == 'adduserldap')
         if (is_array($liste) && count($liste))
         {
         	print $form->selectarray('users', $liste, '', 1);
+        	print ajax_combobox('users');
         }
        	print '</td><td align="center">';
        	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
@@ -1013,21 +1014,6 @@ if ($action == 'create' || $action == 'adduserldap')
     }
     print '</td></tr>';
 
-    // Multicompany
-    if (! empty($conf->multicompany->enabled) && is_object($mc))
-    {
-    	if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-        {
-            print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-            print "<td>".$mc->select_entities($conf->entity);
-            print "</td></tr>\n";
-        }
-        else
-        {
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-        }
-    }
-
     // Accountancy code
     if ($conf->accounting->enabled)
     {
@@ -1111,7 +1097,25 @@ if ($action == 'create' || $action == 'adduserldap')
 			null, '90%' );
 		print "</td></tr>";
 	}
-	
+
+	// Multicompany
+	// This is now done with hook formObjectOptions
+	/*
+	 if (! empty($conf->multicompany->enabled) && is_object($mc))
+	 {
+	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+	 {
+	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+	 print "<td>".$mc->select_entities($conf->entity);
+	 print "</td></tr>\n";
+	 }
+	 else
+	 {
+	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+	 }
+	 }
+	 */
+
 	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 	{
 		print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
@@ -1125,7 +1129,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 		print '</td></tr>';
 	}
-	
+
     // Other attributes
     $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1143,7 +1147,7 @@ if ($action == 'create' || $action == 'adduserldap')
     $doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,'90%');
     $doleditor->Create();
     print "</td></tr>\n";
-			
+
     // Signature
     print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
     print '<td>';
@@ -1527,7 +1531,25 @@ else
 				print $object->default_range;
 				print '</td></tr>';
 			}
-	
+
+		    // Multicompany
+		    // This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
+		    /*
+		     if (! empty($conf->multicompany->enabled) && is_object($mc))
+		     {
+		     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		     {
+		     print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
+		     if (empty($object->entity)) {
+		     print $langs->trans("AllEntities");
+		     } else {
+		     $mc->getInfo($object->entity);
+		     print $mc->label;
+		     }
+		     print "</td></tr>\n";
+		     }
+		     }*/
+
 		    // Other attributes
     		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
@@ -2428,14 +2450,33 @@ else
 				print '<td>';
 				print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
 				print '</td></tr>';
-				
+
 				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
 				print '<td>';
 				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
 				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 				print '</td></tr>';
 			}
-			
+
+            // Multicompany
+            // This is now done with hook formObjectOptions
+            /*
+            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+            if (! empty($conf->multicompany->enabled) && is_object($mc))
+            {
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	{
+            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
+            }
+            */
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

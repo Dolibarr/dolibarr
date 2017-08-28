@@ -3876,7 +3876,7 @@ abstract class CommonObject
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
 	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
-	 * @param 	Translate 	$outputlangs 	Language to use
+	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
 	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
@@ -3885,7 +3885,7 @@ abstract class CommonObject
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams=null)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$srctemplatepath='';
 
@@ -3902,7 +3902,6 @@ abstract class CommonObject
 			$modele=$tmp[0];
 			$srctemplatepath=$tmp[1];
 		}
-
 
 		// Search template files
 		$file=''; $classname=''; $filefound=0;
@@ -3995,7 +3994,10 @@ abstract class CommonObject
 			    $arrayofrecords = array();   // The write_file of templates of adherent class need this
 			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			}
-			else $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			else
+			{
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			}
 
 			if ($resultwritefile > 0)
 			{
@@ -4004,6 +4006,58 @@ abstract class CommonObject
 				// We delete old preview
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_delete_preview($this);
+
+				// Index file in database
+				if (! empty($obj->result['fullpath']))
+				{
+					$destfull = $obj->result['fullpath'];
+					$upload_dir = dirname($destfull);
+					$destfile = basename($destfull);
+					$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
+
+					if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+					{
+						$filename = basename($destfile);
+						$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+						$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+						$ecmfile=new EcmFiles($this->db);
+						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
+						if ($result > 0)
+						{
+							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->fullpath_orig = '';
+							$ecmfile->gen_or_uploaded = 'generated';
+							$ecmfile->description = '';    // indexed content
+							$ecmfile->keyword = '';        // keyword content
+							$result = $ecmfile->update($user);
+							if ($result < 0)
+							{
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+						else
+						{
+							$ecmfile->filepath = $rel_dir;
+							$ecmfile->filename = $filename;
+							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->fullpath_orig = '';
+							$ecmfile->gen_or_uploaded = 'generated';
+							$ecmfile->description = '';    // indexed content
+							$ecmfile->keyword = '';        // keyword content
+							$result = $ecmfile->create($user);
+							if ($result < 0)
+							{
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
+						}
+					}
+				}
+				else
+				{
+					dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+				}
 
 				// Success in building document. We build meta file.
 				dol_meta_create($this);
@@ -4153,7 +4207,7 @@ abstract class CommonObject
 
         if (! is_array($optionsArray))
         {
-            // $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
+            // If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
             // TODO Use of existing extrafield is not yet ready (must mutualize code that use extrafields in form first)
             // global $extrafields;
             //if (! is_object($extrafields))
@@ -4174,7 +4228,7 @@ abstract class CommonObject
         if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
 
         // Request to get complementary values
-        if (count($optionsArray) > 0)
+        if (is_array($optionsArray) && count($optionsArray) > 0)
         {
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
@@ -4298,6 +4352,12 @@ abstract class CommonObject
                				$this->array_options[$key] = null;
                			}
              			break;
+             		/*case 'select':	// Not required, we chosed value='0' for undefined values
+             			if ($value=='-1')
+             			{
+             				$this->array_options[$key] = null;
+             			}
+             			break;*/
             		case 'price':
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
@@ -4431,6 +4491,12 @@ abstract class CommonObject
                         $this->array_options["options_".$key] = null;
                     }
                     break;
+             	/*case 'select':	// Not required, we chosed value='0' for undefined values
+             		if ($value=='-1')
+             		{
+             			$this->array_options[$key] = null;
+             		}
+             		break;*/
                 case 'price':
                     $this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
                     break;
@@ -4499,6 +4565,9 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
+				// Load language if required
+				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+
 				if (is_array($params) && count($params)>0) {
 					if (array_key_exists('colspan',$params)) {
 						$colspan=$params['colspan'];
@@ -4881,7 +4950,7 @@ abstract class CommonObject
 				else
 				{
 					$queryarray[$field] = (int) price2num($this->{$field});
-					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be rest to null later if property 'nullifempty' is on for this field.
+					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
 				}
 			}
 			else if($this->isFloat($info))
@@ -4895,7 +4964,7 @@ abstract class CommonObject
 			}
 
 			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
-			if (! empty($info['nullifempty']) && empty($queryarray[$field])) $queryarray[$field] = null;
+			if (! empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) $queryarray[$field] = null;
 		}
 
 		return $queryarray;
@@ -4985,7 +5054,7 @@ abstract class CommonObject
 	    $fieldvalues = $this->set_save_query();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
-		unset($fieldvalues['rowid']);	// We suppose the field rowid is reserved field for autoincrement field.
+		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
 	    $keys=array();
 	    $values = array();
@@ -5002,7 +5071,7 @@ abstract class CommonObject
     		$sql.= ' ('.implode( ", ", $keys ).')';
     		$sql.= ' VALUES ('.implode( ", ", $values ).')';
 
-			$res = $this->db->query( $sql );
+			$res = $this->db->query($sql);
     	    if ($res===false) {
     	        $error++;
     	        $this->errors[] = $this->db->lasterror();

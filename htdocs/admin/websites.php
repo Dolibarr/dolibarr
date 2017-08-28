@@ -133,7 +133,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             $fieldnamekey=$listfield[$f];
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
-		if ($value == 'ref' && ! preg_match('/^[a-z0-9]+$/i', $_POST[$value]))
+		if ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
         {
 			$ok=0;
             $fieldnamekey=$listfield[$f];
@@ -247,6 +247,8 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
 
+        $db->begin();
+
         $website=new Website($db);
         $rowid=GETPOST('rowid','int');
         $website->fetch($rowid);
@@ -281,14 +283,41 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             $newname = dol_sanitizeFileName(GETPOST('ref','aZ09'));
             if ($newname != $website->ref)
             {
-                $srcfile=DOL_DATA_ROOT.'/websites/'.$website->ref;
-                $destfile=DOL_DATA_ROOT.'/websites/'.$newname;
-                @rename($srcfile, $destfile);
+	            $srcfile=DOL_DATA_ROOT.'/websites/'.$website->ref;
+	            $destfile=DOL_DATA_ROOT.'/websites/'.$newname;
+
+            	if (dol_is_dir($destfile))
+            	{
+            		$error++;
+            		setEventMessages($langs->trans('ErrorDirAlreadyExists', $destfile), null, 'errors');
+            	}
+            	else
+            	{
+	                @rename($srcfile, $destfile);
+
+		            // We must now rename $website->ref into $newname inside files
+		            $arrayreplacement = array($website->ref.'/htmlheader.html' => $newname.'/htmlheader.html');
+		            $listofilestochange = dol_dir_list($destfile, 'files', 0, '\.php$');
+					foreach ($listofilestochange as $key => $value)
+		            {
+		            	dolReplaceInFile($value['fullname'], $arrayreplacement);
+		            }
+            	}
             }
         }
         else
         {
-            setEventMessages($db->error(), null, 'errors');
+        	$error++;
+            setEventMessages($db->lasterror(), null, 'errors');
+        }
+
+        if (! $error)
+        {
+        	$db->commit();
+        }
+        else
+        {
+        	$db->rollback();
         }
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition

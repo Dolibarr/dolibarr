@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
- * 
+ *
  * $elementype must be defined.
  */
 
@@ -158,12 +158,11 @@ if ($action == 'add')
     					$params['options'][$key] = $value;
     				}
     			}
-
                 $result=$extrafields->addExtraField(
                 	GETPOST('attrname', 'alpha'),
                 	GETPOST('label', 'alpha'),
                 	$type,
-                	GETPOST('pos', 'alpha'),
+                	GETPOST('pos', 'int'),
                 	$extrasize,
                 	$elementtype,
                 	(GETPOST('unique', 'alpha')?1:0),
@@ -175,8 +174,8 @@ if ($action == 'add')
                 	(GETPOST('list', 'alpha')?1:0),
 					(GETPOST('ishidden', 'alpha')?1:0),
                     GETPOST('computed_value','alpha'),
-                	(GETPOST('entitycurrentorall', 'alpha')?0:'')
-                		
+                	(GETPOST('entitycurrentorall', 'alpha')?0:''),
+                	GETPOST('langfile', 'alpha')
                 );
     			if ($result > 0)
     			{
@@ -338,7 +337,8 @@ if ($action == 'update')
 					(GETPOST('ishidden', 'alpha')?1:0),
     			    GETPOST('default_value','alpha'),
     				GETPOST('computed_value','alpha'),
-    				(GETPOST('entitycurrentorall', 'alpha')?0:'')
+    				(GETPOST('entitycurrentorall', 'alpha')?0:''),
+    				GETPOST('langfile')
     			);
     			if ($result > 0)
     			{

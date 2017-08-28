@@ -143,7 +143,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 4096);
+            $buf = fgets($fp, 32768);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
             if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
@@ -189,7 +189,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             // Add line buf to buffer if not a comment
             if (! preg_match('/^--/',$buf))
             {
-                $buf=preg_replace('/--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
+                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
@@ -532,6 +532,43 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 
+
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function modules_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=common";
+	$head[$h][1] = $langs->trans("AvailableModules");
+	$head[$h][2] = 'common';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
+	$head[$h][1] = $langs->trans("ModulesMarketPlaces");
+	$head[$h][2] = 'marketplace';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+	$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
+	$head[$h][2] = 'deploy';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=develop";
+	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
+	$head[$h][2] = 'develop';
+	$h++;
+
+	return $head;
+}
+
+
 /**
  * Prepare array with list of tabs
  *
@@ -554,9 +591,16 @@ function security_prepare_head()
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
-    $head[$h][1] = $langs->trans("Files");
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Upload").')';
     $head[$h][2] = 'file';
     $h++;
+
+    /*
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file_download.php";
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Download").')';
+    $head[$h][2] = 'filedownload';
+    $h++;
+	*/
 
     $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
     $head[$h][1] = $langs->trans("ExternalAccess");
