@@ -49,7 +49,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "rouget";
-		$this->description = $langs->trans("DocumentModelSimple");
+		$this->description = $langs->trans("DocumentModelStandardPDF");
 
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();

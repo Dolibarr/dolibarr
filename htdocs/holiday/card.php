@@ -60,7 +60,7 @@ if ($action == 'create')
 	$object = new Holiday($db);
 
     // If no right to create a request
-    $fuserid = GETPOST('fuserid');
+    $fuserid = GETPOST('fuserid','int');
     if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
@@ -118,7 +118,7 @@ if ($action == 'create')
 	    }
 
 	    // Check if there is already holiday for this period
-	    $verifCP = $object->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
+	    $verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
 	        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
@@ -144,11 +144,9 @@ if ($action == 'create')
 
 	    $result = 0;
 
-	    $result = 0;
-
 	    if (! $error)
 	    {
-    	    $object->fk_user = $userid;
+    	    $object->fk_user = $fuserid;
     	    $object->description = $description;
     	    $object->date_debut = $date_debut;
     	    $object->date_fin = $date_fin;
@@ -157,10 +155,15 @@ if ($action == 'create')
     		$object->fk_type = $type;
 
     		$result = $object->create($user);
+    		if ($result <= 0)
+    		{
+    			setEventMessages($object->error, $object->errors, 'errors');
+    			$error++;
+    		}
 	    }
 
 	    // If no SQL error we redirect to the request card
-	    if (! $error && $result > 0)
+	    if (! $error)
 	    {
 			$db->commit();
 
@@ -247,7 +250,7 @@ if ($action == 'update')
 			$object->halfday = $halfday;
 
 			// Update
-			$verif = $object->update($user->id);
+			$verif = $object->update($user);
             if ($verif > 0)
             {
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -284,7 +287,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
 		if ($canedit)
 		{
-			$result=$object->delete($object->id);
+			$result=$object->delete($user);
 		}
 		else
 		{
@@ -317,7 +320,7 @@ if ($action == 'confirm_send')
     {
         $object->statut = 2;
 
-        $verif = $object->update($user->id);
+        $verif = $object->update($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($verif > 0)
@@ -418,7 +421,7 @@ if ($action == 'confirm_valid')
         $object->fk_user_valid = $user->id;
         $object->statut = 3;
 
-        $verif = $object->update($user->id);
+        $verif = $object->update($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($verif > 0)
@@ -505,7 +508,7 @@ if ($action == 'confirm_refuse')
             $object->statut = 5;
             $object->detail_refuse = $_POST['detail_refuse'];
 
-            $verif = $object->update($user->id);
+            $verif = $object->update($user);
 
             // Si pas d'erreur SQL on redirige vers la fiche de la demande
             if ($verif > 0)
@@ -614,7 +617,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         $object->fk_user_cancel = $user->id;
         $object->statut = 4;
 
-        $result = $object->update($user->id);
+        $result = $object->update($user);
 
         if ($result >= 0 && $oldstatus == 3)	// holiday was already validated, status 3, so we must increase back sold
         {
@@ -834,7 +837,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid')?GETPOST('fuserid'):$user->id,'fuserid',0,'',0);
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id,'fuserid',0,'',0);
         print '</td>';
         print '</tr>';
 
@@ -857,7 +860,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // Date start
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("DateDebCP").' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+        print '<td class="fieldrequired">';
+        print $langs->trans("DateDebCP");
+        print ' ('.$langs->trans("FirstDayOfHoliday").')';
+        print '</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
@@ -873,7 +879,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // Date end
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("DateFinCP").' ('.$langs->trans("LastDayOfHoliday").')</td>';
+        print '<td class="fieldrequired">';
+        print $langs->trans("DateFinCP");
+        print ' ('.$langs->trans("LastDayOfHoliday").')';
+        print '</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {
@@ -1033,7 +1042,7 @@ else
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
                 }
 
-                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
+                dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
                 $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
 

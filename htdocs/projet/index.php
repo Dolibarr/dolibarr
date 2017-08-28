@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->load("projects");
 $langs->load("companies");
 
-$mine = GETPOST('mode')=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user','int');
+$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
@@ -59,10 +61,25 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$min
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$text=$langs->trans("ProjectsArea");
-if ($mine) $text=$langs->trans("MyProjectsArea");
+$title=$langs->trans("ProjectsArea");
+//if ($mine) $title=$langs->trans("MyProjectsArea");
 
-print load_fiche_titre($text,'','title_project.png');
+
+// Title for combo list see all projects
+$titleall=$langs->trans("AllAllowedProjects");
+if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
+else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+
+
+$morehtml='';
+$morehtml.='<form name="projectform">';
+$morehtml.='<SELECT name="search_project_user">';
+$morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
+$morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml.='</SELECT>';
+$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
 
 // Show description of content
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
@@ -98,30 +115,34 @@ else dol_print_error($db);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// Search project
-if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
-{
-	$listofsearchfields['search_project']=array('text'=>'Project');
-}
 
-if (count($listofsearchfields))
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
+    // Search project
+    if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+    {
+    	$listofsearchfields['search_project']=array('text'=>'Project');
+    }
+
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
 
@@ -140,8 +161,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
+print_liste_field_titre("NbOfProjects","","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
@@ -165,8 +186,8 @@ if ( $resql )
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{
@@ -197,9 +218,9 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 {
     // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
     // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
-    
+
     print '<br>';
-    
+
     print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 

@@ -357,8 +357,8 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	if (count($name)) {
 		foreach($name as $key=>$value) {
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 
 			// Product
 			$fullname=$name[$key];

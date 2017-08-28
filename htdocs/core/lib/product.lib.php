@@ -3,7 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ function product_prepare_head($object)
     	$head[$h][2] = 'price';
     	$h++;
 	}
-	
+
 	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
     	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
@@ -94,6 +94,26 @@ function product_prepare_head($object)
 	$head[$h][2] = 'referers';
 	$h++;
 
+	if (!empty($conf->variants->enabled) && $object->isProduct()) {
+
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+
+		$prodcomb = new ProductCombination($db);
+
+		if ($prodcomb->fetchByFkProductChild($object->id) == -1)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
+			$head[$h][1] = $langs->trans('ProductCombinations');
+			$head[$h][2] = 'combinations';
+			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
+            if ($nbVariant > 0) $head[$h][1].= ' <span class="badge">'.$nbVariant.'</span>';
+		}
+
+		$h++;
+	}
+
     if ($object->isProduct() || ($object->isService() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
         if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
@@ -129,11 +149,11 @@ function product_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
         if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
         if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
-        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     }
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
@@ -164,7 +184,7 @@ function productlot_prepare_head($object)
     global $db, $langs, $conf, $user;
     $langs->load("products");
     $langs->load("productbatch");
-    
+
     $h = 0;
     $head = array();
 
@@ -188,7 +208,7 @@ function productlot_prepare_head($object)
     $head[$h][2] = 'info';
     $h++;
     */
-    
+
     return $head;
 }
 
@@ -281,9 +301,9 @@ function show_stats_for_company($product,$socid)
 	global $conf,$langs,$user,$db;
 
 	$nblines = 0;
-	
-	print '<tr>';
-	print '<td align="left" width="25%" valign="top">'.$langs->trans("Referers").'</td>';
+
+	print '<tr class="liste_titre">';
+	print '<td align="left" class="tdtop" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
@@ -421,7 +441,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
 		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
 		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
-        $measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
+		$measuring_units[98] = $langs->transnoentitiesnoconv("WeightUnitounce");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
 	}
 	else if ($measuring_style == 'size')
 	{

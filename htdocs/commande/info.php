@@ -61,11 +61,11 @@ $object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = commande_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"), 0, 'order');
+dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"), -1, 'order');
 
 // Order card
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref='<div class="refidno">';
 // Ref customer

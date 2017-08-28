@@ -320,7 +320,6 @@ abstract class CommonDocGenerator
     }
 
 
-
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -375,13 +374,21 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
-		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
+
 		$array_key.'_total_ht'=>price2num($object->total_ht),
 		$array_key.'_total_vat'=>(! empty($object->total_vat)?price2num($object->total_vat):price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
-		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
+
+		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
+		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
+	    $array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
+	    $array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
+		$array_key.'_multicurrency_total_ttc' => price2num($object->multicurrency_total_ttc),
+		$array_key.'_multicurrency_total_ht_locale' => price($object->multicurrency_total_ht, 0, $outputlangs),
+		$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
+		$array_key.'_multicurrency_total_ttc_locale' => price($object->multicurrency_total_ttc, 0, $outputlangs),
 
 		$array_key.'_note_private'=>$object->note,
 		$array_key.'_note_public'=>$object->note_public,
@@ -403,18 +410,29 @@ abstract class CommonDocGenerator
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
 		);
 
+		if (method_exists($object, 'getTotalDiscount')) {
+			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
+			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
+		} else {
+			$resarray[$array_key.'_total_discount_ht_locale'] = '';
+			$resarray[$array_key.'_total_discount_ht'] = '';
+		}
+
 		// Add vat by rates
-		foreach ($object->lines as $line)
+		if (is_array($object->lines) && count($object->lines)>0)
 		{
-		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
-			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
-			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
-			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
-		    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
-			$vatformated=vatrate($line->tva_tx);
-			if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
-			$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
-			$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+			foreach ($object->lines as $line)
+			{
+			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
+				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
+				$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+				$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
+			    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
+				$vatformated=vatrate($line->tva_tx);
+				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
+				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
+				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+			}
 		}
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
@@ -466,6 +484,16 @@ abstract class CommonDocGenerator
 		    'line_date_end'=>dol_print_date($line->date_end, 'day', 'tzuser'),
 		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzuser', $outputlangs),
 		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser'),
+
+		    'line_multicurrency_code' => price2num($line->multicurrency_code),
+		    'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
+		    'line_multicurrency_total_ht' => price2num($line->multicurrency_total_ht),
+		    'line_multicurrency_total_tva' => price2num($line->multicurrency_total_tva),
+		    'line_multicurrency_total_ttc' => price2num($line->multicurrency_total_ttc),
+		    'line_multicurrency_subprice_locale' => price($line->multicurrency_subprice, 0, $outputlangs),
+		    'line_multicurrency_total_ht_locale' => price($line->multicurrency_total_ht, 0, $outputlangs),
+		    'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
+		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
 
 		// Retrieve extrafields
@@ -573,6 +601,33 @@ abstract class CommonDocGenerator
 	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
     	);
     }
+
+
+    /**
+     * Define array with couple subtitution key => subtitution value
+     *
+     * @param   Object		$object    		Dolibarr Object
+     * @param   Translate	$outputlangs    Language object for output
+     * @param   boolean		$recursive    	Want to fetch child array or child object
+     * @return	array						Array of substitution key->code
+     */
+    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+        $array_other = array();
+        if(!empty($object)) {
+            foreach($object as $key => $value) {
+                if(!empty($value)) {
+                    if(!is_array($value) && !is_object($value)) {
+                        $array_other['object_'.$key] = $value;
+                    }
+                    if(is_array($value) && $recursive){
+                        $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
+                    }
+                }
+            }
+        }
+        return $array_other;
+    }
+
 
     /**
      *	Fill array with couple extrafield key => extrafield value

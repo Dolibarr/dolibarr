@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Intervencija %s je obrisana
 InterventionsArea=Intervencije
 DraftFichinter=Draft intervencije
 LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Kontakt klijenta koji prat intervenciju
 # Modele numérotation

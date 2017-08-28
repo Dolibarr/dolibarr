@@ -36,7 +36,7 @@
  * $type, $text, $description, $line
  */
 
-global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins, $outputalsopricetotalwithtax;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -46,7 +46,7 @@ if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
-if (empty($usemargins)) $usemargins=0;
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -54,7 +54,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td class="linecoldescription"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
+	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php 
 	if (($line->info_bits & 2) == 2) {
 	?>
@@ -63,6 +63,7 @@ if (empty($usemargins)) $usemargins=0;
 		$txt='';
 		print img_object($langs->trans("ShowReduc"),'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
 		//else $txt=$langs->trans("Discount");
 		print $txt;
 		?>
@@ -84,6 +85,12 @@ if (empty($usemargins)) $usemargins=0;
 				// Add date of deposit
 				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) 
 				    echo ' ('.dol_print_date($discount->datec).')';
+			}
+			elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 			}
 			else
 			{

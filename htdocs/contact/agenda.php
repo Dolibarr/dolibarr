@@ -89,18 +89,18 @@ $search_agenda_label=GETPOST('search_agenda_label');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='a.datep, a.id';
 if (! $sortorder) $sortorder='DESC';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard','globalcard'));
 
 
@@ -122,7 +122,7 @@ if (empty($reshook))
     }
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -208,10 +208,10 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        dol_fiche_head($head, 'agenda', $title, 0, 'contact');
+        dol_fiche_head($head, 'agenda', $title, -1, 'contact');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
@@ -223,42 +223,42 @@ else
             else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
         }
         $morehtmlref.='</div>';
-        
+
         dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-        
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
- 
+
         $object->info($id);
         print dol_print_object_info($object, 1);
-        
+
         print '</div>';
-                
+
         print dol_fiche_end();
 
-            
+
     	// Actions buttons
-    	
+
         $objcon=$object;
         $object->fetch_thirdparty();
         $objthirdparty=$object->thirdparty;
-    	
+
         $out='';
         $permok=$user->rights->agenda->myactions->create;
         if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
         {
             //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-            if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+            if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
             $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
         	//$out.=$langs->trans("AddAnAction").' ';
         	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
         	//$out.="</a>";
     	}
-    
-    	
+
+
     	print '<div class="tabsAction">';
-    
+
         if (! empty($conf->agenda->enabled))
         {
         	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
@@ -270,22 +270,22 @@ else
             	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
         	}
         }
-    
+
         print '</div>';
-    
+
         if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
        	{
             $param='&id='.$id;
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
             if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-           	    
-        
+
+
             print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
-    
+
             // List of all actions
     		$filters=array();
         	$filters['search_agenda_label']=$search_agenda_label;
-        	
+
             show_actions_done($conf,$langs,$db,$objthirdparty,$object,0,$actioncode, '', $filters, $sortfield, $sortorder);
         }
     }

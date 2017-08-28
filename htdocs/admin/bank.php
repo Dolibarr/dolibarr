@@ -43,7 +43,7 @@ if (!$user->admin)
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type = 'bankaccount';
 
 
@@ -166,7 +166,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), 0, 'account');
+dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
 $var=true;
 
@@ -199,7 +199,7 @@ while ($i < $nbofbank)
 {
 	$var = !$var;
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$bankorder[$i][0]."</td><td>\n";
 	print $bankorder[$i][1];
 	print '</td>';
@@ -273,7 +273,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var = true;
 foreach ($dirmodels as $reldir) 
 {
     foreach (array('', '/doc') as $valdir) {
@@ -305,8 +304,7 @@ foreach ($dirmodels as $reldir)
                                 $modulequalified = 0;
                             
                             if ($modulequalified) {
-                                $var = ! $var;
-                                print '<tr ' . $bc[$var] . '><td width="100">';
+                                print '<tr class="oddeven"><td width="100">';
                                 print(empty($module->name) ? $name : $module->name);
                                 print "</td><td>\n";
                                 if (method_exists($module, 'info'))
@@ -324,7 +322,7 @@ foreach ($dirmodels as $reldir)
                                     print '</td>';
                                 } else {
                                     print '<td align="center">' . "\n";
-                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=set&value=' . $name . '&amp;scandir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=set&value=' . $name . '&amp;scan_dir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
                                     print "</td>";
                                 }
                                 
@@ -333,7 +331,7 @@ foreach ($dirmodels as $reldir)
                                 if ($conf->global->BANKADDON_PDF == $name) {
                                     print img_picto($langs->trans("Default"), 'on');
                                 } else {
-                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setdoc&value=' . $name . '&amp;scandir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+                                    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setdoc&value=' . $name . '&amp;scan_dir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
                                 }
                                 print '</td>';
                                 

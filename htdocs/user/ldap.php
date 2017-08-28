@@ -42,10 +42,10 @@ if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
@@ -70,12 +70,12 @@ if (empty($reshook)) {
 
         $result = $ldap->update($dn, $info, $user, $olddn);
 
-        if ($result >= 0) 
+        if ($result >= 0)
         {
             setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
             $db->commit();
-        } 
-        else 
+        }
+        else
         {
             setEventMessages($ldap->error, $ldap->errors, 'errors');
             $db->rollback();
@@ -104,6 +104,7 @@ if ($user->rights->user->user->lire || $user->admin) {
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
+print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
@@ -128,7 +129,7 @@ if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
     {
         $userSID = $ldap->getObjectSid($object->login);
     }
-    print '<tr><td width="25%" valign="top">'.$langs->trans("SID").'</td>';
+    print '<tr><td class="valigntop">'.$langs->trans("SID").'</td>';
     print '<td>'.$userSID.'</td>';
     print "</tr>\n";
 }
@@ -149,6 +150,8 @@ print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'
 print '</table>';
 
 print '</div>';
+
+dol_fiche_end();
 
 /*
  * Barre d'actions

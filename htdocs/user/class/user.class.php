@@ -104,15 +104,18 @@ class User extends CommonObject
 	public $lang;
 
 	public $rights;                        // Array of permissions user->rights->permx
-	public $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
-	private $_tab_loaded=array();		// Array of cache of already loaded permissions
-	public $nb_rights;			// Number of rights granted to the user
+	public $all_permissions_are_loaded;	   // All permission are loaded
+	public $nb_rights;			           // Number of rights granted to the user
+	private $_tab_loaded=array();		   // Cache array of already loaded permissions
 
 	public $conf;           		// To store personal config
-	var $oldcopy;                	// To contains a clone of this when we need to save old properties of object
+	public $default_values;         // To store default values for user
+	public $lastsearch_values_tmp;  // To store current search criterias for user
+	public $lastsearch_values;      // To store last saved search criterias for user
 
 	public $users;					// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
+	private $cache_childids;
 
 	public $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
 
@@ -127,7 +130,6 @@ class User extends CommonObject
 
 	public $dateemployment;			// Define date of employment by company
 
-	private $cache_childids;
 
 
 	/**
@@ -164,11 +166,11 @@ class User extends CommonObject
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search
 	 *	@param  string	$sid				If defined, sid to used for search
-	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx)
+	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
+	function fetch($id='', $login='', $sid='', $loadpersonalconf=0, $entity=-1)
 	{
 		global $conf, $user;
 
@@ -205,7 +207,7 @@ class User extends CommonObject
 
 		if ($entity < 0)
 		{
-    		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
+    		if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (! empty($user->entity)))
     		{
     			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
     		}
@@ -216,10 +218,10 @@ class User extends CommonObject
 		}
 		else  // The fetch was forced on an entity
 		{
-			if (!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode))
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			else
-				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
+				$sql.= " WHERE u.entity IN (0, ".(($entity!='' && $entity >= 0)?$entity:$conf->entity).")";   // search in entity provided in parameter
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
@@ -234,8 +236,8 @@ class User extends CommonObject
 		{
 			$sql.= " AND u.rowid = ".$id;
 		}
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
+		
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -309,8 +311,8 @@ class User extends CommonObject
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
 
-				// Protection when module multicompany was set, admin was set to first entity and the module disabled,
-				// then this admin user must be admin for all entities.
+				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
+				// in such case, this admin user must be admin for ALL entities.
 				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0;
 
 				// Retreive all extrafield for thirdparty
@@ -340,6 +342,7 @@ class User extends CommonObject
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf)
 		{
+		    // Load user->conf for user
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
@@ -360,8 +363,31 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -2;
+			}
+
+			// Load user->default_values for user. TODO Save this in memcached ?
+			$sql = "SELECT rowid, entity, type, page, param, value";
+			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+			$sql.= " WHERE entity IN (".$this->entity.",".$conf->entity.")";
+			$sql.= " AND user_id IN (0, ".$this->id.")";
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+			    while ($obj = $this->db->fetch_object($resql))
+			    {
+			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
+			        {
+			            $this->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
+			        }
+			    }
+			    $this->db->free($resql);
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				return -3;
 			}
 		}
 
@@ -444,9 +470,9 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id." AND fk_id=".$nid." AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES (".$this->id.", ".$nid.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (entity, fk_user, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -556,6 +582,7 @@ class User extends CommonObject
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
 					$sql.= " WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql.= " AND entity = ".$entity;
 					if (! $this->db->query($sql)) $error++;
 
 					$i++;
@@ -635,12 +662,18 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		if (! empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY))
+		{
+			$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)?"1,":"").$conf->entity.")";
+		}
+		else
+		{
+			$sql.= " AND ur.entity = ".$conf->entity;
+		}
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -682,9 +715,17 @@ class User extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id";
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
-			$sql.= " AND gu.entity IN (0,".$conf->entity.")";
-		} else {
+		if (! empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY))
+		{
+			if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+			} else {
+				$sql.= " AND r.entity = ".$conf->entity;
+			}
+		}
+		else
+		{
+			$sql.= " AND gr.entity = ".$conf->entity;
 			$sql.= " AND r.entity = ".$conf->entity;
 		}
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
@@ -692,7 +733,6 @@ class User extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1262,7 +1302,7 @@ class User extends CommonObject
 	 */
 	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		$nbrowsaffected=0;
 		$error=0;
@@ -1437,22 +1477,14 @@ class User extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('userdao'));
-			$parameters=array('socid'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -1872,7 +1904,7 @@ class User extends CommonObject
 			    $this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
 
 			    // Call trigger
-                $result=$this->call_trigger('USER_SETINGROUP',$user);
+                $result=$this->call_trigger('USER_MODIFY',$user);
 	            if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -1927,7 +1959,7 @@ class User extends CommonObject
 			    $this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
 
 			    // Call trigger
-                $result=$this->call_trigger('USER_REMOVEFROMGROUP',$user);
+                $result=$this->call_trigger('USER_MODIFY',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -1979,7 +2011,7 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo)
+	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	string	$option				On what the link point to
      *  @param  integer $infologin      	Add complete info tooltip
      *  @param	integer	$notooltip			1=Disable tooltip on picto and name
@@ -1992,77 +2024,77 @@ class User extends CommonObject
 	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
 	{
 		global $langs, $conf, $db, $hookmanager;
-        	global $dolibarr_main_authentication, $dolibarr_main_demo;
-        	global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-	        $result = '';
-	        $companylink = '';
-	        $link = '';
+        $result=''; $label='';
+        $link=''; $linkstart=''; $linkend='';
 
-	        $label = '<u>' . $langs->trans("User") . '</u>';
-	        $label.= '<div width="100%">';
-	        $label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
-	        if (! empty($this->login))
-	        $label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
-	        $label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
-	        if (! empty($this->admin))
-	        $label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-	        if (! empty($this->societe_id) )	// Add thirdparty for external users
-	        {
-	            $thirdpartystatic = new Societe($db);
-	            $thirdpartystatic->fetch($this->societe_id);
-	            if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
-	            $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
-	        }
-	        $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
-	        $label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
-	        $label.='</div>';
-	        if (! empty($this->photo))
-	        {
-	        	$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
-	        	$label.= '</div><div style="clear: both;"></div>';
-	        }
+		if (! empty($this->photo))
+		{
+		    $label.= '<div class="photointooltip">';
+		    $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
+		    $label.= '</div><div style="clear: both;"></div>';
+		}
 
-	        // Info Login
-	        if ($infologin)
-	        {
-	            $label.= '<br>';
-	            $label.= '<br><u>'.$langs->trans("Connection").'</u>';
-	            $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
-	            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
-	            $label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
-	            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour",'tzuser');
-	            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour",'tzuser');
-	            $label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
-	            $label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
-	            $s=picto_from_langcode($langs->getDefaultLang());
-	            $label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
-	            $label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
-	            $label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
-	            $label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
-	            if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
-	            if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
-	        }
+		$label.= '<div class="centpercent">';
+		$label.= '<u>' . $langs->trans("User") . '</u><br>';
+		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
+		if (! empty($this->login))
+			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
+		if (! empty($this->admin))
+			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
+		if (! empty($this->societe_id) )	// Add thirdparty for external users
+		{
+			$thirdpartystatic = new Societe($db);
+			$thirdpartystatic->fetch($this->societe_id);
+			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+		}
+		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+		$label.='</div>';
+
+		// Info Login
+		if ($infologin)
+		{
+			$label.= '<br>';
+			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
+			$label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
+			$label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+			$label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour",'tzuser');
+			$label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour",'tzuser');
+			$label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+			$label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+			$s=picto_from_langcode($langs->getDefaultLang());
+			$label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
+			$label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+			$label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
+			$label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+			if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
+			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
+		}
 
 
-	        if ($option == 'leave') $link.= '<a href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$this->id.'"';
-	        else $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+		if ($option == 'leave') $link.= '<a href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$this->id.'"';
+		else $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
 
-	        $linkclose="";
-	        if (empty($notooltip))
-	        {
-	            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-	            {
-	                $langs->load("users");
-	                $label=$langs->trans("ShowUser");
-	                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-	            }
-	            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-	            $linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
-	        }
+		$linkclose="";
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$langs->load("users");
+				$label=$langs->trans("ShowUser");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
 		if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -2082,11 +2114,13 @@ class User extends CommonObject
 	    {
 	      	$paddafterimage='';
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
-        		if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
-        		else $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
-            		$result.=$picto;
+        	// Only picto
+			if ($withpictoimg > 0) $picto='<!-- picto user --><div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
+        	// Picto must be a photo
+			else $picto='<!-- picto photo user --><div class="inline-block nopadding '.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
+            $result.=$picto;
 		}
-		if (abs($withpictoimg) != 2)
+		if ($withpictoimg > -2 && $withpictoimg != 2)
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
@@ -2095,7 +2129,9 @@ class User extends CommonObject
 		}
 		$result.=$linkend;
 		//if ($withpictoimg == -1) $result.='</div>';
+
 		$result.=$companylink;
+
 		return $result;
 	}
 
@@ -2127,7 +2163,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Return label of status of user (active, inactive)
 	 *
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
@@ -2510,7 +2546,7 @@ class User extends CommonObject
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE fk_user <> 0";
-		$sql.= " AND entity IN (".getEntity('user',1).")";
+		$sql.= " AND entity IN (".getEntity('user').")";
 
 		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2554,13 +2590,13 @@ class User extends CommonObject
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) || (! empty($user->admin) && empty($user->entity))))
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
 		}
 		else
 		{
-			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		if ($filter) $sql.=" AND ".$filter;
 
@@ -2632,10 +2668,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 * 	Return list of all child users id in herarchy of current user (all sublevels).
+	 * 	Return list of all child users id in herarchy (all sublevels).
+	 *  Note: Calling this function also reset full list of users into $this->users.
 	 *
 	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
-	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
+	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
 	 *  @see get_children
 	 */
 	function getAllChildIds($addcurrentuser=0)
@@ -2744,7 +2781,7 @@ class User extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.statut > 0";
         //$sql.= " AND employee != 0";
-        $sql.= " AND u.entity IN (".getEntity('user', 1).")";
+        $sql.= " AND u.entity IN (".getEntity('user').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2763,6 +2800,40 @@ class User extends CommonObject
             return -1;
         }
     }
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 * 	@param	    string		$modele			Force model to use ('' to not force)
+	 * 	@param		Translate	$outputlangs	Object langs to use for output
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 * 	@return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("user");
+
+		// Positionne le modele sur le nom du modele a utiliser
+		if (! dol_strlen($modele))
+		{
+			if (! empty($conf->global->USER_ADDON_PDF))
+			{
+				$modele = $conf->global->USER_ADDON_PDF;
+			}
+			else
+			{
+				$modele = 'bluesky';
+			}
+		}
+
+		$modelpath = "core/modules/user/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 }
 

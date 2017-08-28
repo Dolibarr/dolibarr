@@ -8,7 +8,7 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 }
 
 // Add extra fields
-$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.')';
+$sql="SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.')';
 //print $sql;
 $resql=$this->db->query($sql);
 if ($resql)    // This can fail when class is used on old database (during migration for example)
@@ -42,10 +42,23 @@ if ($resql)    // This can fail when class is used on old database (during migra
 				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 				break;
 		}
-		if ($obj->type!='separate') {
-			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-			$this->export_entities_array[$r][$fieldname]=$keyforelement;
+		if ($obj->type!='separate')
+		{
+		    // If not a computed field
+		    if (empty($obj->fieldcomputed))
+		    {
+    			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+    			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+    			$this->export_entities_array[$r][$fieldname]=$keyforelement;
+		    }
+			// If this is a computed field
+			else
+			{
+			    $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+			    $this->export_TypeFields_array[$r][$fieldname]=$typeFilter.'Compute';
+			    $this->export_special_array[$r][$fieldname]=$obj->fieldcomputed;
+			    $this->export_entities_array[$r][$fieldname]=$keyforelement;
+			}
 		}
 	}
 }

@@ -61,7 +61,7 @@ class InfoBox
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
             $sql.= " WHERE b.box_id = d.rowid";
-            $sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+            $sql.= " AND b.entity IN (0,".$conf->entity.")";
             if ($zone >= 0) $sql.= " AND b.position = ".$zone;
             if (is_object($user)) $sql.= " AND b.fk_user IN (0,".$user->id.")";
             else $sql.= " AND b.fk_user = 0";
@@ -71,7 +71,7 @@ class InfoBox
 		{
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-           	$sql.= " WHERE d.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+           	$sql.= " WHERE d.entity IN (0,".$conf->entity.")";
         }
 
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
@@ -184,7 +184,7 @@ class InfoBox
      *  @param	string	$zone       	Name of area (0 for Homepage, ...)
      *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
      *  @param  int     $userid     	Id of user
-     *  @return int                   	<0 if KO, >= 0 if OK
+     *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
      */
     static function saveboxorder($db, $zone,$boxorder,$userid=0)
     {

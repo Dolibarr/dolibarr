@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,10 @@ $id = GETPOST('id', 'int');
 // List of statut
 static $tmpstatut2label = array (
 		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear' 
+		'1' => 'CloseFiscalYear'
 );
 $statut2label = array (
-		'' 
+		''
 );
 foreach ( $tmpstatut2label as $key => $val )
 	$statut2label[$key] = $langs->trans($val);
@@ -69,7 +69,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} 
+}
 
 else if ($action == 'add') {
 	if (! GETPOST('cancel', 'alpha')) {
@@ -113,7 +113,7 @@ else if ($action == 'add') {
 		header("Location: ./fiscalyear.php");
 		exit();
 	}
-} 
+}
 
 // Update record
 else if ($action == 'update') {
@@ -126,7 +126,7 @@ else if ($action == 'update') {
 		$object->statut = GETPOST('statut', 'int');
 
 		$result = $object->update($user);
-		
+
 		if ($result > 0) {
 			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 			exit();
@@ -145,13 +145,13 @@ else if ($action == 'update') {
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
 llxHeader("",$title,$helpurl);
 
-$form = new Form($db);
-
-if ($action == 'create') 
+if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
@@ -176,12 +176,14 @@ if ($action == 'create')
 	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 
+	/*
 	// Statut
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
 	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';
+	*/
 
 	print '</table>';
 
@@ -232,7 +234,8 @@ if ($action == 'create')
 
 			// Statut
 			print '<tr><td>' . $langs->trans("Statut") . '</td><td>';
-			print $form->selectarray('statut', $statut2label, $object->statut);
+			// print $form->selectarray('statut', $statut2label, $object->statut);
+			print $object->getLibStatut(4);
 			print '</td></tr>';
 
 			print '</table>';
@@ -303,9 +306,9 @@ if ($action == 'create')
     			print '<div class="tabsAction">';
 
     			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
-    
-    			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
-			
+
+    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+
     			print '</div>';
 			}
 		}

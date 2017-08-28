@@ -26,6 +26,7 @@
 include_once 'inc.php';
 if (file_exists($conffile)) include_once $conffile;
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
@@ -61,22 +62,23 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
 
 /*
  * View
-*/
+ */
 
-pHeader('',"upgrade2",GETPOST('action'));
-
-$actiondone=0;
+pHeader('',"upgrade2",GETPOST('action','aZ09'));
 
 // Action to launch the repair script
 $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos')?GETPOST('restore_thirdparties_logos'):'0').'<br>'."\n";
-print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements')?GETPOST('clean_linked_elements'):'0').'<br>'."\n";
-print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir')?GETPOST('clean_orphelin_dir'):'0').'<br>'."\n";
-print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch')?GETPOST('clean_product_stock_batch'):'0').'<br>'."\n";
-print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount')?GETPOST('set_empty_time_spent_amount'):'0').'<br>'."\n";
+print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
+print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
+print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir','alpha')?GETPOST('clean_orphelin_dir','alpha'):'0').'<br>'."\n";
+print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch','alpha')?GETPOST('clean_product_stock_batch','alpha'):'0').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
+print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -253,7 +255,7 @@ if ($ok)
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
 	                $type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
-	                
+
            			if ($type=='boolean') {
         				$typedb='int';
         				$lengthdb='1';
@@ -276,7 +278,7 @@ if ($ok)
         				$typedb=$type;
         				$lengthdb=$length;
         			}
-	                
+
 	                $field_desc=array(
 	                	'type'=>$typedb,
 	                	'value'=>$lengthdb,
@@ -314,17 +316,18 @@ if ($ok)
 
 
 
+
 /* From here, actions need a parameter */
 
 
 
-// clean_linked_elements: Check and clean linked elements
+// restore_thirdparties_logos: Move logos to correct new directory.
 if ($ok && GETPOST('restore_thirdparties_logos'))
 {
 	//$exts=array('gif','png','jpg');
 
 	$ext='';
-	
+
 	print '<tr><td colspan="2"><br>*** Restore thirdparties logo<br>';
 	//foreach($exts as $ext)
 	//{
@@ -393,8 +396,66 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 }
 
 
+// rebuild_product_thumbs: Rebuild thumbs for product files
+if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
+{
+    $ext='';
+    global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+
+    print '<tr><td colspan="2"><br>*** Rebuild product thumbs<br>';
+
+    $sql="SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s ORDER BY s.ref";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num=$db->num_rows($resql);
+        $i=0;
+
+        while($i < $num)
+        {
+            $obj=$db->fetch_object($resql);
+
+            if (! empty($obj->ref))
+            {
+                $files=dol_dir_list($dolibarr_main_data_root.'/produit/'.$obj->ref, 'files', 0);
+                foreach($files as $file)
+                {
+					// Generate thumbs.
+					if (image_format_supported($file['fullname']) == 1)
+					{
+					    $imgThumbSmall='notbuild';
+                        if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+                        {
+                            // Used on logon for example
+                            $imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+                        }
+					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
+					    $imgThumbMini='notbuild';
+                        if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+                        {
+                            // Create mini thumbs for image (Ratio is near 16/9)
+                            // Used on menu or for setup page for example
+                            $imgThumbMini = vignette($file['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+                        }
+					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbMini." maxwidthmini=".$maxwidthmini." maxheightmini=".$maxheightmini."<br>\n";
+					}
+                }
+            }
+
+            $i++;
+        }
+    }
+    else
+    {
+        $ok=0;
+        dol_print_error($db);
+    }
+
+    print '</td></tr>';
+}
+
 // clean_linked_elements: Check and clean linked elements
-if ($ok && GETPOST('clean_linked_elements'))
+if ($ok && GETPOST('clean_linked_elements','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Check table of linked elements and delete orphelins links</td></tr>';
 	// propal => order
@@ -418,7 +479,7 @@ if ($ok && GETPOST('clean_linked_elements'))
 
 
 // clean_orphelin_dir: Run purge of directory
-if ($ok && GETPOST('clean_orphelin_dir'))
+if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 {
     $conf->setValues($db);
 
@@ -438,7 +499,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 
         print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
+        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')
@@ -530,7 +591,7 @@ if ($ok && GETPOST('clean_orphelin_dir'))
                         // Clean of orphelins directories are done into repair.php
                         print '<tr><td colspan="2">';
                         print 'Delete orphelins file '.$file['fullname'].'<br>';
-                        if (GETPOST('clean_orphelin_dir') == 'confirmed')
+                        if (GETPOST('clean_orphelin_dir','alpha') == 'confirmed')
                         {
                             dol_delete_file($file['fullname'],1,1,1);
                             dol_delete_dir(dirname($file['fullname']),1);
@@ -545,12 +606,12 @@ if ($ok && GETPOST('clean_orphelin_dir'))
 }
 
 // clean_linked_elements: Check and clean linked elements
-if ($ok && GETPOST('clean_product_stock_batch'))
+if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 {
-    $methodtofix=GETPOST('methodtofix')?GETPOST('methodtofix'):'updatestock';
-    
+    $methodtofix=GETPOST('methodtofix','alpha')?GETPOST('methodtofix','alpha'):'updatestock';
+
     print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
-    
+
     $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
     $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
     $sql.=" WHERE p.rowid = ps.fk_product";
@@ -562,7 +623,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
     if ($resql)
     {
         $num = $db->num_rows($resql);
-        
+
         if ($num)
         {
             $i = 0;
@@ -570,7 +631,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
             {
                 $obj=$db->fetch_object($resql);
                 print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch?$obj->reelbatch:'0').' (sum product_batch)';
-                
+
                 // Fix
                 if ($obj->reel != $obj->reelbatch)
                 {
@@ -599,9 +660,9 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                         if (GETPOST('clean_product_stock_batch') == 'confirmed')
                         {
                             $error=0;
-                            
+
                             $db->begin();
-                            
+
                             $sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
                             $sql2.=" SET reel = ".($obj->reelbatch?$obj->reelbatch:'0')." WHERE rowid = ".$obj->psrowid;
                             $resql2=$db->query($sql2);
@@ -610,26 +671,26 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                                 // We update product_stock, so we must field stock into product too.
                                 $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
                                 $resql3=$db->query($sql3);
-                                if (! $resql3) 
+                                if (! $resql3)
                                 {
                                     $error++;
                                     dol_print_error($db);
                                 }
                             }
-                            else 
+                            else
                             {
                                 $error++;
                                 dol_print_error($db);
                             }
-                            
+
                             if (!$error) $db->commit();
                             else $db->rollback();
                         }
                     }
                 }
-                
+
                 print'</td></tr>';
-            
+
                 $i++;
             }
         }
@@ -646,7 +707,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
 
 
 // clean_linked_elements: Check and clean linked elements
-if ($ok && GETPOST('clean_product_stock_negative_if_batch'))
+if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
 {
     print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
@@ -675,7 +736,7 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch'))
 }
 
 // clean_linked_elements: Check and clean linked elements
-if ($ok && GETPOST('set_empty_time_spent_amount'))
+if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
@@ -684,7 +745,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount'))
     $sql.=" WHERE ptt.fk_user = u.rowid";
     $sql.=" AND ptt.thm IS NULL and u.thm > 0";
     $sql.=" GROUP BY u.rowid, u.login, u.thm";
-    
+
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -711,14 +772,14 @@ if ($ok && GETPOST('set_empty_time_spent_amount'))
                         dol_print_error($db);
                     }
                 }
-                
+
                 if (!$error) $db->commit();
                 else $db->rollback();
 
                 print'</td></tr>';
 
                 if ($error) break;
-                
+
                 $i++;
             }
         }
@@ -732,10 +793,131 @@ if ($ok && GETPOST('set_empty_time_spent_amount'))
         dol_print_error($db);
     }
 
+}
+
+
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
+{
+    print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
+
+    $sql ="SELECT DISTINCT name";
+    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_HOOKS'";
+    $sql.=" ORDER BY name";
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj=$db->fetch_object($resql);
+                $majname = $obj->name;
+
+                print '<tr><td>';
+                print $majname;
+
+                $db->begin();
+
+                if (preg_match('/MAIN_MODULE_(.*)_HOOKS/i', $majname, $reg))
+                {
+                    $name=strtolower($reg[1]);
+
+                    if ($name)
+                    {
+                        $reloffile=$name.'/class/actions_'.$name.'.class.php';
+                        $result = dol_include_once($reloffile);
+                        if (! $result)
+                        {
+                            print ' - File of hooks ('.$reloffile.') NOT found, we disable the module.';
+                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
+                            {
+                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_HOOKS'";
+                                $resql2=$db->query($sql2);
+                                if (! $resql2)
+                                {
+                                    $error++;
+                                    dol_print_error($db);
+                                }
+                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+                                $resql2=$db->query($sql2);
+                                if (! $resql2)
+                                {
+                                    $error++;
+                                    dol_print_error($db);
+                                }
+                                else
+                                    print " - Cleaned";
+                            }
+                            else
+                            {
+                                print ' - Canceled (test mode)';
+                            }
+                        }
+                        else
+                        {
+                            print ' - File of hooks ('.$reloffile.') found, we do nothing.';
+                        }
+                    }
+
+                    if (!$error) $db->commit();
+                    else $db->rollback();
+                }
+
+                print'</td></tr>';
+
+                if ($error) break;
+
+                $i++;
+            }
+        }
+        else
+        {
+            print '<tr><td>No active module with missing files found</td></tr>';
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 
 }
 
 
+
+
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+// clean_linked_elements: Check and clean linked elements
+if ($ok && GETPOST('force_utf8_on_tables','alpha'))
+{
+    print '<tr><td colspan="2"><br>*** Force page code and collation with utf8 (for mysql/mariadb only)</td></tr>';
+
+    if ($db->type == "mysql")
+    {
+        $listoftables = $db->DDLListTables($db->database_name);
+
+        foreach($listoftables as $table)
+        {
+            print '<tr><td colspan="2">';
+            print $table;
+            $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+            if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
+            {
+                $db->query($sql);
+            }
+            print '</td></tr>';
+        }
+    }
+    else
+    {
+        print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+    }
+}
 
 
 print '</table>';

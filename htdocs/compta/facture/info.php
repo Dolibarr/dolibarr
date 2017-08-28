@@ -39,6 +39,8 @@ $ref=GETPOST("ref",'alpha');
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Info');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
@@ -50,7 +52,7 @@ $object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = facture_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), 0, 'bill');
+dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
 $totalpaye = $object->getSommePaiement();
 

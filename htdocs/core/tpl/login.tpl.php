@@ -17,7 +17,7 @@
  */
 
 // Need global variable $title to be defined by caller (like dol_loginfunction)
-
+// Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -49,7 +49,7 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin">
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -60,7 +60,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="center">
+<div class="login_center center">
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -80,27 +80,26 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td class="center">
+
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 echo dol_escape_htmltag($title);
 if ($disablenofollow) echo '</a>';
 ?>
-</td></tr>
-</table>
-<br>
+</div>
+
+
 
 <div class="login_table">
 
 <div id="login_line1">
 
 <div id="login_left">
-
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
 </div>
-
 
 
 <div id="login_right">
@@ -124,23 +123,28 @@ if ($disablenofollow) echo '</a>';
 </span>
 </td></tr>
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
 	}
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
+	}
 }
-?>
-<?php
-	if ($captcha) {
-		// Add a variable param to force not using cache (jmobile)
-		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
-		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
-		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
-		// TODO: provide accessible captcha variants
+
+if ($captcha) {
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
+	if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
+	else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
 	<tr>
@@ -160,13 +164,10 @@ if (! empty($hookmanager->resArray['options'])) {
 <?php } ?>
 </table>
 
-</div> <!-- end div left -->
+</div> <!-- end div login-right -->
 
+</div> <!-- end div login-line1 -->
 
-
-
-
-</div>
 
 <div id="login_line2" style="clear: both">
 
@@ -226,9 +227,10 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 ?>
 
-</div>
+</div> <!-- end login line 2 -->
 
-</div>
+</div> <!-- end login table -->
+
 
 </form>
 
@@ -243,12 +245,29 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	</div></div>
 <?php
 }
+
+// Add commit strip
+if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	if (substr($langs->defaultlang,0,2)=='fr') {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+	} else {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+	}
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
+    {
+        $xml = simplexml_load_string($resgetcommitstrip['content']);
+        $little = $xml->channel->item[0]->children('content',true);
+        print $little->encoded;
+    }
+}
+
 ?>
 
 <?php if ($main_home)
 {
 ?>
-	<div class="center login_main_home" style="max-width: 80%">
+	<div class="center login_main_home" style="max-width: 70%">
 	<?php echo $main_home; ?>
 	</div><br>
 <?php
@@ -261,11 +280,11 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
-<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
-
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
+if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
+
+if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'js') {
 			echo "\n".'<!-- Javascript by hook -->';
@@ -273,9 +292,11 @@ if (! empty($hookmanager->resArray['options'])) {
 		}
 	}
 }
-?>
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
+}
 
-<?php
 // Google Analytics (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
@@ -295,9 +316,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID)
 		print '</script>'."\n";
 	}
 }
-?>
 
-<?php
 // Google Adsense
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {

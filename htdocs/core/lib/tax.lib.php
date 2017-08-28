@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier		<ywarnier@beeznest.org>
  * Copyright (C) 2011	   Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -55,7 +55,7 @@ function tax_prepare_head(ChargeSociales $object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -583,11 +583,11 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 					{
 						$oldrowid=$assoc['rowid'];
 						$list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
+                        $list[$assoc['rate']]['vat'] += $assoc['total_vat'];
 						$list[$assoc['rate']]['localtax1']	 += $assoc['total_localtax1'];
 						$list[$assoc['rate']]['localtax2']	 += $assoc['total_localtax2'];
 					}
 
-					$list[$assoc['rate']]['vat'] = $assoc['total_vat'];
 					$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
 					$list[$assoc['rate']]['dtype'][] = 'ExpenseReportPayment';
 					$list[$assoc['rate']]['datef'][] = $assoc['datef'];

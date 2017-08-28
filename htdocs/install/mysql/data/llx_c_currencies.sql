@@ -41,6 +41,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'AZN'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BHD', NULL, 1,					'Bahrain');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BSD', '[36]', 1,				'Bahamas Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BBD', '[36]', 1,				'Barbados Dollar');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BDT', '[2547]', 1,			    'Bangladeshi Taka');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BYR', '[112,46]', 1,			'Belarus Ruble');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BZD', '[66,90,36]', 1,			'Belize Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BMD', '[36]', 1,				'Bermuda Dollar');
@@ -153,7 +154,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'VEF'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'VND', '[8363]', 1,				'Viet Nam Dong');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XAF', NULL, 1,					'Communaute Financiere Africaine (BEAC) CFA Franc');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XOF', NULL, 1,					'Communaute Financiere Africaine (BCEAO) Franc');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XPF', NULL, 1,                   'Franc pacifique (XPF)');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XPF', '[70]', 1,                'Franc CFP');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'YER', '[65020]', 1,				'Yemen Rial');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ZWD', '[90,36]', 1,				'Zimbabwe Dollar');
 

@@ -292,7 +292,7 @@ create table llx_budget_lines
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   fk_budget     integer NOT NULL,
-  fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project "Projects to come".
+  fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project 'Projects to come'.
   amount		double(24,8) NOT NULL,
   datec         datetime,
   tms           timestamp,
@@ -600,7 +600,7 @@ ALTER TABLE llx_holiday ADD INDEX idx_holiday_entity (entity);
 
 -- Fix Argentina provences
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2326', 2305, '', 0, 'MISIONES', 'Misiones', 1);
-UPDATE llx_c_departements SET ncc = "FORMOSA", nom = "Formosa" WHERE nom = "Formosa Misiones";
+UPDATE llx_c_departements SET ncc = 'FORMOSA', nom = 'Formosa' WHERE nom = 'Formosa Misiones';
 
 -- MALTA VATS (id country=148)
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1481,  148, '18','0','VAT standard rate',1);

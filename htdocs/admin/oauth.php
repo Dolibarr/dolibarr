@@ -93,7 +93,6 @@ print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
 
 print '<table class="noborder" width="100%">';
 
-$var = true;
 $i=0;
 
 foreach ($list as $key)
@@ -116,31 +115,27 @@ foreach ($list as $key)
     if ($supported)
     {
         $redirect_uri=$urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
-        $var = !$var;
-        print '<tr '.$bc[$var].' class="value">';
+        print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
         print '</td></tr>';
     }
     else
     {
-        $var = !$var;
-        print '<tr '.$bc[$var].' class="value">';
+        print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
         print '</td></tr>';
     }
         
     // Api Id
-    $var = !$var;
-    print '<tr '.$bc[$var].' class="value">';
+    print '<tr class="oddeven value">';
     print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
     print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
     print '</td></tr>';
 
     // Api Secret
-    $var = !$var;
-    print '<tr '.$bc[$var].' class="value">';
+    print '<tr class="oddeven value">';
     print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
     print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
     print '</td></tr>';

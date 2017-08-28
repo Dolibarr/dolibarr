@@ -19,7 +19,6 @@ body {
 	color: #333;
 	margin: 0;
 	padding: 0;
-	text-align: center;
 }
 
 p {
@@ -105,6 +104,14 @@ p {
 	color: #333;
 	text-decoration: none;
 	padding-right: 5px;
+}
+
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	.menu_choix0 {
+		max-width: 180px;
+	}
 }
 
 .menu_choix0 a {
@@ -260,7 +267,6 @@ p.titre {
 
 /* --------------------- Combo lists ------------------- */
 .select_design {
-	width: 370px;
 	overflow: auto;
 }
 

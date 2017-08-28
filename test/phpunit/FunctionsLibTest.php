@@ -81,6 +81,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         global $conf,$user,$langs,$db;
         //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
+        if (! function_exists('mb_substr')) { print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(); }
+
         print __METHOD__."\n";
     }
 
@@ -276,6 +278,15 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
+	    //Internet Explorer 11 bis
+	    $user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; NP06; rv:11.0) like Gecko';
+	    $tmp=getBrowserInfo($user_agent);
+	    $this->assertEquals('ie',$tmp['browsername']);
+	    $this->assertEquals('11.0',$tmp['browserversion']);
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
 	    //iPad
 	    $user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
 	    $tmp=getBrowserInfo($user_agent);
@@ -439,6 +450,14 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $text="A string<br>Another string";
         $after=dol_string_nohtmltag($text,1);
         $this->assertEquals("A string Another string",$after,"test5");
+
+        $text='<a href="/myurl" title="<u>Afficher projet</u>">ABC</a>';
+        $after=dol_string_nohtmltag($text,1);
+        $this->assertEquals("ABC",$after,"test6");
+
+        $text='<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
+        $after=dol_string_nohtmltag($text,1);
+        $this->assertEquals("DEF",$after,"test7");
 
         return true;
     }
@@ -793,15 +812,15 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         $s=img_picto('title','/fullpath/img.png','',1);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto3');
 
         $s=img_picto('title','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto4');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto4');
 
         $s=img_picto('title:alt','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="alt" title="title">',$s,'testImgPicto5');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="alt" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto5');
     }
 
     /**

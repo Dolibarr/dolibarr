@@ -48,11 +48,11 @@ $id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
 
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -308,9 +308,9 @@ if ($id > 0)
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Lines"),$_SERVER["PHP_SELF"],"pl.rowid",'',$urladd);
-		print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
-		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="right"');
+		print_liste_field_titre("Lines",$_SERVER["PHP_SELF"],"pl.rowid",'',$urladd);
+		print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="right"');
 		print_liste_field_titre('');
 		print "</tr>\n";
 
@@ -322,7 +322,7 @@ if ($id > 0)
 		{
 			$obj = $db->fetch_object($result);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			// Status of line
 			print "<td>";
@@ -354,7 +354,7 @@ if ($id > 0)
 			print '</td></tr>';
 
 			$total += $obj->amount;
-			$var=!$var;
+
 			$i++;
 		}
 

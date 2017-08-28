@@ -29,7 +29,7 @@ $langs->load("companies");
 
 if (!$user->admin) accessforbidden();
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('homesetup'));
 
 
@@ -70,13 +70,13 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
 
 print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").' ';
-print $langs->trans("SetupDescription2")."<br><br>";
+print $langs->trans("SetupDescription2", $langs->trans("MenuCompanySetup"), $langs->trans("Modules"))."<br><br>";
 
 print '<br>';
 
 // Show info setup company
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
-print img_picto('','puce').' '.$langs->trans("SetupDescription3",DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'));
+print img_picto('','puce').' '.$langs->trans("SetupDescription3", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'), $langs->trans("Setup"), $langs->trans("MenuCompanySetup"));
 if (! empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
@@ -88,7 +88,7 @@ print '<br>';
 print '<br>';
 
 // Show info setup module
-print img_picto('','puce').' '.$langs->trans("SetupDescription4",DOL_URL_ROOT.'/admin/modules.php?mainmenu=home');
+print img_picto('','puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->trans("Setup"), $langs->trans("Modules"));
 if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 {
 	$langs->load("errors");

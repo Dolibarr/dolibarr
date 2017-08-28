@@ -33,9 +33,22 @@ if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
+if (! defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND',1);
+if (! defined('DISABLE_JQUERY_TIPTIP'))     define('DISABLE_JQUERY_TIPTIP',1);
+if (! defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY',1);
+if (! defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT',1);
+if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);
+if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);
+if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
+if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
+if (! defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF',1);
+if (! defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER',1);
+if (! defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2',1);
+
 require_once '../main.inc.php';
 
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
+
 $langs->load("main");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
@@ -54,6 +67,102 @@ $arrayofcss=array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
+
+// Javascript to make menu active like Jmobile did.
+print '
+<style>
+    /*Lets hide the non active LIs by default*/
+    body {
+        font-size: 16px;
+    }
+    body ul {
+        margin: 0;
+        padding-left: 0;
+    }
+    body ul li {
+        list-style: none;
+    }
+    body ul ul {
+        display: none;
+    }
+
+    a.alilevel0 {
+        background-image: url(\''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/next.png\') !important;
+        background-repeat: no-repeat !important;
+        background-position-x: 10px;
+        background-position-y: 16px;
+        padding: 1em 15px 1em 40px;
+    }
+    li.lilevel0 font.vsmenudisabled {
+        /* background-image: url(/dolibarr_dev/htdocs/theme/eldy/img/next.png) !important; */
+        background-repeat: no-repeat !important;
+        background-position-x: 10px;
+        background-position-y: 16px;
+        padding: 1em 15px 1em 40px;
+        background: #f8f8f8;
+        display: block;
+        font-size: 16px !important;
+    }
+    li.lilevel1 {
+        padding: 1em 15px 0.5em 40px;
+        border-top: 1px solid #aaa;
+        margin-right: 20px;
+        border-right: 0px ! important;
+    }
+    li.lilevel1:first-child {
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    li.lilevel1 a {
+        padding-bottom: 5px;
+    }
+    li.lilevel1 a, li.lilevel1 {
+        color: #000;
+        cursor: pointer;
+        display: block;
+    }
+    li.lilevel2 a {
+        padding: 0 15px 0.5em 40px;
+        color: #000;
+        cursor: pointer;
+        display: block;
+    }
+    li.lilevel3 a {
+        padding: 0.2em 15px 8px 60px;
+        color: #000;
+        cursor: pointer;
+        display: block;
+    }
+    li.lilevel3:last-child {
+        padding-bottom: 10px;
+    }
+    a.alilevel0, li.lilevel1 a {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: block;
+    }
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("body ul").click(function(){
+        console.log("We click on body ul");
+
+        $(this).siblings().find("li ul").slideUp(0);
+
+        $(this).find("li ul").slideToggle(200);
+
+        target = $(this);
+        $(\'html, body\').animate({
+          scrollTop: target.offset().top
+        }, 300);
+
+    })
+});
+</script>
+';
+
 
 if (empty($user->societe_id))	// If internal user or not defined
 {
@@ -85,7 +194,7 @@ if (! class_exists('MenuManager'))
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 $menumanager->loadMenu('all','all');
-//var_dump($menumanager->tabMenu);exit;
+//var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');
 
 print '</body>';

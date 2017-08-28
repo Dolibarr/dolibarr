@@ -63,7 +63,7 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 <?php
 if (! empty($mysoc->logo_small))
 {
-    print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">';
+    print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">';
 }
 else
 {

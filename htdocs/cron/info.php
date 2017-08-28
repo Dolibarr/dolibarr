@@ -48,7 +48,18 @@ $object->info($id);
 
 $head = cron_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("CronTask"), 0, 'cron');
+dol_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
+
+$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2">' . $langs->trans("BackToList") . '</a>';
+
+$morehtmlref='<div class="refidno">';
+$morehtmlref.='</div>';
+
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);

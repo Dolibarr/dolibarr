@@ -40,7 +40,7 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-	$action=GETPOST("action");
+	$action=GETPOST('action','aZ09');
     $file=urldecode(GETPOST('file'));
     $section=GETPOST("section");
     $module=GETPOST("module");
@@ -49,7 +49,7 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
     $page = GETPOST("page",'int');
-    if ($page == -1) { $page = 0; }
+    if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
     $offset = $conf->liste_limit * $page;
     $pageprev = $page - 1;
     $pagenext = $page + 1;
@@ -150,7 +150,7 @@ if ($type == 'directory')
     $formfile=new FormFile($db);
 
     $maxlengthname=40;
-    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
+    $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined, we are in automatic ecm.
@@ -184,6 +184,7 @@ if ($type == 'directory')
     // Auto area for expense report
     else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 
+    // Automatic list
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
@@ -194,18 +195,18 @@ if ($type == 'directory')
         $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
         $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
     }
-    // Manual area
+    // Manual list
     else
     {
         $relativepath=$ecmdir->getRelativePath();
         $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
         // If $section defined with value 0
-        if ($section === '0')
+		if ($section === '0' || empty($section))
         {
             $filearray=array();
         }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
 
         if ($section)
         {
@@ -215,7 +216,7 @@ if ($type == 'directory')
         else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-        $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
+		$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
     }
 }
 
