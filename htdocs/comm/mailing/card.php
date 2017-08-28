@@ -61,7 +61,7 @@ $object->substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
-    '__EMAIL__' => 'TESTEMail',
+    //'__EMAIL__' => 'TESTEMail',			// Done into "send" action
     '__LASTNAME__' => 'TESTLastname',
     '__FIRSTNAME__' => 'TESTFirstname',
     '__MAILTOEMAIL__' => 'TESTMailtoEmail',
@@ -408,6 +408,8 @@ if (empty($reshook))
 			// Le message est-il en html
 			$msgishtml=-1;	// Inconnu par defaut
 			if (preg_match('/[\s\t]*<html>/i',$object->body)) $msgishtml=1;
+
+			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;		// other are set at begin of page
 
 			// Pratique les substitutions sur le sujet et message
 			$tmpsujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
