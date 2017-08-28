@@ -38,6 +38,7 @@ class CMailFile
 {
 	public $sendcontext;
 	public $sendmode;
+	public $sendsetup;
 
 	var $subject;      	// Topic:       Subject of email
 	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
@@ -178,7 +179,7 @@ class CMailFile
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 		// Replace relative /viewimage to absolute path
-		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage\.php/', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
+		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
 
 		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
 
