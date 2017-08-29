@@ -118,11 +118,16 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		else
 		{
 			dol_syslog("mod_expensereport_jade::getNextValue", LOG_DEBUG);
-			return -1;
+			return 0;
 		}
 
-		//$date=time();
-		$date=$object->date;
+		$date=$object->date_valid;		// $object->date does not exists
+		if (empty($date))
+		{
+			$this->error = 'Date valid not defined';
+			return 0;
+		}
+
 		$yymm = strftime("%y%m",$date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
