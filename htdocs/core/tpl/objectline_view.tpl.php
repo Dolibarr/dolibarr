@@ -32,7 +32,7 @@
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
- * 
+ *
  * $type, $text, $description, $line
  */
 
@@ -55,7 +55,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
-	<?php 
+	<?php
 	if (($line->info_bits & 2) == 2) {
 	?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
@@ -83,7 +83,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				// Add date of deposit
-				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) 
+				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
 				    echo ' ('.dol_print_date($discount->datec).')';
 			}
 			elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
@@ -101,11 +101,11 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	else
 	{
 		$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE?'dayhour':'day';
-		
+
 	    if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-			
+
 			// Show range
 			echo get_date_range($line->date_start, $line->date_end, $format);
 
@@ -138,17 +138,26 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	</td>
 	<?php if ($object->element == 'supplier_proposal') { ?>
 		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php } 
+	<?php }
 	// VAT Rate
 	?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits); ?></td>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php
+	//var_dump($line);
+	$positiverates='';
+	if (price2num($line->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
+	if (price2num($line->localtax1_tx)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
+	if (price2num($line->localtax2_tx)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
+	if (empty($positiverates)) $positiverates='0';
+	echo vatrate($positiverates.($line->vat_src_code?' ('.$line->vat_src_code.')':''), '%', $line->info_bits);
+	//echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
+	?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
-	
+
 	<?php if (!empty($conf->multicurrency->enabled)) { ?>
 	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
 	<?php } ?>
-	
+
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
@@ -194,7 +203,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
-  		
+
   	<?php if (!empty($user->rights->margins->creer)) { ?>
   	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php } ?>
@@ -220,7 +229,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
         <?php } ?>
 
 
-	<?php 
+	<?php
 	if ($this->statut == 0  && ($object_rights->creer)) { ?>
 	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
@@ -241,7 +250,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 		?>
 	</td>
 
-	<?php 
+	<?php
 	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
 	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>

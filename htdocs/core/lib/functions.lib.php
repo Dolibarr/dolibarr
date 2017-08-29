@@ -3702,7 +3702,13 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 		$info_bits |= 1;
 	}
 
-	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
+	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	else
+	{
+		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		$ret=$rate.($addpercent?'%':'');
+	}
 	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
