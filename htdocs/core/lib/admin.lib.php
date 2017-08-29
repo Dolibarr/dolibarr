@@ -173,7 +173,11 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             			}
             			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
             			{
-							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation)))) $qualified=0;
+            				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+            				//var_dump($reg[2]);
+            				//var_dump($dbcollation);
+            				if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified=0;
+            				//var_dump($qualified);
             			}
             		}
             	}
