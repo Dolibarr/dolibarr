@@ -1491,23 +1491,23 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 		{
 			$tmpresult='';
 
-			$tmpresult.=vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits,1);
+			$tmpresult.=vatrate($object->lines[$i]->tva_tx, 1, $object->lines[$i]->info_bits, 1);
 			if (empty($conf->PDF_MAIN_HIDE_SECOND_TAX))
 			{
-				if ($object->lines[$i]->total_localtax1 != 0)
+				if ($object->lines[$i]->localtax1_tx != 0)
 				{
 					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='/';
 					else $tmpresult='';
-					$tmpresult.=vatrate(abs($object->lines[$i]->total_localtax1),1);
+					$tmpresult.=vatrate(abs($object->lines[$i]->localtax1_tx),1);
 				}
 			}
 			if (empty($conf->PDF_MAIN_HIDE_THIRD_TAX))
 			{
-				if ($object->lines[$i]->total_localtax2 != 0)
+				if ($object->lines[$i]->localtax2_tx != 0)
 				{
 					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='/';
 					else $tmpresult='';
-					$tmpresult.=vatrate(abs($object->lines[$i]->total_localtax2),1);
+					$tmpresult.=vatrate(abs($object->lines[$i]->localtax2_tx),1);
 				}
 			}
 
