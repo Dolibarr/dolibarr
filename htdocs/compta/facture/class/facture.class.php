@@ -783,7 +783,7 @@ class Facture extends CommonInvoice
 		$facture->situation_final  = $this->situation_final;
 
 		// Loop on each line of new invoice
-		foreach($facture->lines as $i => $line)
+		foreach($facture->lines as $i => $tmpline)
 		{
 			$facture->lines[$i]->fk_prev_id = $this->lines[$i]->rowid;
 			if ($invertdetail)
