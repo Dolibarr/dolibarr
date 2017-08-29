@@ -25,6 +25,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_menu MODIFY COLUMN perms text;
+
 ALTER TABLE llx_mailing MODIFY COLUMN titre varchar(128);
 ALTER TABLE llx_mailing MODIFY COLUMN sujet varchar(128);
 
