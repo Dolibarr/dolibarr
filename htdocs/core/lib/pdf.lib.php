@@ -1496,7 +1496,7 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 			{
 				if ($object->lines[$i]->total_localtax1 != 0)
 				{
-					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='+';
+					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='/';
 					else $tmpresult='';
 					$tmpresult.=vatrate(abs($object->lines[$i]->total_localtax1),1);
 				}
@@ -1505,7 +1505,7 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 			{
 				if ($object->lines[$i]->total_localtax2 != 0)
 				{
-					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='+';
+					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='/';
 					else $tmpresult='';
 					$tmpresult.=vatrate(abs($object->lines[$i]->total_localtax2),1);
 				}
