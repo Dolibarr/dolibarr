@@ -357,8 +357,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$sql = "SELECT rowid, code, label, nature";
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " active = 1";
-		$sql.= " ORDER BY label";
+		$sql.= " AND active = 1";
+		$sql.= " ORDER BY label DESC";
 
 		$resql = $db->query($sql);
 		if ($resql)
