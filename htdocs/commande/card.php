@@ -1467,7 +1467,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
 	print '</tr>';
 
-	// Client
+	// Thirdparty
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
 	if ($socid > 0) {
@@ -1491,6 +1491,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			});
 			</script>';
 		}
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";

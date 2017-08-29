@@ -1418,6 +1418,10 @@ div.mainmenu.home{
 	background-position-x: center;
 }
 
+div.mainmenu.billing {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>);
+}
+
 div.mainmenu.accountancy {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>);
 }

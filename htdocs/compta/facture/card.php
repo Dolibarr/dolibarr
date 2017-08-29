@@ -2195,7 +2195,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec'))
+	if ($soc->id > 0 && ! GETPOST('fac_rec','alpha'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -2210,6 +2210,7 @@ if ($action == 'create')
 			print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 		}
 		print ')';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&fac_rec='.GETPOST('fac_rec','alpha')).'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	else
@@ -2230,6 +2231,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
