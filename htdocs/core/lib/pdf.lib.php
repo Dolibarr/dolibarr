@@ -1470,7 +1470,7 @@ function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
  */
 function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 {
-	global $hookmanager;
+	global $conf, $hookmanager, $mysoc;
 
 	$result='';
 	$reshook=0;
@@ -1487,7 +1487,32 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 	}
 	if (empty($reshook))
 	{
-		if (empty($hidedetails) || $hidedetails > 1) $result.=vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits,1);
+		if (empty($hidedetails) || $hidedetails > 1)
+		{
+			$tmpresult='';
+
+			$tmpresult.=vatrate($object->lines[$i]->tva_tx,1,$object->lines[$i]->info_bits,1);
+			if (empty($conf->PDF_MAIN_HIDE_SECOND_TAX))
+			{
+				if ($object->lines[$i]->total_localtax1 != 0)
+				{
+					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='+';
+					else $tmpresult='';
+					$tmpresult.=vatrate(abs($object->lines[$i]->total_localtax1),1);
+				}
+			}
+			if (empty($conf->PDF_MAIN_HIDE_THIRD_TAX))
+			{
+				if ($object->lines[$i]->total_localtax2 != 0)
+				{
+					if (preg_replace('/[\s0%]/','',$tmpresult)) $tmpresult.='+';
+					else $tmpresult='';
+					$tmpresult.=vatrate(abs($object->lines[$i]->total_localtax2),1);
+				}
+			}
+
+			$result.=$tmpresult;
+		}
 	}
 	return $result;
 }
