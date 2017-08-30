@@ -64,24 +64,24 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     datec           datetime  DEFAULT NULL,
     tms             timestamp,
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
-    fk_range        integer DEFAULT 0 NOT NULL,	  	  
-    coef            double DEFAULT 0 NOT NULL,  
-    offset          double DEFAULT 0 NOT NULL	          
+    fk_range        integer DEFAULT 0 NOT NULL,
+    coef            double DEFAULT 0 NOT NULL,
+    offset          double DEFAULT 0 NOT NULL
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL	          
+    active      integer DEFAULT 1 NOT NULL
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     fk_c_exp_tax_cat integer DEFAULT 1 NOT NULL,
-    range_ik    double DEFAULT 0 NOT NULL,   
+    range_ik    double DEFAULT 0 NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL		          
+    active      integer DEFAULT 1 NOT NULL
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
@@ -201,5 +201,5 @@ ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
-
+ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
