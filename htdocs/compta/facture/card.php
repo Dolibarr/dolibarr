@@ -673,6 +673,8 @@ if (empty($reshook))
 				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
+				if (! $resql) dol_print_error($db);
+
 				$res = $db->fetch_object($resql);
 				$total_paiements = $res->total_paiements;
 
@@ -2197,7 +2199,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec'))
+	if ($soc->id > 0 && ! GETPOST('fac_rec','alpha'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -2212,6 +2214,7 @@ if ($action == 'create')
 			print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 		}
 		print ')';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&fac_rec='.GETPOST('fac_rec','alpha')).'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	else
@@ -2232,6 +2235,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -4132,11 +4136,11 @@ else if ($id > 0 || ! empty($ref))
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('DoPayment') . '</span></div>';
 				} else {
-					if ($resteapayer == 0) {
-						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
-					} else {
+					//if ($resteapayer == 0) {
+					//	print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+					//} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'. DOL_URL_ROOT .'/compta/paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPayment') . '</a></div>';
-					}
+					//}
 				}
 			}
 

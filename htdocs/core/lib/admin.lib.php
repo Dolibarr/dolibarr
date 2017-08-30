@@ -143,7 +143,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 4096);
+            $buf = fgets($fp, 32768);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
             if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
@@ -173,7 +173,11 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             			}
             			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
             			{
-							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation)))) $qualified=0;
+            				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+            				//var_dump($reg[2]);
+            				//var_dump($dbcollation);
+            				if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified=0;
+            				//var_dump($qualified);
             			}
             		}
             	}
@@ -187,9 +191,9 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             }
 
             // Add line buf to buffer if not a comment
-            if (! preg_match('/^--/',$buf))
+            if (! preg_match('/^\s*--/',$buf))
             {
-                $buf=preg_replace('/--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
+                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 

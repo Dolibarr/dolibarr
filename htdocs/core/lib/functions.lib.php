@@ -5895,6 +5895,7 @@ function picto_from_langcode($codelang)
  *          		            	        'supplier_invoice' to add a tab in supplier invoice view
  *                  		    	        'invoice'          to add a tab in customer invoice view
  *                          			    'order'            to add a tab in customer order view
+ *                          				'contract'		   to add a tabl in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view
  *                              			'user'             to add a tab in user view
@@ -6270,7 +6271,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 	            	$newres .= $db->escape($tmpcrit2);
 	            	$newres .= $tmpafter;
 	            	$newres .= "'";
-	            	if (empty($tmpcrit2))
+	            	if ($tmpcrit2 == '')
 	            	{
 	            	    $newres .= ' OR ' . $field . " IS NULL";
 	            	}

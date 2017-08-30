@@ -114,7 +114,6 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		if ($result < 0)
 		{
 			$langs->load("errors");
-			$errmsg=$langs->trans($company->error);
 			setEventMessages($company->error, $company->errors, 'errors');
 		}
 		else
@@ -124,7 +123,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 	}
 	else
 	{
-		$errmsg=$object->error;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -212,7 +211,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     {
         $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
     }
-    $subscription=$_POST["subscription"];	// Amount of subscription
+    $subscription=price2num(GETPOST("subscription",'alpha'));	// Amount of subscription
     $label=$_POST["label"];
 
     // Payment informations
@@ -230,6 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         $error++;
         $langs->load("errors");
         $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateSubscription"));
+        setEventMessages($errmsg, null, 'errors');
         $action='addsubscription';
     }
     if (GETPOST('end') && ! $datesubend)
@@ -237,6 +237,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         $error++;
         $langs->load("errors");
         $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateEndSubscription"));
+        setEventMessages($errmsg, null, 'errors');
         $action='addsubscription';
     }
     if (! $datesubend)
@@ -247,16 +248,20 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     {
         $error++;
         $errmsg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment"));
+        setEventMessages($errmsg, null, 'errors');
         $action='addsubscription';
     }
+
+    $amount = price2num(GETPOST("subscription",'alpha'));
 
     // Check if a payment is mandatory or not
     if (! $error && $adht->subscription)	// Member type need subscriptions
     {
-        if (! is_numeric($_POST["subscription"]))
+        if (! is_numeric($amount))
         {
             // If field is '' or not a numeric value
             $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+        	setEventMessages($errmsg, null, 'errors');
             $error++;
             $action='addsubscription';
         }
@@ -274,7 +279,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 {
                     if ($_POST["accountid"])   $errmsg=$langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
                 }
-                if ($errmsg) $action='addsubscription';
+                if ($errmsg)
+                {
+        			setEventMessages($errmsg, null, 'errors');
+                	$action='addsubscription';
+                }
             }
         }
     }
@@ -320,6 +329,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                         {
                             $error++;
                             $errmsg=$db->lasterror();
+        					setEventMessages($errmsg, null, 'errors');
                         }
                     }
                     else
@@ -327,14 +337,16 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                         $error++;
                         $errmsg=$acct->error;
                         $errmsgs=$acct->errors;
-                    }
+        				setEventMessages($errmsg, $errmsgs, 'errors');
+					}
                 }
                 else
 				{
                     $error++;
                     $errmsg=$acct->error;
                     $errmsgs=$acct->errors;
-                }
+        			setEventMessages($errmsg, $errmsgs, 'errors');
+				}
             }
 
             // If option choosed, we create invoice
@@ -352,6 +364,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 	{
                 		$langs->load("errors");
                 		$errmsg=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
+        				setEventMessages($errmsg, null, 'errors');
                 		$error++;
                 	}
                 }
@@ -362,6 +375,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $errmsg=$customer->error;
 	                    $errmsgs=$acct->errors;
+        				setEventMessages($errmsg, $errmsgs, 'errors');
 	                    $error++;
 	                }
                 }
@@ -379,6 +393,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                    {
 	                        $error++;
 	                        $errmsg='ErrorNoPaymentTermRECEPFound';
+        					setEventMessages($errmsg, null, 'errors');
 	                    }
 	                }
 	                $invoice->socid=$object->fk_soc;
@@ -396,6 +411,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $errmsg=$invoice->error;
 	                    $errmsgs=$invoice->errors;
+        				setEventMessages($errmsg, $errmsgs, 'errors');
 	                    $error++;
 	                }
                 }
@@ -416,6 +432,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                if ($result <= 0)
 	                {
 	                    $errmsg=$invoice->error;
+        				setEventMessages($errmsg, null, 'errors');
 	                    $error++;
 	                }
                 }
@@ -428,6 +445,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $errmsg=$invoice->error;
 	                    $errmsgs=$invoice->errors;
+        				setEventMessages($errmsg, $errmsgs, 'errors');
 	                    $error++;
 	                }
                 }
@@ -455,6 +473,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                         {
                             $errmsg=$paiement->error;
                             $errmsgs=$paiement->errors;
+        					setEventMessages($errmsg, $errmsgs, 'errors');
                             $error++;
                         }
                     }
@@ -536,6 +555,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
+        			setEventMessages($errmsg, null, 'errors');
                 }
             }
 

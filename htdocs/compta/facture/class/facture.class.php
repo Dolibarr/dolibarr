@@ -315,6 +315,8 @@ class Facture extends CommonInvoice
 			$this->note_private=trim($this->note_private);
 		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 
+		    $this->array_options=$_facrec->array_options;
+		    
 			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 			$this->brouillon = 1;
@@ -634,7 +636,7 @@ class Facture extends CommonInvoice
 					if (empty($tva_tx)) $tva_npr=0;
 					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
 					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
-
+					
 					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
 						$_facrec->lines[$i]->subprice,
@@ -654,7 +656,7 @@ class Facture extends CommonInvoice
 						null,
 						0,
 						$_facrec->lines[$i]->label,
-						null,
+						empty($_facrec->lines[$i]->array_options)?null:$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit

@@ -731,6 +731,7 @@ class ExpenseReport extends CommonObject
         $this->date_create = $now;
         $this->date_debut = $now;
         $this->date_fin = $now;
+        $this->date_valid = $now;
         $this->date_approve = $now;
 
         $type_fees_id = 2;  // TF_TRIP
@@ -1058,111 +1059,118 @@ class ExpenseReport extends CommonObject
      */
     function setValidate($fuser, $notrigger=0)
     {
-        global $conf,$langs;
+        global $conf,$langs,$user;
 
 		$error = 0;
-        $this->oldref = $this->ref;
-        $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
+		$now = dol_now();
 
-        // Sélection de la date de début de la NDF
-        $sql = 'SELECT date_debut';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' WHERE rowid = '.$this->id;
-        $result = $this->db->query($sql);
-        $objp = $this->db->fetch_object($result);
-        $this->date_debut = $this->db->jdate($objp->date_debut);
-
-        $update_number_int = false;
-
-        // Create next ref if ref is PROVxx
-        // Rename directory if dir was a temporary ref
-        if (preg_match('/^[\(]?PROV/i', $this->ref))
+        // Protection
+        if ($this->statut == self::STATUS_VALIDATED)
         {
-            // Sélection du numéro de ref suivant
-            $ref_next = $this->getNextNumRef();
-            $ref_number_int = ($this->ref+1)-1;
-            $update_number_int = true;
-            // Création du ref_number suivant
-            if($ref_next)
-            {
-                $prefix="ER";
-                if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-                $this->ref = str_replace(' ','_', $this->user_author_infos).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
-            }
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            // We rename directory in order to avoid losing the attachments
-            $oldref = dol_sanitizeFileName($this->oldref);
-            $newref = dol_sanitizeFileName($this->ref);
-            $dirsource = $conf->expensereport->dir_output.'/'.$oldref;
-            $dirdest = $conf->expensereport->dir_output.'/'.$newref;
-            if (file_exists($dirsource))
-            {
-                dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
-
-                if (@rename($dirsource, $dirdest))
-                {
-                    dol_syslog("Rename ok");
-                    // Rename docs starting with $oldref with $newref
-                    $listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
-                    foreach($listoffiles as $fileentry)
-                    {
-                        $dirsource=$fileentry['name'];
-                        $dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
-                        $dirsource=$fileentry['path'].'/'.$dirsource;
-                        $dirdest=$fileentry['path'].'/'.$dirdest;
-                        @rename($dirsource, $dirdest);
-                    }
-                }
-            }
+            dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+            return 0;
         }
-        if ($this->fk_statut != 2)
+
+        $this->date_valid = $now;		// Required for the getNextNum later.
+
+		// Define new ref
+        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
         {
-        	$now = dol_now();
-			$this->db->begin();
+            $num = $this->getNextNumRef();
+        }
+        else
+		{
+            $num = $this->ref;
+        }
+        if (empty($num)) return -1;
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
-            if ($update_number_int) {
-                $sql.= ", ref_number_int = ".$ref_number_int;
-            }
-            $sql.= ' WHERE rowid = '.$this->id;
+        $this->newref = $num;
 
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-				if (!$notrigger)
-				{
-					// Call trigger
-					$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE',$fuser);
+		$this->db->begin();
 
-					if ($result < 0) {
-						$error++;
+        // Validate
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET ref = '".$num."',";
+        $sql.= " fk_statut = ".self::STATUS_VALIDATED.",";
+        $sql.= " date_valid='".$this->db->idate($this->date_valid)."',";
+        $sql.= " fk_user_valid = ".$user->id;
+        $sql.= " WHERE rowid = ".$this->id;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+			if (!$notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE',$fuser);
+
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (! $error)
+			{
+			    $this->oldref = $this->ref;
+
+			    // Rename directory if dir was a temporary ref
+			    if (preg_match('/^[\(]?PROV/i', $this->ref))
+			    {
+			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
+					// in order not to lose the attachments
+					$oldref = dol_sanitizeFileName($this->ref);
+					$newref = dol_sanitizeFileName($num);
+					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
+					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
+					if (file_exists($dirsource))
+					{
+					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+
+					    if (@rename($dirsource, $dirdest))
+					    {
+					        dol_syslog("Rename ok");
+					        // Rename docs starting with $oldref with $newref
+					        $listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+					        foreach($listoffiles as $fileentry)
+					        {
+					        	$dirsource=$fileentry['name'];
+					        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+					        	$dirsource=$fileentry['path'].'/'.$dirsource;
+					        	$dirdest=$fileentry['path'].'/'.$dirdest;
+					        	@rename($dirsource, $dirdest);
+					        }
+					    }
 					}
-					// End call triggers
 				}
+			}
 
-				if (empty($error))
-				{
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					$this->error=$this->db->error();
-					return -2;
-				}
-            }
-            else
-            {
+			// Set new ref and current status
+			if (! $error)
+			{
+			    $this->ref = $num;
+			    $this->statut = self::STATUS_VALIDATED;
+			}
+
+			if (empty($error))
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
 				$this->db->rollback();
-                $this->error=$this->db->lasterror();
-                return -1;
-            }
+				$this->error=$this->db->error();
+				return -2;
+			}
         }
         else
         {
-            dol_syslog(get_class($this)."::setValidate expensereport already with validated status", LOG_WARNING);
+			$this->db->rollback();
+            $this->error=$this->db->lasterror();
+            return -1;
         }
 
         return 0;
@@ -1467,36 +1475,52 @@ class ExpenseReport extends CommonObject
      */
     function getNextNumRef()
     {
-        global $conf;
+        global $langs, $conf;
+        $langs->load("trips");
 
-        $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
-        $num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
+        if (! empty($conf->global->EXPENSEREPORT_ADDON))
+        {
+        	$mybool=false;
 
-        $sql = 'SELECT MAX(de.ref_number_int) as max';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' de';
+        	$file = $conf->global->EXPENSEREPORT_ADDON.".php";
+			$classname = $conf->global->EXPENSEREPORT_ADDON;
 
-        $result = $this->db->query($sql);
+			// Include file with class
+			$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+                $dir = dol_buildpath($reldir."core/modules/expensereport/");
 
-        if($this->db->num_rows($result) > 0):
-        $objp = $this->db->fetch_object($result);
-        $this->ref = $objp->max;
-        $this->ref++;
-        while(strlen($this->ref) < $num_car):
-        $this->ref = "0".$this->ref;
-        endwhile;
-        else:
-        $this->ref = 1;
-        while(strlen($this->ref) < $num_car):
-        $this->ref = "0".$this->ref;
-        endwhile;
-        endif;
+                // Load file with numbering class (if found)
+                $mybool|=@include_once $dir.$file;
+            }
 
-        if ($result):
-        return 1;
-        else:
-        $this->error=$this->db->error();
-        return -1;
-        endif;
+            if (! $mybool)
+            {
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
+            }
+
+            $obj = new $classname();
+            $numref = $obj->getNextValue($this);
+
+            if ($numref != "")
+            {
+            	return $numref;
+            }
+            else
+			{
+				$this->error=$obj->error;
+				$this->errors=$obj->errors;
+            	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+            	return "";
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
+            return "";
+        }
     }
 
     /**

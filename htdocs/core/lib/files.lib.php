@@ -1929,7 +1929,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
 {
 	global $user, $conf, $db;
-	global $dolibarr_main_data_root;
+	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
 
 	if (! is_object($fuser)) $fuser=$user;
 
@@ -1964,6 +1964,16 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	{
 	    $accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 	    $original_file=$dolibarr_main_data_root.'/'.$original_file;
+	}
+	// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+	elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root))
+	{
+		// Dir for custom dirs
+		$tmp=explode(',', $dolibarr_main_document_root_alt);
+		$dirins = $tmp[0];
+
+	    $accessallowed=($user->admin && preg_match('/^module_.*\.zip$/', basename($original_file)));
+	    $original_file=$dirins.'/'.$original_file;
 	}
 	// Wrapping for some images
 	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
