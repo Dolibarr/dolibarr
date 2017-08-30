@@ -730,6 +730,7 @@ class ExpenseReport extends CommonObject
         $this->date_create = $now;
         $this->date_debut = $now;
         $this->date_fin = $now;
+        $this->date_valid = $now;
         $this->date_approve = $now;
 
         $type_fees_id = 2;  // TF_TRIP
@@ -1060,14 +1061,17 @@ class ExpenseReport extends CommonObject
         global $conf,$langs,$user;
 
 		$error = 0;
-		
+		$now = dol_now();
+
         // Protection
         if ($this->statut == self::STATUS_VALIDATED)
         {
             dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
             return 0;
         }
-		
+
+        $this->date_valid = $now;		// Required for the getNextNum later.
+
 		// Define new ref
         if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
         {
@@ -1077,16 +1081,17 @@ class ExpenseReport extends CommonObject
 		{
             $num = $this->ref;
         }
+        if (empty($num)) return -1;
+
         $this->newref = $num;
-		
-    	$now = dol_now();
+
 		$this->db->begin();
 
         // Validate
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " SET ref = '".$num."',";
         $sql.= " fk_statut = ".self::STATUS_VALIDATED.",";
-        $sql.= " date_valid='".$this->db->idate($now)."',";
+        $sql.= " date_valid='".$this->db->idate($this->date_valid)."',";
         $sql.= " fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
@@ -1112,7 +1117,7 @@ class ExpenseReport extends CommonObject
 			    if (preg_match('/^[\(]?PROV/i', $this->ref))
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					
+
 			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
 					// in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
@@ -1122,7 +1127,7 @@ class ExpenseReport extends CommonObject
 					if (file_exists($dirsource))
 					{
 					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
-	
+
 					    if (@rename($dirsource, $dirdest))
 					    {
 					        dol_syslog("Rename ok");
@@ -1505,13 +1510,14 @@ class ExpenseReport extends CommonObject
             else
 			{
 				$this->error=$obj->error;
+				$this->errors=$obj->errors;
             	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
             	return "";
             }
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
+            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
             return "";
         }
     }

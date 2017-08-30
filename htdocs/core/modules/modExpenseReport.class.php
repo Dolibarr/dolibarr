@@ -80,6 +80,13 @@ class modExpenseReport extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "EXPENSEREPORT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_expensereport_jade";
+		$this->const[$r][3] = 'Name of manager to generate expense report ref number';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "15";

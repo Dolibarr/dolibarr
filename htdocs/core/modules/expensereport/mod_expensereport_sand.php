@@ -82,12 +82,13 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      */
     function getExample()
     {
-     	global $conf,$langs,$mysoc;
+     	global $conf,$langs,$user;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
-		$mysoc->code_client=$old_code_client;
+     	$exp=new ExpenseReport($this->db);
+     	$exp->initAsSpecimen();
+     	$exp->fk_user_author = $user->id;
+
+     	$numExample = $this->getNextValue($exp);
 
 		if (! $numExample)
 		{
@@ -99,11 +100,10 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$object)
+    function getNextValue($object)
     {
 		global $db,$conf;
 
@@ -118,7 +118,21 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'expensereport','ref','',$objsoc,$object->date);
+		$date=$object->date_valid;		// $object->date does not exists
+		if (empty($date))
+		{
+			$this->error = 'Date valid not defined';
+			return 0;
+		}
+
+		$fuser = null;
+		if ($object->fk_user_author > 0)
+		{
+			$fuser=new User($db);
+			$fuser->fetch($object->fk_user_author);
+		}
+
+		$numFinal=get_next_value($db,$mask,'expensereport','ref','',null, $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}
