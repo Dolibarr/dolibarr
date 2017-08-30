@@ -147,7 +147,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	$positiverates='';
 	if (price2num($line->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
 	if (price2num($line->total_localtax1)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
-	if (price2num($line->total_localtax2_tx)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
+	if (price2num($line->total_localtax2)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
 	if (empty($positiverates)) $positiverates='0';
 	echo vatrate($positiverates.($line->vat_src_code?' ('.$line->vat_src_code.')':''), '%', $line->info_bits);
 	//echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
