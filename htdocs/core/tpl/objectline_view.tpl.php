@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,8 +146,8 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	//var_dump($line);
 	$positiverates='';
 	if (price2num($line->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
-	if (price2num($line->localtax1_tx)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
-	if (price2num($line->localtax2_tx)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
+	if (price2num($line->total_localtax1)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
+	if (price2num($line->total_localtax2)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
 	if (empty($positiverates)) $positiverates='0';
 	echo vatrate($positiverates.($line->vat_src_code?' ('.$line->vat_src_code.')':''), '%', $line->info_bits);
 	//echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
