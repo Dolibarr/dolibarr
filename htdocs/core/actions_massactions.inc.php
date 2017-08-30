@@ -429,7 +429,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     }
 
     $arrayofinclusion=array();
-    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
+    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote($tmppdf.'.pdf','/').'$';
     $listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
     // build list of files with full path
@@ -505,8 +505,8 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    $pdf=pdf_getInstance();
 	    if (class_exists('TCPDF'))
 	    {
-		$pdf->setPrintHeader(false);
-		$pdf->setPrintFooter(false);
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
 	    }
 	    $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
@@ -515,15 +515,15 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    // Add all others
 	    foreach($files as $file)
 	    {
-		// Charge un document PDF depuis un fichier.
-		$pagecount = $pdf->setSourceFile($file);
-		for ($i = 1; $i <= $pagecount; $i++)
-		{
-		    $tplidx = $pdf->importPage($i);
-		    $s = $pdf->getTemplatesize($tplidx);
-		    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-		    $pdf->useTemplate($tplidx);
-		}
+			// Charge un document PDF depuis un fichier.
+			$pagecount = $pdf->setSourceFile($file);
+			for ($i = 1; $i <= $pagecount; $i++)
+			{
+			    $tplidx = $pdf->importPage($i);
+			    $s = $pdf->getTemplatesize($tplidx);
+			    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+			    $pdf->useTemplate($tplidx);
+			}
 	    }
 
 	    // Create output dir if not exists
@@ -536,18 +536,18 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    // Save merged file
 	    if ($filter=='paye:0')
 	    {
-		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
-		else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 	    }
 	    if ($year) $filename.='_'.$year;
 	    if ($month) $filename.='_'.$month;
 	    if ($pagecount)
 	    {
-		$now=dol_now();
-		$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
-		$pdf->Output($file,'F');
-		if (! empty($conf->global->MAIN_UMASK))
-		    @chmod($file, octdec($conf->global->MAIN_UMASK));
+			$now=dol_now();
+			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+			$pdf->Output($file,'F');
+			if (! empty($conf->global->MAIN_UMASK))
+			    @chmod($file, octdec($conf->global->MAIN_UMASK));
 
 		    $langs->load("exports");
 		    setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
