@@ -30,9 +30,9 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
     if ($object->id)
     {
     	if (! empty($upload_dirold) && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
-            dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
+            $result = dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
         else
-            dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
+            $result = dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
 }
 elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -176,7 +176,7 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave'))
 
                     setEventMessages($langs->trans("FileRenamed"), null);
                 }
-                else 
+                else
                 {
                     $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
                     setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
