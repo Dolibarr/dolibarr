@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("companies");
 $langs->load("categories");
@@ -165,7 +165,7 @@ $formother = new FormOther($db);
 // Show report header
 if ($modecompta=="CREANCES-DETTES")
 {
-	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -176,7 +176,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } else {
-	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -187,9 +187,9 @@ if ($modecompta=="CREANCES-DETTES")
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }

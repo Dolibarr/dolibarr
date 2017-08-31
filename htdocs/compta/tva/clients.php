@@ -220,7 +220,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		$vatsup.=' ('.$langs->trans("ToGetBack").')';
 	}
 }
-report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -260,7 +260,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			
+
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra)) {
 				if($coll->assuj == '1') {
@@ -340,7 +340,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			
+
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if (empty($intra)) {
 				if ($coll->assuj == '1') {

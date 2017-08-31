@@ -64,7 +64,7 @@ if (! $sortfield) $sortfield='s.nom, s.rowid';
 if (! $sortorder) $sortorder='ASC';
 
 // Date range
-$year=GETPOST("year");
+$year=GETPOST('year','int');
 if (empty($year))
 {
     $year_current = strftime("%Y",dol_now());
@@ -77,7 +77,8 @@ if (empty($year))
 }
 $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
-// Quarter
+
+// We define date_start and date_end
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
     $q=GETPOST("q")?GETPOST("q"):0;
@@ -105,11 +106,6 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
     if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
     if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
-else
-{
-    // TODO We define q
-
-}
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->ACCOUNTING_MODE);
@@ -123,7 +119,7 @@ llxHeader();
 
 $form=new Form($db);
 
-$nomlink='';
+$namelink='';
 $periodlink='';
 $exportlink='';
 
@@ -158,9 +154,9 @@ else {
 
 $hselected = 'report';
 
-report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2016/17		Jamal Elbaz			<jamelbaz@gmail.com>
- * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2016-2017		Jamal Elbaz			<jamelbaz@gmail.com>
+ * Copyright (C) 2016 	    	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
  */
 
 /**
- * \file 		htdocs/accountancy/report/result.php
- * \ingroup 	Advanced accountancy
+ * \file 		htdocs/compta/resultat/result.php
+ * \ingroup 	compta, accountancy
  * \brief 		Page for accounting result
  */
-require '../../main.inc.php';
 
-// Class
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancycategory.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
@@ -45,19 +45,67 @@ $cancel = GETPOST('cancel');
 $simple_report = GETPOST('simple_report');
 
 
-// Filter
-$year = GETPOST('year','int');
-if ($year == 0) {
-	$year_current = strftime("%Y", time());
-	$year_start = $year_current;
+$date_startmonth=GETPOST('date_startmonth');
+$date_startday=GETPOST('date_startday');
+$date_startyear=GETPOST('date_startyear');
+$date_endmonth=GETPOST('date_endmonth');
+$date_endday=GETPOST('date_endday');
+$date_endyear=GETPOST('date_endyear');
+
+$nbofyear=1;
+
+// Date range
+$year=GETPOST('year','int');
+if (empty($year))
+{
+	$year_current = strftime("%Y",dol_now());
+	$month_current = strftime("%m",dol_now());
+	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$year_start = $year;
+	$month_current = strftime("%m",dol_now());
+	$year_start = $year - ($nbofyear - 1);
+}
+$date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
+$date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+// We define date_start and date_end
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=GETPOST("q")?GETPOST("q"):0;
+	if ($q==0)
+	{
+		// We define date_start and date_end
+		$year_end=$year_start + ($nbofyear - 1);
+		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		if (! GETPOST('month'))
+		{
+			if (! GETPOST("year") &&  $month_start > $month_current)
+			{
+				$year_start--;
+				$year_end--;
+			}
+			$month_end=$month_start-1;
+			if ($month_end < 1) $month_end=12;
+			else $year_end++;
+		}
+		else $month_end=$month_start;
+		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+	}
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 
 if($cat_id == 0){
 	$cat_id = null;
 }
+
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
+$modecompta = $conf->global->ACCOUNTING_MODE;
+if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
 
 // Security check
 if ($user->societe_id > 0)
@@ -80,14 +128,60 @@ $form = new Form($db);
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-$nom = $langs->trans("ReportInOut").', '.$langs->trans("ByAccounts");
-$nomlink = '';
-$periodlink = '';
-$exportlink = '';
-$builddate = time();
-$description = '';
-$period = $langs->trans("Detail").' '. $form->selectyesno('simple_report',$simple_report,0) . " " .$textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear ;
-report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''));
+
+
+// Affiche en-tete de rapport
+if ($modecompta=="CREANCES-DETTES")
+{
+	$name=$langs->trans("AnnualByAccountDueDebtMode");
+	$calcmode=$langs->trans("CalcModeDebt");
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	$description=$langs->trans("RulesResultDue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
+	$builddate=time();
+	//$exportlink=$langs->trans("NotYetAvailable");
+}
+else if ($modecompta=="RECETTES-DEPENSES") {
+	$name=$langs->trans("AnnualByAccountInputOutputMode");
+	$calcmode=$langs->trans("CalcModeEngagement");
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	//$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',1,1,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	$description=$langs->trans("RulesResultInOut");
+	$builddate=time();
+	//$exportlink=$langs->trans("NotYetAvailable");
+}
+else if ($modecompta=="BOOKKEEPING")
+{
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByAccounts");
+	$calcmode=$langs->trans("CalcModeBookkeeping");
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$nomlink = '';
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period.=' &nbsp; '.$langs->trans("Detail").' '. $form->selectyesno('simple_report',$simple_report,0);
+	$periodlink = $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear ;
+	$exportlink = '';
+	$description=$langs->trans("RulesResultDue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
+	$builddate = time();
+}
+
+report_header($name, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
+
+
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
 
 $moreforfilter='';
 

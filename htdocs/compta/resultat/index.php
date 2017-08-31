@@ -27,17 +27,60 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
-$year_start=GETPOST('year_start');
-$year_current = strftime("%Y",time());
+$date_startmonth=GETPOST('date_startmonth');
+$date_startday=GETPOST('date_startday');
+$date_startyear=GETPOST('date_startyear');
+$date_endmonth=GETPOST('date_endmonth');
+$date_endday=GETPOST('date_endday');
+$date_endyear=GETPOST('date_endyear');
+
 $nbofyear=4;
-if (! $year_start) {
-	$year_start = $year_current - ($nbofyear-1);
-	$year_end = $year_current;
+
+// Date range
+$year=GETPOST('year','int');
+if (empty($year))
+{
+	$year_current = strftime("%Y",dol_now());
+	$month_current = strftime("%m",dol_now());
+	$year_start = $year_current - ($nbofyear - 1);
+} else {
+	$year_current = $year;
+	$month_current = strftime("%m",dol_now());
+	$year_start = $year - ($nbofyear - 1);
 }
-else {
-	$year_end=$year_start + ($nbofyear-1);
+$date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
+$date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+// We define date_start and date_end
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=GETPOST("q")?GETPOST("q"):0;
+	if ($q==0)
+	{
+		// We define date_start and date_end
+		$year_end=$year_start + ($nbofyear - 1);
+		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		if (! GETPOST('month'))
+		{
+			if (! GETPOST("year") &&  $month_start > $month_current)
+			{
+				$year_start--;
+				$year_end--;
+			}
+			$month_end=$month_start-1;
+			if ($month_end < 1) $month_end=12;
+			else $year_end++;
+		}
+		else $month_end=$month_start;
+		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+	}
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 
 // Security check
@@ -59,16 +102,16 @@ llxHeader();
 
 $form=new Form($db);
 
-$nomlink='';
+$namelink='';
 $exportlink='';
 
 // Affiche en-tete du rapport
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$nom=$langs->trans("AnnualSummaryDueDebtMode");
+	$name=$langs->trans("AnnualSummaryDueDebtMode");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period="$year_start - $year_end";
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
 	$description.='<br>'.$langs->trans("RulesResultDue");
@@ -78,10 +121,10 @@ if ($modecompta == 'CREANCES-DETTES')
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-	$nom=$langs->trans("AnnualSummaryInputOutputMode");
+	$name=$langs->trans("AnnualSummaryInputOutputMode");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$period="$year_start - $year_end";
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
 	$description.='<br>'.$langs->trans("RulesResultInOut");
@@ -91,9 +134,9 @@ else {
 
 $hselected='report';
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
@@ -103,6 +146,7 @@ if (! empty($conf->accounting->enabled))
 /*
  * Factures clients
  */
+
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
