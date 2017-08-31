@@ -184,7 +184,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("VendorName").'</td><td>';
-print '<input size="64" type="text" name="STRIPE_CREDITOR" value="'.$conf->global->STRIPE_CREDITOR.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
