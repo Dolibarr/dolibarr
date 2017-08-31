@@ -114,7 +114,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
 
 $head='';
-if (! empty($conf->global->PAYPAL_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -135,7 +135,7 @@ if ($PAYPALTOKEN)
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
-    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
 
@@ -170,7 +170,7 @@ if ($PAYPALTOKEN)
 
             print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
             print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-            if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
+            if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
 
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -180,9 +180,9 @@ if ($PAYPALTOKEN)
             // Fin appel triggers
 
         	// Send an email
-			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
+			if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 			{
-				$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
+				$sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
 				// Define $urlwithroot
 				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -201,7 +201,7 @@ if ($PAYPALTOKEN)
 				    else $appli.=" ".DOL_VERSION;
 				}
 				else $appli.=" ".DOL_VERSION;
-				
+
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 				$tmptag=dolExplodeIntoArray($fulltag,'.','=');
@@ -248,7 +248,7 @@ if ($PAYPALTOKEN)
             $result=$interface->run_triggers('PAYPAL_PAYMENT_KO',$object,$user,$langs,$conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }
             // Fin appel triggers
-            
+
 		    //Display a user friendly Error on the page using any of the following error information returned by PayPal
             $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
             $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
@@ -264,9 +264,9 @@ if ($PAYPALTOKEN)
             if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
 
            	// Send an email
-			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
+			if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 			{
-				$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
+				$sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
 				// Define $urlwithroot
 				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -285,7 +285,7 @@ if ($PAYPALTOKEN)
 				    else $appli.=" ".DOL_VERSION;
 				}
 				else $appli.=" ".DOL_VERSION;
-				
+
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("ValidationOfPaymentFailed");
 				$content="";

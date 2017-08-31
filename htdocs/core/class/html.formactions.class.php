@@ -304,7 +304,7 @@ class FormActions
 		}
 		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected);
+			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

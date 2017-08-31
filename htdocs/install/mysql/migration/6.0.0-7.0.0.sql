@@ -201,5 +201,11 @@ ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
+UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_KO'  where name = 'PAYPAL_MESSAGE_KO';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_CREDITOR'    where name = 'PAYPAL_CREDITOR';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_CSS_URL'     where name = 'PAYPAL_CSS_URL';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_NEWFORMTEXT' where name = 'PAYPAL_NEWFORMTEXT';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_LOGO'        where name = 'PAYPAL_LOGO';
 
 
