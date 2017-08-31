@@ -51,6 +51,7 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
+$langs->load("stripe");
 
 if (! empty($conf->paypal->enabled))
 {
@@ -59,7 +60,12 @@ if (! empty($conf->paypal->enabled))
     $PAYPALPAYERID=GETPOST('PAYERID');
     if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
 }
-// TODO Other payment method
+if (! empty($conf->paybox->enabled))
+{
+}
+if (! empty($conf->stripe->enabled))
+{
+}
 
 $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
@@ -106,7 +112,7 @@ $object = new stdClass();   // For triggers
  * View
  */
 
-dol_syslog("Callback url when a PayPal payment was canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when an online payment is canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
@@ -122,48 +128,29 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
-    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    $FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
-        
+
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
     $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO',$object,$user,$langs,$conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
-    
+
     // Send an email
     $sendemail = '';
-    if (! empty($conf->paypal->enabled))
-    {
-    	if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
-    	{
-            $sendemail = $conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    	}
+   	if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
+   	{
+        $sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
     }
-    // Send an email
-    if (! empty($conf->paybox->enabled))
-    {
-        if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
-        {
-            $sendemail = $conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-        }
-    }
-    // Send an email
-    if (! empty($conf->stripe->enabled))
-    {
-        if (! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL))
-        {
-            $sendemail = $conf->global->STRIPE_PAYONLINE_SENDEMAIL;
-        }
-    }
-    
+
     if ($sendemail)
     {
         $from=$conf->global->MAILING_EMAIL_FROM;
         $sendto=$sendemail;
-        
+
     	// Define link to login card
     	$appli=constant('DOL_APPLICATION_TITLE');
     	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -176,7 +163,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	    else $appli.=" ".DOL_VERSION;
     	}
     	else $appli.=" ".DOL_VERSION;
-    	
+
     	$urlback=$_SERVER["REQUEST_URI"];
     	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
     	$content="";
@@ -188,7 +175,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
     	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
     	$mailfile = new CMailFile($topic, $sendto, $from, $content);
-    
+
     	$result=$mailfile->sendfile();
     	if ($result)
     	{
@@ -199,12 +186,12 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
     	}
     }
-    
+
     unset($_SESSION['ipaddress']);
 }
 
 $head='';
-if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -217,7 +204,7 @@ print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
-if (! empty($conf->global->PAYMENT_MESSAGE_KO)) print $conf->global->PAYMENT_MESSAGE_KO;
+if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_KO)) print $conf->global->ONLINE_PAYMENT_MESSAGE_KO;
 print "\n</div>\n";
 
 

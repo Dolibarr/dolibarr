@@ -183,9 +183,9 @@ if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
 
 // Common variables
 $creditor=$mysoc->name;
-$paramcreditor='STRIPE_CREDITOR_'.$suffix;
+$paramcreditor='ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
-else if (! empty($conf->global->STRIPE_CREDITOR)) $creditor=$conf->global->STRIPE_CREDITOR;
+else if (! empty($conf->global->ONLINE_PAYMENT_CREDITOR)) $creditor=$conf->global->ONLINE_PAYMENT_CREDITOR;
 
 
 
@@ -297,7 +297,7 @@ if ($action == 'charge')
     }
 
 	$_SESSION["onlinetoken"] = $stripeToken;
-    $_SESSION["Payment_Amount"] = $amount;
+    $_SESSION["FinalPaymentAmt"] = $amount;
     $_SESSION["currencyCodeType"] = $currency;
     $_SESSION["paymentType"] = '';
     $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
@@ -328,7 +328,7 @@ if ($action == 'charge')
  */
 
 $head='';
-if (! empty($conf->global->STRIPE_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->STRIPE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -369,14 +369,14 @@ print "\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
+// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
-$paramlogo='STRIPE_LOGO_'.$suffix;
+$paramlogo='PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->STRIPE_LOGO)) $logosmall=$conf->global->STRIPE_LOGO;
+else if (! empty($conf->global->PAYMENT_LOGO)) $logosmall=$conf->global->PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
@@ -401,11 +401,11 @@ if ($urllogo)
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->STRIPE_NEWFORM_TEXT))
+if (! empty($conf->global->PAYMENT_NEWFORM_TEXT))
 {
     $langs->load("members");
-    if (preg_match('/^\((.*)\)$/',$conf->global->STRIPE_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
-    else $text.=$conf->global->STRIPE_NEWFORM_TEXT."<br>\n";
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYMENT_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYMENT_NEWFORM_TEXT."<br>\n";
     $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
