@@ -82,7 +82,7 @@ foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_stripe');
 
 $head='';
-if (! empty($conf->global->STRIPE_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->STRIPE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -105,7 +105,7 @@ if ($ispaymentok)
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
-    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
     $TRANSACTIONID      = $_SESSION['TRANSACTIONID'];
@@ -117,14 +117,14 @@ if ($ispaymentok)
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
-    
+
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-    if (! empty($conf->global->STRIPE_MESSAGE_OK)) print $conf->global->STRIPE_MESSAGE_OK;
-    
+    if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+
     $sendemail = '';
-    if (! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
-    
+    if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
+
 	// Send an email
     if ($sendemail)
 	{
@@ -147,7 +147,7 @@ if ($ispaymentok)
     	    else $appli.=" ".DOL_VERSION;
     	}
     	else $appli.=" ".DOL_VERSION;
-    	
+
     	$urlback=$_SERVER["REQUEST_URI"];
 		$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 		$tmptag=dolExplodeIntoArray($fulltag,'.','=');

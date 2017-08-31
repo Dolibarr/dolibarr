@@ -539,8 +539,9 @@ class AccountancyCategory
 	/**
 	 * get cpts of category
 	 *
-	 * @param  int     $cat_id     Category id
-	 * @return array               Result in table
+	 * @param int $cat_id Id accounting account category
+	 *
+	 * @return array       Result in table
 	 */
 	public function getCptsCat($cat_id) {
 		global $mysoc;

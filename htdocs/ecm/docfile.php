@@ -78,7 +78,7 @@ if (! $urlfile)
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result=$ecmdir->fetch(GETPOST("section"));
+$result=$ecmdir->fetch(GETPOST("section",'alpha'));
 if (! $result > 0)
 {
     dol_print_error($db,$ecmdir->error);
@@ -109,10 +109,10 @@ if (! empty($_GET["fileid"]))
  * Put here all code to do according to value of "action" parameter
  ********************************************************************/
 
-if ($action == 'cancel') 
+if ($action == 'cancel')
 {
     $action ='';
-    if ($backtourl) 
+    if ($backtourl)
     {
         header("Location: ".$backtourl);
         exit;
@@ -144,7 +144,7 @@ if ($action == 'update')
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
     {
-        $result=dol_move($oldfile,$newfile);
+        $result=dol_move($oldfile, $newfile);
         if (! $result)
         {
             $langs->load('errors');
@@ -268,10 +268,12 @@ $filepath=$relativepath.$file->label;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
 print img_picto('','object_globe.png').' ';
-print '<input type="text" class="quatrevingtpercent" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
-print ' <a data-ajax="false" href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
+print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
 print '</td></tr>';
 print '</table>';
+
+print ajax_autoselect('downloadlink');
 
 dol_fiche_end();
 

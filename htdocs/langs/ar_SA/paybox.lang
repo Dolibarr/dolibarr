@@ -11,6 +11,7 @@ YourEMail=البريد الالكتروني لتأكيد الدفع
 Creditor=الدائن
 PaymentCode=دفع رمز
 PayBoxDoPayment=على الدفع
+ToPay=هل لدفع
 YouWillBeRedirectedOnPayBox=سوف يتم نقلك على تأمين Paybox لك صفحة لإدخال معلومات بطاقة الائتمان
 Continue=التالي
 ToOfferALinkForOnlinePayment=عنوان دفع %s

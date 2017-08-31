@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Följande webbadresser finns att erbjuda en sida till en kund att göra en förskottsbetalning Dolibarr objekt
+PaymentForm=Inbetalningskort
+WelcomeOnPaymentPage=Välkommen till vår online betalningssystem
+ThisScreenAllowsYouToPay=Denna skärm tillåter dig att göra en online-betalning till %s.
+ThisIsInformationOnPayment=Detta är information om betalning för att göra
+ToComplete=För att komplettera
+YourEMail=E-post för betalning bekräftelse
+STRIPE_PAYONLINE_SENDEMAIL=EMail att varna efter en betalning (framgång eller ej)
+Creditor=Borgenär
+PaymentCode=Betalning kod
+StripeDoPayment=Gå mot betalning
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Nästa
+ToOfferALinkForOnlinePayment=URL för %s betalning
+ToOfferALinkForOnlinePaymentOnOrder=URL för att erbjuda en %s online gränssnitt betalning användare för en ordning
+ToOfferALinkForOnlinePaymentOnInvoice=URL för att erbjuda en %s online gränssnitt betalning användare för en faktura
+ToOfferALinkForOnlinePaymentOnContractLine=URL för att erbjuda en %s online gränssnitt betalning användare för ett kontrakt linje
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL för att erbjuda en %s online gränssnitt betalning användare för en fri belopp
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL för att erbjuda en %s online gränssnitt betalning användare för en medlem prenumeration
+YouCanAddTagOnUrl=Du kan också lägga till url parameter <b>&tag = <i>värde</i></b> för någon av dessa URL (krävs endast för gratis betalning) för att lägga till din egen kommentar tagg betalning.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Den här sidan bekräftar att din betalning har registrerats. Tack.
+YourPaymentHasNotBeenRecorded=Din betalning inte har registrerats och transaktionen har avbrutits. Tack.
+AccountParameter=Tagen parametrar
+UsageParameter=Användning parametrar
+InformationToFindParameters=Hjälp att hitta din %s kontoinformation
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Namn på leverantör
+CSSUrlForPaymentForm=CSS-formatmall URL för inbetalningskort
+MessageOK=Meddelande på validerade betalning återvänder sida
+MessageKO=Meddelande om avbokning betalning återvänder sida
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

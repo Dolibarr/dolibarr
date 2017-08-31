@@ -344,8 +344,31 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 
-			// Send mail
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
+			$substitutionarray=array(
+				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+				'__ID__' => (is_object($object)?$object->id:''),
+				'__EMAIL__' => $sendto,
+				'__CHECK_READ__' => (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'',
+				'__REF__' => (is_object($object)?$object->ref:''),
+				'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?dol_string_nohtmltag($user->signature):'')
+				/* not available on all object
+				/'__FIRSTNAME__'=>(is_object($object)?$object->firstname:''),
+				'__LASTNAME__'=>(is_object($object)?$object->lastname:''),
+				'__FULLNAME__'=>(is_object($object)?$object->getFullName($langs):''),
+				'__ADDRESS__'=>(is_object($object)?$object->address:''),
+				'__ZIP__'=>(is_object($object)?$object->zip:''),
+				'__TOWN_'=>(is_object($object)?$object->town:''),
+				'__COUNTRY__'=>(is_object($object)?$object->country:''),
+				*/
+			);
+
+			$subject=make_substitutions($subject, $substitutionarray);
+			$message=make_substitutions($message, $substitutionarray);
+
+			// Send mail (substitutionarray must be done just before this)
+			if (empty($sendcontext)) $sendcontext = 'standard';
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid,'', $sendcontext);
+
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');
@@ -391,6 +414,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$object->trackid        = $trackid;
 						$object->fk_element		= $object->id;
 						$object->elementtype	= $object->element;
+						if (is_array($attachedfiles) && count($attachedfiles)>0) {
+							$object->attachedfiles	= $attachedfiles;
+						}
 
 						// Call of triggers
 						if (! empty($trigger_name))

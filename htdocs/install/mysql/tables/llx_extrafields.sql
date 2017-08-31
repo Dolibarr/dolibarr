@@ -23,7 +23,6 @@ create table llx_extrafields
 	name            varchar(64) NOT NULL,         				-- name of field into extrafields tables
 	entity          integer DEFAULT 1 NOT NULL,					-- multi company id
     elementtype     varchar(64) NOT NULL DEFAULT 'member',		-- for which element this extra fields is for
-	tms             timestamp,									-- date of last update
 	label           varchar(255) NOT NULL,        				-- label to show for attribute
 	type            varchar(8),
 	size            varchar(8) DEFAULT NULL,
@@ -36,6 +35,10 @@ create table llx_extrafields
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field
 	list			integer DEFAULT 0,							-- list of values for field that are combo lists
-	langs			varchar(24),								-- example: fileofmymodule@mymodule
-	ishidden		integer DEFAULT 0							-- ??? example of use case ???
+	langs			varchar(64),								-- example: fileofmymodule@mymodule
+	ishidden		integer DEFAULT 0,							-- Can be foreign key of external system
+	fk_user_author	integer,									-- user making creation
+	fk_user_modif	integer,	                                -- user making last change
+	datec			datetime,									-- date de creation
+	tms             timestamp									-- date of last update
 )ENGINE=innodb;

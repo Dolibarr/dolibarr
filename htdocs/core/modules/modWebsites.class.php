@@ -50,7 +50,8 @@ class modWebsites extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable to build and serve public websites with CMS features";
-        $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -71,7 +72,7 @@ class modWebsites extends DolibarrModules
 		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
-        $this->langfiles = array("websites");
+        $this->langfiles = array("website");
 
         // Constants
         //-----------
@@ -121,6 +122,23 @@ class modWebsites extends DolibarrModules
 						        'perms'=>'$user->rights->websites->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
+
+        // Exports
+        $r=1;
+
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
+        $this->export_label[$r]='MyWebsitePages';	// Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->export_icon[$r]='globe';
+        $keyforclass = 'WebsitePage'; $keyforclassfile='/websites/class/websitepage.class.php'; $keyforelement='Website';
+        include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+        //$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
+        //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        $this->export_sql_start[$r]='SELECT DISTINCT ';
+        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'website_page as t, '.MAIN_DB_PREFIX.'website as p';
+        $this->export_sql_end[$r] .=' WHERE t.fk_website = p.rowid';
+        $this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('website').')';
         $r++;
     }
 }

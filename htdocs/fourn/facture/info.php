@@ -46,6 +46,8 @@ $object = new FactureFournisseur($db);
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);

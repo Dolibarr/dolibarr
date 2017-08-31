@@ -194,11 +194,11 @@ class FormActions
         	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Action'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('By'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Action', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('By', $_SERVER["PHP_SELF"], '', $page, $param, '');
         	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
         	print '</tr>';
         	print "\n";
@@ -304,7 +304,7 @@ class FormActions
 		}
 		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected);
+			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

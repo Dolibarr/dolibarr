@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/customer/index.php
+ * \file 	htdocs/accountancy/customer/index.php
  * \ingroup Advanced accountancy
- * \brief Home customer journalization page
+ * \brief 	Home customer journalization page
  */
 
 require '../../main.inc.php';
@@ -363,7 +363,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 	print "</table>\n";
 
-	
+
 	if (! empty($conf->margin->enabled)) {
 		print "<br>\n";
 		print '<table class="noborder" width="100%">';

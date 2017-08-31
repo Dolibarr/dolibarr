@@ -511,7 +511,8 @@ if (empty($reshook))
 	    $error = 0;
 
 		// Set if we used free entry or predefined product
-		$predef='';
+	    $predef='';
+	    $ref_fourn = GETPOST('fourn_ref');
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
@@ -573,7 +574,7 @@ if (empty($reshook))
 			{
 			    $productsupplier = new ProductFournisseur($db);
 
-			    if (empty($conf->global->SUPPLIER_PROPOSAL_WITH_NOPRICEDEFINED))
+			    if (empty($conf->global->SUPPLIER_PROPOSAL_WITH_NOPRICEDEFINED))	// TODO this test seems useless
 			    {
 			        $idprod=0;
 			        if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
@@ -588,8 +589,9 @@ if (empty($reshook))
 			    }
 			    elseif (GETPOST('idprodfournprice') > 0)
 			    {
-			        //$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
-			        $idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), -1);        // We force qty to -1 to be sure to find if a supplier price exist
+			        //$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
+			    	$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+			    	$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
                     $res=$productsupplier->fetch($idprod);
 			    }
 
@@ -983,7 +985,9 @@ $now = dol_now();
 // Add new askprice
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewAskPrice"));
+    $currency_code = $conf->currency;
+
+    print load_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1059,6 +1063,7 @@ if ($action == 'create')
 	} else {
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";

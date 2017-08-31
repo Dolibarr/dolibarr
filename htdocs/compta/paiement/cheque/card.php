@@ -373,7 +373,7 @@ if ($action == 'new')
 {
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
-    
+
 	$lines = array();
 
 	$now=dol_now();
@@ -474,7 +474,7 @@ if ($action == 'new')
 		$moreforfilter='';
         print '<div class="div-table-responsive-no-min">';
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-		
+
 		print '<tr class="liste_titre">';
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
@@ -529,18 +529,18 @@ if ($action == 'new')
     				print '&nbsp;';
     			}
     			print '</td>';
-    
+
     			print '<td align="center">';
     			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
     			print '</td>' ;
     			print '</tr>';
-    
+
     			$i++;
     		}
 		}
 		print "</table>";
         print '</div>';
-        
+
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
@@ -563,15 +563,15 @@ else
 	$accountstatic->fetch($object->account_id);
 
 	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td class="titlefield">';
@@ -626,7 +626,7 @@ else
 	print '</td>';
 	print '</tr>';
 	*/
-	
+
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
@@ -648,7 +648,7 @@ else
 
 	print '</div>';
 
-	
+
 	// List of cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
@@ -670,16 +670,16 @@ else
 		print '<table class="noborder" width="100%">';
 
 		$param="&amp;id=".$object->id;
-		
+
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Cheques"),'','','','','width="30"');
-		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Payment"),$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Cheques",'','','','','width="30"');
+		print_liste_field_titre("DateChequeReceived",$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("CheckTransmitter",$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("Bank",$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Payment",$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("LineRecord",$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
 		$i=1;
@@ -692,7 +692,7 @@ else
     			if (! isset($accounts[$objp->bid]))
     				$accounts[$objp->bid]=0;
     			$accounts[$objp->bid] += 1;
-    
+
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';
     			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
@@ -735,13 +735,13 @@ else
        			{
        				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
        			}
-    			if ($objp->statut == 2) 
+    			if ($objp->statut == 2)
     			{
     				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
     			}
     		    print '</td>';
     			print '</tr>';
-    			
+
     			$i++;
     		}
         }
@@ -751,7 +751,7 @@ else
             print $langs->trans("None");
             print '</td>';
         }
-                
+
 		print "</table>";
 		print "</div>";
 	}

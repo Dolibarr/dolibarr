@@ -41,7 +41,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='categories'; //Must be the $element of the class that manage extrafield
+$elementtype='categorie'; //Must be the $element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 

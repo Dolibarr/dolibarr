@@ -81,7 +81,7 @@ $userAccess=0;
  */
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_user_id="";
     $toselect='';
@@ -494,6 +494,7 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
+	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	if (count($tasksarray) > 0)
@@ -536,6 +537,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print "</table>";
+	print '</div>';
 
 	print '</form>';
 

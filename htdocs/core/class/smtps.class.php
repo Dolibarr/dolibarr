@@ -221,7 +221,7 @@ class SMTPs
 	var $_debug = false;
 
 
-	// DOL_CHANGE LDR
+	// @CHANGE LDR
 	var $log = '';
 	var $_errorsTo = '';
 	var $_deliveryReceipt = 0;
@@ -271,7 +271,7 @@ class SMTPs
 	{
 		$this->_moreinheader = $_val;
 	}
-	
+
 	/**
      * get trackid
      *
@@ -291,7 +291,7 @@ class SMTPs
 	{
 	    return $this->_moreinheader;
 	}
-	
+
     /**
      * Set errors to
      *
@@ -358,10 +358,13 @@ class SMTPs
 		// This is done here because '@fsockopen' will not give me this
 		// information if it failes to connect because it can't find the HOST
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
-		// DOL_CHANGE LDR
+		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if ( (! is_ip($host)) && ((gethostbyname($host)) == $host))
@@ -373,7 +376,7 @@ class SMTPs
 		{
 			//See if we can connect to the SMTP server
 			if ($this->socket = @fsockopen(
-    			$this->getHost(),       // Host to 'hit', IP or domain
+    			preg_replace('@tls://@i','',$this->getHost()),       // Host to 'hit', IP or domain
     			$this->getPort(),       // which Port number to use
     			$this->errno,           // actual system level error
     			$this->errstr,          // and any text that goes with the error
@@ -393,7 +396,7 @@ class SMTPs
 			// This connection attempt failed.
 			else
 			{
-				// DOL_CHANGE LDR
+				// @CHANGE LDR
 				if (empty($this->errstr)) $this->errstr='Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
@@ -411,21 +414,22 @@ class SMTPs
 	function _server_authenticate()
 	{
 		global $conf;
-		
+
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
-		{
-		    $host=preg_replace('@tls://@i','',$host);	// Remove prefix
-		    $host='tls://'.$host;
-		}
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
+		if ($usetls) $host='tls://'.$host;
+
 		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
 		{
-			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+			if ($usetls)
 			{
 			    /*
 			    The following dialog illustrates how a client and server can start a TLS STARTTLS session
@@ -443,7 +447,7 @@ class SMTPs
                 // Second pass EHLO
                 C: EHLO client-domain.com
                 S: 250-server-domain.com
-                S: 250 AUTH LOGIN			    
+                S: 250 AUTH LOGIN
 			    C: <continues by sending an SMTP command
 			    */
 				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
@@ -451,18 +455,32 @@ class SMTPs
 					$this->_setErr(131, 'STARTTLS connection is not supported.');
 					return $_retVal;
 				}
-				if (!stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
+
+				// Before 5.6.7:
+				// STREAM_CRYPTO_METHOD_SSLv23_CLIENT = STREAM_CRYPTO_METHOD_SSLv2_CLIENT|STREAM_CRYPTO_METHOD_SSLv3_CLIENT
+				// STREAM_CRYPTO_METHOD_TLS_CLIENT = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
+				// PHP >= 5.6.7:
+				// STREAM_CRYPTO_METHOD_SSLv23_CLIENT = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
+				// STREAM_CRYPTO_METHOD_TLS_CLIENT = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT
+
+				$crypto_method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+				if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) {
+					$crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+					$crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+				}
+
+				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method))
 				{
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
-				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time 
+				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
 				{
 					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
 					return $_retVal;
-				}				
+				}
 			}
 			// Send Authentication to Server
 			// Check for errors along the way
@@ -514,8 +532,12 @@ class SMTPs
 			{
 				// Send the RFC821 specified HELO.
 				$host=$this->getHost();
+				$usetls = preg_match('@tls://@i',$host);
+
 				$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
 				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
 			}
 
@@ -903,7 +925,7 @@ class SMTPs
 	    if ( $_strReplyTo )
 	        $this->_msgReplyTo = $this->_strip_email($_strReplyTo);
 	}
-	
+
 	/**
 	 * Retrieves the Address from which mail will be the reply-to
 	 *
@@ -913,15 +935,15 @@ class SMTPs
 	function getReplyTo($_part = true)
 	{
 	    $_retValue = '';
-	
+
 	    if ( $_part === true )
 	        $_retValue = $this->_msgReplyTo;
 	    else
 	        $_retValue = $this->_msgReplyTo[$_part];
-	
+
 	    return $_retValue;
 	}
-	
+
 	/**
 	 * Inserts given addresses into structured format.
 	 * This method takes a list of given addresses, via an array
@@ -1093,7 +1115,7 @@ class SMTPs
 					{
 						foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
 						{
-							if ( $_realName )	// DOL_CHANGE LDR
+							if ( $_realName )	// @CHANGE LDR
 							{
 								$_realName = '"' . $_realName . '"';
 								$_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
@@ -1217,6 +1239,8 @@ class SMTPs
 	 */
 	function getHeader()
 	{
+		global $conf;
+
 		$_header = 'From: '       . $this->getFrom('org') . "\r\n"
 		. 'To: '         . $this->getTO()          . "\r\n";
 
@@ -1233,13 +1257,16 @@ class SMTPs
 		if ( $this->getBCC() )
 		$_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
         */
-		
+
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
 		$host=dol_getprefix('email');
-		
+
 		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n";
 		$_header .= 'Date: '       . date("r")               . "\r\n";
@@ -1258,7 +1285,7 @@ class SMTPs
 		}
 		if ( $this->getMoreInHeader() )
 		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
-		
+
 		//$_header .=
 		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
 		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
@@ -1270,7 +1297,7 @@ class SMTPs
 		$_header .= $this->getPriority();
 
 
-		// DOL_CHANGE LDR
+		// @CHANGE LDR
 		if ( $this->getDeliveryReceipt() )
 		    $_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
@@ -1279,9 +1306,10 @@ class SMTPs
 		    $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
 
 		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)' . "\r\n";
+		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART?'MAIN_MAIL_USE_MULTI_PART':'No MAIN_MAIL_USE_MULTI_PART') . "\r\n";
 		$_header .= 'Mime-Version: 1.0' . "\r\n";
 
-		
+
 		return $_header;
 	}
 
@@ -1310,17 +1338,17 @@ class SMTPs
 			$strContentAltText = html_entity_decode(strip_tags($strContent));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
-		
+
 		// Make RFC2045 Compliant
 		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
 		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));   // TODO Using this method creates unexpected line break on text/plain content.
-		
+
 		$this->_msgContent[$strType] = array();
 
 		$this->_msgContent[$strType]['mimeType'] = $strMimeType;
 		$this->_msgContent[$strType]['data']     = $strContent;
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
-		
+
 		if ( $this->getMD5flag() )
 		$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
 		//}
@@ -1334,7 +1362,7 @@ class SMTPs
 	function getBodyContent()
 	{
 	    global $conf;
-	    
+
 		// Generate a new Boundary string
 		$this->_setBoundary();
 
@@ -1382,7 +1410,7 @@ class SMTPs
 			$content .= "\r\n";
 
 			$content .= "--" . $this->_getBoundary('mixed') . "\r\n";
-			
+
 			if (key_exists('image', $this->_msgContent))     // If inline image found
 			{
 				$content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
@@ -1390,7 +1418,7 @@ class SMTPs
 				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
 			}
 
-			
+
 			// $this->_msgContent must be sorted with key 'text' or 'html' first then 'image' then 'attachment'
 
 
@@ -1414,7 +1442,7 @@ class SMTPs
 						$content .= "\r\n" .  $_data['data'] . "\r\n\r\n";
 					}
 				}
-				// DOL_CHANGE LDR
+				// @CHANGE LDR
 				else if ( $type == 'image' )
 				{
 					// loop through all images
@@ -1450,18 +1478,18 @@ class SMTPs
 						$content.= "\r\n";
 						$content.= "--" . $this->_getBoundary('related') . "\r\n";
 					}
-					
+
 					if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part before html part
 					{
 					    $content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
     					$content .= "\r\n";
 	       				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
-					
+
 	       				$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
 	       				$content.= "\r\n". $_content['dataText'] . "\r\n";
 	       				$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
-					}	       				
-	       				
+					}
+
 					$content .= 'Content-Type: ' . $_content['mimeType'] . '; '
 					//                             . 'charset="' . $this->getCharSet() . '"';
 					. 'charset=' . $this->getCharSet() . '';
@@ -1483,7 +1511,7 @@ class SMTPs
 					{
 					    $content.= "--" . $this->_getBoundary('alternative') . "--". "\r\n";
 					}
-					
+
 					$content .= "\r\n";
 				}
 			}
@@ -1521,7 +1549,7 @@ class SMTPs
 	}
 
 
-	// DOL_CHANGE LDR
+	// @CHANGE LDR
 
 	/**
 	 * Image attachments are added to the content array as sub-arrays,
@@ -1546,7 +1574,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
 		}
 	}
-	// END DOL_CHANGE LDR
+	// END @CHANGE LDR
 
 
 	/**
@@ -1740,7 +1768,7 @@ class SMTPs
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{
-		if ($this->_debug) $this->log.=$_strSend;	// DOL_CHANGE LDR for log
+		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
 		fputs($this->socket, $_strSend . $CRLF);
 		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
 

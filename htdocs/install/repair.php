@@ -78,7 +78,7 @@ print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(G
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
 print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
 print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
-print 'Option force_utf8_on_tables, for mysql/mariadb only(0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -802,90 +802,108 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
 
-    $sql ="SELECT DISTINCT name";
-    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
-    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_HOOKS'";
-    $sql.=" ORDER BY name";
+    $arraylistofkey=array('hooks','js','css');
 
-    $resql = $db->query($sql);
-    if ($resql)
+    foreach($arraylistofkey as $key)
     {
-        $num = $db->num_rows($resql);
-        if ($num)
-        {
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj=$db->fetch_object($resql);
-                $majname = $obj->name;
+	    $sql ="SELECT DISTINCT name, value";
+	    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+	    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+	    $sql.=" ORDER BY name";
 
-                print '<tr><td>';
-                print $majname;
+	    $resql = $db->query($sql);
+	    if ($resql)
+	    {
+	        $num = $db->num_rows($resql);
+	        if ($num)
+	        {
+	            $i = 0;
+	            while ($i < $num)
+	            {
+	                $obj=$db->fetch_object($resql);
+	                $constantname = $obj->name;				// Name of constant for hook or js or css declaration
 
-                $db->begin();
+	                print '<tr><td>';
+	                print $constantname;
 
-                if (preg_match('/MAIN_MODULE_(.*)_HOOKS/i', $majname, $reg))
-                {
-                    $name=strtolower($reg[1]);
+	                $db->begin();
 
-                    if ($name)
-                    {
-                        $reloffile=$name.'/class/actions_'.$name.'.class.php';
-                        $result = dol_include_once($reloffile);
-                        if (! $result)
-                        {
-                            print ' - File of hooks ('.$reloffile.') NOT found, we disable the module.';
-                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
-                            {
-                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_HOOKS'";
-                                $resql2=$db->query($sql2);
-                                if (! $resql2)
-                                {
-                                    $error++;
-                                    dol_print_error($db);
-                                }
-                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-                                $resql2=$db->query($sql2);
-                                if (! $resql2)
-                                {
-                                    $error++;
-                                    dol_print_error($db);
-                                }
-                                else
-                                    print " - Cleaned";
-                            }
-                            else
-                            {
-                                print ' - Canceled (test mode)';
-                            }
-                        }
-                        else
-                        {
-                            print ' - File of hooks ('.$reloffile.') found, we do nothing.';
-                        }
-                    }
+	                if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
+	                {
+	                    $name=strtolower($reg[1]);
 
-                    if (!$error) $db->commit();
-                    else $db->rollback();
-                }
+	                    if ($name)		// And entry for key $key and module $name was found in database.
+	                    {
+	                    	if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
+	                    	if ($key == 'js')
+	                    	{
+		                    	$value=$obj->value;
+		                    	$valuearray=json_decode($value);
+	                    		$reloffile=$valuearray[0];
+	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+	                    	}
+	                    	if ($key == 'css')
+	                    	{
+		                    	$value=$obj->value;
+		                    	$valuearray=json_decode($value);
+	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+	                    	}
 
-                print'</td></tr>';
+	                        $result = dol_include_once($reloffile);
+	                        if (! $result)
+	                        {
+	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
+	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
+	                            {
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+	                                $resql2=$db->query($sql2);
+	                                if (! $resql2)
+	                                {
+	                                    $error++;
+	                                    dol_print_error($db);
+	                                }
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql2=$db->query($sql2);
+	                                if (! $resql2)
+	                                {
+	                                    $error++;
+	                                    dol_print_error($db);
+	                                }
+	                                else
+	                                    print " - Cleaned";
+	                            }
+	                            else
+	                            {
+	                                print ' - Canceled (test mode)';
+	                            }
+	                        }
+	                        else
+	                        {
+	                            print ' - File of '.$key.' ('.$reloffile.') found, we do nothing.';
+	                        }
+	                    }
 
-                if ($error) break;
+	                    if (!$error) $db->commit();
+	                    else $db->rollback();
+	                }
 
-                $i++;
-            }
-        }
-        else
-        {
-            print '<tr><td>No active module with missing files found</td></tr>';
-        }
+	                print'</td></tr>';
+
+	                if ($error) break;
+
+	                $i++;
+	            }
+	        }
+	        else
+	        {
+	            print '<tr><td>No active module with missing files found by searching on MAIN_MODULE_(.*)_'.strtoupper($key).'</td></tr>';
+	        }
+	    }
+	    else
+	    {
+	        dol_print_error($db);
+	    }
     }
-    else
-    {
-        dol_print_error($db);
-    }
-
 }
 
 
@@ -895,7 +913,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force page code and collation with utf8 (for mysql/mariadb only)</td></tr>';
+    print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8 (for mysql/mariadb only)</td></tr>';
 
     if ($db->type == "mysql")
     {

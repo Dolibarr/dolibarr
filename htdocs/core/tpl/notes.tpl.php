@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Florian Henry	      <florian.henry@open-concept.pro>
- * Copyright (C) 2014 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2017 Laurent Destailleur <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $cssclass must be defined by caller. For example cssclass='fieldtitle"
-$module = $object->element;
-$note_public = 'note_public';
+// $permission must be defined by caller.
+// $cssclass   must be defined by caller. For example cssclass='fieldtitle"
+$module       = $object->element;
+$note_public  = 'note_public';
 $note_private = 'note_private';
 
 $colwidth=(isset($colwidth)?$colwidth:(empty($cssclass)?'25':''));
@@ -66,21 +67,29 @@ elseif ($module == 'product')    		 { $permission=$user->rights->produit->creer;
 if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:95%';	// Rem: This var is for all notes, not only thirdparties note.
 else $typeofdata='textarea:12:95%';
 
+print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
+print '<div class="tagtable border table-border centpercent">'."\n";
+if ($module != 'product') {
+	// No public note yet on products
+	print '<div class="tagtr table-border-row">'."\n";
+	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
+	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
+	print '</div>'."\n";
+	print '<div class="tagtd table-val-border-col">'."\n";
+	print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1)."\n";
+	print '</div>'."\n";
+	print '</div>'."\n";
+}
+if (empty($user->societe_id)) {
+	print '<div class="tagtr table-border-row">'."\n";
+	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
+	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
+	print '</div>'."\n";
+	print '<div class="tagtd table-val-border-col">'."\n";
+	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
+	print '</div>'."\n";
+	print '</div>'."\n";
+}
+print '</div>'."\n";
 ?>
-
-<!-- BEGIN PHP TEMPLATE NOTES -->
-<div class="tagtable border table-border centpercent">
-<?php if ($module != 'product') {   // No public note yet on products ?>
-	<div class="tagtr table-border-row">
-		<div class="tagtd tdtop table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0); ?></div>
-		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1); ?></div>
-	</div>
-<?php } ?>
-<?php if (empty($user->societe_id)) { ?>
-	<div class="tagtr table-border-row">
-		<div class="tagtd tdtop table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0); ?></div>
-		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1); ?></div>
-	</div>
-<?php } ?>
-</div>
 <!-- END PHP TEMPLATE NOTES-->

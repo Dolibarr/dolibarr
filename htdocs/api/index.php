@@ -131,9 +131,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
         {
             while (($file = readdir($handle))!==false)
             {
-                if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i",$file,$reg))
+                if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i",$file,$regmod))
                 {
-                    $module = strtolower($reg[1]);
+                    $module = strtolower($regmod[1]);
                     $moduledirforclass = getModuleDirForApiClass($module);
                     $moduleforperm = $module;
                     if ($module == 'propale') { $moduleforperm='propal'; }
@@ -159,9 +159,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                                 if ($file_searched == 'api_access.class.php') continue;
 
                                 // Support of the deprecated API.
-                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
+                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$regapi))
                                 {
-                                    $classname = ucwords($reg[1]).'Api';
+                                    $classname = ucwords($regapi[1]).'Api';
                                     require_once $dir_part.$file_searched;
                                     if (class_exists($classname))
                                     {
@@ -173,9 +173,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                                         dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
                                     }
                                 }
-                                elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
+                                elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$regapi))
                                 {
-                                    $classname = ucwords($reg[1]);
+                                    $classname = ucwords($regapi[1]);
                                     $classname = str_replace('_', '', $classname);
                                     require_once $dir_part.$file_searched;
                                     if (class_exists($classname))
@@ -206,7 +206,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
 }
 
 // Call one APIs or one definition of an API
-if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' && preg_match('/^\/resources.json\/(.+)$/', $reg[2], $regbis))))
+if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' && preg_match('/^\/resources.json\/(.+)$/', $reg[2], $regbis) && $regbis[1] != 'root')))
 {
     $module = $reg[1];
     if ($module == 'explorer')  // If we call page to explore details of a service
@@ -238,6 +238,7 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
     {
         $classfile = str_replace('_', '', $module);
         if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
+        if ($module == 'supplierorders')   $classfile = 'supplier_orders';
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');
         $classname=ucwords($module);
 

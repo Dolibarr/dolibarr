@@ -47,27 +47,51 @@ class MyObject extends CommonObject
 	/**
 	 * @var array  Does this field is linked to a thirdparty ?
 	 */
-	protected $isnolinkedbythird=1;
+	protected $isnolinkedbythird = 1;
 	/**
 	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	protected $ismultientitymanaged = 1;
-
-
 	/**
-     * @var string String with name of icon for myobject
-     */
-	public $picto = 'myobject';
-
-	/**
-	 * @var int    Entity Id
+	 * @var string String with name of icon for myobject
 	 */
-	public $entity;
+	public $picto = 'myobject@mymodule';
+
 
 	/**
-     * @var array  Array with all fields and their property
+	 *             'type' if the field format.
+	 *             'label' the translation key.
+	 *             'enabled' is a condition when the filed must be managed.
+	 *             'visible' says if field is visible in list (-1 means not shown by default but can be aded into list to be viewed).
+	 *             'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *             'index' if we want an index in database.
+	 *             'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *             'position' is the sort order of field.
+	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *             'comment' is not used. You can store here any text of your choice.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
-	public $fields;
+	public $fields=array(
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
+		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=>1, 'index'=>1, 'position'=>20),
+	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'position'=>40,  'searchall'=>0, 'isameasure'=>1),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>1000),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>500),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
+	);
+	// END MODULEBUILDER PROPERTIES
 
 
 
@@ -103,7 +127,11 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $conf;
+
 		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $fields['rowid']['visible']=0;
 	}
 
 	/**
@@ -111,195 +139,90 @@ class MyObject extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int             <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		return $this->createCommon($user, $notrigger);
+	}
 
-		$error = 0;
+	/**
+	 * Clone and object into another one
+	 *
+	 * @param  	User 	$user      	User that creates
+	 * @param  	int 	$fromid     Id of object to clone
+	 * @return 	mixed 				New object created, <0 if KO
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		global $hookmanager, $langs;
+	    $error = 0;
 
-		// Clean parameters
-		if (isset($this->prop1)) {
-			$this->prop1 = trim($this->prop1);
-		}
-		if (isset($this->prop2)) {
-			$this->prop2 = trim($this->prop2);
-		}
-		//...
+	    dol_syslog(__METHOD__, LOG_DEBUG);
 
-		// Check parameters
-		// Put here code to add control on parameters values
+	    $object = new self($this->db);
 
-		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		$sql .= ' field1,';
-		$sql .= ' field2';
-		//...
-		$sql .= ') VALUES (';
-		$sql .= ' \'' . $this->prop1 . '\',';
-		$sql .= ' \'' . $this->prop2 . '\'';
-		//...
-		$sql .= ')';
+	    $this->db->begin();
 
-		$this->db->begin();
+	    // Load source object
+	    $object->fetchCommon($fromid);
+	    // Reset some properties
+	    unset($object->id);
+	    unset($object->fk_user_creat);
+	    unset($object->import_key);
 
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-		}
+	    // Clear fields
+	    $object->ref = "copy_of_".$object->ref;
+	    $object->title = $langs->trans("CopyOf")." ".$object->title;
+	    // ...
 
-		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+	    // Create clone
+		$object->context['createfromclone'] = 'createfromclone';
+	    $result = $object->createCommon($user);
+	    if ($result < 0) {
+	        $error++;
+	        $this->error = $object->error;
+	        $this->errors = $object->errors;
+	    }
 
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-
-			return $this->id;
-		}
+	    // End
+	    if (!$error) {
+	        $this->db->commit();
+	        return $object;
+	    } else {
+	        $this->db->rollback();
+	        return -1;
+	    }
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param  int     $id      Id object
-	 * @param  string  $ref     Ref
-	 * @return int              <0 if KO, 0 if not found, >0 if OK
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-		$sql .= ' t.field1,';
-		$sql .= ' t.field2';
-		//...
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		$sql.= ' WHERE 1 = 1';
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity('mymoduleobject') . ")";
-		}
-		if (null !== $ref) {
-			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
-		} else {
-			$sql .= ' AND t.rowid = ' . $id;
-		}
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$numrows = $this->db->num_rows($resql);
-			if ($numrows) {
-				$obj = $this->db->fetch_object($resql);
-
-				$this->id = $obj->rowid;
-				$this->prop1 = $obj->field1;
-				$this->prop2 = $obj->field2;
-				//...
-			}
-
-			$this->db->free($resql);
-
-			$this->fetch_optionals();
-
-			// $this->fetch_lines();
-
-			if ($numrows) {
-				return 1;
-			} else {
-				return 0;
-			}
-		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-			return - 1;
-		}
+		$result = $this->fetchCommon($id, $ref);
+		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		return $result;
 	}
 
 	/**
-	 * Load object in memory from the database
+	 * Load object lines in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchLines($id, $ref = null)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		$this->lines=array();
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-		$sql .= ' t.field1,';
-		$sql .= ' t.field2';
-		//...
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+		// Load lines with object MyObjectLine
 
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-			}
-		}
-		$sql.= ' WHERE 1 = 1';
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity('mymoduleobject') . ")";
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
-		}
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
-		}
-		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
-		}
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new self($this->db);
-
-				$line->id = $obj->rowid;
-				$line->prop1 = $obj->field1;
-				$line->prop2 = $obj->field2;
-				//...
-			}
-			$this->db->free($resql);
-
-			return $num;
-		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-
-			return - 1;
-		}
+		return count($this->lines)?1:0;
 	}
 
 	/**
@@ -307,177 +230,36 @@ class MyObject extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$error = 0;
-
-		// Clean parameters
-		if (isset($this->prop1)) {
-			$this->prop1 = trim($this->prop1);
-		}
-		if (isset($this->prop2)) {
-			$this->prop2 = trim($this->prop2);
-		}
-		//...
-
-		// Check parameters
-		// Put here code to add a control on parameters values
-
-		// Update request
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		$sql .= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
-        $sql .= " field2=".(isset($this->field2)?"'".$this->db->escape($this->field2)."'":"null")."";
-		//...
-		$sql .= ' WHERE rowid=' . $this->id;
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-		}
-
-		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-
-			return 1;
-		}
+		return $this->updateCommon($user, $notrigger);
 	}
 
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$error = 0;
-
-		$this->db->begin();
-
-		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			}
-		}
-
-		// If you need to delete child tables to, you can insert them here
-
-		if (!$error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE rowid=' . $this->id;
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-
-			return 1;
-		}
-	}
-
-	/**
-	 * Load an object from its id and create a new one in database
-	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
-	 */
-	public function createFromClone($fromid)
-	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		global $user;
-		$error = 0;
-		$object = new MyModuleObject($this->db);
-
-		$this->db->begin();
-
-		// Load source object
-		$object->fetch($fromid);
-		// Reset object
-		$object->id = 0;
-
-		// Clear fields
-		// ...
-
-		// Create clone
-		$result = $object->create($user);
-
-		// Other options
-		if ($result < 0) {
-			$error ++;
-			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
-		}
-
-		// End
-		if (!$error) {
-			$this->db->commit();
-
-			return $object->id;
-		} else {
-			$this->db->rollback();
-
-			return - 1;
-		}
+		return $this->deleteCommon($user, $trigger);
 	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-     *  @param	int  	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -488,18 +270,27 @@ class MyObject extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("MyObject") . '</u>';
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id;
+        $url='';
+        if ($option != 'nolink')
+        {
+        	$url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
+
+	        // Add param to save lastsearch_values or not
+	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
         $linkclose='';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowProject");
+                $label=$langs->trans("ShowMyObject");
                 $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
@@ -580,6 +371,59 @@ class MyObject extends CommonObject
 		}
 	}
 
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
+		$sql.= ' fk_user_creat, fk_user_modif';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql.= ' WHERE t.rowid = '.$id;
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation   = $cuser;
+				}
+
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
+
+				if ($obj->fk_user_cloture)
+				{
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture   = $cluser;
+				}
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 
 	/**
 	 * Initialise object with example values
@@ -589,28 +433,42 @@ class MyObject extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->id = 0;
-		$this->prop1 = 'prop1';
-		$this->prop2 = 'prop2';
+		$this->initAsSpecimenCommon();
 	}
 
+
+	/**
+	 * Action executed by scheduler
+	 * CAN BE A CRON TASK
+	 *
+	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function doScheduledJob()
+	{
+		global $conf, $langs;
+
+		$this->output = '';
+		$this->error='';
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		// ...
+
+		return 0;
+	}
 }
 
 /**
- * Class MyModuleObjectLine
+ * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class MyModuleObjectLine
+/*
+class MyObjectLine
 {
-	/**
-	 * @var int ID
-	 */
+	// @var int ID
 	public $id;
-	/**
-	 * @var mixed Sample line property 1
-	 */
+	// @var mixed Sample line property 1
 	public $prop1;
-	/**
-	 * @var mixed Sample line property 2
-	 */
+	// @var mixed Sample line property 2
 	public $prop2;
 }
+*/

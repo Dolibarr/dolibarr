@@ -169,12 +169,12 @@ class Productcustomerprice extends CommonObject
 		$sql .= " " . (empty($this->price_min_ttc) ? '0' : "'" . $this->price_min_ttc . "'") . ",";
 		$sql .= " " . (! isset($this->price_base_type) ? 'NULL' : "'" . $this->db->escape($this->price_base_type) . "'") . ",";
 		$sql .= " ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
-		$sql .= " " . (! isset($this->tva_tx) ? 'NULL' : "'" . $this->tva_tx . "'") . ",";
+		$sql .= " " . (! isset($this->tva_tx) ? 'NULL' : (empty($this->tva_tx)?0:$this->tva_tx)) . ",";
 		$sql .= " " . (! isset($this->recuperableonly) ? 'NULL' : "'" . $this->recuperableonly . "'") . ",";
 		$sql .= " " . (empty($this->localtax1_type) ? "'0'" : "'" . $this->localtax1_type . "'") . ",";
-		$sql .= " " . (! isset($this->localtax1_tx) ? 'NULL' : "'" . $this->localtax1_tx . "'") . ",";
+		$sql .= " " . (! isset($this->localtax1_tx) ? 'NULL' : (empty($this->localtax1_tx)?0:$this->localtax1_tx)) . ",";
 		$sql .= " " . (empty($this->localtax2_type) ? "'0'" : "'" . $this->localtax2_type . "'") . ",";
-		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : "'" . $this->localtax2_tx . "'") . ",";
+		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx)?0:$this->localtax2_tx)) . ",";
 		$sql .= " " . $user->id . ",";
 		$sql .= " " . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . "";
 		$sql .= ")";
@@ -656,10 +656,10 @@ class Productcustomerprice extends CommonObject
 		$sql .= " price_min_ttc=" . (isset($this->price_min_ttc) ? $this->price_min_ttc : "null") . ",";
 		$sql .= " price_base_type=" . (isset($this->price_base_type) ? "'" . $this->db->escape($this->price_base_type) . "'" : "null") . ",";
 		$sql .= " default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
-		$sql .= " tva_tx=" . (isset($this->tva_tx) ? $this->tva_tx : "null") . ",";
+		$sql .= " tva_tx=" . (isset($this->tva_tx) ? (empty($this->tva_tx)?0:$this->tva_tx) : "null") . ",";
 		$sql .= " recuperableonly=" . (isset($this->recuperableonly) ? $this->recuperableonly : "null") . ",";
-		$sql .= " localtax1_tx=" . (isset($this->localtax1_tx) ? $this->localtax1_tx : "null") . ",";
-		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? $this->localtax2_tx : "null") . ",";
+		$sql .= " localtax1_tx=" . (isset($this->localtax1_tx) ? (empty($this->localtax1_tx)?0:$this->localtax1_tx) : "null") . ",";
+		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? (empty($this->localtax2_tx)?0:$this->localtax2_tx) : "null") . ",";
 		$sql .= " localtax1_type=" . (! empty($this->localtax1_type) ? "'".$this->localtax1_type."'": "'0'") . ",";
 		$sql .= " localtax2_type=" . (! empty($this->localtax2_type) ? "'".$this->localtax2_type."'": "'0'") . ",";
 		$sql .= " fk_user=" . $user->id . ",";
@@ -676,15 +676,12 @@ class Productcustomerprice extends CommonObject
 
 		if (! $error) {
 			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
+				// Call triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PRODUCT_CUSTOMER_PRICE_UPDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// End call triggers
 			}
 		}
 

@@ -9,6 +9,7 @@ BankTransactionForCategory=Entrées bancaires pour la catégorie <b>%s</b>
 RemoveFromRubriqueConfirm=Êtes-vous sûr de vouloir supprimer le lien entre l'entrée et la catégorie?
 ListBankTransactions=Liste des entrées bancaires
 BankTransactions=Entrées bancaires
+BankTransaction=Entrée de la banque
 ListTransactions=Entrées de la liste
 ListTransactionsByCategory=Liste des entrées / catégorie
 TransactionsToConciliate=Entrées à réconcilier

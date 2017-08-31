@@ -47,7 +47,7 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/l
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
+if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -366,6 +366,9 @@ if (empty($reshook)) {
 				$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 				$object->dateemployment = $dateemployment;
+
+				$object->default_range = GETPOST('default_range');
+				$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -715,6 +718,7 @@ if ($action == 'create' || $action == 'adduserldap')
         if (is_array($liste) && count($liste))
         {
         	print $form->selectarray('users', $liste, '', 1);
+        	print ajax_combobox('users');
         }
        	print '</td><td align="center">';
        	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
@@ -1010,21 +1014,6 @@ if ($action == 'create' || $action == 'adduserldap')
     }
     print '</td></tr>';
 
-    // Multicompany
-    if (! empty($conf->multicompany->enabled) && is_object($mc))
-    {
-    	if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-        {
-            print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-            print "<td>".$mc->select_entities($conf->entity);
-            print "</td></tr>\n";
-        }
-        else
-        {
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-        }
-    }
-
     // Accountancy code
     if ($conf->accounting->enabled)
     {
@@ -1107,6 +1096,38 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
 			null, '90%' );
 		print "</td></tr>";
+	}
+
+	// Multicompany
+	// This is now done with hook formObjectOptions
+	/*
+	 if (! empty($conf->multicompany->enabled) && is_object($mc))
+	 {
+	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+	 {
+	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+	 print "<td>".$mc->select_entities($conf->entity);
+	 print "</td></tr>\n";
+	 }
+	 else
+	 {
+	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+	 }
+	 }
+	 */
+
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+	{
+		print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+		print '<td>';
+		print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+		print '<td>';
+		$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+		print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+		print '</td></tr>';
 	}
 
     // Other attributes
@@ -1497,6 +1518,37 @@ else
 		    print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
 		    print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 		    print "</tr>\n";
+
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td class="fk_c_exp_tax_cat">';
+				print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				print $object->default_range;
+				print '</td></tr>';
+			}
+
+		    // Multicompany
+		    // This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
+		    /*
+		     if (! empty($conf->multicompany->enabled) && is_object($mc))
+		     {
+		     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		     {
+		     print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
+		     if (empty($object->entity)) {
+		     print $langs->trans("AllEntities");
+		     } else {
+		     $mc->getInfo($object->entity);
+		     print $mc->label;
+		     }
+		     print "</td></tr>\n";
+		     }
+		     }*/
 
 		    // Other attributes
     		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -2391,6 +2443,39 @@ else
                 print '</td>';
                 print "</tr>\n";
             }
+
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td>';
+				print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+				print '</td></tr>';
+			}
+
+            // Multicompany
+            // This is now done with hook formObjectOptions
+            /*
+            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+            if (! empty($conf->multicompany->enabled) && is_object($mc))
+            {
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	{
+            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
+            }
+            */
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');

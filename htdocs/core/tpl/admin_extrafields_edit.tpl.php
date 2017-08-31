@@ -54,11 +54,11 @@
     		?>
 
     		// Case of computed field
-    		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') { 
-    			jQuery("tr.extra_computed_value").show(); 
+    		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
+    			jQuery("tr.extra_computed_value").show();
     		} else {
     			computed_value.val(''); jQuery("tr.extra_computed_value").hide();
-    		} 
+    		}
     		if (computed_value.val())
     		{
         		console.log("We enter a computed formula");
@@ -73,7 +73,7 @@
         		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', false);
         		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").show();
     		}
-    		
+
 			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
 			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
     		else if (type == 'double')   { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
@@ -91,19 +91,19 @@
 			else if (type == 'separate') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true); default_value.val('').prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
 			else {	// type = string
 				size.val('').prop('disabled', true);
-				unique.removeAttr('disabled');		
+				unique.removeAttr('disabled');
 			}
 
 			if (type == 'separate')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true); 
-				jQuery('#size, #default_value').val('').prop('disabled', true); 
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true);
+				jQuery('#size, #default_value').val('').prop('disabled', true);
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled'); 
-			}			
+				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled');
+			}
     	}
     	init_typeoffields(jQuery("#type").val());
     	jQuery("#type").change(function() {
@@ -113,7 +113,7 @@
     	// If we enter a formula, we disable other fields
     	jQuery("#computed_value").keyup(function() {
     		init_typeoffields(jQuery('#type').val());
-    	});    	
+    	});
     });
 </script>
 
@@ -129,20 +129,20 @@
 <table summary="listofattributes" class="border centpercent">
 
 <?php
-$type=$extrafields->attribute_type[$attrname];
-$size=$extrafields->attribute_size[$attrname];
-$computed=$extrafields->attribute_computed[$attrname];
-$default=$extrafields->attribute_default[$attrname];
-$unique=$extrafields->attribute_unique[$attrname];
-$required=$extrafields->attribute_required[$attrname];
-$pos=$extrafields->attribute_pos[$attrname];
-$alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
-$param=$extrafields->attribute_param[$attrname];
-$perms=$extrafields->attribute_perms[$attrname];
-$list=$extrafields->attribute_list[$attrname];
-if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) {
-	$ishidden=$extrafields->attribute_hidden[$attrname];
-}
+$type=$extrafields->attributes[$elementtype]['type'][$attrname];
+$size=$extrafields->attributes[$elementtype]['size'][$attrname];
+$computed=$extrafields->attributes[$elementtype]['computed'][$attrname];
+$default=$extrafields->attributes[$elementtype]['default'][$attrname];
+$unique=$extrafields->attributes[$elementtype]['unique'][$attrname];
+$required=$extrafields->attributes[$elementtype]['required'][$attrname];
+$pos=$extrafields->attributes[$elementtype]['pos'][$attrname];
+$alwayseditable=$extrafields->attributes[$elementtype]['alwayseditable'][$attrname];
+$param=$extrafields->attributes[$elementtype]['param'][$attrname];
+$perms=$extrafields->attributes[$elementtype]['perms'][$attrname];
+$langfile=$extrafields->attributes[$elementtype]['langfile'][$attrname];
+$list=$extrafields->attributes[$elementtype]['list'][$attrname];
+$ishidden=$extrafields->attributes[$elementtype]['hidden'][$attrname];
+$entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -217,7 +217,9 @@ else
 </td>
 </tr>
 <!-- Position -->
-<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($extrafields->attribute_pos[$attrname]);  ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($pos);  ?>"></td></tr>
+<!-- Language file -->
+<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile);  ?>"></td></tr>
 <!-- Computed value -->
 <tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
 <!-- Default value -->
@@ -231,6 +233,9 @@ else
 <!-- Is visible or not -->
 <?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
     <tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo ($ishidden ?' checked':''); ?>></td></tr>
+<?php } ?>
+<?php if ($conf->multicompany->enabled) { ?>
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
 <!-- By default visible into list -->
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>

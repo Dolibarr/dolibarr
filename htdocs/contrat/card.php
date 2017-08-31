@@ -1153,6 +1153,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1482,7 +1483,7 @@ else
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 	        $sql.= " cd.fk_unit,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity";
+            $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
             $sql.= " WHERE cd.rowid = ".$object->lines[$cursorline-1]->id;
@@ -1513,7 +1514,7 @@ else
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
                     print '<tr '.$bcnd[$var].' valign="top">';
-                    // Libelle
+                    // Label
                     if ($objp->fk_product > 0)
                     {
                         print '<td>';
@@ -1521,19 +1522,21 @@ else
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
 						$productstatic->entity=$objp->pentity;
-                        $text = $productstatic->getNomUrl(1,'',20);
-                        if ($objp->label)
+						$productstatic->label=$objp->plabel;
+						$text = $productstatic->getNomUrl(1,'',20);
+                        if ($objp->plabel)
                         {
                         	$text .= ' - ';
-                        	$productstatic->ref=$objp->label;
-                        	$text .= $productstatic->getNomUrl(0,'',16);
+                        	//$productstatic->ref=$objp->label;
+                        	//$text .= $productstatic->getNomUrl(0,'',16);
+                        	$text .= $objp->plabel;
                         }
                         $description = $objp->description;
 
 	                    // Add description in form
 						if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 						{
-							$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							$text .= (! empty($objp->description) && $objp->description!=$objp->plabel)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 							$description = '';	// Already added into main visible desc
 						}
 
@@ -1543,7 +1546,7 @@ else
                     }
                     else
 					{
-                        print '<td>'.dol_htmlentitiesbr($objp->description)."</td>\n";
+                        print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
                     }
                     // TVA
                     print '<td align="center">';
@@ -2043,7 +2046,7 @@ else
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
-            if ($object->statut == 1 && $nbofservices)
+            if ($object->statut == 1)
             {
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';

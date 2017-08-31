@@ -618,9 +618,10 @@ class Propal extends CommonObject
 	 *  @param		array		$array_options		extrafields array
      * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 * 	@param		int			$notrigger			disable line update trigger
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise = 0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise = 0, $notrigger=0)
     {
         global $mysoc;
 
@@ -745,7 +746,7 @@ class Propal extends CommonObject
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
 
-            $result=$this->line->update();
+            $result=$this->line->update($notrigger);
             if ($result > 0)
             {
                 // Reorder if child line
@@ -909,23 +910,23 @@ class Propal extends CommonObject
         $sql.= $this->socid;
         $sql.= ", 0";
         $sql.= ", ".$this->remise;
-        $sql.= ", ".($this->remise_percent?$this->db->escape($this->remise_percent):'null');
-        $sql.= ", ".($this->remise_absolue?$this->db->escape($this->remise_absolue):'null');
+        $sql.= ", ".($this->remise_percent?$this->db->escape($this->remise_percent):'NULL');
+        $sql.= ", ".($this->remise_absolue?$this->db->escape($this->remise_absolue):'NULL');
         $sql.= ", 0";
         $sql.= ", 0";
         $sql.= ", '".$this->db->idate($this->date)."'";
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '(PROV)'";
-        $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
+        $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"NULL");
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", '".$this->db->escape($this->modelpdf)."'";
-        $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
-        $sql.= ", ".$this->cond_reglement_id;
-        $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"NULL");
+        $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
+        $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
-        $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
+        $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"NULL");
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
         $sql.= ", ".$this->availability_id;
         $sql.= ", ".$this->demand_reason_id;
@@ -2361,7 +2362,7 @@ class Propal extends CommonObject
     	$this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = '.self::STATUS_BILLED;
-        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT.' ;';
+        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -3501,7 +3502,7 @@ class Propal extends CommonObject
 /**
  *	Class to manage commercial proposal lines
  */
-class PropaleLigne  extends CommonObjectLine
+class PropaleLigne extends CommonObjectLine
 {
     public $element='propaldet';
     public $table_element='propaldet';

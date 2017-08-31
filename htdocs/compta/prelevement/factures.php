@@ -171,16 +171,16 @@ if ($result)
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	$massactionbutton='';
-	
+
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
-  	
+
   	print"\n<!-- debut table -->\n";
   	print '<table class="liste" width="100%">';
   	print '<tr class="liste_titre">';
-  	print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("StatusDebitCredit"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+  	print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
+  	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
+  	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre("StatusDebitCredit",$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -194,12 +194,12 @@ if ($result)
 
      	$invoicetmp->id = $obj->facid;
      	$invoicetmp->ref = $obj->ref;
-     	
+
      	$thirdpartytmp->id = $obj->socid;
      	$thirdpartytmp->name = $obj->name;
-     	
+
       	print '<tr class="oddeven">';
-      	
+
       	print "<td>";
       	print $invoicetmp->getNomUrl(1);
         print "</td>\n";
@@ -228,13 +228,13 @@ if ($result)
 		}
 
       	print "</td>";
-      	
+
       	print "<td></td>";
-      	
+
       	print "</tr>\n";
 
       	$total += $obj->total_ttc;
-      	
+
       	$i++;
     }
 

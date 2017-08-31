@@ -33,6 +33,8 @@ create table llx_facture_fourn
   
   datec					datetime,                      -- date de creation de la facture
   datef					date,                          -- date de la facture
+  date_pointoftax		date DEFAULT NULL,			   -- date point of tax (for GB)
+  date_valid			date,						   -- date validation
   tms					timestamp,                     -- date creation/modification
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,

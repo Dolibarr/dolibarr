@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 /**
  *		File that defines the balance of paid holiday of users.
@@ -84,7 +84,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
         $search_name='';
         $toselect='';
@@ -265,7 +265,7 @@ else
     print '</tr>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Employee'), $_SERVER["PHP_SELF"]);
+    print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
     if (count($typeleaves))
     {
         foreach($typeleaves as $key => $val)

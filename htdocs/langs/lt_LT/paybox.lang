@@ -11,6 +11,7 @@ YourEMail=E-paštas mokėjimo patvirtinimo gavimui
 Creditor=Kreditorius
 PaymentCode=Mokėjimo kodas
 PayBoxDoPayment=Eiti į mokėjimą
+ToPay=Atlikti mokėjimą
 YouWillBeRedirectedOnPayBox=Būsite nukreipti į saugų Paybox puslapį kredito kortelės informacijos įvedimui
 Continue=Kitas
 ToOfferALinkForOnlinePayment=URL %s mokėjimui

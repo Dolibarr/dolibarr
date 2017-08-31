@@ -1,8 +1,16 @@
 # Dolibarr language file - Source file is en_US - banks
+MenuBankCash=Finanzen
+FinancialAccount=Finanzkonto
+BankAccounts=Kontenübersicht
+AccountRef=Konto-Referenz
+CashAccount=Kasse
 AllTime=Vom start
+Reconciliation=Zahlungsabgleich
+RIB=Kontonummer
 AccountType=Kontoart
 AccountCard=Konto-Karte
 Conciliable=Ausgleichsfähig
+StatusAccountOpened=Offen
 SupplierInvoicePayment=Lieferantenzahlung
 WithdrawalPayment=Entnahme Zahlung
 BankTransfers=Kontentransfer

@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - workflow
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear un pedido de cliente automáticamente a la firma de una cotización
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturada la cotización cuando el pedido de cliente relacionado se clasifique como pagado
+WorkflowSetup=Configuración del módulo de flujo de trabajo
+WorkflowDesc=Este módulo está diseñado para modificar el comportamiento de las acciones automáticas en la aplicación. Por defecto, el flujo de trabajo está abierto (puede hacer las cosas en el orden que desee). Usted puede activar las acciones automáticas que le interesen.
+ThereIsNoWorkflowToModify=No hay modificaciones de flujo de trabajo disponibles con los módulos activados.
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente después de que un contrato es validado

@@ -106,7 +106,7 @@ pHeader('','step5',GETPOST('action','aZ09')?GETPOST('action','aZ09'):'upgrade','
 
 if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
-    print '<h3>'.$langs->trans('DataMigration').'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
@@ -4101,6 +4101,10 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
@@ -4114,6 +4118,7 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
     DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
     DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
+
     );
 
     foreach ($filetodeletearray as $filetodelete)

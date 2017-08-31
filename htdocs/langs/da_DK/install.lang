@@ -53,10 +53,10 @@ AdminLogin=Log ind for Dolibarr database administrator. Hold tomme, hvis du slut
 PasswordAgain=Gentag adgangskode en anden gang
 AdminPassword=Adgangskode til Dolibarr database administrator. Hold tomme, hvis du slutter i anonym
 CreateDatabase=Opret database
-CreateUser=Opret bruger
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Database - SuperUser adgang
 CheckToCreateDatabase=Afkrydsningsfelt, hvis databasen ikke eksisterer og skal være oprettet. <br> I dette tilfælde skal du udfylde login / password for SuperUser konto nederst på denne side.
-CheckToCreateUser=Afkrydsningsfelt, hvis login ikke eksisterer og skal være oprettet. <br> I dette tilfælde skal du udfylde login / password for SuperUser konto nederst på denne side.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Log ind på den bruger lov til at oprette nye databaser eller nye brugere, ubrugelige, hvis din database og din database login findes allerede (ligesom når du er vært ved en web hosting provider).
 KeepEmptyIfNoPassword=Efterlad tom, hvis brugeren ikke har nogen adgangskode (undgå dette)
 SaveConfigurationFile=Gem værdier
@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=Du bruger DoliWamp opsætningsguiden, så værdier foresl�
 KeepDefaultValuesDeb=Du bruger Dolibarr opsætningsguiden fra en Ubuntu eller Debian-pakke, så værdier, der foreslås her, er allerede optimeret. Kun den password i databasen ejeren for at oprette skal udfyldes. Ændre andre parametre kun hvis du ved hvad du gør.
 KeepDefaultValuesMamp=Du bruger DoliMamp opsætningsguiden, så værdier foreslås her allerede er optimeret. Ændre dem kun, hvis du ved hvad du gør.
 KeepDefaultValuesProxmox=Du bruger Dolibarr opsætningsguiden fra en Proxmox virtual appliance, så værdier, der foreslås her, allerede er optimeret. Skift dem kun hvis du ved hvad du gør.
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

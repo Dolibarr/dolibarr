@@ -183,7 +183,7 @@ function CreateFolder( $resourceType, $currentFolder )
 	echo '<Error number="' . $sErrorNumber . '" />' ;
 }
 
-// DOL_CHANGE
+// @CHANGE
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
 /**
  * FileUpload
@@ -308,7 +308,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sFileUrl = CombinePaths($sFileUrl, $sFileName);
 
 
-	// DOL_CHANGE
+	// @CHANGE
 	//SendUploadResults( $sErrorNumber, $sFileUrl, $sFileName );
 	if($CKEcallback == '')
     {

@@ -24,6 +24,8 @@ AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Propales
 Module30Name=Factures
+Module2300Name=Cron
+Module2300Desc=Scheduled job management
 DictionaryPaymentConditions=Conditions de paiement
 SuppliersPayment=Paiements fournisseurs
 Target=Objectif

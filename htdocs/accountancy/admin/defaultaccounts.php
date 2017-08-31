@@ -42,7 +42,7 @@ $langs->load("salaries");
 $langs->load("loan");
 
 // Security check
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }

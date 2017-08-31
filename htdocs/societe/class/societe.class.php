@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -882,8 +882,6 @@ class Societe extends CommonObject
 			$sql .= ', multicurrency_code = \''.$this->db->escape($this->multicurrency_code)."'";
             $sql .= " WHERE rowid = '" . $id ."'";
 
-
-            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -978,11 +976,12 @@ class Societe extends CommonObject
                 {
                     // Doublon
                     $this->error = $langs->trans("ErrorDuplicateField");
-                    $result =  -1;
+                    $result = -1;
                 }
                 else
                 {
-                    $result =  -2;
+                    $this->error = $this->db->lasterror();
+                    $result = -2;
                 }
                 $this->db->rollback();
                 return $result;
@@ -3347,31 +3346,36 @@ class Societe extends CommonObject
 	 */
 	function getOutstandingProposals($mode='customer')
 	{
-	    $table='propal';
-	    if ($mode == 'supplier') $table = 'supplier_proposal';
+		$table='propal';
+		if ($mode == 'supplier') $table = 'supplier_proposal';
 
-	    $sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
-	    $sql .= " WHERE fk_soc = ". $this->id;
+		$sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql .= " WHERE fk_soc = ". $this->id;
+		if ($mode == 'supplier') {
+			$sql .= " AND entity IN (".getEntity('supplier_proposal').")";
+		} else {
+			$sql .= " AND entity IN (".getEntity('propal').")";
+		}
 
-	    dol_syslog("getOutstandingProposals", LOG_DEBUG);
-	    $resql=$this->db->query($sql);
-	    if ($resql)
-	    {
-	        $outstandingOpened = 0;
-	        $outstandingTotal = 0;
-	        $outstandingTotalIncTax = 0;
-	        while($obj=$this->db->fetch_object($resql)) {
-	            $outstandingTotal+= $obj->total_ht;
-	            $outstandingTotalIncTax+= $obj->total_ttc;
-	            if ($obj->fk_statut != 0)    // Not a draft
-	            {
-	                $outstandingOpened+=$obj->total_ttc;
-	            }
-	        }
-	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
-	    }
-	    else
-	        return array();
+		dol_syslog("getOutstandingProposals", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$outstandingOpened = 0;
+			$outstandingTotal = 0;
+			$outstandingTotalIncTax = 0;
+			while($obj=$this->db->fetch_object($resql)) {
+				$outstandingTotal+= $obj->total_ht;
+				$outstandingTotalIncTax+= $obj->total_ttc;
+				if ($obj->fk_statut != 0)    // Not a draft
+				{
+					$outstandingOpened+=$obj->total_ttc;
+				}
+			}
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+		}
+		else
+			return array();
 	}
 
 	/**
@@ -3382,31 +3386,36 @@ class Societe extends CommonObject
 	 */
 	function getOutstandingOrders($mode='customer')
 	{
-	    $table='commande';
-	    if ($mode == 'supplier') $table = 'commande_fournisseur';
+		$table='commande';
+		if ($mode == 'supplier') $table = 'commande_fournisseur';
 
-	    $sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
-	    $sql .= " WHERE fk_soc = ". $this->id;
+		$sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql .= " WHERE fk_soc = ". $this->id;
+		if ($mode == 'supplier') {
+			$sql .= " AND entity IN (".getEntity('supplier_order').")";
+		} else {
+			$sql .= " AND entity IN (".getEntity('commande').")";
+		}
 
-	    dol_syslog("getOutstandingOrders", LOG_DEBUG);
-	    $resql=$this->db->query($sql);
-	    if ($resql)
-	    {
-	        $outstandingOpened = 0;
-	        $outstandingTotal = 0;
-	        $outstandingTotalIncTax = 0;
-	        while($obj=$this->db->fetch_object($resql)) {
-	            $outstandingTotal+= $obj->total_ht;
-	            $outstandingTotalIncTax+= $obj->total_ttc;
-	            if ($obj->fk_statut != 0)    // Not a draft
-	            {
-	                $outstandingOpened+=$obj->total_ttc;
-	            }
-	        }
-	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
-	    }
-	    else
-	        return array();
+		dol_syslog("getOutstandingOrders", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$outstandingOpened = 0;
+			$outstandingTotal = 0;
+			$outstandingTotalIncTax = 0;
+			while($obj=$this->db->fetch_object($resql)) {
+				$outstandingTotal+= $obj->total_ht;
+				$outstandingTotalIncTax+= $obj->total_ttc;
+				if ($obj->fk_statut != 0)    // Not a draft
+				{
+					$outstandingOpened+=$obj->total_ttc;
+				}
+			}
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+		}
+		else
+			return array();
 	}
 
 	/**
@@ -3417,64 +3426,69 @@ class Societe extends CommonObject
 	 */
 	function getOutstandingBills($mode='customer')
 	{
-	    $table='facture';
-	    if ($mode == 'supplier') $table = 'facture_fourn';
+		$table='facture';
+		if ($mode == 'supplier') $table = 'facture_fourn';
 
-	    /* Accurate value of remain to pay is to sum remaintopay for each invoice
-	     $paiement = $invoice->getSommePaiement();
-	     $creditnotes=$invoice->getSumCreditNotesUsed();
-	     $deposits=$invoice->getSumDepositsUsed();
-	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-	     */
-	    if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-	    else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-	    $sql .= " WHERE fk_soc = ". $this->id;
+		/* Accurate value of remain to pay is to sum remaintopay for each invoice
+		 $paiement = $invoice->getSommePaiement();
+		 $creditnotes=$invoice->getSumCreditNotesUsed();
+		 $deposits=$invoice->getSumDepositsUsed();
+		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+		 */
+		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql .= " WHERE fk_soc = ". $this->id;
+		if ($mode == 'supplier') {
+			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
+		} else {
+			$sql .= " AND entity IN (".getEntity('facture').")";
+		}
 
-	    dol_syslog("getOutstandingBills", LOG_DEBUG);
-	    $resql=$this->db->query($sql);
-	    if ($resql)
-	    {
-	        $outstandingOpened = 0;
-	        $outstandingTotal = 0;
-	        $outstandingTotalIncTax = 0;
-	        if ($mode == 'supplier')
-	        {
-	            require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-	            $tmpobject=new FactureFournisseur($this->db);
-	        }
-	        else
-	        {
-	           require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	           $tmpobject=new Facture($this->db);
-	        }
-	        while($obj=$this->db->fetch_object($resql)) {
-	            $tmpobject->id=$obj->rowid;
-	            if ($obj->fk_statut != 0                                           // Not a draft
-	                && ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
-	                )
-	            {
-	                $outstandingTotal+= $obj->total_ht;
-	                $outstandingTotalIncTax+= $obj->total_ttc;
-	            }
-	            if ($obj->paye == 0
-	                && $obj->fk_statut != 0    // Not a draft
-	                && $obj->fk_statut != 3	   // Not abandonned
-	                && $obj->fk_statut != 2)   // Not classified as paid
-    	            //$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
-	            {
-    	            $paiement = $tmpobject->getSommePaiement();
-    	            $creditnotes = $tmpobject->getSumCreditNotesUsed();
-    	            $deposits = $tmpobject->getSumDepositsUsed();
-	                $outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
-	            }
-	        }
-	        return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
-	    }
-	    else
-	    {
-	        return array();
-	    }
+		dol_syslog("getOutstandingBills", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$outstandingOpened = 0;
+			$outstandingTotal = 0;
+			$outstandingTotalIncTax = 0;
+			if ($mode == 'supplier')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+				$tmpobject=new FactureFournisseur($this->db);
+			}
+			else
+			{
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				$tmpobject=new Facture($this->db);
+			}
+			while($obj=$this->db->fetch_object($resql)) {
+				$tmpobject->id=$obj->rowid;
+				if ($obj->fk_statut != 0                                           // Not a draft
+					&& ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
+					)
+				{
+					$outstandingTotal+= $obj->total_ht;
+					$outstandingTotalIncTax+= $obj->total_ttc;
+				}
+				if ($obj->paye == 0
+					&& $obj->fk_statut != 0    // Not a draft
+					&& $obj->fk_statut != 3	   // Not abandonned
+					&& $obj->fk_statut != 2)   // Not classified as paid
+				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+				{
+					$paiement = $tmpobject->getSommePaiement();
+					$creditnotes = $tmpobject->getSumCreditNotesUsed();
+					$deposits = $tmpobject->getSumDepositsUsed();
+					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
+				}
+			}
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+		}
+		else
+		{
+			return array();
+		}
 	}
 
 	/**

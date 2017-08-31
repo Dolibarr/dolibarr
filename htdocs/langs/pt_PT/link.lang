@@ -7,4 +7,4 @@ ErrorFileNotLinked=Os ficheiros não puderam ser ligados
 LinkRemoved=A ligação %s foi removida
 ErrorFailedToDeleteLink= falhou a remoção da ligação '<b>%s</b>'
 ErrorFailedToUpdateLink= Falha na atualização de ligação '<b>%s</b>'
-URLToLink=URL to link
+URLToLink=URL para hiperligação

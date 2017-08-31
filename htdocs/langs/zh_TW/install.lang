@@ -53,10 +53,10 @@ AdminLogin=登錄為Dolibarr數據庫所有者。
 PasswordAgain=第二次再次輸入密碼
 AdminPassword=密碼Dolibarr數據庫所有者。
 CreateDatabase=創建數據庫
-CreateUser=創建所有者
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=數據庫服務器 - 超級用戶
 CheckToCreateDatabase=檢查中，如果數據庫不存在，必須創建。 <br>在這種情況下，必須填寫登錄/密碼為超級用戶帳戶在本頁面底部。
-CheckToCreateUser=如果數據庫所有者復選框不存在，必須創建。 <br>在這種情況下，必須選擇自己的登錄名和密碼，並填寫在本頁面底部的登錄/為超級用戶帳戶的密碼。如果此框未被選中，業主數據庫及其密碼必須存在。
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=允許創建新的數據庫或新用戶，無用的，如果你的數據庫和數據庫登錄已經存在就像當你在一個網站舉辦的托管服務提供商是（用戶登錄）。
 KeepEmptyIfNoPassword=給空如果用戶沒有密碼（避免這種情況）
 SaveConfigurationFile=保存價值
@@ -138,6 +138,7 @@ KeepDefaultValuesWamp=您使用從DoliWamp Dolibarr安裝向導，所以這裏�
 KeepDefaultValuesDeb=您使用從Ubuntu或者Debian軟件包的Dolibarr安裝向導，所以這裏建議值已經進行了優化。只有數據庫的所有者創建的密碼必須完成。其他參數的變化，如果你只知道你做什麽。
 KeepDefaultValuesMamp=您使用從DoliMamp Dolibarr安裝向導，所以這裏建議值已經進行了優化。他們唯一的變化，如果你知道你做什麽。
 KeepDefaultValuesProxmox=您使用Proxmox的虛擬設備的Dolibarr安裝向導，因此，這裏提出的價值已經優化。改變他們，只有當你知道你做什麽。
+UpgradeExternalModule=Run dedicated upgrade process of external modules
 
 #########
 # upgrade

@@ -4,6 +4,7 @@ SuppliersOrdersArea=Področje naročil pri dobaviteljih
 OrderCard=Kartica naročila
 OrderId=ID naročila
 Order=Naročilo
+PdfOrderTitle=Naročilo
 Orders=Naročila
 OrderLine=Vrstica naročila
 OrderDate=Datum naročila

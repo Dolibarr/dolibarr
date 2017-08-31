@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable par défaut pour les paiements de salaire
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable par défaut pour les dépenses de personnel
 Salary=Salaires
 NewSalaryPayment=Nouveau paiement de salaire
@@ -8,6 +7,5 @@ SalariesPayments=Paiements salaires
 ShowSalaryPayment=Afficher paiement de salaires
 THM=Taux horaire moyen
 TJM=Taux journalier moyen
-CurrentSalary=Salaire actuel
 THMDescription=Cette valeur peut être utilisée pour calculer le coût du temps consommé sur un projet entré par les utilisateurs si le projet de module est utilisé
 TJMDescription=Cette valeur est actuellement à titre d'information seulement et ne sert pas à tout calcul

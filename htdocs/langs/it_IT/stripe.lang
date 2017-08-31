@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
+PaymentForm=Forma di pagamento
+WelcomeOnPaymentPage=Benvenuti sul nostro servizio di pagamento online
+ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online su %s.
+ThisIsInformationOnPayment=Informazioni sul pagamento da effettuare
+ToComplete=Per completare
+YourEMail=Email per la conferma del pagamento
+STRIPE_PAYONLINE_SENDEMAIL=Email di avviso dopo un pagamento (a buon fine o no)
+Creditor=Creditore
+PaymentCode=Codice pagamento
+StripeDoPayment=Vai al pagamento
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Successivo
+ToOfferALinkForOnlinePayment=URL per il pagamento %s
+ToOfferALinkForOnlinePaymentOnOrder=URL per il pagamento %s di un ordine
+ToOfferALinkForOnlinePaymentOnInvoice=URL per il pagamento %s di una fattura
+ToOfferALinkForOnlinePaymentOnContractLine=URL per il pagamento %s di una riga di contratto
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL per il pagamento %s di un importo
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per il pagamento %s dell'adesione di un membro
+YouCanAddTagOnUrl=Puoi anche aggiungere a qualunque di questi url il parametro <b>&tag=<i>value</i></b> (richiesto solo per il pagamento gratuito) per aggiungere una tag con un tuo commento.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Il pagamento è stato registrato. Grazie.
+YourPaymentHasNotBeenRecorded=Il pagamento non è stato registrato e la transazione è stata annullata. Grazie.
+AccountParameter=Dati account
+UsageParameter=Parametri d'uso
+InformationToFindParameters=Aiuto per trovare informazioni sul tuo account %s
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Nome del venditore
+CSSUrlForPaymentForm=URL del foglio di stile CSS per il modulo di pagamento
+MessageOK=Messaggio sulla pagina di pagamento convalidato
+MessageKO=Messaggio sulla pagina di pagamento annullato
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

@@ -154,11 +154,11 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
-                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines 
+                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
                 {
                     $tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
                 }
-                
+
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
 
@@ -328,6 +328,8 @@ class pdf_baleine extends ModelePDFProjects
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1;   // Pas d'erreur
 			}
