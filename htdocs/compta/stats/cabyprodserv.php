@@ -186,6 +186,9 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 }
 
 
+
+$name=array();
+
 // SQL request
 $catotal=0;
 $catotal_ht=0;

@@ -3284,32 +3284,34 @@ function dol_print_error_email($prefixcode, $errormessage='')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$tooltip	 Tooltip
  *	@return	void
  */
-function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="", $tooltip="")
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix, 0, $tooltip);
 }
 
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        Translation key of field
- *	@param	int		$thead		 0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
- *	@param	string	$file        Url used when we click on sort picto
- *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
- *	@param	string	$begin       ("" by defaut)
- *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
- *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
- *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
- *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *	@param	string	$name        		Translation key of field
+ *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	string	$file        		Url used when we click on sort picto
+ *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable.
+ *	@param	string	$begin       		("" by defaut)
+ *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
+ *	@param  string	$moreattrib  		Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
+ *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
+ *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag.
  *  @param	string	$disablesortlink	1=Disable sort link
+ *  @param	string	$tooltip	 		Tooltip
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0)
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0, $tooltip='')
 {
-	global $conf, $langs;
+	global $conf, $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	$sortorder=strtoupper($sortorder);
@@ -3350,7 +3352,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		}
 	}
 
-	$out.=$langs->trans($name);
+	if ($tooltip) $out.=$form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
+	else $out.=$langs->trans($name);
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{

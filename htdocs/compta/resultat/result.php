@@ -29,11 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
-$error = 0;
+$langs->loadLangs(array('compta','bills','donation','salaries'));
 
-// Langs
-$langs->load("accountancy");
-$langs->load("compta");
+$error = 0;
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
@@ -98,6 +96,24 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 
+if (($date_start < dol_time_plus_duree($date_end, -1, 'y')) || ($date_start > $date_end))
+{
+	$date_end = dol_time_plus_duree($date_start - 1, 1, 'y');
+}
+
+// $date_start and $date_end are defined. We force $start_year and $nbofyear
+$tmps=dol_getdate($date_start);
+$start_year = $tmps['year'];
+$tmpe=dol_getdate($date_end);
+$year_end = $tmpe['year'];
+$nbofyear = ($year_end - $start_year) + 1;
+
+$date_start_previous = dol_time_plus_duree($date_start, -1, 'y');
+$date_end_previous = dol_time_plus_duree($date_end, -1, 'y');
+
+//var_dump($date_start." ".$date_end." ".$date_start_previous." ".$date_end_previous." ".$nbofyear);
+
+
 if($cat_id == 0){
 	$cat_id = null;
 }
@@ -125,8 +141,8 @@ llxheader('', $langs->trans('ReportInOut'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+$textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($start_year - 1) . '">' . img_previous() . '</a>';
+$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($start_year + 1) . '">' . img_next() . '</a>';
 
 
 
@@ -135,8 +151,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
 	$name=$langs->trans("AnnualByAccountDueDebtMode");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesResultDue");
@@ -149,7 +165,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$name=$langs->trans("AnnualByAccountInputOutputMode");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">','</a>').')';
 	//$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',1,1,0,'',1,0,1);
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
@@ -159,18 +175,18 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 }
 else if ($modecompta=="BOOKKEEPING")
 {
-	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByAccounts");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPersonalizedAccountGroups");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$nomlink = '';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	$period.=' &nbsp; '.$langs->trans("Detail").' '. $form->selectyesno('simple_report',$simple_report,0);
-	$periodlink = $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear ;
+	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectyesno('simple_report',$simple_report,0);
+	$periodlink = $textprevyear . " " . $langs->trans("Year") . " " . $start_year . " " . $textnextyear ;
 	$exportlink = '';
-	$description=$langs->trans("RulesResultDue");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
-	else  $description.= $langs->trans("DepositsAreIncluded");
+	$description=$langs->trans("RulesResultBookkeepingPersonalized", $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("AccountingCategory"));
+	//if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	//else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate = time();
 }
 
@@ -203,190 +219,239 @@ $months = array( $langs->trans("JanuaryMin"),
 			);
 
 print '<tr class="liste_titre">';
-print '<th class="liste_titre">'.$langs->trans("Account").'</th>';
-print '<th class="liste_titre">'.$langs->trans("Description").'</th>';
-print '<th class="liste_titre" align="center">N-1</th>';
-print '<th class="liste_titre" align="center">'.$langs->trans("NReal").'</th>';
+print '<th class="liste_titre">'.$langs->trans("AccountingCategory").'</th>';
+print '<th class="liste_titre"></th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("PreviousYear").'</th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach($months as $k => $v){
-	print '<th class="liste_titre"  align="center">'.$langs->trans($v).'</th>';
+	print '<th class="liste_titre" align="right">'.$langs->trans($v).'</th>';
 }
 print	'</tr>';
 
+if ($modecompta == 'CREANCES-DETTES')
+{
+	//if (! empty($date_start) && ! empty($date_end))
+	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+}
+else if ($modecompta=="RECETTES-DEPENSES")
+{
+	//if (! empty($date_start) && ! empty($date_end))
+	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+}
+else if ($modecompta=="BOOKKEEPING")
+{
+	// TODO
+	//if (! empty($date_start) && ! empty($date_end))
+	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 
+	//All categories
+	$cats = $AccCat->getCats();
+	if ($catsCalcule < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
 
-//All categories
-$cats = $AccCat->getCats();
-if ($catsCalcule < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
+	$j=1;
+	$sommes = array();
 
-$j=1;
-$sommes = array();
+	foreach ($cats as $cat)		// Loop on each group
+	{
+		if (!empty($cat['category_type']))		// category calculed
+		{
+			$formula = $cat['formula'];
 
-foreach($cats as $cat ){
-	if(!empty($cat['category_type'])){ // category calculed
+			print "<tr>";
+			//print '<td colspan="2"><font color="blue">' . $cat['label'] . '</font></td>';
+			print '<td colspan="2">' . $cat['label'] . '</td>';
 
-		$formula = $cat['formula'];
+			$vars = array();
 
-		print "<tr class='liste_titre'>";
-		print '<td colspan="2">' . $cat['label'] . '</td>';
-
-		$vars = array();
-
-		// Previous Fiscal year (N-1)
-		foreach($sommes as $code => $det){
-			$vars[$code] = $det['NP'];
-		}
-
-
-		$result = strtr($formula, $vars);
-
-
-		$r = $AccCat->calculate($result);
-
-		print '<td align="right"><font color="blue">' . price($r) . '</td>';
-		$code = $cat['code']; // code categorie de calcule
-		$sommes[$code]['NP'] += $r;
-
-		// Current fiscal year (N)
-		if (is_array($sommes) && ! empty($sommes)){
+			// Previous Fiscal year (N-1)
 			foreach($sommes as $code => $det){
-				$vars[$code] = $det['N'];
+				$vars[$code] = $det['NP'];
 			}
-		}
 
-		$result = strtr($formula, $vars);
 
-		$r = $AccCat->calculate($result);
-
-		print '<td align="right"><font color="blue">' . price($r) . '</td>';
-		$sommes[$code]['N'] += $r;
-
-		// Detail by month
-		foreach($months as $k => $v){
-			foreach($sommes as $code => $det){
-				$vars[$code] = $det['M'][$k];
-			}
 			$result = strtr($formula, $vars);
+
+
 			$r = $AccCat->calculate($result);
-			print '<td align="right"><font color="blue">' . price($r) . '</td>';
-			$sommes[$code]['M'][$k] += $r;
-		}
 
+			print '<td align="right"><font color="blue">' . price($r) . '</font></td>';
+			$code = $cat['code']; // code categorie de calcule
+			$sommes[$code]['NP'] += $r;
 
-		print "</tr>\n";
-
-
-	}else{ // normal category
-
-		$totCat = array();
-		$totCat['M'] = array();
-
-		// get cpts of category
-		$cpts = $AccCat->getCptsCat($cat['rowid']);
-
-
-		print "<tr class='liste_titre'>";
-		print '<td colspan="2">' . $cat['label'] . '</td>';
-
-		foreach($cpts as $i => $cpt){
-			$var = ! $var;
-
-			$code = $cat['code'];
-
-			// N-1
-			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current -1, $cpt['dc']);
-
-			if ($return < 0) {
-				setEventMessages(null, $AccCat->errors, 'errors');
-				$resultNP=0;
-			} else {
-				$resultNP=$AccCat->sdc;
+			// Current fiscal year (N)
+			if (is_array($sommes) && ! empty($sommes)){
+				foreach($sommes as $code => $det){
+					$vars[$code] = $det['N'];
+				}
 			}
 
-			//N
-			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
-			if ($return < 0) {
-				setEventMessages(null, $AccCat->errors, 'errors');
-				$resultN=0;
-			} else {
-				$resultN=$AccCat->sdc;
-			}
+			$result = strtr($formula, $vars);
 
-			$totCat['NP'] += $resultNP;
-			$totCat['N'] += $resultN;
+			$r = $AccCat->calculate($result);
 
+			print '<td align="right"><font color="blue">' . price($r) . '</font></td>';
+			$sommes[$code]['N'] += $r;
+
+			// Detail by month
 			foreach($months as $k => $v){
-				$return = $AccCat->getResult($cpt['account_number'], $k+1, $year_current, $cpt['dc']);
-				if ($return < 0) {
-					setEventMessages(null, $AccCat->errors, 'errors');
-					$resultM=0;
-				} else {
-					$resultM=$AccCat->sdc;
+				foreach($sommes as $code => $det){
+					$vars[$code] = $det['M'][$k];
 				}
-				$totCat['M'][$k] += $resultM;
-
-			}
-		}
-
-		print '<td align="right">' . price($totCat['NP'])  . '</td>';
-		print '<td align="right">' . price($totCat['N']) . '</td>';
-
-		foreach($totCat['M'] as $k => $v){
-			print '<td align="right">' . price($v) . '</td>';
-		}
-		print "</tr>\n";
-
-		foreach($cpts as $i => $cpt){
-			$var = ! $var;
-
-			$code = $cat['code'];
-
-			// N-1
-			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current -1, $cpt['dc']);
-
-			if ($return < 0) {
-				setEventMessages(null, $AccCat->errors, 'errors');
-				$resultNP=0;
-			} else {
-				$resultNP=$AccCat->sdc;
+				$result = strtr($formula, $vars);
+				$r = $AccCat->calculate($result);
+				print '<td align="right"><font color="blue">' . price($r) . '</font></td>';
+				$sommes[$code]['M'][$k] += $r;
 			}
 
-			//N
-			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
-			if ($return < 0) {
-				setEventMessages(null, $AccCat->errors, 'errors');
-				$resultN=0;
-			} else {
-				$resultN=$AccCat->sdc;
-			}
-
-			$sommes[$code]['NP'] += $resultNP;
-			$sommes[$code]['N'] += $resultN;
-			print '<tr'. $bc[$var].'>';
-			if ($simple_report == 'yes') {
-			print '<td>' . length_accountg($cpt['account_number']) . '</td>';
-			print '<td>' . $cpt['name_cpt'] . '</td>';
-			print '<td align="right">' . price($resultNP)  . '</td>';
-			print '<td align="right">' . price($resultN) . '</td>';
-			}
-
-			foreach($months as $k => $v){
-				$return = $AccCat->getResult($cpt['account_number'], $k+1, $year_current, $cpt['dc']);
-				if ($return < 0) {
-					setEventMessages(null, $AccCat->errors, 'errors');
-					$resultM=0;
-				} else {
-					$resultM=$AccCat->sdc;
-				}
-				$sommes[$code]['M'][$k] += $resultM;
-				if ($simple_report == 'yes') {
-				print '<td align="right">' . price($resultM) . '</td>';
-				}
-			}
 
 			print "</tr>\n";
+
+
+		}
+		else			// normal category
+		{
+			$totCat = array();
+			$totCat['NP'] = 0;
+			$totCat['N'] = 0;
+			$totCat['M'] = array();
+			foreach($months as $k => $v)
+			{
+				$totCat['M'][$k] = 0;
+			}
+
+			// Get cpts of category/group
+			$cpts = $AccCat->getCptsCat($cat['rowid']);
+
+			print "<tr>";
+
+			// Column group
+			print '<td colspan="2">';
+			print $cat['label'];
+			if (count($cpts) > 0)
+			{
+				$i=0;
+				foreach($cpts as $cpt)
+				{
+					if ($i > 5)
+					{
+						print '...)';
+						break;
+					}
+					if ($i > 0) print ', ';
+					else print ' (';
+					print $cpt['account_number'];
+					$i++;
+				}
+				if ($i <= 5) print ')';
+			}
+			else
+			{
+				print ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
+			}
+			print '</td>';
+
+			$code = $cat['code'];
+
+			// Column N Previous and N
+			foreach($cpts as $i => $cpt)
+			{
+				// N-1
+				$return = $AccCat->getResult($cpt['account_number'], 0, $date_start_previous, $date_end_previous, $cpt['dc']);
+
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultNP=0;
+				} else {
+					$resultNP=$AccCat->sdc;
+				}
+
+				//N
+				$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultN=0;
+				} else {
+					$resultN=$AccCat->sdc;
+				}
+
+				$totCat['NP'] += $resultNP;
+				$totCat['N'] += $resultN;
+
+				foreach($months as $k => $v)
+				{
+					$return = $AccCat->getResult($cpt['account_number'], $k+1, $date_start, $date_end, $cpt['dc']);
+					if ($return < 0) {
+						setEventMessages(null, $AccCat->errors, 'errors');
+						$resultM=0;
+					} else {
+						$resultM=$AccCat->sdc;
+					}
+					$totCat['M'][$k] += $resultM;
+				}
+			}
+
+			print '<td align="right">' . price($totCat['NP'])  . '</td>';
+			print '<td align="right">' . price($totCat['N']) . '</td>';
+
+			foreach($totCat['M'] as $k => $v){
+				print '<td align="right">' . price($v) . '</td>';
+			}
+			print "</tr>\n";
+
+			//
+			foreach($cpts as $i => $cpt)
+			{
+				// N-1
+				$return = $AccCat->getResult($cpt['account_number'], 0, $date_start_previous, $date_end_previous, $cpt['dc']);
+
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultNP=0;
+				} else {
+					$resultNP=$AccCat->sdc;
+				}
+
+				//N
+				$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultN=0;
+				} else {
+					$resultN=$AccCat->sdc;
+				}
+
+				$sommes[$code]['NP'] += $resultNP;
+				$sommes[$code]['N'] += $resultN;
+
+				if ($simple_report == 'yes') {
+					print '<tr>';
+					print '<td> &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . '</td>';
+					print '<td>' . $cpt['name_cpt'] . '</td>';
+					print '<td align="right">' . price($resultNP)  . '</td>';
+					print '<td align="right">' . price($resultN) . '</td>';
+				}
+
+				foreach($months as $k => $v)
+				{
+					$return = $AccCat->getResult($cpt['account_number'], $k+1, $date_start, $date_end, $cpt['dc']);
+					if ($return < 0) {
+						setEventMessages(null, $AccCat->errors, 'errors');
+						$resultM=0;
+					} else {
+						$resultM=$AccCat->sdc;
+					}
+					$sommes[$code]['M'][$k] += $resultM;
+					if ($simple_report == 'yes') {
+						print '<td align="right">' . price($resultM) . '</td>';
+					}
+				}
+
+				if ($simple_report == 'yes') {
+					print "</tr>\n";
+				}
+			}
 		}
 	}
-
 }
 
 print "</table>";

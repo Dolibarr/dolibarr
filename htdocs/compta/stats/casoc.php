@@ -195,6 +195,8 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 }
 
 
+$name=array();
+
 // Show Array
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES') {

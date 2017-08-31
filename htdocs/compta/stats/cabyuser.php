@@ -167,6 +167,8 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 }
 
 
+$name=array();
+
 // Show array
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 // Extra parameters management
