@@ -177,7 +177,7 @@ if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 
 if($local==1){
@@ -336,7 +336,7 @@ else
 					if (! empty($fields['ddate_start'])) $type=1;
 					if (! empty($fields['ddate_end'])) $type=1;
 
-					
+
 					print '<tr class="oddeven">';
 
 					// Ref
@@ -499,7 +499,7 @@ else
 					if (! empty($fields['ddate_start'])) $type=1;
 					if (! empty($fields['ddate_end'])) $type=1;
 
-					
+
 					print '<tr class="oddeven">';
 
 					// Ref

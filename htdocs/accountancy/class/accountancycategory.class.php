@@ -334,19 +334,20 @@ class AccountancyCategory
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int $cpt Id accounting account
-	 * @param string $month Specifig month - Can be empty
-	 * @param string $year Specific year
-	 * @param int $sens Sens of the account 0: credit - debit 1: debit - credit
-	 *
-	 * @return integer Result in table
+	 * @param int 		$cpt 		Id accounting account
+	 * @param string 	$month 		Specifig month - Can be empty
+	 * @param string 	$date_start	Date start
+	 * @param string 	$date_end	Date end
+	 * @param int 		$sens 		Sens of the account 0: credit - debit 1: debit - credit
+	 * @return integer 				Result in table
 	 */
-	public function getResult($cpt, $month, $year, $sens) {
+	public function getResult($cpt, $month, $date_start, $date_end, $sens)
+	{
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.numero_compte = '" . $cpt."'";
-		$sql .= " AND YEAR(t.doc_date) = " . $year;
-
+		if (! empty($date_start) && ! empty($date_end))
+			$sql.= " AND t.doc_date >= '".$this->db->idate($date_start)."' AND t.doc_date <= '".$this->db->idate($date_end)."'";
 		if (! empty($month)) {
 			$sql .= " AND MONTH(t.doc_date) = " . $month;
 		}

@@ -35,7 +35,7 @@
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
- *   @param  string              $varlink        Add a variable into the address of the page
+ *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
 function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
@@ -43,9 +43,9 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	global $langs;
 
 	if (empty($hselected)) $hselected='report';
-	
+
 	print "\n\n<!-- debut cartouche rapport -->\n";
-	
+
 	if(! empty($varlink)) $varlink = '?'.$varlink;
 
 	$h=0;
@@ -116,7 +116,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	print '</form>';
 
 	dol_fiche_end();
-	
+
 	print "\n<!-- fin cartouche rapport -->\n\n";
 }
 

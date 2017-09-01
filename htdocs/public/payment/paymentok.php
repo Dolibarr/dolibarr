@@ -67,21 +67,6 @@ if (! empty($conf->paypal->enabled))
 	if ($urlok) $PAYPAL_API_OK=$urlok;
 	$PAYPAL_API_KO="";
 	if ($urlko) $PAYPAL_API_KO=$urlko;
-	if (empty($PAYPAL_API_USER))
-	{
-	    dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
-	    return -1;
-	}
-	if (empty($PAYPAL_API_PASSWORD))
-	{
-	    dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
-	    return -1;
-	}
-	if (empty($PAYPAL_API_SIGNATURE))
-	{
-	    dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
-	    return -1;
-	}
 
     $PAYPALTOKEN=GETPOST('TOKEN');
     if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
@@ -143,14 +128,14 @@ $object = new stdClass();   // For triggers
  * View
  */
 
-dol_syslog("Callback url when a payment was done. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when a payment was done. query_string=".(dol_escape_htmltag($_SERVER["QUERY_STRING"])?dol_escape_htmltag($_SERVER["QUERY_STRING"]):'')." script_uri=".(dol_escape_htmltag($_SERVER["SCRIPT_URI"])?dol_escape_htmltag($_SERVER["SCRIPT_URI"]):''), LOG_DEBUG, 0, '_payment');
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
 $head='';
-if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -166,69 +151,81 @@ print '<div id="dolpaymentdiv" align="center">'."\n";
 
 if (! empty($conf->paypal->enabled))
 {
-	if ($PAYPALTOKEN)
+	if ($paymentmethod == 'paypal')
 	{
-	    // Get on url call
-	    $onlinetoken              = $PAYPALTOKEN;
-	    $fulltag            = $FULLTAG;
-	    $payerID            = $PAYPALPAYERID;
-	    // Set by newpayment.php
-	    $paymentType        = $_SESSION['PaymentType'];
-	    $currencyCodeType   = $_SESSION['currencyCodeType'];
-	    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
-	    // From env
-	    $ipaddress          = $_SESSION['ipaddress'];
-	
-		dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
-	
-		// Validate record
-	    if (! empty($paymentType))
-	    {
-	        dol_syslog("We call GetExpressCheckoutDetails", LOG_DEBUG, 0, '_payment');
-	        $resArray=getDetails($onlinetoken);
-	        //var_dump($resarray);
-	
-	        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
-	        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
-	
-	        $ack = strtoupper($resArray["ACK"]);
-	        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
-	        {
-	        	$object->source		= $source;
-	        	$object->ref		= $ref;
-	        	$object->payerID	= $payerID;
-	        	$object->fulltag	= $fulltag;
-	        	$object->resArray	= $resArray;
-	
-	            // resArray was built from a string like that
-	            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
-	            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
-	            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
-	            $TAXAMT=urldecode($resArray["TAXAMT"]);
-	            $NOTE=urldecode($resArray["NOTE"]);
+		if ($PAYPALTOKEN)
+		{
+		    // Get on url call
+		    $onlinetoken              = $PAYPALTOKEN;
+		    $fulltag            = $FULLTAG;
+		    $payerID            = $PAYPALPAYERID;
+		    // Set by newpayment.php
+		    $paymentType        = $_SESSION['PaymentType'];
+		    $currencyCodeType   = $_SESSION['currencyCodeType'];
+		    $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
+		    // From env
+		    $ipaddress          = $_SESSION['ipaddress'];
 
-	            $ispaymentok=True;
-	        }
-	        else
-	        {
-	            //Display a user friendly Error on the page using any of the following error information returned by PayPal
-	            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
-	            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
-	            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
-	            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
-	        }
-	    }
-	    else
-	    {
-	        dol_print_error('','Session expired');
-	    }	    
+			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+
+			// Validate record
+		    if (! empty($paymentType))
+		    {
+		        dol_syslog("We call GetExpressCheckoutDetails", LOG_DEBUG, 0, '_payment');
+		        $resArray=getDetails($onlinetoken);
+		        //var_dump($resarray);
+
+		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
+		        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+
+		        $ack = strtoupper($resArray["ACK"]);
+		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+		        {
+		        	$object->source		= $source;
+		        	$object->ref		= $ref;
+		        	$object->payerID	= $payerID;
+		        	$object->fulltag	= $fulltag;
+		        	$object->resArray	= $resArray;
+
+		            // resArray was built from a string like that
+		            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
+		            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
+		            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
+		            $TAXAMT=urldecode($resArray["TAXAMT"]);
+		            $NOTE=urldecode($resArray["NOTE"]);
+
+		            $ispaymentok=True;
+		        }
+		        else
+		        {
+		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
+		            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
+		            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
+		            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
+		            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+		        }
+		    }
+		    else
+		    {
+		        dol_print_error('','Session expired');
+		    }
+		}
+		else
+		{
+		    dol_print_error('','$PAYPALTOKEN not defined');
+		}
 	}
-	else
-	{
-	    dol_print_error('','$PAYPALTOKEN not defined');
-	}	
 }
 
+if (! empty($conf->paybox->enabled))
+{
+	if ($paymentmethod == 'paybox') $ispaymentok = true;	// We call this page only if payment is ok
+}
+
+if (! empty($conf->stripe->enabled))
+{
+	if ($paymentmethod == 'stripe') $ispaymentok = true;	// We call this page only if payment is ok
+}
 
 
 if ($ispaymentok)
@@ -240,10 +237,11 @@ if ($ispaymentok)
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
-    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
-    
+    $TRANSACTIONID      = $_SESSION['TRANSACTIONID'];
+
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
@@ -251,18 +249,14 @@ if ($ispaymentok)
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
-    
+
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-    if (! empty($conf->global->PAYMENT_MESSAGE_OK)) print $conf->global->PAYMENT_MESSAGE_OK;
-    
+    if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+
     $sendemail = '';
-    if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
-    // TODO Remove local option to keep only the generic one ?
-    if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
-    
+    if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
+
 	// Send an email
     if ($sendemail)
 	{
@@ -285,7 +279,7 @@ if ($ispaymentok)
 		    else $appli.=" ".DOL_VERSION;
 		}
 		else $appli.=" ".DOL_VERSION;
-		
+
 		$urlback=$_SERVER["REQUEST_URI"];
 		$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 		$tmptag=dolExplodeIntoArray($fulltag,'.','=');
@@ -333,33 +327,33 @@ else
     // Set by newpayment.php
     $paymentType        = $_SESSION['PaymentType'];
     $currencyCodeType   = $_SESSION['currencyCodeType'];
-    $FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+    $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
-    
+
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
     $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO',$object,$user,$langs,$conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
-    
+
 
     print $langs->trans('DoExpressCheckoutPaymentAPICallFailed') . "<br>\n";
     print $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";
     print $langs->trans('ShortErrorMessage') . ": " . $ErrorShortMsg."<br>\n";
     print $langs->trans('ErrorCode') . ": " . $ErrorCode."<br>\n";
     print $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
-     
+
     if ($mysoc->email) print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
-    
+
     $sendemail = '';
     if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
     // TODO Remove local option to keep only the generic one ?
     if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
     if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
     if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
-    
+
     // Send an email
     if ($sendemail)
     {
@@ -369,7 +363,7 @@ else
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
         //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-         
+
         // Define link to login card
         $appli=constant('DOL_APPLICATION_TITLE');
         if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -382,7 +376,7 @@ else
             else $appli.=" ".DOL_VERSION;
         }
         else $appli.=" ".DOL_VERSION;
-        
+
         $urlback=$_SERVER["REQUEST_URI"];
         $topic='['.$appli.'] '.$langs->transnoentitiesnoconv("ValidationOfPaymentFailed");
         $content="";
@@ -392,12 +386,12 @@ else
 		$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."\n";
         $content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
         $content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-         
+
         $ishtml=dol_textishtml($content);	// May contain urls
-         
+
         require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
         $mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
-         
+
         $result=$mailfile->sendfile();
         if ($result)
         {
