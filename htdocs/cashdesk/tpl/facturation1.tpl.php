@@ -45,8 +45,7 @@ $langs->load("cashdesk");
 			<!-- Suppression de l'attribut onkeyup qui causait un probleme d'emulation avec les douchettes -->
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" value="<?php echo $obj_facturation->ref() ?>"
 				onchange="javascript: setSource('REF');"
-				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
-				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
+				onfocus="javascript: this.select();" />
 			</td>
 			<td class="select_design maxwidthonsmartphone">
             <?php /*
