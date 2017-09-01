@@ -430,7 +430,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     }
 
     $arrayofinclusion=array();
-    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
+    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote($tmppdf.'.pdf','/').'$';
     $listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
     // build list of files with full path
@@ -505,8 +505,8 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    $pdf=pdf_getInstance();
 	    if (class_exists('TCPDF'))
 	    {
-		$pdf->setPrintHeader(false);
-		$pdf->setPrintFooter(false);
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
 	    }
 	    $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
@@ -515,15 +515,15 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    // Add all others
 	    foreach($files as $file)
 	    {
-		// Charge un document PDF depuis un fichier.
-		$pagecount = $pdf->setSourceFile($file);
-		for ($i = 1; $i <= $pagecount; $i++)
-		{
-		    $tplidx = $pdf->importPage($i);
-		    $s = $pdf->getTemplatesize($tplidx);
-		    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-		    $pdf->useTemplate($tplidx);
-		}
+			// Charge un document PDF depuis un fichier.
+			$pagecount = $pdf->setSourceFile($file);
+			for ($i = 1; $i <= $pagecount; $i++)
+			{
+			    $tplidx = $pdf->importPage($i);
+			    $s = $pdf->getTemplatesize($tplidx);
+			    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+			    $pdf->useTemplate($tplidx);
+			}
 	    }
 
 	    // Create output dir if not exists

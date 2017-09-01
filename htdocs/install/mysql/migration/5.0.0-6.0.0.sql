@@ -24,6 +24,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
@@ -583,9 +584,6 @@ ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
 -- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_website_page FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
 
-insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'IGST-CGST', 8, 8, '1', 0, '0', 0, 'IGST-CGST', 1);
-insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'SGST', 0, 0, '0', 16, '1', 0, 'SGST', 1);
-
 CREATE TABLE llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -605,3 +603,6 @@ CREATE TABLE llx_facturedet_rec_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
+
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'CGST+SGST', 0,  9, '1', 9, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'IGST'     , 18, 0, '0', 0, '0', 0, 'IGST',      1);
