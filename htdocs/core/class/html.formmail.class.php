@@ -473,7 +473,7 @@ class FormMail extends Form
         				$out.= ' &lt;'.$this->tomail.'&gt;';
         				if ($this->withtofree)
         				{
-        					$out.= '<br>'.$langs->trans("or").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+        					$out.= '<br>'.$langs->trans("and").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
         				}
         			}
         			else
@@ -489,7 +489,7 @@ class FormMail extends Form
         			}
         			if (! empty($this->withto) && is_array($this->withto))
         			{
-        				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
+        				if (! empty($this->withtofree)) $out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
         			    // multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
         				$tmparray = $this->withto;
         				foreach($tmparray as $key => $val)
@@ -522,7 +522,7 @@ class FormMail extends Form
         			$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
         			if (! empty($this->withtocc) && is_array($this->withtocc))
         			{
-        				$out.= " ".$langs->trans("or")." ";
+        				$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
         				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
         				$tmparray = $this->withtocc;
         				foreach($tmparray as $key => $val)
@@ -551,7 +551,7 @@ class FormMail extends Form
         			$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
         			if (! empty($this->withtoccc) && is_array($this->withtoccc))
         			{
-        				$out.= " ".$langs->trans("or")." ";
+        				$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
         				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
         				$tmparray = $this->withtoccc;
         				foreach($tmparray as $key => $val)

@@ -843,114 +843,110 @@ if ($mode == 'marketplace')
 
 if ($mode == 'deploy')
 {
-    dol_fiche_head($head, $mode, '', -1);
+	dol_fiche_head($head, $mode, '', -1);
 
+	$dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
+	$allowonlineinstall=true;
+	$allowfromweb=1;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
 
-    $allowonlineinstall=true;
-    $allowfromweb=1;
-    if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
+	$fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
+	$message='';
+	if (! empty($allowonlineinstall))
+	{
+		if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
+		{
+			$message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
+			$allowfromweb=-1;
+		}
+		else
+		{
+			if ($dirins_ok)
+			{
+				if (! is_writable(dol_osencode($dirins)))
+				{
+					$langs->load("errors");
+					$message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
+					$allowfromweb=0;
+				}
+			}
+			else
+			{
+				$message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+				$allowfromweb=0;
+			}
+		}
+	}
+	else
+	{
+		$message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
+		$allowfromweb=0;
+	}
 
-    $fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
-    $message='';
-    if (! empty($allowonlineinstall))
-    {
-        if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
-        {
-            $message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
-            $allowfromweb=-1;
-        }
-        else
-        {
-            if ($dirins_ok)
-            {
-                if (! is_writable(dol_osencode($dirins)))
-                {
-                    $langs->load("errors");
-                    $message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
-                    $allowfromweb=0;
-                }
-            }
-            else
-            {
+	if ($allowfromweb < 1)
+	{
+		print $langs->trans("SomethingMakeInstallFromWebNotPossible");
+		print $message;
+		//print $langs->trans("SomethingMakeInstallFromWebNotPossible2");
+		print '<br>';
+	}
 
-                $message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
-                $allowfromweb=0;
-            }
-        }
-    }
-    else
-    {
-        $message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
-        $allowfromweb=0;
-    }
+	print '<br>';
 
-    if ($allowfromweb < 1)
-    {
-    	print $langs->trans("SomethingMakeInstallFromWebNotPossible");
-    	print $message;
-    	//print $langs->trans("SomethingMakeInstallFromWebNotPossible2");
-    	print '<br>';
-    }
+	if ($allowfromweb >= 0)
+	{
+		if ($allowfromweb == 1)
+		{
+			//print $langs->trans("ThisIsProcessToFollow").'<br>';
+		}
+		else
+		{
+			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
+			print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+			print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
+			print '<b>'.$langs->trans("StepNb",2).'</b>: ';
+			print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+			print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+		}
 
-    print '<br>';
+		if ($allowfromweb == 1)
+		{
+			print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
 
-    if ($allowfromweb >= 0)
-    {
-    	if ($allowfromweb == 1)
-    	{
-    	    //print $langs->trans("ThisIsProcessToFollow").'<br>';
-    	}
-    	else
-    	{
-    	    print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
-        	print '<b>'.$langs->trans("StepNb",1).'</b>: ';
-        	print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
-        	print '<b>'.$langs->trans("StepNb",2).'</b>: ';
-        	print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
-        	print '<b>'.$langs->trans("StepNb",3).'</b>: ';
-    	}
+			print '<br>';
 
-    	if ($allowfromweb == 1)
-    	{
-    		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+			print '<input type="hidden" name="action" value="install">';
+			print '<input type="hidden" name="mode" value="deploy">';
+			print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+			print '</form>';
 
-    		print '<br>';
+			print '<br>';
+			print '<br>';
 
-            print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
-    		print '<input type="hidden" name="action" value="install">';
-    		print '<input type="hidden" name="mode" value="deploy">';
-    		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
-    		print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
-    		print '</form>';
+			print '<div class="center"><div class="logo_setup"></div></div>';
+		}
+		else
+		{
+			print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+			print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+			print $langs->trans("SetupIsReadyForUse").'<br>';
+		}
+	}
 
-            print '<br>';
-            print '<br>';
+	if (! empty($result['return']))
+	{
+		print '<br>';
 
-            print '<div class="center"><div class="logo_setup"></div></div>';
-    	}
-    	else
-    	{
-    		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
-    		print '<b>'.$langs->trans("StepNb",4).'</b>: ';
-    		print $langs->trans("SetupIsReadyForUse").'<br>';
-    	}
-    }
+		foreach($result['return'] as $value)
+		{
+			echo $value.'<br>';
+		}
+	}
 
-
-    if (! empty($result['return']))
-    {
-    	print '<br>';
-
-    	foreach($result['return'] as $value)
-    	{
-    		echo $value.'<br>';
-    	}
-    }
-
-    dol_fiche_end();
+	dol_fiche_end();
 }
-
-
 
 llxFooter();
 

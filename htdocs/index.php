@@ -541,12 +541,11 @@ if ($showweather)
     $boxwork.='</tr>';
 }
 
-$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
-
 // Show dashboard
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
+	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
         if (empty($boad->nbtodo)) $nbworkboardempty++;
@@ -581,11 +580,12 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='</td></tr>';
 }
 else
 {
     $boxwork.='<tr class="nohover">';
-    $boxwork.='<td colspan="4" class="nohover valignmiddle opacitymedium">';
+    $boxwork.='<td class="nohover valignmiddle opacitymedium">';
     $boxwork.=$langs->trans("NoOpenedElementToProcess");
     $boxwork.='</td>';
     $boxwork.='</tr>';

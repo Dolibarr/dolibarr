@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "commercial"));
+$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -72,7 +72,8 @@ $search_idprof4=trim(GETPOST('search_idprof4'));
 $search_idprof5=trim(GETPOST('search_idprof5'));
 $search_idprof6=trim(GETPOST('search_idprof6'));
 $search_sale=trim(GETPOST("search_sale",'int'));
-$search_categ=trim(GETPOST("search_categ",'int'));
+$search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
+$search_categ_sup=trim(GETPOST("search_categ_sup",'int'));
 $search_country=GETPOST("search_country",'intcomma');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_status=GETPOST("search_status",'int');
@@ -215,7 +216,8 @@ if (empty($reshook))
     {
         $search_nom='';
         $search_alias='';
-        $search_categ=0;
+        $search_categ_cus=0;
+        $search_categ_sup=0;
         $search_sale='';
     	$search_barcode="";
         $search_customer_code='';
@@ -383,7 +385,8 @@ $sql.= " state.code_departement as state_code, state.nom as state_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
-if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_soc";
+if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
+if ($search_categ_sup) $sql .= ", cs.fk_categorie, cs.fk_soc";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -396,7 +399,8 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 // We'll need this table joined to the select in order to filter by categ
-if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_".($type=='f'?"fournisseur":"societe")." as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ_sup)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -407,8 +411,10 @@ if ($socid)                $sql.= " AND s.rowid = ".$socid;
 if ($search_sale)          $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale)          $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
-if ($search_categ > 0)     $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
-if ($search_categ == -2)   $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_sup > 0) $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
+if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
+if ($search_categ_sup == -2)   $sql.= " AND cs.fk_categorie IS NULL";
 
 if ($search_all)           $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if (strlen($search_cti))   $sql.= natural_search('s.phone', $search_cti);
@@ -449,8 +455,8 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    // Search on a numeric
+    if ($crit != '' && (! in_array($typ, array('select')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -499,7 +505,8 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_all != '') $param = "&sall=".urlencode($search_all);
 if ($sall != '') $param .= "&sall=".urlencode($sall);
-if ($search_categ > 0) $param.='&search_categ='.urlencode($search_categ);
+if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
+if ($search_categ_sup > 0) $param.='&search_categ_sup='.urlencode($search_categ_sup);
 if ($search_sale > 0)	$param.='&search_sale='.urlencode($search_sale);
 if ($search_nom != '') $param.= "&search_nom=".urlencode($search_nom);
 if ($search_alias != '') $param.= "&search_alias=".urlencode($search_alias);
@@ -584,25 +591,25 @@ if ($search_all)
 
 // Filter on categories
 $moreforfilter='';
-if ($type == 'c' || $type == 'p')
+if (empty($type) || $type == 'c' || $type == 'p')
 {
 	if (! empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';
-	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories('customer',$search_categ,'search_categ',1);
+	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
+		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
 	 	$moreforfilter.='</div>';
 	}
 }
-if ($type == 'f')
+if (empty($type) || $type == 'f')
 {
     if (! empty($conf->categorie->enabled))
     {
         require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $moreforfilter.='<div class="divsearchfield">';
-        $moreforfilter.=$langs->trans('Categories'). ': ';
-        $moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
+        $moreforfilter.=$langs->trans('SuppliersCategoriesShort').': ';
+        $moreforfilter.=$formother->select_categories('supplier',$search_categ_sup,'search_categ_sup',1);
         $moreforfilter.='</div>';
     }
 }

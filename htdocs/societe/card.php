@@ -168,12 +168,17 @@ if (empty($reshook))
 				}
 
 				// Merge extrafields
-				foreach ($soc_origin->array_options as $key => $val)
+				if (is_array($soc_origin->array_options))
 				{
-				    if (empty($object->array_options[$key])) $object->array_options[$key] = $val;
+					foreach ($soc_origin->array_options as $key => $val)
+					{
+					    if (empty($object->array_options[$key])) $object->array_options[$key] = $val;
+					}
 				}
 
 				// TODO Merge categories
+
+
 				$object->update($object->id, $user);
 
 				// Move links

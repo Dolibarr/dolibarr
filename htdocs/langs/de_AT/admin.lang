@@ -26,6 +26,7 @@ Module310Desc=Mitgliederverwaltun
 Module330Desc=Bookmarks-Verwaltung
 Module500Name=Steuern, Sozialbeiträge und Dividenden
 Module500Desc=Steuer-, Sozialbeitrags- und Dividendenverwaltung
+Module2300Desc=Scheduled job management
 Module50100Name=Kassa
 Permission31=Produkte/Services einsehen
 Permission32=Produkte/Services erstellen/bearbeiten

@@ -39,7 +39,7 @@ class CMailFile
 	public $sendcontext;
 	public $sendmode;
 	public $sendsetup;
-	
+
 	var $subject;      	// Topic:       Subject of email
 	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
 	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
@@ -115,14 +115,14 @@ class CMailFile
 		global $conf, $dolibarr_main_data_root;
 
 		$this->sendcontext = $sendcontext;
-		
+
 		$this->sendmode = '';
-		if ($this->sendcontext == 'emailing') $this->sendmode = $conf->global->EMAILING_MAIL_SENDMODE;	
+		if ($this->sendcontext == 'emailing') $this->sendmode = $conf->global->EMAILING_MAIL_SENDMODE;
 		if (empty($this->sendmode)) $this->sendmode=$conf->global->MAIN_MAIL_SENDMODE;
 		if (empty($this->sendmode)) $this->sendmode='mail';
-		
+
 		$this->sendsetup = array();
-		
+
 
 		// We define end of line (RFC 821).
 		$this->eol="\r\n";
@@ -157,7 +157,7 @@ class CMailFile
 		{
 		    dol_syslog("CMailFile::CMailfile: Try to send an email with empty body");
 		    $msg='.';     // Avoid empty message (with empty message conten show a multipart structure)
-		}		
+		}
 
 		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)
@@ -169,6 +169,16 @@ class CMailFile
 		{
 			$this->msgishtml = $msgishtml;
 		}
+
+		global $dolibarr_main_url_root;
+
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		// Replace relative /viewimage to absolute path
+		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
 
 		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
 
@@ -230,7 +240,7 @@ class CMailFile
 			$this->addr_bcc = $addr_bcc;
 			$this->deliveryreceipt = $deliveryreceipt;
 			$this->trackid = $trackid;
-				
+
 			$smtp_headers = $this->write_smtpheaders();
 			if (! empty($moreinheader)) $smtp_headers.=$moreinheader;   // $moreinheader contains the \r\n
 
@@ -339,7 +349,7 @@ class CMailFile
 			$this->phpmailer->SetReplyTo($this->getValidAddress($from,0,1));   // Set property with this->phpmailer->setReplyTo after constructor if you want to use another value than the From
 			// TODO Add trackid into smtp header
 			// TODO if (! empty($moreinheader)) ...
-				
+
 			if (! empty($this->html))
 			{
 				if (!empty($css))
@@ -666,7 +676,7 @@ class CMailFile
 				if ($res)
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
-						
+
 					$result=$this->smtps->sendMsg();
 					//print $result;
 
@@ -1026,7 +1036,7 @@ class CMailFile
 				$out.= $this->eol;
 				$out.= "--" . $this->related_boundary . $this->eol;
 			}
-				
+
 			if (! $this->atleastoneimage && $strContentAltText && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))    // Add plain text message part before html part
 			{
 				$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
@@ -1036,7 +1046,7 @@ class CMailFile
 				$out.= $this->eol.$strContentAltText.$this->eol;
 				$out.= "--" . $this->alternative_boundary . $this->eol;
 			}
-				
+
 			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
 			$out.= $this->eol.$strContent.$this->eol;
 
@@ -1355,7 +1365,7 @@ class CMailFile
 			if ($email)
 			{
 				$i++;
-				 
+
 				$newemail='';
 				if ($format == 4)
 				{

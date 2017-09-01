@@ -44,7 +44,6 @@ $ref		= GETPOST('ref');
 // Security check
 if ($user->societe_id)
 {
-	$action='';
 	$socid = $user->societe_id;
 }
 $result=restrictedArea($user,'commande',$id,'');

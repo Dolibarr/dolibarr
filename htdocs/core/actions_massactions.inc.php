@@ -82,7 +82,7 @@ if (! $error && $massaction == 'confirm_presend')
             $result=$objecttmp->fetch($toselectid);
             if ($result > 0)
             {
-                $listoinvoicesid[$toselectid]=$toselectid;
+                $listofobjectid[$toselectid]=$toselectid;
                 $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
                 $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
@@ -169,7 +169,7 @@ if (! $error && $massaction == 'confirm_presend')
 
             //var_dump($listofobjectref);exit;
             $attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
-            $listofqualifiedinvoice=array();
+            $listofqualifiedid=array();
             $listofqualifiedref=array();
             foreach($listofobjectref[$thirdpartyid] as $objectid => $object)
             {
@@ -223,7 +223,7 @@ if (! $error && $massaction == 'confirm_presend')
                         );
                     }
 
-                    $listofqualifiedinvoice[$objectid]=$object;
+                    $listofqualifiedid[$objectid]=$object;
                     $listofqualifiedref[$objectid]=$object->ref;
                 }
                 else
@@ -238,8 +238,8 @@ if (! $error && $massaction == 'confirm_presend')
                 //var_dump($listofqualifiedref);
             }
 
-            // Loop on each qualified invoice of the thirdparty
-            if (count($listofqualifiedinvoice) > 0)
+            // Loop on each qualified objects of the thirdparty
+            if (count($listofqualifiedid) > 0)
             {
                 $langs->load("commercial");
 
@@ -266,17 +266,35 @@ if (! $error && $massaction == 'confirm_presend')
                 $subject = GETPOST('subject');
                 $message = GETPOST('message');
                 $sendtocc = GETPOST('sentocc');
-                $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
+                $sendtobcc = '';
+                if ($objectclass == 'Propale') 				$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);
+                if ($objectclass == 'Commande') 			$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO);
+                if ($objectclass == 'Facture') 				$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
+                if ($objectclass == 'Supplier_Proposal') 	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO);
+                if ($objectclass == 'CommandeFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO);
+                if ($objectclass == 'FactureFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO);
+
 
                 $substitutionarray=array(
-                    '__ID__' => join(', ',array_keys($listofqualifiedinvoice)),
+                	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+                	'__ID__' => join(', ',array_keys($listofqualifiedid)),
                     '__EMAIL__' => $thirdparty->email,
                     '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
                     '__FACREF__' => join(', ',$listofqualifiedref),            // For backward compatibility
                     '__ORDERREF__' => join(', ',$listofqualifiedref),          // For backward compatibility
                     '__PROPREF__' => join(', ',$listofqualifiedref),           // For backward compatibility
                     '__REF__' => join(', ',$listofqualifiedref),
-                    '__REFCLIENT__' => $thirdparty->name
+                    '__REFCLIENT__' => $thirdparty->name,
+					'__SIGNATURE__' =>  (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?dol_string_nohtmltag($user->signature):'')
+                	/* not available on all object
+					/'__FIRSTNAME__'=>(is_object($object)?$object->firstname:''),
+					'__LASTNAME__'=>(is_object($object)?$object->lastname:''),
+					'__FULLNAME__'=>(is_object($object)?$object->getFullName($langs):''),
+					'__ADDRESS__'=>(is_object($object)?$object->address:''),
+					'__ZIP__'=>(is_object($object)?$object->zip:''),
+					'__TOWN_'=>(is_object($object)?$object->town:''),
+					'__COUNTRY__'=>(is_object($object)?$object->country:''),
+					*/
                 );
 
                 $subject=make_substitutions($subject, $substitutionarray);
@@ -288,7 +306,7 @@ if (! $error && $massaction == 'confirm_presend')
 
                 //var_dump($filepath);
 
-                // Send mail
+                // Send mail (substitutionarray must be done just before this)
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
                 if ($mailfile->error)
@@ -305,7 +323,7 @@ if (! $error && $massaction == 'confirm_presend')
                         $error=0;
 
                         // Insert logs into agenda
-                        foreach($listofqualifiedinvoice as $invid => $object)
+                        foreach($listofqualifiedid as $objid => $object)
                         {
                             /*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
                             if ($objectclass == 'Commande') $actiontypecode='AC_COM';
@@ -328,7 +346,7 @@ if (! $error && $massaction == 'confirm_presend')
                             $object->sendtoid		= 0;
                             $object->actionmsg		= $actionmsg;  // Long text
                             $object->actionmsg2		= $actionmsg2; // Short text
-                            $object->fk_element		= $invid;
+                            $object->fk_element		= $objid;
                             $object->elementtype	= $object->element;
 
                             // Appel des triggers
@@ -403,7 +421,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
-            $listoinvoicesid[$toselectid]=$toselectid;
+            $listofobjectid[$toselectid]=$toselectid;
             $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
             $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
             $listofobjectref[$toselectid]=$objecttmp->ref;
@@ -411,7 +429,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     }
 
     $arrayofinclusion=array();
-    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
+    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote($tmppdf.'.pdf','/').'$';
     $listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
     // build list of files with full path
@@ -487,8 +505,8 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    $pdf=pdf_getInstance();
 	    if (class_exists('TCPDF'))
 	    {
-		$pdf->setPrintHeader(false);
-		$pdf->setPrintFooter(false);
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
 	    }
 	    $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
@@ -497,15 +515,15 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    // Add all others
 	    foreach($files as $file)
 	    {
-		// Charge un document PDF depuis un fichier.
-		$pagecount = $pdf->setSourceFile($file);
-		for ($i = 1; $i <= $pagecount; $i++)
-		{
-		    $tplidx = $pdf->importPage($i);
-		    $s = $pdf->getTemplatesize($tplidx);
-		    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-		    $pdf->useTemplate($tplidx);
-		}
+			// Charge un document PDF depuis un fichier.
+			$pagecount = $pdf->setSourceFile($file);
+			for ($i = 1; $i <= $pagecount; $i++)
+			{
+			    $tplidx = $pdf->importPage($i);
+			    $s = $pdf->getTemplatesize($tplidx);
+			    $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+			    $pdf->useTemplate($tplidx);
+			}
 	    }
 
 	    // Create output dir if not exists
@@ -518,18 +536,18 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    // Save merged file
 	    if ($filter=='paye:0')
 	    {
-		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
-		else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 	    }
 	    if ($year) $filename.='_'.$year;
 	    if ($month) $filename.='_'.$month;
 	    if ($pagecount)
 	    {
-		$now=dol_now();
-		$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
-		$pdf->Output($file,'F');
-		if (! empty($conf->global->MAIN_UMASK))
-		    @chmod($file, octdec($conf->global->MAIN_UMASK));
+			$now=dol_now();
+			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+			$pdf->Output($file,'F');
+			if (! empty($conf->global->MAIN_UMASK))
+			    @chmod($file, octdec($conf->global->MAIN_UMASK));
 
 		    $langs->load("exports");
 		    setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');

@@ -227,6 +227,6 @@ NoExportableData=No exportable data (no modules with exportable data loaded, or 
 ##### External sites #####
 WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
-WEBSITE_TITLE=Title
-WEBSITE_DESCRIPTION=Description
+WEBSITE_TITLE=표제
+WEBSITE_DESCRIPTION=기술
 WEBSITE_KEYWORDS=Keywords
