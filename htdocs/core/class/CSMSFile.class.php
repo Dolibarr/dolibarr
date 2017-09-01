@@ -42,6 +42,7 @@ class CSMSFile
 	var $priority;
 	var $class;
 	var $message;
+	var $nostop;
 
 
 	/**
@@ -81,6 +82,7 @@ class CSMSFile
         $this->priority=$priority;
         $this->class=$class;
         $this->message=$msg;
+        $this->nostop=false;
 	}
 
 
@@ -119,6 +121,7 @@ class CSMSFile
 				$sms->deferred=$this->deferred;
 				$sms->priority=$this->priority;
                 $sms->class=$this->class;
+                $sms->nostop=$this->nostop;
 
                 $res=$sms->SmsSend();
 				if ($res <= 0)
@@ -148,6 +151,7 @@ class CSMSFile
 		            $sms->priority=$this->priority;
 		            $sms->class=$this->class;
 		            $sms->message=$this->message;
+		            $sms->nostop=$this->nostop;
 
                     $res=$sms->SmsSend();
                     $this->error = $sms->error;
