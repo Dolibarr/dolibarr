@@ -138,6 +138,9 @@ print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, 
 print "<br>\n";
 
 
+print '<br>';
+
+
 print "<br>\n";
 print_fiche_titre($langs->trans("AccountancyAreaDescActionFreq"), '', 'object_calendarweek');
 print '<hr>';

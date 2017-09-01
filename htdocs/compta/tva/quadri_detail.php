@@ -133,7 +133,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
+    $name=$langs->trans("VATReportByQuartersInDueDebtMode");
     $calcmode=$langs->trans("CalcModeVATDebt");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -172,7 +172,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
+    $name=$langs->trans("VATReportByQuartersInInputOutputMode");
     $calcmode=$langs->trans("CalcModeVATEngagement");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -210,7 +210,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -396,7 +396,7 @@ else
 				if (! empty($fields['ddate_start'])) $type=1;
 				if (! empty($fields['ddate_end'])) $type=1;
 
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
@@ -553,7 +553,7 @@ else
 				if (! empty($fields['ddate_start'])) $type=1;
 				if (! empty($fields['ddate_end'])) $type=1;
 
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
