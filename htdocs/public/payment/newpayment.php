@@ -1225,7 +1225,19 @@ if ($action != 'dopayment')
     {
         // Buttons for all payments registration methods
 
-        if (! empty($conf->paypal->enabled))
+        if (! empty($conf->paybox->enabled))
+        {
+        	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+        }
+
+        if (! empty($conf->stripe->enabled))
+        {
+        	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment__stripe" value="'.$langs->trans("StripeDoPayment").'">';
+        }
+
+    	if (! empty($conf->paypal->enabled))
         {
         	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
@@ -1237,16 +1249,6 @@ if ($action != 'dopayment')
         	{
         		print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
         	}
-        }
-
-        if (! empty($conf->paybox->enabled))
-        {
-        	print '<br><input class="button buttonpayment buttonpaymentpaybox" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
-        }
-
-        if (! empty($conf->stripe->enabled))
-        {
-        	print '<br><input class="button buttonpayment buttonpaymentstripe" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
         }
     }
     else

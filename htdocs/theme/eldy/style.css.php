@@ -348,6 +348,17 @@ input.buttonpayment {
 	margin-bottom: 15px;
 	background-image: none;
 }
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 24px;
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
 	background-repeat: no-repeat;
