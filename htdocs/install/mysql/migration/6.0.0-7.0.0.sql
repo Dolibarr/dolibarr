@@ -25,6 +25,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VTE',    'Income of products',               '707xxx',                   0, 0, '',        '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'MAR',    'Expenses of products',             '603xxx - 607xxx - 609xxx', 0, 0, '',        '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3, 'MARGE',  'Commercial margin',                '',                         0, 1, 'VTE+MAR', '30', 1, 1);
+
 UPDATE llx_c_accounting_category set formula = 'VTE+MAR' where code = 'MARGE';
 
 ALTER TABLE llx_menu MODIFY COLUMN perms text;
