@@ -107,6 +107,7 @@ class CSMSFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
 		{
+
 		    // Action according to choosed sending method
 		    if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
 			{
@@ -129,7 +130,7 @@ class CSMSFile
 				{
 					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 					//var_dump($res);        // 1973128
-					$this->dump_sms_result($res);
+					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
 			}
 		    else if (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
@@ -159,7 +160,7 @@ class CSMSFile
     				{
     					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
     					//var_dump($res);        // 1973128
-    					$this->dump_sms_result($res);
+    					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
     				}
 		        }
 		        catch(Exception $e)
