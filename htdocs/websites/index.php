@@ -169,7 +169,7 @@ if ($action == 'addsite')
 {
 	$db->begin();
 
-	if (! $error && empty(GETPOST('WEBSITE_REF','alpha')))
+	if (! $error && ! GETPOST('WEBSITE_REF','alpha'))
 	{
 		$error++;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
