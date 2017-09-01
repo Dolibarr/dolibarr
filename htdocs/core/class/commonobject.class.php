@@ -4156,6 +4156,13 @@ abstract class CommonObject
             foreach($this->array_options as $key => $value)
             {
                	$attributeKey = substr($key,8);   // Remove 'options_' prefix
+
+				// array_option may contain extrafields from an origin object that doesn't exist in current object, we should not try to insert them
+				if(empty($extrafields->attribute_type[$attributeKey])) {
+					unset($this->array_options[$key]);
+					continue;
+				}
+				
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
                	$attributeParam = $extrafields->attribute_param[$attributeKey];
