@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
+ * Copyright (C) 2017       Rui Strecht      		<rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,7 @@ $search_account_supplier_code=trim(GETPOST('search_account_supplier_code'));
 $search_town=trim(GETPOST("search_town"));
 $search_zip=trim(GETPOST("search_zip"));
 $search_state=trim(GETPOST("search_state"));
+$search_region=trim(GETPOST("search_region"));
 $search_email=trim(GETPOST('search_email'));
 $search_phone=trim(GETPOST('search_phone'));
 $search_url=trim(GETPOST('search_url'));
@@ -168,6 +170,7 @@ $arrayfields=array(
     's.town'=>array('label'=>"Town", 'checked'=>1),
     's.zip'=>array('label'=>"Zip", 'checked'=>1),
     'state.nom'=>array('label'=>"State", 'checked'=>0),
+    'region.nom'=>array('label'=>"Region", 'checked'=>0),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
     's.email'=>array('label'=>"Email", 'checked'=>0),
     's.url'=>array('label'=>"Url", 'checked'=>0),
@@ -387,7 +390,8 @@ $sql.= " s.email, s.phone, s.url, s.siren as idprof1, s.siret as idprof2, s.ape 
 $sql.= " s.tms as date_update, s.datec as date_creation,";
 $sql.= " s.code_compta,s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
-$sql.= " state.code_departement as state_code, state.nom as state_name";
+$sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
@@ -404,6 +408,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
 if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 if (! empty($search_categ_sup)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
@@ -436,6 +441,7 @@ if ($search_account_supplier_code) $sql.= natural_search("s.code_compta_fourniss
 if ($search_town)          $sql.= natural_search("s.town",$search_town);
 if (strlen($search_zip))   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state)         $sql.= natural_search("state.nom",$search_state);
+if ($search_region)         $sql.= natural_search("region.nom",$search_region);
 if ($search_country)       $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_email)         $sql.= natural_search("s.email",$search_email);
 if (strlen($search_phone)) $sql.= natural_search("s.phone", $search_phone);
@@ -728,6 +734,13 @@ if (! empty($arrayfields['state.nom']['checked']))
 	print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 	print '</td>';
 }
+// Region
+if (! empty($arrayfields['region.nom']['checked']))
+{
+    print '<td class="liste_titre">';
+	print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
+	print '</td>';
+}
 // Country
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
@@ -937,6 +950,7 @@ if (! empty($arrayfields['s.code_compta_fournisseur']['checked'])) print_liste_f
 if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],"s.zip","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['region.nom']['checked']))        print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.email']['checked']))          print_liste_field_titre($arrayfields['s.email']['label'],$_SERVER["PHP_SELF"],"s.email","",$param,'',$sortfield,$sortorder);
@@ -1066,6 +1080,12 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['state.nom']['checked']))
     {
         print "<td>".$obj->state_name."</td>\n";
+        if (! $i) $totalarray['nbfield']++;
+    }
+    // Region
+    if (! empty($arrayfields['region.nom']['checked']))
+    {
+        print "<td>".$obj->region_name."</td>\n";
         if (! $i) $totalarray['nbfield']++;
     }
     // Country
