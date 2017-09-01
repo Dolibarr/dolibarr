@@ -212,6 +212,7 @@ class CSMSFile
 			fputs($fp, "Priority: ".$this->priority."\n");
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
+			fputs($fp, "DisableStop: ".$this->nostop."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);
