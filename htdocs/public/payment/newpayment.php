@@ -62,24 +62,24 @@ $action=GETPOST('action','aZ09');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix",'alpha');
-$amount=price2num(GETPOST("amount"));
+$suffix=GETPOST("suffix",'aZ09');
+$amount=price2num(GETPOST("amount",'alpha'));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
 if (! $action)
 {
-    if (! GETPOST("amount") && ! GETPOST("source"))
+    if (! GETPOST("amount",'alpha') && ! GETPOST("source",'alpha'))
     {
     	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
     	exit;
     }
-    if (is_numeric($amount) && ! GETPOST("tag") && ! GETPOST("source"))
+    if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! GETPOST("source",'alpha'))
     {
     	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
     	exit;
     }
-    if (GETPOST("source") && ! GETPOST("ref"))
+    if (GETPOST("source",'alpha') && ! GETPOST("ref",'alpha'))
     {
     	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
     	exit;
@@ -551,20 +551,21 @@ $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
-$paramlogo='PAYMENT_LOGO_'.$suffix;
+$paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->PAYMENT_LOGO)) $logosmall=$conf->global->PAYMENT_LOGO;
+else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$width=128;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
-	$width=96;
+	$width=128;
 }
 // Output html code for logo
 if ($urllogo)
