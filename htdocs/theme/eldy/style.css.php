@@ -347,21 +347,33 @@ input.buttonpayment {
 	width: 300px;
 	margin-bottom: 15px;
 	background-image: none;
+	line-height: 24px;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 26px;
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
 }
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
 	background-repeat: no-repeat;
-	background-position: 5px 4px;
+	background-position: 8px 7px;
 }
 input.buttonpaymentpaybox {
 	background-image: url(<?php echo dol_buildpath($path.'/paybox/img/object_paybox.png',1) ?>);
 	background-repeat: no-repeat;
-	background-position: 5px 4px;
+	background-position: 8px 7px;
 }
 input.buttonpaymentstripe {
 	background-image: url(<?php echo dol_buildpath($path.'/stripe/img/object_stripe.png',1) ?>);
 	background-repeat: no-repeat;
-	background-position: 5px 3px;
+	background-position: 8px 7px;
 }
 span.timesheetalreadyrecorded input {
     border: none;
