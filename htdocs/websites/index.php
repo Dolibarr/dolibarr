@@ -783,6 +783,21 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
     }
 }
 
+// Export site
+if (GETPOST('exportsite'))
+{
+	$fileofzip = exportWebSite($object);
+
+	$file_name = basename($yourfile);
+
+	header("Content-Type: application/zip");
+	header("Content-Disposition: attachment; filename=".$file_name);
+	header("Content-Length: " . filesize($yourfile));
+
+	readfile($fileofzip);
+	exit;
+}
+
 
 
 /*
@@ -894,6 +909,7 @@ if (count($object->records) > 0)
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
 
 		print ' &nbsp; ';
 

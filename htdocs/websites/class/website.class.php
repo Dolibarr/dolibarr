@@ -480,7 +480,8 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Load an object from its id and create a new one in database
+	 * Load an object from its id and create a new one in database.
+	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
 	 * @param	User	$user		User making the clone
 	 * @param 	int 	$fromid 	Id of object to clone
