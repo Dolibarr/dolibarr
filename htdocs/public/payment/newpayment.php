@@ -71,17 +71,17 @@ if (! $action)
 {
     if (! GETPOST("amount",'alpha') && ! GETPOST("source",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
+    	print $langs->trans('ErrorBadParameters')." - amount or source";
     	exit;
     }
     if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! GETPOST("source",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
+    	print $langs->trans('ErrorBadParameters')." - tag or source";
     	exit;
     }
     if (GETPOST("source",'alpha') && ! GETPOST("ref",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+    	print $langs->trans('ErrorBadParameters')." - ref";
     	exit;
     }
 }
@@ -117,6 +117,11 @@ $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
 if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod,'/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
 
+if (! empty($suffix))
+{
+	$urlok.='suffix='.urlencode($suffix).'&';
+	$urlko.='suffix='.urlencode($suffix).'&';
+}
 if (! empty($SOURCE))
 {
     $urlok.='source='.urlencode($SOURCE).'&';
@@ -560,12 +565,12 @@ $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
-	$width=128;
+	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
-	$width=128;
+	$width=150;
 }
 // Output html code for logo
 if ($urllogo)
