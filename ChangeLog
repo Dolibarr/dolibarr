@@ -9,7 +9,7 @@ NEW: Add a payment module for Stripe.
 NEW: Add module "Product variant" (like red, blue for the product shoes)
 NEW: Accountancy - Activate multi-journal & Add journal_label to database (FEC)
 NEW: Add a tracking id into mass emailing.
-NEW: Tax system more compatible with the new tax roollout in India (IGST / CGST / SGST).
+NEW: Tax system more compatible with the new tax rollout in India (IGST / CGST / SGST).
 NEW: Add calculation function for Loan schedule
 NEW: Add "depends on" and "required by" into module informations
 NEW: Add hidden option THIRDPARTY_INCLUDE_PARENT_IN_LINKTO
