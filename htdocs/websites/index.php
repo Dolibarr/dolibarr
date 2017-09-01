@@ -96,6 +96,7 @@ $action=GETPOST('action','alpha');
 
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
+if (GETPOST('createsite')) { $action='createsite'; }
 if (GETPOST('create')) { $action='create'; }
 if (GETPOST('editmedias')) { $action='editmedias'; }
 if (GETPOST('editcss')) { $action='editcss'; }
@@ -155,8 +156,66 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
  * Actions
  */
 
-if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
+if (GETPOST('refreshsite'))		// If we change the site, we reset the pageid and cancel addsite action.
+{
+	$pageid=0;
+	if ($action == 'addsite') $action = 'preview';
+}
 if (GETPOST('refreshpage') && ! in_array($action, array('updatecss'))) $action='preview';
+
+
+// Add site
+if ($action == 'addsite')
+{
+	$db->begin();
+
+	if (! $error && empty(GETPOST('WEBSITE_REF','alpha')))
+	{
+		$error++;
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+	}
+	if (! $error && ! preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF','alpha')))
+	{
+		$error++;
+		setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("Ref")), null, 'errors');
+	}
+
+	if (! $error)
+	{
+		$tmpobject=new Website($db);
+		$tmpobject->ref = GETPOST('WEBSITE_REF','alpha');
+		$tmpobject->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
+		$tmpobject->virtualhost = GETPOST('WEBSITE_VIRTUALHOST','alpha');
+
+		$result = $tmpobject->create($user);
+		if ($result <= 0)
+		{
+			$error++;
+			setEventMessages($tmpobject->error, $tmpobject->errors, 'errors');
+		}
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SiteAdded", $object->ref), null, 'mesgs');
+		$action='';
+
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$tmpobject->ref);
+		exit;
+	}
+	else
+	{
+		$db->rollback();
+		$action='createsite';
+	}
+
+	if (! $error)
+	{
+		$action = 'preview';
+		$id = $object->id;
+	}
+}
 
 // Add page
 if ($action == 'add')
@@ -820,6 +879,10 @@ llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0,
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+if ($action == 'createsite')
+{
+    print '<input type="hidden" name="action" value="addsite">';
+}
 if ($action == 'create')
 {
     print '<input type="hidden" name="action" value="add">';
@@ -865,6 +928,10 @@ if (count($object->records) > 0)
 {
     // ***** Part for web sites
 
+	print '<div class="websiteselection hideonsmartphoneimp minwwidth100">';
+	print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddWebsite")).'" name="createsite">';
+	print '</div>';
+
     print '<div class="websiteselection hideonsmartphoneimp">';
     print $langs->trans("Website").': ';
     print '</div>';
@@ -907,7 +974,7 @@ if (count($object->records) > 0)
         print ' &nbsp; ';
 
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
-        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
 
@@ -963,7 +1030,7 @@ if (count($object->records) > 0)
 
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-        print '<div class="websiteselection hideonsmartphoneimp">';
+        print '<div class="websiteselection hideonsmartphoneimp monwidth100">';
         print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
         print '</div>';
 
@@ -1091,7 +1158,7 @@ if (count($object->records) > 0)
 
             // TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
         }
-        if (! in_array($action, array('editcss','editmenu','editmedias','create','createpagefromclone')))
+        if (! in_array($action, array('editcss','editmenu','editmedias','createsite','create','createpagefromclone')))
         {
             if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
             if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -1268,13 +1335,80 @@ if ($action == 'editcss')
     print '<br>';
 }
 
+if ($action == 'createsite')
+{
+    print '<div class="fiche">';
+
+    print '<br>';
+
+	/*$h = 0;
+	$head = array();
+
+	$head[$h][0] = dol_buildpath('/websites/index.php',1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("AddSite");
+   	$head[$h][2] = 'card';
+	$h++;
+
+    dol_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
+    */
+	if ($action == 'create') print_fiche_titre($langs->trans("AddSite"));
+
+    print '<!-- Add site -->'."\n";
+    //print '<div class="fichecenter">';
+
+    print '<table class="border" width="100%">';
+
+    if (GETPOST('WEBSITE_REF'))         $siteref=GETPOST('WEBSITE_REF','alpha');
+    if (GETPOST('WEBSITE_DESCRIPTION')) $sitedesc=GETPOST('WEBSITE_DESCRIPTION','alpha');
+
+    print '<tr><td class="titlefieldcreate fieldrequired">';
+    print $langs->trans('Ref');
+    print '</td><td>';
+    print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'">';
+    print '</td></tr>';
+
+    print '<tr><td>';
+    print $langs->trans('Description');
+    print '</td><td>';
+    print '<input type="text" class="flat minwidth300" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($sitedesc).'">';
+    print '</td></tr>';
+
+    print '<tr><td>';
+    print $form->textwithpicto($langs->trans('Virtualhost'), $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/websites/<i>websiteref</i>'), 1, 'help', '', 0, 2, 'tooltipvirtual');
+    print '</td><td>';
+    print '<input type="text" class="flat minwidth300" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($sitedesc).'">';
+    print '</td></tr>';
+
+
+    print '</table>';
+
+    if ($action == 'createsite')
+    {
+    	print '<div class="center">';
+
+	    print '<input class="button" type="submit" name="add" value="'.$langs->trans("Create").'">';
+    	print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+
+    	print '</div>';
+    }
+
+
+	//print '</div>';
+
+    //dol_fiche_end();
+
+    print '</div>';
+
+    print '<br>';
+}
+
 if ($action == 'editmeta' || $action == 'create')
 {
     print '<div class="fiche">';
 
     print '<br>';
 
-	$h = 0;
+	/*$h = 0;
 	$head = array();
 
 	$head[$h][0] = dol_buildpath('/websites/index.php',1).'?id='.$object->id;
@@ -1282,10 +1416,11 @@ if ($action == 'editmeta' || $action == 'create')
    	$head[$h][2] = 'card';
 	$h++;
 
-    //dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
+    dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
+    */
 	if ($action == 'create') print_fiche_titre($langs->trans("AddPage"));
 
-    print '<!-- Edit Meta -->'."\n";
+    print '<!-- Edit or create page -->'."\n";
     //print '<div class="fichecenter">';
 
     if ($action == 'create')
