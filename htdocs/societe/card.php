@@ -325,7 +325,6 @@ if (empty($reshook))
             $action='create';
         }
 
-
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
@@ -333,7 +332,7 @@ if (empty($reshook))
         }
 		else $object->canvas=$canvas;
 
-        if (GETPOST("private") == 1)
+        if (GETPOST("private") == 1)	// Ask to create a contact
         {
             $object->particulier       = GETPOST("private");
 
@@ -356,14 +355,14 @@ if (empty($reshook))
         $object->skype                 = GETPOST('skype', 'alpha');
         $object->phone                 = GETPOST('phone', 'alpha');
         $object->fax                   = GETPOST('fax','alpha');
-        $object->email                 = GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
-        $object->url                   = GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-        $object->idprof1               = GETPOST('idprof1', 'alpha');
-        $object->idprof2               = GETPOST('idprof2', 'alpha');
-        $object->idprof3               = GETPOST('idprof3', 'alpha');
-        $object->idprof4               = GETPOST('idprof4', 'alpha');
-        $object->idprof5               = GETPOST('idprof5', 'alpha');
-        $object->idprof6               = GETPOST('idprof6', 'alpha');
+        $object->email                 = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+        $object->url                   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+        $object->idprof1               = trim(GETPOST('idprof1', 'alpha'));
+        $object->idprof2               = trim(GETPOST('idprof2', 'alpha'));
+        $object->idprof3               = trim(GETPOST('idprof3', 'alpha'));
+        $object->idprof4               = trim(GETPOST('idprof4', 'alpha'));
+        $object->idprof5               = trim(GETPOST('idprof5', 'alpha'));
+        $object->idprof6               = trim(GETPOST('idprof6', 'alpha'));
         $object->prefix_comm           = GETPOST('prefix_comm', 'alpha');
         $object->code_client           = GETPOST('code_client', 'alpha');
         $object->code_fournisseur      = GETPOST('code_fournisseur', 'alpha');
@@ -383,7 +382,9 @@ if (empty($reshook))
 
         $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
         $object->effectif_id           = GETPOST('effectif_id', 'int');
-        $object->typent_id             = GETPOST('typent_id');
+        $object->typent_id             = GETPOST('typent_id','int');
+
+        $object->typent_code           = dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
 
         $object->client                = GETPOST('client', 'int');
         $object->fournisseur           = GETPOST('fournisseur', 'int');
@@ -461,40 +462,6 @@ if (empty($reshook))
             	$object->country_code=$tmparray['code'];
             	$object->country=$tmparray['label'];
             }
-
-            // Check for duplicate or mandatory prof id
-            // Only for companies
-	        if (!($object->particulier || $private))
-        	{
-	        	for ($i = 1; $i <= 6; $i++)
-	        	{
-	        	    $slabel="idprof".$i;
-	    			$_POST[$slabel]=trim($_POST[$slabel]);
-	        	    $vallabel=$_POST[$slabel];
-	        		if ($vallabel && $object->id_prof_verifiable($i))
-					{
-						if($object->id_prof_exists($i,$vallabel,$object->id))
-						{
-							$langs->load("errors");
-	                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-	                		$action = (($action=='add'||$action=='create')?'create':'edit');
-						}
-					}
-
-            		// Check for mandatory prof id (but only if country is than than ours)
-					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
-            		{
-    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-    					{
-    						$langs->load("errors");
-    						$error++;
-    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-    						$action = (($action=='add'||$action=='create')?'create':'edit');
-    					}
-            		}
-	        	}
-        	}
         }
 
         if (! $error)
@@ -512,7 +479,7 @@ if (empty($reshook))
                 {
                     if ($object->particulier)
                     {
-                        dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
+                        dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
                         $result=$object->create_individual($user);
                         if (! $result >= 0)
                         {
@@ -1152,7 +1119,7 @@ else
         }
 
         // Email web
-        print '<tr><td>'.fieldLabel('EMail','email').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td>';
+        print '<tr><td>'.fieldLabel('EMail','email',$conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
@@ -1710,7 +1677,7 @@ else
             }
 
             // EMail / Web
-            print '<tr><td>'.fieldLabel('EMail','email',(! empty($conf->global->SOCIETE_MAIL_REQUIRED))).'</td>';
+            print '<tr><td>'.fieldLabel('EMail','email',(! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
 	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
             print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
@@ -1740,7 +1707,7 @@ else
 	                if (($j % 2) == 0) print '<tr>';
 
 	                $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	                if(empty($conf->global->$idprof_mandatory))
+	                if (empty($conf->global->$idprof_mandatory) || ! $object->isACompany())
 	                    print '<td>'.fieldLabel($idprof,$key).'</td><td>';
                     else
 	                    print '<td><span class="fieldrequired">'.fieldLabel($idprof,$key).'</td><td>';

@@ -33,8 +33,8 @@
 // Build doc
 if ($action == 'builddoc' && $permissioncreate)
 {
-	
-    if (is_numeric(GETPOST('model')))
+
+    if (is_numeric(GETPOST('model','alpha')))
     {
         $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
     }
@@ -48,18 +48,18 @@ if ($action == 'builddoc' && $permissioncreate)
             dol_print_error('Object must have been loaded by a fetch');
             exit;
         }*/
-        
+
         // Save last template used to generate document
-    	if (GETPOST('model'))
+    	if (GETPOST('model','alpha'))
     	{
     	    $object->setDocModel($user, GETPOST('model','alpha'));
     	}
-    
+
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
         //{
-            if (GETPOST('fk_bank')) { // this field may come from an external module
-                $object->fk_bank = GETPOST('fk_bank');
+            if (GETPOST('fk_bank','int')) { // this field may come from an external module
+                $object->fk_bank = GETPOST('fk_bank','int');
             } else if (! empty($object->fk_account)) {
                 $object->fk_bank = $object->fk_account;
             }
@@ -76,13 +76,13 @@ if ($action == 'builddoc' && $permissioncreate)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        
+
         // To be sure vars is defined
         if (empty($hidedetails)) $hidedetails=0;
         if (empty($hidedesc)) $hidedesc=0;
         if (empty($hideref)) $hideref=0;
         if (empty($moreparams)) $moreparams=null;
-        
+
         $result= $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
         if ($result <= 0)
         {

@@ -49,7 +49,7 @@ class Thirdparties extends DolibarrApi
 		$this->db = $db;
         $this->company = new Societe($this->db);
         
-        if (! empty($conf->global->SOCIETE_MAIL_REQUIRED)) {
+        if (! empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
             static::$FIELDS[] = 'email';
         }
     }

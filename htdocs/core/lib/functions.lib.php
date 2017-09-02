@@ -5738,8 +5738,8 @@ function dol_osencode($str)
  * 		@param	DoliDB	$db			Database handler
  * 		@param	string	$key		Code or Id to get Id or Code
  * 		@param	string	$tablename	Table name without prefix
- * 		@param	string	$fieldkey	Field for code
- * 		@param	string	$fieldid	Field for id
+ * 		@param	string	$fieldkey	Field for search ('code' or 'id')
+ * 		@param	string	$fieldid	Field to get ('id' or 'code')
  *      @return int					<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
