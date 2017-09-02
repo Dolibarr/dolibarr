@@ -4622,7 +4622,9 @@ abstract class CommonObject
 
 					$labeltoshow = $langs->trans($label);
 					if($extrafields->attribute_required[$key])
-						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
+					{
+						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
+					}
 					$out .= '<td>'.$labeltoshow.'</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
