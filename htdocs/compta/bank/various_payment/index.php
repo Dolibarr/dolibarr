@@ -243,7 +243,7 @@ if ($result)
 
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($obj->accountancy_journal);
-					$accountstatic->accountancy_journal = $accountingjournal->code;
+					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
 				}
 
 				$accountstatic->label=$obj->blabel;

@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +218,7 @@ class FormCompany
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code FROM";
+		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
@@ -265,7 +266,15 @@ class FormCompany
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 2) {
+							$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						}
+						else if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1) {
+							$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						}
+						else {
+							$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						}
 						$out.= '</option>';
 					}
 					$i++;

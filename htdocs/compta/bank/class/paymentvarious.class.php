@@ -30,8 +30,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentVarious extends CommonObject
 {
-	//public $element='payment_various';		//!< Id that identify managed objects
-	//public $table_element='payment_various';	//!< Name of table without prefix where object is stored
+	public $element='variouspayment';		//!< Id that identify managed objects
+	public $table_element='payment_various';	//!< Name of table without prefix where object is stored
+	public $picto = 'bill';
 
 	var $tms;
 	var $datep;
@@ -42,6 +43,7 @@ class PaymentVarious extends CommonObject
 	var $num_payment;
 	var $label;
 	var $accountancy_code;
+	var $fk_project;
 	var $fk_bank;
 	var $fk_user_author;
 	var $fk_user_modif;
@@ -96,6 +98,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
+		$sql.= " fk_projet='".$this->db->escape($this->fk_project)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank:"null").",";
 		$sql.= " fk_user_author=".$this->fk_user_author.",";
 		$sql.= " fk_user_modif=".$this->fk_user_modif;
@@ -154,6 +157,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " v.label,";
 		$sql.= " v.note,";
 		$sql.= " v.accountancy_code,";
+		$sql.= " v.fk_projet as fk_project,";
 		$sql.= " v.fk_bank,";
 		$sql.= " v.fk_user_author,";
 		$sql.= " v.fk_user_modif,";
@@ -185,6 +189,7 @@ class PaymentVarious extends CommonObject
 				$this->label			= $obj->label;
 				$this->note				= $obj->note;
 				$this->accountancy_code	= $obj->accountancy_code;
+				$this->fk_project		= $obj->fk_project;
 				$this->fk_bank			= $obj->fk_bank;
 				$this->fk_user_author	= $obj->fk_user_author;
 				$this->fk_user_modif	= $obj->fk_user_modif;
@@ -317,6 +322,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", note";
 		$sql.= ", label";
 		$sql.= ", accountancy_code";
+		$sql.= ", fk_projet";
 		$sql.= ", fk_user_author";
 		$sql.= ", datec";
 		$sql.= ", fk_bank";
@@ -447,6 +453,63 @@ class PaymentVarious extends CommonObject
 		{
 			dol_print_error($this->db);
 			return -1;
+		}
+	}
+
+
+	/**
+	 * Retourne le libelle du statut
+	 *
+	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * @return  string   		   	Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut     Id status
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @return string      		Libelle
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 	}
 
