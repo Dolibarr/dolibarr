@@ -393,7 +393,8 @@ class Societe extends CommonObject
 
 
     /**
-     *    Create third party in database
+     *    Create third party in database.
+     *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
      *
      *    @param	User	$user       Object of user that ask creation
      *    @return   int         		>= 0 if OK, < 0 if KO
