@@ -528,7 +528,7 @@ class ExtraFields
 				$typedb=$type;
 				$lengthdb=$length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'));
+			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'), 'default'=>$default);
 
 			if ($type != 'separate') // No table update when separate type
 			{

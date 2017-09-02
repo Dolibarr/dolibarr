@@ -42,12 +42,12 @@
     		var alwayseditable = jQuery("#alwayseditable");
     		var list = jQuery("#list");
     		<?php
-    		if ((GETPOST('type') != "select") && (GETPOST('type') != "sellist"))
+    		if ((GETPOST('type','alpha') != "select") && (GETPOST('type','alpha') != "sellist"))
     		{
     			print 'jQuery("#value_choice").hide();';
     		}
 
-    		if (GETPOST('type') == "separate")
+    		if (GETPOST('type','alpha') == "separate")
     		{
 				print "jQuery('#size, #default_value').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
@@ -110,7 +110,7 @@
 				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled');
 			}
     	}
-    	init_typeoffields('<?php echo GETPOST('type'); ?>');
+    	init_typeoffields('<?php echo GETPOST('type','alpha'); ?>');
     	jQuery("#type").change(function() {
     		init_typeoffields($(this).val());
     	});
@@ -130,15 +130,15 @@
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->
-<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
+<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label','alpha'); ?>"></td></tr>
 <!-- Code -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
+<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname','alpha'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
+<?php print $form->selectarray('type',$type2label,GETPOST('type','alpha')); ?>
 </td></tr>
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size')?GETPOST('size'):''); ?>"></td></tr>
+<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size','alpha')?GETPOST('size','alpha'):''); ?>"></td></tr>
 <!-- Default Value (for select list / radio/ checkbox) -->
 <tr id="value_choice">
 <td>
@@ -147,7 +147,7 @@
 <td>
     <table class="nobordernopadding">
     <tr><td>
-    	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
+    	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param','alpha'); ?></textarea>
     </td><td>
     <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
     <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
@@ -162,27 +162,27 @@
 <!-- Language file -->
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile','alpha')); ?>"></td></tr>
 <!-- Computed Value -->
-<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" type="text" name="computed_value" class="quatrevingtpercent" value="<?php echo (GETPOST('"computed_value"')?GETPOST('"computed_value"'):''); ?>"></td></tr>
+<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" type="text" name="computed_value" class="quatrevingtpercent" value="<?php echo (GETPOST('computed_value','none')?GETPOST('computed_value','none'):''); ?>"></td></tr>
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo (GETPOST('"default_value"')?GETPOST('"default_value"'):''); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo (GETPOST('default_value','alpha')?GETPOST('default_value','alpha'):''); ?>"></td></tr>
 <!-- Unique -->
-<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo (GETPOST('unique')?' checked':''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo (GETPOST('unique','alpha')?' checked':''); ?>></td></tr>
 <!-- Required -->
-<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo (GETPOST('required')?' checked':''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo (GETPOST('required','alpha')?' checked':''); ?>></td></tr>
 <!-- Always editable -->
-<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ((GETPOST('alwayseditable') || ! GETPOST('button'))?' checked':''); ?>></td></tr>
+<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ((GETPOST('alwayseditable','alpha') || ! GETPOST('button','alpha'))?' checked':''); ?>></td></tr>
 <!-- Is visible or not -->
 <?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
-<tr class="extra_ishidden"><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo (GETPOST('ishidden') ?' checked' : ''); ?>></td></tr>
+<tr class="extra_ishidden"><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo (GETPOST('ishidden','alpha') ?' checked' : ''); ?>></td></tr>
 <?php } ?>
 <?php if ($conf->multicompany->enabled) { ?>
-    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (GETPOST('entitycurrentorall') ? '':' checked'); ?>></td></tr>
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (GETPOST('entitycurrentorall','alpha') ? '':' checked'); ?>></td></tr>
 <?php } ?>
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
 <!-- By default visible into list -->
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
 <?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
-</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo (GETPOST('list')?' checked':''); ?>></td></tr>
+</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo (GETPOST('list','alpha')?' checked':''); ?>></td></tr>
 <?php } ?>
 </table>
 

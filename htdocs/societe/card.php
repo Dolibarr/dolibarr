@@ -701,6 +701,10 @@ if (empty($reshook))
                 }
             }
         }
+        else
+        {
+        	$action='create';
+        }
     }
 
     // Delete third party
