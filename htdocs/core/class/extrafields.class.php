@@ -769,8 +769,8 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
 
-
-					if (!empty($conf->multicompany->enabled)) {
+					if (!empty($conf->multicompany->enabled))
+					{
 						$sql_entity_name='SELECT label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid='.$tab->entity;
 						$resql_entity_name=$this->db->query($sql_entity_name);
 						if ($resql_entity_name)
@@ -784,11 +784,6 @@ class ExtraFields
 								}
 							}
 						}
-					}
-					else
-					{
-						$this->error=$this->db->lasterror();
-						dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 					}
 				}
 			}

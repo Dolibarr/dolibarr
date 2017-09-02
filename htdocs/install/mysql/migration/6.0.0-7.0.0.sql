@@ -25,6 +25,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VTE',    'Income of products',               '707xxx',                   0, 0, '',        '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'MAR',    'Expenses of products',             '603xxx - 607xxx - 609xxx', 0, 0, '',        '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3, 'MARGE',  'Commercial margin',                '',                         0, 1, 'VTE+MAR', '30', 1, 1);
+
 UPDATE llx_c_accounting_category set formula = 'VTE+MAR' where code = 'MARGE';
 
 ALTER TABLE llx_menu MODIFY COLUMN perms text;
@@ -66,24 +70,24 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     datec           datetime  DEFAULT NULL,
     tms             timestamp,
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
-    fk_range        integer DEFAULT 0 NOT NULL,	  	  
-    coef            double DEFAULT 0 NOT NULL,  
-    offset          double DEFAULT 0 NOT NULL	          
+    fk_range        integer DEFAULT 0 NOT NULL,
+    coef            double DEFAULT 0 NOT NULL,
+    offset          double DEFAULT 0 NOT NULL
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL	          
+    active      integer DEFAULT 1 NOT NULL
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     fk_c_exp_tax_cat integer DEFAULT 1 NOT NULL,
-    range_ik    double DEFAULT 0 NOT NULL,   
+    range_ik    double DEFAULT 0 NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL		          
+    active      integer DEFAULT 1 NOT NULL
 )ENGINE=innodb DEFAULT CHARSET=utf8;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
@@ -200,8 +204,12 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
+ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
+
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
+
+ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
 UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
 UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_KO'  where name = 'PAYPAL_MESSAGE_KO';
@@ -230,5 +238,3 @@ UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
-
-

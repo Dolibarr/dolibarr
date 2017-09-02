@@ -51,26 +51,14 @@ function file(fichier) {
 }
 
 
-// Affichage des donnees aTexte dans le bloc identifie par aId
-function afficheDonnees(aId, aTexte) {
-
-	document.getElementById(aId).innerHTML = aTexte;
-
-}
-
-
 // aCible : id du bloc de destination; aCode : argument a passer a la page php chargee du traitement et de l'affichage
 function verifResultat(aCible, aCode, iLimit) {
 	if (aCode != '' && aCode.length >= iLimit) {
 
 		if (texte = file('facturation_dhtml.php?code='+escape(aCode))) {
-
-			afficheDonnees (aCible, texte);
-
+			document.getElementById(aCible).innerHTML = texte;
 		} else
-
-			afficheDonnees (aCible, '');
-
+			document.getElementById(aCible).innerHTML = '';
 	}
 
 }

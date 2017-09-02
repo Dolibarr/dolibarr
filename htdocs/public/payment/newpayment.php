@@ -62,26 +62,26 @@ $action=GETPOST('action','aZ09');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix",'alpha');
-$amount=price2num(GETPOST("amount"));
+$suffix=GETPOST("suffix",'aZ09');
+$amount=price2num(GETPOST("amount",'alpha'));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
 if (! $action)
 {
-    if (! GETPOST("amount") && ! GETPOST("source"))
+    if (! GETPOST("amount",'alpha') && ! GETPOST("source",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
+    	print $langs->trans('ErrorBadParameters')." - amount or source";
     	exit;
     }
-    if (is_numeric($amount) && ! GETPOST("tag") && ! GETPOST("source"))
+    if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! GETPOST("source",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
+    	print $langs->trans('ErrorBadParameters')." - tag or source";
     	exit;
     }
-    if (GETPOST("source") && ! GETPOST("ref"))
+    if (GETPOST("source",'alpha') && ! GETPOST("ref",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+    	print $langs->trans('ErrorBadParameters')." - ref";
     	exit;
     }
 }
@@ -117,6 +117,11 @@ $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
 if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod,'/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
 
+if (! empty($suffix))
+{
+	$urlok.='suffix='.urlencode($suffix).'&';
+	$urlko.='suffix='.urlencode($suffix).'&';
+}
 if (! empty($SOURCE))
 {
     $urlok.='source='.urlencode($SOURCE).'&';
@@ -551,20 +556,21 @@ $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
-$paramlogo='PAYMENT_LOGO_'.$suffix;
+$paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->PAYMENT_LOGO)) $logosmall=$conf->global->PAYMENT_LOGO;
+else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
-	$width=96;
+	$width=150;
 }
 // Output html code for logo
 if ($urllogo)
@@ -1219,7 +1225,19 @@ if ($action != 'dopayment')
     {
         // Buttons for all payments registration methods
 
-        if (! empty($conf->paypal->enabled))
+        if (! empty($conf->paybox->enabled))
+        {
+        	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+        }
+
+        if (! empty($conf->stripe->enabled))
+        {
+        	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment__stripe" value="'.$langs->trans("StripeDoPayment").'">';
+        }
+
+    	if (! empty($conf->paypal->enabled))
         {
         	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
@@ -1231,16 +1249,6 @@ if ($action != 'dopayment')
         	{
         		print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
         	}
-        }
-
-        if (! empty($conf->paybox->enabled))
-        {
-        	print '<br><input class="button buttonpayment buttonpaymentpaybox" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
-        }
-
-        if (! empty($conf->stripe->enabled))
-        {
-        	print '<br><input class="button buttonpayment buttonpaymentstripe" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
         }
     }
     else
