@@ -1084,7 +1084,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
 
@@ -1103,9 +1103,9 @@ class DoliDBPgsql extends DoliDB
         	}
 		}
 
-		if ($field_desc['default'])
+		if ($field_desc['default'] != '')
 		{
-			if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
+			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
         	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
 		}
 

@@ -660,7 +660,7 @@ class ExtraFields
 			$sql.= " '".$param."',";
 			$sql.= " ".$list.", ";
 			$sql.= " ".$ishidden.", ";
-			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
+			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
@@ -1128,13 +1128,13 @@ class ExtraFields
 			$form = new Form($db);
 
 			$value_arr=explode(',',$value);
-			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $param['options'], $value_arr, '', 0, '', 0, '100%');
+			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 
 		}
 		elseif ($type == 'radio')
 		{
 			$out='';
-			foreach ($param['options'] as $keyopt=>$val )
+			foreach ($param['options'] as $keyopt => $val)
 			{
 				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
