@@ -209,27 +209,22 @@ class FactureRec extends CommonInvoice
 			                $error++;
 			            }
 			        }
-			    }				    
+			    }
 
-				if ($error)
-				{
+				if ($error) {
+					$this->error=$this->db->lasterror();
 					$this->db->rollback();
-				}
-				else
-				{
+					return -2;
+				} else {
 					$this->db->commit();
 					return $this->id;
 				}
-			}
-			else
-			{
+			} else {
 			    $this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
