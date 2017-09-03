@@ -570,6 +570,9 @@ class FactureRec extends CommonInvoice
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+
+			if (empty($localtaxes_type[0]))$localtaxes_type[0]=0;
+			if (empty($localtaxes_type[1]))$localtaxes_type[1]=1;
 			
 			$product_type=$type;
 			if ($fk_product)
