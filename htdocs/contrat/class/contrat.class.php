@@ -252,7 +252,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user      		Object User making action
 	 *  @param	int|string	$date_start		Date start (now if empty)
-	 *	@return	void
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function activateAll($user, $date_start='')
 	{
@@ -287,19 +287,21 @@ class Contrat extends CommonObject
 		if ($ok)
 		{
 			$this->db->commit();
+			return 0;
 		}
 		else
 		{
 			dol_print_error($this->db,'Error in activateAll function');
 			$this->db->rollback();
+			return -1;
 		}
 	}
 
 	/**
 	 *  Close all lines of a contract
 	 *
-	 *  @param	User		$user      Object User making action
-	 *	@return	void
+	 *  @param	User		$user      		Object User making action
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function closeAll($user)
 	{
@@ -335,11 +337,13 @@ class Contrat extends CommonObject
         if ($ok)
         {
             $this->db->commit();
+            return 1;
         }
         else
         {
             dol_print_error($this->db,'Error in closeAll function');
             $this->db->rollback();
+            return -1;
         }
 	}
 
