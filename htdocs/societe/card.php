@@ -95,6 +95,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'ro
 
 
 
+
 /*
  * Actions
  */
@@ -310,19 +311,19 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
             $error++;
-            $action='create';
+            $action=($action=='add'?'create':'edit');
         }
         if (GETPOST('client') < 0)
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
             $error++;
-            $action='create';
+            $action=($action=='add'?'create':'edit');
         }
         if (GETPOST('fournisseur') < 0)
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
-            $action='create';
+            $action=($action=='add'?'create':'edit');
         }
 
         if ($action == 'update')
@@ -653,7 +654,7 @@ if (empty($reshook))
                     }
                 }
                 else
-              {
+                {
 					switch($_FILES['photo']['error'])
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -683,7 +684,7 @@ if (empty($reshook))
 
                 if (! $error && ! count($errors))
                 {
-                    if (! empty($backtopage))
+                	if (! empty($backtopage))
                 	{
                		    header("Location: ".$backtopage);
                     	exit;
@@ -703,7 +704,7 @@ if (empty($reshook))
         }
         else
         {
-        	$action='create';
+        	$action = ($action=='add'?'create':'edit');
         }
     }
 
@@ -754,7 +755,6 @@ if (empty($reshook))
     $permissioncreate=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
-
 
 
 /*
@@ -1356,11 +1356,12 @@ else
          * Edition
          */
 
+
         //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
-            $res=$object->fetch_optionals($object->id,$extralabels);
+        	$res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
 	        $head = societe_prepare_head($object);
@@ -1466,15 +1467,12 @@ else
                 }
             }
 
-            dol_htmloutput_errors($error,$errors);
-
             if($object->localtax1_assuj==0){
             	$sub=0;
             }else{$sub=1;}
             if($object->localtax2_assuj==0){
             	$sub2=0;
             }else{$sub2=1;}
-
 
             print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
@@ -1942,7 +1940,7 @@ else
     }
     else
     {
-        /*
+    	/*
          * View
          */
 
