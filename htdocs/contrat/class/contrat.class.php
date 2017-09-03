@@ -248,12 +248,60 @@ class Contrat extends CommonObject
 
 
 	/**
+	 *  Open all lines of a contract
+	 *
+	 *  @param	User		$user      		Object User making action
+	 *  @param	int|string	$date_start		Date start (now if empty)
+	 *	@return	void
+	 */
+	function activateAll($user, $date_start='')
+	{
+		if (empty($date_start)) $date_start = dol_now();
+
+		$this->db->begin();
+
+		// Load lines
+		$this->fetch_lines();
+
+		$ok=true;
+		foreach($this->lines as $contratline)
+		{
+			// Open lines not already open
+			if ($contratline->statut != 4)
+			{
+				$result = $contratline->active_line($user, $date_start, -1);
+				if ($result < 0)
+				{
+					$ok=false;
+					break;
+				}
+			}
+		}
+
+		if ($this->statut == 0)
+		{
+			$result=$this->validate($user);
+			if ($result < 0) $ok=false;
+		}
+
+		if ($ok)
+		{
+			$this->db->commit();
+		}
+		else
+		{
+			dol_print_error($this->db,'Error in activateAll function');
+			$this->db->rollback();
+		}
+	}
+
+	/**
 	 *  Close all lines of a contract
 	 *
 	 *  @param	User		$user      Object User making action
 	 *	@return	void
 	 */
-	function cloture($user)
+	function closeAll($user)
 	{
 		$this->db->begin();
 
@@ -263,7 +311,7 @@ class Contrat extends CommonObject
 		$ok=true;
 		foreach($this->lines as $contratline)
 		{
-			// Close line not already closed
+			// Close lines not already closed
 	        if ($contratline->statut != 5)
 	        {
 				$contratline->date_cloture=dol_now();
@@ -290,7 +338,7 @@ class Contrat extends CommonObject
         }
         else
         {
-            dol_print_error($this->db,'Error in cloture function');
+            dol_print_error($this->db,'Error in closeAll function');
             $this->db->rollback();
         }
 	}
@@ -920,8 +968,8 @@ class Contrat extends CommonObject
 			{
 			    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			    {
-			        $result=$this->insertExtraFields();
-			        if ($result < 0)
+			    	$result=$this->insertExtraFields();
+			    	if ($result < 0)
 			        {
 			            $error++;
 			        }
@@ -1361,7 +1409,8 @@ class Contrat extends CommonObject
 			if (empty($info_bits)) $info_bits=0;
 			if (empty($pu_ht) || ! is_numeric($pu_ht))  $pu_ht=0;
 			if (empty($pu_ttc)) $pu_ttc=0;
-            if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txtva) || ! is_numeric($txtva)) $txtva=0;
+			if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
             if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
 
 			if ($price_base_type=='HT')
@@ -3007,11 +3056,11 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Activate a contract line
 	 *
-	 * @param    User $user Objet User who activate contract
-	 * @param  int $date Date d'ouverture
-	 * @param  int|string $date_end Date fin prevue
-	 * @param    string $comment A comment typed by user
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param   User 		$user 		Objet User who activate contract
+	 * @param  	int 		$date 		Date activation
+	 * @param  	int|string 	$date_end 	Date planned end. Use '-1' to keep it unchanged.
+	 * @param   string 		$comment 	A comment typed by user
+	 * @return 	int                    	<0 if KO, >0 if OK
 	 */
 	function active_line($user, $date, $date_end = '', $comment = '')
 	{
@@ -3030,7 +3079,7 @@ class ContratLigne extends CommonObjectLine
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "contratdet SET statut = 4,";
 		$sql .= " date_ouverture = " . (dol_strlen($date) != 0 ? "'" . $this->db->idate($date) . "'" : "null") . ",";
-		$sql .= " date_fin_validite = " . (dol_strlen($date_end) != 0 ? "'" . $this->db->idate($date_end) . "'" : "null") . ",";
+		if ($date_end >= 0) $sql .= " date_fin_validite = " . (dol_strlen($date_end) != 0 ? "'" . $this->db->idate($date_end) . "'" : "null") . ",";
 		$sql .= " fk_user_ouverture = " . $user->id . ",";
 		$sql .= " date_cloture = null,";
 		$sql .= " commentaire = '" . $this->db->escape($comment) . "'";
