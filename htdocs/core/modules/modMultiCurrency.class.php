@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Pierre-Henry Favre  <phf@atm-consulting.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -60,7 +60,7 @@ class modMultiCurrency extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Module to enter elements with a foreign currency";
-		
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -175,12 +175,6 @@ class modMultiCurrency extends DolibarrModules
 		//    2=>array('file'=>'myboxc.php@multicurrency','note'=>'')
 		//);
 
-		// Cronjobs
-		$this->cronjobs = array();			// List of cron jobs entries to add
-		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600),
-		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
-		// );
-
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
@@ -266,12 +260,12 @@ class modMultiCurrency extends DolibarrModules
 
 		//$this->_load_tables('/multicurrency/sql/');
 		$res = $this->_init($sql, $options);
-		
+
 		if ($res)
 		{
 			$this->createFirstCurrency();
 		}
-		
+
 		return $res;
 	}
 
@@ -293,22 +287,22 @@ class modMultiCurrency extends DolibarrModules
 	/**
 	 * Function called when module is enabled
 	 * Create the currency from general setting
-	 * 
+	 *
 	 * @return 	int		1 if OK, 0 if KO
 	 */
 	private function createFirstCurrency()
 	{
 		global $conf,$user,$langs;
-		
+
 		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency))
 		{
 			$langs->loadCacheCurrencies('');
-			
+
 			$multicurrency = new MultiCurrency($this->db);
 			$multicurrency->code = $conf->currency;
 			$multicurrency->name = $langs->cache_currencies[$conf->currency]['label'].' ('.$langs->getCurrencySymbol($conf->currency).')';
 			$r = $multicurrency->create($user);
-			
+
 			if ($r > 0)	$multicurrency->addRate(1);
 		}
 	}
