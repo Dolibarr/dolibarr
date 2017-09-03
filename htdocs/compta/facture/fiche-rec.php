@@ -402,16 +402,16 @@ if (empty($reshook))
     	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
     	if ($ret < 0)
     		$error ++;
-    		
+
     		if (! $error) {
-    			
+
     			$result = $object->insertExtraFields();
     			if ($result < 0) {
     				$error ++;
     			}
     		} else if ($reshook < 0)
     			$error ++;
-    			
+
     			if ($error) {
     				$action = 'edit_extras';
     				setEventMessages($object->error, $object->errors, 'errors');
@@ -760,7 +760,7 @@ if (empty($reshook))
             $extrafieldsline = new ExtraFields($db);
             $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
             $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-            
+
             $objectline = new FactureLigneRec($db);
             if ($objectline->fetch(GETPOST('lineid')))
             {
@@ -771,7 +771,7 @@ if (empty($reshook))
             		setEventMessages($langs->trans('Error').$result, null, 'errors');
             	}
             }
-            
+
             // Unset extrafield
             if (is_array($extralabelsline))
     	    {
@@ -1054,7 +1054,7 @@ if ($action == 'create')
 		// Bank account
 		if ($object->fk_account > 0)
 		{
-			print "<tr><td>".$langs->trans('RIB')."</td><td>";
+			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 			print "</td></tr>";
 		}
@@ -1361,11 +1361,11 @@ else
 		print "</td>";
 		print '</tr>';
 
-		
+
 		// Other attributes
 		$cols = 2;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-		
+
     	print '</table>';
 
     	print '</div>';
