@@ -427,19 +427,20 @@ if (empty($reshook))
             if (! empty($object->email) && ! isValidEMail($object->email))
             {
                 $langs->load("errors");
-                $error++; $errors[] = $langs->trans("ErrorBadEMail",$object->email);
+                $error++;
+                setEventMessages('', $langs->trans("ErrorBadEMail",$object->email), 'errors');
                 $action = ($action=='add'?'create':'edit');
             }
             if (! empty($object->url) && ! isValidUrl($object->url))
             {
                 $langs->load("errors");
-                $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->url);
+                setEventMessages('', $langs->trans("ErrorBadUrl",$object->url), 'errors');
                 $action = ($action=='add'?'create':'edit');
             }
             if ($object->fournisseur && ! $conf->fournisseur->enabled)
             {
                 $langs->load("errors");
-                $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
+                setEventMessages('', $langs->trans("ErrorSupplierModuleNotEnabled"), 'errors');
                 $action = ($action=='add'?'create':'edit');
             }
             if (! empty($object->webservices_url)) {
@@ -482,9 +483,10 @@ if (empty($reshook))
                     {
                         dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
                         $result=$object->create_individual($user);
-                        if (! $result >= 0)
+                        if ($result < 0)
                         {
-                            $error=$object->error; $errors=$object->errors;
+                            setEventMessages($object->error, $object->errors, 'errors');
+                        	$error++;
                         }
                     }
 
@@ -546,7 +548,8 @@ if (empty($reshook))
 						$object->code_client = null;
 					}
 
-                    $error=$object->error; $errors=$object->errors;
+                    setEventMessages($object->error, $object->errors, 'errors');
+                   	$error++;
                 }
 
                 if ($result >= 0)
@@ -600,7 +603,8 @@ if (empty($reshook))
                 $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
                 if ($result <=  0)
                 {
-                    $error = $object->error; $errors = $object->errors;
+                    setEventMessages($object->error, $object->errors, 'errors');
+                  	$error++;
                 }
 
 				// Customer categories association
@@ -722,7 +726,8 @@ if (empty($reshook))
         else
         {
             $langs->load("errors");
-            $error=$langs->trans($object->error); $errors = $object->errors;
+           	setEventMessages($object->error, $object->errors, 'errors');
+           	$error++;
             $action='';
         }
     }
