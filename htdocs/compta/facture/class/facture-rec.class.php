@@ -1032,6 +1032,7 @@ class FactureRec extends CommonInvoice
 		}
 		
 		$this->usenewprice = 1;
+		$this->fetch_thirdparty();
 	}
 
 	/**
