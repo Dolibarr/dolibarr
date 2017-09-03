@@ -287,7 +287,7 @@ class Contrat extends CommonObject
 		if ($ok)
 		{
 			$this->db->commit();
-			return 0;
+			return 1;
 		}
 		else
 		{

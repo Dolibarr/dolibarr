@@ -673,7 +673,7 @@ class Societe extends CommonObject
         				if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
         				{
         					$langs->load("errors");
-        					$error++; $this->errors[] = $langs->transcountry('ProfId'.$i, $this->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+        					$error++; $this->errors[] = $langs->trans('Email')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
         				}
         			}
 
