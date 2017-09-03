@@ -2235,7 +2235,6 @@ if ($action == 'create')
 			print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 		}
 		print ')';
-        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&fac_rec='.GETPOST('fac_rec','alpha')).'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	else
