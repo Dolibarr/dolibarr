@@ -660,7 +660,7 @@ class ExtraFields
 			$sql.= " '".$param."',";
 			$sql.= " ".$list.", ";
 			$sql.= " ".$ishidden.", ";
-			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
+			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
