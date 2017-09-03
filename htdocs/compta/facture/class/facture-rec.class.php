@@ -194,6 +194,7 @@ class FactureRec extends CommonInvoice
 					if ($result_insert < 0)
 					{
 						$error++;
+						break;
 					}
 				}
 				
@@ -207,6 +208,7 @@ class FactureRec extends CommonInvoice
 			            {
 			                $this->error=$this->db->lasterror();
 			                $error++;
+			                break;
 			            }
 			        }
 			    }
@@ -214,6 +216,7 @@ class FactureRec extends CommonInvoice
 				if ($error) {
 					$this->error=$this->db->lasterror();
 					$this->db->rollback();
+					throw new Exception($sql.' '.$this->error);
 					return -2;
 				} else {
 					$this->db->commit();
@@ -222,7 +225,7 @@ class FactureRec extends CommonInvoice
 			} else {
 			    $this->error=$this->db->lasterror();
 				$this->db->rollback();
-				throw new Exception($sql);
+				throw new Exception($sql.' '. $this->error);
 				return -2;
 			}
 		} else {
