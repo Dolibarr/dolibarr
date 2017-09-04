@@ -1224,18 +1224,17 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by piece number
 	 *
-	 * @param int $piecenum peicenum to delete
-	 * @param string $mode Mode
-	 * @return int Result
+	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @return 	int 				Result
 	 */
-	function deleteMvtNum($piecenum, $mode) {
+	function deleteMvtNum($piecenum) {
 		global $conf;
 
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element. $mode;
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
