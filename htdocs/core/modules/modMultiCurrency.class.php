@@ -25,7 +25,7 @@
  *  \ingroup    multicurrency
  *  \brief      Description and activation file for module MultiCurrency
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -40,7 +40,7 @@ class modMultiCurrency extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs,$conf;
+        global $langs, $conf;
 
         $this->db = $db;
 
@@ -57,7 +57,7 @@ class modMultiCurrency extends DolibarrModules
 		$this->module_position = 40;
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Module to enter elements with a foreign currency";
 
@@ -70,7 +70,7 @@ class modMultiCurrency extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='multicurrency';
+		$this->picto = 'multicurrency';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /multicurrency/core/xxxxx) (0=disable, 1=enable)
@@ -101,12 +101,12 @@ class modMultiCurrency extends DolibarrModules
 		$this->config_page_url = array("multicurrency.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->conflictwith = array();	// List of modules id this module is in conflict with
-		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array(); // List of modules id this module is in conflict with
+		$this->phpmin = array(5, 0); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("multicurrency");
 
 		// Constants
@@ -143,12 +143,12 @@ class modMultiCurrency extends DolibarrModules
         $this->tabs = array();
 
         // Dictionaries
-	    if (! isset($conf->multicurrency->enabled))
+	    if (!isset($conf->multicurrency->enabled))
         {
-        	$conf->multicurrency=new stdClass();
-        	$conf->multicurrency->enabled=0;
+        	$conf->multicurrency = new stdClass();
+        	$conf->multicurrency->enabled = 0;
         }
-		$this->dictionaries=array();
+		$this->dictionaries = array();
         /* Example:
         if (! isset($conf->multicurrency->enabled)) $conf->multicurrency->enabled=0;	// This is to avoid warnings
         $this->dictionaries=array(
@@ -167,7 +167,7 @@ class modMultiCurrency extends DolibarrModules
 
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-        $this->boxes = array();			// List of boxes
+        $this->boxes = array(); // List of boxes
 		// Example:
 		//$this->boxes=array(
 		//    0=>array('file'=>'myboxa.php@multicurrency','note'=>'','enabledbydefaulton'=>'Home'),
@@ -176,8 +176,8 @@ class modMultiCurrency extends DolibarrModules
 		//);
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$r=0;
+		$this->rights = array(); // Permission array used by this module
+		$r = 0;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
@@ -189,8 +189,8 @@ class modMultiCurrency extends DolibarrModules
 		// $r++;
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
+		$this->menu = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 		//
@@ -226,7 +226,7 @@ class modMultiCurrency extends DolibarrModules
 
 
 		// Exports
-		$r=1;
+		$r = 1;
 
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -254,7 +254,7 @@ class modMultiCurrency extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	public function init($options='')
+	public function init($options = '')
 	{
 		$sql = array();
 
@@ -292,7 +292,7 @@ class modMultiCurrency extends DolibarrModules
 	 */
 	private function createFirstCurrency()
 	{
-		global $conf,$user,$langs;
+		global $conf, $user, $langs;
 
 		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency))
 		{
