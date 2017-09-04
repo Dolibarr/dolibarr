@@ -936,7 +936,7 @@ class ActionComm extends CommonObject
 	        $response->label = $langs->trans("ActionsToDo");
 	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
 	        if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
-	        $response->img = img_object('',"action");
+	        $response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))

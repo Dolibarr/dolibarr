@@ -854,8 +854,20 @@ div.fiche>form>div.div-table-responsive {
 }
 
 /* Force values for small screen 570 */
+@media only screen and (max-width: 767px)
+{
+	body {
+		font-size: <?php print $fontsize+1; ?>px;
+	}
+}
+
+/* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	body {
+		font-size: <?php print $fontsize+1; ?>px;
+	}
+
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
 
     .tdoverflowonsmartphone {

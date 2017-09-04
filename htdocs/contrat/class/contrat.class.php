@@ -1897,9 +1897,11 @@ class Contrat extends CommonObject
 			$text='';
 			if ($mode == 4)
 			{
-				$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
+				$text ='<span class="hideonsmartphone">';
+				$text.=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
 				$text.=' '.$langs->trans("Services");
 				$text.=': &nbsp; &nbsp; ';
+				$text.='</span>';
 			}
 			$text.=($mode == 7?'<div class="inline-block">':'');
 			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.$line->LibStatut(0,3,-1,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
