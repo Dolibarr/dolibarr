@@ -224,7 +224,6 @@ class FactureRec extends CommonInvoice
 			} else {
 			    $this->error=$this->db->lasterror();
 				$this->db->rollback();
-				throw new Exception($sql.' '. $this->error);
 				return -2;
 			}
 		} else {
