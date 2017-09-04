@@ -1517,7 +1517,7 @@ class Contrat extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX.$contractline->table_element);
+				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX."contratdet");
 
 				$result=$this->update_statut($user);
 				if ($result > 0)
