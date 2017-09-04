@@ -963,7 +963,7 @@ if ($action == 'create')
 		    $disableedit=1;
 		    $disablemove=1;
 		    $disableremove=1;
-		    $ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid);      // No date selector for template invoice
+		    $ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		print "</table>\n";
