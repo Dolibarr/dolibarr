@@ -160,7 +160,7 @@ if ($modetax==1) {	// Calculate on invoice for goods and services
 		. $langs->trans('AddExtraReport')
 		. '</input>'
 		. '<br>';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -204,7 +204,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		. $langs->trans('AddExtraReport')
 		. '</input>'
 		. '<br>';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -220,7 +220,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		$vatsup.=' ('.$langs->trans("ToGetBack").')';
 	}
 }
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");

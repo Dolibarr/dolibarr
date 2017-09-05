@@ -165,7 +165,7 @@ if ($modecompta=="CREANCES-DETTES") {
 		$description.= $langs->trans("DepositsAreIncluded");
 	}
 
-	$builddate=time();
+	$builddate=dol_now();
 } else {
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -175,7 +175,7 @@ if ($modecompta=="CREANCES-DETTES") {
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 
-	$builddate=time();
+	$builddate=dol_now();
 }
 
 report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);

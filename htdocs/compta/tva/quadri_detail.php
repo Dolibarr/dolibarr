@@ -152,7 +152,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
     $description.=$fsearch;
-    $builddate=time();
+    $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 
 	// Customers invoices
@@ -192,7 +192,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
     //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
-	$builddate=time();
+	$builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 
 	// Customers invoices
@@ -210,7 +210,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 
 }
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");

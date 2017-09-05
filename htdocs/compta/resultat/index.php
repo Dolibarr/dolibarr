@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
-$date_startmonth=GETPOST('date_startmonth');
-$date_startday=GETPOST('date_startday');
-$date_startyear=GETPOST('date_startyear');
-$date_endmonth=GETPOST('date_endmonth');
-$date_endday=GETPOST('date_endday');
-$date_endyear=GETPOST('date_endyear');
+$date_startmonth=GETPOST('date_startmonth','int');
+$date_startday=GETPOST('date_startday','int');
+$date_startyear=GETPOST('date_startyear','int');
+$date_endmonth=GETPOST('date_endmonth','int');
+$date_endday=GETPOST('date_endday','int');
+$date_endyear=GETPOST('date_endyear','int');
 
 $nbofyear=4;
 
@@ -113,7 +113,6 @@ llxHeader();
 
 $form=new Form($db);
 
-$namelink='';
 $exportlink='';
 
 // Affiche en-tete du rapport
@@ -129,7 +128,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$description.='<br>'.$langs->trans("RulesResultDue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.="<br>".$langs->trans("DepositsAreNotIncluded");
 	else  $description.="<br>".$langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="RECETTES-DEPENSES") {
@@ -141,7 +140,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
 	$description.='<br>'.$langs->trans("RulesResultInOut");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="BOOKKEEPING")
@@ -152,14 +151,15 @@ else if ($modecompta=="BOOKKEEPING")
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesAmountOnInOutBookkeepingRecord", $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("AccountingCategory"));
-	$builddate=time();
+	$description=$langs->trans("RulesAmountOnInOutBookkeepingRecord");
+	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("Chartofaccounts")).')';
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
 $hselected='report';
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -805,7 +805,7 @@ elseif ($modecompta == 'BOOKKEEPING') {
 
 
 /*
- * Donation get dunning paiement
+ * Request in mode BOOKKEEPING
  */
 
 if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
@@ -817,7 +817,11 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql.= " WHERE b.numero_compte = aa.account_number AND b.entity = ".$conf->entity;
 	//$sql.= " AND fk_statut in (1,2)";
-	$sql.= " AND pcg_type in ('INCOME', 'EXPENSE')";
+	$sql.= " AND (";
+	$sql.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	$sql.= " OR ";
+	$sql.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	$sql.= ")";
 	//$sql.= " AND code_journal in ('VT', 'AC')";
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND b.doc_date >= '".$db->idate($date_start)."' AND b.doc_date <= '".$db->idate($date_end)."'";
@@ -825,7 +829,7 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 
 	//print $sql;
 
-	dol_syslog("get donation payments");
+	dol_syslog("get bookkeeping record");
 	$result=$db->query($sql);
 	if ($result)
 	{

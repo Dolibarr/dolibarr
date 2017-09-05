@@ -31,9 +31,7 @@ ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account
 JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
-PreviousYear=Previous year
-SelectedPeriod=Selected period
-GroupIsEmptyCheckSetup=Group is empty, check setup of the accounting group
+GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
@@ -152,7 +150,7 @@ Sens=Sens
 Codejournal=Journal
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
-AccountingCategory=Accounting account groups
+AccountingCategory=Personalized groups
 GroupByAccountAccounting=Group by accounting account
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.  
 ByAccounts=By accounts
@@ -263,7 +261,7 @@ OptionModeProductSellDesc=Show all products with accounting account for sales.
 OptionModeProductBuyDesc=Show all products with accounting account for purchases.
 CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
 CleanHistory=Reset all bindings for selected year
-
+PredefinedGroups=Predefined groups
 WithoutValidAccount=Without valid dedicated account
 WithValidAccount=With valid dedicated account
 ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
@@ -282,4 +280,4 @@ NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. It will be replaced by a more complete report in a next version. 
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate. 
