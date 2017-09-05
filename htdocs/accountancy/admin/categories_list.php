@@ -1,16 +1,6 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
- * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@zendsi.com>
- * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,11 +98,11 @@ $tabsqlsort[32]="position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[32]= "code,label,range_account,category_type,formula,position,country_id,country";
+$tabfield[32]= "code,label,range_account,category_type,formula,position,country";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[32]= "code,label,range_account,category_type,formula,position,country";
+$tabfieldvalue[32]= "code,label,range_account,category_type,formula,position,country_id";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -168,7 +158,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     foreach ($listfield as $f => $value)
     {
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
-        if (! isset($_POST[$value]) || $_POST[$value]=='')
+		if ($value == 'country') continue;								// country_id required but not country
+		if (! isset($_POST[$value]) || $_POST[$value]=='')
         {
             $ok=0;
             $fieldnamekey=$listfield[$f];
@@ -183,11 +174,6 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
     }
-    // Other checks
-    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
-        $ok=0;
-        setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
-    }
     if (isset($_POST["code"]))
     {
     	if ($_POST["code"]=='0')
@@ -201,17 +187,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
 	    }*/
     }
-    if (isset($_POST["country"]) && ($_POST["country"]=='0'))
+    if (isset($_POST["country"]) && ($_POST["country"] <= 0))
     {
-    	if (in_array($tablib[$id],array('DictionaryCompanyType','DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
-    	{
-    		$_POST["country"]='';
-    	}
-    	else
-    	{
-        	$ok=0;
-        	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
-    	}
+       	$ok=0;
+       	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
     }
 
 	// Clean some parameters
@@ -301,8 +280,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
-            if ($field == 'price' || preg_match('/^amount/i',$field) || $field == 'taux') {
-            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
+            if ($field == 'fk_country' && $_POST['country'] > 0) {
+            	$_POST[$listfieldvalue[$i]] = $_POST['country'];
             }
             else if ($field == 'entity') {
             	$_POST[$listfieldvalue[$i]] = $conf->entity;
@@ -531,12 +510,10 @@ if ($id)
             {
             	$valuetoshow=$langs->trans("Label");
             }
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments"); }
             if ($fieldlist[$field]=='country')         {
-                if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
                 $valuetoshow=$langs->trans("Country");
             }
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $valuetoshow=''; }
             if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
             if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); }
             if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); }
@@ -735,6 +712,7 @@ if ($id)
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
+                    print '<td></td>';
                 }
                 else
                 {
@@ -844,8 +822,8 @@ if ($id)
                         print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&account_category='.$obj->rowid.'">'.$langs->trans("Setup").'</a>';
                     }
                     print '</td>';
-                    print "</tr>\n";
                 }
+                print "</tr>\n";
                 $i++;
             }
         }
@@ -891,16 +869,17 @@ function fieldListAccountingCategories($fieldlist, $obj='', $tabname='', $contex
 	{
 		if ($fieldlist[$field] == 'country')
 		{
-			if (in_array('region_id',$fieldlist))
-			{
-				print '<td>';
-				//print join(',',$fieldlist);
-				print '</td>';
-				continue;
-			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname='country';
-			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:$mysoc->country_code)), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+			if ($context == 'add')
+			{
+				$fieldname='country_id';
+				print $form->select_country(GETPOST('country_id','int'), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+			}
+			else
+			{
+				print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:$mysoc->country_code)), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+			}
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'country_id')
