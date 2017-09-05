@@ -92,6 +92,18 @@ class MyObject extends CommonObject
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
 	);
+
+	public $rowid;
+	public $ref;
+	public $entity;
+	public $label;
+	public $amount;
+	public $status;
+	public $date_creation;
+	public $tms;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
 

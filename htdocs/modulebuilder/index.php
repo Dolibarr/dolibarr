@@ -316,10 +316,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
     if (! $error)
     {
         // Edit the class file to write properties
-        rebuildObjectClass($destdir, $module, $objectname, $newmask);
-
+        $result=rebuildObjectClass($destdir, $module, $objectname, $newmask);
+        if ($result < 0) $error++;
+    }
+    if (! $error)
+    {
         // Edit sql with new properties
-        rebuildObjectSql($destdir, $module, $objectname, $newmask);
+        $result=rebuildObjectSql($destdir, $module, $objectname, $newmask);
+        if ($result < 0) $error++;
     }
 
     if (! $error)
@@ -336,26 +340,57 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
     $destdir = $dirins.'/'.strtolower($module);
     dol_mkdir($destdir);
 
-    // TODO Complete list of fields with new one
+    $addfieldentry = array(
+    	'name'=>GETPOST('propname','aZ09'),'type'=>GETPOST('proptype','aZ09'),'label'=>GETPOST('proplabel','aZ09'),'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
+    	'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
+    	'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp'));
 
     // Edit the class file to write properties
-    $result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir);
-	if ($result <= 0)
-	{
-		$error++;
-	}
+    if (! $error)
+    {
+    	$result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
+		if ($result <= 0) $error++;
+    }
 
     // Edit sql with new properties
-    rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
-	if ($result <= 0)
-	{
-		$error++;
-	}
+    if (! $error)
+    {
+    	$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
+		if ($result <= 0) $error++;
+    }
 
     if (! $error)
     {
-        setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+    	setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
     }
+}
+
+if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
+{
+	$objectname = $tabobj;
+
+	$srcdir = $dirread.'/'.strtolower($module);
+	$destdir = $dirins.'/'.strtolower($module);
+	dol_mkdir($destdir);
+
+	// Edit the class file to write properties
+	if (! $error)
+	{
+		$result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
+		if ($result <= 0) $error++;
+	}
+
+	// Edit sql with new properties
+	if (! $error)
+	{
+		$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
+		if ($result <= 0) $error++;
+	}
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+	}
 }
 
 if ($dirins && $action == 'confirm_delete')
@@ -448,27 +483,6 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
     $tabobj = 'deleteobject';
 }
 
-if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
-{
-    if (! $error)
-    {
-        $modulelowercase=strtolower($module);
-        $objectlowercase=strtolower($objectname);
-
-        // File of class
-        $fileforclass = $dirins.'/'.$modulelowercase.'/class/'.$objectlowercase.'.class.php';
-
-        // TODO
-
-        // File of sql
-        $fileforsql = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'.sql';
-        $fileforsqlextra = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'_extrafields.sql';
-        $fileforsqlkey = $dirins.'/'.$modulelowercase.'/sql/'.$objectlowercase.'.key.sql';
-
-
-        // TODO
-    }
-}
 
 if ($dirins && $action == 'generatepackage')
 {
@@ -691,6 +705,8 @@ if ($action == 'reset' && $user->admin)
 /*
  * View
  */
+
+$form = new Form($db);
 
 // Set dir where external modules are installed
 if (! dol_is_dir($dirins))
@@ -1376,6 +1392,7 @@ elseif (! empty($module))
                         print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread?'@'.$dirread:'')).'">';
                         print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
+	            		print '<div class="div-table-responsive">';
                         print '<table class="noborder">';
                         print '<tr class="liste_titre">';
                         print '<td>'.$langs->trans("Property");
@@ -1489,6 +1506,7 @@ elseif (! empty($module))
                             print '</tr>';
                         }
                         print '</table>';
+						print '</div>';
 
                         print '</form>';
                     }

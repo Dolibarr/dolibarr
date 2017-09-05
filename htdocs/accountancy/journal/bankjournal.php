@@ -740,7 +740,7 @@ if (empty($action) || $action == 'view') {
 		|| empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
 		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 
 
@@ -772,6 +772,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
+    print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
@@ -922,6 +923,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	llxFooter();
 }
