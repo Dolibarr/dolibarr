@@ -106,7 +106,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	print '<td>'.$langs->trans("GeneratedOn").'</td>';
 	if (! $exportlink) print '<td colspan="3">';
 	else print '<td>';
-	print dol_print_date($builddate);
+	print dol_print_date($builddate, 'dayhour');
 	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
 	print '</td></tr>';
 

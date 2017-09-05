@@ -160,7 +160,7 @@ if ($modetax==1) {	// Calculate on invoice for goods and services
 		. $langs->trans('AddExtraReport')
 		. '</input>'
 		. '<br>';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -204,7 +204,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		. $langs->trans('AddExtraReport')
 		. '</input>'
 		. '<br>';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");

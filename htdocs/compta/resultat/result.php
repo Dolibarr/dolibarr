@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
-$langs->loadLangs(array('compta','bills','donation','salaries'));
+$langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 
 $error = 0;
 
@@ -173,7 +173,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$description=$langs->trans("RulesResultDue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="RECETTES-DEPENSES") {
@@ -185,7 +185,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesResultInOut");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="BOOKKEEPING")
@@ -203,7 +203,7 @@ else if ($modecompta=="BOOKKEEPING")
 	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'&mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("AccountingCategory")).')';
 	//if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	//else  $description.= $langs->trans("DepositsAreIncluded");
-	$builddate = time();
+	$builddate=dol_now();
 }
 
 report_header($name, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
@@ -223,7 +223,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 print '<th class="liste_titre">'.$langs->trans("AccountingCategory").'</th>';
 print '<th class="liste_titre"></th>';
-print '<th class="liste_titre" align="right">'.$langs->trans("PreviousYear").'</th>';
+print '<th class="liste_titre" align="right">'.$langs->trans("PreviousPeriod").'</th>';
 print '<th class="liste_titre" align="right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach($months as $k => $v){
 	print '<th class="liste_titre width50" align="right" >'.$langs->trans($v).'</th>';
@@ -262,8 +262,11 @@ else if ($modecompta=="BOOKKEEPING")
 			print "<tr>";
 
 			// Year NP
-			//print '<td colspan="2"><font color="blue">' . $cat['label'] . '</font></td>';
-			print '<td colspan="2">' . $cat['label'] . '</td>';
+			print '<td class="width200">';
+			print $cat['code'];
+			print '</td><td>';
+			print $cat['label'];
+			print '</td>';
 
 			$vars = array();
 
@@ -338,7 +341,9 @@ else if ($modecompta=="BOOKKEEPING")
 			print "<tr>";
 
 			// Column group
-			print '<td colspan="2">';
+			print '<td class="width200">';
+			print $cat['code'];
+			print '</td><td>';
 			print $cat['label'];
 			if (count($cpts) > 0)
 			{
@@ -429,7 +434,8 @@ else if ($modecompta=="BOOKKEEPING")
 					$resultN=$totPerAccount[$cpt['account_number']]['N'];
 
 					print '<tr>';
-					print '<td> &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . '</td>';
+					print '<td></td>';
+					print ' &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . '</td>';
 					print '<td>' . $cpt['name_cpt'] . '</td>';
 					print '<td align="right">' . price($resultNP)  . '</td>';
 					print '<td align="right">' . price($resultN) . '</td>';

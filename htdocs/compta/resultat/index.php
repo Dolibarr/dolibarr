@@ -129,7 +129,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$description.='<br>'.$langs->trans("RulesResultDue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.="<br>".$langs->trans("DepositsAreNotIncluded");
 	else  $description.="<br>".$langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="RECETTES-DEPENSES") {
@@ -141,7 +141,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
 	$description.='<br>'.$langs->trans("RulesResultInOut");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="BOOKKEEPING")
@@ -154,7 +154,7 @@ else if ($modecompta=="BOOKKEEPING")
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountOnInOutBookkeepingRecord");
 	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("Chartofaccounts")).')';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
@@ -806,7 +806,7 @@ elseif ($modecompta == 'BOOKKEEPING') {
 
 
 /*
- * Donation get dunning paiement
+ * Request in mode BOOKKEEPING
  */
 
 if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
@@ -830,7 +830,7 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 
 	//print $sql;
 
-	dol_syslog("get donation payments");
+	dol_syslog("get bookkeeping record");
 	$result=$db->query($sql);
 	if ($result)
 	{

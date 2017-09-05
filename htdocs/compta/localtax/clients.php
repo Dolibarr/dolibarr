@@ -115,7 +115,7 @@ if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-	$builddate=time();
+	$builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
@@ -133,7 +133,7 @@ if ($calc==2) 	// Invoice for goods, payment for services
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $builddate=time();
+    $builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");

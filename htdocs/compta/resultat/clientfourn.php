@@ -166,7 +166,7 @@ if ($modecompta=="CREANCES-DETTES")
     $description=$langs->trans("RulesResultDue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
-    $builddate=time();
+    $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
 elseif ($modecompta=="RECETTES-DEPENSES")
@@ -179,7 +179,7 @@ elseif ($modecompta=="RECETTES-DEPENSES")
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesResultInOut");
-    $builddate=time();
+    $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
 elseif ($modecompta=="BOOKKEEPING")
@@ -194,7 +194,7 @@ elseif ($modecompta=="BOOKKEEPING")
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultBookkeepingPredefined");
 	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("Chartofaccounts")).')';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
@@ -218,7 +218,7 @@ if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("Groups", $_SERVER["PHP_SELF"], 's.nom, s.rowid','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 's.nom, s.rowid','',$param,'',$sortfield,$sortorder,'width200 ');
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING')
 {

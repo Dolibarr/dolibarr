@@ -136,7 +136,7 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
     $description.=$fsearch;
-    $builddate=time();
+    $builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
@@ -164,7 +164,7 @@ if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.=' '.$langs->trans("DepositsAreNotIncluded");
 	else  $description.=' '.$langs->trans("DepositsAreIncluded");
     $description.=$fsearch;
-	$builddate=time();
+	$builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
