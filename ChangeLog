@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 5.0.6 compared to 5.0.5 *****
+FIX: Removed a bad symbolic link into custom directory.
+FIX: Renaming a resouce ref rename also the directory of attached files.
 
 ***** ChangeLog for 5.0.5 compared to 5.0.4 *****
 FIX: #7075 : bad path for document
