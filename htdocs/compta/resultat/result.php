@@ -344,7 +344,7 @@ else if ($modecompta=="BOOKKEEPING")
 			print $cat['code'];
 			print '</td><td>';
 			print $cat['label'];
-			if (count($cpts) > 0)
+			if (count($cpts) > 0)	// Show example of 5 first accounting accounts
 			{
 				$i=0;
 				foreach($cpts as $cpt)
@@ -434,8 +434,11 @@ else if ($modecompta=="BOOKKEEPING")
 
 					print '<tr>';
 					print '<td></td>';
-					print ' &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . '</td>';
-					print '<td>' . $cpt['name_cpt'] . '</td>';
+					print '<td class="tdoverflowmax200">';
+					print ' &nbsp; &nbsp; ' . length_accountg($cpt['account_number']);
+					print ' - ';
+					print $cpt['account_label'];
+					print '</td>';
 					print '<td align="right">' . price($resultNP)  . '</td>';
 					print '<td align="right">' . price($resultN) . '</td>';
 

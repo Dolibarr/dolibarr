@@ -2743,7 +2743,7 @@ input.liste_titre {
 	/* height: 32px; */
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    color: #552266;
+    color: #551188;
     font-weight: normal;
     white-space: nowrap;
 }
