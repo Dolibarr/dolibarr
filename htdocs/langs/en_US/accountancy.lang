@@ -31,7 +31,7 @@ ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account
 JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
-GroupIsEmptyCheckSetup=Group is empty, check setup of the accounting group
+GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup

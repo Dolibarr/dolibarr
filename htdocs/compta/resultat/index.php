@@ -113,7 +113,6 @@ llxHeader();
 
 $form=new Form($db);
 
-$namelink='';
 $exportlink='';
 
 // Affiche en-tete du rapport
@@ -160,7 +159,7 @@ else if ($modecompta=="BOOKKEEPING")
 
 $hselected='report';
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {

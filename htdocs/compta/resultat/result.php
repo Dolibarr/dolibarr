@@ -194,7 +194,6 @@ else if ($modecompta=="BOOKKEEPING")
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$nomlink = '';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectyesno('showaccountdetail',$showaccountdetail,0);
 	$periodlink = $textprevyear . " " . $langs->trans("Year") . " " . $start_year . " " . $textnextyear ;
@@ -206,7 +205,7 @@ else if ($modecompta=="BOOKKEEPING")
 	$builddate=dol_now();
 }
 
-report_header($name, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
@@ -259,10 +258,10 @@ else if ($modecompta=="BOOKKEEPING")
 
 			$formula = $cat['formula'];
 
-			print "<tr>";
+			print '<tr class="liste_total">';
 
 			// Year NP
-			print '<td class="width200">';
+			print '<td class="liste_total width200">';
 			print $cat['code'];
 			print '</td><td>';
 			print $cat['label'];
@@ -283,7 +282,7 @@ else if ($modecompta=="BOOKKEEPING")
 			$r = dol_eval($result, 1);
 			//var_dump($r);
 
-			print '<td align="right"><font color="blue">' . price($r) . '</font></td>';
+			print '<td class="liste_total right">' . price($r) . '</td>';
 
 			// Year N
 			$code = $cat['code']; 				// code of categorie ('VTE', 'MAR', ...)
@@ -301,7 +300,7 @@ else if ($modecompta=="BOOKKEEPING")
 			//$r = $AccCat->calculate($result);
 			$r = dol_eval($result, 1);
 
-			print '<td align="right"><font color="blue">' . price($r) . '</font></td>';
+			print '<td class="liste_total right">' . price($r) . '</td>';
 			$sommes[$code]['N'] += $r;
 
 			// Detail by month
@@ -315,7 +314,7 @@ else if ($modecompta=="BOOKKEEPING")
 				//$r = $AccCat->calculate($result);
 				$r = dol_eval($result, 1);
 
-				print '<td align="right"><font color="blue">' . price($r) . '</font></td>';
+				print '<td class="liste_total right">' . price($r) . '</td>';
 				$sommes[$code]['M'][$k] += $r;
 			}
 

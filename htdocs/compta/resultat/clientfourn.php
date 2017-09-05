@@ -147,7 +147,6 @@ llxHeader();
 
 $form=new Form($db);
 
-$namelink='';
 $periodlink='';
 $exportlink='';
 
@@ -200,7 +199,7 @@ elseif ($modecompta=="BOOKKEEPING")
 
 $hselected = 'report';
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
