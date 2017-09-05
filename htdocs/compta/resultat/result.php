@@ -26,8 +26,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
@@ -136,6 +136,21 @@ $AccCat = new AccountancyCategory($db);
  * View
  */
 
+$months = array(
+	$langs->trans("JanuaryMin"),
+	$langs->trans("FebruaryMin"),
+	$langs->trans("MarchMin"),
+	$langs->trans("AprilMin"),
+	$langs->trans("MayMin"),
+	$langs->trans("JuneMin"),
+	$langs->trans("JulyMin"),
+	$langs->trans("AugustMin"),
+	$langs->trans("SeptemberMin"),
+	$langs->trans("OctoberMin"),
+	$langs->trans("NovemberMin"),
+	$langs->trans("DecemberMin"),
+);
+
 llxheader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);
@@ -204,20 +219,6 @@ $moreforfilter='';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-$months = array( $langs->trans("JanuaryMin"),
-				$langs->trans("FebruaryMin"),
-				$langs->trans("MarchMin"),
-				$langs->trans("AprilMin"),
-				$langs->trans("MayMin"),
-				$langs->trans("JuneMin"),
-				$langs->trans("JulyMin"),
-				$langs->trans("AugustMin"),
-				$langs->trans("SeptemberMin"),
-				$langs->trans("OctoberMin"),
-				$langs->trans("NovemberMin"),
-				$langs->trans("DecemberMin"),
-			);
 
 print '<tr class="liste_titre">';
 print '<th class="liste_titre">'.$langs->trans("AccountingCategory").'</th>';

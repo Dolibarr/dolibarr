@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
@@ -119,10 +120,28 @@ $modecompta = $conf->global->ACCOUNTING_MODE;
 if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta",'alpha')) $modecompta=GETPOST("modecompta",'alpha');
 
+$AccCat = new AccountancyCategory($db);
+
+
 
 /*
  * View
  */
+
+$months = array(
+	$langs->trans("JanuaryMin"),
+	$langs->trans("FebruaryMin"),
+	$langs->trans("MarchMin"),
+	$langs->trans("AprilMin"),
+	$langs->trans("MayMin"),
+	$langs->trans("JuneMin"),
+	$langs->trans("JulyMin"),
+	$langs->trans("AugustMin"),
+	$langs->trans("SeptemberMin"),
+	$langs->trans("OctoberMin"),
+	$langs->trans("NovemberMin"),
+	$langs->trans("DecemberMin"),
+);
 
 llxHeader();
 
@@ -265,32 +284,14 @@ if ($modecompta == 'BOOKKEEPING')
 				// Loop on detail of all accounts
 				// This make 14 calls for each detail of account (NP, N and month m)
 				if ($showaccountdetail == 'yes')
-				{   /*
+				{
+					// TODO Get list of account for this group/subgroup
+					$cpts = array();
+
 					foreach($cpts as $i => $cpt)
 					{
-						// N-1
-						$return = $AccCat->getResult($cpt['account_number'], 0, $date_start_previous, $date_end_previous, $cpt['dc']);
-
-						if ($return < 0) {
-							setEventMessages(null, $AccCat->errors, 'errors');
-							$resultNP=0;
-						} else {
-							$resultNP=$AccCat->sdc;
-						}
-
-						//N
-						$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
-						if ($return < 0) {
-							setEventMessages(null, $AccCat->errors, 'errors');
-							$resultN=0;
-						} else {
-							$resultN=$AccCat->sdc;
-						}
-
-						$sommes[$code]['NP'] += $resultNP;
-						$sommes[$code]['N'] += $resultN;
-
 						print '<tr>';
+
 						print '<td> &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . '</td>';
 						print '<td>' . $cpt['name_cpt'] . '</td>';
 						print '<td align="right">' . price($resultNP)  . '</td>';
@@ -306,14 +307,11 @@ if ($modecompta == 'BOOKKEEPING')
 								$resultM=$AccCat->sdc;
 							}
 							$sommes[$code]['M'][$k] += $resultM;
-							if ($showaccountdetail == 'yes') {
-								print '<td align="right">' . price($resultM) . '</td>';
-							}
+							print '<td align="right">' . price($resultM) . '</td>';
 						}
 
 						print "</tr>\n";
 					}
-					*/
 				}
 
 				$i++;

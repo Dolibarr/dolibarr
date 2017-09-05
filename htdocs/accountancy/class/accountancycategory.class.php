@@ -338,7 +338,7 @@ class AccountancyCategory
 	 * @param string 	$month 		Specifig month - Can be empty
 	 * @param string 	$date_start	Date start
 	 * @param string 	$date_end	Date end
-	 * @param int 		$sens 		Sens of the account 0: credit - debit 1: debit - credit
+	 * @param int 		$sens 		Sens of the account:  0: credit - debit, 1: debit - credit
 	 * @return integer 				Result in table
 	 */
 	public function getResult($cpt, $month, $date_start, $date_end, $sens)
