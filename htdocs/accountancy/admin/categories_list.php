@@ -52,7 +52,7 @@ $langs->load("hrm");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
+$id=32;
 $rowid=GETPOST('rowid','alpha');
 $code=GETPOST('code','alpha');
 

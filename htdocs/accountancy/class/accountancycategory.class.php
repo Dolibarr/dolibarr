@@ -488,13 +488,19 @@ class AccountancyCategory
 
 	// calcule
 
+	/* I try to replace this with dol_eval()
+
 	const PATTERN = '/(?:\-?\d+(?:\.?\d+)?[\+\-\*\/])+\-?\d+(?:\.?\d+)?/';
 
 	const PARENTHESIS_DEPTH = 10;
 
-	public function calculate($input){
+	public function calculate($input)
+	{
+		global $langs;
+
 		if(strpos($input, '+') != null || strpos($input, '-') != null || strpos($input, '/') != null || strpos($input, '*') != null){
 			//  Remove white spaces and invalid math chars
+			$input = str_replace($langs->trans("ThousandSeparator"), '', $input);
 			$input = str_replace(',', '.', $input);
 			$input = preg_replace('[^0-9\.\+\-\*\/\(\)]', '', $input);
 
@@ -536,6 +542,8 @@ class AccountancyCategory
 
 		return 0;
 	}
+	*/
+
 
 	/**
 	 * get cpts of category
