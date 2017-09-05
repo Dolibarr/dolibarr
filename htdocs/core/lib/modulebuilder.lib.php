@@ -96,7 +96,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
         dol_sort_array($object->fields, 'position');
 
         $i=0;
-        $texttoinsert = "\t".'// BEGIN MODULEBUILDER PROPERTIES'."\n";
+        $texttoinsert = '// BEGIN MODULEBUILDER PROPERTIES'."\n";
         $texttoinsert.= "\t".'/**'."\n";
         $texttoinsert.= "\t".' * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.'."\n";
         $texttoinsert.= "\t".' */'."\n";
@@ -111,7 +111,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
                 $texttoinsert.= " 'visible'=>".($val['visible']!=''?$val['visible']:-1).",";
                 $texttoinsert.= " 'enabled'=>".($val['enabled']!=''?$val['enabled']:1).",";
                 $texttoinsert.= " 'position'=>".($val['position']!=''?$val['position']:50).",";
-                if ($val['notnull']) $texttoinsert.= " 'notnull'=>".$val['notnull'].",";
+                $texttoinsert.= " 'notnull'=>".($val['notnull']!=''?$val['notnull']:-1).",";
                 if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
                 if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
                 if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
@@ -216,7 +216,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
             $texttoinsert.= "\t".$key." ".$val['type'];
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
-            $texttoinsert.= ($val['notnull']?' NOT NULL':'');
+            $texttoinsert.= (($val['notnull'] > 0)?' NOT NULL':'');
             if ($i < count($object->fields)) $texttoinsert.=", ";
             $texttoinsert.= "\n";
         }

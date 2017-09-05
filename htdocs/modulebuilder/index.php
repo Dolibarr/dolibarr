@@ -236,15 +236,28 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
                     setEventMessages($langs->trans("FileAlreadyExists", $destfile), null, 'warnings');
                 }
             }
-            else
-            {
-                // Copy is ok
-                if ($destfile == 'class/'.$objectname.'.txt')
-                {
-                	// Regenerate left menu entry in descriptor
-                	$stringtoadd='';
-					// TODO Loop on each .txt file in class dir.
-                	$stringtoadd.="
+        }
+
+        if (! $error)
+        {
+            	// Scan for object class files
+            	$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+
+            	$firstobjectname='';
+            	foreach($listofobject as $fileobj)
+            	{
+            		if (preg_match('/^api_/',$fileobj['name'])) continue;
+            		if (preg_match('/^actions_/',$fileobj['name'])) continue;
+
+            		$tmpcontent=file_get_contents($fileobj['fullname']);
+            		if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims',$tmpcontent,$reg))
+            		{
+            			$objectnameloop = $reg[1];
+            			if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
+            		}
+
+                	// Regenerate left menu entry in descriptor for $objectname
+                	$stringtoadd="
 \t\t\$this->menu[\$r++]=array(
                 				'fk_menu'=>'fk_mainmenu=mymodule',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',			                // This is a Left menu entry
@@ -272,14 +285,22 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
                		";
-                	$moduledescriptorfile=$dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+                	$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
+                	$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
+                	$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
+
+                	$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
+
                 	// TODO Allow a replace with regex using dolReplaceRegexInFile
+                	// TODO Avoid duplicate addition
+
                 	dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
 
 					// Add module descriptor to list of files to replace "MyObject' string with real name of object.
                 	$filetogenerate[]='core/modules/mod'.$module.'.class.php';
+
+                	// TODO
                 }
-            }
         }
     }
 
@@ -361,7 +382,15 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 
     if (! $error)
     {
+    	clearstatcache();
+
     	setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+
+    	// Make a redirect to reload all data
+    	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
+
+    	clearstatcache();
+    	exit;
     }
 }
 
@@ -389,7 +418,15 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
 	if (! $error)
 	{
+		clearstatcache();
+
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+
+    	// Make a redirect to reload all data
+    	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
+
+    	clearstatcache();
+    	exit;
 	}
 }
 
@@ -1473,7 +1510,7 @@ elseif (! empty($module))
                             print $proptype;
                             print '</td>';
                             print '<td class="center">';
-                            print $propnotnull?'X':'';
+                            print $propnotnull;
                             print '</td>';
                             /*print '<td>';
                             print $propdefault;
