@@ -52,7 +52,7 @@ class Categorie extends CommonObject
     const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
     const TYPE_PROJECT = 6;
     public $picto = 'category';
-    
+
 
 	/**
 	 * @var array ID mapping from type string
@@ -556,7 +556,7 @@ class Categorie extends CommonObject
 		        $error++;
 		    }
 		}
-		
+
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
@@ -1163,11 +1163,11 @@ class Categorie extends CommonObject
 				 */
 				if($obj[0] > 0 && $obj[0] != $this->id)
 				{
-					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent.": rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
@@ -1737,8 +1737,8 @@ class Categorie extends CommonObject
 	{
 	    return '';
 	}
-	
-	
+
+
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

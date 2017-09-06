@@ -206,7 +206,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
     $search_state="";
     $search_type='';
     $search_country='';
-    $search_type_thirdparty='';    
+    $search_type_thirdparty='';
     $day='';
     $year='';
     $month='';
@@ -229,7 +229,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-    
+
 
 /*
  * View
@@ -255,7 +255,7 @@ $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
-if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';   
+if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -423,6 +423,7 @@ if ($resql)
     {
         $soc = new Societe($db);
         $soc->fetch($socid);
+		if (empty($search_societe)) $search_societe = $soc->name;
     }
 
     $param='&socid='.$socid;
@@ -462,7 +463,7 @@ if ($resql)
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge")
 	);
-	if ($user->rights->facture->supprimer) 
+	if ($user->rights->facture->supprimer)
 	{
 	    //if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) || empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
 	    if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
@@ -479,6 +480,7 @@ if ($resql)
 
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -492,8 +494,8 @@ if ($resql)
 	if ($massaction == 'presend')
 	{
 		$langs->load("mails");
-		
-		if (! GETPOST('cancel')) 
+
+		if (! GETPOST('cancel'))
 		{
 			$objecttmp=new Facture($db);
 			$listofselectedid=array();
@@ -502,7 +504,7 @@ if ($resql)
 			foreach($arrayofselected as $toselectid)
 			{
 				$result=$objecttmp->fetch($toselectid);
-				if ($result > 0) 
+				if ($result > 0)
 				{
 					$listofselectedid[$toselectid]=$toselectid;
 					$thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
@@ -513,10 +515,10 @@ if ($resql)
 		}
 
 		print '<input type="hidden" name="massaction" value="confirm_presend">';
-		
+
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
-		
+
 		dol_fiche_head(null, '', '');
 
 		$topicmail="SendBillRef";
@@ -584,16 +586,16 @@ if ($resql)
 		//$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		print $formmail->get_form();
-        
+
         dol_fiche_end();
 	}
-	
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
  	// If the user can view prospects other than his'
     $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
@@ -619,7 +621,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
 	}
     $parameters=array();
@@ -683,14 +685,14 @@ if ($resql)
     // Filters lines
     print '<tr class="liste_titre">';
 	// Ref
-	if (! empty($arrayfields['f.facnumber']['checked'])) 
+	if (! empty($arrayfields['f.facnumber']['checked']))
 	{
         print '<td class="liste_titre" align="left">';
         print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
         print '</td>';
 	}
 	// Ref customer
-	if (! empty($arrayfields['f.ref_client']['checked'])) 
+	if (! empty($arrayfields['f.ref_client']['checked']))
 	{
     	print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
@@ -711,7 +713,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Date invoice
-	if (! empty($arrayfields['f.date']['checked'])) 
+	if (! empty($arrayfields['f.date']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
         if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
@@ -720,7 +722,7 @@ if ($resql)
         print '</td>';
 	}
 	// Date due
-	if (! empty($arrayfields['f.date_lim_reglement']['checked'])) 
+	if (! empty($arrayfields['f.date_lim_reglement']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
         if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_lim" value="'.$day_lim.'">';
@@ -730,7 +732,7 @@ if ($resql)
         print '</td>';
 	}
 	// Thirpdarty
-	if (! empty($arrayfields['s.nom']['checked'])) 
+	if (! empty($arrayfields['s.nom']['checked']))
 	{
 	   print '<td class="liste_titre" align="left"><input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'"></td>';
 	}
@@ -760,7 +762,7 @@ if ($resql)
 	    print '</td>';
 	}
 	// Payment mode
-	if (! empty($arrayfields['f.fk_mode_reglement']['checked'])) 
+	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
     	print '<td class="liste_titre" align="left">';
     	$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 0, 1, 10);
@@ -875,19 +877,19 @@ if ($resql)
             $totaldeposits = $facturestatic->getSumDepositsUsed();
             $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
             $remaintopay = $obj->total_ttc - $totalpay;
-            
+
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
 
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-    
+
                 print '<td class="nobordernopadding nowrap">';
                 print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
                 print $obj->increment;
                 print '</td>';
-    
+
                 print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
                 $filename=dol_sanitizeFileName($obj->facnumber);
                 $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
@@ -896,7 +898,7 @@ if ($resql)
     			print '</td>';
                 print '</tr>';
                 print '</table>';
-    
+
                 print "</td>\n";
     		    if (! $i) $totalarray['nbfield']++;
     		}
@@ -1085,12 +1087,12 @@ if ($resql)
             // Status
             if (! empty($arrayfields['f.fk_statut']['checked']))
             {
-                print '<td align="right" class="nowrap">';
-                print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
-                print "</td>";
-                if (! $i) $totalarray['nbfield']++;
+            	print '<td align="right" class="nowrap">';
+            	print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
+            	print "</td>";
+            	if (! $i) $totalarray['nbfield']++;
             }
-            
+
     		// Action column
             print '<td class="nowrap" align="center">';
             if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1101,7 +1103,7 @@ if ($resql)
             }
     		print '</td>' ;
     		if (! $i) $totalarray['nbfield']++;
-				
+
             print "</tr>\n";
 
             $i++;
@@ -1128,21 +1130,21 @@ if ($resql)
     		   else print '<td></td>';
     		}
     		print '</tr>';
-    		
+
     	}
     }
 
     $db->free($resql);
-	
+
 	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-    
+
 	print "</table>\n";
     print "</div>";
-    
+
     print "</form>\n";
-    
+
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
     {
         /*
@@ -1150,11 +1152,11 @@ if ($resql)
          */
         $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
         $urlsource.=str_replace('&amp;','&',$param);
-        
+
         $filedir=$diroutputmassaction;
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
-    
+
         print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else

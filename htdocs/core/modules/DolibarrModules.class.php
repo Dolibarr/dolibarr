@@ -50,13 +50,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * @since 4.0.0
      */
     public $editor_name;
-    
+
     /**
      * @var string URL of module at publisher site
      * @since 4.0.0
      */
     public $editor_url;
-    
+
     /**
      * @var string Family
      * @see familyinfo
@@ -80,13 +80,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      *
      */
     public $familyinfo;
-    
+
     /**
      * @var int Module position
      * @since 3.9.0
      */
     public $module_position=500;
-    
+
     /**
      * @var string Module name
      *
@@ -214,7 +214,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * HTML content supported.
      */
     public $descriptionlong;
-    
+
     /**
      * @var string[] Module language files
      */
@@ -254,7 +254,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      * @var bool Module is enabled globally (Multicompany support)
      */
     public $core_enabled;
-    
+
     /**
      * @var string Relative path to module style sheet
      * @deprecated
@@ -573,9 +573,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     {
         global $langs;
         $langs->load("admin");
-        
+
         if (empty($this->descriptionlong)) return '';
-        
+
         // If module description translation does not exist using its unique id, we can use its name to find translation
         if (is_array($this->langfiles))
         {
@@ -586,7 +586,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
         return $langs->trans($this->descriptionlong);
     }
-    
+
     /**
      * Gives the publisher name
      *
@@ -596,7 +596,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     {
         return $this->editor_name;
     }
-    
+
     /**
      * Gives the publisher url
      *
@@ -606,7 +606,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     {
         return $this->editor_url;
     }
-    
+
     /**
      * Gives module version (translated if param $translated is on)
      * For 'experimental' modules, gives 'experimental' translation
@@ -709,7 +709,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
     }
 
-    
+
     /**
      * Gives the last date of activation
      *
@@ -718,11 +718,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     function getLastActivationDate()
     {
         global $conf;
-        
+
         $sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
         $sql.= " AND entity IN (0, ".$conf->entity.")";
-        
+
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) $err++;
@@ -731,11 +731,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
             $obj=$this->db->fetch_object($resql);
             if ($obj) return $this->db->jdate($obj->tms);
         }
-        
+
         return '';
     }
-    
-    
+
+
     /**
      * Insert constants for module activation
      *
@@ -836,7 +836,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                         $files[] = $file;
                     }
                     sort($files);
-                    foreach ($files as $file) 
+                    foreach ($files as $file)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -854,7 +854,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                         $files[] = $file;
                     }
                     sort($files);
-                    foreach ($files as $file) 
+                    foreach ($files as $file)
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -872,7 +872,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                         $files[] = $file;
                     }
                     sort($files);
-                    foreach ($files as $file) 
+                    foreach ($files as $file)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -890,7 +890,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                         $files[] = $file;
                     }
                     sort($files);
-                    foreach ($files as $file) 
+                    foreach ($files as $file)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
@@ -1030,19 +1030,19 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 //$titre = $this->boxes[$key][0];
                 $file  = $this->boxes[$key]['file'];
                 //$note  = $this->boxes[$key][2];
-                
+
                 // TODO If the box is also included by another module and the other module is still on, we should not remove it.
                 // For the moment, we manage this with hard coded exception
                 //print "Remove box ".$file.'<br>';
                 if ($file == 'box_graph_product_distribution.php')
                 {
-                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) 
+                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))
                     {
                         dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
                         continue;
                     }
                 }
-                
+
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
 
                 if ($this->db->type == 'sqlite3') {
@@ -1117,7 +1117,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 $status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
                 $priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
                 $test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
-                
+
                 // Search if boxes def already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
                 $sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
@@ -1255,55 +1255,55 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      *
      * @return int  Error count (0 if ok)
      */
-    function insert_tabs()
-    {
-        global $conf;
+	function insert_tabs()
+	{
+		global $conf;
 
-        $err=0;
+		$err=0;
 
-        if (! empty($this->tabs))
-        {
-            $i=0;
-            foreach ($this->tabs as $key => $value)
-            {
-            	if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+		if (! empty($this->tabs))
+		{
+			$i=0;
+			foreach ($this->tabs as $key => $value)
+			{
+				if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
 
-            	$entity=$conf->entity;
-            	$newvalue = $value;
+				$entity=$conf->entity;
+				$newvalue = $value;
 
-            	if (is_array($value))
-            	{
-            		$newvalue = $value['data'];
-            		if (isset($value['entity'])) $entity = $value['entity'];
-            	}
+				if (is_array($value))
+				{
+					$newvalue = $value['data'];
+					if (isset($value['entity'])) $entity = $value['entity'];
+				}
 
-                if ($newvalue)
-                {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-                    $sql.= "name";
-                    $sql.= ", type";
-                    $sql.= ", value";
-                    $sql.= ", note";
-                    $sql.= ", visible";
-                    $sql.= ", entity";
-                    $sql.= ")";
-                    $sql.= " VALUES (";
-                    $sql.= $this->db->encrypt($this->const_name."_TABS_".$i,1);
-                    $sql.= ", 'chaine'";
-                    $sql.= ", ".$this->db->encrypt($value,1);
-                    $sql.= ", null";
-                    $sql.= ", '0'";
-                    $sql.= ", ".$conf->entity;
-                    $sql.= ")";
+				if ($newvalue)
+				{
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+					$sql.= "name";
+					$sql.= ", type";
+					$sql.= ", value";
+					$sql.= ", note";
+					$sql.= ", visible";
+					$sql.= ", entity";
+					$sql.= ")";
+					$sql.= " VALUES (";
+					$sql.= $this->db->encrypt($this->const_name."_TABS_".$i,1);
+					$sql.= ", 'chaine'";
+					$sql.= ", ".$this->db->encrypt($newvalue,1);
+					$sql.= ", null";
+					$sql.= ", '0'";
+					$sql.= ", ".$entity;
+					$sql.= ")";
 
-                    dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
-                    $this->db->query($sql);
-                }
-                $i++;
-            }
-        }
-        return $err;
-    }
+					dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
+					$this->db->query($sql);
+				}
+				$i++;
+			}
+		}
+		return $err;
+	}
 
     /**
      * Adds constants
@@ -1329,11 +1329,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
             // Clean
             if (empty($visible)) $visible='0';
-            if (empty($val)) $val='';
+            if (empty($val) && $val != '0') $val='';
 
             $sql = "SELECT count(*)";
             $sql.= " FROM ".MAIN_DB_PREFIX."const";
-            $sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+            $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
             $sql.= " AND entity = ".$entity;
 
             $result=$this->db->query($sql);
@@ -1347,7 +1347,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                     $sql.= " VALUES (";
                     $sql.= $this->db->encrypt($name,1);
                     $sql.= ",'".$type."'";
-                    $sql.= ",".($val?$this->db->encrypt($val,1):"''");
+                    $sql.= ",".(($val != '')?$this->db->encrypt($val,1):"''");
                     $sql.= ",".($note?"'".$this->db->escape($note)."'":"null");
                     $sql.= ",'".$visible."'";
                     $sql.= ",".$entity;
@@ -1552,7 +1552,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
     /**
      * Removes access rights
-     * 
+     *
      * @return  int                     Error count (0 if OK)
      */
     function delete_permissions()
@@ -1585,7 +1585,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         global $user;
 
         if (! is_array($this->menu) || empty($this->menu)) return 0;
-        
+
         require_once DOL_DOCUMENT_ROOT . '/core/class/menubase.class.php';
 
         $err=0;

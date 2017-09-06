@@ -510,17 +510,18 @@ if (empty($reshook))
 	}
 
 	// Add a product line
-	if ($action == 'addline' && $user->rights->supplier_proposal->creer) 
+	if ($action == 'addline' && $user->rights->supplier_proposal->creer)
 	{
 	    $langs->load('errors');
 	    $error = 0;
 
 		// Set if we used free entry or predefined product
-		$predef='';
+	    $predef='';
+	    $ref_fourn = GETPOST('fourn_ref');
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
-		
+
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -577,7 +578,7 @@ if (empty($reshook))
 			if ((GETPOST('prod_entry_mode') != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 			{
 			    $productsupplier = new ProductFournisseur($db);
-			    
+
 			    if (empty($conf->global->SUPPLIER_PROPOSAL_WITH_NOPRICEDEFINED))
 			    {
 			        $idprod=0;
@@ -597,16 +598,16 @@ if (empty($reshook))
 			        $idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), -1);        // We force qty to -1 to be sure to find if a supplier price exist
                     $res=$productsupplier->fetch($idprod);
 			    }
-                
+
 			    if ($idprod > 0)
 			    {
 			        $pu_ht = $productsupplier->fourn_pu;
 			        $price_base_type = $productsupplier->fourn_price_base_type;
 			        $type = $productsupplier->type;
 			        $label = $productsupplier->label;
-			        $desc = $productsupplier->description;
+			        $desc = $productsupplier->description;			        
 			        if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
-			
+
 			        $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 			        $tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 			        if (empty($tva_tx)) $tva_npr=0;
@@ -664,13 +665,13 @@ if (empty($reshook))
 			    $type = GETPOST('type');
 
 			    $fk_unit= GETPOST('units', 'alpha');
-			
+
 			    $tva_tx = price2num($tva_tx);	// When vat is text input field
-			
+
 			    // Local Taxes
 			    $localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			    $localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
-			
+
 			    if (GETPOST('price_ht')!=='')
 			    {
 			        $price_base_type = 'HT';
@@ -683,13 +684,13 @@ if (empty($reshook))
 			        $ht = $ttc / (1 + ($tva_tx / 100));
 			        $price_base_type = 'HT';
 			    }
-			
+
 				$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_fourn, $fk_unit);
 			    //$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
 			}
 
 
-			if (! $error && $result > 0) 
+			if (! $error && $result > 0)
 			{
 					$db->commit();
 
@@ -706,7 +707,7 @@ if (empty($reshook))
 						}
 						$model=$object->modelpdf;
 						$ret = $object->fetch($id); // Reload to get new records
-						
+
 						$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			    		if ($result < 0) dol_print_error($db,$result);
 					}
@@ -716,7 +717,7 @@ if (empty($reshook))
 					unset($_POST['qty']);
 					unset($_POST['type']);
 					unset($_POST['remise_percent']);
-					unset($_POST['pu']);					
+					unset($_POST['pu']);
 					unset($_POST['price_ht']);
 					unset($_POST['multicurrency_price_ht']);
 					unset($_POST['price_ttc']);
@@ -747,8 +748,8 @@ if (empty($reshook))
 					unset($_POST['date_endday']);
 					unset($_POST['date_endmonth']);
 					unset($_POST['date_endyear']);
-			} 
-			else 
+			}
+			else
 			{
 				$db->rollback();
 
@@ -1367,11 +1368,11 @@ if ($action == 'create')
 	// Print form confirm
 	print $formconfirm;
 
-	
+
 	// Supplier proposal card
 	$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
-	
+
+
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier
 	//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
@@ -1392,7 +1393,7 @@ if ($action == 'create')
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
 	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref.=$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                $morehtmlref.='</form>';
 	            } else {
@@ -1411,15 +1412,15 @@ if ($action == 'create')
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
 
 	// Payment term
@@ -1562,14 +1563,14 @@ if ($action == 'create')
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	
+
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border centpercent">';
-	
+
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
 		// Multicurrency Amount HT
@@ -1587,7 +1588,7 @@ if ($action == 'create')
 		print '<td>' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 	}
-	
+
 	// Amount HT
 	print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
 	print '<td>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
@@ -1618,18 +1619,18 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '</table>';
-	
+
 	// Margin Infos
 	/*if (! empty($conf->margin->enabled)) {
 	   $formmargin->displayMarginInfos($object);
-	}*/	
+	}*/
 
 	print '</div>';
 	print '</div>';
 	print '</div>';
-	
+
 	print '<div class="clearboth"></div><br>';
-	
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
@@ -1666,7 +1667,7 @@ if ($action == 'create')
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
 	$forceall=1; $senderissupplier=2; $dateSelector=0;     // $senderissupplier=2 is same than 1 but disable test on minimum qty.
-	
+
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
 
@@ -1814,12 +1815,12 @@ if ($action == 'create')
 
 		print $formfile->showdocuments('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-		
+
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_proposal'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		
+
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element

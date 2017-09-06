@@ -73,9 +73,9 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
-$viewstatut=GETPOST('viewstatut');
+$viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$object_statut=GETPOST('propal_statut');
+$object_statut=GETPOST('propal_statut','alpha');
 
 $sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -353,6 +353,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfProposals') . ' - '.$soc->name;
+		if (empty($search_societe)) $search_societe = $soc->name;
 	}
 	else
 	{
