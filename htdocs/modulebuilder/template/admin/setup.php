@@ -42,14 +42,17 @@ global $langs, $user;
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/mymodule.lib.php';
 //require_once "../class/myclass.class.php";
+
 // Translations
-$langs->load("mymodule@mymodule");
+$langs->loadLangs(array("admin", "mymodule@mymodule"));
 
 // Access control
 if (! $user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
+
+$arrayofparameters=array('MYMODULE_MYPARAM1'=>'1', 'MYMODULE_MYPARAM2'=>'2');
 
 
 /*
@@ -76,14 +79,62 @@ $head = mymoduleAdminPrepareHead();
 dol_fiche_head(
 	$head,
 	'settings',
-	$langs->trans("Module500000Name"),
-	0,
+	$langs->trans("ModuleMyModuleName"),
+	-1,
 	"mymodule@mymodule"
 );
 
 // Setup page goes here
 echo $langs->trans("MyModuleSetupPage");
 
+
+if ($action == 'edit')
+{
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+	foreach($arrayofparameters as $key => $val)
+	{
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+		print '</td><td><input class="flat" name="'.$key.'" size="3" value="' . $conf->global->$key . '"></td></tr>';
+	}
+
+	print '</table>';
+
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '</div>';
+
+	print '</form>';
+	print '<br>';
+}
+else
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+	foreach($arrayofparameters as $key => $val)
+	{
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+		print '</td><td>' . $conf->global->$key . '</td></tr>';
+	}
+
+	print '</table>';
+
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '</div>';
+}
+
+
 // Page end
 dol_fiche_end();
+
 llxFooter();
+$db->close();

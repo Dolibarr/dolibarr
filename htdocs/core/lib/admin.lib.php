@@ -143,10 +143,10 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 4096);
+            $buf = fgets($fp, 32768);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
-            if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
+            if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
             {
             	$qualified=1;
 
@@ -159,28 +159,41 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             	// restrict on version
             	if ($qualified)
             	{
-
-	                $versionrequest=explode('.',$reg[2]);
-	                //print var_dump($versionrequest);
-	                //print var_dump($versionarray);
-	                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
-	                {
-	                	$qualified=0;
-	                }
+            		if (! empty($reg[2]))
+            		{
+            			if (is_numeric($reg[2]))	// This is a version
+            			{
+			                $versionrequest=explode('.',$reg[2]);
+			                //print var_dump($versionrequest);
+			                //print var_dump($versionarray);
+			                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
+			                {
+			                	$qualified=0;
+			                }
+            			}
+            			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+            			{
+            				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+            				//var_dump($reg[2]);
+            				//var_dump($dbcollation);
+            				if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified=0;
+            				//var_dump($qualified);
+            			}
+            		}
             	}
 
                 if ($qualified)
                 {
                     // Version qualified, delete SQL comments
-                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i','',$buf);
+                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i','',$buf);
                     //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
                 }
             }
 
             // Add line buf to buffer if not a comment
-            if (! preg_match('/^--/',$buf))
+            if (! preg_match('/^\s*--/',$buf))
             {
-                $buf=preg_replace('/--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
+                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
@@ -523,6 +536,43 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 
+
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function modules_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=common";
+	$head[$h][1] = $langs->trans("AvailableModules");
+	$head[$h][2] = 'common';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
+	$head[$h][1] = $langs->trans("ModulesMarketPlaces");
+	$head[$h][2] = 'marketplace';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+	$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
+	$head[$h][2] = 'deploy';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=develop";
+	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
+	$head[$h][2] = 'develop';
+	$h++;
+
+	return $head;
+}
+
+
 /**
  * Prepare array with list of tabs
  *
@@ -545,9 +595,16 @@ function security_prepare_head()
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
-    $head[$h][1] = $langs->trans("Files");
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Upload").')';
     $head[$h][2] = 'file';
     $h++;
+
+    /*
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file_download.php";
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Download").')';
+    $head[$h][2] = 'filedownload';
+    $h++;
+	*/
 
     $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
     $head[$h][1] = $langs->trans("ExternalAccess");

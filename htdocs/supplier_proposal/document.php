@@ -44,7 +44,6 @@ $ref		= GETPOST('ref','alpha');
 $socid='';
 if (! empty($user->societe_id))
 {
-	$action='';
 	$socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'supplier_proposal', $id);
@@ -96,8 +95,8 @@ if ($object->id > 0)
 
 	// Supplier proposal card
 	$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-		
-		
+
+
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier
 	//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
@@ -138,14 +137,14 @@ if ($object->id > 0)
 	    }
 	}
 	$morehtmlref.='</div>';
-		
-		
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-		
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border"width="100%">';
 
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
@@ -154,9 +153,9 @@ if ($object->id > 0)
 	print '</table>';
 
 	print '</div>';
-	
+
 	dol_fiche_end();
-	
+
 	$modulepart = 'supplier_proposal';
 	$permission = $user->rights->supplier_proposal->creer;
 	$permtoedit = $user->rights->supplier_proposal->creer;

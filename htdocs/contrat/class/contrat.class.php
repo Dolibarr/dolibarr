@@ -248,12 +248,62 @@ class Contrat extends CommonObject
 
 
 	/**
+	 *  Open all lines of a contract
+	 *
+	 *  @param	User		$user      		Object User making action
+	 *  @param	int|string	$date_start		Date start (now if empty)
+	 *	@return	int							<0 if KO, >0 if OK
+	 */
+	function activateAll($user, $date_start='')
+	{
+		if (empty($date_start)) $date_start = dol_now();
+
+		$this->db->begin();
+
+		// Load lines
+		$this->fetch_lines();
+
+		$ok=true;
+		foreach($this->lines as $contratline)
+		{
+			// Open lines not already open
+			if ($contratline->statut != 4)
+			{
+				$result = $contratline->active_line($user, $date_start, -1);
+				if ($result < 0)
+				{
+					$ok=false;
+					break;
+				}
+			}
+		}
+
+		if ($this->statut == 0)
+		{
+			$result=$this->validate($user);
+			if ($result < 0) $ok=false;
+		}
+
+		if ($ok)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db,'Error in activateAll function');
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
 	 *  Close all lines of a contract
 	 *
-	 *  @param	User		$user      Object User making action
-	 *	@return	void
+	 *  @param	User		$user      		Object User making action
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	function cloture($user)
+	function closeAll($user)
 	{
 		$this->db->begin();
 
@@ -263,7 +313,7 @@ class Contrat extends CommonObject
 		$ok=true;
 		foreach($this->lines as $contratline)
 		{
-			// Close line not already closed
+			// Close lines not already closed
 	        if ($contratline->statut != 5)
 	        {
 				$contratline->date_cloture=dol_now();
@@ -287,11 +337,13 @@ class Contrat extends CommonObject
         if ($ok)
         {
             $this->db->commit();
+            return 1;
         }
         else
         {
-            dol_print_error($this->db,'Error in cloture function');
+            dol_print_error($this->db,'Error in closeAll function');
             $this->db->rollback();
+            return -1;
         }
 	}
 
@@ -920,8 +972,8 @@ class Contrat extends CommonObject
 			{
 			    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			    {
-			        $result=$this->insertExtraFields();
-			        if ($result < 0)
+			    	$result=$this->insertExtraFields();
+			    	if ($result < 0)
 			        {
 			            $error++;
 			        }
@@ -1288,6 +1340,15 @@ class Contrat extends CommonObject
 				}
 			}
 
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
 			// Commit or rollback
 			if ($error)
 			{
@@ -1352,7 +1413,8 @@ class Contrat extends CommonObject
 			if (empty($info_bits)) $info_bits=0;
 			if (empty($pu_ht) || ! is_numeric($pu_ht))  $pu_ht=0;
 			if (empty($pu_ttc)) $pu_ttc=0;
-            if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txtva) || ! is_numeric($txtva)) $txtva=0;
+			if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
             if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
 
 			if ($price_base_type=='HT')
@@ -1455,6 +1517,8 @@ class Contrat extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX."contratdet");
+
 				$result=$this->update_statut($user);
 				if ($result > 0)
 				{
@@ -1463,7 +1527,7 @@ class Contrat extends CommonObject
 					{
 						$contractline = new ContratLigne($this->db);
 						$contractline->array_options=$array_options;
-						$contractline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$contractline->table_element);
+						$contractline->id=$contractlineid;
 						$result=$contractline->insertExtraFields();
 						if ($result < 0)
 						{
@@ -1477,13 +1541,20 @@ class Contrat extends CommonObject
 					    $result=$this->call_trigger('LINECONTRACT_INSERT',$user);
 					    if ($result < 0)
 					    {
-					        $this->db->rollback();
-					        return -1;
+					    	$error++;
 					    }
 					    // End call triggers
+					}
 
+					if ($error)
+					{
+						$this->db->rollback();
+						return -1;
+					}
+					else
+					{
 						$this->db->commit();
-						return 1;
+						return $contractlineid;
 					}
 				}
 				else
@@ -1826,18 +1897,20 @@ class Contrat extends CommonObject
 			$text='';
 			if ($mode == 4)
 			{
-				$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
+				$text ='<span class="hideonsmartphone">';
+				$text.=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
 				$text.=' '.$langs->trans("Services");
 				$text.=': &nbsp; &nbsp; ';
+				$text.='</span>';
 			}
 			$text.=($mode == 7?'<div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.$line->LibStatut(0,3)).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.$line->LibStatut(0,3,-1,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? ($this->nbofservicesopened.$line->LibStatut(4,3,0)).(($mode != 7 || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? ($this->nbofservicesopened.$line->LibStatut(4,3,0,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? ($this->nbofservicesexpired.$line->LibStatut(4,3,1)).(($mode != 7 || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? ($this->nbofservicesexpired.$line->LibStatut(4,3,1,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.$line->LibStatut(5,3)) : '';
+			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.$line->LibStatut(5,3,-1,'class="paddingleft2 inline-block valigntextbottom"')) : '';
 			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}
@@ -2509,9 +2582,10 @@ class ContratLigne extends CommonObjectLine
 	 *  @param	int		$statut     Id statut
 	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *	@param	int		$expired	0=Not expired, 1=Expired, -1=Both or unknown
+	 *  @param	string	$moreatt	More attribute
 	 *  @return string      		Libelle
 	 */
-	function LibStatut($statut,$mode,$expired=-1)
+	function LibStatut($statut,$mode,$expired=-1,$moreatt='')
 	{
 		global $langs;
 		$langs->load("contracts");
@@ -2541,11 +2615,11 @@ class ContratLigne extends CommonObjectLine
 		}
 		if ($mode == 3)
 		{
-			if ($statut == 0) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0'); }
-			if ($statut == 4 && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
-			if ($statut == 4 && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4'); }
-			if ($statut == 4 && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3'); }
-			if ($statut == 5) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
+			if ($statut == 0) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0',$moreatt); }
+			if ($statut == 4 && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4',$moreatt); }
+			if ($statut == 4 && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4',$moreatt); }
+			if ($statut == 4 && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3',$moreatt); }
+			if ($statut == 5) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6',$moreatt); }
 		}
 		if ($mode == 4)
 		{
@@ -2988,11 +3062,11 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Activate a contract line
 	 *
-	 * @param    User $user Objet User who activate contract
-	 * @param  int $date Date d'ouverture
-	 * @param  int|string $date_end Date fin prevue
-	 * @param    string $comment A comment typed by user
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param   User 		$user 		Objet User who activate contract
+	 * @param  	int 		$date 		Date activation
+	 * @param  	int|string 	$date_end 	Date planned end. Use '-1' to keep it unchanged.
+	 * @param   string 		$comment 	A comment typed by user
+	 * @return 	int                    	<0 if KO, >0 if OK
 	 */
 	function active_line($user, $date, $date_end = '', $comment = '')
 	{
@@ -3011,7 +3085,7 @@ class ContratLigne extends CommonObjectLine
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "contratdet SET statut = 4,";
 		$sql .= " date_ouverture = " . (dol_strlen($date) != 0 ? "'" . $this->db->idate($date) . "'" : "null") . ",";
-		$sql .= " date_fin_validite = " . (dol_strlen($date_end) != 0 ? "'" . $this->db->idate($date_end) . "'" : "null") . ",";
+		if ($date_end >= 0) $sql .= " date_fin_validite = " . (dol_strlen($date_end) != 0 ? "'" . $this->db->idate($date_end) . "'" : "null") . ",";
 		$sql .= " fk_user_ouverture = " . $user->id . ",";
 		$sql .= " date_cloture = null,";
 		$sql .= " commentaire = '" . $this->db->escape($comment) . "'";

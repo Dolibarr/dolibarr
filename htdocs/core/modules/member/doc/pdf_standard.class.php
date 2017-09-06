@@ -418,6 +418,8 @@ class pdf_standard extends CommonStickerGenerator
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 
+		$this->result = array('fullpath'=>$file);
+		
 		// Output to http stream
 		if (empty($nooutput))
 		{

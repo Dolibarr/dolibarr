@@ -206,7 +206,7 @@ if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res=$object->fetch($id);
-	if ($object->id <= 0) dol_print_error($db,$object->error);
+	if ($object->id <= 0) dol_print_error($db,$object->error,$object->errors);
 }
 
 $title=$langs->trans("CustomerCard");
@@ -608,7 +608,7 @@ if ($id > 0)
 	if(empty($reshook)){
 		$boxstat.= $hookmanager->resPrint;
 	}
-	
+
 	$boxstat.='</td></tr>';
 	$boxstat.='</table>';
 	$boxstat.='</div>';

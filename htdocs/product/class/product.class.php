@@ -4022,31 +4022,7 @@ class Product extends CommonObject
 		    $filearray=array_merge($filearray, $filearrayold);
 		}
 
-        $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
-
-        //var_dump($filearray);
-        //var_dump($filearrayindatabase);
-
-        // Complete filearray with properties found into $filearrayindatabase
-        foreach($filearray as $key => $val)
-        {
-            $found=0;
-            // Search if it exists into $filearrayindatabase
-            foreach($filearrayindatabase as $key2 => $val2)
-            {
-                if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
-                {
-                    $filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
-                    $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
-                    $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
-                    $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
-                    $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
-                    $filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
-                    $found=1;
-                    break;
-                }
-            }
-        }
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
         if (count($filearray))
         {

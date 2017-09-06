@@ -288,6 +288,7 @@ if (empty($reshook))
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
@@ -364,21 +365,29 @@ if (empty($reshook))
 	    {
 	    	$productsupplier = new ProductFournisseur($db);
 
-	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))	// TODO this test seems useless
 	    	{
 				$idprod=0;
 				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 			}
-
-	    	if (GETPOST('idprodfournprice') > 0)
+			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			{
+				$idprod=$reg[1];
+				$res=$productsupplier->fetch($idprod);
+				// Call to init properties of $productsupplier
+				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
+				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+			}
+	    	elseif (GETPOST('idprodfournprice') > 0)
 	    	{
-	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
+			    $qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
+			    //$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+	    		$res=$productsupplier->fetch($idprod);
 	    	}
 
 	    	if ($idprod > 0)
 	    	{
-	    		$res=$productsupplier->fetch($idprod);
-
 	    		$label = $productsupplier->label;
 
 	    		$desc = $productsupplier->description;
@@ -399,8 +408,8 @@ if (empty($reshook))
 	    			$tva_tx,
 	    			$localtax1_tx,
 	    			$localtax2_tx,
+	    			$idprod,
 	    			$productsupplier->id,
-	    			GETPOST('idprodfournprice'),
 	    			$productsupplier->fourn_ref,
 	    			$remise_percent,
 	    			'HT',
@@ -1450,6 +1459,7 @@ if ($action=='create')
 			});
 			</script>';
         }
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 	}
 	print '</td>';
 
@@ -2104,6 +2114,7 @@ elseif (! empty($object->id))
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
 	$forceall=1; $senderissupplier=1; $dateSelector=0;
+	if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 
 	// Show object lines
 	$inputalsopricewithtax=0;

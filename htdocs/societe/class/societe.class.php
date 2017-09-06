@@ -393,14 +393,15 @@ class Societe extends CommonObject
 
 
     /**
-     *    Create third party in database
+     *    Create third party in database.
+     *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
      *
      *    @param	User	$user       Object of user that ask creation
      *    @return   int         		>= 0 if OK, < 0 if KO
      */
     function create($user)
     {
-        global $langs,$conf;
+        global $langs,$conf,$mysoc;
 
 		$error=0;
 
@@ -422,14 +423,6 @@ class Societe extends CommonObject
 
         dol_syslog(get_class($this)."::create ".$this->name);
 
-        // Check parameters
-        if (! empty($conf->global->SOCIETE_MAIL_REQUIRED) && ! isValidEMail($this->email))
-        {
-            $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEMail",$this->email);
-            return -1;
-        }
-
         $now=dol_now();
 
         $this->db->begin();
@@ -438,7 +431,7 @@ class Societe extends CommonObject
         if ($this->code_client == -1)      $this->get_codeclient($this,0);
         if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
 
-        // Check more parameters
+        // Check more parameters (including mandatory setup
         // If error, this->errors[] is filled
         $result = $this->verify();
 
@@ -524,6 +517,7 @@ class Societe extends CommonObject
         }
     }
 
+
     /**
      * Create a contact/address from thirdparty
      *
@@ -568,6 +562,9 @@ class Societe extends CommonObject
      */
     function verify()
     {
+    	global $conf, $langs, $mysoc;
+
+    	$error = 0;
         $this->errors=array();
 
         $result = 0;
@@ -629,6 +626,69 @@ class Societe extends CommonObject
                 $result = -3;
             }
         }
+
+        // Check for duplicate or mandatory fields defined into setup
+        $array_to_check=array('IDPROF1','IDPROF2','IDPROF3','IDPROF4','IDPROF5','IDPROF6','EMAIL');
+        foreach($array_to_check as $key)
+        {
+        	$keymin=strtolower($key);
+        	$i=(int) preg_replace('/[^0-9]/','',$key);
+        	$vallabel=$this->$keymin;
+
+        	if ($i > 0)
+        	{
+        		if ($this->isACompany())
+        		{
+        			// Check for unicity
+        			if ($vallabel && $this->id_prof_verifiable($i))
+        			{
+        				if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
+        				{
+        					$langs->load("errors");
+        					$error++; $this->errors[] = $langs->transcountry('ProfId'.$i, $this->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+        				}
+        			}
+
+        			// Check for mandatory prof id (but only if country is other than ours)
+        			if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id)
+        			{
+        				$idprof_mandatory ='SOCIETE_'.$key.'_MANDATORY';
+        				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+        				{
+        					$langs->load("errors");
+        					$error++;
+        					$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $this->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").')';
+        				}
+        			}
+        		}
+        	}
+        	else
+        	{
+        		//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
+        		if ($key == 'EMAIL')
+        		{
+        			// Check for unicity
+        			if ($vallabel)
+        			{
+        				if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
+        				{
+        					$langs->load("errors");
+        					$error++; $this->errors[] = $langs->trans('Email')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+        				}
+        			}
+
+        			// Check for mandatory
+        			if (! empty($conf->global->SOCIETE_EMAIL_MANDATORY) && ! isValidEMail($this->email))
+        			{
+        				$langs->load("errors");
+        				$error++;
+        				$this->errors[] = $langs->trans("ErrorBadEMail", $this->email).' ('.$langs->trans("ForbiddenBySetupRules").')';
+        			}
+        		}
+        	}
+        }
+
+        if ($error) $result = -4;
 
         return $result;
     }
@@ -719,13 +779,7 @@ class Societe extends CommonObject
         $this->code_compta=trim($this->code_compta);
         $this->code_compta_fournisseur=trim($this->code_compta_fournisseur);
 
-        // Check parameters
-        if (! empty($conf->global->SOCIETE_MAIL_REQUIRED) && ! isValidEMail($this->email))
-        {
-            $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEMail",$this->email);
-            return -1;
-        }
+        // Check parameters. More tests are done later in the ->verify()
         if (! is_numeric($this->client) && ! is_numeric($this->fournisseur))
         {
             $langs->load("errors");
@@ -1912,7 +1966,11 @@ class Societe extends CommonObject
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
             if (! empty($this->name_alias)) $label.=' ('.$this->name_alias.')';
         }
-        if (! empty($this->code_client) && $this->client)
+        if (! empty($this->country_code))
+            $label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
+        if (! empty($this->tva_intra))
+            $label.= '<br><b>' . $langs->trans('VATNumber') . ':</b> '. $this->tva_intra;
+            if (! empty($this->code_client) && $this->client)
             $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
         if (! empty($this->code_fournisseur) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
@@ -2581,7 +2639,7 @@ class Societe extends CommonObject
 	/**
      *  Returns if a profid sould be verified
      *
-     *  @param	int		$idprof		1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *  @param	int		$idprof		1,2,3,4,5,6 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm,5=idprof5,6=idprof6)
      *  @return boolean         	true , false
      */
     function id_prof_verifiable($idprof)
@@ -2602,6 +2660,12 @@ class Societe extends CommonObject
         	case 4:
         		$ret=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
         		break;
+        	case 5:
+        		$ret=(!$conf->global->SOCIETE_IDPROF5_UNIQUE?false:true);
+        		break;
+        	case 6:
+        		$ret=(!$conf->global->SOCIETE_IDPROF6_UNIQUE?false:true);
+        		break;
         	default:
         		$ret=false;
         }
@@ -2612,28 +2676,40 @@ class Societe extends CommonObject
 	/**
      *    Verify if a profid exists into database for others thirds
      *
-     *    @param	int		$idprof		1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *    @param	string	$idprof		'idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','email' (Example: idprof1=siren, idprof2=siret, idprof3=naf, idprof4=rcs/rm)
      *    @param	string	$value		Value of profid
-     *    @param	int		$socid		Id of thirdparty if update
-     *    @return   boolean				true if exists, false if not
+     *    @param	int		$socid		Id of thirdparty to exclude (if update)
+     *    @return   boolean				True if exists, False if not
      */
-    function id_prof_exists($idprof,$value,$socid=0)
+    function id_prof_exists($idprof, $value, $socid=0)
     {
-     	switch($idprof)
+    	$field = $idprof;
+
+     	switch($idprof)	// For backward compatibility
         {
-        	case 1:
+        	case '1':
+        	case 'idprof1':
         		$field="siren";
         		break;
-        	case 2:
+        	case '2':
+        	case 'idprof2':
         		$field="siret";
         		break;
-        	case 3:
+        	case '3':
+        	case 'idprof3':
         		$field="ape";
         		break;
-        	case 4:
+        	case '4':
+        	case 'idprof4':
         		$field="idprof4";
         		break;
-        }
+        	case '5':
+        		$field="idprof5";
+        		break;
+        	case '6':
+        		$field="idprof6";
+        		break;
+     	}
 
          //Verify duplicate entries
         $sql  = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe').")";
@@ -2895,7 +2971,7 @@ class Societe extends CommonObject
         $isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
         if (! empty($this->tva_intra)) $isacompany=1;
         else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_PRIVATE'))) $isacompany=0;
-        else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
+        else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE','TE_GROUP'))) $isacompany=1;
 
         return $isacompany;
     }

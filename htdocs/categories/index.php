@@ -54,7 +54,7 @@ elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCat
 elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
 elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
 elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='account'; }
+elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
 elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
 elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
 else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }

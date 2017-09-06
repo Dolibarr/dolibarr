@@ -1010,6 +1010,7 @@ if ($id)
 
         $fieldlist=explode(',',$tabfield[$id]);
 
+	    print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder" width="100%">';
 
         // Line for title
@@ -1153,6 +1154,7 @@ if ($id)
         if ($id == 4) $colspan++;
 
         print '</table>';
+		print '</div>';
 
         /*if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
         {
@@ -1182,6 +1184,7 @@ if ($id)
             print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
         }
 
+	    print '<div class="div-table-responsive">';
         print '<table class="noborder" width="100%">';
 
         // Title line with search boxes
@@ -1626,6 +1629,7 @@ if ($id)
         }
 
         print '</table>';
+        print '</div>';
     }
     else {
         dol_print_error($db);

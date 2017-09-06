@@ -37,7 +37,7 @@ $langs->load("paybox");
 $langs->load("stripe");
 
 if (! $user->admin) accessforbidden();
-  
+
 $action = GETPOST('action','alpha');
 
 
@@ -55,17 +55,17 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY",GETPOST('STRIPE_LIVE_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "STRIPE_CREDITOR",GETPOST('STRIPE_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "STRIPE_CSS_URL",GETPOST('STRIPE_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "STRIPE_MESSAGE_OK",GETPOST('STRIPE_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK",GETPOST('ONLINE_PAYMENT_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "STRIPE_MESSAGE_KO",GETPOST('STRIPE_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO",GETPOST('ONLINE_PAYMENT_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "STRIPE_PAYONLINE_SENDEMAIL",GETPOST('STRIPE_PAYONLINE_SENDEMAIL'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL",GETPOST('ONLINE_PAYMENT_SENDEMAIL'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	
+
     if (! $error)
   	{
   		$db->commit();
@@ -184,31 +184,31 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("VendorName").'</td><td>';
-print '<input size="64" type="text" name="STRIPE_CREDITOR" value="'.$conf->global->STRIPE_CREDITOR.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="STRIPE_CSS_URL" value="'.$conf->global->STRIPE_CSS_URL.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
 print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('STRIPE_MESSAGE_OK',$conf->global->STRIPE_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('STRIPE_MESSAGE_KO',$conf->global->STRIPE_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO',$conf->global->ONLINE_PAYMENT_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("STRIPE_PAYONLINE_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="STRIPE_PAYONLINE_SENDEMAIL" value="'.$conf->global->STRIPE_PAYONLINE_SENDEMAIL.'">';
+print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
+print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 

@@ -190,8 +190,9 @@ function getBrowserInfo($user_agent)
 	}
 
 	// OS
-	if (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
+	if (preg_match('/linux/i', $user_agent))			{ $os='linux'; }
 	elseif (preg_match('/macintosh/i', $user_agent))	{ $os='macintosh'; }
+	elseif (preg_match('/windows/i', $user_agent))		{ $os='windows'; }
 
 	// Name
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))      { $name='firefox';   $version=$reg[2]; }
@@ -201,7 +202,8 @@ function getBrowserInfo($user_agent)
 	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  }
 	elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg))   { $name='safari';    $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))    { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
 	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) { $name='lynxlinks'; $version=$reg[4]; }
 
 	if ($tablet) {
@@ -343,8 +345,20 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	                }
 	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
 	                {
-	                    $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                    $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                	if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+	                	{
+	                		// We made a search from quick search menu, do we still use default filter ?
+	                		if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+	                		{
+	                    		$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+	                    		$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                		}
+	                	}
+	                	else
+	                	{
+	                    	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+	                    	$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                	}
 	                }
 	            }
 	        }
@@ -1190,10 +1204,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			}
+			//}
         }
 	}
 	else
@@ -1234,8 +1248,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                           && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
                            )
                         {
-                            $ret = dol_convert_file($file, 'png', $fileimage);
-                            if ($ret < 0) $error++;
+                        	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+                        	{
+                            	$ret = dol_convert_file($file, 'png', $fileimage);
+                            	if ($ret < 0) $error++;
+                        	}
                         }
 
                         $heightforphotref=70;
@@ -1270,7 +1287,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 }
             }
 
-            if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
+            if (! $phototoshow)      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')
@@ -1288,6 +1305,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 }
                 $morehtmlleft.='<!-- No photo to show -->';
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+
                 $morehtmlleft.='</div>';
             }
         }
@@ -3281,32 +3299,34 @@ function dol_print_error_email($prefixcode, $errormessage='')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$tooltip	 Tooltip
  *	@return	void
  */
-function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="", $tooltip="")
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix, 0, $tooltip);
 }
 
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        Translation key of field
- *	@param	int		$thead		 0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
- *	@param	string	$file        Url used when we click on sort picto
- *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
- *	@param	string	$begin       ("" by defaut)
- *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
- *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
- *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
- *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *	@param	string	$name        		Translation key of field
+ *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	string	$file        		Url used when we click on sort picto
+ *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable.
+ *	@param	string	$begin       		("" by defaut)
+ *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
+ *	@param  string	$moreattrib  		Add more attributes on th ("" by defaut, example: 'align="center"'). To add more css class, use param $prefix.
+ *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
+ *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	string	$disablesortlink	1=Disable sort link
+ *  @param	string	$tooltip	 		Tooltip
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0)
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0, $tooltip='')
 {
-	global $conf, $langs;
+	global $conf, $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	$sortorder=strtoupper($sortorder);
@@ -3322,7 +3342,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	$field1=trim($tmpfield[0]);            // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
 	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
-
 	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
@@ -3347,7 +3366,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		}
 	}
 
-	$out.=$langs->trans($name);
+	if ($tooltip) $out.=$form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
+	else $out.=$langs->trans($name);
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
@@ -3696,7 +3716,13 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 		$info_bits |= 1;
 	}
 
-	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
+	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	else
+	{
+		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		$ret=$rate.($addpercent?'%':'');
+	}
 	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
@@ -5723,8 +5749,8 @@ function dol_osencode($str)
  * 		@param	DoliDB	$db			Database handler
  * 		@param	string	$key		Code or Id to get Id or Code
  * 		@param	string	$tablename	Table name without prefix
- * 		@param	string	$fieldkey	Field for code
- * 		@param	string	$fieldid	Field for id
+ * 		@param	string	$fieldkey	Field for search ('code' or 'id')
+ * 		@param	string	$fieldid	Field to get ('id' or 'code')
  *      @return int					<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
@@ -5886,6 +5912,7 @@ function picto_from_langcode($codelang)
  *          		            	        'supplier_invoice' to add a tab in supplier invoice view
  *                  		    	        'invoice'          to add a tab in customer invoice view
  *                          			    'order'            to add a tab in customer order view
+ *                          				'contract'		   to add a tabl in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view
  *                              			'user'             to add a tab in user view
@@ -6261,7 +6288,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 	            	$newres .= $db->escape($tmpcrit2);
 	            	$newres .= $tmpafter;
 	            	$newres .= "'";
-	            	if (empty($tmpcrit2))
+	            	if ($tmpcrit2 == '')
 	            	{
 	            	    $newres .= ' OR ' . $field . " IS NULL";
 	            	}
@@ -6454,7 +6481,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 
 /**
  * Return value from dictionary
- * 
+ *
  * @param string	$tablename		name of dictionary
  * @param string	$field			the value to return
  * @param int		$id				id of line
@@ -6464,13 +6491,13 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
 {
 	global $dictvalues,$db,$langs;
-	
+
 	if (!isset($dictvalues[$tablename]))
 	{
 		$dictvalues[$tablename] = array();
 		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
 		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -6484,7 +6511,7 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 			dol_print_error($db);
 		}
 	}
-	
+
 	if (!empty($dictvalues[$tablename][$id])) return $dictvalues[$tablename][$id]->{$field}; // Found
 	else // Not found
 	{

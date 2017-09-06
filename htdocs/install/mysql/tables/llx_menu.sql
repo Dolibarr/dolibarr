@@ -38,8 +38,8 @@ CREATE TABLE llx_menu
 	titre         varchar(255) NOT NULL,					-- Key for menu translation 
 	langs         varchar(100),								-- Lang file to load for translation
 	level         smallint,									-- Deprecated. Not used.
-	perms         varchar(255),								-- Condition to show enabled or disabled
-	enabled       varchar(255) NULL default '1',    -- Condition to show or hide
+	perms         text,										-- Condition to show enabled or disabled
+	enabled       varchar(255) NULL default '1', 		    -- Condition to show or hide
 	usertype      integer NOT NULL DEFAULT 0,				-- 0 if menu for all users, 1 for external only, 2 for internal only
 	tms           timestamp
 	

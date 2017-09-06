@@ -936,7 +936,7 @@ class ActionComm extends CommonObject
 	        $response->label = $langs->trans("ActionsToDo");
 	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
 	        if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
-	        $response->img = img_object('',"action");
+	        $response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
 
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
@@ -1509,7 +1509,17 @@ class ActionComm extends CommonObject
     {
     	global $conf, $langs;
 
+		$this->output = '';
+		$this->error='';
+
+    	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
+    	{
+    		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+    		return 0;
+    	}
+
     	dol_syslog(__METHOD__, LOG_DEBUG);
+
 
 
     	return 0;

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
+MenuResourceIndex=자원
 MenuResourceAdd=New resource
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
@@ -33,4 +33,4 @@ SelectResource=Select resource
 IdResource=Id resource
 AssetNumber=Serial number
 ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+ImportDataset_resource_1=자원

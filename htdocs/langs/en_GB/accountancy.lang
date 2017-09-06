@@ -45,6 +45,7 @@ Lineofinvoice=Invoice line
 NoAccountSelected=No finance account selected
 VentilatedinAccount=Linked successfully to the financial account
 NotVentilatedinAccount=Not linked to the financial account
+XLineSuccessfullyBinded=%s products/services successfully linked to the finance account
 XLineFailedToBeBinded=%s products/services were not linked to any finance account
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to link shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin sorting the page "Links to do" by the most recent elements

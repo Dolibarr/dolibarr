@@ -50,7 +50,8 @@ class modCron extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable the Dolibarr cron service";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -96,8 +97,8 @@ class modCron extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
-			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>10, 'status'=>1, 'test'=>true),
-			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>20, 'status'=>0, 'test'=>in_array($db->type, array('mysql','mysqli'))),
+			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
+			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>in_array($db->type, array('mysql','mysqli'))),
 		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);
 
