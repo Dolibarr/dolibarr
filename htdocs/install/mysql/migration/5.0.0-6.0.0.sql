@@ -155,6 +155,12 @@ ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
 ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
 
+ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer:
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_code	varchar(255):
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1:
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL:
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL:
+
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
@@ -533,6 +539,9 @@ CREATE TABLE llx_website_page
 ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
 
 ALTER TABLE llx_website_page ADD CONSTRAINT fk_website_page_website FOREIGN KEY (fk_website) REFERENCES llx_website (rowid);
+
+ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 
 
 UPDATE llx_extrafields set elementtype='categorie' where elementtype='categories';
