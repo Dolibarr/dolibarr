@@ -370,6 +370,7 @@ print '<div class="inline-block divButAction"><a class="butActionDelete" name="b
 
 print '</div>';
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre_filter">';
@@ -501,6 +502,7 @@ print '<td colspan="2"></td>';
 print '</tr>';
 
 print "</table>";
+print '</div>';
 
 print '</form>';
 

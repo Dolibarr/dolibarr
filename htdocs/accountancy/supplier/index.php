@@ -182,6 +182,7 @@ $buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?ye
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
@@ -227,8 +228,7 @@ if ($resql) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
-
+print '</div>';
 
 
 print '<br>';
@@ -236,6 +236,7 @@ print '<br>';
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
@@ -281,7 +282,7 @@ if ($resql) {
     print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
+print '</div>';
 
 
 
@@ -293,6 +294,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     print_fiche_titre($langs->trans("OtherInfo"), '', '');
 
     print "<br>\n";
+	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
     for($i = 1; $i <= 12; $i ++) {
@@ -333,6 +335,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     	print $db->lasterror(); // Show last sql error
     }
     print "</table>\n";
+    print '</div>';
 }
 
 

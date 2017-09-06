@@ -423,6 +423,7 @@ if ($id)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
 
+    print '<div class="div-table-responsive">';
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -691,6 +692,7 @@ if ($id)
     }
 
     print '</table>';
+	print '</div>';
 
     print '</form>';
 }

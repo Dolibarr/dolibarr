@@ -94,7 +94,7 @@ if ($action == 'validatehistory') {
 	}
 
 	dol_syslog('htdocs/accountancy/expensereport/index.php');
-	
+
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -139,7 +139,7 @@ if ($action == 'validatehistory') {
 	$sql1.= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
 	$sql1.= " AND er.entity IN (" . getEntity('accountancy') . ")";
 	$sql1.=")";
-	
+
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 
 	$resql1 = $db->query($sql1);
@@ -186,6 +186,7 @@ $buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?ye
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
@@ -231,7 +232,7 @@ if ($resql) {
     print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
+print '</div>';
 
 
 print '<br>';
@@ -239,6 +240,7 @@ print '<br>';
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '');
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
@@ -284,7 +286,7 @@ if ($resql) {
     print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
+print '</div>';
 
 
 
@@ -292,17 +294,18 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 {
     print '<br>';
     print '<br>';
-    
+
     print_fiche_titre($langs->trans("OtherInfo"), '', '');
-    
+
     print "<br>\n";
+	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
     for($i = 1; $i <= 12; $i ++) {
     	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
     }
     print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
-    
+
     $sql = "SELECT '" . $langs->trans("TotalExpenseReport") . "' AS label,";
     for($i = 1; $i <= 12; $i ++) {
     	$sql .= " SUM(" . $db->ifsql('MONTH(er.date_create)=' . $i, 'erd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
@@ -314,12 +317,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= " AND er.date_debut <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
     $sql .= " AND er.fk_statut > 0 ";
     $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";     // We don't share object for accountancy
-    
+
     dol_syslog('htdocs/accountancy/expensereport/index.php');
     $resql = $db->query($sql);
     if ($resql) {
     	$num = $db->num_rows($resql);
-    
+
     	while ( $row = $db->fetch_row($resql)) {
     		print '<tr><td>' . $row[0] . '</td>';
     			for($i = 1; $i <= 12; $i ++) {
@@ -328,12 +331,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     		print '<td align="right"><b>' . price($row[13]) . '</b></td>';
     		print '</tr>';
     	}
-    
+
     	$db->free($resql);
     } else {
     	print $db->lasterror(); // Show last sql error
     }
     print "</table>\n";
+    print '</div>';
 }
 
 llxFooter();
