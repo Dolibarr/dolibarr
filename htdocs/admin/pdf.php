@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2105 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,11 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION",     $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS",     $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'',$conf->entity);
-	
+
+
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX",    $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["_MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
+
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -248,6 +252,40 @@ if ($action == 'edit')	// Edit
 	print '</table>';
 
     print '<br>';
+
+    // Localtaxes
+    if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
+    {
+        $locales ='';
+        $text='';
+
+        if ($mysoc->useLocalTax(1))
+        {
+            $locales = $langs->transcountry("LT1",$mysoc->country_code);
+            $text ='<tr class="oddeven"><td>' . $langs->trans("HideLocalTaxOnPDF",$langs->transcountry("LT1",$mysoc->country_code)) . '</td><td>';
+            $text.= $form->selectyesno('MAIN_PDF_MAIN_HIDE_SECOND_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX : 0, 1);
+            $text .= '</td></tr>';
+        }
+
+        if ($mysoc->useLocalTax(2))
+        {
+            $locales.=($locales?' & ':'').$langs->transcountry("LT2",$mysoc->country_code);
+
+            $text.= '<tr class="oddeven"><td>' . $langs->trans("HideLocalTaxOnPDF",$langs->transcountry("LT2",$mysoc->country_code)) . '</td><td>';
+            $text.= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
+            $text.= '</td></tr>';
+        }
+
+        print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
+        $var=true;
+        print '<table summary="more" class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+        print $text;
+
+        print '</table>';
+        print '<br>';
+
+    }
 
     // Other
     print load_fiche_titre($langs->trans("Other"),'','').'<br>';
@@ -443,6 +481,40 @@ else	// Show
     print '</table>'."\n";
 
     print '<br>';
+
+    // Localtaxes
+    if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
+    {
+        $locales ='';
+        $text='';
+
+        if ($mysoc->useLocalTax(1))
+        {
+            $locales = $langs->transcountry("LT1",$mysoc->country_code);
+            $text ='<tr class="oddeven"><td>' . $langs->trans("HideLocalTaxOnPDF",$langs->transcountry("LT1",$mysoc->country_code)) . '</td><td>';
+            $text .= yn($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX,1);
+            $text .= '</td></tr>';
+        }
+
+        if ($mysoc->useLocalTax(2))
+        {
+            $locales.=($locales?' & ':'').$langs->transcountry("LT2",$mysoc->country_code);
+
+            $text.= '<tr class="oddeven"><td>' . $langs->trans("HideLocalTaxOnPDF",$langs->transcountry("LT2",$mysoc->country_code)) . '</td><td>';
+            $text.= yn($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX,1);
+            $text.= '</td></tr>';
+        }
+
+        print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
+        $var=true;
+        print '<table summary="more" class="noborder" width="100%">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+        print $text;
+
+        print '</table>';
+        print '<br>';
+
+    }
 
     // Other
     print load_fiche_titre($langs->trans("Other"),'','');

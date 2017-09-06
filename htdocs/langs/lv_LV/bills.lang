@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Rēķina kartiņa
 PredefinedInvoices=Iepriekš definēti rēķini
 Invoice=Rēķins
+PdfInvoiceTitle=Rēķins
 Invoices=Rēķini
 InvoiceLine=Rēķina līnija
 InvoiceCustomer=Klienta rēķins

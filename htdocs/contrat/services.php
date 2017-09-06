@@ -154,6 +154,7 @@ if (empty($reshook))
 
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
+   		$search_product_category=0;
     	$search_name="";
     	$search_contract="";
     	$search_service="";
@@ -176,6 +177,8 @@ if (empty($reshook))
     	$filter_opcloture="";
     	$mode='';
     	$filter='';
+    	$toselect='';
+    	$search_array_options=array();
     }
 }
 
@@ -223,7 +226,7 @@ if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
 if ($filter == "notexpired") $sql.= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 if ($search_name)     $sql.= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
-if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
+if ($search_contract) $sql.= " AND c.ref LIKE '%".$db->escape($search_contract)."%' ";
 if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $filter_dateouvertureprevue=dol_mktime(0,0,0,$opouvertureprevuemonth,$opouvertureprevueday,$opouvertureprevueyear);
@@ -374,7 +377,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
 			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }

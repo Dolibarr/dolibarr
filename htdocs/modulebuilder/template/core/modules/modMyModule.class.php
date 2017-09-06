@@ -235,7 +235,7 @@ class modMyModule extends DolibarrModules
 								'leftmenu'=>'',
 								'url'=>'/mymodule/mymoduleindex.php',
 								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1000,
+								'position'=>1000+$r,
 								'enabled'=>'$conf->mymodule->enabled',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
@@ -252,7 +252,7 @@ class modMyModule extends DolibarrModules
 								'leftmenu'=>'mymodule',
 								'url'=>'/mymodule/myobject_list.php',
 								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1100,
+								'position'=>1000+$r,
 								'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
@@ -264,7 +264,7 @@ class modMyModule extends DolibarrModules
 								'leftmenu'=>'mymodule',
 								'url'=>'/mymodule/myobject_page.php?action=create',
 								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1101,
+								'position'=>1000+$r,
 								'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',

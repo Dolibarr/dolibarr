@@ -882,10 +882,10 @@ class ExtraFields
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
-			    if ($key == '') continue;
+				if ((string) $key == '') continue;
 				list($val, $parent) = explode('|', $val);
 				$out.='<option value="'.$key.'"';
-				$out.= ($value==$key?' selected':'');
+				$out.= (((string) $value == (string) $key)?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 				$out.='>'.$val.'</option>';
 			}
@@ -1062,13 +1062,13 @@ class ExtraFields
 			$form = new Form($db);
 
 			$value_arr=explode(',',$value);
-			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $param['options'], $value_arr, '', 0, '', 0, '100%');
+			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 
 		}
 		elseif ($type == 'radio')
 		{
 			$out='';
-			foreach ($param['options'] as $keyopt=>$val )
+			foreach ($param['options'] as $keyopt => $val)
 			{
 				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';

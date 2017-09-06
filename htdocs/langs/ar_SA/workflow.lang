@@ -2,14 +2,16 @@
 WorkflowSetup=سير العمل وحدة الإعداد
 WorkflowDesc=تم تصميم هذه الوحدة لتعديل السلوك من الإجراءات الآلية إلى التطبيق. افتراضيا، سير العمل مفتوح (يمكنك أن تفعل أشياء في النظام الذي تريد). يمكنك تفعيل الإجراءات الآلية كنت مهتما في.
 ThereIsNoWorkflowToModify=لا يوجد أي تعديلات سير العمل المتاحة مع وحدات تفعيلها.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=إنشاء النظام العميل تلقائيا بعد التوقيع على اقتراح التجاري
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد التوقيع على اقتراح التجاري
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد التحقق من صحة العقد
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد إغلاق النظام العميل
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=تصنيف مقترح مصدر على صلة وصفت عند تعيين النظام العميل لدفع
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=تصنيف المصدر المرتبط النظام العميل (ق) إلى المنقار عند تعيين فاتورة العملاء لدفع
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=تصنيف ربط مصدر النظام العميل (ق) إلى المنقار عند التحقق من صحة الفاتورة العملاء
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+# Autoclassify
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 AutomaticCreation=Automatic creation
 AutomaticClassification=Automatic classification

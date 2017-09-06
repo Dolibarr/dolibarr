@@ -807,7 +807,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				$align=$extrafields->getAlignFlag($key);
         			$sortonfield = "ef.".$key;
         			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-        			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
                }
     	   }
     	}*/

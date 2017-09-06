@@ -60,6 +60,8 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  * View
  */
 
+$form = new Form($db);
+
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Info");

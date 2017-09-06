@@ -74,7 +74,7 @@ $head = cronadmin_prepare_head();
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-dol_fiche_head($head,'setup',$langs->trans("Module2300Name"),0,'cron');
+dol_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
 
 print "<br>\n";
 
@@ -91,16 +91,16 @@ print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
 $disabled='';
 if (! empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled=' disabled="disabled"';
 print '<td>';
-if (empty($conf->global->CRON_DISABLE_KEY_CHANGE)) 
+if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
 {
     print '<input type="text" class="flat minwidth200"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
     if (! empty($conf->use_javascript_ajax))
     	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-else 
+else
 {
-    print (! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:''); 
-    print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">'; 
+    print (! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'');
+    print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
 }
 print '</td>';
 print '<td>&nbsp;</td>';

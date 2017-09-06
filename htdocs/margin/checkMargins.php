@@ -218,9 +218,9 @@ if ($result) {
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice=$langs->trans('BuyingPrice');
+	    $labelcostprice='BuyingPrice';
 	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice=$langs->trans('CostPrice');
+	    $labelcostprice='CostPrice';
 
 	$moreforfilter='';
 
@@ -246,12 +246,12 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("UnitPriceHT"), $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
+	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 

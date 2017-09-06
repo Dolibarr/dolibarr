@@ -126,14 +126,14 @@ if ($resql)
 	print_barre_liste($title.($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,"",$num);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Email"));
-	print_liste_field_titre($langs->trans("Phone"));
+	print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Email");
+	print_liste_field_titre("Phone");
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -150,7 +150,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
@@ -168,9 +168,9 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-	
+
 	print '</form>';
-	
+
 	$db->free($resql);
 }
 else

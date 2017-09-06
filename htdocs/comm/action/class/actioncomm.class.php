@@ -1194,7 +1194,7 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend;
+            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="valigntextbottom"':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend;
         }
         if ($withpicto==1) $result.=' ';
         $result.=$linkstart.$libelleshort.$linkend;

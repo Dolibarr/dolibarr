@@ -28,7 +28,14 @@ OverviewOfAmountOfLinesBound=Prezentare generală a valorii liniilor deja asocia
 OtherInfo=Alte informații
 DeleteCptCategory=Eliminați contul contabil din grup
 ConfirmDeleteCptCategory=Sigur doriți să eliminați acest cont contabil din grupul de cont contabil?
+JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
+NotYetInGeneralLedger=Not yet journalized in ledgers
+
+MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
+MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
 AccountancyArea=Contabilitate
 AccountancyAreaDescIntro=Utilizarea modulului de contabilitate se face în mai multe etape:
@@ -45,7 +52,7 @@ AccountancyAreaDescExpenseReport=PASUL %s: Definiți conturile contabile implici
 AccountancyAreaDescSal=PASUL %s: Definirea conturilor contabile implicite pentru plata salariilor. Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescContrib=PASUL %s: Definiți conturile implicite de contabilitate pentru cheltuieli speciale (taxe diverse). Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescDonation=PASUL %s: Definirea conturilor contabile implicite pentru donații. Pentru aceasta, utilizați intrarea din meniu %s.
-AccountancyAreaDescMisc=PASUL %s: Definirea conturilor contabile implicite pentru diverse tranzacții. Pentru aceasta, utilizați intrarea din meniu %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=PASUL %s: Definiți conturile contabile implicite pentru împrumuturi. Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescBank=PASUL %s: Definirea conturilor contabile pentru fiecare bancă și conturi financiare. Pentru aceasta, mergeți pe cardul fiecărui cont financiar. Puteți începe de la pagina %s.
 AccountancyAreaDescProd=STEP %s: Definirea conturilor contabile pentru produsele / serviciile dvs. Pentru aceasta, utilizați intrarea din meniu %s.
@@ -83,7 +90,7 @@ ValidTransaction=Validate transaction
 WriteBookKeeping=Introducerea tranzactiilor in Jurnalul Cartea mare
 Bookkeeping=Cartea mare
 AccountBalance=Sold cont
-
+ObjectsRef=Source object ref
 CAHTF=Total purchase supplier before tax
 TotalExpenseReport=Raportul total al cheltuielilor
 InvoiceLines=Linii de facturi de asociat
@@ -103,7 +110,7 @@ LineOfExpenseReport=Linia de raport de cheltuieli
 NoAccountSelected=Nu a fost selectat niciun cont contabil
 VentilatedinAccount=Asociat cu succes la contul de contabilitate
 NotVentilatedinAccount=Nu este asociat cu contul contabil
-XLineSuccessfullyBinded=%s produse / servicii asociate cu succes unui cont contabil
+XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=Produsele / serviciile %s nu au fost asociate niciunui cont contabil
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Numărul de elemente de asociat afișate pe pagină (maxim recomandat: 50)
@@ -154,7 +161,7 @@ DelBookKeeping=Ștergeți înregistrarea Cărții Mari
 FinanceJournal=Jurnal Bancă
 ExpenseReportsJournal=Jurnalul rapoartelor de cheltuieli
 DescFinanceJournal=Jurnal de finanțe, care include toate tipurile de plăți prin cont bancar
-DescJournalOnlyBindedVisible=Aceasta este o vizualizare a înregistrării care este asociata contului contabil de produse / servicii și poate fi înregistrată în Cartea Mare.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
 VATAccountNotDefined=Contul de TVA nu a fost definit
 ThirdpartyAccountNotDefined=Contul pentru o terță parte nu este definit
 ProductAccountNotDefined=Contul pentru produs nu este definit
@@ -170,6 +177,8 @@ AddCompteFromBK=Adăugați conturi contabile grupului
 ReportThirdParty=Listează contul terță parte
 DescThirdPartyReport=Consultați aici lista clienților și furnizorilor terță parte și a conturile lor contabile
 ListAccounts=Lista conturilor contabile
+UnknownAccountForThirdparty=Unknown third party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Clasa contului
 Pcgsubtype=Subclasa contului
@@ -194,7 +203,7 @@ ValidateHistory=Asociază automat
 AutomaticBindingDone=Asociere automată făcută
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
-MvtNotCorrectlyBalanced=Miscare incorect efectuata   . Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Card asociat
 GeneralLedgerIsWritten=Tranzacțiile sunt scrise în Cartea Mare
 GeneralLedgerSomeRecordWasNotRecorded=Unele tranzacții nu au putut fi expediate. Dacă nu există niciun alt mesaj de eroare, probabil că acestea au fost expediate.
@@ -210,7 +219,6 @@ AccountingJournals=Jurnalele contabile
 AccountingJournal=Jurnalul contabil
 NewAccountingJournal=Jurnal contabil nou
 ShowAccoutingJournal=Arătați jurnalul contabil
-Code=Cod
 Nature=Personalitate juridică
 AccountingJournalType1=Diverse operațiuni
 AccountingJournalType2=Vânzări
@@ -221,8 +229,6 @@ AccountingJournalType9=Are nou
 ErrorAccountingJournalIsAlreadyUse=Acest jurnal este deja folosit
 
 ## Export
-Exports=Exporturi
-Export=Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Model export
 OptionsDeactivatedForThisExportModel=Pentru acest model de export, optiunile sunt dezactivate

@@ -190,8 +190,9 @@ function getBrowserInfo($user_agent)
 	}
 
 	// OS
-	if (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
+	if (preg_match('/linux/i', $user_agent))			{ $os='linux'; }
 	elseif (preg_match('/macintosh/i', $user_agent))	{ $os='macintosh'; }
+	elseif (preg_match('/windows/i', $user_agent))		{ $os='windows'; }
 
 	// Name
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))      { $name='firefox';   $version=$reg[2]; }
@@ -201,7 +202,8 @@ function getBrowserInfo($user_agent)
 	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  }
 	elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg))   { $name='safari';    $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))    { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
 	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) { $name='lynxlinks'; $version=$reg[4]; }
 
 	if ($tablet) {
@@ -1190,10 +1192,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			}
+			//}
         }
 	}
 	else
@@ -1234,8 +1236,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                           && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
                            )
                         {
-                            $ret = dol_convert_file($file, 'png', $fileimage);
-                            if ($ret < 0) $error++;
+                        	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+                        	{
+                            	$ret = dol_convert_file($file, 'png', $fileimage);
+                            	if ($ret < 0) $error++;
+                        	}
                         }
 
                         $heightforphotref=70;
@@ -1270,7 +1275,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 }
             }
 
-            if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
+            if (! $phototoshow)      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')
@@ -1286,7 +1291,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
     				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
                 }
-                $morehtmlleft.='<!-- No photo to show --><div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+                $morehtmlleft.='<!-- No photo to show -->';
+                $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+
                 $morehtmlleft.='</div>';
             }
         }
@@ -1341,7 +1348,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if ($object->element != 'product' && $object->element != 'bookmark')
+	if ($object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories')
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -2553,7 +2560,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($pictoisfullpath)
 	{
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
 		$fullpathpicto = $picto;
 	}
 	else
@@ -2575,7 +2582,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
 		// If alt path are defined, define url where img file is, according to physical path
 		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
 		{
@@ -3244,7 +3251,12 @@ function dol_print_error($db='',$error='',$errors=null)
 	}
 
 	if (empty($dolibarr_main_prod)) print $out;
-	else define("MAIN_CORE_ERROR", 1);
+	else
+	{
+		print $langs->trans("DolibarrHasDetectedError").'. ';
+		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
+		define("MAIN_CORE_ERROR", 1);
+	}
 	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
@@ -3695,7 +3707,13 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 		$info_bits |= 1;
 	}
 
-	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
+	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	else
+	{
+		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		$ret=$rate.($addpercent?'%':'');
+	}
 	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
@@ -6260,7 +6278,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 	            	$newres .= $db->escape($tmpcrit2);
 	            	$newres .= $tmpafter;
 	            	$newres .= "'";
-	            	if (empty($tmpcrit2))
+	            	if ($tmpcrit2 == '')
 	            	{
 	            	    $newres .= ' OR ' . $field . " IS NULL";
 	            	}

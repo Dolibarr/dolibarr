@@ -227,7 +227,7 @@ foreach ($search_array_options as $key => $val)
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double','real'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if ($crit != '' && (! in_array($typ, array('select')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }

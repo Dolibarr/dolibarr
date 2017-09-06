@@ -77,38 +77,39 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  */
 function test_sql_and_script_inject($val, $type)
 {
-    $sql_inj = 0;
+    $inj = 0;
     // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
     if ($type != 2)
     {
-        $sql_inj += preg_match('/delete\s+from/i',	 $val);
-        $sql_inj += preg_match('/create\s+table/i',	 $val);
-        $sql_inj += preg_match('/update.+set.+=/i',  $val);
-        $sql_inj += preg_match('/insert\s+into/i', 	 $val);
-        $sql_inj += preg_match('/select.+from/i', 	 $val);
-        $sql_inj += preg_match('/union.+select/i', 	 $val);
-        $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-        $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
+        $inj += preg_match('/delete\s+from/i',	 $val);
+        $inj += preg_match('/create\s+table/i',	 $val);
+        $inj += preg_match('/update.+set.+=/i',  $val);
+        $inj += preg_match('/insert\s+into/i', 	 $val);
+        $inj += preg_match('/select.+from/i', 	 $val);
+        $inj += preg_match('/union.+select/i', 	 $val);
+        $inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+        $inj += preg_match('/(\.\.%2f)+/i',		 $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
     // When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
-    $sql_inj += preg_match('/<script/i', $val);
-    if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
-    $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-    $sql_inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
+    $inj += preg_match('/<script/i', $val);
+    if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
+    $inj += preg_match('/base[\s]+href/si', $val);
+    $inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+    $inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
+    $inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
+    $inj += preg_match('/onload\s*=/i', $val);        // onload can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
     if ($type == 1)
     {
-        $sql_inj += preg_match('/javascript:/i', $val);
-        $sql_inj += preg_match('/vbscript:/i', $val);
+        $inj += preg_match('/javascript:/i', $val);
+        $inj += preg_match('/vbscript:/i', $val);
     }
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-    if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
-    if ($type == 2) $sql_inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
-    return $sql_inj;
+    if ($type == 1) $inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
+    if ($type == 2) $inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
+    return $inj;
 }
 
 /**
@@ -1075,10 +1076,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";      				// Do not index
         print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
-        // Favicon. Note, even if we remove this meta, the browser and android webview try to find a favicon.ico
+        // Favicon
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
-        print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
+        if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
         //if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
@@ -1199,7 +1200,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes JS for JQuery -->'."\n";
             if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+            if (! empty($conf->global->MAIN_FEATURES_LEVEL) && ! defined('JS_JQUERY_MIGRATE_DISABLED'))
             {
                 if (defined('JS_JQUERY_MIGRATE') && constant('JS_JQUERY_MIGRATE')) print '<script type="text/javascript" src="'.JS_JQUERY_MIGRATE.'jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
@@ -2002,7 +2003,7 @@ if (! function_exists("llxFooter"))
         }
 
         // Wrapper to manage dropdown
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax) && ! defined('JS_JQUERY_DISABLE_DROPDOWN'))
         {
             print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
             print '<script type="text/javascript">

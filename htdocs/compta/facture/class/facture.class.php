@@ -748,6 +748,15 @@ class Facture extends CommonInvoice
 
 		// Charge facture source
 		$facture=new Facture($this->db);
+                
+                $this->fetch_optionals();
+                if(!empty($this->array_options)){
+                    $facture->array_options = $this->array_options;
+                }
+           
+                foreach($this->lines as &$line){
+                    $line->fetch_optionals();//fetch extrafields
+                }
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
@@ -774,7 +783,7 @@ class Facture extends CommonInvoice
 		$facture->situation_final  = $this->situation_final;
 
 		// Loop on each line of new invoice
-		foreach($facture->lines as $i => $line)
+		foreach($facture->lines as $i => $tmpline)
 		{
 			$facture->lines[$i]->fk_prev_id = $this->lines[$i]->rowid;
 			if ($invertdetail)

@@ -260,9 +260,16 @@ if ($id > 0)
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-    print '<div class="underbanner clearboth"></div>';
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
+	    print '<div class="underbanner clearboth"></div>';
 
-    print '<br>';
+	    print '<br>';
+
+	    showMyBalance($holiday, $user_id);
+	}
+
+	dol_fiche_end();
 }
 else
 {
@@ -270,23 +277,43 @@ else
     //print count($holiday->holiday);
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, count($holiday->holiday), 'title_hrm.png', 0, '', '', $limit);
 
-	dol_fiche_head('');
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
+		dol_fiche_head('');
+
+		showMyBalance($holiday, $user_id);
+
+		dol_fiche_end();
+	}
 }
 
-$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
 
-$out='';
-$typeleaves=$holiday->getTypes(1,1);
-foreach($typeleaves as $key => $val)
+
+/**
+ * Show balance of user
+ *
+ * @param 	Holiday	$holiday	Object $holiday
+ * @param	int		$user_id	User id
+ * @return	string				Html code with balance
+ */
+function showMyBalance($holiday, $user_id)
 {
-	$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
-	$nb_holiday += $nb_type;
-	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
-}
-print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
-print $out;
+	global $conf, $langs;
 
-dol_fiche_end();
+	$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
+
+	$out='';
+	$typeleaves=$holiday->getTypes(1,1);
+	foreach($typeleaves as $key => $val)
+	{
+		$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
+		$nb_holiday += $nb_type;
+		$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+	}
+	print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+	print $out;
+}
+
 
 
 if ($id > 0) print '<br>';
@@ -387,15 +414,15 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("DateDebCP",$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("DateFinCP",$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 

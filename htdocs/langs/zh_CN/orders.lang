@@ -4,6 +4,7 @@ SuppliersOrdersArea=供应商订单区
 OrderCard=订单信息
 OrderId=订单编号
 Order=订单
+PdfOrderTitle=订单
 Orders=订单
 OrderLine=在线订单
 OrderDate=订购日期

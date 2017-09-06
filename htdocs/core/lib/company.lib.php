@@ -749,10 +749,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Poste",$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre( $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
     // Add to agenda
     if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create))
     {
@@ -1043,7 +1043,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
     global $param;
 
     // Check parameters
-    if (! is_object($filterobj)) dol_print_error('','BadParameter');
+    if (! is_object($filterobj) && ! is_object($objcon)) dol_print_error('','BadParameter');
 
     $out='';
     $histo=array();
@@ -1061,24 +1061,24 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
         $sql.= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
-        if (get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
-        if (get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
-        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
+        if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
-        if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
-        if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         $sql.= " WHERE u.rowid = a.fk_user_action";
         $sql.= " AND a.entity IN (".getEntity('agenda').")";
-        if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-        if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        if (get_class($filterobj) == 'Adherent')
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+        if (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+        if (is_object($filterobj) && get_class($filterobj) == 'Adherent')
         {
             $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
             if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        if (get_class($filterobj) == 'CommandeFournisseur')
+        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
         {
             $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
             if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
@@ -1239,7 +1239,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        if ($objcon && get_class($objcon) == 'Contact' && get_class($filterobj) == 'Societe')
+        if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
         {
             $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
         }
@@ -1247,7 +1247,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         {
             $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
         }
-        if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
+        if ($filterobj && get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
 
         $out.="\n";
 

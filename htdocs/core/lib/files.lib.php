@@ -588,7 +588,7 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
- * Copy a dir to another dir.
+ * Copy a dir to another dir. This include recursive subdirectories.
  *
  * @param	string	$srcfile			Source file (a directory)
  * @param	string	$destfile			Destination file (a directory)
@@ -630,7 +630,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
         $dir_handle=opendir($ossrcfile);
         while ($file=readdir($dir_handle))
         {
-            if ($file!="." && $file!="..")
+            if ($file != "." && $file != ".." && ! is_link($ossrcfile."/".$file))
             {
                 if (is_dir($ossrcfile."/".$file))
                 {
@@ -999,7 +999,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 }
 
 /**
- *  Remove a file or several files with a mask
+ *  Remove a file or several files with a mask.
+ *  This delete file physically but also database indexes.
  *
  *  @param	string	$file           File to delete or mask of files to delete
  *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
@@ -1154,7 +1155,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 
                 if ($item != "." && $item != "..")
                 {
-                    if (is_dir(dol_osencode("$dir/$item")))
+                    if (is_dir(dol_osencode("$dir/$item")) && ! is_link(dol_osencode("$dir/$item")))
                     {
                         $count=dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted);
                     }
@@ -1349,14 +1350,15 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  *
  * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
+ * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index.
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
+ * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
  * @return	int                             <=0 if KO, >0 if OK
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='', $generatethumbs=1)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1407,16 +1409,19 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					// Generate thumbs.
-					if (image_format_supported($destfull) == 1)
+					if ($generatethumbs)
 					{
-					    // Create thumbs
-					    // We can't use $object->addThumbs here because there is no $object known
+						if (image_format_supported($destfull) == 1)
+						{
+						    // Create thumbs
+						    // We can't use $object->addThumbs here because there is no $object known
 
-					    // Used on logon for example
-					    $imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-					    // Create mini thumbs for image (Ratio is near 16/9)
-					    // Used on menu or for setup page for example
-					    $imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+						    // Used on logon for example
+						    $imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+						    // Create mini thumbs for image (Ratio is near 16/9)
+						    // Used on menu or for setup page for example
+						    $imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+						}
 					}
 
 					// Update session
@@ -1560,34 +1565,41 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
- *  @return	int					<0 if KO, >0 if OK
+ *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
 function dol_convert_file($fileinput,$ext='png',$fileoutput='')
 {
 	global $langs;
 
-	$image=new Imagick();
-	$ret = $image->readImage($fileinput);
-	if ($ret)
+	if (class_exists('Imagick'))
 	{
-		$ret = $image->setImageFormat($ext);
+		$image=new Imagick();
+		$ret = $image->readImage($fileinput);
 		if ($ret)
 		{
-			if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
+			$ret = $image->setImageFormat($ext);
+			if ($ret)
+			{
+				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
-			$count = $image->getNumberImages();
-			$ret = $image->writeImages($fileoutput, true);
-			if ($ret) return $count;
-			else return -3;
+				$count = $image->getNumberImages();
+				$ret = $image->writeImages($fileoutput, true);
+				if ($ret) return $count;
+				else return -3;
+			}
+			else
+			{
+				return -2;
+			}
 		}
 		else
 		{
-			return -2;
+			return -1;
 		}
 	}
 	else
 	{
-		return -1;
+		return 0;
 	}
 }
 

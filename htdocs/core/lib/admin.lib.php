@@ -146,7 +146,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             $buf = fgets($fp, 4096);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
-            if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
+            if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
             {
             	$qualified=1;
 
@@ -159,20 +159,29 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             	// restrict on version
             	if ($qualified)
             	{
-
-	                $versionrequest=explode('.',$reg[2]);
-	                //print var_dump($versionrequest);
-	                //print var_dump($versionarray);
-	                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
-	                {
-	                	$qualified=0;
-	                }
+            		if (! empty($reg[2]))
+            		{
+            			if (is_numeric($reg[2]))	// This is a version
+            			{
+			                $versionrequest=explode('.',$reg[2]);
+			                //print var_dump($versionrequest);
+			                //print var_dump($versionarray);
+			                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
+			                {
+			                	$qualified=0;
+			                }
+            			}
+            			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+            			{
+							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation)))) $qualified=0;
+            			}
+            		}
             	}
 
                 if ($qualified)
                 {
                     // Version qualified, delete SQL comments
-                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i','',$buf);
+                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i','',$buf);
                     //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
                 }
             }

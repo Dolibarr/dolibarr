@@ -418,7 +418,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
 			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -492,23 +492,36 @@ foreach ($accounts as $key=>$type)
     // Account number
     if (! empty($arrayfields['b.account_number']['checked']))
     {
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-
-		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('',$acc->account_number);
-
-		print '<td>'.length_accountg($accountingaccount->getNomUrl(0,1,1,'',1)).'</td>';
-
+    	print '<td>';
+    	if (! empty($conf->accounting->enabled))
+    	{
+    		$accountingaccount = new AccountingAccount($db);
+    		$accountingaccount->fetch('',$acc->account_number);
+    		print $accountingaccount->getNomUrl(0,1,1,'',1);
+    	}
+    	else
+    	{
+    		print $acc->account_number;
+    	}
+    	print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
     // Accountancy journal
     if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
-		$accountingjournal = new AccountingJournal($db);
-		$accountingjournal->fetch($acc->fk_accountancy_journal);
-
-		print '<td>'.$accountingjournal->getNomUrl(0,1,1,'',1).'</td>';
+    	print '<td>';
+    	if (! empty($conf->accounting->enabled))
+    	{
+    		$accountingjournal = new AccountingJournal($db);
+    		$accountingjournal->fetch($acc->fk_accountancy_journal);
+    		print $accountingjournal->getNomUrl(0,1,1,'',1);
+    	}
+    	else
+    	{
+    		print '';
+    	}
+    	print '</td>';
 		if (! $i) $totalarray['nbfield']++;
     }
 

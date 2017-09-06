@@ -2,7 +2,7 @@
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -488,7 +488,7 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}

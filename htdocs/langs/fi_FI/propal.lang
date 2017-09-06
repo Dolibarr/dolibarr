@@ -6,6 +6,7 @@ ProposalsDraft=Tarjousluonnos
 ProposalsOpened=Open commercial proposals
 Prop=Tarjoukset
 CommercialProposal=Tarjous
+PdfCommercialProposalTitle=Tarjous
 ProposalCard=Tarjous kortti
 NewProp=Uusi tarjous
 NewPropal=Uusi tarjous

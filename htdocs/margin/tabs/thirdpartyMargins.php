@@ -92,14 +92,14 @@ if ($socid > 0)
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-    
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-    
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
-    
+
     if ($object->client)
     {
         print '<tr><td class="titlefield">';
@@ -138,14 +138,14 @@ if ($socid > 0)
     }
 
     print "</table>";
-    
+
     print '</div>';
     print '<div style="clear:both"></div>';
 
     dol_fiche_end();
-    
+
     print '<br>';
-    
+
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
     $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
@@ -179,16 +179,16 @@ if ($socid > 0)
     	print "<table class=\"noborder\" width=\"100%\">";
 
     	print '<tr class="liste_titre">';
-    	print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("SoldAmount"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("PurchasedAmount"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
+    	print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
+    	print_liste_field_titre("SoldAmount",$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("PurchasedAmount",$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	if (! empty($conf->global->DISPLAY_MARK_RATES))
-    		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	print "</tr>\n";
 
     	$cumul_achat = 0;
@@ -206,7 +206,7 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-    			
+
 
     			print '<tr class="oddeven">';
     			print '<td>';
@@ -232,7 +232,7 @@ if ($socid > 0)
     	}
 
     	// affichage totaux marges
-    	
+
     	$totalMargin = $cumul_vente - $cumul_achat;
     	if ($totalMargin < 0)
     	{
@@ -244,7 +244,7 @@ if ($socid > 0)
     		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
     		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
     	}
-    	
+
     	// Total
     	print '<tr class="liste_total">';
     	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";

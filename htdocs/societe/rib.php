@@ -443,17 +443,17 @@ if ($socid && $action != 'edit' && $action != "create")
         print '<table class="liste" width="100%">';
 
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("LabelRIB"));
-        print_liste_field_titre($langs->trans("Bank"));
-        print_liste_field_titre($langs->trans("RIB"));
-        print_liste_field_titre($langs->trans("IBAN"));
-        print_liste_field_titre($langs->trans("BIC"));
+        print_liste_field_titre("LabelRIB");
+        print_liste_field_titre("Bank");
+        print_liste_field_titre("RIB");
+        print_liste_field_titre("IBAN");
+        print_liste_field_titre("BIC");
         if (! empty($conf->prelevement->enabled))
         {
-			print print_liste_field_titre($langs->trans("RUM"));
-			print print_liste_field_titre($langs->trans("WithdrawMode"));
+			print print_liste_field_titre("RUM");
+			print print_liste_field_titre("WithdrawMode");
         }
-        print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
+        print_liste_field_titre("DefaultRIB", '', '', '', '', 'align="center"');
         print_liste_field_titre('', '', '', '', '', 'align="center"');
         print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";

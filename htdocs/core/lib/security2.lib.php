@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
-	// Select templates
+	// Select templates dir
 	if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
 	{
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl/'));
@@ -201,10 +201,19 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$demopassword=$tab[1];
 	}
 
-	// Execute hook getLoginPageOptions
-	// Should be an array with differents options in $hookmanager->resArray
+	// Execute hook getLoginPageOptions (for table)
 	$parameters=array('entity' => GETPOST('entity','int'));
-	$reshook = $hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks. resArray is filled by hook.
+	$reshook = $hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks.
+	if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {
+		$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
+	} else {
+		$morelogincontent = $hookmanager->resPrint;
+	}
+
+	// Execute hook getLoginPageExtraOptions (eg for js)
+	$parameters=array('entity' => GETPOST('entity','int'));
+	$reshook = $hookmanager->executeHooks('getLoginPageExtraOptions',$parameters);    // Note that $action and $object may have been modified by some hooks.
+	$moreloginextracontent = $hookmanager->resPrint;
 
 	// Login
 	$login = (! empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username","alpha") ? GETPOST("username","alpha") : $demologin));

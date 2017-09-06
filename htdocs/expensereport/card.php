@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -1871,7 +1871,7 @@ else
 				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 				$sql.= " WHERE e.rowid = '".$id."'";
 				$sql.= " AND p.fk_expensereport = e.rowid";
-				$sql.= " AND e.entity = ".$conf->entity;
+				$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 				$sql.= " AND p.fk_typepayment = c.id";
 				$sql.= " ORDER BY dp";
 
@@ -1955,7 +1955,14 @@ else
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
-				$sql.= ' ORDER BY fde.date ASC';
+				if (! empty($conf->global->EXPENSEREPORT_LINES_SORTED_BY_ROWID))
+				{
+					$sql.= ' ORDER BY fde.rang ASC, fde.rowid ASC';
+				}
+				else
+				{
+					$sql.= ' ORDER BY fde.rang ASC, fde.date ASC';
+				}
 
 				print '<div style="clear: both;"></div>';
 

@@ -2322,10 +2322,6 @@ class Form
                 unset($producttmpselect);
             }
 
-        	if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
-			{
-				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
-			}
 			// mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
@@ -2333,11 +2329,6 @@ class Form
         }
         else
         {
-            if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
-			{
-				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
-				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';
-			}
         	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
         }
     }
@@ -5038,7 +5029,7 @@ class Form
      *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
      *	@param	array			$array          Array (key => value)
      *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-     *	@param	int				$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (value is '' or '&nbsp;' if 1), <0 to add an empty value with key that is this value.
+     *	@param	int|string		$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
      *	@param	int				$key_in_label   1 to show key into label with format "[key] value"
      *	@param	int				$value_as_key   1 to use value as key
      *	@param  string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
@@ -5890,18 +5881,22 @@ class Form
             $object->next_prev_filter.=$hookmanager->resPrint;
         }
 
-        //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
-        $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
-
-        $navurl = $_SERVER["PHP_SELF"];
-        // Special case for project/task page
-        if ($paramid == 'project_ref')
+        $previous_ref = $next_ref = '';
+        if ($shownav)
         {
-            $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document).php/','/tasks.php',$navurl);
-            $paramid='ref';
+	        //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
+	        $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
+
+        	$navurl = $_SERVER["PHP_SELF"];
+	        // Special case for project/task page
+	        if ($paramid == 'project_ref')
+	        {
+	            $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document)\.php/','/tasks.php',$navurl);
+	            $paramid='ref';
+	        }
+	        $previous_ref = $object->ref_previous?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+	        $next_ref     = $object->ref_next?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
         }
-        $previous_ref = $object->ref_previous?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-        $next_ref     = $object->ref_next?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<!-- Start banner content --><div style="vertical-align: middle">';
@@ -5954,6 +5949,10 @@ class Form
 		else if (in_array($object->element, array('adherent_type')))
 		{
 			$ret.=$object->label;
+		}
+		else if ($object->element == 'ecm_directories')
+		{
+			$ret.='';
 		}
 		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
 
