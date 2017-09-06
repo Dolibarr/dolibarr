@@ -3263,7 +3263,12 @@ function dol_print_error($db='',$error='',$errors=null)
 	}
 
 	if (empty($dolibarr_main_prod)) print $out;
-	else define("MAIN_CORE_ERROR", 1);
+	else
+	{
+		print $langs->trans("DolibarrHasDetectedError").'. ';
+		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
+		define("MAIN_CORE_ERROR", 1);
+	}
 	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
@@ -6208,6 +6213,8 @@ function dol_getmypid()
 function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
+
+    $value=trim($value);
 
     if ($mode == 0)
     {

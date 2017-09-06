@@ -158,6 +158,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     foreach ($listfield as $f => $value)
     {
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
+		if ($value == 'range_account' && empty($_POST['range_account'])) continue;
 		if ($value == 'country') continue;								// country_id required but not country
 		if (! isset($_POST[$value]) || $_POST[$value]=='')
         {
@@ -285,7 +286,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             }
             if ($i) $sql.=",";
             $sql.= $field."=";
-            if ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
+            if ($_POST[$listfieldvalue[$i]] == '' && ! $listfieldvalue[$i] == 'range_account') $sql.="null";  // For range_account, we want/accept code = ''
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
             $i++;
         }
@@ -433,7 +434,7 @@ if ($id == 32)
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id>0?'&search_country_id='.$search_country_id:''), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -586,8 +587,7 @@ if ($id)
         $paramwithsearch = $param;
         if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
         if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-        if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-
+        if (GETPOST('from','alpha')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
         // There is several pages
         if ($num > $listlimit)
         {
@@ -774,14 +774,9 @@ if ($id)
                     if (isset($obj->code))
                     {
                     	if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) { $iserasable = 0; $canbedisabled = 0; }
-                    	else if ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; }
-                    	else if ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
                     }
 
-                    if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
-                    if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
-                    if ($obj->code == 'RECEP') $canbemodified=1;
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
                     if ($param) $url .= '&'.$param;
@@ -792,10 +787,7 @@ if ($id)
                     if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else
                  	{
-                 		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
-                 		else if (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
-                  		else if (isset($obj->type) && in_array($obj->type, array('system')) && ! empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
-                    	else print $langs->trans("AlwaysActive");
+                    	print $langs->trans("AlwaysActive");
                     }
                     print "</td>";
 
