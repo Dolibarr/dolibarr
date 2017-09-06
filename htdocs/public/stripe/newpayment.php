@@ -1085,6 +1085,7 @@ if (preg_match('/^dopayment/',$action))
         box-shadow: 0 1px 3px 0 #e6ebf1;
         -webkit-transition: box-shadow 150ms ease;
         transition: box-shadow 150ms ease;
+        width: 350px;
     }
 
     .StripeElement--focus {
@@ -1126,7 +1127,7 @@ if (preg_match('/^dopayment/',$action))
     <label for="card-element">
     Credit or debit card
     </label>
-    <div id="card-element" style="width: 350px;">
+    <div id="card-element">
     <!-- a Stripe Element will be inserted here. -->
     </div>
 
