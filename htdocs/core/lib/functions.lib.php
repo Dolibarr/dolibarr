@@ -3595,7 +3595,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'').'>'.($page+1)."</li>";
 		}
 	}
+
 	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
+
 	print '</td>';
 
 	print '</tr></table>'."\n";

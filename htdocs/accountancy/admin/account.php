@@ -190,13 +190,14 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $params='';
+    $param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($search_account) $params.= '&search_account='.urlencode($search_account);
-	if ($search_label) $params.= '&search_label='.urlencode($search_label);
-	if ($search_accountparent) $params.= '&search_accountparent='.urlencode($search_accountparent);
-	if ($search_pcgtype) $params.= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $params.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($search_account) $param.= '&search_account='.urlencode($search_account);
+	if ($search_label) $param.= '&search_label='.urlencode($search_label);
+	if ($search_accountparent) $param.= '&search_accountparent='.urlencode($search_accountparent);
+	if ($search_pcgtype) $param.= '&search_pcgtype='.urlencode($search_pcgtype);
+	if ($search_pcgsubtype) $param.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
@@ -212,7 +213,7 @@ if ($resql)
 
 	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 
-    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
+    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd, '', $limit);
 
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts") . " : ";
