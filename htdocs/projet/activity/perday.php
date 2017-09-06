@@ -341,6 +341,9 @@ $param='';
 $param.=($mode?'&mode='.$mode:'');
 $param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
 $param.=($search_userassignedid > 0?'&search_userassignedid='.$search_usertoprocessid:'');
+$param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
+$param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
+$param.=($search_task_label?'&search_task_label='.$search_task_label:'');
 
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
