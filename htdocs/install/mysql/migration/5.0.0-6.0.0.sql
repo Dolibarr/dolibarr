@@ -24,6 +24,8 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
@@ -326,7 +328,8 @@ ALTER TABLE llx_expensereport_det ADD COLUMN vat_src_code varchar(10)  DEFAULT '
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('ADHERENT_BANK_USE_AUTO')__;
 
-UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__ WHERE value = __ENCRYPT('moono')__ AND name = __ENCRYPT('FCKEDITOR_SKIN')__;
+UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__   WHERE value = __ENCRYPT('moono')__       AND name = __ENCRYPT('FCKEDITOR_SKIN')__;
+DELETE FROM llx_document_model where nom = 'fsfe.fr.php' and type='donation';
 
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;

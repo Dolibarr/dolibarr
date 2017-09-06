@@ -6199,6 +6199,8 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
 
+    $value=trim($value);
+
     if ($mode == 0)
     {
     	$value=preg_replace('/\*/','%',$value);	// Replace * with %
