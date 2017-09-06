@@ -2,6 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1125,7 +1126,7 @@ if (preg_match('/^dopayment/',$action))
     <label for="card-element">
     Credit or debit card
     </label>
-    <div id="card-element">
+    <div id="card-element" style="width: 350px;">
     <!-- a Stripe Element will be inserted here. -->
     </div>
 
