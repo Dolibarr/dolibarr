@@ -818,9 +818,11 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 	$sql.= " WHERE b.numero_compte = aa.account_number AND b.entity = ".$conf->entity;
 	//$sql.= " AND fk_statut in (1,2)";
 	$sql.= " AND (";
-	$sql.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	//$sql.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	$sql.= " (pcg_type = 'EXPENSE')";
 	$sql.= " OR ";
-	$sql.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	//$sql.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	$sql.= " (pcg_type = 'INCOME')";
 	$sql.= ")";
 	//$sql.= " AND code_journal in ('VT', 'AC')";
 	if (! empty($date_start) && ! empty($date_end))
