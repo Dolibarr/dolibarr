@@ -178,7 +178,7 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
+   foreach($extrafields->attribute_label as $key => $val)
    {
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key]);
    }
@@ -217,16 +217,16 @@ if (empty($reshook))
     	$search_accountancy_code_buy='';
     	$search_array_options=array();
     }
-    
+
     // Mass actions
     $objectclass='Product';
     if ((string) $type == '1') { $objectlabel='Services'; }
     if ((string) $type == '0') { $objectlabel='Products'; }
-    
+
     $permtoread = $user->rights->produit->lire;
     $permtodelete = $user->rights->produit->supprimer;
     $uploaddir = $conf->product->dir_output;
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';    
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -321,8 +321,9 @@ else
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    $typ=$extrafields->attribute_type[$tmpkey];
 	    $mode=0;
-	    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-	    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+	    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+	    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+	    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
 	    {
 	        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
 	    }
@@ -353,10 +354,10 @@ else
 	 */
 	function list_get_product_sellprice($fk_object) {
 		global $langs,$conf, $user;
-		
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
 		if($object === false) return '';
-		
+
 		if ($object->status)
 		{
 			if ($object->price_base_type == 'TTC') return price($object->price_ttc).' '.$langs->trans("TTC");
@@ -371,23 +372,23 @@ else
 	 * @param   int 	$fk_object 	rowid of product
 	 * @param	string	$field		concerned field status|status_buy
 	 * @param	int		$type		for libstatus
-	 * @return string	
+	 * @return string
 	 */
 	function list_get_product_status($fk_object, $field, $type) {
 		global $conf, $user;
-		
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
-		
+
 		if($object === false) return '';
-		
+
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			return ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
 			return $object->LibStatut($object->{$field},5,$type);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Function return formated ref
 	 *
@@ -396,14 +397,14 @@ else
 	 */
 	function list_get_product_ref($fk_object) {
 		global $conf, $user;
-		
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
-		
+
 		if($object === false) return '';
-		
+
 		return $object->getNomUrl(1,'',24);
 	}
-	
+
 	/**
 	 * Function return formated extrafield
 	 *
@@ -413,10 +414,10 @@ else
 	 */
 	function list_get_product_extrafield($fk_object, $key) {
 		global $extrafields;
-		
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
 		if($object === false) return '';
-		
+
 		return $extrafields->showOutputField($key, $object->array_options['options_'.$key], '', 1);
 	}
 
@@ -428,12 +429,12 @@ else
 	 */
 	function list_get_product_virtual_stock($fk_object) {
 		global $langs;
-	
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
 		if($object === false) return '';
-		
+
 		$object->load_stock('nobatch');
-		
+
 		$out = '';
 		if ($object->type != 1)
 		{
@@ -443,7 +444,7 @@ else
 
 		return $out;
 	}
-	
+
 	/**
 	 * Function return formated stock
 	 *
@@ -452,17 +453,17 @@ else
 	 */
 	function list_get_product_stock($fk_object) {
 		global $langs;
-		
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
 		if($object === false) return '';
-		
+
 		$out = '';
 		if ($object->type != 1)
 		{
 			if ($object->seuil_stock_alerte != '' && $object->stock_reel< (float) $object->seuil_stock_alerte) $out.= img_warning($langs->trans("StockTooLow")).' ';
 			$out.= (double) $object->stock_reel;
 		}
-		
+
 		return $out;
 	}
 	/**
@@ -473,12 +474,12 @@ else
 	 */
 	function list_get_product_minbuyprice($fk_object) {
 		global $conf, $user, $langs,$db,$form;
-		
+
 		$out = '';
-		
+
 		$object = Listview::getCachedOjbect('Product', $fk_object);
 		if($object === false || empty($object->status_buy) ) return '';
-		
+
 		$product_fourn =new ProductFournisseur($db);
 		if ($product_fourn->find_min_price_product_fournisseur($fk_object) > 0)
 		{
@@ -494,7 +495,7 @@ else
 		}
 		return $out;
 	}
-	
+
 	// array of customized field function
 	$arrayeval = array(
 			'tobuy'=>'list_get_product_status(@rowid@, "status_buy",1)'
@@ -506,7 +507,7 @@ else
 			,'stock'=>'list_get_product_stock(@rowid@)'
 			,'minbuyprice'=>'list_get_product_minbuyprice(@rowid@)'
 	);
-	
+
 	// defined list align for field
 	$arrayalign = array(
 			'price'=>'right'
@@ -519,13 +520,13 @@ else
 			,'datec'=>'center'
 			,'tms'=>'center'
 	);
-	
+
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListMoreFields',$parameters);    // Note that $action and $object may have been modified by hook
 	if($reshook) {
 		$arrayfields = $hookmanager->resArray;
 	}
-	
+
 	// init title, hidden field (allowed into selected fields), and position
 	$arrayhide = $arraytitle = $arrayposition = array();
     foreach($arrayfields as $k=>$data) {
@@ -537,7 +538,7 @@ else
     		$arrayposition[$f] = empty($data['position']) ? 0 : $data['position'];
     	}
     }
-    
+
     // Extra fields
     if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     {
@@ -554,7 +555,7 @@ else
     );
     if ($user->rights->produit->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
     if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
-    
+
     // Filter on categories
     $moreforfilter='';
     if (! empty($conf->categorie->enabled))
@@ -564,7 +565,7 @@ else
     	$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
     	$moreforfilter.='</div>';
     }
-    
+
     //Show/hide child products. Hidden by default
     if (!empty($conf->variants->enabled) && $type === 0) {
     	$moreforfilter.='<div class="divsearchfield">';
@@ -572,16 +573,16 @@ else
     	$moreforfilter.= ' <label for="search_hidechildproducts">'.$langs->trans('HideChildProducts').'</label>';
     	$moreforfilter.='</div>';
     }
-    
+
     if ($moreforfilter)
     {
     	$parameters=array();
     	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-    	
+
     	if(!empty($hookmanager->resPrint)) {
     		$moreforfilter.=$hookmanager->resPrint;
     	}
-    				
+
     }
 
     $param='';
@@ -609,7 +610,7 @@ else
     	$tmpkey=preg_replace('/search_options_/','',$key);
     	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     }
-    
+
     //var_dump($arraytitle,$arrayhide);
     $list=new Listview($db, 'product');
     $listHTML = $list->render($sql,array(
@@ -633,7 +634,7 @@ else
     		,'allow-fields-select'=>1 // allow to select hidden fields
     		,'head_search'=>$moreforfilter //custom search on head
     		,'no-auto-sql-search'=>1 //disabled auto completion sql for search and pager url, use dolibarr style for migration of product list
-			,'translate'=>array()    		
+			,'translate'=>array()
     		,'search'=>array(
     				'ref'=>array('search_type'=>true, 'table'=>'p', 'fieldname'=>'sref')
     				,'label'=>array('search_type'=>true, 'table'=>'p', 'fieldname'=>'snom')
@@ -650,11 +651,11 @@ else
     		,'hide'=>$arrayhide
     		,'eval'=>$arrayeval
     ));
-    
+
     $num = $list->totalRow;
-    
+
     	$arrayofselected=is_array($toselect)?$toselect:array();
-    	
+
     	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
     	{
     	    $id = $list->TField[0]->rowid;
@@ -693,9 +694,9 @@ else
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
 		echo $listHTML;
-    
+
     	print '</form>';
-    
+
 }
 
 
