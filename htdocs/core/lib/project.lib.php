@@ -175,6 +175,17 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
+	
+	// Manage discussion
+	if (empty($conf->global->MAIN_ALLOW_COMMENT_ON_TASK))
+	{
+		$nbComments= $object->getNbComments();
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
+		$head[$h][1] = $langs->trans("TaskCommentLinks");
+		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
+		$head[$h][2] = 'task_comment';
+		$h++;
+	}
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
@@ -187,7 +198,7 @@ function task_prepare_head($object)
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
-
+    
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

@@ -826,6 +826,16 @@ div.fiche>form>div.div-table-responsive {
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 
+.width20p { width:20%; }
+.width25p { width:25%; }
+.width40p { width:40%; }
+.width50p { width:50%; }
+.width60p { width:60%; }
+.width75p { width:75%; }
+.width80p { width:80%; }
+.width100p { width:100%; }
+
+
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
@@ -3796,6 +3806,29 @@ pre#editfilecontentaceeditorid {
 
 #types textarea {
     height: 100px;
+}
+
+
+/* ============================================================================== */
+/*  Comments                                                                   	  */
+/* ============================================================================== */
+
+#comment div {
+	box-sizing:border-box;
+}
+
+#comment .comment {
+    border-radius:7px;
+    padding:7px 10px;
+    margin-bottom:10px;
+}
+#comment .comment-info {
+    font-size:0.8em;
+    color:#555;
+    margin-top:5px;
+}
+#comment textarea {
+    width: 100%;
 }
 
 
