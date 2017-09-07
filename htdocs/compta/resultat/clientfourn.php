@@ -238,9 +238,11 @@ print "</tr>\n";
 if ($modecompta == 'BOOKKEEPING')
 {
 	$predefinedgroupwhere = "(";
-	$predefinedgroupwhere.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	//$predefinedgroupwhere.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	$predefinedgroupwhere.= " (pcg_type = 'EXPENSE')";
 	$predefinedgroupwhere.= " OR ";
-	$predefinedgroupwhere.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	//$predefinedgroupwhere.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
+	$predefinedgroupwhere.= " (pcg_type = 'INCOME')";
 	$predefinedgroupwhere.= ")";
 
 	$charofaccountstring = $conf->global->CHARTOFACCOUNTS;

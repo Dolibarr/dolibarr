@@ -187,7 +187,7 @@ UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as group for accounting account products to build the expense/income report.
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
@@ -219,7 +219,7 @@ ChangeBinding=Change the binding
 
 ## Admin
 ApplyMassCategories=Apply mass categories
-AddAccountFromBookKeepingWithNoCategories=Add acccount already used with no categories
+AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
 CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal

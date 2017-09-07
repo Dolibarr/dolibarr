@@ -113,7 +113,7 @@ if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 $check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$original_file              = $check_access['original_file'];
+$fullpath_original_file     = $check_access['original_file'];
 
 // Security:
 // Limit access if permissions are wrong
@@ -124,11 +124,10 @@ if (! $accessallowed)
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpath_original_file))
 {
-    dol_syslog("Refused to deliver file ".$original_file, LOG_WARNING);
-    // Do no show plain path in shown error message
-    dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
+	dol_syslog("Refused to deliver file ".$fullpath_original_file);
+	print "ErrorFileNameInvalid: ".$original_file;
     exit;
 }
 
@@ -143,7 +142,7 @@ if ($modulepart == 'barcode')
 
     if (empty($generator) || empty($encoding))
     {
-        dol_print_error(0,'Error, parameter "generator" or "encoding" not defined');
+        print 'Error: Parameter "generator" or "encoding" not defined';
         exit;
     }
 
@@ -176,14 +175,13 @@ else					// Open and return file
     clearstatcache();
 
     // Output files on browser
-    dol_syslog("viewimage.php return file $original_file content-type=$type");
+    dol_syslog("viewimage.php return file $fullpath_original_file content-type=$type");
 
     // This test is to avoid error images when image is not available (for example thumbs).
-    if (! dol_is_file($original_file) && empty($_GET["noalt"]))
+    if (! dol_is_file($fullpath_original_file) && empty($_GET["noalt"]))
     {
-        $original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
+        $fullpath_original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
         /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
-        dol_print_error(0,$error);
         print $error;
         exit;*/
     }
@@ -192,16 +190,17 @@ else					// Open and return file
     if ($type)
     {
         top_httphead($type);
-        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
+        header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
     }
     else
     {
         top_httphead('image/png');
-        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
+        header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
     }
 
-    $original_file_osencoded=dol_osencode($original_file);
-    readfile($original_file_osencoded);
+    $fullpath_original_file_osencoded=dol_osencode($fullpath_original_file);
+
+    readfile($fullpath_original_file_osencoded);
 }
 
 
