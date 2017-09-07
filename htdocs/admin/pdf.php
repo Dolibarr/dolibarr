@@ -77,7 +77,7 @@ if ($action == 'update')
 
 
     dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX",    $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["_MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
