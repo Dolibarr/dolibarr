@@ -94,18 +94,23 @@ function test_sql_and_script_inject($val, $type)
     // This is all cases a browser consider text is javascript:
     // When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
+	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
     $inj += preg_match('/<script/i', $val);
+	$inj += preg_match('/<iframe/i', $val);
+	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
     if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
     $inj += preg_match('/base[\s]+href/si', $val);
     $inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
     $inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
     $inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-    $inj += preg_match('/onload\s*=/i', $val);        // onload can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-    if ($type == 1)
-    {
+    $inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
+    //$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
+	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val);		// refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+    //if ($type == 1)
+    //{
         $inj += preg_match('/javascript:/i', $val);
         $inj += preg_match('/vbscript:/i', $val);
-    }
+    //}
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
     if ($type == 1) $inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
     if ($type == 2) $inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
