@@ -259,8 +259,12 @@ class Task extends CommonObject
 
             $this->db->free($resql);
 
-            if ($num_rows) return 1;
-            else return 0;
+            if ($num_rows) {
+            	$this->fetchComments();
+            	return 1;
+            }else {
+            	return 0;
+            }
         }
         else
         {
