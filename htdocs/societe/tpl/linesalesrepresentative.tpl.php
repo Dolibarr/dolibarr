@@ -32,6 +32,8 @@
                 $userstatic->firstname=$val['firstname'];
                 $userstatic->statut=$val['statut'];
                 $userstatic->photo=$val['photo'];
+                $userstatic->email=$val['email'];
+                $userstatic->entity=$val['entity'];
                 print $userstatic->getNomUrl(-1);
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';

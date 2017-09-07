@@ -4349,7 +4349,7 @@ abstract class CommonObject
               			}
                			elseif ($value=='')
                			{
-               				$this->array_options[$key] = null;
+               				$new_array_options[$key] = null;
                			}
              			break;
              		/*case 'select':	// Not required, we chosed value='0' for undefined values
@@ -4359,13 +4359,13 @@ abstract class CommonObject
              			}
              			break;*/
             		case 'price':
-            			$this->array_options[$key] = price2num($this->array_options[$key]);
+            			$new_array_options[$key] = price2num($this->array_options[$key]);
             			break;
             		case 'date':
-            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
             			break;
             		case 'datetime':
-            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
             			break;
            			case 'link':
 						$param_list=array_keys($attributeParam ['options']);
@@ -4381,7 +4381,7 @@ abstract class CommonObject
     							if (is_numeric($value)) $res=$object->fetch($value);
 								else $res=$object->fetch('',$value);
 
-    							if ($res > 0) $this->array_options[$key]=$object->id;
+    							if ($res > 0) $new_array_options[$key]=$object->id;
     							else
     							{
     							    $this->error="Ref '".$value."' for object '".$object->element."' not found";
@@ -4421,9 +4421,9 @@ abstract class CommonObject
                 // Add field o fattribut
             	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
             	{
-	                if ($this->array_options[$key] != '')
+	                if ($new_array_options[$key] != '')
 	                {
-	                    $sql.=",'".$this->db->escape($this->array_options[$key])."'";
+	                    $sql.=",'".$this->db->escape($new_array_options[$key])."'";
 	                }
 	                else
 	                {
@@ -4620,10 +4620,13 @@ abstract class CommonObject
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 
+					$labeltoshow = $langs->trans($label);
 					if($extrafields->attribute_required[$key])
-						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
+					{
+						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
+					}
+					$out .= '<td>'.$labeltoshow.'</td>';
 
-					$out .= '<td>'.$langs->trans($label).'</td>';
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
 

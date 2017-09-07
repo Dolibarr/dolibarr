@@ -184,3 +184,96 @@ function dolIncludeHtmlContent($contentfile)
 	$includehtmlcontentopened--;
 }
 
+/**
+ * Generate a zip with all data of web site.
+ *
+ * @param 	Website		$website		Object website
+ * @return  void
+ */
+function exportWebSite($website)
+{
+	global $db, $conf;
+
+	dol_mkdir($conf->websites->dir_temp);
+	$srcdir = $conf->websites->dir_output.'/'.$website->ref;
+	$destdir = $conf->websites->dir_temp.'/'.$website->ref;
+
+	$arrayreplacement=array();
+
+	dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+
+	$srcdir = DOL_DATA_ROOT.'/medias/images/'.$website->ref;
+	$destdir = $conf->websites->dir_temp.'/'.$website->ref.'/medias/images/'.$website->ref;
+
+	dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+
+	// Build sql file
+	dol_mkdir($conf->websites->dir_temp.'/'.$website->ref.'/export');
+
+	$filesql = $conf->websites->dir_temp.'/'.$website->ref.'/export/pages.sql';
+	$fp = fopen($filesql,"w");
+
+	$objectpages = new WebsitePage($db);
+	$listofpages = $objectpages->fetchAll($website->id);
+
+	// Assign ->newid and ->newfk_page
+	$i=1;
+	foreach($listofpages as $pageid => $objectpageold)
+	{
+		$objectpageold->newid=$i;
+		$i++;
+	}
+	$i=1;
+	foreach($listofpages as $pageid => $objectpageold)
+	{
+		// Search newid
+		$newfk_page=0;
+		foreach($listofpages as $pageid2 => $objectpageold2)
+		{
+			if ($pageid2 == $objectpageold->fk_page)
+			{
+				$newfk_page = $objectpageold2->newid;
+				break;
+			}
+		}
+		$objectpageold->newfk_page=$newfk_page;
+		$i++;
+	}
+	foreach($listofpages as $pageid => $objectpageold)
+	{
+		$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keyword, status, date_creation, tms, lang, import_key, grabbed_from, content)';
+		$line.= " VALUES(";
+		$line.= $objectpageold->newid."+__MAXROWID__, ";
+		$line.= ($objectpageold->newfk_page ? $db->escape($objectpageold->newfk_page)."+__MAXROWID__" : "null").", ";
+		$line.= "__WEBSITE_ID__, ";
+		$line.= "'".$db->escape($objectpageold->pageurl)."', ";
+		$line.= "'".$db->escape($objectpageold->title)."', ";
+		$line.= "'".$db->escape($objectpageold->description)."', ";
+		$line.= "'".$db->escape($objectpageold->keyword)."', ";
+		$line.= "'".$db->escape($objectpageold->status)."', ";
+		$line.= "'".$db->idate($objectpageold->date_creation)."', ";
+		$line.= "'".$db->idate($objectpageold->date_modification)."', ";
+		$line.= "'".$db->escape($objectpageold->lang)."', ";
+		$line.= ($objectpageold->import_key ? "'".$db->escape($objectpageold->import_key)."'" : "null").", ";
+		$line.= "'".$db->escape($objectpageold->grabbed_from)."', ";
+		$line.= "'".$db->escape($objectpageold->content)."'";
+		$line.= ");";
+		$line.= "\n";
+		fputs($fp, $line);
+	}
+
+	fclose($fp);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filesql, octdec($conf->global->MAIN_UMASK));
+
+	// Build zip file
+	$filedir = $conf->websites->dir_temp.'/'.$website->ref;
+	$fileglob = $conf->websites->dir_temp.'/'.$website->ref.'/export/'.$website->ref.'_export_*.zip';
+	$filename = $conf->websites->dir_temp.'/'.$website->ref.'/export/'.$website->ref.'_export_'.dol_print_date(dol_now(),'dayhourlog').'.zip';
+
+	dol_delete_file($fileglob, 0);
+	dol_compress_file($filedir, $filename, 'zip');
+
+	return $filename;
+}
+

@@ -24,10 +24,10 @@
 
 
 /**
- *	Show header of a VAT report
+ *	Show header of a report
  *
- *	@param	string				$nom            Name of report
- *	@param 	string				$variante       Link for alternate report
+ *	@param	string				$reportname     Name of report
+ *	@param 	string				$notused        Not used
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
@@ -35,17 +35,17 @@
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
- *   @param  string              $varlink        Add a variable into the address of the page
+ *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function report_header($reportname,$notused,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
 {
 	global $langs;
 
 	if (empty($hselected)) $hselected='report';
-	
-	print "\n\n<!-- debut cartouche rapport -->\n";
-	
+
+	print "\n\n<!-- start banner of report -->\n";
+
 	if(! empty($varlink)) $varlink = '?'.$varlink;
 
 	$h=0;
@@ -53,23 +53,25 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
 
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+
 	dol_fiche_head($head, 'report');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
 	foreach($moreparam as $key => $value)
 	{
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 	print '<table width="100%" class="border">';
 
+	$variante = ($periodlink || $exportlink);
+
 	// Ligne de titre
 	print '<tr>';
 	print '<td width="110">'.$langs->trans("ReportName").'</td>';
-	if (! $variantexxx) print '<td colspan="3">';
-	else print '<td>';
-	print $nom;
-	if ($variantexxx) print '</td><td colspan="2">'.$variantexxx;
+	print '<td>';
+	print $reportname;
 	print '</td>';
+	if ($variante) print '<td></td>';
 	print '</tr>';
 
 	// Calculation mode
@@ -77,10 +79,9 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	{
 		print '<tr>';
 		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-		if (! $variante) print '<td colspan="3">';
-		else print '<td>';
+		print '<td>';
 		print $calcmode;
-		if ($variante) print '</td><td colspan="2">'.$variante;
+		if ($variante) print '<td></td>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -88,35 +89,37 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	if (! $periodlink) print '<td colspan="3">';
-	else print '<td>';
+	print '<td>';
 	if ($period) print $period;
-	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	if ($variante) print '<td>'.$periodlink.'</td>';
 	print '</td>';
 	print '</tr>';
 
 	// Ligne de description
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
-	print '<td colspan="3">'.$description.'</td>';
+	print '<td>'.$description.'</td>';
+	if ($variante) print '<td></td>';
 	print '</tr>';
 
 	// Ligne d'export
 	print '<tr>';
 	print '<td>'.$langs->trans("GeneratedOn").'</td>';
-	if (! $exportlink) print '<td colspan="3">';
-	else print '<td>';
-	print dol_print_date($builddate);
-	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
-	print '</td></tr>';
+	print '<td>';
+	print dol_print_date($builddate, 'dayhour');
+	print '</td>';
+	if ($variante) print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
+	print '</tr>';
 
 	print '</table>';
 
-	print '<br><div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
-	print '</form>';
-
 	dol_fiche_end();
-	
-	print "\n<!-- fin cartouche rapport -->\n\n";
+
+	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+
+	print '</form>';
+	print '<br>';
+
+	print "\n<!-- end banner of report -->\n\n";
 }
 

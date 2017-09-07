@@ -528,7 +528,7 @@ class ExtraFields
 				$typedb=$type;
 				$lengthdb=$length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'));
+			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'), 'default'=>$default);
 
 			if ($type != 'separate') // No table update when separate type
 			{
@@ -660,7 +660,7 @@ class ExtraFields
 			$sql.= " '".$param."',";
 			$sql.= " ".$list.", ";
 			$sql.= " ".$ishidden.", ";
-			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
+			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
@@ -769,8 +769,8 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
 
-
-					if (!empty($conf->multicompany->enabled)) {
+					if (!empty($conf->multicompany->enabled))
+					{
 						$sql_entity_name='SELECT label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid='.$tab->entity;
 						$resql_entity_name=$this->db->query($sql_entity_name);
 						if ($resql_entity_name)
@@ -784,11 +784,6 @@ class ExtraFields
 								}
 							}
 						}
-					}
-					else
-					{
-						$this->error=$this->db->lasterror();
-						dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 					}
 				}
 			}
@@ -1133,13 +1128,13 @@ class ExtraFields
 			$form = new Form($db);
 
 			$value_arr=explode(',',$value);
-			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $param['options'], $value_arr, '', 0, '', 0, '100%');
+			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 
 		}
 		elseif ($type == 'radio')
 		{
 			$out='';
-			foreach ($param['options'] as $keyopt=>$val )
+			foreach ($param['options'] as $keyopt => $val)
 			{
 				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';

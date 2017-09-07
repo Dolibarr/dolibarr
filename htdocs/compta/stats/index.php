@@ -25,21 +25,69 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$year_start=GETPOST("year_start");
-$year_current = strftime("%Y",time());
+$langs->loadLangs(array('compta','bills','donation','salaries'));
+
+$date_startmonth=GETPOST('date_startmonth');
+$date_startday=GETPOST('date_startday');
+$date_startyear=GETPOST('date_startyear');
+$date_endmonth=GETPOST('date_endmonth');
+$date_endday=GETPOST('date_endday');
+$date_endyear=GETPOST('date_endyear');
+
 $nbofyear=4;
-if (! $year_start) {
-	$year_start = $year_current - ($nbofyear-1);
-	$year_end = $year_current;
+
+// Date range
+$year=GETPOST('year','int');
+if (empty($year))
+{
+	$year_current = strftime("%Y",dol_now());
+	$month_current = strftime("%m",dol_now());
+	$year_start = $year_current - ($nbofyear - 1);
+} else {
+	$year_current = $year;
+	$month_current = strftime("%m",dol_now());
+	$year_start = $year - ($nbofyear - 1);
 }
-else {
-	$year_end=$year_start + ($nbofyear-1);
+$date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
+$date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+// We define date_start and date_end
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=GETPOST("q")?GETPOST("q"):0;
+	if ($q==0)
+	{
+		// We define date_start and date_end
+		$year_end=$year_start + ($nbofyear - 1);
+		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		if (! GETPOST('month'))
+		{
+			if (! GETPOST("year") &&  $month_start > $month_current)
+			{
+				$year_start--;
+				$year_end--;
+			}
+			$month_end=$month_start-1;
+			if ($month_end < 1) $month_end=12;
+			else $year_end++;
+		}
+		else $month_end=$month_start;
+		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+	}
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
+
 $userid=GETPOST('userid','int');
 $socid = GETPOST('socid','int');
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
+
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
+if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
 
 // Security check
@@ -55,55 +103,57 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
  */
 
 llxHeader();
+
 $form=new Form($db);
 
 // Affiche en-tete du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-	$nom=$langs->trans("SalesTurnover");
+	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
-	$period="$year_start - $year_end";
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="RECETTES-DEPENSES")
 {
-	$nom=$langs->trans("SalesTurnover");
+	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
-	$period="$year_start - $year_end";
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="BOOKKEEPING")
 {
-	$nom=$langs->trans("BookkeepingTurnover");
+	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period="$year_start - $year_end";
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesCABookkeeping");
-	$description.= $langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$description=$langs->trans("RulesCADue");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	else  $description.= $langs->trans("DepositsAreIncluded");
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
@@ -252,7 +302,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 {
 	$mois_modulo = $mois;// ajout
 	if($mois>12){$mois_modulo = $mois-12;} // ajout
-	
+
 	print '<tr class="oddeven">';
 
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
@@ -342,7 +392,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 /*
  for ($mois = 1 ; $mois < 13 ; $mois++)
  {
- 
+
  print '<tr class="oddeven">';
 
  print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,2000),"%B")."</td>";
@@ -510,7 +560,7 @@ print '</div>';
  $totalam_Rac +=  $obj->am;
  $i++;
  }
- 
+
  print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
  }
  $db->free($resql);
@@ -560,7 +610,7 @@ print '</div>';
  $total_pr +=  $obj->total_ttc-$obj->tot_fttc;
  $i++;
  }
- 
+
  print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
  }
  $db->free($resql);

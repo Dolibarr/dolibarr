@@ -28,7 +28,8 @@ create table llx_payment_various
   fk_typepayment        integer NOT NULL,
   num_payment           varchar(50),				-- ref
   label                 varchar(255),
-  accountancy_code		varchar(32),
+  accountancy_code      varchar(32),
+  fk_projet             integer DEFAULT NULL,
   entity                integer DEFAULT 1 NOT NULL,	-- multi company id
   note                  text,
   fk_bank               integer,
