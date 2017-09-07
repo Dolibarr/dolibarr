@@ -459,9 +459,9 @@ if (empty($reshook))
 	                        // Extrafields
 	                        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
 	                        	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	                        	$extrafields = new ExtraFields($db);
-	                        	$targetExtraLabels = $extrafields->fetch_name_optionals_label($object->table_element_line);
-	                        	$lines[$i]->fetch_optionals($lines[$i]->rowid, $targetExtraLabels);
+	                        	$targetExtraFields = new ExtraFields($db);
+	                        	$targetExtraFieldLabels = $targetExtraFields->fetch_name_optionals_label($object->table_element_line);
+	                        	$lines[$i]->fetch_optionals($lines[$i]->rowid, $targetExtraFieldLabels);
 	                        }
 	                        // FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 	                        $result = $object->addline(
