@@ -1236,8 +1236,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                           && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
                            )
                         {
-                            $ret = dol_convert_file($file, 'png', $fileimage);
-                            if ($ret < 0) $error++;
+                        	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+                        	{
+                            	$ret = dol_convert_file($file, 'png', $fileimage);
+                            	if ($ret < 0) $error++;
+                        	}
                         }
 
                         $heightforphotref=70;
@@ -3248,7 +3251,12 @@ function dol_print_error($db='',$error='',$errors=null)
 	}
 
 	if (empty($dolibarr_main_prod)) print $out;
-	else define("MAIN_CORE_ERROR", 1);
+	else
+	{
+		print $langs->trans("DolibarrHasDetectedError").'. ';
+		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
+		define("MAIN_CORE_ERROR", 1);
+	}
 	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
@@ -3699,7 +3707,13 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 		$info_bits |= 1;
 	}
 
-	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
+	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	else
+	{
+		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		$ret=$rate.($addpercent?'%':'');
+	}
 	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
@@ -6184,6 +6198,8 @@ function dol_getmypid()
 function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
+
+    $value=trim($value);
 
     if ($mode == 0)
     {

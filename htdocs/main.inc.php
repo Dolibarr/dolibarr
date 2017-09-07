@@ -77,38 +77,39 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  */
 function test_sql_and_script_inject($val, $type)
 {
-    $sql_inj = 0;
+    $inj = 0;
     // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
     if ($type != 2)
     {
-        $sql_inj += preg_match('/delete\s+from/i',	 $val);
-        $sql_inj += preg_match('/create\s+table/i',	 $val);
-        $sql_inj += preg_match('/update.+set.+=/i',  $val);
-        $sql_inj += preg_match('/insert\s+into/i', 	 $val);
-        $sql_inj += preg_match('/select.+from/i', 	 $val);
-        $sql_inj += preg_match('/union.+select/i', 	 $val);
-        $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-        $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
+        $inj += preg_match('/delete\s+from/i',	 $val);
+        $inj += preg_match('/create\s+table/i',	 $val);
+        $inj += preg_match('/update.+set.+=/i',  $val);
+        $inj += preg_match('/insert\s+into/i', 	 $val);
+        $inj += preg_match('/select.+from/i', 	 $val);
+        $inj += preg_match('/union.+select/i', 	 $val);
+        $inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+        $inj += preg_match('/(\.\.%2f)+/i',		 $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
     // When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
-    $sql_inj += preg_match('/<script/i', $val);
-    if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
-    $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-    $sql_inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
+    $inj += preg_match('/<script/i', $val);
+    if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
+    $inj += preg_match('/base[\s]+href/si', $val);
+    $inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+    $inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
+    $inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
+    $inj += preg_match('/onload\s*=/i', $val);        // onload can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
     if ($type == 1)
     {
-        $sql_inj += preg_match('/javascript:/i', $val);
-        $sql_inj += preg_match('/vbscript:/i', $val);
+        $inj += preg_match('/javascript:/i', $val);
+        $inj += preg_match('/vbscript:/i', $val);
     }
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-    if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
-    if ($type == 2) $sql_inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
-    return $sql_inj;
+    if ($type == 1) $inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
+    if ($type == 2) $inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
+    return $inj;
 }
 
 /**

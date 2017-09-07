@@ -514,7 +514,7 @@ foreach ($accounts as $key=>$type)
     	if (! empty($conf->accounting->enabled))
     	{
     		$accountingjournal = new AccountingJournal($db);
-    		$accountingjournal->fetch('',$acc->fk_accountancy_journal);
+    		$accountingjournal->fetch($acc->fk_accountancy_journal);
     		print $accountingjournal->getNomUrl(0,1,1,'',1);
     	}
     	else
