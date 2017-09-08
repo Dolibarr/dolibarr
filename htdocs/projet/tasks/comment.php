@@ -141,7 +141,6 @@ if ($id > 0 || ! empty($ref))
 	if ($task->fetch($id,$ref) > 0)
 	{
 		$res=$task->fetch_optionals($task->id,$extralabels);
-		$res = $task->fetchComments();
 
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -369,7 +368,7 @@ if ($id > 0 || ! empty($ref))
 				print '<div class="comment-info">';
 				print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
 				print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
-				if($first && $fk_user == $user->id) {
+				if(($first && $fk_user == $user->id) || $user->admin == 1) {
 					print '<br/> <a href="?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'">'.$langs->trans('Delete').'</a>';
 				}
 				print '</div>';
