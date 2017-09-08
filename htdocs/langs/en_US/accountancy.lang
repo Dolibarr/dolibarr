@@ -273,5 +273,6 @@ BookeppingLineAlreayExists=Lines already existing into bookeeping
 NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
+UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. It will be replaced by a more complete report in a next version. 

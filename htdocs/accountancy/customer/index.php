@@ -213,8 +213,8 @@ for($i = 1; $i <= 12; $i ++) {
 }
 print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
-$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') . " AS codecomptable,";
-$sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
+$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
+$sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
 	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
@@ -240,8 +240,20 @@ if ($resql) {
 
 	while ( $row = $db->fetch_row($resql)) {
 
-		print '<tr class="oddeven"><td>' . length_accountg($row[0]) . '</td>';
-		print '<td align="left">' . $row[1] . '</td>';
+		print '<tr class="oddeven"><td>';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("Unknown");
+		}
+		else print length_accountg($row[0]);
+		print '</td>';
+		print '<td align="left">';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+		}
+		else print $row[1];
+		print '</td>';
 		for($i = 2; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
 		}
@@ -269,8 +281,8 @@ for($i = 1; $i <= 12; $i ++) {
 }
 print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
-$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') . " AS codecomptable,";
-$sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
+$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
+$sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
 	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
@@ -296,7 +308,20 @@ if ($resql) {
 
 	while ( $row = $db->fetch_row($resql)) {
 
-		print '<tr class="oddeven"><td>' . length_accountg($row[0]) . '</td>';
+		print '<tr class="oddeven"><td>';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("Unknown");
+		}
+		else print length_accountg($row[0]);
+		print '</td>';
+		print '<td align="left">';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+		}
+		else print $row[1];
+		print '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		for($i = 2; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
@@ -363,7 +388,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 	print "</table>\n";
 
-	
+
 	if (! empty($conf->margin->enabled)) {
 		print "<br>\n";
 		print '<table class="noborder" width="100%">';
