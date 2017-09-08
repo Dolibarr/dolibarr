@@ -1525,7 +1525,7 @@ class Categorie extends CommonObject
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
 	 *
 	 *  @param      string	$sdir       Repertoire destination finale
-	 *  @param      string	$files		Nom du fichier uploade
+	 *  @param      string	$file		Nom du fichier uploade
 	 *	@return		void
 	 */
 	function add_photo($sdir, $file)
