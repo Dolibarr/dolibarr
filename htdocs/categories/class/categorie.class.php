@@ -1530,8 +1530,6 @@ class Categorie extends CommonObject
 	 */
 	function add_photo($sdir, $file)
 	{
-
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
