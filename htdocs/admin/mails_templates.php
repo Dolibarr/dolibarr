@@ -55,7 +55,7 @@ $search_label=GETPOST('search_label','alpha');
 $search_type_template=GETPOST('search_type_template','alpha');
 $search_topic=GETPOST('search_topic','alpha');
 $search_lang=GETPOST('search_lang','alpha');
-$search_fk_user=GETPOST('search_fk_user','intcoma');
+$search_fk_user=GETPOST('search_fk_user','intcomma');
 $search_topic=GETPOST('search_topic','alpha');
 
 $allowed=1;
