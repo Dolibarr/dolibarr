@@ -160,7 +160,8 @@ if ($conf->fournisseur->enabled)       $elementList['order_supplier_send']=$lang
 if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
 if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans('MailToThirdparty');
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
-$elementList['other']=$langs->trans('Other');
+$elementList['all']=$langs->trans('VisibleEverywhere');
+$elementList['none']=$langs->trans('VisibleNowhere');
 
 
 $parameters=array('elementList'=>$elementList);
