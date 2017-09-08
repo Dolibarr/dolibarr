@@ -177,7 +177,7 @@ function task_prepare_head($object)
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 	
 	// Manage discussion
-	if (empty($conf->global->MAIN_ALLOW_COMMENT_ON_TASK))
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK))
 	{
 		$nbComments= $object->getNbComments();
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
