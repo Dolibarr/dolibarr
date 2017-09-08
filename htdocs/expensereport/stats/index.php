@@ -74,7 +74,7 @@ print load_fiche_titre($title, $mesg);
 dol_mkdir($dir);
 
 $stats = new ExpenseReportStats($db, $socid, $userid);
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$object_status.')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -262,7 +262,7 @@ foreach ($data as $val)
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		
+
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
@@ -271,7 +271,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	
+
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';

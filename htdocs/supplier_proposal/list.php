@@ -284,7 +284,7 @@ if ($search_montant_vat != '') $sql.= natural_search("sp.tva", $search_montant_v
 if ($search_montant_ttc != '') $sql.= natural_search("sp.total", $search_montant_ttc, 1);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
-if ($search_status >= 0 && $search_status != '') $sql.= ' AND sp.fk_statut IN ('.$search_status.')';
+if ($search_status >= 0 && $search_status != '') $sql.= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
