@@ -805,6 +805,7 @@ ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 ImportId=Import id
 Websites=Web sites
 Events=Events
+EMailTemplates=Emails templates
 # Week day
 Monday=Monday
 Tuesday=Tuesday
