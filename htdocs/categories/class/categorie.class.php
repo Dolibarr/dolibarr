@@ -1542,18 +1542,28 @@ class Categorie extends CommonObject
 			dol_mkdir($dir);
 		}
 
-		if (file_exists($dir))
-		{
-			for ($i=0;$i<=count($file['name']);$i++) {
+		if (file_exists($dir)) {
+			if (is_array($file['name']) && count($file['name']) > 0) {
+				for($i = 0; $i <= count($file['name']); $i ++) {
 
-				$originImage = $dir . $file['name'][$i];
+					$originImage = $dir . $file['name'][$i];
+
+					// Cree fichier en taille origine
+					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
+
+					if (file_exists($originImage)) {
+						// Create thumbs
+						$this->addThumbs($originImage);
+					}
+				}
+			} else {
+				$originImage = $dir . $file['name'];
 
 				// Cree fichier en taille origine
-				dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
+				dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
 
-				if (file_exists($originImage))
-				{
-				    // Create thumbs
+				if (file_exists($originImage)) {
+					// Create thumbs
 					$this->addThumbs($originImage);
 				}
 			}
