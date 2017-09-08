@@ -201,9 +201,10 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
     $head[$h][1] = $langs->trans("Journalization");
     $head[$h][2] = 'journal';
 
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+
     dol_fiche_head($head, 'journal');
 
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
     foreach($moreparam as $key => $value)
     {
         print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -251,11 +252,11 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     print '</table>';
 
-    print '<br><div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+    dol_fiche_end();
+
+    print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
     print '</form>';
-
-    dol_fiche_end();
 
     print "\n<!-- fin cartouche journal -->\n\n";
 }

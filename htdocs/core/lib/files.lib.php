@@ -288,8 +288,8 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complate filearray.
  *
- * @param	$filearray		Array of files get using dol_dir_list
- * @param	$relativedir	Relative dir from DOL_DATA_ROOT
+ * @param	array	$filearray		Array of files get using dol_dir_list
+ * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
 function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
@@ -1654,34 +1654,41 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
- *  @return	int					<0 if KO, >0 if OK
+ *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
 function dol_convert_file($fileinput,$ext='png',$fileoutput='')
 {
 	global $langs;
 
-	$image=new Imagick();
-	$ret = $image->readImage($fileinput);
-	if ($ret)
+	if (class_exists('Imagick'))
 	{
-		$ret = $image->setImageFormat($ext);
+		$image=new Imagick();
+		$ret = $image->readImage($fileinput);
 		if ($ret)
 		{
-			if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
+			$ret = $image->setImageFormat($ext);
+			if ($ret)
+			{
+				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
-			$count = $image->getNumberImages();
-			$ret = $image->writeImages($fileoutput, true);
-			if ($ret) return $count;
-			else return -3;
+				$count = $image->getNumberImages();
+				$ret = $image->writeImages($fileoutput, true);
+				if ($ret) return $count;
+				else return -3;
+			}
+			else
+			{
+				return -2;
+			}
 		}
 		else
 		{
-			return -2;
+			return -1;
 		}
 	}
 	else
 	{
-		return -1;
+		return 0;
 	}
 }
 
@@ -1929,7 +1936,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
 {
 	global $user, $conf, $db;
-	global $dolibarr_main_data_root;
+	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
 
 	if (! is_object($fuser)) $fuser=$user;
 
@@ -1964,6 +1971,16 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	{
 	    $accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 	    $original_file=$dolibarr_main_data_root.'/'.$original_file;
+	}
+	// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+	elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root))
+	{
+		// Dir for custom dirs
+		$tmp=explode(',', $dolibarr_main_document_root_alt);
+		$dirins = $tmp[0];
+
+	    $accessallowed=($user->admin && preg_match('/^module_.*\.zip$/', basename($original_file)));
+	    $original_file=$dirins.'/'.$original_file;
 	}
 	// Wrapping for some images
 	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))

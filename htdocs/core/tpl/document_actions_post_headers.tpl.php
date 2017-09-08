@@ -80,7 +80,7 @@ $formfile->form_attach_new_file(
 
 $disablemove=1;
 if ($modulepart == 'produit') $disablemove=0;
-    
+
 // List of document
 $formfile->list_of_documents(
     $filearray,

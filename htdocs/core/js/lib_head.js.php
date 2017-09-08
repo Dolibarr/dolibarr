@@ -46,7 +46,7 @@ else header('Cache-Control: no-cache');
 ?>
 
 /*
- * ================================================================= 
+ * =================================================================
  * Purpose:
  * Pour la saisie des dates par calendrier Input: base "/theme/eldy" dateFieldID
  * "dateo" Nom du champ format "dd/MM/yyyy" Format issu de Dolibarr de
@@ -63,7 +63,7 @@ function showDP(base,dateFieldID,format,codelang)
 	showDP.datefieldID=dateFieldID;	// Must be after the close
 
 	var dateField=getObjectFromID(dateFieldID);
-	
+
 	// get positioning
 	var thetop=getTop(dateField)+dateField.offsetHeight;
 
@@ -86,7 +86,7 @@ function showDP(base,dateFieldID,format,codelang)
 	showDP.box.style.position="absolute";
 	showDP.box.style.top=thetop + "px";
 	showDP.box.style.left=theleft + "px";
-	
+
 	if (dateField.value)	// Si il y avait valeur initiale dans champ
 	{
 		selDate=getDateFromFormat(dateField.value,format);
@@ -129,7 +129,7 @@ function resetDP(base,dateFieldID,format,codelang)
 	var dateField=getObjectFromID(dateFieldID);
 	dateField.value = formatDate(new Date(), format);
 	dpChangeDay(dateFieldID,format);
-	
+
 	var alreadybox=getObjectFromID("DPCancel");
 	if (alreadybox) showDP(base,dateFieldID,format,codelang);
 }
@@ -147,25 +147,26 @@ function loadMonth(base,month,year,ymd,codelang)
 	}
 
 	var req=null;
-	
+
 	req=loadXMLDoc(theURL,null,false);
 	if (req.responseText == '') alert('Failed to get URL '.theURL);
  	// alert(theURL+' - '+req.responseText); // L'url doit avoir la meme racine
 	// que la pages et elements sinon pb de securite.
-	showDP.box.innerHTML=req.responseText;	
+	showDP.box.innerHTML=req.responseText;
 }
 
 function closeDPBox()
 {
 	document.body.removeChild(showDP.box);
 	displaySelectBoxes();
-	showDP.box=null;	
-	showDP.datefieldID=null;	
+	showDP.box=null;
+	showDP.datefieldID=null;
 }
 
 function dpChangeDay(dateFieldID,format)
 {
 	showDP.datefieldID=dateFieldID;
+	console.log("Call dpChangeDay, we save date into detailed fields.");
 
 	var thefield=getObjectFromID(showDP.datefieldID);
 	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
@@ -200,7 +201,7 @@ function dpClickDay(year,month,day,format)
 	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
 	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
 
-	var dt = new Date(year, month-1, day); 
+	var dt = new Date(year, month-1, day);
 
 	thefield.value=formatDate(dt,format);
 	if(thefield.onchange) thefield.onchange.call(thefield);
@@ -238,7 +239,7 @@ function getTop(theitem){
 		offsetTop += offsetTrail.offsetTop;
 		offsetTrail = offsetTrail.offsetParent;
 	}
-	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined") 
+	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined")
 		offsetTop += document.body.TopMargin;
 	return offsetTop;
 }
@@ -251,7 +252,7 @@ function getLeft(theitem){
 		offsetLeft += offsetTrail.offsetLeft;
 		offsetTrail = offsetTrail.offsetParent;
 	}
-	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined") 
+	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined")
 		offsetLeft += document.body.leftMargin;
 	return offsetLeft;
 }
@@ -260,16 +261,16 @@ function getLeft(theitem){
 // Create XMLHttpRequest object and load url
 // Used by calendar or other ajax processes
 // Return req built or false if error
-function loadXMLDoc(url,readyStateFunction,async) 
+function loadXMLDoc(url,readyStateFunction,async)
 {
 	// req must be defined by caller with
 	// var req = false;
- 
+
 	// branch for native XMLHttpRequest object (Mozilla, Safari...)
 	if (window.XMLHttpRequest)
 	{
 		req = new XMLHttpRequest();
-		
+
 // if (req.overrideMimeType) {
 // req.overrideMimeType('text/xml');
 // }
@@ -286,7 +287,7 @@ function loadXMLDoc(url,readyStateFunction,async)
             try {
                 req = new ActiveXObject("Microsoft.XMLHTTP");
             } catch (e) {}
-        } 
+        }
 	}
 
 	// If XMLHttpRequestObject req is ok, call URL
@@ -321,9 +322,9 @@ function loadXMLDoc(url,readyStateFunction,async)
  */
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
-	{  
-		for(var i = 0; i < document.all.length; i++) 
+	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
+	{
+		for(var i = 0; i < document.all.length; i++)
 		{
 			if(document.all[i].tagName)
 				if(document.all[i].tagName == "SELECT")
@@ -337,9 +338,9 @@ function hideSelectBoxes() {
  */
 function displaySelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
-	{  
-	       for(var i = 0; i < document.all.length; i++) 
+	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
+	{
+	       for(var i = 0; i < document.all.length; i++)
 	       {
 	               if(document.all[i].tagName)
 	                       if(document.all[i].tagName == "SELECT")
@@ -351,7 +352,7 @@ function displaySelectBoxes() {
 
 
 /*
- * ================================================================= 
+ * =================================================================
  * Function:
  * formatDate (javascript object Date(), format) Purpose: Returns a date in the
  * output format specified. The format string can use the following tags: Field |
@@ -366,10 +367,10 @@ function displaySelectBoxes() {
 function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
-	
+
 	// Force parametres en chaine
 	format=format+"";
-	
+
 	var result="";
 
 	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
@@ -402,7 +403,7 @@ function formatDate(date,format)
 		else if (substr == 'mm')   { result=result+(minute<0||minute>9?"":"0")+minute; }
 		else if (substr == 'ss')   { result=result+(seconde<0||seconde>9?"":"0")+seconde; }
 		else { result=result+substr; }
-		
+
 		i+=substr.length;
 	}
 
@@ -412,22 +413,22 @@ function formatDate(date,format)
 
 
 /*
- * ================================================================= 
+ * =================================================================
  * Function:
  * getDateFromFormat(date_string, format_string) Purpose: This function takes a
  * date string and a format string. It parses the date string with format and it
  * returns the date as a javascript Date() object. If date does not match
- * format, it returns 0. The format string can use the following tags: 
+ * format, it returns 0. The format string can use the following tags:
  * Field        | Tags
  * -------------+-----------------------------------
- * Year         | yyyy (4 digits), yy (2 digits) 
- * Month        | MM (2 digits) 
- * Day of Month | dd (2 digits) 
- * Hour (1-12)  | hh (2 digits) 
- * Hour (0-23)  | HH (2 digits) 
- * Minute       | mm (2 digits) 
+ * Year         | yyyy (4 digits), yy (2 digits)
+ * Month        | MM (2 digits)
+ * Day of Month | dd (2 digits)
+ * Hour (1-12)  | hh (2 digits)
+ * Hour (0-23)  | HH (2 digits)
+ * Minute       | mm (2 digits)
  * Second       | ss (2 digits)
- * Author: Laurent Destailleur 
+ * Author: Laurent Destailleur
  * Licence: GPL
  * ==================================================================
  */
@@ -440,7 +441,7 @@ function getDateFromFormat(val,format)
 	format=format+"";
 
 	if (val == '') return 0;
-	
+
 	var now=new Date();
 	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
 	var month=now.getMonth()+1;
@@ -466,37 +467,37 @@ function getDateFromFormat(val,format)
 		}
 
 		// alert('substr='+substr);
-        if (substr == "yyyy") year=getIntegerInString(val,d,4,4); 
-        if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900); 
-        if (substr == "MM" ||substr == "M") 
-        { 
-            month=getIntegerInString(val,d,1,2); 
-            d -= 2- month.length; 
-        } 
-        if (substr == "dd") 
-        { 
-            day=getIntegerInString(val,d,1,2); 
-            d -= 2- day.length; 
-        } 
-        if (substr == "HH" ||substr == "hh" ) 
-        { 
-            hour=getIntegerInString(val,d,1,2); 
-            d -= 2- hour.length; 
-        } 
-        if (substr == "mm"){ 
-            minute=getIntegerInString(val,d,1,2); 
-            d -= 2- minute.length; 
-        } 
-        if (substr == "ss") 
-        { 
-            seconde=getIntegerInString(val,d,1,2); 
-            d -= 2- seconde.length; 
-        } 
-	
+        if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
+        if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+        if (substr == "MM" ||substr == "M")
+        {
+            month=getIntegerInString(val,d,1,2);
+            d -= 2- month.length;
+        }
+        if (substr == "dd")
+        {
+            day=getIntegerInString(val,d,1,2);
+            d -= 2- day.length;
+        }
+        if (substr == "HH" ||substr == "hh" )
+        {
+            hour=getIntegerInString(val,d,1,2);
+            d -= 2- hour.length;
+        }
+        if (substr == "mm"){
+            minute=getIntegerInString(val,d,1,2);
+            d -= 2- minute.length;
+        }
+        if (substr == "ss")
+        {
+            seconde=getIntegerInString(val,d,1,2);
+            d -= 2- seconde.length;
+        }
+
 		i+=substr.length;
 		d+=substr.length;
 	}
-	
+
 	// Check if format param are ok
 	if (year==null||year<1) { return 0; }
 	if (month==null||(month<1)||(month>12)) { return 0; }
@@ -504,15 +505,15 @@ function getDateFromFormat(val,format)
 	if (hour==null||(hour<0)||(hour>24)) { return 0; }
 	if (minute==null||(minute<0)||(minute>60)) { return 0; }
 	if (seconde==null||(seconde<0)||(seconde>60)) { return 0; }
-		
+
 	// alert(year+' '+month+' '+day+' '+hour+' '+minute+' '+seconde);
 	return new Date(year,month-1,day,hour,minute,seconde);
 }
 
 /*
- * ================================================================= 
+ * =================================================================
  * Function:
- * stringIsInteger(string) 
+ * stringIsInteger(string)
  * Purpose: Return true if string is an integer
  * ==================================================================
  */
@@ -530,9 +531,9 @@ function stringIsInteger(str)
 }
 
 /*
- * ================================================================= 
+ * =================================================================
  * Function:
- * getIntegerInString(string,pos,minlength,maxlength) 
+ * getIntegerInString(string,pos,minlength,maxlength)
  * Purpose: Return part of string from position i that is integer
  * ==================================================================
  */
@@ -549,10 +550,10 @@ function getIntegerInString(str,i,minlength,maxlength)
 
 
 /*
- * ================================================================= 
+ * =================================================================
  * Purpose:
- * Clean string to have it url encoded 
- * Input: s 
+ * Clean string to have it url encoded
+ * Input: s
  * Author: Laurent Destailleur
  * Licence: GPL
  * ==================================================================
@@ -566,11 +567,11 @@ function urlencode(s) {
 
 
 /*
- * ================================================================= 
+ * =================================================================
  * Purpose:
  * Applique un delai avant execution. Used for autocompletion of companies.
- * Input:   funct, delay 
- * Author:  Regis Houssin 
+ * Input:   funct, delay
+ * Author:  Regis Houssin
  * Licence: GPL
  * ==================================================================
  */
@@ -581,11 +582,11 @@ function urlencode(s) {
 
 
 /*
- * ================================================================= 
+ * =================================================================
  * Purpose:
  * Clean values of a "Sortable.serialize". Used by drag and drop.
- * Input:   expr 
- * Author:  Regis Houssin 
+ * Input:   expr
+ * Author:  Regis Houssin
  * Licence: GPL
  * ==================================================================
  */
@@ -599,12 +600,12 @@ function cleanSerialize(expr) {
 
 
 /*
- * ================================================================= 
+ * =================================================================
  * Purpose: Display a temporary message in input text fields (For showing help message on
  *          input field).
  * Input:   fieldId
  * Input:   message
- * Author:  Regis Houssin 
+ * Author:  Regis Houssin
  * Licence: GPL
  * ==================================================================
  */
@@ -617,11 +618,11 @@ function displayMessage(fieldId,message) {
 }
 
 /*
- * ================================================================= 
+ * =================================================================
  * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field). 
- * Input:   fiedId 
- * Input:   message 
+ *          input field).
+ * Input:   fiedId
+ * Input:   message
  * Author:  Regis Houssin
  * Licence: GPL
  * ==================================================================
@@ -673,7 +674,7 @@ function setConstant(url, code, input, entity, strict) {
 						$(newvalue).removeClass("butAction");
 						$(newvalue).addClass("butActionRefused");
 					}
-				});				
+				});
 			// Show another element
 			} else if (type == "showhide" || type == "show") {
 				$.each(data, function(key, value) {
@@ -734,7 +735,7 @@ function delConstant(url, code, input, entity, strict) {
 						$(newvalue).removeClass("butActionRefused");
 						$(newvalue).addClass("butAction");
 					}
-				});				
+				});
 			// Hide another element
 			} else if (type == "showhide" || type == "hide") {
 				$.each(data, function(key, value) {
@@ -816,13 +817,13 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	}
 }
 
-/* 
- * ================================================================= 
+/*
+ * =================================================================
  * This is to allow to transform all select box into ajax autocomplete box
- * with just one line: 
+ * with just one line:
  * $(function() { $( "#idofmylist" ).combobox(); });
- * Do not use it on large combo boxes 
- * ================================================================= 
+ * Do not use it on large combo boxes
+ * =================================================================
  */
 (function( $ ) {
 	$.widget( "ui.combobox", {
@@ -933,11 +934,11 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 /**
  * Function to output a dialog bog for copy/paste
- * 
+ *
  * @param	string	text	Text to put into copy/paste area
  * @param	string	text2	Text to put under the copy/paste area
  */
-function copyToClipboard(text,text2) 
+function copyToClipboard(text,text2)
 {
 	text = text.replace(/<br>/g,"\n");
 	var newElem = '<textarea id="coordsforpopup" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
@@ -951,7 +952,7 @@ function copyToClipboard(text,text2)
 
 /**
  * Show a popup HTML page. Use the "window.open" function.
- * 
+ *
  * @param	string	url		Url
  * @param	string	title  	Title of popup
  * @return	boolean			False
@@ -982,15 +983,17 @@ function newpopup(url,title) {
 function document_preview(file, type, title)
 {
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+	var showOriginalSizeButton = false;
+
 	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
-	
+
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
 		var object_width='100%';
 		var height = $( window ).height()*0.90;
 		var object_height='98%';
 
-		show_preview();
+		show_preview('notimage');
 
 	} else {
 		var object_width=0;
@@ -1004,22 +1007,37 @@ function document_preview(file, type, title)
 
 			width = $( window ).width()*0.90;
 			if(object_width < width){
+				console.log("Object width is small, we set width of popup according to image width.");
 				width = object_width + 30
 			}
 			height = $( window ).height()*0.85;
 			if(object_height < height){
+				console.log("Object height is small, we set height of popup according to image height.");
 				height = object_height + 80
 			}
+			else
+			{
+				showOriginalSizeButton = true;
+			}
 
-			show_preview();
+			show_preview('image');
 
 		};
 		img.src = file;
 
 	}
-	function show_preview(){
-		/* console.log("file="+file+" type="+type+" width="+width+" height="+height); */
+	function show_preview(mode) {
+		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+
+		optionsbuttons = {}
+		if (mode == 'image' && showOriginalSizeButton)
+		{
+			optionsbuttons = {
+			    "<?php echo dol_escape_js($langs->trans("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->trans("Close")); ?>": function() { $( this ).dialog( "close" ); }
+				};
+		}
 
 		$("#dialogforpopup").html(newElem);
 		$("#dialogforpopup").dialog({
@@ -1028,19 +1046,25 @@ function document_preview(file, type, title)
 			width: width,
 			height: height,
 			modal: true,
-			title: title
+			title: title,
+			buttons: optionsbuttons
 		});
+
+		if (showOriginalSizeButton)
+		{
+			jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "100%", "width": "auto", "margin-left": "auto", "margin-right": "auto", "display": "block" });
+		}
 	}
 }
 
 /*
- * Provide a function to get an URL GET parameter in javascript 
- * 
+ * Provide a function to get an URL GET parameter in javascript
+ *
  * @param 	string	name				Name of parameter
  * @param	mixed	valueifnotfound		Value if not found
  * @return	string						Value
  */
-function getParameterByName(name, valueifnotfound) 
+function getParameterByName(name, valueifnotfound)
 {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -1098,7 +1122,7 @@ function getParameterByName(name, valueifnotfound)
 	}
 })();
 
-// Another solution, easier, to build a javascript rounding function 
+// Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
 
 
@@ -1146,10 +1170,10 @@ function price2numjs(amount) {
 	amount = amount.replace(dec, '.');
 	//console.log("amount before="+amount+" rouding="+rounding)
 	var res = Math.round10(amount, - rounding);
-	// Other solution is 
+	// Other solution is
 	// var res = dolroundjs(amount, rounding)
 	console.log("res="+res)
 	return res;
 }
-    
+
 

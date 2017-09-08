@@ -315,6 +315,8 @@ class Facture extends CommonInvoice
 			$this->note_private=trim($this->note_private);
 		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 
+		    $this->array_options=$_facrec->array_options;
+
 			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 			$this->brouillon = 1;
@@ -654,7 +656,7 @@ class Facture extends CommonInvoice
 						null,
 						0,
 						$_facrec->lines[$i]->label,
-						null,
+						empty($_facrec->lines[$i]->array_options)?null:$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit
@@ -748,12 +750,12 @@ class Facture extends CommonInvoice
 
 		// Charge facture source
 		$facture=new Facture($this->db);
-                
+
                 $this->fetch_optionals();
                 if(!empty($this->array_options)){
                     $facture->array_options = $this->array_options;
                 }
-           
+
                 foreach($this->lines as &$line){
                     $line->fetch_optionals();//fetch extrafields
                 }
@@ -783,7 +785,7 @@ class Facture extends CommonInvoice
 		$facture->situation_final  = $this->situation_final;
 
 		// Loop on each line of new invoice
-		foreach($facture->lines as $i => $line)
+		foreach($facture->lines as $i => $tmpline)
 		{
 			$facture->lines[$i]->fk_prev_id = $this->lines[$i]->rowid;
 			if ($invertdetail)

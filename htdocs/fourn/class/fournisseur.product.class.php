@@ -310,7 +310,7 @@ class ProductFournisseur extends Product
                     $error++;
                 }
 
-                if (! $error && ! empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
+                if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
                     $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";
                     $sql .= "datec, fk_product_fournisseur,fk_user,price,quantity)";
@@ -588,7 +588,8 @@ class ProductFournisseur extends Product
                 foreach($record_array as $record)
                 {
                     $fourn_price = $record["price"];
-                    $fourn_unitprice = $record["unitprice"];
+                    // discount calculated buy price
+                    $fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) + $record["unitcharges"] - $record["remise"];
                     if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
                         $prod_supplier = new ProductFournisseur($this->db);
                         $prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
@@ -620,7 +621,7 @@ class ProductFournisseur extends Product
                         $this->fourn_qty                = $record["quantity"];
                         $this->fourn_remise_percent     = $record["remise_percent"];
                         $this->fourn_remise             = $record["remise"];
-                        $this->fourn_unitprice          = $fourn_unitprice;
+                        $this->fourn_unitprice          = $record["unitprice"];
                         $this->fourn_charges            = $record["charges"];		// deprecated
                         $this->fourn_unitcharges        = $record["unitcharges"];	// deprecated
                         $this->fourn_tva_tx             = $record["tva_tx"];
@@ -629,7 +630,7 @@ class ProductFournisseur extends Product
 						$this->delivery_time_days		= $record["delivery_time_days"];
                         $this->fk_supplier_price_expression      = $record["fk_supplier_price_expression"];
                         $this->id                       = $prodid;
-                        $min = $this->fourn_unitprice;
+                        $min = $fourn_unitprice;
                     }
                 }
             }

@@ -45,6 +45,7 @@ $langs->load("errors");
 $langs->load("admin");
 $langs->load("main");
 $langs->load("mails");
+$langs->load("languages");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -85,17 +86,17 @@ $tabsqlsort[25]="label ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[25]= "label,type_template,private,position,topic,content";
+$tabfield[25]= "label,type_template,lang,private,position,topic,content";
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfield[25].=',content_lines';
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[25]= "label,type_template,private,position,topic,content";
+$tabfieldvalue[25]= "label,type_template,lang,private,position,topic,content";
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfieldvalue[25].=',content_lines';
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[25]= "label,type_template,private,position,topic,content";
+$tabfieldinsert[25]= "label,type_template,lang,private,position,topic,content";
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfieldinsert[25].=',content_lines';
 $tabfieldinsert[25].=',entity';     // Must be at end because not into other arrays
 
@@ -144,16 +145,16 @@ $sourceList=array();
 
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
-if ($conf->propal->enabled) $elementList['propal_send']=$langs->trans('MailToSendProposal');
-if ($conf->commande->enabled) $elementList['order_send']=$langs->trans('MailToSendOrder');
-if ($conf->facture->enabled) $elementList['facture_send']=$langs->trans('MailToSendInvoice');
-if ($conf->expedition->enabled) $elementList['shipping_send']=$langs->trans('MailToSendShipment');
-if ($conf->ficheinter->enabled) $elementList['fichinter_send']=$langs->trans('MailToSendIntervention');
+if ($conf->propal->enabled)            $elementList['propal_send']=$langs->trans('MailToSendProposal');
+if ($conf->commande->enabled)          $elementList['order_send']=$langs->trans('MailToSendOrder');
+if ($conf->facture->enabled)           $elementList['facture_send']=$langs->trans('MailToSendInvoice');
+if ($conf->expedition->enabled)        $elementList['shipping_send']=$langs->trans('MailToSendShipment');
+if ($conf->ficheinter->enabled)        $elementList['fichinter_send']=$langs->trans('MailToSendIntervention');
 if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send']=$langs->trans('MailToSendSupplierRequestForQuotation');
-if ($conf->fournisseur->enabled) $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
-if ($conf->fournisseur->enabled) $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
-if ($conf->societe->enabled) $elementList['thirdparty']=$langs->trans('MailToThirdparty');
-if ($conf->contrat->enabled) $elementList['contract']=$langs->trans('MailToSendContract');
+if ($conf->fournisseur->enabled)       $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
+if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
+if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans('MailToThirdparty');
+if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
 
 $parameters=array('elementList'=>$elementList);
 $reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -204,7 +205,7 @@ if (empty($reshook))
             if ($value == 'content') $value='content-'.$rowid;
             if ($value == 'content_lines') $value='content_lines-'.$rowid;
 
-            if (! isset($_POST[$value]) || $_POST[$value]=='')
+            if ((! isset($_POST[$value]) || $_POST[$value]=='') && $value != 'lang')
             {
                 $ok=0;
                 $fieldnamekey=$listfield[$f];
@@ -253,15 +254,16 @@ if (empty($reshook))
             $i=0;
             foreach ($listfieldinsert as $f => $value)
             {
-                //var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
-                if ($value == 'entity') {
-                	$_POST[$listfieldvalue[$i]] = $conf->entity;
-                }
+            	$keycode=$listfieldvalue[$i];
+            	if ($value == 'lang') $keycode='langcode';
+
+            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
+                if ($value == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
-                if ($value == 'private' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='0';
-                if ($value == 'position' && ! is_numeric($_POST[$listfieldvalue[$i]])) $_POST[$listfieldvalue[$i]]='1';
-                if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
-                else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+                if ($value == 'private' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='0';
+                if ($value == 'position' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='1';
+                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  												// For vat, we want/accept code = ''
+                else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
             $sql.=",1)";
@@ -301,15 +303,16 @@ if (empty($reshook))
             $i = 0;
             foreach ($listfieldmodify as $field)
             {
+            	$keycode=$listfieldvalue[$i];
+            	if ($field == 'lang') $keycode='langcode';
+
                 if ($field == 'content') $_POST['content']=$_POST['content-'.$rowid];
                 if ($field == 'content_lines') $_POST['content_lines']=$_POST['content_lines-'.$rowid];
-                if ($field == 'entity') {
-                	$_POST[$listfieldvalue[$i]] = $conf->entity;
-                }
+                if ($field == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
                 $sql.= $field."=";
-                if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
-                else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  // For vat, we want/accept code = ''
+                else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
             $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
@@ -410,6 +413,14 @@ $head[$h][1] = $langs->trans("OutGoingEmailSetup");
 $head[$h][2] = 'common';
 $h++;
 
+if ($conf->mailing->enabled)
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
+	$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+	$head[$h][2] = 'common_emailing';
+	$h++;
+}
+
 $head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
 $head[$h][1] = $langs->trans("DictionaryEMailTemplates");
 $head[$h][2] = 'templates';
@@ -426,16 +437,13 @@ if ($action == 'delete')
 //var_dump($elementList);
 
 
-$sql="SELECT rowid as rowid, label, type_template, private, position, topic, content_lines, content, active";
+$sql="SELECT rowid as rowid, label, type_template, lang, private, position, topic, content_lines, content, active";
 $sql.=" FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql.=" WHERE entity IN (".getEntity('email_template').")";
 if ($search_label) $sql.=natural_search('label', $search_label);
-
-if ($search_country_id > 0)
+if (empty($conf->global->MAIN_MULTILANGS))
 {
-    if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
-    else $sql.=" WHERE ";
-    $sql.= " c.rowid = ".$search_country_id;
+	$sql.= " AND (lang = '".$langs->defaultlang."' OR lang IS NULL)";
 }
 
 if ($sortfield)
@@ -461,21 +469,21 @@ $sql.=$db->plimit($listlimit+1,$offset);
 
 $fieldlist=explode(',',$tabfield[$id]);
 
-print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
-
-print '<table class="noborder" width="100%">';
-
 // Form to add a new line
 $alabelisused=0;
 $var=false;
 
 $fieldlist=explode(',',$tabfield[$id]);
 
-if ($action != 'edit')
-{
-    // Line for title
+//if ($action != 'edit')
+//{
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
+
+	print '<table class="noborder" width="100%">';
+
+	// Line for title
     print '<tr class="liste_titre">';
     foreach ($fieldlist as $field => $value)
     {
@@ -585,12 +593,13 @@ if ($action != 'edit')
 
     $colspan=count($fieldlist)+1;
     //print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
-}
 
-print '</table>';
-print '</form>';
+    print '</table>';
 
-print '<br>';
+    print '</form>';
+
+	print '<br>';
+//}
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -691,6 +700,7 @@ if ($resql)
             $obj = $db->fetch_object($resql);
             //print_r($obj);
             print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
             if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
             {
                 $tmpaction='edit';
@@ -724,15 +734,15 @@ if ($resql)
                     // Show value for field
                     if ($showfield) {
 
-                        print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
+                        print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' ">';
+                        print '<td colspan="5">'; // To create an artificial CR for the current tr we are on
                         $okforextended = true;
-                        if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
-                            $okforextended = false;
-                            $doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
-                            print $doleditor->Create(1);
-                            print '</td>';
-                            print '<td></td><td></td><td></td>';
-
+                        if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended = false;
+                        $doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+                        print $doleditor->Create(1);
+                        print '</td>';
+                        print '<td></td><td></td><td></td>';
+                        print '<td></td>';
                     }
                 }
             }
@@ -756,12 +766,16 @@ if ($resql)
                         {
                             $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
                         }
+                        if ($value == 'lang' && $valuetoshow)
+                        {
+                        	$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
+                        }
 
                         $class='tddict';
 						// Show value for field
 						if ($showfield)
 						{
-                            print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+                           	print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
 						}
                     }
                 }
@@ -876,14 +890,29 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		if ($fieldlist[$field] == 'lang')
 		{
 			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
+			if (! empty($conf->global->MAIN_MULTILANGS))
+			{
+				$selectedlang = $langs->defaultlang;
+				if ($context == 'edit') $selectedlang = $obj->{$fieldlist[$field]};
+				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1);
+			}
+			else
+			{
+				if (! empty($obj->{$fieldlist[$field]}))
+				{
+					print $obj->{$fieldlist[$field]}.' - '.$langs->trans('Language_'.$obj->{$fieldlist[$field]});
+				}
+				$keyname=$fieldlist[$field];
+				if ($keyname == 'lang') $keyname='langcode';	// Avoid conflict with lang param
+				print '<input type="hidden" value="'.$obj->{$fieldlist[$field]}.'" name="'.$keyname.'">';
+			}
 			print '</td>';
 		}
 		// Le type de template
 		elseif ($fieldlist[$field] == 'type_template')
 		{
 			print '<td>';
-			print $form->selectarray('type_template', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1);
 			print '</td>';
 		}
 		elseif (in_array($fieldlist[$field], array('content','content_lines'))) continue;

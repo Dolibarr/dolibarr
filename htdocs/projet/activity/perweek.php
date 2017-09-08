@@ -337,6 +337,9 @@ $param='';
 $param.=($mode?'&mode='.$mode:'');
 $param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
 $param.=($search_usertoprocessid > 0?'&search_usertoprocessid='.$search_usertoprocessid:'');
+$param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
+$param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
+$param.=($search_task_label?'&search_task_label='.$search_task_label:'');
 
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
@@ -434,10 +437,10 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -454,13 +457,13 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("RefTask").'</td>';
-print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td>'.$langs->trans("ProjectRef").'</td>';
 if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
 {
     print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
+print '<td>'.$langs->trans("RefTask").'</td>';
+print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
 /*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';

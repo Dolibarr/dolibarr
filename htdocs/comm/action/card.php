@@ -577,6 +577,11 @@ if ($action == 'mupdate')
 
 }
 
+// Actions to delete doc
+$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$permissioncreate = ($user->rights->agenda->allactions->delete ||	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete));
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 
 /*
  * View
@@ -709,7 +714,7 @@ if ($action == 'create')
     // Location
     if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     {
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
     }
 
 	// Assigned to
@@ -965,7 +970,7 @@ if ($id > 0)
 		}
 
 		// Title
-		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
+		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="minwidth100" value="'.$object->label.'"></td></tr>';
 
         // Full day event
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
@@ -1049,7 +1054,7 @@ if ($id > 0)
         // Location
 	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
 	    {
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.$object->location.'"></td></tr>';
 	    }
 
 		// Assigned to
@@ -1211,7 +1216,6 @@ if ($id > 0)
 		$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback.=$out;
-
 
 		$morehtmlref='<div class="refidno">';
 		// Thirdparty
@@ -1477,7 +1481,7 @@ if ($id > 0)
              */
 
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
             $genallowed=$user->rights->agenda->myactions->create;
 	        $delallowed=$user->rights->agenda->myactions->delete;

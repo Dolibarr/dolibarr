@@ -73,7 +73,7 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : 0);
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
@@ -83,7 +83,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $userid = GETPOST('userid', 'int');
-$search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
+$search_ref = GETPOST('sf_ref','alpha') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
@@ -430,27 +430,52 @@ if (empty($reshook))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)))
 	)
 	{
-		$idwarehouse = GETPOST('idwarehouse');
+		$idwarehouse = GETPOST('idwarehouse','int');
 
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
 		// Check parameters
 
-		// Check for mandatory prof id (but only if country is than than ours)
-		if ($mysoc->country_id > 0 && $object->thirdparty->country_id == $mysoc->country_id)
+        // Check for mandatory fields defined into setup
+		$array_to_check=array('IDPROF1','IDPROF2','IDPROF3','IDPROF4','IDPROF5','IDPROF6','EMAIL');
+		foreach($array_to_check as $key)
 		{
-    		for ($i = 1; $i <= 6; $i++)
-    		{
-    			$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
-    			$idprof = 'idprof' . $i;
-    			if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
-    			{
-    				if (! $error) $langs->load("errors");
-    				$error++;
-    				setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), null, 'errors');
-    			}
-    		}
+			$keymin=strtolower($key);
+			$i=(int) preg_replace('/[^0-9]/','',$key);
+			$vallabel=$object->thirdparty->$keymin;
+
+			if ($i > 0)
+			{
+				if ($object->thirdparty->isACompany())
+				{
+					// Check for mandatory prof id (but only if country is other than ours)
+					if ($mysoc->country_id > 0 && $object->thirdparty->country_id == $mysoc->country_id)
+					{
+						$idprof_mandatory ='SOCIETE_'.$key.'_INVOICE_MANDATORY';
+						if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+						{
+							$langs->load("errors");
+							$error++;
+							setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $object->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+						}
+					}
+				}
+			}
+			else
+			{
+				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
+				if ($key == 'EMAIL')
+				{
+					// Check for mandatory
+					if (! empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && ! isValidEMail($object->thirdparty->email))
+					{
+						$langs->load("errors");
+						$error++;
+						setEventMessages($langs->trans("ErrorBadEMail", $object->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+					}
+				}
+			}
 		}
 
 		$qualified_for_stock_change = 0;
@@ -664,12 +689,13 @@ if (empty($reshook))
 			if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_SITUATION)
 			{
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
-
 				$sql = 'SELECT SUM(pf.amount) as total_paiements
 						FROM llx_c_paiement as c, llx_paiement_facture as pf, llx_paiement as p
-						WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid ORDER BY p.datep, p.tms';
+						WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
 
 				$resql = $db->query($sql);
+				if (! $resql) dol_print_error($db);
+
 				$res = $db->fetch_object($resql);
 				$total_paiements = $res->total_paiements;
 
@@ -2194,7 +2220,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec'))
+	if ($soc->id > 0 && ! GETPOST('fac_rec','alpha'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -2229,6 +2255,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -4128,11 +4155,11 @@ else if ($id > 0 || ! empty($ref))
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('DoPayment') . '</span></div>';
 				} else {
-					if ($resteapayer == 0) {
-						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
-					} else {
+					//if ($resteapayer == 0) {
+					//	print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+					//} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'. DOL_URL_ROOT .'/compta/paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPayment') . '</a></div>';
-					}
+					//}
 				}
 			}
 
@@ -4257,7 +4284,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<br>';
 
 	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
+	if (GETPOST('modelselected','alpha')) {
 		$action = 'presend';
 	}
 	if ($action != 'prerelance' && $action != 'presend')
@@ -4344,7 +4371,7 @@ else if ($id > 0 || ! empty($ref))
 
 		// Build document if it not exists
 		if (! $file || ! is_readable($file)) {
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model','alpha') ? GETPOST('model','alpha') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
@@ -4364,7 +4391,7 @@ else if ($id > 0 || ! empty($ref))
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+        $formmail->fromtype = (GETPOST('fromtype','alpha')?GETPOST('fromtype','alpha'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
 
         if($formmail->fromtype === 'user'){
             $formmail->fromid = $user->id;

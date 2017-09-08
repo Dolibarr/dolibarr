@@ -312,6 +312,7 @@ if ($result)
 	$texte=$langs->trans("ListOfProductsServices");
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
+	print '<div class="div-table-responsive">';
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre_filter">';
@@ -448,6 +449,7 @@ if ($result)
 		$i ++;
 	}
 	print '</table>';
+	print '</div>';
 
 	// Example : Adding jquery code
 	print '<script type="text/javascript" language="javascript">

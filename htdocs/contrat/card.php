@@ -752,7 +752,13 @@ if (empty($reshook))
 	// Close all lines
 	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-	    $object->cloture($user);
+	    $object->closeAll($user);
+	}
+
+	// Close all lines
+	else if ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
+	{
+	    $object->activateAll($user);
 	}
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
@@ -1153,6 +1159,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1311,6 +1318,11 @@ else
         if ($action == 'close')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
+
+        }
+        if ($action == 'activate')
+        {
+        	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
 
         }
 
@@ -1616,7 +1628,7 @@ else
                         print $langs->trans("DateStartPlanned").': ';
                         if ($objp->date_debut)
                         {
-                            print dol_print_date($db->jdate($objp->date_debut));
+                            print dol_print_date($db->jdate($objp->date_debut), 'day');
                             // Warning si date prevu passee et pas en service
                             if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) {
                     		    $warning_delay=$conf->contrat->services->inactifs->warning_delay / 3600 / 24;
@@ -1629,7 +1641,7 @@ else
                         print $langs->trans("DateEndPlanned").': ';
                         if ($objp->date_fin)
                         {
-                            print dol_print_date($db->jdate($objp->date_fin));
+                            print dol_print_date($db->jdate($objp->date_fin), 'day');
                             if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) {
                     		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
                                 $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
@@ -1848,21 +1860,21 @@ else
                 // Si pas encore active
                 if (! $objp->date_debut_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle);
+                    if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
                     else print $langs->trans("ContractStatusNotRunning");
                 }
                 // Si active et en cours
                 if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    print dol_print_date($objp->date_debut_reelle);
+                    print dol_print_date($objp->date_debut_reelle, 'day');
                 }
                 // Si desactive
                 if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    print dol_print_date($objp->date_debut_reelle);
+                    print dol_print_date($objp->date_debut_reelle, 'day');
                     print ' &nbsp;-&nbsp; ';
                     print $langs->trans("DateEndReal").': ';
-                    print dol_print_date($objp->date_fin_reelle);
+                    print dol_print_date($objp->date_fin_reelle, 'day');
                 }
                 if (! empty($objp->comment)) print "<br>".$objp->comment;
                 print '</td>';
@@ -2070,6 +2082,10 @@ else
             	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
             }
 
+            if ($object->nbofservicesclosed > 0)
+            {
+            	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+            }
             if ($object->nbofservicesclosed < $nbofservices)
             {
                 //if (! $numactive)
@@ -2120,9 +2136,9 @@ else
     		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
-    			// Show links to link elements
-    			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-    			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
     		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

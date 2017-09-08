@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Expense report
-ExpenseReports=Expense reports
+ExpenseReports=경비 보고서
 ShowExpenseReport=Show expense report
-Trips=Expense reports
+Trips=경비 보고서
 TripsAndExpenses=Expenses reports
 TripsAndExpensesStatistics=Expense reports statistics
 TripCard=Expense report card
@@ -38,7 +38,7 @@ TripSociete=Information company
 TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
-TF_OTHER=Other
+TF_OTHER=다른
 TF_TRIP=Transportation
 TF_LUNCH=Lunch
 TF_METRO=Metro
@@ -56,17 +56,17 @@ AucuneLigne=There is no expense report declared yet
 ModePaiement=Payment mode
 
 VALIDATOR=User responsible for approval
-VALIDOR=Approved by
+VALIDOR=에 의해 승인 됨
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Paid by
 REFUSEUR=Denied by
 CANCEL_USER=Deleted by
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=이유
+MOTIF_CANCEL=이유
 
 DATE_REFUS=Deny date
-DATE_SAVE=Validation date
+DATE_SAVE=유효성 확인 일
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 BROUILLONNER=Reopen

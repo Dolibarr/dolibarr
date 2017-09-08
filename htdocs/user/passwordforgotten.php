@@ -224,10 +224,19 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
 	$captcha_refresh = img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
 }
 
-// Execute hook getPasswordForgottenPageOptions
-// Should be an array with differents options in $hookmanager->resArray
+// Execute hook getPasswordForgottenPageOptions (for table)
 $parameters=array('entity' => GETPOST('entity','int'));
 $hookmanager->executeHooks('getPasswordForgottenPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {
+	$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
+} else {
+	$morelogincontent = $hookmanager->resPrint;
+}
+
+// Execute hook getPasswordForgottenPageExtraOptions (eg for js)
+$parameters=array('entity' => GETPOST('entity','int'));
+$reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions',$parameters);    // Note that $action and $object may have been modified by some hooks.
+$moreloginextracontent = $hookmanager->resPrint;
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
 

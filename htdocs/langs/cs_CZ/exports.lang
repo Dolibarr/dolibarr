@@ -120,7 +120,7 @@ SelectPrimaryColumnsForUpdateAttempt=Select kolona (y) použít jako primární 
 UpdateNotYetSupportedForThisImport=Aktualizace pro tento typ importu není podporována (pouze vložte)
 NoUpdateAttempt=Žádný pokus aktualizace byla provedena, pouze vložit
 ImportDataset_user_1=Uživatelé (zaměstnanci nebo ne) a vlastnosti
-ComputedField=Computed field
+ComputedField=Vypočtené pole
 ## filters
 SelectFilterFields=Chcete-li filtrovat některé hodnoty, stačí zadat hodnoty zde.
 FilteredFields=Filtrované pole

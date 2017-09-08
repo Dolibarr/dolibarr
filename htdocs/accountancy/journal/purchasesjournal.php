@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012       Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
@@ -514,7 +514,7 @@ if (empty($action) || $action == 'view') {
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
-	$builddate = time();
+	$builddate=dol_now();
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
@@ -532,7 +532,7 @@ if (empty($action) || $action == 'view') {
 	// Button to write into Ledger
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 	    print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
@@ -564,6 +564,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
+    print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
@@ -692,6 +693,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	// End of page
 	llxFooter();

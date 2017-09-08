@@ -70,9 +70,9 @@ else $typeofdata='textarea:12:95%';
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border centpercent">'."\n";
 if ($module != 'product') {
-	// No public note yet on products 
+	// No public note yet on products
 	print '<div class="tagtr table-border-row">'."\n";
-	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'">'."\n";
+	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
 	print '<div class="tagtd table-val-border-col">'."\n";
@@ -82,14 +82,14 @@ if ($module != 'product') {
 }
 if (empty($user->societe_id)) {
 	print '<div class="tagtr table-border-row">'."\n";
-	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass); .'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'">'."\n";
+	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
 	print '<div class="tagtd table-val-border-col">'."\n";
 	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";
-} 
+}
 print '</div>'."\n";
 ?>
 <!-- END PHP TEMPLATE NOTES-->
