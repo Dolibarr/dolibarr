@@ -172,13 +172,16 @@ if ($result) {
 	{
 		$obj = $db->fetch_object($result);
 
+		$lineisapurchase = ($obj->label == '(SupplierInvoicePayment)' || $obj->label == '(SupplierInvoicePaymentBack)');
+		$lineisasell = ($obj->label == '(CustomerInvoicePayment)' || $obj->label == '(CustomerInvoicePaymentBack)');
+
 		// Set accountancy code (for bank and thirdparty)
 		$compta_bank = $obj->account_number;
 
 		$compta_soc = 'NotDefined';
-		if ($obj->label == '(SupplierInvoicePayment)' || $obj->label == '(SupplierInvoicePaymentBack)')
+		if ($lineisapurchase)
 			$compta_soc = (! empty($obj->code_compta_fournisseur) ? $obj->code_compta_fournisseur : $account_supplier);
-		if ($obj->label == '(CustomerInvoicePayment)' || $obj->label == '(CustomerInvoicePaymentBack)')
+		if ($lineisasell)
 			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $account_customer);
 
 		$tabcompany[$obj->rowid] = array (
@@ -604,6 +607,8 @@ if (! $error && $action == 'writebookkeeping') {
 	}
 }
 
+
+
 // Export
 if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
@@ -936,7 +941,7 @@ $db->close();
  * Return source for doc_ref of a bank transaction
  *
  * @param 	string 	$val			Array of val
- * @param 	string	$typerecord		Type of record
+ * @param 	string	$typerecord		Type of record ('payment', 'payment_supplier', 'payment_expensereport', 'payment_vat', ...)
  * @return string|unknown
  */
 function getSourceDocRef($val, $typerecord)
