@@ -1525,11 +1525,13 @@ class Categorie extends CommonObject
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
 	 *
 	 *  @param      string	$sdir       Repertoire destination finale
-	 *  @param      string	$file		Nom du fichier uploade
+	 *  @param      string	$files		Nom du fichier uploade
 	 *	@return		void
 	 */
 	function add_photo($sdir, $file)
 	{
+
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
@@ -1542,15 +1544,18 @@ class Categorie extends CommonObject
 
 		if (file_exists($dir))
 		{
-			$originImage = $dir . $file['name'];
+			for ($i=0;$i<=count($file['name']);$i++) {
 
-			// Cree fichier en taille origine
-			dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
+				$originImage = $dir . $file['name'][$i];
 
-			if (file_exists($originImage))
-			{
-			    // Create thumbs
-				$this->addThumbs($originImage);
+				// Cree fichier en taille origine
+				dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
+
+				if (file_exists($originImage))
+				{
+				    // Create thumbs
+					$this->addThumbs($originImage);
+				}
 			}
 		}
 	}
