@@ -277,7 +277,15 @@ class pdf_soleil extends ModelePDFFicheinter
 						$curX = $this->posxdesc-1;
 
 						// Description of product line
-						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+                                                if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR))
+                                                {
+						        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+                                                }
+                                                else
+                                                {
+                                                        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'day',false,$outputlangs,true);
+                                                }
+
 						if ($objectligne->duration > 0)
 						{
 							$txt.=" - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);

@@ -2,6 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1084,6 +1085,7 @@ if (preg_match('/^dopayment/',$action))
         box-shadow: 0 1px 3px 0 #e6ebf1;
         -webkit-transition: box-shadow 150ms ease;
         transition: box-shadow 150ms ease;
+        width: 350px;
     }
 
     .StripeElement--focus {

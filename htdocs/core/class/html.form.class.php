@@ -1919,7 +1919,7 @@ class Form
         $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
         if (count($warehouseStatusArray))
         {
-            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.implode(',',$warehouseStatusArray).'))';
+            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$db->escape(implode(',',$warehouseStatusArray)).'))';
         }
 
         if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
