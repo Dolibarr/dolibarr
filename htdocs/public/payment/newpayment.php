@@ -1264,6 +1264,7 @@ else
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';
@@ -1446,7 +1447,7 @@ if (preg_match('/^dopayment/',$action))
 
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1);
 
 llxFooter('', 'public');
 
