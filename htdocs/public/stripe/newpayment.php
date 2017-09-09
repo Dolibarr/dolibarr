@@ -1229,7 +1229,7 @@ if (preg_match('/^dopayment/',$action))
 
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,1);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix);
 
 llxFooter('', 'public');
 

@@ -193,7 +193,7 @@ if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 
 print "\n</div>\n";
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

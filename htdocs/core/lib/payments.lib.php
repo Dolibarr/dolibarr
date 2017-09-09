@@ -96,9 +96,10 @@ function payment_supplier_prepare_head(Paiement $object) {
  * @param   Societe		$fromcompany	Third party
  * @param   Translate	$langs			Output language
  * @param	int			$addformmessage	Add the payment form message
+ * @param	string		$suffix			Suffix to use on constants
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0)
+function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suffix='')
 {
     global $conf;
 
@@ -152,16 +153,20 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0)
 
     print '<br>';
 
-    print '<div class="center"><font style="font-size: 10px;">'."\n";
+    print '<div class="center">'."\n";
     if ($addformmessage)
     {
-    	$key='ONLINE_PAYMENT_MESSAGE_FORM';
-    	if (! empty($conf->global->$key)) print '<br>'.$conf->global->$key;
+    	print '<br>';
+    	$parammessageform='ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
+    	if (! empty($conf->global->$parammessageform)) print $conf->global->$parammessageform;
+    	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $conf->global->ONLINE_PAYMENT_MESSAGE_FORM;
     }
 
-    print '<br><hr>'."\n";
+    print '<font style="font-size: 10px;"><br><hr>'."\n";
     print $fromcompany->name.'<br>';
-    print $line1.'<br>';
+    print $line1;
+    if (strlen($line1+$line2) > 50) print '<br>';
+    else print ' - ';
     print $line2;
     print '</font></div>'."\n";
 }
