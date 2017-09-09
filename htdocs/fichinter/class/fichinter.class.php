@@ -579,6 +579,38 @@ class Fichinter extends CommonObject
 
 		return $amount;
 	}
+	
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param      string                  $modele         Force model to use ('' to not force)
+	 *  @param      Translate               $outputlangs    Object langs to use for output
+	 *  @param      int                     $hidedetails    Hide details of lines
+	 *  @param      int                     $hidedesc       Hide description
+	 *  @param      int                     $hideref        Hide ref
+	 *  @return     int                                     0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs;
+
+		$langs->load("interventions");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'azur';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROPALE_ADDON_PDF)) {
+				$modele = $conf->global->PROPALE_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/fichinter/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
 
 	/**
 	 *	Returns the label status
