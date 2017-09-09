@@ -390,13 +390,13 @@ if ($rowid > 0)
 		}
 		if ($status != '')
 		{
-		    $sql.= " AND d.statut IN (".$status.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+		    $sql.= " AND d.statut IN (".$db->escape($status).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 		}
 		if ($action == 'search')
 		{
 			if (GETPOST('search'))
 			{
-		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search'));
+		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
 		  	}
 		}
 		if (! empty($search_lastname))

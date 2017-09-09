@@ -49,7 +49,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	public function isActive()
 	{
 	    global $conf;
-	    
+
 		// This function does not exists on some ISP (Ex: Free in France)
 		if (!function_exists('openlog')) return 0;
 
@@ -81,15 +81,15 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function checkConfiguration()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$errors = array();
 
-	    $facility = SYSLOG_FACILITY;
+	    $facility = constant($conf->global->SYSLOG_FACILITY);
 	    if ($facility)
 		{
 			// Only LOG_USER supported on Windows
-			if (! empty($_SERVER["WINDIR"])) $facility='LOG_USER';
+			if (! empty($_SERVER["WINDIR"])) $facility=constant('LOG_USER');
 
 			dol_syslog("admin/syslog: facility ".$facility);
 		}
