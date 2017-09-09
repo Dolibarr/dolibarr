@@ -642,7 +642,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre("DateCreationShort",$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
