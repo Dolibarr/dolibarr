@@ -43,7 +43,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet","expedition");    // To test if we can delete object
+    protected $childtables=array("supplier_proposal","propal","commande","facture","facture_rec","contrat","fichinter","facture_fourn","commande_fournisseur","projet","expedition","prelevement_lignes");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
