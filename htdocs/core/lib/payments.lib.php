@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (C) 2013	Marcos García	<marcosgdf@gmail.com>
  *
@@ -161,15 +160,15 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suf
     	print '<br>';
 
     	$parammessageform='ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
-    	if (! empty($conf->global->$parammessageform)) print $conf->global->$parammessageform;
-    	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $conf->global->ONLINE_PAYMENT_MESSAGE_FORM;
+    	if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
+    	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
 
     	// Add other message if VAT exists
     	if (! empty($object->total_vat) || ! empty($object->total_tva))
     	{
     		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
-    		if (! empty($conf->global->$parammessageform)) print $conf->global->$parammessageform;
-    		else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT;
+    		if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
+    		else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
     	}
     }
 
