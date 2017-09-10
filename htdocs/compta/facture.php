@@ -2968,6 +2968,13 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
+  if($object->type == Facture::TYPE_CREDIT_NOTE or $object->type == Facture::TYPE_DEPOSIT){
+    $discount = new DiscountAbsolute($db);
+    $result = $discount->fetch(0, $object->id);
+    if($result >= 0){
+      $morehtmlref.=$langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')).'<br>';
+    }
+  }
 	// Ref customer
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
