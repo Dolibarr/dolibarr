@@ -97,9 +97,10 @@ function payment_supplier_prepare_head(Paiement $object) {
  * @param   Translate	$langs			Output language
  * @param	int			$addformmessage	Add the payment form message
  * @param	string		$suffix			Suffix to use on constants
+ * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suffix='')
+function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suffix='',$object=null)
 {
     global $conf;
 
@@ -156,10 +157,20 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suf
     print '<div class="center">'."\n";
     if ($addformmessage)
     {
+    	print '<!-- object = '.$object->element.' -->';
     	print '<br>';
+
     	$parammessageform='ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
     	if (! empty($conf->global->$parammessageform)) print $conf->global->$parammessageform;
     	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $conf->global->ONLINE_PAYMENT_MESSAGE_FORM;
+
+    	// Add other message if VAT exists
+    	if (! empty($object->total_vat) || ! empty($object->total_tva))
+    	{
+    		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
+    		if (! empty($conf->global->$parammessageform)) print $conf->global->$parammessageform;
+    		else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT;
+    	}
     }
 
     print '<font style="font-size: 10px;"><br><hr>'."\n";
