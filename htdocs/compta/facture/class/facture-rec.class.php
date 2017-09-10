@@ -248,7 +248,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql = 'SELECT f.rowid, f.entity, f.titre, f.status, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
@@ -281,6 +281,7 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
+				$this->statut                 = $obj->status;
 				$this->type                   = $obj->type;
 				$this->datep                  = $obj->dp;
 				$this->date                   = $obj->df;
@@ -297,7 +298,6 @@ class FactureRec extends CommonInvoice
 				$this->close_code             = $obj->close_code;
 				$this->close_note             = $obj->close_note;
 				$this->socid                  = $obj->fk_soc;
-				$this->statut                 = $obj->fk_statut;
 				$this->date_lim_reglement     = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
 				$this->mode_reglement_code    = $obj->mode_reglement_code;
@@ -956,6 +956,59 @@ class FactureRec extends CommonInvoice
 		return $result;
 	}
 
+	/**
+	 *	Renvoi le libelle d'un statut donne
+	 *
+	 *	@param    	int  	$paye          	Status field paye
+	 *	@param      int		$status        	Id status
+	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *	@param		int		$type			Type invoice
+	 *	@return     string        			Libelle du statut
+	 */
+	function LibStatut($paye,$status,$mode=0,$alreadypaid=-1,$type=0)
+	{
+		global $langs;
+		$langs->load('bills');
+
+		//print "$paye,$status,$mode,$alreadypaid,$type";
+		if ($mode == 0)
+		{
+			$prefix='';
+			if ($type == -1) return $langs->trans('Suspended');       // credit note
+			else return $langs->trans('Active');
+		}
+		if ($mode == 1)
+		{
+			$prefix='Short';
+			if ($status == -1) return $langs->trans('Suspended');
+			else return $langs->trans('Active');
+		}
+		if ($mode == 2)
+		{
+			if ($status == -1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
+			else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+		}
+		if ($mode == 3)
+		{
+			$prefix='Short';
+			if ($type == -1) return img_picto($langs->trans('Suspended'),'statut6');
+			else return img_picto($langs->trans('Active'),'statut4');
+		}
+		if ($mode == 4)
+		{
+			$prefix='';
+			if ($type == -1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
+			else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+		}
+		if ($mode == 5 || $mode == 6)
+		{
+			$prefix='';
+			if ($mode == 5) $prefix='Short';
+			if ($type == -1) return '<span class="xhideonsmartphone">'.$langs->trans('Suspended').' </span>'.img_picto($langs->trans('Suspended'),'statut6');
+			else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
+		}
+	}
 
 	/**
 	 *  Initialise an instance with random values.
@@ -1309,7 +1362,7 @@ class FactureLigneRec extends CommonInvoiceLine
      */
     function fetch($rowid)
     {
-    	$sql = 'SELECT l.rowid, l.fk_facture ,l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
+    	$sql = 'SELECT l.rowid, l.fk_facture ,l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
     	$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
     	$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
     	$sql.= ' l.rang, l.special_code,';

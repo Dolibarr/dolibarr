@@ -28,6 +28,8 @@ create table llx_facture_rec
   datec              datetime,            -- date de creation
   tms				 timestamp,           -- date creation/modification
 
+  status             integer DEFAULT 1,					-- 1=active, 0=suspended
+  
   amount             double(24,8)     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,
   remise_percent     real     DEFAULT 0,
