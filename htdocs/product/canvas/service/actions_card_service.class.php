@@ -298,7 +298,7 @@ class ActionsCardService
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf;
-		global $search_categ,$sall,$sref,$sbarcode,$snom,$catid;
+		global $search_categ,$sall,$sref,$search_barcode,$snom,$catid;
 
         $this->getFieldList();
 
@@ -320,7 +320,7 @@ class ActionsCardService
 			$sql.= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
 		}
 		if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
-		if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+		if ($search_barcode) $sql.= " AND p.barcode LIKE '%".$search_barcode."%'";
 		if ($snom)     $sql.= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{
