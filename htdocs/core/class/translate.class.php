@@ -620,6 +620,15 @@ class Translate
 
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 
+			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities
+            $str=str_replace(array('<','>','"',),array('__lt__','__gt__','__quot__'),$str);
+
+			// Crypt string into HTML
+			$str=htmlentities($str,ENT_QUOTES,$this->charset_output);
+
+			// Restore HTML tags
+            $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);
+
 			return $str;
 		}
 		else								// Translation is not available
