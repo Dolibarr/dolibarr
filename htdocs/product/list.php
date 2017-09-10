@@ -58,8 +58,8 @@ $search_label=GETPOST("search_label");
 $search_type = GETPOST("search_type",'int');
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
-$tosell = GETPOST("tosell", 'int');
-$tobuy = GETPOST("tobuy", 'int');
+$search_tosell = GETPOST("search_tosell", 'int');
+$search_tobuy = GETPOST("search_tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
 $search_tobatch = GETPOST("search_tobatch",'int');
@@ -213,8 +213,8 @@ if (empty($reshook))
     	$search_label="";
     	$search_barcode="";
     	$search_categ=0;
-    	$tosell="";
-    	$tobuy="";
+    	$search_tosell="";
+    	$search_tobuy="";
     	$search_tobatch='';
     	$search_type='';
     	$search_accountancy_code_sell='';
@@ -301,8 +301,8 @@ else
 	if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
 	if ($search_label)     $sql .= natural_search('p.label', $search_label);
 	if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
-    if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
-    if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
+    if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($search_tosell);
+    if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($search_tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
     if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
@@ -402,8 +402,8 @@ else
     	if ($search_ref_supplier) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
     	if ($search_barcode) $param.=($search_barcode?"&search_barcode=".urlencode($search_barcode):"");
     	if ($search_label) $param.="&search_label=".urlencode($search_label);
-    	if ($tosell != '') $param.="&tosell=".urlencode($tosell);
-    	if ($tobuy != '') $param.="&tobuy=".urlencode($tobuy);
+    	if ($search_tosell != '') $param.="&search_tosell=".urlencode($search_tosell);
+    	if ($search_tobuy != '') $param.="&search_tobuy=".urlencode($search_tobuy);
     	if ($fourn_id > 0) $param.=($fourn_id?"&fourn_id=".$fourn_id:"");
     	if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
     	if ($type != '') $param.='&type='.urlencode($type);
@@ -651,13 +651,13 @@ else
     		if (! empty($arrayfields['p.tosell']['checked']))
     		{
 	    		print '<td class="liste_titre" align="right">';
-	            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+	            print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$search_tosell,1);
 	            print '</td >';
     		}
 			if (! empty($arrayfields['p.tobuy']['checked']))
     		{
 	            print '<td class="liste_titre" align="right">';
-	            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
+	            print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$search_tobuy,1);
 	            print '</td>';
     		}
             print '<td class="liste_titre" align="middle">';
