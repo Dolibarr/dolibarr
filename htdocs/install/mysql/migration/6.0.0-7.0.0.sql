@@ -55,7 +55,8 @@ ALTER TABLE llx_mailing MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
-
+ALTER TABLE llx_bookmark DROP COLUM fk_soc;
+ 
 ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);

@@ -32,7 +32,7 @@ class Bookmark extends CommonObject
     public $table_element='bookmark';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'bookmark';
-    
+
     var $db;
 
     var $id;
@@ -111,7 +111,7 @@ class Bookmark extends CommonObject
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
 		if (empty($this->position)) $this->position=0;
-		
+
 		$now=dol_now();
 
     	$this->db->begin();
@@ -119,14 +119,12 @@ class Bookmark extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
         $sql.= ",title,favicon,position";
         $sql.= ",entity";
-        if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
         $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->url."', '".$this->target."',";
         $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
         $sql.= ", '".$conf->entity."'";
-        if ($this->fk_soc) $sql.=",".$this->fk_soc;
         $sql.= ")";
 
         dol_syslog("Bookmark::update", LOG_DEBUG);
@@ -243,5 +241,5 @@ class Bookmark extends CommonObject
 	{
 	    return '';
 	}
-	
+
 }
