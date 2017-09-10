@@ -964,16 +964,19 @@ if ($id > 0)
 		$sql.= ', f.tva as total_tva';
 		$sql.= ', f.total_ttc';
 		$sql.= ', f.datec as dc';
-		$sql.= ', f.status as status';
+		$sql.= ', f.date_last_gen';
+		$sql.= ', f.frequency';
+		$sql.= ', f.unit_frequency';
+		$sql.= ', f.suspended as suspended';
 		$sql.= ', s.nom, s.rowid as socid';
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= ' GROUP BY f.rowid, f.titre, f.amount, f.total, f.tva, f.total_ttc,';
-		$sql.= ' f.datec,';
-		$sql.= ' f.status,';
+		$sql.= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
+		$sql.= ' f.suspended,';
 		$sql.= ' s.nom, s.rowid';
-		$sql.= " ORDER BY f.datec DESC";
+		$sql.= " ORDER BY f.date_last_gen, f.datec DESC";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -999,19 +1002,28 @@ if ($id > 0)
 				print '<td class="nowrap">';
 				$invoicetemplate->id = $objp->id;
 				$invoicetemplate->ref = $objp->ref;
-				$invoicetemplate->statut = $objp->status;
+				$invoicetemplate->suspended = $objp->suspended;
+				$invoicetemplate->frequency = $objp->frequency;
+				$invoicetemplate->unit_frequency = $objp->unit_frequency;
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
-				if ($objp->dc > 0)
+				if ($objp->frequency && $objp->date_last_gen > 0)
 				{
-					print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
+					print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen),'day').'</td>';
 				}
 				else
 				{
-					print '<td align="right"><b>!!!</b></td>';
+					if ($objp->dc > 0)
+					{
+						print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
+					}
+					else
+					{
+						print '<td align="right"><b>!!!</b></td>';
+					}
 				}
 				print '<td align="right" style="min-width: 60px">';
 				print price($objp->total_ht);
@@ -1025,7 +1037,8 @@ if ($id > 0)
 				}
 
 				print '<td align="right" class="nowrap" style="min-width: 60px">';
-				print ($invoicetemplate->LibStatut(0,$invoicetemplate->statut,5,0));
+				print $langs->trans('FrequencyPer_'.$invoicetemplate->unit_frequency, $invoicetemplate->frequency).' - ';
+				print ($invoicetemplate->LibStatut($invoicetemplate->frequency,$invoicetemplate->suspended,5,0));
 				print '</td>';
 				print "</tr>\n";
 				$i++;

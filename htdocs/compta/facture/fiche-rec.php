@@ -121,7 +121,8 @@ $arrayfields=array(
     'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
     'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
     'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
-    'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
+	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 );
 // Extra fields
@@ -934,6 +935,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 $companystatic = new Societe($db);
+$invoicerectmp = new FactureRec($db);
 
 $now = dol_now();
 $tmparray=dol_getdate($now);
@@ -1409,7 +1411,7 @@ else
 		{
 		    	if ($object->frequency > 0)
 		    	{
-				print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+					print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
 		    	}
 		    	else
 		    	{
@@ -1617,7 +1619,7 @@ else
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
+		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
 		$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
 		$sql.= " f.datec, f.tms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
@@ -1625,7 +1627,7 @@ else
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql.= " WHERE f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= ' AND f.entity IN ('.getEntity('facture').')';
 		if (! $user->rights->societe->client->voir && ! $socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
@@ -1837,6 +1839,12 @@ else
 			    print '<td class="liste_titre">';
 			    print '</td>';
 			}
+			// Status
+			if (! empty($arrayfields['status']['checked']))
+			{
+			    print '<td class="liste_titre" align="center">';
+			    print '</td>';
+			}
 			// Action column
 			print '<td class="liste_titre" align="middle">';
 			$searchpicto=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
@@ -1855,8 +1863,9 @@ else
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'],$_SERVER['PHP_SELF'],"f.nb_gen_done","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.date_last_gen']['checked'])) print_liste_field_titre($arrayfields['f.date_last_gen']['label'],$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.datec","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.tms","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 			print "</tr>\n";
 
@@ -1870,6 +1879,11 @@ else
 
 					$companystatic->id=$objp->socid;
 					$companystatic->name=$objp->name;
+
+					$invoicerectmp->id=$objp->id;
+					$invoicerectmp->frequency=$objp->frequency;
+					$invoicerectmp->suspend=$objp->suspend;
+					$invoicerectmp->unit_frequency=$objp->unit_frequency;
 
 					print '<tr class="oddeven">';
 
@@ -1926,6 +1940,12 @@ else
 					{
 					   print '<td align="center">';
 					   print dol_print_date($db->jdate($objp->tms),'dayhour');
+					   print '</td>';
+					}
+					if (! empty($arrayfields['status']['checked']))
+					{
+					   print '<td align="center">';
+					   print $invoicerectmp->getLibStatut(3,0);
 					   print '</td>';
 					}
 					// Action column

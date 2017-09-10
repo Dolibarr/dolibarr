@@ -248,7 +248,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre, f.status, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql = 'SELECT f.rowid, f.entity, f.titre, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
@@ -281,7 +281,7 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
-				$this->statut                 = $obj->status;
+				$this->suspended              = $obj->suspended;
 				$this->type                   = $obj->type;
 				$this->datep                  = $obj->dp;
 				$this->date                   = $obj->df;
@@ -879,6 +879,7 @@ class FactureRec extends CommonInvoice
 			    $facture->brouillon = 1;
 			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
+			    $facture->suspended = 0;
 
 			    $invoiceidgenerated = $facture->create($user);
 			    if ($invoiceidgenerated <= 0)
@@ -957,56 +958,92 @@ class FactureRec extends CommonInvoice
 	}
 
 	/**
+	 *  Return label of object status
+	 *
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param      integer	$alreadypaid    Not used
+	 *  @return     string			        Label
+	 */
+	function getLibStatut($mode=0,$alreadypaid=-1)
+	{
+		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, $alreadypaid, $this->type);
+	}
+
+	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
-	 *	@param    	int  	$paye          	Status field paye
-	 *	@param      int		$status        	Id status
+	 *	@param    	int  	$recur         	Is it a recurring invoice ?
+	 *	@param      int		$status        	Id status (suspended or not)
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *	@param		int		$alreadypaid	Not used
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Libelle du statut
 	 */
-	function LibStatut($paye,$status,$mode=0,$alreadypaid=-1,$type=0)
+	function LibStatut($recur,$status,$mode=0,$alreadypaid=-1,$type=0)
 	{
 		global $langs;
 		$langs->load('bills');
 
-		//print "$paye,$status,$mode,$alreadypaid,$type";
+		//print "$recur,$status,$mode,$alreadypaid,$type";
 		if ($mode == 0)
 		{
 			$prefix='';
-			if ($type == -1) return $langs->trans('Suspended');       // credit note
-			else return $langs->trans('Active');
+			if ($recur)
+			{
+				if ($status == 1) return $langs->trans('Suspended');       // credit note
+				else return $langs->trans('Active');
+			}
+			else return $langs->trans("Draft");
 		}
 		if ($mode == 1)
 		{
 			$prefix='Short';
-			if ($status == -1) return $langs->trans('Suspended');
-			else return $langs->trans('Active');
+			if ($recur)
+			{
+				if ($status == 1) return $langs->trans('Suspended');
+				else return $langs->trans('Active');
+			}
+			else return $langs->trans("Draft");
 		}
 		if ($mode == 2)
 		{
-			if ($status == -1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
-			else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+			if ($recur)
+			{
+				if ($status == 1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
+				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+			}
+			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
 		}
 		if ($mode == 3)
 		{
-			$prefix='Short';
-			if ($type == -1) return img_picto($langs->trans('Suspended'),'statut6');
-			else return img_picto($langs->trans('Active'),'statut4');
+			if ($recur)
+			{
+				$prefix='Short';
+				if ($status == 1) return img_picto($langs->trans('Suspended'),'statut6');
+				else return img_picto($langs->trans('Active'),'statut4');
+			}
+			else return img_picto($langs->trans('Draft'),'statut0');
 		}
 		if ($mode == 4)
 		{
 			$prefix='';
-			if ($type == -1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
-			else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+			if ($recur)
+			{
+				if ($type == 1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
+				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+			}
+			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
 		}
 		if ($mode == 5 || $mode == 6)
 		{
 			$prefix='';
 			if ($mode == 5) $prefix='Short';
-			if ($type == -1) return '<span class="xhideonsmartphone">'.$langs->trans('Suspended').' </span>'.img_picto($langs->trans('Suspended'),'statut6');
-			else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
+			if ($recur)
+			{
+				if ($status == 1) return '<span class="xhideonsmartphone">'.$langs->trans('Suspended').' </span>'.img_picto($langs->trans('Suspended'),'statut6');
+				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
+			}
+			else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');
 		}
 	}
 

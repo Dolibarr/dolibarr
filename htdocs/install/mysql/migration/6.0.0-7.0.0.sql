@@ -38,7 +38,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
-ALTER TABLE llx_facture_rec ADD COLUMN status integer DEFAULT 1;
+ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
+
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 

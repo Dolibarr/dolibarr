@@ -1347,6 +1347,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
         else $morehtmlstatus.=$object->getLibStatut(4);
 	}
+	elseif ($object->element == 'facturerec')
+	{
+        if ($object->frequency==0) $morehtmlstatus.=$object->getLibStatut(2);
+        else $morehtmlstatus.=$object->getLibStatut(4);
+	}
 	else { // Generic case
 	    $tmptxt=$object->getLibStatut(6);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
