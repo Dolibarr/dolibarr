@@ -313,7 +313,7 @@ class FormMail extends Form
         	}
 
         	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
-        	if ($result<0)
+        	if ($result < 0)
         	{
         		setEventMessages($this->error, $this->errors, 'errors');
         	}
@@ -321,6 +321,9 @@ class FormMail extends Form
         	foreach($this->lines_model as $line)
         	{
         		$modelmail_array[$line->id]=$line->label;
+        		if ($line->lang) $modelmail_array[$line->id].=' ('.$line->lang.')';
+        		if ($line->private) $modelmail_array[$line->id].=' - '.$langs->trans("Private");
+        		//if ($line->fk_user != $user->id) $modelmail_array[$line->id].=' - '.$langs->trans("By").' ';
         	}
 
         	// Zone to select its email template
@@ -337,11 +340,11 @@ class FormMail extends Form
         	elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
         	        'propal_send','order_send','facture_send',
         	        'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
-        	        'invoice_supplier_send','thirdparty'
+        	        'invoice_supplier_send','thirdparty','all'
            	    )))
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
+        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
         	    $out.= ' &nbsp; ';
         	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
@@ -373,7 +376,7 @@ class FormMail extends Form
         		{
         			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
         			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
-        			$out.= '<tr><td width="180">'.$langs->trans("MailFrom").'</td><td>';
+        			$out.= '<tr><td width="180" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
 
                     if (! ($this->fromtype === 'user' && $this->fromid > 0)
                         && ! ($this->fromtype === 'company')
@@ -939,7 +942,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Find if template exists
+	 *      Find if template exists and are available for current user, then set them into $this->lines_module.
 	 *      Search into table c_email_templates
 	 *
 	 * 		@param	string		$type_template	Get message for key module
@@ -952,13 +955,13 @@ class FormMail extends Form
 	{
 		$ret=array();
 
-		$sql = "SELECT rowid, label, topic, content, content_lines, lang, position";
+		$sql = "SELECT rowid, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
-		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
+		$sql.= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
-		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";		// See all public templates or templates I own.
 		if ($active >= 0) $sql.=" AND active = ".$active;
-		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages
 		$sql.= $this->db->order("position,lang,label","ASC");
 		//print $sql;
 
@@ -972,10 +975,13 @@ class FormMail extends Form
 				$line = new ModelMail();
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
+				$line->lang=$obj->lang;
+				$line->fk_user=$obj->fk_user;
+				$line->private=$obj->private;
+				$line->position=$obj->position;
 				$line->topic=$obj->topic;
 				$line->content=$obj->content;
 				$line->content_lines=$obj->content_lines;
-				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
 			}
 			$this->db->free($resql);

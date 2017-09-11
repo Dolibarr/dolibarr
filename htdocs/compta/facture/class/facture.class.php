@@ -286,6 +286,8 @@ class Facture extends CommonInvoice
 			$result=$_facrec->fetch($this->fac_rec);
 			$result=$_facrec->fetchObjectLinked();       // This load $_facrec->linkedObjectsIds
 
+			$originaldatewhen = $_facrec->date_when;
+
 			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
@@ -361,7 +363,12 @@ class Facture extends CommonInvoice
 			    '__INVOICE_PREVIOUS_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y'),
 			    '__INVOICE_YEAR__' => dol_print_date($this->date, '%Y'),
 			    '__INVOICE_NEXT_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y'),
+				// Only for tempalte invoice
+				'__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__' => dol_print_date($originaldatewhen, 'dayhour'),
+				'__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__' => dol_print_date(dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency), 'dayhour')
 			);
+
+			//var_dump($substitutionarray);exit;
 
 			$substitutionisok=true;
 			complete_substitutions_array($substitutionarray, $outputlangs);

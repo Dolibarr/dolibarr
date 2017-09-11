@@ -46,7 +46,7 @@ $sref=GETPOST("sref");
 $snom=GETPOST("snom");
 $sall=GETPOST('sall', 'alphanohtml');
 $type=GETPOST("type","int");
-$sbarcode=GETPOST("sbarcode",'alpha');
+$search_barcode=GETPOST("search_barcode",'alpha');
 $search_warehouse=GETPOST('search_warehouse','alpha');
 $search_batch=GETPOST('search_batch','alpha');
 $catid=GETPOST('catid','int');
@@ -140,7 +140,7 @@ if (dol_strlen($type))
     }
 }
 if ($sref)     $sql.= natural_search("p.ref", $sref);
-if ($sbarcode) $sql.= natural_search("p.barcode", $sbarcode);
+if ($search_barcode) $sql.= natural_search("p.barcode", $search_barcode);
 if ($snom)     $sql.= natural_search("p.label", $snom);
 if (! empty($tosell)) $sql.= " AND p.tosell = ".$tosell;
 if (! empty($tobuy))  $sql.= " AND p.tobuy = ".$tobuy;

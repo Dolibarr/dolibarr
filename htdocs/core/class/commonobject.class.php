@@ -2956,6 +2956,8 @@ abstract class CommonObject
      */
     function isObjectUsed($id=0)
     {
+    	global $langs;
+
         if (empty($id)) $id=$this->id;
 
         // Check parameters
@@ -2965,10 +2967,19 @@ abstract class CommonObject
             return -1;
         }
 
+        $arraytoscan = $this->childtables;
+        // For backward compatibility, we check if array is old format array('table1', 'table2', ...)
+        $tmparray=array_keys($this->childtables);
+        if (is_numeric($tmparray[0]))
+        {
+        	$arraytoscan = array_flip($this->childtables);
+        }
+
         // Test if child exists
         $haschild=0;
-        foreach($this->childtables as $table)
+        foreach($arraytoscan as $table => $elementname)
         {
+        	//print $id.'-'.$table.'-'.$elementname.'<br>';
             // Check if third party can be deleted
             $sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
             $sql.= " WHERE ".$this->fk_element." = ".$id;
@@ -2976,19 +2987,24 @@ abstract class CommonObject
             if ($resql)
             {
                 $obj=$this->db->fetch_object($resql);
-                $haschild+=$obj->nb;
-                //print 'Found into table '.$table;
-                if ($haschild) break;    // We found at least on, we stop here
+                if ($obj->nb > 0)
+                {
+                	$langs->load("errors");
+                	//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
+                	$haschild += $obj->nb;
+                	$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+                	break;    // We found at least one, we stop here
+                }
             }
             else
             {
-                $this->error=$this->db->lasterror();
+                $this->errors[]=$this->db->lasterror();
                 return -1;
             }
         }
         if ($haschild > 0)
         {
-            $this->error="ErrorRecordHasChildren";
+            $this->errors[]="ErrorRecordHasChildren";
             return $haschild;
         }
         else return 0;

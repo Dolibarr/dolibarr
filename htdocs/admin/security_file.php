@@ -131,6 +131,7 @@ dol_fiche_head($head, 'file', $langs->trans("Security"), -1);
 // Upload options
 $var=false;
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
@@ -193,6 +194,7 @@ print "</td>";
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

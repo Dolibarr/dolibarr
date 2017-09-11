@@ -68,7 +68,7 @@ $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
 $listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;	// To avoid too long dictionaries
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -1166,11 +1166,6 @@ if ($id)
 
         print '</table>';
 		print '</div>';
-
-        /*if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
-        {
-        	print '* '.$langs->trans("LabelUsedByDefault").'.<br>';
-        }*/
     }
 
     print '</form>';
@@ -1190,9 +1185,10 @@ if ($id)
         $i = 0;
 
         // There is several pages
-        if ($num > $listlimit)
+        if ($num > $listlimit || $page)
         {
             print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
+            print '<div class="clearboth"></div>';
         }
 
 	    print '<div class="div-table-responsive">';
@@ -1673,6 +1669,8 @@ else
      */
 
     $lastlineisempty=false;
+
+	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     //print '<td>'.$langs->trans("Module").'</td>';
@@ -1725,6 +1723,7 @@ else
         }
     }
     print '</table>';
+    print '</div>';
 }
 
 print '<br>';
