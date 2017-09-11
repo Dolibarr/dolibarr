@@ -571,11 +571,7 @@ class Fichinter extends CommonObject
 
 		$thm = $this->author->thm;
 
-		foreach($this->lines as &$line) {
-
-			$amount+=$line->qty * $thm;
-
-		}
+		$amount = $this->duration / 60 / 60 * $thm;
 
 		return $amount;
 	}
