@@ -40,6 +40,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
 
+ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
+
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
