@@ -442,7 +442,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 
 		$morehtmlref='';
-
+		
 		// Project
 		if (empty($withproject))
 		{
@@ -450,10 +450,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
 		    $morehtmlref.='<br>';
-
+			
 		    // Third party
-		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    	$morehtmlref.=$langs->trans("ThirdParty").': ';
+	    	if (!empty($projectstatic->thirdparty)) {
+	    		$morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    	}
 		    $morehtmlref.='</div>';
 		}
 
