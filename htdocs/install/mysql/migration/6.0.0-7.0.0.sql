@@ -249,6 +249,17 @@ UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
 
 
+CREATE TABLE llx_projet_task_comment (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    datec datetime  DEFAULT NULL,
+    tms timestamp,
+    description text NOT NULL,
+    fk_user integer DEFAULT NULL,
+    fk_task integer DEFAULT NULL,
+    entity integer DEFAULT 1,
+    import_key varchar(125) DEFAULT NULL
+);
+
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;

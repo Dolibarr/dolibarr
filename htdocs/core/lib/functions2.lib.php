@@ -2240,3 +2240,25 @@ function getModuleDirForApiClass($module)
 
     return $moduledirforclass;
 }
+
+/*
+ * Return 2 hexa code randomly
+ * 
+ * @param	$min	int	Between 0 and 255
+ * @param	$max	int	Between 0 and 255
+ * @return String
+ */
+function random_color_part($min=0,$max=255) {
+	return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+}
+
+/*
+ * Return hexadecimal color randomly
+ * 
+ * @param	$min	int	Between 0 and 255
+ * @param	$max	int	Between 0 and 255
+ * @return String
+ */
+function random_color($min=0, $max=255) {
+	return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+}

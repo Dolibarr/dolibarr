@@ -208,3 +208,8 @@ OppStatusPENDING=Pending
 OppStatusWON=Won
 OppStatusLOST=Lost
 Budget=Budget
+# Comments trans
+AllowCommentOnTask=Allow user comments on tasks
+TaskCommentLinks=Comments
+TaskNbComments=Number of comments
+TaskComment=Task's comments space
