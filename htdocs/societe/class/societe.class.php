@@ -44,7 +44,7 @@ class Societe extends CommonObject
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
     protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
-	protected $childtablesoncascade=array("llx_societe_prices", "llx_societe_log", "llx_societe_address", "llx_product_fournisseur_price", "llx_product_customer_price_log", "llx_product_customer_price", "socpeople", "adherent", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "llx_categorie", "llx_notify", "llx_notfy_def");
+	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notfy_def");
 
 
 	/**
