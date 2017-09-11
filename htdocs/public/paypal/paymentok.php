@@ -170,7 +170,9 @@ if ($PAYPALTOKEN)
 
             print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
             print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-            if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+
+			$key='ONLINE_PAYMENT_MESSAGE_OK';
+			if (! empty($conf->global->$key)) print $conf->global->$key;
 
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -326,7 +328,7 @@ else
 
 print "\n</div>\n";
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

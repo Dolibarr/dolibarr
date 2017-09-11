@@ -22,12 +22,14 @@
 create table llx_facture_rec
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  titre              varchar(50) NOT NULL,
+  titre              varchar(100) NOT NULL,
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
   fk_soc             integer NOT NULL,
   datec              datetime,            -- date de creation
   tms				 timestamp,           -- date creation/modification
 
+  suspended          integer DEFAULT 0,					-- 1=suspended
+  
   amount             double(24,8)     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,
   remise_percent     real     DEFAULT 0,

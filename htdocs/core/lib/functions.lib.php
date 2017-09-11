@@ -277,12 +277,14 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 
 	if (empty($method) || $method == 3 || $method == 4)
 	{
+
     	$relativepathstring = $_SERVER["PHP_SELF"];
     	// Clean $relativepathstring
     	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-    	//var_dump($relativepathstring);
+		//var_dump($relativepathstring);
+		//var_dump($user->default_values);
 
         // Code for search criteria persistence.
     	// Retrieve values if restore_lastsearch_values is set and there is saved values
@@ -319,46 +321,85 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
 	                //var_dump($user->default_values[$relativepathstring]);
-	                if ($paramname == 'sortfield')
+	                if ($paramname == 'sortfield')			// Sorted on which fields ?
 	                {
-	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
-	                    {
-	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-	                        {
-	                            if ($out) $out.=', ';
-	                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
-	                        }
-	                    }
+	                	$qualified=1;
+	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+	                	{
+	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
+	                		$tmpqueryarraywehave=explode('&', $_SERVER['QUERY_STRING']);
+	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                		{
+	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+	                		}
+	                	}
+						if ($qualified)
+						{
+		                	if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
+		                    {
+		                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+		                        {
+		                            if ($out) $out.=', ';
+		                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
+		                        }
+		                    }
+						}
 	                }
-	                elseif ($paramname == 'sortorder')
+	                elseif ($paramname == 'sortorder')		// ASC or DESC ?
 	                {
-	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
-	                    {
-	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-	                        {
-	                            if ($out) $out.=', ';
-	                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
-	                        }
-	                    }
+	                	$qualified=1;
+	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))
+	                	{
+	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
+	                		$tmpqueryarraywehave=explode('&', $_SERVER['QUERY_STRING']);
+	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                		{
+	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+	                		}
+	                	}
+						if ($qualified)
+						{
+		                	if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
+		                    {
+		                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+		                        {
+		                            if ($out) $out.=', ';
+		                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
+		                        }
+		                    }
+						}
 	                }
 	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
 	                {
-	                	if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+	                	$qualified=1;
+	                	if (isset($user->default_values[$relativepathstring]['filters_queries']))
 	                	{
-	                		// We made a search from quick search menu, do we still use default filter ?
-	                		if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['filters_queries']);
+	                		$tmpqueryarraywehave=explode('&', $_SERVER['QUERY_STRING']);
+	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
 	                		{
-	                    		$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                    		$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
 	                		}
 	                	}
-	                	else
-	                	{
-	                    	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                    	$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
-	                	}
+						if ($qualified)
+						{
+		                	if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+		                	{
+		                		// We made a search from quick search menu, do we still use default filter ?
+		                		if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+		                		{
+		                    		$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                    		$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+		                		}
+		                	}
+		                	else
+		                	{
+		                    	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                    	$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+		                	}
+						}
 	                }
 	            }
 	        }
@@ -1345,6 +1386,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	elseif ($object->element == 'contrat' || $object->element == 'contract')
 	{
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
+        else $morehtmlstatus.=$object->getLibStatut(4);
+	}
+	elseif ($object->element == 'facturerec')
+	{
+        if ($object->frequency==0) $morehtmlstatus.=$object->getLibStatut(2);
         else $morehtmlstatus.=$object->getLibStatut(4);
 	}
 	else { // Generic case
@@ -6207,7 +6253,7 @@ function dol_getmypid()
  *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
- *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
+ *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query

@@ -36,6 +36,14 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 
 
+-- For 7.0
+
+ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
+
+ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
+
+
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'DEPENSES',  'Expenses of products/services',             'Exemple: 6xxxxx', 0, 0, '',                '20', 1, 1);
@@ -55,7 +63,8 @@ ALTER TABLE llx_mailing MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
-
+ALTER TABLE llx_bookmark DROP COLUM fk_soc;
+ 
 ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);

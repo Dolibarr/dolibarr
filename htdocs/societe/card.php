@@ -186,7 +186,6 @@ if (empty($reshook))
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
 					'Societe' => '/societe/class/societe.class.php',
-					'Bookmark' => '/bookmarks/class/bookmark.class.php',
 					'Categorie' => '/categories/class/categorie.class.php',
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
@@ -1977,7 +1976,7 @@ else
 		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
 	    }
 
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

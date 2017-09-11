@@ -56,7 +56,7 @@ $search_id=trim(GETPOST("search_id","int"));
 $search_nom=trim(GETPOST("search_nom"));
 $search_alias=trim(GETPOST("search_alias"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
-$search_barcode=trim(GETPOST("sbarcode"));
+$search_barcode=trim(GETPOST("search_barcode"));
 $search_customer_code=trim(GETPOST('search_customer_code'));
 $search_supplier_code=trim(GETPOST('search_supplier_code'));
 $search_account_customer_code=trim(GETPOST('search_account_customer_code'));
@@ -473,12 +473,14 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double','real'))) $mode=1;    // Search on a numeric
-    if ($crit != '' && (! in_array($typ, array('select')) || $crit != '0'))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
 }
+
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -540,7 +542,7 @@ if ($search_customer_code != '') $param.= "&search_customer_code=".urlencode($se
 if ($search_supplier_code != '') $param.= "&search_supplier_code=".urlencode($search_supplier_code);
 if ($search_account_customer_code != '') $param.= "&search_account_customer_code=".urlencode($search_account_customer_code);
 if ($search_account_supplier_code != '') $param.= "&search_account_supplier_code=".urlencode($search_account_supplier_code);
-if ($search_barcode != '') $param.= "&sbarcode=".urlencode($search_barcode);
+if ($search_barcode != '') $param.= "&search_barcode=".urlencode($search_barcode);
 if ($search_idprof1 != '') $param.= '&search_idprof1='.urlencode($search_idprof1);
 if ($search_idprof2 != '') $param.= '&search_idprof2='.urlencode($search_idprof2);
 if ($search_idprof3 != '') $param.= '&search_idprof3='.urlencode($search_idprof3);
@@ -687,7 +689,7 @@ if (! empty($arrayfields['s.name_alias']['checked']))
 if (! empty($arrayfields['s.barcode']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
+	print '<input class="flat searchstring" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
 	print '</td>';
 }
 // Customer code

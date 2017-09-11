@@ -43,9 +43,11 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet","expedition");    // To test if we can delete object
+    protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
+	protected $childtablesoncascade=array("llx_societe_prices", "llx_societe_log", "llx_societe_address", "llx_product_fournisseur_price", "llx_product_customer_price_log", "llx_product_customer_price", "socpeople", "adherent", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "llx_categorie", "llx_notify", "llx_notfy_def");
 
-    /**
+
+	/**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
@@ -1424,11 +1426,11 @@ class Societe extends CommonObject
 	            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 	            if ($this->client || $this->prospect)
 	            {
-	                $toute_categs ['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
+	                $toute_categs['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
 	            }
 	            if ($this->fournisseur)
 	            {
-	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
+	                $toute_categs['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
 	            }
 
 	            // Remove each "Categorie"
@@ -1441,78 +1443,19 @@ class Societe extends CommonObject
 	            }
 			}
 
-            // Remove contacts
-            if (! $error)
-            {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-                $sql.= " WHERE fk_soc = " . $id;
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error .= $this->db->lasterror();
-                }
-            }
-
-            // Update link in member table
-            if (! $error)
-            {
-                $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-                $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error .= $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
-                }
-            }
-
-            // Remove ban
-            if (! $error)
-            {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-                $sql.= " WHERE fk_soc = " . $id;
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error = $this->db->lasterror();
-                }
-            }
-
-            // Remove societe_remise
-            if (! $error)
-            {
-            	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise";
-            	$sql.= " WHERE fk_soc = " . $id;
-            	if (! $this->db->query($sql))
-            	{
-            		$error++;
-            		$this->error = $this->db->lasterror();
-            	}
-            }
-
-		    // Remove societe_remise_except
-            if (! $error)
-            {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except";
-                $sql.= " WHERE fk_soc = " . $id;
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error = $this->db->lasterror();
-                }
-            }
-
-            // Remove associated users
-            if (! $error)
-            {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_commerciaux";
-                $sql.= " WHERE fk_soc = " . $id;
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                    $this->error = $this->db->lasterror();
-                }
-            }
+			foreach ($this->childtablesoncascade as $tabletodelete)
+			{
+				if (! $error)
+				{
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete;
+					$sql.= " WHERE fk_soc = " . $id;
+					if (! $this->db->query($sql))
+					{
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+			}
 
             // Removed extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
@@ -1530,11 +1473,10 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
                 $sql.= " WHERE rowid = " . $id;
-                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
-                    $this->error = $this->db->lasterror();
+                    $this->errors[] = $this->db->lasterror();
                 }
             }
 

@@ -1,5 +1,4 @@
 <?php
-	
 /**
  * Copyright (C) 2013	Marcos García	<marcosgdf@gmail.com>
  *
@@ -21,14 +20,14 @@
 /**
  * Returns an array with the tabs for the "Payment" section
  * It loads tabs from modules looking for the entity payment
- *  
+ *
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
 function payment_prepare_head(Paiement $object) {
-	
+
 	global $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -56,14 +55,14 @@ function payment_prepare_head(Paiement $object) {
 /**
  * Returns an array with the tabs for the "Supplier payment" section
  * It loads tabs from modules looking for the entity payment_supplier
- *  
+ *
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
 function payment_supplier_prepare_head(Paiement $object) {
-	
+
 	global $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -77,7 +76,7 @@ function payment_supplier_prepare_head(Paiement $object) {
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_supplier');
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
@@ -95,9 +94,12 @@ function payment_supplier_prepare_head(Paiement $object) {
  *
  * @param   Societe		$fromcompany	Third party
  * @param   Translate	$langs			Output language
+ * @param	int			$addformmessage	Add the payment form message
+ * @param	string		$suffix			Suffix to use on constants
+ * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany,$langs)
+function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suffix='',$object=null)
 {
     global $conf;
 
@@ -149,10 +151,32 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs)
         $line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
     }
 
-    print '<br><br><hr>'."\n";
-    print '<div class="center"><font style="font-size: 10px;">'."\n";
+    print '<br>';
+
+    print '<div class="center">'."\n";
+    if ($addformmessage)
+    {
+    	print '<!-- object = '.$object->element.' -->';
+    	print '<br>';
+
+    	$parammessageform='ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
+    	if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
+    	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+
+    	// Add other message if VAT exists
+    	if (! empty($object->total_vat) || ! empty($object->total_tva))
+    	{
+    		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
+    		if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
+    		else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+    	}
+    }
+
+    print '<font style="font-size: 10px;"><br><hr>'."\n";
     print $fromcompany->name.'<br>';
-    print $line1.'<br>';
+    print $line1;
+    if (strlen($line1+$line2) > 50) print '<br>';
+    else print ' - ';
     print $line2;
     print '</font></div>'."\n";
 }

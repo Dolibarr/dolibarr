@@ -66,6 +66,7 @@ $suffix=GETPOST("suffix",'aZ09');
 $amount=price2num(GETPOST("amount",'alpha'));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
+$source = GETPOST("source",'alpha');
 
 if (! $action)
 {
@@ -607,8 +608,11 @@ $found=false;
 $error=0;
 $var=false;
 
+$object = null;
+
+
 // Free payment
-if (! GETPOST("source"))
+if (! $source)
 {
 	$found=true;
 	$tag=GETPOST("tag");
@@ -655,7 +659,7 @@ if (! GETPOST("source"))
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order')
+if ($source == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -672,6 +676,8 @@ if (GETPOST("source") == 'order')
 	else
 	{
 		$result=$order->fetch_thirdparty($order->socid);
+
+		$object = $order;
 	}
 
     if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
@@ -765,7 +771,7 @@ if (GETPOST("source") == 'order')
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice')
+if ($source == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -782,6 +788,8 @@ if (GETPOST("source") == 'invoice')
 	else
 	{
 		$result=$invoice->fetch_thirdparty($invoice->socid);
+
+		$object = $invoice;
 	}
 
     if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
@@ -874,7 +882,7 @@ if (GETPOST("source") == 'invoice')
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline')
+if ($source == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -882,6 +890,7 @@ if (GETPOST("source") == 'contractline')
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 	$contractline=new ContratLigne($db);
+
 	$result=$contractline->fetch('',$ref);
 	if ($result < 0)
 	{
@@ -892,6 +901,8 @@ if (GETPOST("source") == 'contractline')
 	{
 		if ($contractline->fk_contrat > 0)
 		{
+			$object = $contractline;
+
 			$contract=new Contrat($db);
 			$result=$contract->fetch($contractline->fk_contrat);
 			if ($result > 0)
@@ -914,7 +925,8 @@ if (GETPOST("source") == 'contractline')
     if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
     {
     	$amount=$contractline->total_ttc;
-    	if ($contractline->fk_product)
+
+    	if ($contractline->fk_product && ! empty($conf->global-PAYMENT_USE_NEW_PRICE_FOR_CONTRACTLINES))
     	{
     		$product=new Product($db);
     		$result=$product->fetch($contractline->fk_product);
@@ -940,6 +952,7 @@ if (GETPOST("source") == 'contractline')
     			exit;
     		}
     	}
+
         if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
         $amount=price2num($amount);
     }
@@ -1072,7 +1085,7 @@ if (GETPOST("source") == 'contractline')
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription')
+if ($source == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -1089,6 +1102,8 @@ if (GETPOST("source") == 'membersubscription')
 	}
 	else
 	{
+		$object = $member;
+
 		$subscription=new Subscription($db);
 	}
 
@@ -1264,6 +1279,7 @@ else
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';
@@ -1445,8 +1461,7 @@ if (preg_match('/^dopayment/',$action))
 }
 
 
-
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
 
 llxFooter('', 'public');
 

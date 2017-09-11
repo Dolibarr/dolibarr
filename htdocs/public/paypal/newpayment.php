@@ -1015,7 +1015,7 @@ print '<br>';
 
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix);
 
 llxFooter('', 'public');
 
