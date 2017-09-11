@@ -411,8 +411,8 @@ if (! empty($conf->global->PAYMENT_NEWFORM_TEXT))
 }
 if (empty($text))
 {
-    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong><br></td></tr>'."\n";
-    $text.='<tr><td class="textpublicpayment"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 

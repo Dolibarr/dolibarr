@@ -920,7 +920,8 @@ class Commande extends CommonOrder
                 		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
                 		            {
                 		                $originforcontact = 'commande';
-                		                $originidforcontact = $value->id;
+							            if (is_object($value)) $originidforcontact = $value->id;
+							            else $originidforcontact = $value;
                 		                break; // We take first one
                 		            }
                 		        }

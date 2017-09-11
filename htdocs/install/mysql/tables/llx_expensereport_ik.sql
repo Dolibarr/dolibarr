@@ -26,4 +26,4 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     fk_range        integer DEFAULT 0 NOT NULL,	  	  
     coef            double DEFAULT 0 NOT NULL,  
     offset          double DEFAULT 0 NOT NULL	          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
