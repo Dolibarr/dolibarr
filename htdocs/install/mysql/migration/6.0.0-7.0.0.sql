@@ -98,14 +98,14 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     fk_range        integer DEFAULT 0 NOT NULL,
     coef            double DEFAULT 0 NOT NULL,
     offset          double DEFAULT 0 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     range_ik    double DEFAULT 0 NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
 ('EX_KME', 'ExpLabelKm', 1, '625100'),
@@ -258,7 +258,7 @@ CREATE TABLE llx_projet_task_comment (
     fk_task integer DEFAULT NULL,
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
-);
+)ENGINE=innodb;
 
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;

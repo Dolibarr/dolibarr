@@ -25,4 +25,4 @@ CREATE TABLE llx_projet_task_comment (
     fk_task integer DEFAULT NULL,
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
-);
+) ENGINE=innodb;
