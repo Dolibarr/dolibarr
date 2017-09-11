@@ -861,8 +861,8 @@ class RemiseCheque extends CommonObject
         if ($user->rights->banque->cheque)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-            $sql.= " SET date_bordereau = ".($date ? $this->db->idate($date) : 'null');
-            $sql.= " WHERE rowid = ".$this->id;
+            $sql.= " SET date_bordereau = '".($date ? $this->db->idate($date) : 'null');
+            $sql.= "' WHERE rowid = ".$this->id;
 
             dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
             $resql=$this->db->query($sql);
