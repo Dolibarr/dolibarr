@@ -61,6 +61,8 @@ class box_comptes extends ModeleBoxes
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+
+		$this->hidden = ! ($user->rights->banque->lire);
 	}
 
 	/**
@@ -171,11 +173,11 @@ class box_comptes extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

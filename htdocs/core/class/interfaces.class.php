@@ -66,11 +66,17 @@ class Interfaces
         	$this->errors[]=$this->error;
             return -1;
         }
-        if (! is_object($user) || ! is_object($langs))	// Warning
+        if (! is_object($langs))	// Warning
         {
             dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
         }
-
+        if (! is_object($user))	    // Warning
+        {
+            dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
+            global $db;
+            $user = new User($db);
+        }
+        
         $nbfile = $nbtotal = $nbok = $nbko = 0;
 
         $files = array();
@@ -101,27 +107,6 @@ class Interfaces
 
                         $nbfile++;
                         
-                        $modName = "Interface".ucfirst($reg[3]);
-                        //print "file=$file - modName=$modName\n";
-                        if (in_array($modName,$modules))
-                        {
-                            $langs->load("errors");
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/"), LOG_ERR);
-                            continue;
-                        }
-                        else
-                        {
-                            try {
-                                //print 'Todo for '.$modName." : ".$newdir.'/'.$file."\n";
-                                include_once $newdir.'/'.$file;
-                                //print 'Done for '.$modName."\n";
-                            }
-                            catch(Exception $e)
-                            {
-                                dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERROR);
-                            }
-                        }
-                        
                         // Check if trigger file is disabled by name
                         if (preg_match('/NORUN$/i',$file)) continue;
                         // Check if trigger file is for a particular module
@@ -139,8 +124,28 @@ class Interfaces
                             continue;
                         }
 
+                        $modName = "Interface".ucfirst($reg[3]);
+                        //print "file=$file - modName=$modName\n";
+                        if (in_array($modName,$modules))    // $modules = list of modName already loaded
+                        {
+                            $langs->load("errors");
+                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
+                            continue;
+                        }
+                        
+                        try {
+                            //print 'Todo for '.$modName." : ".$newdir.'/'.$file."\n";
+                            include_once $newdir.'/'.$file;
+                            //print 'Done for '.$modName."\n";
+                        }
+                        catch(Exception $e)
+                        {
+                            dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERR);
+                        }
+                        
                         $modules[$i] = $modName;
                         $files[$i] = $file;
+                        $fullpathfiles[$modName] = $newdir.'/'.$file;
                         $orders[$i] = $part1.'_'.$part2.'_'.$part3;   // Set sort criteria value
 
                         $i++;

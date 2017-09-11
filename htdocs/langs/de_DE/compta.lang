@@ -202,6 +202,6 @@ SameCountryCustomersWithVAT=Nationale Kunden berichten
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Basierend auf den ersten beiden Buchstaben der Mehrwertsteuernummer die gleiche ist wie Ihr eigener Unternehmens Ländercode.
 LinkedFichinter=mit Serviceauftrag verbinden
 ImportDataset_tax_contrib=Sozialabgaben/Steuern
-ImportDataset_tax_vat=Vat payments
+ImportDataset_tax_vat=USt.-Zahlungen
 ErrorBankAccountNotFound=Fehler: Bankkonto nicht gefunden
 FiscalPeriod=Buchhaltungs Periode

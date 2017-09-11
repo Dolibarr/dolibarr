@@ -70,12 +70,16 @@ $label=$somme=$nb=array();
 $totalnb=$totalsum=0;
 $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensereport_det as de, ".MAIN_DB_PREFIX."c_type_fees as tf";
-$sql.= " WHERE de.fk_expensereport = d.rowid AND de.fk_c_type_fees = tf.id";
+$sql.= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport', 1).") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
+    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+    $childids = $user->getAllChildIds();
+    $childids[]=$user->id;
+    $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
+
 $sql.= " GROUP BY tf.code, tf.label";
 
 $result = $db->query($sql);
@@ -146,7 +150,14 @@ $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.pho
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND d.fk_user_author IN ('.join(',',$childids).')';
+// RESTRICT RIGHTS
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
+    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
+{
+    $childids = $user->getAllChildIds();
+    $childids[]=$user->id;
+    $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+}
 $sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;

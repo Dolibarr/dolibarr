@@ -149,7 +149,7 @@ if (empty($conf->db->user)) $conf->db->user='';
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
 $bc[false]=' class="bg1"';

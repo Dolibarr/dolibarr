@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("compta");
 $langs->load("salaries");
 $langs->load("bills");
+$langs->load("hrm");
 
 // Security check
 $socid = GETPOST("socid","int");

@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Frederic France			<frederic.france@free.fr>
@@ -198,6 +198,9 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
 		$infos.= $langs->transnoentities("Country").": ".$this->country."\n";
 		$infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
+        $infos.= $langs->transnoentities("PhonePro").": ".$this->phone."\n";
+        $infos.= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
+        $infos.= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 		    $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
@@ -225,6 +228,10 @@ class Adherent extends CommonObject
 				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
 				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
 				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
+                '%TYPE%'=>$msgishtml?dol_htmlentitiesbr($this->type):$this->type,
+                '%PHONE_PRO%'=>$msgishtml?dol_htmlentitiesbr($this->phone):$this->phone,
+                '%PHONE_PERSO%'=>$msgishtml?dol_htmlentitiesbr($this->phone_perso):$this->phone_perso,
+                '%PHONE_MOBILE%'=>$msgishtml?dol_htmlentitiesbr($this->phone_mobile):$this->phone_mobile,
 				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
@@ -439,18 +446,18 @@ class Adherent extends CommonObject
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
-        $sql.= ", email='".$this->email."'";
-        $sql.= ", skype='".$this->skype."'";
+        $sql.= ", email='".$this->db->escape($this->email)."'";
+        $sql.= ", skype='".$this->db->escape($this->skype)."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso=" .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
         $sql.= ", note_private=" .($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
         $sql.= ", note_public=" .($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
-        $sql.= ", public='".$this->public."'";
+        $sql.= ", public='".$this->db->escape($this->public)."'";
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;
-        $sql.= ", morphy='".$this->morphy."'";
+        $sql.= ", morphy='".$this->db->escape($this->morphy)."'";
         $sql.= ", birth="   .($this->birth?"'".$this->db->idate($this->birth)."'":"null");
         if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
         if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
@@ -496,7 +503,7 @@ class Adherent extends CommonObject
                 if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
                 {
                     $isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1;
-                    
+
                     // If password to set differs from the one found into database
                     $result=$this->setPassword($user,$this->pass,$isencrypted,$notrigger,$nosyncuserpass);
                     if (! $nbrowsaffected) $nbrowsaffected++;
@@ -649,7 +656,7 @@ class Adherent extends CommonObject
         // Search for last subscription id and end date
         $sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
         $sql.= " FROM ".MAIN_DB_PREFIX."subscription";
-        $sql.= " WHERE fk_adherent='".$this->id."'";
+        $sql.= " WHERE fk_adherent=".$this->id;
         $sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
 
         dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
@@ -862,7 +869,7 @@ class Adherent extends CommonObject
                 $this->pass=$password;
                 $this->pass_indatabase=$password_indatabase;
                 $this->pass_indatabase_crypted=$password_crypted;
-                
+
                 if ($this->user_id && ! $nosyncuser)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1122,7 +1129,7 @@ class Adherent extends CommonObject
                 $this->pass				= $obj->pass;
                 $this->pass_indatabase  = $obj->pass;
                 $this->pass_indatabase_crypted = $obj->pass_crypted;
-                
+
                 $this->state_id			= $obj->state_id;
                 $this->state_code		= $obj->state_id?$obj->state_code:'';
                 $this->state			= $obj->state_id?$obj->state:'';
@@ -1160,7 +1167,7 @@ class Adherent extends CommonObject
 
                 $this->user_id			= $obj->user_id;
                 $this->user_login		= $obj->user_login;
-                
+
                 $this->model_pdf        = $obj->model_pdf;
 
                 // Retreive all extrafield for thirdparty
@@ -1456,7 +1463,7 @@ class Adherent extends CommonObject
         if (! empty($conf->global->ADHERENT_USE_MAILMAN) && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->add_to_mailman($this);
-         
+
             if ($result < 0)
             {
             	if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
@@ -1815,9 +1822,9 @@ class Adherent extends CommonObject
     public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
     {
         global $conf,$langs;
-    
+
         $langs->load("orders");
-    
+
         // Positionne le modele sur le nom du modele a utiliser
         if (! dol_strlen($modele))
         {
@@ -1830,13 +1837,13 @@ class Adherent extends CommonObject
                 $modele = 'standard';
             }
         }
-    
+
         $modelpath = "core/modules/member/doc/";
-    
+
         return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
     }
-    
-    
+
+
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
@@ -1926,27 +1933,28 @@ class Adherent extends CommonObject
         $this->fullname=$this->getFullName($langs);
 
         // Member
-        if ($this->fullname && ! empty($conf->global->LDAP_MEMBER_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
-        if ($this->lastname && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))     $info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->lastname;
-        if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME)) $info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
-        if ($this->login && ! empty($conf->global->LDAP_MEMBER_FIELD_LOGIN))      $info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
-        if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))    $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
-        if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))      $info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
-        if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
-        if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
-        if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))        $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
-        if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
-        if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
-        if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))       $info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
-        if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
-        if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
-        if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
-        if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))	      $info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
-        if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note_private;
-        if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC)) $info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = $this->note_public;
-        if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
-        if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
-        if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
+        if ($this->fullname && ! empty($conf->global->LDAP_MEMBER_FIELD_FULLNAME))				$info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
+        if ($this->lastname && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))					$info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->lastname;
+        if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME))			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
+        if ($this->login && ! empty($conf->global->LDAP_MEMBER_FIELD_LOGIN))					$info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
+        if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
+        if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))			$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // md5 for OpenLdap TODO add type of encryption
+        if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))					$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
+        if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
+        if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
+        if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+        if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
+        if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))						$info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
+        if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
+        if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+        if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
+        if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
+        if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))						$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
+        if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note_private;
+        if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = $this->note_public;
+        if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))				$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
+        if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
+        if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))	$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 
         // Subscriptions
         if ($this->first_subscription_date && ! empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE))     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dol_print_date($this->first_subscription_date,'dayhourldap');
@@ -2080,7 +2088,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * Return if a member is late (subscription late) or not
-	 * 
+	 *
 	 * @return boolean     True if late, False if not late
 	 */
     public function hasDelay()

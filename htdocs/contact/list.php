@@ -42,7 +42,7 @@ $ref = '';  // There is no ref for contacts
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
@@ -787,7 +787,7 @@ while ($i < min($num,$limit))
     print '<td align="right">';
     print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.img_object($langs->trans("AddAction"),"action").'</a>';
     print ' &nbsp; ';
-    print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
+    print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
     print img_picto($langs->trans("VCard"),'vcard.png').' ';
     print '</a></td>';
 

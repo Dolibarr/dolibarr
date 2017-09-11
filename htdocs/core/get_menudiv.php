@@ -35,7 +35,7 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
 
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL by the main.inc.php
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
 $langs->load("main");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');

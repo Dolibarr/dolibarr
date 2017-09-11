@@ -13,11 +13,28 @@
 -- flush privileges;
 
 
--- Requests to change character set and collation of a column
+-- Request to change default pagecode + colation of database
+-- ALTER DATABASE name_of_database CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
--- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
--- ALTER TABLE llx_accountingaccount MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
--- You can check with "show full columns from llx_accountingaccount";
+-- Request to change default pagecode + colation of table
+-- ALTER TABLE name_of_table CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+-- Request to change character set and collation of a varchar column.
+-- utf8 and utf8_unicode_ci is recommended (or even better utf8mb4 and utf8mb4_unicode_ci with mysql 5.5.3+)
+-- ALTER TABLE name_of_table MODIFY field VARCHAR(20) CHARACTER SET utf8;
+-- ALTER TABLE name_of_table MODIFY field VARCHAR(20) COLLATE utf8_unicode_ci;
+-- You can check with 'show full columns from mytablename';
+
+
+
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batchlot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 
 
 
@@ -232,6 +249,7 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
 
 UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_projet set fk_opp_status = (SELECT rowid FROM llx_c_lead_status WHERE code='PROSP') where fk_opp_status IS NULL and opp_amount > 0;
 UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 
 -- Requests to clean old tables or external modules tables
@@ -305,6 +323,26 @@ DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_m
 drop table tmp_c_shipment_mode;
 
 
+-- Restore id of user on link for payment of expense report
+drop table tmp_bank_url_expense_user;
+create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
+update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where bu.url_id = 0 and bu.type ='user';
+drop table tmp_bank_url_expense_user;
+
+
+
+-- Clean product prices
+--delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 
+-- Set product prices into llx_product with last price into llx_product_prices
+--update llx_product as p set 
+-- p.price = (select pp.price from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_ttc = (select pp.price_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_min = (select pp.price_min from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.price_min_ttc = (select pp.price_min_ttc from llx_product_price as pp where pp.price_level = 1 and pp.fk_product = p.rowid order by pp.tms desc limit 1),
+-- p.tva_tx = 0
+-- where price = 17.5
+
+
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
@@ -323,3 +361,4 @@ drop table tmp_c_shipment_mode;
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport_det as ed set date = (select date_debut from llx_expensereport as e where ed.fk_expensereport = e.rowid) where DATE(STR_TO_DATE(date, '%Y-%m-%d')) < '1000-00-00';
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+

@@ -53,8 +53,8 @@ else header('Cache-Control: no-cache');
 // On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL
-if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on URL
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
+if (GETPOST('theme')) $conf->theme=GETPOST('theme', 'alpha');  // If theme was forced on URL
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
@@ -155,28 +155,31 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 
 //$colortopbordertitle1=$colorbackhmenu1;
 
-
 // Set text color to black or white
+$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbackhmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
 
+$colorbackvmenu1=join(',',colorStringToArray($colorbackvmenu1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbackvmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
 
+$colorbacktitle1=join(',',colorStringToArray($colorbacktitle1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
 {
-    $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+    $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
     if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
     else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
 }
 
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktabcard1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : '')+(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
 else { $colortextbacktab='111111'; }
 
@@ -346,7 +349,7 @@ select.flat, form.flat select {
 	opacity: 0;
 }
 select:invalid { color: gray; }
-input:disabled {
+	input:disabled {
 	background:#ddd;
 }
 
@@ -577,13 +580,13 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tdoverflowmax100 {
+.tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tdoverflowmax300 {
+.tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -863,7 +866,7 @@ div.vmenu, td.vmenu {
 }
 .side-nav {
 	position: absolute;
-    z-index: 200;
+    z-index: 90;
     display: none;
 }
 div.blockvmenulogo
@@ -983,6 +986,9 @@ div.nopadding {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
+.pictoobjectwidth {
+	width: 14px;
+}
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
@@ -1047,7 +1053,6 @@ div.photoref {
 	vertical-align:middle;
 	text-align:center;
 }
-
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -1060,7 +1065,10 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwith ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
-
+.tdhrthin {
+	margin: 0;
+	padding-bottom: 0 !important;
+}
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */
@@ -1245,6 +1253,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -1627,6 +1636,7 @@ div.vmenu, td.vmenu {
 	padding-bottom: 3px;
 	overflow: hidden;
     text-overflow: ellipsis;
+    width: 188px;				/* required to have overflow working. must be same than .menu_titre */
 }
 #menu_contenu_logo { padding-top: 0; }
 .companylogo { }
@@ -2738,11 +2748,12 @@ div.pagination li.paginationafterarrows {
 }
 */
 
+
 /* Set the color for hover lines */
 .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover, table.dataTable tr.even:hover, table.dataTable tr.odd:hover, .box_pair:hover, .box_impair:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 <?php } ?>
 }
 
@@ -2753,10 +2764,10 @@ div.pagination li.paginationafterarrows {
 	color: #202020;
 	min-height: 18px; /* seems to not be used */
 
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
 .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
@@ -2772,12 +2783,13 @@ table.dataTable tr.odd {
 }
 
 /* For no hover style */
-table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td {
+table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
 tr.nohoverpair td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
+
 
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;
@@ -2953,7 +2965,7 @@ div.tabBar .noborder {
  */
 
 .boxstats {
-    <?php print "float: ".$left.";\n"; ?>
+    display: inline-block;
     margin: 3px;
     padding: 3px;
 	/*-moz-box-shadow: 3px 3px 4px #DDD;
@@ -2963,7 +2975,19 @@ div.tabBar .noborder {
     border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
+
+	white-space: nowrap;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    width: 115px;
 }
+@media only screen and (max-width: 767px)
+{
+    .boxstats {
+        width: 100px;
+    }
+}
+
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
@@ -2987,12 +3011,11 @@ span.dashboardlineko {
 	font-weight: bold;
 }
 .boxtable {
-/*    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD; */
     margin-bottom: 8px !important;
 }
-
+.tdboxstats {
+	text-align: center;
+}
 
 .box {
     padding-right: 0px;
@@ -4202,7 +4225,7 @@ span.noborderoncategories {
 /* ============================================================================== */
 
 ul.ulselectedfields {
-    z-index: 100;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
+    z-index: 95;			/* To have the select box appears on first plan even when near buttons are decorated by jmobile */
 }
 dl.dropdown {
     margin:0px;

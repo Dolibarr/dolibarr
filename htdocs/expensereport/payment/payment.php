@@ -78,7 +78,7 @@ if ($action == 'add_payment')
         setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToDebit")), null, 'errors');
         $error++;
     }
-    
+
 	if (! $error)
 	{
 		$paymentid = 0;
@@ -176,7 +176,7 @@ if (GETPOST("action") == 'create')
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
-	
+
     dol_fiche_head();
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
@@ -225,7 +225,7 @@ if (GETPOST("action") == 'create')
     	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
     	print '</td></tr>';
 	}
-	
+
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';

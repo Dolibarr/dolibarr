@@ -26,7 +26,7 @@
  * $langs
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $senderissupplier (0 by default, 1 for supplier invoices/orders)
+ * $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
@@ -37,7 +37,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
     $usemargins=1;
 }
 
-global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+global $dateSelector, $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
 if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
 elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
@@ -52,8 +52,8 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
-<?php 
-$nolinesbefore=(count($this->lines) == 0);
+<?php
+$nolinesbefore=(count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 ?>
 <tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add') ?> nodrag nodrop">
@@ -94,7 +94,7 @@ if ($nolinesbefore) {
 		<?php
 		}
 		else $colspan++;
-		
+
 		if ($conf->global->MARGIN_TYPE == "1")
 			echo $langs->trans('BuyingPrice');
 		else
@@ -108,7 +108,7 @@ if ($nolinesbefore) {
 	?>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
-<?php 
+<?php
 }
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add'; ?>">
@@ -200,20 +200,22 @@ else {
 		}
 		else
 		{
+			// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
 		    if ($senderissupplier != 2)
 		    {
     			$ajaxoptions=array(
     					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
-    					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
-    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
+    					'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
+    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for exemple shown we select a disabled option into combo)
     			);
     			$alsoproductwithnosupplierprice=0;
 		    }
-		    else 
+		    else
 		    {
 		        $ajaxoptions = array();
 		        $alsoproductwithnosupplierprice=1;
 		    }
+
 			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
 		}
 		echo '</span>';
@@ -263,13 +265,13 @@ else {
 	<td class="nobottom linecoluht" align="right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
-	
+
 	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
 	<td class="nobottom linecoluht_currency" align="right">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
 	<?php } ?>
-	
+
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td class="nobottom linecoluttc" align="right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc",'alpha',2):''); ?>">
@@ -306,7 +308,7 @@ else {
 		<?php
 		$coldisplay++;
 		}
-		
+
 		if ($user->rights->margins->creer)
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
@@ -561,9 +563,9 @@ jQuery(document).ready(function() {
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		console.log("#idprod, #idprodfournprice change triggered");
-		
+
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
-		
+
 		jQuery('#trlinefordates').show();
 
 		<?php
@@ -584,13 +586,13 @@ jQuery(document).ready(function() {
         	  		var defaultkey = '';
         	  		var defaultprice = '';
     	      		var bestpricefound = 0;
-    	      		
+
     	      		var bestpriceid = 0; var bestpricevalue = 0;
     	      		var pmppriceid = 0; var pmppricevalue = 0;
     	      		var costpriceid = 0; var costpricevalue = 0;
-    
+
     				/* setup of margin calculation */
-    	      		var defaultbuyprice = '<?php 
+    	      		var defaultbuyprice = '<?php
     	      		if (isset($conf->global->MARGIN_TYPE))
     	      		{
     	      		    if ($conf->global->MARGIN_TYPE == '1')   print 'bestsupplierprice';
@@ -598,7 +600,7 @@ jQuery(document).ready(function() {
     	      		    if ($conf->global->MARGIN_TYPE == 'costprice') print 'costprice';
     	      		} ?>';
     	      		console.log("we will set the field for margin. defaultbuyprice="+defaultbuyprice);
-    	      		
+
     	      		var i = 0;
     	      		$(data).each(function() {
     	      			if (this.id != 'pmpprice' && this.id != 'costprice')
@@ -615,7 +617,7 @@ jQuery(document).ready(function() {
     			      		//console.log("id="+this.id+"-price="+this.price);
     			      		if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
     			      		{
-    			      			if (this.price > 0) { 
+    			      			if (this.price > 0) {
     				      			defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
     			      				//console.log("pmppricevalue="+pmppricevalue);
     			      			}
@@ -634,22 +636,22 @@ jQuery(document).ready(function() {
     	        		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
     	      		});
     	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
-    
+
     	      		console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
-    
+
     	      		$("#fournprice_predef").html(options).show();
     	      		if (defaultkey != '')
     				{
     		      		$("#fournprice_predef").val(defaultkey);
     		      	}
-    
+
     	      		/* At loading, no product are yet selected, so we hide field of buying_price */
     	      		$("#buying_price").hide();
-    
+
     	      		/* Define default price at loading */
     	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
     			    $("#buying_price").val(defaultprice);
-    
+
     	      		$("#fournprice_predef").change(function() {
     		      		console.log("change on fournprice_predef");
     	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
@@ -711,7 +713,9 @@ function setforfree() {
 	jQuery("#fournprice_predef").hide();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
+	jQuery("#title_up_ht_currency").show();
 	jQuery("#title_up_ttc").show();
+	jQuery("#title_up_ttc_currency").show();
 	jQuery("#np_marginRate").show();	// May no exists
 	jQuery("#np_markRate").show();	// May no exists
 	jQuery(".np_marginRate").show();	// May no exists
@@ -723,7 +727,7 @@ function setforpredef() {
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false);
 	jQuery("#prod_entry_mode_predef").prop('checked',true);
-	jQuery("#price_ht").hide();
+	jQuery("#price_ht").val('').hide();
 	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
@@ -731,7 +735,9 @@ function setforpredef() {
 	//jQuery("#fournprice_predef").show(); // management somewhere else
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
+	jQuery("#title_up_ht_currency").hide();
 	jQuery("#title_up_ttc").hide();
+	jQuery("#title_up_ttc_currency").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists
 	jQuery(".np_marginRate").hide();	// May no exists

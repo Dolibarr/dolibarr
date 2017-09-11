@@ -129,6 +129,12 @@ if (empty($reshook))
 	        $error++;
 	    }
 
+	    if (GETPOST('opp_amount') != '' && ! (GETPOST('opp_status') > 0))
+	    {
+	        $error++;
+	        setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
+	    }
+
 	    if (! $error)
 	    {
 	        $error=0;
@@ -264,8 +270,9 @@ if (empty($reshook))
 	    	$result=$object->update($user);
 	    	if ($result < 0)
 	    	{
-	    		$error++;
-		        setEventMessages($object->error, $object->errors,'errors');
+	    	    $error++;
+	    	    if ($result == -4) setEventMessages($langs->trans("ErrorRefAlreadyExists"), null, 'errors');
+		        else setEventMessages($object->error, $object->errors, 'errors');
 	    	}else {
 	    		// Category association
 	    		$categories = GETPOST('categories');
@@ -301,8 +308,8 @@ if (empty($reshook))
 			    setEventMessages($langs->trans("FailedToCloseProject").':'.$object->error, $object->errors, 'errors');
 	        }
 	    }
-	    
-	    
+
+
 	    if ($error)
 	    {
 			$db->rollback();
@@ -315,7 +322,7 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 	    }
-	    
+
 	}
 
 	// Build doc
@@ -558,32 +565,33 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	    // Opportunity probability
 	    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?price(GETPOST('opp_percent')):'').'"><span class="hideonsmartphone"> %</span>';
+	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?GETPOST('opp_percent'):'').'"><span class="hideonsmartphone"> %</span>';
 	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.(GETPOST('opp_percent')!=''?'0':'1').'">';
 	    print '</td>';
 	    print '</tr>';
 
 	    // Opportunity amount
 	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
+	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?GETPOST('opp_amount'):'').'"></td>';
 	    print '</tr>';
     }
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?GETPOST('budget_amount'):'').'"></td>';
 	print '</tr>';
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
+    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.GETPOST("description").'</textarea>';
     print '</td></tr>';
 
     if ($conf->categorie->enabled) {
     	// Categories
     	print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
     	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
+    	$arrayselected=GETPOST('categories', 'array');
     	print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
     	print "</td></tr>";
     }
@@ -611,7 +619,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
         print ' &nbsp; &nbsp; ';
         print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-    }    
+    }
     print '</div>';
 
     print '</form>';
@@ -633,12 +641,12 @@ if ($action == 'create' && $user->rights->projet->creer)
         });
         </script>';
 }
-elseif ($object->id > 0) 
+elseif ($object->id > 0)
 {
     /*
      * Show or edit
      */
-    
+
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -820,26 +828,26 @@ elseif ($object->id > 0)
     else
     {
         // Project card
-        
+
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         $morehtmlref='<div class="refidno">';
         // Title
         $morehtmlref.=$object->title;
         // Thirdparty
-        if ($object->thirdparty->id > 0) 
+        if ($object->thirdparty->id > 0)
         {
             $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
         }
         $morehtmlref.='</div>';
-        
+
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
             $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        
+
 	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -873,18 +881,18 @@ elseif ($object->id > 0)
 	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,0,$langs,1,0,0,$conf->currency);
 	        print '</td></tr>';
 	    }
-    
+
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
         print dol_print_date($object->date_start,'day');
         $end=dol_print_date($object->date_end,'day');
-        if ($end) 
+        if ($end)
         {
             print ' - '.$end;
             if ($object->hasDelay()) print img_warning($langs->trans('Late'));
         }
         print '</td></tr>';
-    	     
+
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
         if (strcmp($object->budget_amount, '')) print price($object->budget_amount,0,$langs,1,0,0,$conf->currency);
@@ -893,16 +901,16 @@ elseif ($object->id > 0)
         // Other attributes
         $cols = 2;
         include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright">';
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
-        
+
         print '<table class="border" width="100%">';
-        
+
         // Description
         print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
         print nl2br($object->description);
@@ -914,13 +922,13 @@ elseif ($object->id > 0)
             print $form->showCategories($object->id,'project',1);
             print "</td></tr>";
         }
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '</div>';
         print '</div>';
-        
+
         print '<div class="clearboth"></div>';
     }
 
@@ -939,9 +947,10 @@ elseif ($object->id > 0)
     // Change probability from status
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
+        // Default value to close or not when we set opp to 'WON'.
         $defaultcheckedwhenoppclose=1;
         if (empty($conf->global->PROJECT_HIDE_TASKS)) $defaultcheckedwhenoppclose=0;
-        
+
         print '<!-- Javascript to manage opportunity status change -->';
         print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
@@ -954,13 +963,17 @@ elseif ($object->id > 0)
                     var oldpercent = \''.dol_escape_js($object->opp_percent).'\';
 
                     console.log("We select "+elemcode);
-                    if (elemcode == \'LOST\') defaultcloseproject = 1;
-                    jQuery("#divtocloseproject").show();
-                    if (defaultcloseproject) jQuery("#inputcloseproject").prop("checked", true);
+
+                    /* Define if checkbox to close is checked or not */
+                    closeproject = 0;
+                    if (elemcode == \'LOST\') closeproject = 1;
+                    if (elemcode == \'WON\') closeproject = defaultcloseproject;
+                    if (closeproject) jQuery("#inputcloseproject").prop("checked", true);
                     else jQuery("#inputcloseproject").prop("checked", false);
-                        
-                    /* Make close project visible or not */
-                    if (elemcode == \'WON\' || elemcode == \'LOST\') 
+                    console.log("closeproject="+closeproject);
+
+                    /* Make the close project checkbox visible or not */
+                    if (elemcode == \'WON\' || elemcode == \'LOST\')
                     {
                         jQuery("#divtocloseproject").show();
                     }
@@ -968,7 +981,7 @@ elseif ($object->id > 0)
                     {
                         jQuery("#divtocloseproject").hide();
                     }
-                        
+
                     /* Change percent of default percent of new status is higher */
                     if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
                     {
@@ -995,7 +1008,7 @@ elseif ($object->id > 0)
     {
 	    if ($action != "edit" )
 	    {
-	        
+
         	// Create event
         	if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
             	// "workflow" action so should appears somewhere else on

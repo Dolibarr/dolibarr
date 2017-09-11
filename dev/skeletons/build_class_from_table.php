@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017 Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +252,7 @@ $cleanparam='';
 $i=0;
 foreach($property as $key => $prop)
 {
-	$i++;
+	
 	$addfield=1;
 	if ($prop['field'] == 'tms') $addfield=0;	// This is a field of type timestamp edited automatically
 	if ($prop['extra'] == 'auto_increment') $addfield=0;
@@ -263,6 +264,7 @@ foreach($property as $key => $prop)
 		$varprop.="';";
 		$varprop.="\n";
 	}
+	$i++;
 }
 $targetcontent=preg_replace('/\$sql \.= \' field1,\';/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\$sql \.= \' field2\';/', '', $targetcontent);
@@ -648,7 +650,7 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>\$object->".$prop['field']."</td></tr>';\n";
+    	    $varprop.="print '<tr><td class=\"fieldrequired\">'.\$langs->trans(\"Field".$prop['field']."\").'</td><td>'.\$object->".$prop['field'].".'</td></tr>';\n";
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);

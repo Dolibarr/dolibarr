@@ -88,6 +88,7 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = detect_dolibarr_main_data_root($main_dir);
 		}
 		$main_url = detect_dolibarr_main_url_root();
+
 		if (!empty($force_install_databaserootlogin)) {
 			$userroot = parse_database_login($force_install_databaserootlogin);
 		}
@@ -509,7 +510,7 @@ if (! $error && $db->connected && $action == "set")
         print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
         // Si creation utilisateur admin demandee, on le cree
-        if (isset($db_create_user) && $db_create_user == "on") {
+        if (isset($db_create_user) && ($db_create_user == "1" || $db_create_user == "on")) {
             dolibarr_install_syslog("step1: create database user: " . $dolibarr_main_db_user);
 
             //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->port;
@@ -542,7 +543,7 @@ if (! $error && $db->connected && $action == "set")
                 if ($db->connected)
                 {
                     $resultbis = 1;
-                    
+
                     // Create user
                     $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                     // Create user bis
@@ -553,7 +554,7 @@ if (! $error && $db->connected && $action == "set")
                             $resultbis=$db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                         }
                     }
-                    
+
                     if ($result > 0 && $resultbis > 0)
                     {
 
@@ -613,7 +614,7 @@ if (! $error && $db->connected && $action == "set")
 
 
         // If database creation is asked, we create it
-        if (!$error && (isset($db_create_database) && $db_create_database == "on")) {
+        if (!$error && (isset($db_create_database) && ($db_create_database == "1" || $db_create_database == "on"))) {
             dolibarr_install_syslog("step1: create database: " . $dolibarr_main_db_name . " " . $dolibarr_main_db_character_set . " " . $dolibarr_main_db_collation . " " . $dolibarr_main_db_user);
         	$newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
             //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;

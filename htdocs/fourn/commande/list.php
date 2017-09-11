@@ -54,6 +54,8 @@ $orderday=GETPOST("orderday","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
 $deliveryday=GETPOST("deliveryday","int");
+
+$sall=GETPOST('search_all', 'alphanohtml');
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
@@ -69,7 +71,6 @@ $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss','alpha');
-$sall=GETPOST('search_all');
 $socid = GETPOST('socid','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
@@ -474,7 +475,7 @@ if ($resql)
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
         $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
         $moreforfilter.='</div>';
     }
     $parameters=array();
@@ -718,7 +719,7 @@ if ($resql)
         if (! empty($arrayfields['cf.ref']['checked']))
         {
             print '<td class="nowrap">';
-            
+
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
             print '<td class="nobordernopadding nowrap">';
@@ -733,7 +734,7 @@ if ($resql)
 			$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
-			
+
 			print '</td>'."\n";
             if (! $i) $totalarray['nbfield']++;
         }

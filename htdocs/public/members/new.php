@@ -300,20 +300,27 @@ if ($action == 'add')
             {
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
-                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
-                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
                     {
-                    	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
+                        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                        {
+                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        }
+                        else
+                        {
+                            $urlback.='&securekey='.urlencode($conf->global->PAYPAL_SECURITY_TOKEN);
+                        }
                     }
-                    
+
                 }
                 else
                 {

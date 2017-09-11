@@ -248,6 +248,7 @@ class Categories extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
         }
+        
 		return $obj_ret;
     }
 
@@ -351,9 +352,47 @@ class Categories extends DolibarrApi
     
         $object = parent::_cleanObjectDatas($object);
     
-        // Remove the subscriptions because they are handled as a subresource.
-        //unset($object->subscriptions);
-    
+        // Remove fields not relevent to categories
+        unset($object->country);
+        unset($object->country_id);
+        unset($object->country_code);
+        unset($object->total_ht);
+        unset($object->total_ht);
+        unset($object->total_localtax1);
+        unset($object->total_localtax2);
+        unset($object->total_ttc);
+        unset($object->total_tva);
+        unset($object->lines);
+        unset($object->fk_incoterms);
+        unset($object->libelle_incoterms);
+        unset($object->location_incoterms);
+        unset($object->civility_id);
+        unset($object->name);
+        unset($object->lastname);
+        unset($object->firstname);
+        unset($object->shipping_method_id);
+        unset($object->fk_delivery_address);
+        unset($object->cond_reglement);
+        unset($object->cond_reglement_id);
+        unset($object->mode_reglement_id);
+        unset($object->barcode_type_coder);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type);
+        unset($object->canvas);
+        unset($object->cats);
+        unset($object->motherof);
+        unset($object->context);
+        unset($object->socid);
+        unset($object->thirdparty);
+        unset($object->contact);
+        unset($object->contact_id);
+        unset($object->user);
+        unset($object->fk_account);
+        unset($object->fk_project);
+        unset($object->note);
+        unset($object->statut);
+        
         return $object;
     }
     

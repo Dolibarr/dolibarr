@@ -90,31 +90,35 @@ class FormAccounting
             $num = $db->num_rows($resql);
             if ($num)
             {
-                print '<select class="flat minwidth200" name="'.$htmlname.'">';
+                $out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
                 $i = 0;
 
-                if ($useempty) print '<option value="0">&nbsp;</option>';
+                if ($useempty) $out.= '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($resql);
-                    print '<option value="'.$obj->rowid.'"';
-                    if ($obj->rowid == $selected) print ' selected';
-                    print '>'.($maxlen ? dol_trunc($obj->type,$maxlen) : $obj->type);
-					print ' ('.$obj->range_account.')';
+                    $out .= '<option value="'.$obj->rowid.'"';
+                    if ($obj->rowid == $selected) $out .= ' selected';
+                    $out .= '>'.($maxlen ? dol_trunc($obj->type,$maxlen) : $obj->type);
+					$out .= ' ('.$obj->range_account.')';
                     $i++;
                 }
-                print '</select>';
-                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+                $out .=  '</select>';
+                //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             }
             else
             {
-                print $langs->trans("ErrorNoAccountingCategoryForThisCountry",$mysoc->country_code);
+                $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry",$mysoc->country_code);
             }
         }
         else
         {
             dol_print_error($db,$db->lasterror());
         }
+        
+        $out .= ajax_combobox($htmlname, $event);
+        
+        print $out;
     }
 }
 

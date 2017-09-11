@@ -196,7 +196,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	{
         $result=$object->fetch($id);
 
-        $object->lib=GETPOST('label');
         $object->date_ech=$dateech;
         $object->periode=$dateperiod;
         $object->amount=price2num($amount);

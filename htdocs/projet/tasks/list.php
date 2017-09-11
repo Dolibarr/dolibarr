@@ -36,7 +36,7 @@ $langs->load('companies');
 
 $id=GETPOST('id','int');
 
-$search_all=GETPOST('search_all');
+$search_all=GETPOST('search_all', 'alphanohtml');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
 {
@@ -811,7 +811,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
         $i++;
         if ($i == 1)
         {
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
         elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totalplannedworkload'],$plannedworkloadoutputformat).'</td>';

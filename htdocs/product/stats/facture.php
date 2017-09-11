@@ -83,9 +83,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-    
+
 	$object = $product;
-    
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -117,11 +117,14 @@ if ($id > 0 || ! empty($ref))
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-        
-		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
+
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -131,17 +134,17 @@ if ($id > 0 || ! empty($ref))
 
         print '</div>';
         print '<div style="clear:both"></div>';
-		
+
 		dol_fiche_end();
 
 		if ($showmessage && $nboflines > 1)
 		{
 			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
 		}
-        elseif ($user->rights->facture->lire) 
+        elseif ($user->rights->facture->lire)
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
+            $sql.= " f.facnumber, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
             $sql.= " d.rowid, d.total_ht as total_ht, d.qty";           // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -164,13 +167,13 @@ if ($id > 0 || ! empty($ref))
             $total_ht=0;
             $total_qty=0;
 			$totalrecords=0;
-            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+            if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
             {
             	$result = $db->query($sql);
-            	if ($result) 
+            	if ($result)
             	{
             		$totalrecords = $db->num_rows($result);
-            		while ($objp = $db->fetch_object($result)) 
+            		while ($objp = $db->fetch_object($result))
             		{
             			$total_ht+=$objp->total_ht;
             			$total_qty+=$objp->qty;
@@ -233,23 +236,24 @@ if ($id > 0 || ! empty($ref))
                     $var=True;
                     while ($i < min($num,$conf->liste_limit))
 					{
-                        $objp = $db->fetch_object($result);
+						$objp = $db->fetch_object($result);
+						$invoicestatic->id=$objp->facid;
+						$invoicestatic->ref=$objp->facnumber;
+						$societestatic->fetch($objp->socid);
+						$paiement = $invoicestatic->getSommePaiement();
                         $var=!$var;
 
                         print '<tr '.$bc[$var].'>';
                         print '<td>';
-                        $invoicestatic->id=$objp->facid;
-                        $invoicestatic->ref=$objp->facnumber;
                         print $invoicestatic->getNomUrl(1);
                         print "</td>\n";
-                        $societestatic->fetch($objp->socid);
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
                         print "<td>".$objp->code_client."</td>\n";
                         print '<td align="center">';
                         print dol_print_date($db->jdate($objp->datef),'day')."</td>";
                         print '<td align="center">'.$objp->qty."</td>\n";
                         print '<td align="right">'.price($objp->total_ht)."</td>\n";
-                        print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
+                        print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5,$paiement,$objp->type).'</td>';
                         print "</tr>\n";
                         $i++;
 

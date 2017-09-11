@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
- * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012-2017 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');
 $sref			= GETPOST('sref');
 $sref_client	= GETPOST('sref_client');
-$sall			= GETPOST('sall');
+$sall			= GETPOST('sall', 'alphanohtml');
 $socid			= GETPOST('socid','int');
 $selected		= GETPOST('orders_to_invoice');
 $sortfield		= GETPOST("sortfield",'alpha');
@@ -122,7 +122,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	}
 	if (isset($_POST['orders_to_invoice']))
 	{
-		$orders_id = GETPOST('orders_to_invoice','',1);
+		$orders_id = GETPOST('orders_to_invoice','',2);
 		$nn        = count($orders_id);
 		$ii        = 0;
 

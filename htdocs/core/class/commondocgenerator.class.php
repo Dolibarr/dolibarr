@@ -304,11 +304,13 @@ abstract class CommonDocGenerator
 
     	$now=dol_now('gmt');	// gmt
     	$array_other = array(
-   			'current_date'=>dol_print_date($now,'day','tzuser'),
-   			'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
+    	    // Date in default language
+    	    'current_date'=>dol_print_date($now,'day','tzuser'),
+    	    'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
    			'current_server_date'=>dol_print_date($now,'day','tzserver'),
    			'current_server_datehour'=>dol_print_date($now,'dayhour','tzserver'),
-   			'current_date_locale'=>dol_print_date($now,'day','tzuser',$outputlangs),
+    	    // Date in requested output language
+    	    'current_date_locale'=>dol_print_date($now,'day','tzuser',$outputlangs),
    			'current_datehour_locale'=>dol_print_date($now,'dayhour','tzuser',$outputlangs),
    			'current_server_date_locale'=>dol_print_date($now,'day','tzserver',$outputlangs),
    			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
@@ -331,7 +333,7 @@ abstract class CommonDocGenerator
 	{
 		global $conf;
 
-		$sumpayed=''; $alreadypayed='';
+		$sumpayed=$sumdeposit=$sumcreditnote='';
 		if ($object->element == 'facture')
 		{
 			$invoice_source=new Facture($this->db);
@@ -340,7 +342,8 @@ abstract class CommonDocGenerator
 				$invoice_source->fetch($object->fk_facture_source);
 			}
 			$sumpayed = $object->getSommePaiement();
-			$alreadypayed=price($sumpayed,0,$outputlangs);
+			$sumdeposit = $object->getSumDepositsUsed();
+			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
 		$resarray=array(
@@ -350,6 +353,7 @@ abstract class CommonDocGenerator
 		$array_key.'_ref_customer'=>$object->ref_client,
 		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
+		// Dates
         $array_key.'_hour'=>dol_print_date($object->date,'hour'),
 		$array_key.'_date'=>dol_print_date($object->date,'day'),
 		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
@@ -360,6 +364,7 @@ abstract class CommonDocGenerator
 		$array_key.'_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
 		$array_key.'_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
 		$array_key.'_date_close'=>(! empty($object->date_cloture)?dol_print_date($object->date_cloture,'dayhour'):''),
+
 		$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
 		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
 		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
@@ -381,11 +386,21 @@ abstract class CommonDocGenerator
 		$array_key.'_note_private'=>$object->note,
 		$array_key.'_note_public'=>$object->note_public,
 		$array_key.'_note'=>$object->note_public,			// For backward compatibility
+
 		// Payments
-		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
-		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
-		$array_key.'_already_payed'=>$alreadypayed,
-		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
+		$array_key.'_already_payed_locale'=>price($sumpayed, 0, $outputlangs),
+		$array_key.'_already_payed'=>price2num($sumpayed),
+		$array_key.'_already_deposit_locale'=>price($sumdeposit, 0, $outputlangs),
+		$array_key.'_already_deposit'=>price2num($sumdeposit),
+		$array_key.'_already_creditnote_locale'=>price($sumcreditnote, 0, $outputlangs),
+		$array_key.'_already_creditnote'=>price2num($sumcreditnote),
+
+		$array_key.'_already_payed_all_locale'=>price(price2num($sumpayed + $sumdeposit + $sumcreditnote, 'MT'), 0, $outputlangs),
+		$array_key.'_already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
+
+		// Remain to pay with all know infrmation (except open direct debit requests)
+		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT'), 0, $outputlangs),
+		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
 		);
 
 		// Add vat by rates
@@ -444,10 +459,13 @@ abstract class CommonDocGenerator
 			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
-			'line_date_start'=>$line->date_start,
-			'line_date_start_rfc'=>dol_print_date($line->date_start,'dayrfc'),
-			'line_date_end'=>$line->date_end,
-			'line_date_end_rfc'=>dol_print_date($line->date_end,'dayrfc')
+		    // Dates
+			'line_date_start'=>dol_print_date($line->date_start, 'day', 'tzuser'),
+			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzuser', $outputlangs),
+		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc', 'tzuser'),
+		    'line_date_end'=>dol_print_date($line->date_end, 'day', 'tzuser'),
+		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzuser', $outputlangs),
+		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser'),
 		);
 
 		// Retrieve extrafields

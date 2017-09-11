@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
@@ -636,7 +636,7 @@ class FactureFournisseur extends CommonInvoice
     function fetch_lines()
     {
         $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
-        $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
+        $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
 		$sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
@@ -644,6 +644,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
         $sql.= ' WHERE fk_facture_fourn='.$this->id;
         $sql.= ' ORDER BY f.rang, f.rowid';
+
 
         dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
         $resql_rows = $this->db->query($sql);
@@ -683,6 +684,7 @@ class FactureFournisseur extends CommonInvoice
                     $line->total_tva		= $obj->total_tva;
                     $line->total_localtax1	= $obj->total_localtax1;
                     $line->total_localtax2	= $obj->total_localtax2;
+                    $line->fk_facture_fourn     = $obj->fk_facture_fourn;
                     $line->total_ttc		= $obj->total_ttc;
                     $line->fk_product		= $obj->fk_product;
                     $line->product_type		= $obj->product_type;
@@ -1420,7 +1422,7 @@ class FactureFournisseur extends CommonInvoice
             if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
             // Mise a jour informations denormalisees au niveau de la facture meme
-            $result=$this->update_price(1,'auto',0,$mysoc);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+            $result=$this->update_price(1,'auto',0,$this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
             if ($result > 0)
             {
                 $this->db->commit();
@@ -1786,7 +1788,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
-	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0&mainmenu=accountancy&leftmenu=suppliers_bills';
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=accountancy&leftmenu=suppliers_bills';
 	        $response->img=img_object($langs->trans("Bills"),"bill");
 
             $facturestatic = new FactureFournisseur($this->db);
@@ -2385,8 +2387,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	{
 		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
-		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
+		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
+		$sql.= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
 		$sql.= ' WHERE f.rowid = '.$rowid;
@@ -2407,6 +2410,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		$this->id				= $obj->rowid;
 		$this->rowid				= $obj->rowid;
+		$this->fk_facture_fourn			= $obj->fk_facture_fourn;
 		$this->description		= $obj->description;
 		$this->product_ref		= $obj->product_ref;
 		$this->ref				= $obj->product_ref;
@@ -2438,6 +2442,11 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->special_code		= $obj->special_code;
 		$this->rang       		= $obj->rang;
 		$this->fk_unit           = $obj->fk_unit;
+
+		$this->multicurrency_subprice	= $obj->multicurrency_subprice;
+		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
+		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
+		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
 
 		return 1;
 	}

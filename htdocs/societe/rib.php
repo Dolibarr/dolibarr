@@ -293,13 +293,13 @@ if (empty($reshook))
         $action = 'builddoc';
         $moreparams = array(
             'use_companybankid'=>GETPOST('companybankid'),
-            'force_dir_output'=>$conf->societe->dir_output.'/'.dol_sanitizeFileName($object->id)
+            'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
         );
         $_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
         $_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
     }
     $id = $socid;
-    $upload_dir = $conf->societe->dir_output;
+    $upload_dir = $conf->societe->multidir_output[$object->entity];
     $permissioncreate=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -358,14 +358,16 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print load_fiche_titre($langs->trans("DefaultRIB"), '', '');
 
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
+    
     print '<table class="border centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4">'.$account->label.'</td></tr>';
+    print '<td>'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td colspan="4">'.$account->bank.'</td></tr>';
+	print '<td>'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
 	foreach($account->getFieldsToShow(1) as $val)
@@ -406,24 +408,24 @@ if ($socid && $action != 'edit' && $action != "create")
 		}
 
 		print '<tr><td>'.$langs->trans($val).'</td>';
-		print '<td colspan="4">'.$content.'</td>';
+		print '<td>'.$content.'</td>';
 		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print $account->domiciliation;
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
 	print $account->proprio;
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print $account->owner_address;
 	print "</td></tr>\n";
 
 	print '</table>';
-
+    print '</div>';
 
 	print '<br>';
 	
@@ -610,7 +612,7 @@ if ($socid && $action != 'edit' && $action != "create")
         {
         	$colspan=8;
         	if (! empty($conf->prelevement->enabled)) $colspan+=2;
-            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';
@@ -655,7 +657,7 @@ if ($socid && $action != 'edit' && $action != "create")
     
         $var=true;
     
-        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
+        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
     
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
     

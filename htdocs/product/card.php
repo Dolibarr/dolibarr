@@ -165,7 +165,7 @@ if (empty($reshook))
 			exit;
 		}
 	}
-	
+
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
@@ -221,7 +221,7 @@ if (empty($reshook))
             $action = "create";
             $error++;
         }
-        
+
         if (! $error)
         {
 	        $units = GETPOST('units', 'int');
@@ -239,12 +239,43 @@ if (empty($reshook))
             else
             	$object->price_min = GETPOST('price_min');
 
-            $object->tva_tx                = str_replace('*','',GETPOST('tva_tx'));
-            $object->tva_npr               = preg_match('/\*/',GETPOST('tva_tx'))?1:0;
+	        $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
-            // local taxes.
-            $object->localtax1_tx 			   = get_localtax($object->tva_tx,1);
-            $object->localtax2_tx 			   = get_localtax($object->tva_tx,2);
+	        // We must define tva_tx, npr and local taxes
+	        $vatratecode = '';
+	        $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+	        $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+	        $localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+	        // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+	        if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+	        {
+	            // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
+	            $vatratecode=$reg[1];
+	            // Get record from code
+	            $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+	            $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	            $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+	            $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+	            $sql.= " AND t.code ='".$vatratecode."'";
+	            $resql=$db->query($sql);
+	            if ($resql)
+	            {
+	                $obj = $db->fetch_object($resql);
+	                $npr = $obj->recuperableonly;
+	                $localtax1 = $obj->localtax1;
+	                $localtax2 = $obj->localtax2;
+	                $localtax1_type = $obj->localtax1_type;
+	                $localtax2_type = $obj->localtax2_type;
+	            }
+	        }
+
+	        $object->default_vat_code = $vatratecode;
+	        $object->tva_tx = $tva_tx;
+	        $object->tva_npr = $npr;
+	        $object->localtax1_tx = $localtax1;
+	        $object->localtax2_tx = $localtax2;
+	        $object->localtax1_type = $localtax1_type;
+	        $object->localtax2_type = $localtax2_type;
 
             $object->type               	 = $type;
             $object->status             	 = GETPOST('statut');
@@ -289,7 +320,7 @@ if (empty($reshook))
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
 	        $object->fk_unit                 = GETPOST('units');
-			
+
 			$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
 			$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
 
@@ -413,7 +444,7 @@ if (empty($reshook))
 
 				$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
 				$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
-				
+
 				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
@@ -641,16 +672,19 @@ if (empty($reshook))
                 }
             }
 
+			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+
             // On reevalue prix selon taux tva car taux tva transaction peut etre different
             // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-            if ($tva_tx != $object->tva_tx) {
+            if ($tmpvat != $tmpprodvat) {
                 if ($price_base_type != 'HT') {
-                    $pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
                 } else {
-                    $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+                    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
                 }
             }
-            
+
             if (GETPOST('propalid') > 0) {
                 // Define cost price for margin calculation
                 $buyprice=0;
@@ -663,7 +697,7 @@ if (empty($reshook))
                 {
                     $buyprice = $result;
                 }
-                
+
                 $result = $propal->addline(
                     $desc,
                     $pu_ht,
@@ -706,7 +740,7 @@ if (empty($reshook))
                 {
                     $buyprice = $result;
                 }
-                
+
                 $result = $commande->addline(
                     $desc,
                     $pu_ht,
@@ -892,7 +926,7 @@ else
         dol_fiche_head('');
 
         print '<table class="border centpercent">';
-        
+
         print '<tr>';
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
@@ -1064,14 +1098,14 @@ else
         //if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
         //{
             print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
-    
+
             // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
             $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
     	    $doleditor->Create();
-    
+
             print "</td></tr>";
         //}
-        
+
 		if($conf->categorie->enabled) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -1106,7 +1140,8 @@ else
 
             // VAT
             print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-            print $form->load_tva("tva_tx",-1,$mysoc,'');
+            $defaultva=get_default_tva($mysoc, $mysoc);
+            print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
             print '</td></tr>';
 
             print '</table>';
@@ -1116,7 +1151,7 @@ else
 
         // Accountancy codes
         print '<table class="border" width="100%">';
-		
+
 		if (! empty($conf->accounting->enabled))
 		{
             // Accountancy_code_sell
@@ -1130,8 +1165,8 @@ else
             print '<td>';
 			print $formaccountancy->select_account(GETPOST('accountancy_code_buy'), 'accountancy_code_buy', 1, null, 1, 1, '');
             print '</td></tr>';
-		}			
-		else // For external software 
+		}
+		else // For external software
 		{
             // Accountancy_code_sell
             print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -1375,7 +1410,7 @@ else
             }
 
 			// Tags-Categories
-            if ($conf->categorie->enabled) 
+            if ($conf->categorie->enabled)
 			{
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
@@ -1392,13 +1427,13 @@ else
 			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 			{
                 print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
-        
+
                 $doleditor = new DolEditor('note_private', $object->note_private, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
                 $doleditor->Create();
-    
+
                 print "</td></tr>";
 			}
-			
+
             print '</table>';
 
             print '<br>';
@@ -1418,8 +1453,8 @@ else
                 print '<td>';
 				print $formaccountancy->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
                 print '</td></tr>';
-			}			
-			else // For external software 
+			}
+			else // For external software
 			{
                 // Accountancy_code_sell
                 print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -1457,15 +1492,18 @@ else
             $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
-            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-            
-            
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+            dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
+
             print '<div class="fichecenter">';
             print '<div class="fichehalfleft">';
-            
+
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
-            
+
             // Type
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
             {
@@ -1571,7 +1609,7 @@ else
             }
             print '</td></tr>';
             */
-            
+
             // Batch number management (to batch)
             if (! empty($conf->productbatch->enabled)) {
                 print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
@@ -1594,10 +1632,10 @@ else
             print '</table>';
             print '</div>';
             print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
+
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
-            
+
             // Nature
             if($object->type!= Product::TYPE_SERVICE)
             {
@@ -1719,13 +1757,13 @@ else
                 print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note_private)?$object->note_private:dol_nl2br($object->note_private,1,true)).'</td></tr>'."\n";
                 print '<!-- End show Note --> '."\n";
 			}
-			
+
             print "</table>\n";
     		print '</div>';
-    		
+
             print '</div></div>';
             print '<div style="clear:both"></div>';
-        
+
             dol_fiche_end();
         }
 
@@ -1792,7 +1830,7 @@ if (empty($reshook))
 {
 	if ($action == '' || $action == 'view')
 	{
-	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) ||
 	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
 	    {
 	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
@@ -1937,7 +1975,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
     	print '<input type="hidden" name="action" value="addin">';
 
 	    print load_fiche_titre($langs->trans("AddToDraft"),'','');
-		
+
 		dol_fiche_head('');
 
     	$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
@@ -1949,7 +1987,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
     	print '<table width="100%" class="border">';
         print $html;
         print '</table>';
-		
+
         print '<div class="center">';
         print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
         print '</div>';
@@ -1976,10 +2014,10 @@ if ($action == '' || $action == 'view')
     $delallowed=$user->rights->produit->supprimer;
 
     $var=true;
-    
+
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
-    
+
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
     print '</div></div></div>';

@@ -413,10 +413,10 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         {
             // Migrate to add entity value into llx_societe_remise
             migrate_remise_entity($db,$langs,$conf);
-        
+
             // Migrate to add entity value into llx_societe_remise_except
             migrate_remise_except_entity($db,$langs,$conf);
-        
+
             // Reload modules (this must be always and only into last targeted version)
             $listofmodule=array(
                 'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
@@ -426,11 +426,11 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
                 'MAIN_MODULE_PRINTING'=>'newboxdefonly',
             );
             migrate_reload_modules($db,$langs,$conf,$listofmodule);
-        
+
             // Reload menus (this must be always and only into last targeted version)
             migrate_reload_menu($db,$langs,$conf,$versionto);
         }
-        
+
         // Can force activation of some module during migration with third paramater = MAIN_MODULE_XXX,MAIN_MODULE_YYY,...
         if ($enablemodules)
         {
@@ -453,11 +453,11 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $db->close();
 
 
-        // Actions for all version (not in database)
+        // Actions for all versions (not in database)
         migrate_delete_old_files($db, $langs, $conf);
-
         migrate_delete_old_dir($db, $langs, $conf);
-        
+
+
         dol_mkdir(DOL_DATA_ROOT.'/bank');
         migrate_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
     }
@@ -3926,7 +3926,14 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php'
+    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
+
+    DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
+    DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
+    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
+    DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
+    DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
+    DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)

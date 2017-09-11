@@ -44,7 +44,7 @@ $result=restrictedArea($user,'produit|service');
 $action=GETPOST('action','alpha');
 $sref=GETPOST("sref");
 $snom=GETPOST("snom");
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $type=GETPOST("type","int");
 $sbarcode=GETPOST("sbarcode",'alpha');
 $search_warehouse=GETPOST('search_warehouse','alpha');
@@ -126,10 +126,7 @@ $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowi
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if ($sall)
-{
-	$sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
-}
+if ($sall) $sql.=natural_search(array('p.ref','p.label','p.description','p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
@@ -163,6 +160,12 @@ $sql.= " pb.batch, pb.eatby, pb.sellby,";
 $sql.= " pl.eatby, pl.sellby";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
 $sql.= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 
@@ -193,11 +196,11 @@ if ($resql)
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, 'title_products');
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products');
 	}
 	else
 	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num, 0, 'title_products');
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products');
 	}
 
 	if (! empty($catid))

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5). Use 3 here, if hash is not needed for security purpose, for security need, prefer 0.
+ * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5, 4:md5 for OpenLdap). Use 3 here, if hash is not needed for security purpose, for security need, prefer 0.
  * 	@return		string					Hash of string
  */
 function dol_hash($chain,$type=0)
@@ -87,6 +87,7 @@ function dol_hash($chain,$type=0)
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));
 	else if ($type == 3) return md5($chain);
+	else if ($type == 4) return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 
@@ -102,7 +103,7 @@ function dol_hash($chain,$type=0)
  *	@param	User	$user      	  	User to check
  *	@param  string	$features	    Features to check (it must be module name. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+ *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
@@ -145,7 +146,9 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     $readok=1; $nbko=0;
     foreach ($featuresarray as $feature)	// first we check nb of test ko
     {
-    	if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($feature,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
+        $featureforlistofmodule=$feature;
+        if ($featureforlistofmodule == 'produit') $featureforlistofmodule='product';
+        if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
     	{
     		$readok=0; $nbko++;
     		continue;
@@ -343,9 +346,9 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
  * This function is also called by restrictedArea
  *
  * @param User		$user			User to check
- * @param array		$featuresarray	Features/modules to check. Example: ('user','service') 
+ * @param array		$featuresarray	Features/modules to check. Example: ('user','service','member','project','task',...)
  * @param int		$objectid		Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- * @param string	$tableandshare	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+ * @param string	$tableandshare	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
  * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param string	$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  * @param string	$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
@@ -367,11 +370,14 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 
 		// For backward compatibility
 		if ($feature == 'member') $feature='adherent';
-		
+		if ($feature == 'project') $feature='projet';
+		if ($feature == 'task') $feature='projet_task';
+
 		$check = array('adherent','banque','user','usergroup','produit','service','produit|service','categorie'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
-		$checkother = array('contact');	 // Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
-		$checkproject = array('projet'); // Test for project object
+		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
+		$checkproject = array('projet','project'); // Test for project object
+		$checktask = array('projet_task');
 		$nocheck = array('barcode','stock','fournisseur');	// No test
 		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -451,13 +457,34 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		}
 		else if (in_array($feature,$checkproject))
 		{
-			if (! empty($conf->projet->enabled) && ! $user->rights->projet->all->lire)
+			if (! empty($conf->projet->enabled) && empty($user->rights->projet->all->lire))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic=new Project($db);
 				$tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
 				$tmparray=explode(',',$tmps);
 				if (! in_array($objectid,$tmparray)) return false;
+			}
+			else
+			{
+				$sql = "SELECT dbt.".$dbt_select;
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			}
+		}
+		else if (in_array($feature,$checktask))
+		{
+			if (! empty($conf->projet->enabled) && empty($user->rights->projet->all->lire))
+			{
+			    $task = new Task($db);
+			    $task->fetch($objectid);
+
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$projectstatic=new Project($db);
+				$tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
+				$tmparray=explode(',',$tmps);
+				if (! in_array($task->fk_project,$tmparray)) return false;
 			}
 			else
 			{

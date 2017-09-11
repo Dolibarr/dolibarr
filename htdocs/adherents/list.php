@@ -57,7 +57,7 @@ $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 
 if ($statut < -1) $statut = '';
@@ -375,7 +375,7 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
-print '<div class="div-table-responsive-no-min">';
+print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 print '<tr class="liste_titre">';
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))

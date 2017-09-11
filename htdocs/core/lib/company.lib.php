@@ -214,7 +214,7 @@ function societe_prepare_head(Societe $object)
         // Attached files
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-        $upload_dir = $conf->societe->dir_output . "/" . $object->id;
+        $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
         $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
         $nbLinks=Link::count($db, $object->element, $object->id);
         
@@ -531,6 +531,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
 
         print "\n";
         print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
+        print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
         $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status";
@@ -597,7 +598,8 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             dol_print_error($db);
         }
         print "</table>";
-
+        print '</div>';
+        
         print "<br>\n";
     }
 
@@ -958,7 +960,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
- *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter.
+ *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
@@ -999,7 +1001,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
-        $sql.= " WHERE u.rowid = a.fk_user_author";
+        $sql.= " WHERE u.rowid = a.fk_user_action";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
@@ -1171,13 +1173,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
         
         $out.="\n";
+        
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder" width="100%">';
         $out.='<tr class="liste_titre">';
 		if ($donetodo)
 		{
             $out.='<td>';
             if (get_class($filterobj) == 'Societe') $out.='<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$filterobj->id.'&amp;status=done">';
-            $out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
+            $out.=($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
+            $out.=($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
+            $out.=($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
+            //$out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
             if (get_class($filterobj) == 'Societe') $out.='</a>';
             $out.='</td>';
 		}
@@ -1201,7 +1208,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='<td class="liste_titre"></td>';
 		}
 		$out.='<td class="liste_titre"></td>';
-		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out.='<td class="liste_titre"></td>';
 		$out.='<td class="liste_titre">';
 	    $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
@@ -1373,7 +1380,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $i++;
         }
         $out.="</table>\n";
-        //$out.="<br>\n";
+        $out.="</div>\n";
     }
 
     $out.='</form>';

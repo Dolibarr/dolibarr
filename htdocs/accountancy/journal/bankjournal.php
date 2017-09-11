@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  *
@@ -48,6 +48,9 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
+
 
 // Langs
 $langs->load("companies");
@@ -57,6 +60,8 @@ $langs->load("banks");
 $langs->load('bills');
 $langs->load('donations');
 $langs->load("accountancy");
+$langs->load("trips");
+$langs->load("hrm");
 
 $id_bank_account = GETPOST('id_account', 'int');
 
@@ -78,9 +83,9 @@ if ($user->societe_id > 0 && empty($id_bank_account))
 /*
  * Actions
  */
-	
+
 $error = 0;
-	
+
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
@@ -101,13 +106,16 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
-$sql  = "SELECT b.rowid , b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+$sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number,";
-$sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop";
+$sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop,";
+$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as name, u.firstname as firstname, bu2.type as typeop";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='user'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc on bu1.url_id=soc.rowid";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on bu2.url_id=u.rowid";
 $sql .= " WHERE ba.rowid=" . $id_bank_account;
 $sql .= ' AND ba.entity IN ('.getEntity('bank_account', 0).')';        // We don't share object for accountancy
 if ($date_start && $date_end)
@@ -123,6 +131,7 @@ $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
+$paymentexpensereportstatic = new PaymentExpenseReport($db);
 
 // Get code of finance journal
 $bank_code_journal = new Account($db);
@@ -143,6 +152,7 @@ if ($result) {
 	$account_transfer = (! empty($conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH) ? $conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH : $langs->trans("CodeNotDef"));
 
 	$tabcompany = array();
+	$tabuser = array();
 	$tabpay = array ();
 	$tabbq = array ();
 	$tabtp = array ();
@@ -153,21 +163,31 @@ if ($result) {
 	// one line for bank jounral = tabbq
 	// one line for thirdparty journal = tabtp
 	$i = 0;
-	while ( $i < $num ) 
+	while ( $i < $num )
 	{
 		$obj = $db->fetch_object($result);
 
 		// Set accountancy code (for bank and thirdparty)
 		$compta_bank = $obj->account_number;
-		if ($obj->label == '(SupplierInvoicePayment)')
+		$compta_soc = 'NotDefined';
+		if ($obj->label == '(SupplierInvoicePayment)' || $obj->label == '(SupplierInvoicePaymentBack)')
 			$compta_soc = (! empty($obj->code_compta_fournisseur) ? $obj->code_compta_fournisseur : $account_supplier);
-		if ($obj->label == '(CustomerInvoicePayment)')
+		if ($obj->label == '(CustomerInvoicePayment)' || $obj->label == '(CustomerInvoicePaymentBack)')
 			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $account_customer);
 
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
 		        'code_compta' => $compta_soc,
+		);
+
+		$compta_user = (! empty($obj->accountancy_code) ? $obj->accountancy_code : $account_employee);
+
+		$tabuser[$obj->rowid] = array (
+				'id' => $obj->userid,
+				'lastname' => $obj->lastname,
+				'firstname' => $obj->firstname,
+		        'accountancy_code' => $compta_user,
 		);
 
 		// Variable bookkeeping
@@ -186,10 +206,10 @@ if ($result) {
 		if (is_array($links)) {
 		    // Now loop on each link of record in bank.
 			foreach ( $links as $key => $val ) {
-			    
-			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat')))     // So we excluded 'company' here
+
+			    if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport')))     // So we excluded 'company' here
 			    {
-			        // We save tabtype for a future use, to remember what kind of payment it is 
+			        // We save tabtype for a future use, to remember what kind of payment it is
 			        $tabtype[$obj->rowid] = $links[$key]['type'];
 			    }
 
@@ -206,12 +226,12 @@ if ($result) {
 					$societestatic->id = $links[$key]['url_id'];
 					$societestatic->name = $links[$key]['label'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-					$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+					if ($compta_soc) $tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 				} else if ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
 					$userstatic->name = $links[$key]['label'];
 					$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
-					// $tabtp[$obj->rowid][$compta_user] += $obj->amount;
+					if ($compta_user) $tabtp[$obj->rowid][$compta_user] += $obj->amount;
 				} else if ($links[$key]['type'] == 'sc') {
 					$chargestatic->id = $links[$key]['url_id'];
 					$chargestatic->ref = $links[$key]['url_id'];
@@ -256,7 +276,12 @@ if ($result) {
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-					$tabtp[$obj->rowid][$account_employee] += $obj->amount;
+					// $tabtp[$obj->rowid][$account_employee] += $obj->amount;
+				} else if ($links[$key]['type'] == 'payment_expensereport') {
+					$paymentexpensereportstatic->id = $links[$key]['url_id'];
+					$paymentexpensereportstatic->fk_expensereport = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentexpensereportstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["fk_expensereport"] = $paymentexpensereportstatic->id;
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
@@ -266,7 +291,7 @@ if ($result) {
 
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
-		
+
 		// Check account number is ok
 		/*if ($action == 'writebookkeeping')        // Make test now in such a case
 		{
@@ -285,7 +310,7 @@ if ($result) {
     	        setEventMessages($langs->trans('ErrorAccountancyCodeOnThirdPartyNotDefined'), null, 'errors');
     		}
 		}*/
-		
+
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 
 		$i ++;
@@ -306,149 +331,175 @@ if (! $error && $action == 'writebookkeeping') {
 
 	$error = 0;
 	foreach ( $tabpay as $key => $val ) {      // $key is rowid into llx_bank
-		
+
 	    $errorforline = 0;
-	    
+
 	    $db->begin();
-	    
+
 		// Bank
 		if (! $errorforline)
 		{
 		    // Line into bank account
-    		foreach ( $tabbq[$key] as $k => $mt ) 
+    		foreach ( $tabbq[$key] as $k => $mt )
     		{
-    			$bookkeeping = new BookKeeping($db);
-    			$bookkeeping->doc_date = $val["date"];
-    			$bookkeeping->doc_ref = $val["ref"];
-    			$bookkeeping->doc_type = 'bank';
-    			$bookkeeping->fk_doc = $key;
-    			$bookkeeping->fk_docdet = $val["fk_bank"];
-    			$bookkeeping->numero_compte = $k;
-    			$bookkeeping->label_compte = $compte->label;
-    			$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
-    			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
-    			$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
-    			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
-    			$bookkeeping->code_journal = $journal;
-    			$bookkeeping->fk_user_author = $user->id;
-    			$bookkeeping->date_create = $now;
-    
-    			if ($tabtype[$key] == 'payment') {
-    			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    			    	
-    				$sqlmid = 'SELECT fac.facnumber';
-    				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
-    				$sqlmid .= " WHERE pay.fk_bank=" . $key;
-    				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
-    				$resultmid = $db->query($sqlmid);
-    				if ($resultmid) {
-    					$objmid = $db->fetch_object($resultmid);
-    					$bookkeeping->doc_ref = $objmid->facnumber;    // Ref of invoice
-    				}
-    			} else if ($tabtype[$key] == 'payment_supplier') {
-    			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    			    	
-    				$sqlmid = 'SELECT facf.ref_supplier, facf.ref';
-    				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
-    				$sqlmid .= " WHERE payf.fk_bank=" . $key;
-    				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
-    				$resultmid = $db->query($sqlmid);
-    				if ($resultmid) {
-    					$objmid = $db->fetch_object($resultmid);
-    					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')'; // Ref on invoice
-    				}
-    			}
-    
-    			$result = $bookkeeping->create($user);
-    			if ($result < 0) {
-    				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-    				{
-    					$error++;
-    					$errorforline++;
-    					//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-    				}
-    				else
-    				{
-	    				$error++;
-	    				$errorforline++;
-	    				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-    				}
+    			if ($mt) {
+        		    $bookkeeping = new BookKeeping($db);
+        			$bookkeeping->doc_date = $val["date"];
+        			$bookkeeping->doc_ref = $val["ref"];
+        			$bookkeeping->doc_type = 'bank';
+        			$bookkeeping->fk_doc = $key;
+        			$bookkeeping->fk_docdet = $val["fk_bank"];
+        			$bookkeeping->numero_compte = $k;
+        			$bookkeeping->label_compte = $compte->label;
+        			$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
+        			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+        			$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
+        			$bookkeeping->credit = ($mt < 0 ? - $mt : 0);
+        			$bookkeeping->code_journal = $journal;
+        			$bookkeeping->fk_user_author = $user->id;
+        			$bookkeeping->date_create = $now;
+
+        			if ($tabtype[$key] == 'payment') {
+        			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+
+        				$sqlmid = 'SELECT fac.facnumber';
+        				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON payfac.fk_facture=fac.rowid";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
+        				$sqlmid .= " WHERE pay.fk_bank=" . $key;
+        				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+        				$resultmid = $db->query($sqlmid);
+        				if ($resultmid) {
+        					$objmid = $db->fetch_object($resultmid);
+        					$bookkeeping->doc_ref = $objmid->facnumber;    // Ref of invoice
+        				}
+        			} else if ($tabtype[$key] == 'payment_supplier') {
+        			    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+
+        				$sqlmid = 'SELECT facf.ref_supplier, facf.ref';
+        				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON payfacf.fk_facturefourn=facf.rowid";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
+        				$sqlmid .= " WHERE payf.fk_bank=" . $key;
+        				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+        				$resultmid = $db->query($sqlmid);
+        				if ($resultmid) {
+        					$objmid = $db->fetch_object($resultmid);
+        					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')'; // Ref on invoice
+        				}
+        			} else if ($tabtype[$key] == 'payment_expensereport') {
+        			    $bookkeeping->code_tiers = $tabuser[$key]['accountancy_code'];
+
+        				$sqlmid = 'SELECT e.ref';
+        				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_expensereport as payer ON payer.fk_expensereport=e.rowid";
+        				$sqlmid .= " WHERE payer.fk_expensereport=" . $val["fk_expensereport"];
+        				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+        				$resultmid = $db->query($sqlmid);
+        				if ($resultmid) {
+        					$objmid = $db->fetch_object($resultmid);
+        					$bookkeeping->doc_ref = $objmid->ref; // Ref of expensereport
+        				}
+        			}
+
+        			$result = $bookkeeping->create($user);
+        			if ($result < 0) {
+        				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+        				{
+        					$error++;
+        					$errorforline++;
+        					//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+        				}
+        				else
+        				{
+    	    				$error++;
+    	    				$errorforline++;
+    	    				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+        				}
+        			}
     			}
     		}
 		}
-		
+
 		// Third party
 		if (! $errorforline)
 		{
 		    // Line into thirdparty account
     		foreach ( $tabtp[$key] as $k => $mt ) {
-    			$bookkeeping = new BookKeeping($db);
-    			$bookkeeping->doc_date = $val["date"];
-    			$bookkeeping->doc_ref = $val["ref"];
-    			$bookkeeping->doc_type = 'bank';
-    			$bookkeeping->fk_doc = $key;
-    			$bookkeeping->fk_docdet = $val["fk_bank"];
-    			$bookkeeping->label_compte = $tabcompany[$key]['name'];
-    			$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
-    			$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-    			$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
-    			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-    			$bookkeeping->code_journal = $journal;
-    			$bookkeeping->fk_user_author = $user->id;
-    			$bookkeeping->date_create = $now;
-    
-    			if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
-    				$bookkeeping->code_tiers = '';
-    				$bookkeeping->numero_compte = $k;
-    			} else if ($tabtype[$key] == 'payment') {    // If payment is payment of customer invoice, we get ref of invoice
-    				$sqlmid = 'SELECT fac.facnumber';
-    				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
-    				$sqlmid .= " WHERE pay.fk_bank=" . $key;
-    				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
-    				$resultmid = $db->query($sqlmid);
-    				if ($resultmid) {
-    					$objmid = $db->fetch_object($resultmid);
-    					$bookkeeping->doc_ref = $objmid->facnumber;
-    				}
-    				$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    				$bookkeeping->numero_compte = $k;
-    			} else if ($tabtype[$key] == 'payment_supplier') {           // If payment is payment of supplier invoice, we get ref of invoice
-    
-    				$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
-    				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
-    				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
-    				$sqlmid .= " WHERE payf.fk_bank=" . $key;
-    				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
-    				$resultmid = $db->query($sqlmid);
-    				if ($resultmid) {
-    					$objmid = $db->fetch_object($resultmid);
-    					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
-    				}
-                    $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
-    				$bookkeeping->numero_compte = $k;
-    			} else {
-    			    // FIXME Should be a temporary account ???
-    				$bookkeeping->doc_ref = $k;
-    				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-    				$bookkeeping->numero_compte = 'CodeNotDef';
-    			}
-    
-    			$result = $bookkeeping->create($user);
-    			if ($result < 0) {
-    				$error++;
-    				$errorforline++;
-    				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+    			if ($mt) {
+        		    $bookkeeping = new BookKeeping($db);
+        			$bookkeeping->doc_date = $val["date"];
+        			$bookkeeping->doc_ref = $val["ref"];
+        			$bookkeeping->doc_type = 'bank';
+        			$bookkeeping->fk_doc = $key;
+        			$bookkeeping->fk_docdet = $val["fk_bank"];
+        			$bookkeeping->label_compte = $tabcompany[$key]['name'];
+        			$bookkeeping->montant = ($mt < 0 ? - $mt : $mt);
+        			$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+        			$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
+        			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
+        			$bookkeeping->code_journal = $journal;
+        			$bookkeeping->fk_user_author = $user->id;
+        			$bookkeeping->date_create = $now;
+
+        			if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
+        				$bookkeeping->code_tiers = '';
+        				$bookkeeping->numero_compte = $k;
+        			} else if ($tabtype[$key] == 'payment') {    // If payment is payment of customer invoice, we get ref of invoice
+        				$sqlmid = 'SELECT fac.facnumber';
+        				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
+        				$sqlmid .= " WHERE pay.fk_bank=" . $key;
+        				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+        				$resultmid = $db->query($sqlmid);
+        				if ($resultmid) {
+        					$objmid = $db->fetch_object($resultmid);
+        					$bookkeeping->doc_ref = $objmid->facnumber;
+        				}
+        				$bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+        				$bookkeeping->numero_compte = $k;
+        			} else if ($tabtype[$key] == 'payment_supplier') {           // If payment is payment of supplier invoice, we get ref of invoice
+
+        				$sqlmid = 'SELECT facf.ref_supplier,facf.ref';
+        				$sqlmid .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
+        				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
+        				$sqlmid .= " WHERE payf.fk_bank=" . $key;
+        				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+        				$resultmid = $db->query($sqlmid);
+        				if ($resultmid) {
+        					$objmid = $db->fetch_object($resultmid);
+        					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
+        				}
+                        $bookkeeping->code_tiers = $tabcompany[$key]['code_compta'];
+        				$bookkeeping->numero_compte = $k;
+        			} else {
+        			    // FIXME Should be a temporary account ???
+        				$bookkeeping->doc_ref = $k;
+        				//$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+        				$bookkeeping->numero_compte = 'CodeNotDef';
+        			}
+
+        			$result = $bookkeeping->create($user);
+        			if ($result < 0) {
+        				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+        				{
+        					$error++;
+        					$errorforline++;
+        					//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->doc_ref.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+        				}
+        				else
+        				{
+    	    				$error++;
+    	    				$errorforline++;
+    	    				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+        				}
+        			}
     			}
     		}
 		}
-		
+
 		if (! $errorforline)
 		{
             $db->commit();
@@ -470,7 +521,7 @@ if (! $error && $action == 'writebookkeeping') {
 	{
 	    setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
-	
+
 	$action = '';
 }
 
@@ -481,6 +532,7 @@ if ($action == 'export_csv') {
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);
+	$userstatic = new User($db);
 
 	// Model Cegid Expert Export
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
@@ -491,10 +543,10 @@ if ($action == 'export_csv') {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
 			$reflabel = $val["ref"];
-			if ($reflabel == '(SupplierInvoicePayment)') {
+			if ($reflabel == '(SupplierInvoicePayment)' || $reflabel == '(SupplierInvoicePaymentBack)') {
 				$reflabel = $langs->trans('Supplier');
 			}
-			if ($reflabel == '(CustomerInvoicePayment)') {
+			if ($reflabel == '(CustomerInvoicePayment)' || $reflabel == '(CustomerInvoicePaymentBack)') {
 				$reflabel = $langs->trans('Customer');
 			}
 			if ($reflabel == '(SocialContributionPayment)') {
@@ -504,11 +556,18 @@ if ($action == 'export_csv') {
 				$reflabel = $langs->trans('Donation');
 			}
 			if ($reflabel == '(SubscriptionPayment)') {
-				$reflabel = $langs->trans('Donation');
+				$reflabel = $langs->trans('Subscription');
 			}
-			
+			if ($reflabel == '(ExpenseReportPayment)') {
+				$reflabel = $langs->trans('Employee');
+			}
+
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
+
+			$userstatic->id = $tabuser[$key]['id'];
+			$userstatic->lastname = $tabuser[$key]['lastname'];
+			$userstatic->firstname = $tabuser[$key]['firstname'];
 
 			// Bank
 			foreach ( $tabbq[$key] as $k => $mt ) {
@@ -636,7 +695,6 @@ if ($action == 'export_csv') {
 
 
 
-
 /*
  * View
  */
@@ -646,7 +704,8 @@ $form = new Form($db);
 if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$invoicesupplierstatic = new FactureFournisseur($db);
-	
+	$expensereportstatic = new ExpenseReport($db);
+
 	llxHeader('', $langs->trans("FinanceJournal"));
 
 	$nom = $langs->trans("FinanceJournal") . ' - ' . $bank_code_journal->getNomUrl(1);
@@ -656,17 +715,18 @@ if (empty($action) || $action == 'view') {
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
 	$varlink = 'id_account=' . $id_bank_account;
-	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
-			'action' => ''
-	), '', $varlink);
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+
+	/*if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
 		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans('Export') . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
 	} else {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
-	}
+	}*/
 
+    print '<div class="tabsAction">';
 	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+    print '</div>';
 
 	// TODO Avoid using js. We can use a direct link with $param
 	print '
@@ -688,7 +748,7 @@ if (empty($action) || $action == 'view') {
 	/*
 	 * Show result array
 	 */
-	print '<br><br>';
+	print '<br>';
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -710,12 +770,12 @@ if (empty($action) || $action == 'view') {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$reflabel = $val["ref"];
-		if ($reflabel == '(SupplierInvoicePayment)') {
+		if ($reflabel == '(SupplierInvoicePayment)' || $reflabel == '(SupplierInvoicePaymentBack)') {
 			$reflabel = $langs->trans('Supplier');
 		}
-		if ($reflabel == '(CustomerInvoicePayment)') {
+		if ($reflabel == '(CustomerInvoicePayment)' || $reflabel == '(CustomerInvoicePaymentBack)') {
 			$reflabel = $langs->trans('Customer');
-		}		
+		}
 		if ($reflabel == '(SocialContributionPayment)') {
 			$reflabel = $langs->trans('SocialContribution');
 		}
@@ -723,9 +783,12 @@ if (empty($action) || $action == 'view') {
 			$reflabel = $langs->trans('Donation');
 		}
 		if ($reflabel == '(SubscriptionPayment)') {
-			$reflabel = $langs->trans('SubscriptionPayment');
+			$reflabel = $langs->trans('Subscription');
 		}
-		
+		if ($reflabel == '(ExpenseReportPayment)') {
+			$reflabel = $langs->trans('Employee');
+		}
+
 		$ref=$reflabel;
 		if ($tabtype[$key] == 'payment')
 		{
@@ -755,13 +818,27 @@ if (empty($action) || $action == 'view') {
 		    }
 		    else dol_print_error($db);
 		}
+		elseif ($tabtype[$key] == 'payment_expensereport')
+		{
+		    $sqlmid = 'SELECT payer.fk_expensereport as id';
+		    $sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_expensereport as payer";
+		    $sqlmid .= " WHERE payer.fk_expensereport=" . $val["fk_expensereport"];
+		    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+		    $resultmid = $db->query($sqlmid);
+		    if ($resultmid) {
+		        $objmid = $db->fetch_object($resultmid);
+		        $expensereportstatic->fetch($objmid->id);
+		        $ref=$langs->trans("ExpenseReport").' '.$expensereportstatic->getNomUrl(1);
+		    }
+		    else dol_print_error($db);
+		}
 
 
 		/*$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];*/
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt ) 
+		foreach ( $tabbq[$key] as $k => $mt )
 		{
 		    print "<tr " . $bc[$var] . ">";
 		    print "<td><!-- Bank bank.rowid=".$key."--></td>";
@@ -820,7 +897,7 @@ if (empty($action) || $action == 'view') {
         		{
         		    print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
         		}
-				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE); 
+				else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
 				print "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>&nbsp;</td>";

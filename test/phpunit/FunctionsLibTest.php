@@ -120,31 +120,96 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 
 
+    /**
+     * testDolGetFirstLineOfText
+     *
+     * @return void
+     */
+    public function testDolGetFirstLineOfText()
+    {
+    	// Nb of line is same than entry text
+
+    	$input="aaaa";
+    	$result=dolGetFirstLineOfText($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa", $result);
+
+    	$input="aaaa\nbbbbbbbbbbbb\n";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa\nbbbbbbbbbbbb", $result);
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb", $result);
+
+    	// Nb of line is lower
+
+    	$input="aaaa\nbbbbbbbbbbbb\ncccccc\n";
+    	$result=dolGetFirstLineOfText($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa...", $result);
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+    	$result=dolGetFirstLineOfText($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa...", $result);
+
+    	$input="aaaa\nbbbbbbbbbbbb\ncccccc\n";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa\nbbbbbbbbbbbb...", $result);
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb...", $result);
+
+    	// Nb of line is higher
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc";
+    	$result=dolGetFirstLineOfText($input, 100);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 a');
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+    	$result=dolGetFirstLineOfText($input, 100);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 b');
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>\n";
+    	$result=dolGetFirstLineOfText($input, 100);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 c');
+    }
+
+
 	/**
 	 * testDolBuildPath
 	 *
-	 * @return boolean
+	 * @return void
 	 */
 	public function testDolBuildPath()
 	{
 	    /*$tmp=dol_buildpath('/google/oauth2callback.php', 0);
 	    var_dump($tmp);
 	    */
-	     
+
 	    /*$tmp=dol_buildpath('/google/oauth2callback.php', 1);
 	    var_dump($tmp);
 	    */
-	     
+
 	    $result=dol_buildpath('/google/oauth2callback.php', 2);
 	    print __METHOD__." result=".$result."\n";
 	    $this->assertStringStartsWith('http', $result);
-	     
+
 	    $result=dol_buildpath('/google/oauth2callback.php', 3);
         print __METHOD__." result=".$result."\n";
         $this->assertStringStartsWith('http', $result);
 	}
-    
-    
+
+
     /**
     * testGetBrowserInfo
     *
@@ -502,32 +567,48 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         // Default trunc (will add ... if truncation truncation or keep last char if only one char)
         $input="éeéeéeàa";
         $after=dol_trunc($input,3);
-        $this->assertEquals("éeé...",$after);
+        $this->assertEquals("éeé...",$after,'Test A1');
         $after=dol_trunc($input,2);
-        $this->assertEquals("ée...",$after);
+        $this->assertEquals("ée...",$after,'Test A2');
+        $after=dol_trunc($input,1);
+        $this->assertEquals("é...",$after,'Test A3');
+        $input="éeéeé";
+        $after=dol_trunc($input,3);
+        $this->assertEquals("éeéeé",$after,'Test B1');
+        $after=dol_trunc($input,2);
+        $this->assertEquals("éeéeé",$after,'Test B2');
+        $after=dol_trunc($input,1);
+        $this->assertEquals("é...",$after,'Test B3');
+        $input="éeée";
+        $after=dol_trunc($input,3);
+        $this->assertEquals("éeée",$after,'Test C1');
+        $after=dol_trunc($input,2);
+        $this->assertEquals("éeée",$after,'Test C2');
+        $after=dol_trunc($input,1);
+        $this->assertEquals("éeée",$after,'Test C3');
         $input="éeé";
         $after=dol_trunc($input,3);
-        $this->assertEquals("éeé",$after);
+        $this->assertEquals("éeé",$after,'Test C');
         $after=dol_trunc($input,2);
-        $this->assertEquals("éeé",$after);
+        $this->assertEquals("éeé",$after,'Test D');
         $after=dol_trunc($input,1);
-        $this->assertEquals("é...",$after);
+        $this->assertEquals("éeé",$after,'Test E');
         // Trunc with no ...
         $input="éeéeéeàa";
         $after=dol_trunc($input,3,'right','UTF-8',1);
-        $this->assertEquals("éeé",$after);
+        $this->assertEquals("éeé",$after,'Test F');
         $after=dol_trunc($input,2,'right','UTF-8',1);
-        $this->assertEquals("ée",$after);
+        $this->assertEquals("ée",$after,'Test G');
         $input="éeé";
         $after=dol_trunc($input,3,'right','UTF-8',1);
-        $this->assertEquals("éeé",$after);
+        $this->assertEquals("éeé",$after,'Test H');
         $after=dol_trunc($input,2,'right','UTF-8',1);
-        $this->assertEquals("ée",$after);
+        $this->assertEquals("ée",$after,'Test I');
         $after=dol_trunc($input,1,'right','UTF-8',1);
-        $this->assertEquals("é",$after);
+        $this->assertEquals("é",$after,'Test J');
         $input="éeéeéeàa";
         $after=dol_trunc($input,4,'middle');
-        $this->assertEquals("ée...àa",$after);
+        $this->assertEquals("ée...àa",$after,'Test K');
 
         return true;
     }
@@ -658,7 +739,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals("21 jump street\nMyTown, MyState, 99999",$address);
     }
 
-    
+
     /**
      * testDolFormatAddress
      *
@@ -671,18 +752,18 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-    
+
         $object=new Societe($db);
         $object->initAsSpecimen();
-    
+
         $object->country_code='FR';
         $phone=dol_print_phone('1234567890', $object->country_code);
         $this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
-    
+
         $object->country_code='FR';
         $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
         $this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
-        
+
         $object->country_code='FR';
         $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
         $this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
@@ -690,10 +771,10 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $object->country_code='CA';
         $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
         $this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
-        
+
     }
-    
-    
+
+
     /**
      * testImgPicto
      *
@@ -1043,5 +1124,5 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		return true;
 	}
-	
+
 }

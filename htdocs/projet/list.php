@@ -62,13 +62,12 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_all=GETPOST("search_all");
+$search_all=GETPOST('search_all', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
 $search_year=GETPOST("search_year");
-$search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_opp_percent=GETPOST("search_opp_percent",'alpha');
@@ -196,6 +195,7 @@ $title=$langs->trans("Projects");
 if ($search_user == $user->id) $title=$langs->trans("MyProjects");
 
 // Get list of project id allowed to user (in a string list separated by coma)
+$projectsListId='';
 if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
 
 // Get id of types of contacts for projects (This list never contains a lot of elements)
@@ -245,7 +245,7 @@ if ($search_user > 0)
 $sql.= " WHERE p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($socid) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
@@ -854,7 +854,7 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
         $i++;
         if ($i == 1)
         {
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         }
         elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp']).'</td>';

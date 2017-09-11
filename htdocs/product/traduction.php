@@ -202,7 +202,10 @@ dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', '', '', 0, '', '', 1);
+$shownav = 1;
+if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+dol_banner_tab($object, 'ref', $linkback, shownav, 'ref');
 
 dol_fiche_end();
 
@@ -245,7 +248,7 @@ if ($action == 'edit')
 		{
 			$s=picto_from_langcode($key);
 			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
-		    
+
 			print '<table class="border" width="100%">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
@@ -275,7 +278,7 @@ if ($action == 'edit')
 else if ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
-    
+
 	if (! empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)

@@ -116,8 +116,9 @@ function length_accountg($account)
 
 	if ($account < 0 || empty($account)) return '';
 	
+	if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+	
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
-
 	if (! empty($g)) {
 		// Clean parameters
 		$i = strlen($account);
@@ -150,8 +151,9 @@ function length_accounta($accounta)
 
 	if ($accounta < 0 || empty($accounta)) return '';
 	
+	if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+	
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
-
 	if (! empty($a)) {
 		// Clean parameters
 		$i = strlen($accounta);

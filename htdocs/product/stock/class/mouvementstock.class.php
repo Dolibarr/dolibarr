@@ -176,8 +176,8 @@ class MouvementStock extends CommonObject
                         		if ($this->db->jdate($obj->eatby) != $eatby && $this->db->jdate($obj->eatby) != $eatbywithouthour)    // We test date without hours and with hours for backward compatibility 
                                 {
                                     // If found and eatby/sellby defined into table and provided and differs, return error
-                                    $this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
-                                    dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
+                                    $this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby), 'dayhour'), dol_print_date($eatby, 'dayhour'));
+                                    dol_syslog("ThisSerialAlreadyExistWithDifferentDate batch=".$batch.", eatby found into product_lot = ".$obj->eatby." = ".dol_print_date($this->db->jdate($obj->eatby), 'dayhourrfc')." so eatbywithouthour = ".$eatbywithouthour." = ".dol_print_date($eatbywithouthour)." - eatby provided = ".$eatby." = ".dol_print_date($eatby, 'dayhourrfc'), LOG_ERR);
                                     $this->db->rollback();
                                     return -3;
                                 }
@@ -277,7 +277,7 @@ class MouvementStock extends CommonObject
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER))
+		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER))
 		{
     		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
     		{
@@ -292,6 +292,7 @@ class MouvementStock extends CommonObject
     		    }
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
+    		        $langs->load("stocks");
         		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
         		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
         		    $this->db->rollback();
@@ -302,6 +303,7 @@ class MouvementStock extends CommonObject
     		{
     		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
     		    {
+    		        $langs->load("stocks");
     		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
     		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
     		        $this->db->rollback();

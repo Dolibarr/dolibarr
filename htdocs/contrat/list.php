@@ -53,7 +53,7 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_contract=GETPOST('search_contract');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
@@ -187,11 +187,12 @@ $now=dol_now();
 $form=new Form($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
+$contracttmp = new Contrat($db);
 
-llxHeader();
+llxHeader('', $langs->trans("Contracts"));
 
 $sql = 'SELECT';
-$sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier,";
+$sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -265,7 +266,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier,";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code,";
 $sql.= " state.code_departement, state.nom";
@@ -304,7 +305,14 @@ if ($resql)
     $i = 0;
 
     $arrayofselected=is_array($toselect)?$toselect:array();
-    
+
+	if ($socid > 0)
+	{
+		$soc = new Societe($db);
+		$soc->fetch($socid);
+		if (empty($search_name)) $search_name = $soc->name;
+	}
+
     $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -322,7 +330,7 @@ if ($resql)
         $tmpkey=preg_replace('/search_options_/','',$key);
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     }
-    
+
     // List of mass actions available
     $arrayofmassactions =  array(
         //'presend'=>$langs->trans("SendByMail"),
@@ -331,7 +339,7 @@ if ($resql)
     if ($user->rights->contrat->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
     if ($massaction == 'presend') $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-    
+
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -347,9 +355,9 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
     $moreforfilter='';
-    
+
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
@@ -374,15 +382,15 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
 	}
-    
+
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -392,7 +400,7 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
     print '<tr class="liste_titre">';
@@ -410,9 +418,9 @@ if ($resql)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
 				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
@@ -485,7 +493,7 @@ if ($resql)
         print '<td class="liste_titre maxwidthonsmartphone" align="center">';
         print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
         print '</td>';
-    }    
+    }
     if (! empty($arrayfields['sale_representative']['checked']))
     {
         print '<td class="liste_titre"></td>';
@@ -540,7 +548,7 @@ if ($resql)
     {
         print '<td class="liste_titre">';
         print '</td>';
-    }    
+    }
     // Status
     if (! empty($arrayfields['status']['checked']))
     {
@@ -556,24 +564,36 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
+
+        $contracttmp->ref=$obj->ref;
+        $contracttmp->id=$obj->rowid;
+        $contracttmp->ref_customer=$obj->ref_customer;
+        $contracttmp->ref_supplier=$obj->ref_supplier;
+
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         if (! empty($arrayfields['c.ref']['checked']))
         {
-            print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">';
-            print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->rowid) .'</a>';
+            print '<td class="nowrap">';
+            print $contracttmp->getNomUrl(1);
             if ($obj->nb_late) print img_warning($langs->trans("Late"));
+            if (!empty($obj->note_private) || !empty($obj->note_public))
+            {
+                print ' <span class="note">';
+                print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+                print '</span>';
+            }
             print '</td>';
         }
-        if (! empty($arrayfields['c.ref_customer']['checked'])) 
+        if (! empty($arrayfields['c.ref_customer']['checked']))
         {
             print '<td>'.$obj->ref_customer.'</td>';
         }
-        if (! empty($arrayfields['c.ref_supplier']['checked'])) 
+        if (! empty($arrayfields['c.ref_supplier']['checked']))
         {
             print '<td>'.$obj->ref_supplier.'</td>';
         }
-        if (! empty($arrayfields['s.nom']['checked'])) 
+        if (! empty($arrayfields['s.nom']['checked']))
         {
             print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
         }
@@ -616,7 +636,7 @@ if ($resql)
             print $typenArray[$obj->typent_code];
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
-        }        
+        }
         if (! empty($arrayfields['sale_representative']['checked']))
         {
             // Sales representatives
@@ -700,7 +720,7 @@ if ($resql)
             if (! $i) $totalarray['nbfield']++;
         }
         // Status
-        if (! empty($arrayfields['status']['checked'])) 
+        if (! empty($arrayfields['status']['checked']))
         {
             print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
             print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
@@ -717,7 +737,7 @@ if ($resql)
         }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-        
+
         print "</tr>\n";
         $i++;
     }
@@ -725,7 +745,7 @@ if ($resql)
 
     print '</table>';
     print '</div>';
-    
+
     print '</form>';
 }
 else

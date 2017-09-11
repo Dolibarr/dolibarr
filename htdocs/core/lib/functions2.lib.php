@@ -5,6 +5,7 @@
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1160,7 +1161,7 @@ function check_value($mask,$value)
 
     // If an offset is asked
     if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('^\+',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
+    if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
 
     // Define $sqlwhere
 
@@ -1439,7 +1440,7 @@ function dol_print_reduction($reduction,$langs)
     }
     else
     {
-        $string = $reduction.'%';
+        $string = price($reduction).'%';
     }
 
     return $string;

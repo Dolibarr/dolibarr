@@ -76,8 +76,8 @@ BoxTitleLastLeaveRequests=Les %s dernières demandes de congés modifiées
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
 HolidaysCancelation=Annulation de la demande de congés
-EmployeeLastname=Employee last name
-EmployeeFirstname=Employee first name
+EmployeeLastname=Nom du salarié
+EmployeeFirstname=Prénom du salarié
 TypeWasDisabledOrRemoved=Le type de congés (id %s) a été désactivé ou supprimé
 
 ## Configuration du Module ##

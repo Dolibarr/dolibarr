@@ -106,8 +106,9 @@ $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0
 print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
-if (! empty($cat_id)) {
-	$return = $AccCat->getCptBK($cat_id);
+if (! empty($cat_id)) 
+{
+	$return = $AccCat->getAccountsWithNoCategory($cat_id);
 	if ($return < 0) {
 		setEventMessages(null, $AccCat->errors, 'errors');
 	}
@@ -149,7 +150,10 @@ if ($action == 'display' || $action == 'delete') {
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print $form->formconfirm($_SERVER["PHP_SELF"] . "?account_category=$cat_id&cptid=" . $cpt->rowid, $langs->trans("DeleteCptCategory"), $langs->trans("ConfirmDeleteCptCategory"), "delete", '', 0, "action-delete" . $j);
-				print '<td><input class="button" type="button" id="action-delete' . $j . '" value="' . $langs->trans("Delete") . '"></td>';
+				print '<td>';
+				//print img_delete();
+				print '<input class="button" type="button" id="action-delete' . $j . '" value="' . $langs->trans("Delete") . '">';
+				print '</td>';
 				print "</tr>\n";
 				$j ++;
 			}

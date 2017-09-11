@@ -112,7 +112,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname           Code of attribute
 	 *  @param  string	$label              label of attribute
-	 *  @param  int		$type               Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param  int		$type               Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param  int		$pos                Position of attribute
 	 *  @param  string	$size               Size/length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
@@ -164,7 +164,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -727,6 +727,10 @@ class ExtraFields
     		elseif ($type == 'url')
     		{
     		    $showsize='minwidth400imp';
+    		}
+    		elseif ($type == 'boolean')
+    		{
+    		    $showsize='';
     		}
     		else
     		{

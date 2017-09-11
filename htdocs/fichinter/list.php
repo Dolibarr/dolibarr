@@ -62,7 +62,7 @@ $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -211,7 +211,14 @@ $result=$db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
-
+	
+	if ($socid > 0)
+	{
+		$soc = new Societe($db);
+		$soc->fetch($socid);
+		if (empty($search_company)) $search_company = $soc->name;
+	}
+	
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -518,7 +525,7 @@ if ($result)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';

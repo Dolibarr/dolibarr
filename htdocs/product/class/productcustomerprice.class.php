@@ -140,7 +140,6 @@ class Productcustomerprice extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_customer_price(";
-
 		$sql .= "entity,";
 		$sql .= "datec,";
 		$sql .= "fk_product,";
@@ -150,6 +149,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= "price_min,";
 		$sql .= "price_min_ttc,";
 		$sql .= "price_base_type,";
+		$sql .= "default_vat_code,";
 		$sql .= "tva_tx,";
 		$sql .= "recuperableonly,";
 		$sql .= "localtax1_type,";
@@ -158,9 +158,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= "localtax2_tx,";
 		$sql .= "fk_user,";
 		$sql .= "import_key";
-
 		$sql .= ") VALUES (";
-
 		$sql .= " " . $conf->entity . ",";
 		$sql .= " '" . $this->db->idate(dol_now()) . "',";
 		$sql .= " " . (! isset($this->fk_product) ? 'NULL' : "'" . $this->fk_product . "'") . ",";
@@ -170,15 +168,15 @@ class Productcustomerprice extends CommonObject
 		$sql .= " " . (empty($this->price_min) ? '0' : "'" . $this->price_min . "'") . ",";
 		$sql .= " " . (empty($this->price_min_ttc) ? '0' : "'" . $this->price_min_ttc . "'") . ",";
 		$sql .= " " . (! isset($this->price_base_type) ? 'NULL' : "'" . $this->db->escape($this->price_base_type) . "'") . ",";
-		$sql .= " " . (! isset($this->tva_tx) ? 'NULL' : "'" . $this->tva_tx . "'") . ",";
+		$sql .= " ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
+		$sql .= " " . (! isset($this->tva_tx) ? 'NULL' : (empty($this->tva_tx)?0:$this->tva_tx)) . ",";
 		$sql .= " " . (! isset($this->recuperableonly) ? 'NULL' : "'" . $this->recuperableonly . "'") . ",";
 		$sql .= " " . (empty($this->localtax1_type) ? "'0'" : "'" . $this->localtax1_type . "'") . ",";
-		$sql .= " " . (! isset($this->localtax1_tx) ? 'NULL' : "'" . $this->localtax1_tx . "'") . ",";
+		$sql .= " " . (! isset($this->localtax1_tx) ? 'NULL' : (empty($this->localtax1_tx)?0:$this->localtax1_tx)) . ",";
 		$sql .= " " . (empty($this->localtax2_type) ? "'0'" : "'" . $this->localtax2_type . "'") . ",";
-		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : "'" . $this->localtax2_tx . "'") . ",";
+		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx)?0:$this->localtax2_tx)) . ",";
 		$sql .= " " . $user->id . ",";
 		$sql .= " " . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . "";
-
 		$sql .= ")";
 
 		$this->db->begin();
@@ -250,6 +248,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.price_min,";
 		$sql .= " t.price_min_ttc,";
 		$sql .= " t.price_base_type,";
+		$sql .= " t.default_vat_code,";
 		$sql .= " t.tva_tx,";
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
@@ -278,6 +277,7 @@ class Productcustomerprice extends CommonObject
 				$this->price_min = $obj->price_min;
 				$this->price_min_ttc = $obj->price_min_ttc;
 				$this->price_base_type = $obj->price_base_type;
+				$this->default_vat_code = $obj->default_vat_code;
 				$this->tva_tx = $obj->tva_tx;
 				$this->recuperableonly = $obj->recuperableonly;
 				$this->localtax1_tx = $obj->localtax1_tx;
@@ -324,6 +324,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.price_min,";
 		$sql .= " t.price_min_ttc,";
 		$sql .= " t.price_base_type,";
+		$sql .= " t.default_vat_code,";
 		$sql .= " t.tva_tx,";
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
@@ -380,6 +381,7 @@ class Productcustomerprice extends CommonObject
 				$line->price_min = $obj->price_min;
 				$line->price_min_ttc = $obj->price_min_ttc;
 				$line->price_base_type = $obj->price_base_type;
+				$line->default_vat_code = $obj->default_vat_code;
 				$line->tva_tx = $obj->tva_tx;
 				$line->recuperableonly = $obj->recuperableonly;
 				$line->localtax1_tx = $obj->localtax1_tx;
@@ -429,6 +431,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.price_min,";
 		$sql .= " t.price_min_ttc,";
 		$sql .= " t.price_base_type,";
+		$sql .= " t.default_vat_code,";
 		$sql .= " t.tva_tx,";
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
@@ -484,6 +487,7 @@ class Productcustomerprice extends CommonObject
 				$line->price_min = $obj->price_min;
 				$line->price_min_ttc = $obj->price_min_ttc;
 				$line->price_base_type = $obj->price_base_type;
+				$line->default_vat_code = $obj->default_vat_code;
 				$line->tva_tx = $obj->tva_tx;
 				$line->recuperableonly = $obj->recuperableonly;
 				$line->localtax1_tx = $obj->localtax1_tx;
@@ -595,6 +599,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= "price_min,";
 		$sql .= "price_min_ttc,";
 		$sql .= "price_base_type,";
+		$sql .= "default_vat_code,";
 		$sql .= "tva_tx,";
 		$sql .= "recuperableonly,";
 		$sql .= "localtax1_tx,";
@@ -616,6 +621,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.price_min,";
 		$sql .= " t.price_min_ttc,";
 		$sql .= " t.price_base_type,";
+		$sql .= " t.default_vat_code,";
 		$sql .= " t.tva_tx,";
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
@@ -649,10 +655,11 @@ class Productcustomerprice extends CommonObject
 		$sql .= " price_min=" . (isset($this->price_min) ? $this->price_min : "null") . ",";
 		$sql .= " price_min_ttc=" . (isset($this->price_min_ttc) ? $this->price_min_ttc : "null") . ",";
 		$sql .= " price_base_type=" . (isset($this->price_base_type) ? "'" . $this->db->escape($this->price_base_type) . "'" : "null") . ",";
-		$sql .= " tva_tx=" . (isset($this->tva_tx) ? $this->tva_tx : "null") . ",";
+		$sql .= " default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
+		$sql .= " tva_tx=" . (isset($this->tva_tx) ? (empty($this->tva_tx)?0:$this->tva_tx) : "null") . ",";
 		$sql .= " recuperableonly=" . (isset($this->recuperableonly) ? $this->recuperableonly : "null") . ",";
-		$sql .= " localtax1_tx=" . (isset($this->localtax1_tx) ? $this->localtax1_tx : "null") . ",";
-		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? $this->localtax2_tx : "null") . ",";
+		$sql .= " localtax1_tx=" . (isset($this->localtax1_tx) ? (empty($this->localtax1_tx)?0:$this->localtax1_tx) : "null") . ",";
+		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? (empty($this->localtax2_tx)?0:$this->localtax2_tx) : "null") . ",";
 		$sql .= " localtax1_type=" . (! empty($this->localtax1_type) ? "'".$this->localtax1_type."'": "'0'") . ",";
 		$sql .= " localtax2_type=" . (! empty($this->localtax2_type) ? "'".$this->localtax2_type."'": "'0'") . ",";
 		$sql .= " fk_user=" . $user->id . ",";
@@ -918,6 +925,7 @@ class Productcustomerprice extends CommonObject
 		$this->price_min = '';
 		$this->price_min_ttc = '';
 		$this->price_base_type = '';
+		$this->default_vat_code = '';
 		$this->tva_tx = '';
 		$this->recuperableonly = '';
 		$this->localtax1_tx = '';
@@ -943,6 +951,7 @@ class PriceByCustomerLine
 	var $price_min;
 	var $price_min_ttc;
 	var $price_base_type;
+	var $default_vat_code;
 	var $tva_tx;
 	var $recuperableonly;
 	var $localtax1_tx;

@@ -175,6 +175,9 @@ class InterfaceLogevents extends DolibarrTriggers
         }
 */
 
+		// Add more information into desc from the context property
+		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];
+		
         // Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 

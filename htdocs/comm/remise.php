@@ -125,6 +125,8 @@ if ($socid > 0)
 
 	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
+	print '<div class="underbanner clearboth"></div>';
+	
 	print '<table class="border centpercent">';
 
 	// New value

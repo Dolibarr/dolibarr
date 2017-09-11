@@ -390,7 +390,7 @@ class Account extends CommonObject
      *  @param	string		$label			Descripton
      *  @param	float		$amount			Amount
      *  @param	string		$num_chq		Numero cheque ou virement
-     *  @param	string		$categorie		Categorie optionnelle
+     *  @param	int  		$categorie		Category id (optionnal)
      *  @param	User		$user			User that create
      *  @param	string		$emetteur		Name of cheque writer
      *  @param	string		$banque			Bank of cheque writer
@@ -471,17 +471,17 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 
-			if ($categorie) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_account (";
-				$sql .= "fk_account, fk_categorie";
+			if ($categorie>0) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
 				$sql .= " ".$accline->id.", ".$categorie;
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
 				if (!$result) {
+					$this->error = $this->db->lasterror();
 					$this->db->rollback();
-					$this->error = $this->db->error();
 					return -3;
 				}
 			}
@@ -705,17 +705,17 @@ class Account extends CommonObject
 		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
 
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
-        $sql.= ",currency_code = '".$this->currency_code."'";
+        $sql.= ",currency_code = '".$this->db->escape($this->currency_code)."'";
 
         $sql.= ",min_allowed = ".($this->min_allowed != '' ? price2num($this->min_allowed) : "null");
         $sql.= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
@@ -797,12 +797,12 @@ class Account extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
         $sql.= " bank  = '".$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->code_banque."'";
-        $sql.= ",code_guichet='".$this->code_guichet."'";
-        $sql.= ",number='".$this->number."'";
-        $sql.= ",cle_rib='".$this->cle_rib."'";
-        $sql.= ",bic='".$this->bic."'";
-        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql.= ",number='".$this->db->escape($this->number)."'";
+        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql.= ",bic='".$this->db->escape($this->bic)."'";
+        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -1359,7 +1359,7 @@ class Account extends CommonObject
     {
         $country_code=$this->getCountryCode();
 
-        if (in_array($country_code,array('CH','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon, ...
+        if (in_array($country_code,array('CH','FR','ES','GA','IT','NC'))) return 1; // France, Spain, Gabon, ...
         if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
         return 0;
     }

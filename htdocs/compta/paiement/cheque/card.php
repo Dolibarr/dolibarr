@@ -560,41 +560,24 @@ if ($action == 'new')
 }
 else
 {
-	$linkback='<a href="'.$_SERVER["PHP_SELF"].'?leftmenu=customers_bills_checks&action=new">'.$langs->trans("BackToList").'</a>';
 	$paymentstatic=new Paiement($db);
 	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
+	$accountstatic->fetch($object->account_id);
 
-	$accountstatic->id=$object->account_id;
-	$accountstatic->label=$object->account_label;
+	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
+	
+	$morehtmlref='';
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+	
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
+	
 	print '<table class="border" width="100%">';
+
 	print '<tr><td class="titlefield">';
-
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Ref');
-	print '</td>';
-	if ($action != 'editref') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editref&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRef'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="2">';
-	if ($action == 'editref')
-	{
-		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="setref">';
-		print '<input type="text" name="ref" value="'.$object->ref.'">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-		print '</form>';
-	}
-	else
-	{
-	    print $form->showrefnav($object,'ref',$linkback, 1, 'ref');
-	}
-
-	print '</td>';
-	print '</tr>';
-
-	print '<tr><td>';
 
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
@@ -660,13 +643,15 @@ else
 	print price($object->amount);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Status').'</td><td colspan="2">';
+	/*print '<tr><td>'.$langs->trans('Status').'</td><td colspan="2">';
 	print $object->getLibStatut(4);
-	print '</td></tr>';
+	print '</td></tr>';*/
 
 	print '</table><br>';
 
+	print '</div>';
 
+	
 	// List of cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
@@ -684,6 +669,7 @@ else
 	{
 		$num = $db->num_rows($resql);
 
+	    print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
 		$param="&amp;id=".$object->id;
@@ -760,6 +746,7 @@ else
 			$i++;
 		}
 		print "</table>";
+		print "</div>";
 	}
 	else
 	{
