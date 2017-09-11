@@ -66,6 +66,7 @@
 
 UPDATE llx_user set api_key = null where api_key = '';
 
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;

@@ -383,8 +383,8 @@ class AccountancyCategory
 	/**
 	 * Return list of personalized groups
 	 *
-	 * @return	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
-	 * @return	array|int						Array of personalized groups or < 0 if KO
+	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
+	 * @return	array							Array of groups
 	 */
 	public function getCats($categorytype=-1)
 	{
@@ -429,7 +429,7 @@ class AccountancyCategory
 							'position' => $obj->position,
 							'category_type' => $obj->category_type
 					);
-					$i ++;
+					$i++;
 				}
 			}
 			return $data;
@@ -506,9 +506,9 @@ class AccountancyCategory
 	 * Get all accounting account of a group.
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param 	int 	$cat_id 			Id if personalized accounting group/category
-	 * @param 	string 	$predefinedgroup 	Sql criteria filter to select accounting accounts
-	 * @return 	array       				Array of accounting accounts
+	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
+	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
+	 * @return 	array       					Array of accounting accounts
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{

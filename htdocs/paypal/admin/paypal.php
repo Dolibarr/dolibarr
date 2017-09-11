@@ -64,6 +64,8 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",GETPOST('PAYPAL_ADD_PAYMENT_URL','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK",GETPOST('ONLINE_PAYMENT_MESSAGE_OK'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO",GETPOST('ONLINE_PAYMENT_MESSAGE_KO'),'chaine',0,'',$conf->entity);
@@ -217,6 +219,13 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_ADD_PAYMENT_URL").'</td><td>';
 print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL",$conf->global->PAYPAL_ADD_PAYMENT_URL,1);
+print '</td></tr>';
+
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("MessageForm").'</td><td>';
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_4,'90%');
+$doleditor->Create();
 print '</td></tr>';
 
 

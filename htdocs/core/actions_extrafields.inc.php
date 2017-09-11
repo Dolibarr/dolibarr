@@ -25,6 +25,7 @@
 
 $maxsizestring=255;
 $maxsizeint=10;
+$mesg=array();
 
 $extrasize=GETPOST('size','int');
 $type=GETPOST('type','alpha');

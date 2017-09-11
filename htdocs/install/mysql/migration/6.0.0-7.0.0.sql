@@ -35,7 +35,7 @@ ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DE
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 
-
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'DEPENSES',  'Expenses of products/services',             'Exemple: 6xxxxx', 0, 0, '',                '20', 1, 1);

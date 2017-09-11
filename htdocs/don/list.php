@@ -92,11 +92,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p
 $sql.= " ON p.rowid = d.fk_projet WHERE 1 = 1";
 if ($statut != '' && $statut != '-1')
 {
-	$sql .= " AND d.fk_statut IN (".$statut.")";
+	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
 }
 if (trim($search_ref) != '')
 {
-    $sql.= natural_search('d.ref',$search_ref);
+    $sql.= natural_search('d.ref', $search_ref);
 }
 if (trim($search_all) != '')
 {

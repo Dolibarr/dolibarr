@@ -535,9 +535,9 @@ if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname
 if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
 
 //Required triple check because statut=0 means draft filter
-if (GETPOST('statut', 'alpha') !== '')
+if (GETPOST('statut', 'intcomma') !== '')
 {
-	$sql .= " AND cf.fk_statut IN (".$db->escape(GETPOST('statut', 'alpha')).")";
+	$sql .= " AND cf.fk_statut IN (".$db->escape($db->escape(GETPOST('statut', 'intcomma'))).")";
 }
 if ($search_status != '' && $search_status >= 0)
 {
@@ -589,8 +589,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
