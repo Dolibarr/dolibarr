@@ -559,9 +559,10 @@ class Fichinter extends CommonObject
 	/**
 	 *	Returns amount based on user thm
 	 *
-	 *	@return     float amount
+	 *	@return     float 		Amount
 	 */
-	function getAmount() {
+	function getAmount()
+	{
 		global $db;
 
 		$amount = 0;
@@ -571,13 +572,11 @@ class Fichinter extends CommonObject
 
 		$thm = $this->author->thm;
 
-		foreach($this->lines as &$line) {
-
-			$amount+=$line->qty * $thm;
-
+		foreach($this->lines as $line) {
+			$amount += ($line->duration / 60 / 60 * $thm);
 		}
 
-		return $amount;
+		return price2num($amount, 'MT');
 	}
 
 	/**
