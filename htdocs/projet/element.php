@@ -448,7 +448,7 @@ $listofreferent=array(
 	'datefieldname'=>'datev',
 	'margin'=>'minus',
 	'disableamount'=>0,
-    'urlnew'=>DOL_URL_ROOT.'/compta/bank_various_payment/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'banks',
     'buttonnew'=>'AddVariousPayment',
     'testnew'=>$user->rights->banque->modifier,
@@ -731,7 +731,7 @@ foreach ($listofreferent as $key => $value)
 		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty)
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, array('payment_various')))
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
