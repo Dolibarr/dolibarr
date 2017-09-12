@@ -351,7 +351,7 @@ class SupplierInvoices extends DolibarrApi
     function _validate($data)
     {
         $invoice = array();
-        foreach (Invoices::$FIELDS as $field) {
+        foreach (SupplierInvoices::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $invoice[$field] = $data[$field];
