@@ -56,7 +56,7 @@ class DolibarrApi
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode, $refreshCache);
-	$this->r->setBaseUrls(DOL_MAIN_URL_ROOT);
+	$this->r->setBaseUrls(DOL_MAIN_URL_ROOT, $urlwithroot);
         $this->r->setAPIVersion(1);
     }
 
