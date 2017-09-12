@@ -300,7 +300,7 @@ if (empty($reshook))
     // Delete
     if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer)
     {
-    	$object->delete();
+    	$object->delete($user);
     	header("Location: " . $_SERVER['PHP_SELF'] );
     	exit;
     }

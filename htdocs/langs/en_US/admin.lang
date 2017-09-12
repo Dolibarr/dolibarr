@@ -1243,6 +1243,7 @@ MemberMainOptions=Main options
 AdherentLoginRequired= Manage a Login for each member
 AdherentMailRequired=EMail required to create a new member
 MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default
+VisitorCanChooseItsPaymentMode=Visitor can choose among available payment modes
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Global parameters

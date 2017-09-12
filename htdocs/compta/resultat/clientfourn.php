@@ -44,7 +44,7 @@ $date_startyear=GETPOST('date_startyear','int');
 $date_endmonth=GETPOST('date_endmonth','int');
 $date_endday=GETPOST('date_endday','int');
 $date_endyear=GETPOST('date_endyear','int');
-$showaccountdetail = GETPOST('showaccountdetail','aZ09');
+$showaccountdetail = GETPOST('showaccountdetail','aZ09')?GETPOST('showaccountdetail','aZ09'):'no';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -156,7 +156,7 @@ $total_ttc=0;
 // Affiche en-tete de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $name=$langs->trans("AnnualByCompanies");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode=$langs->trans("CalcModeDebt");
     $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">','</a>').')';
@@ -170,7 +170,7 @@ if ($modecompta=="CREANCES-DETTES")
 }
 elseif ($modecompta=="RECETTES-DEPENSES")
 {
-    $name=$langs->trans("AnnualByCompanies");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode=$langs->trans("CalcModeEngagement");
     $calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">','</a>').')';
@@ -183,13 +183,14 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-	$name=$langs->trans("AnnualByCompanies");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
     $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',1,1,0,'',1,0,1);
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectyesno('showaccountdetail',$showaccountdetail,0);
+	$arraylist=array('no'=>$langs->trans("No"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
+	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultBookkeepingPredefined");
 	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("Chartofaccounts")).')';
@@ -291,7 +292,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 				// Loop on detail of all accounts
 				// This make 14 calls for each detail of account (NP, N and month m)
-				if ($showaccountdetail == 'yes')
+				if ($showaccountdetail != 'no')
 				{
 					$tmppredefinedgroupwhere="pcg_type = '".$db->escape($objp->pcg_type)."' AND pcg_subtype = '".$db->escape($objp->pcg_subtype)."'";
 					$tmppredefinedgroupwhere.= " AND fk_pcg_version = '".$charofaccountstring."'";
@@ -310,7 +311,8 @@ if ($modecompta == 'BOOKKEEPING')
 							$resultN=$AccCat->sdc;
 						}
 
-						if ($resultN > 0)
+
+						if ($showaccountdetail == 'all' || $resultN > 0)
 						{
 							print '<tr>';
 							print '<td></td>';

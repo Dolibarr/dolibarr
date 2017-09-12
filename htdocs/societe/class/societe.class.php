@@ -1106,17 +1106,18 @@ class Societe extends CommonObject
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-        if ($rowid) $sql .= ' WHERE s.rowid = '.$rowid;
-        else if ($ref)   $sql .= " WHERE s.nom = '".$this->db->escape($ref)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($ref_ext) $sql .= " WHERE s.ref_ext = '".$this->db->escape($ref_ext)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($ref_int) $sql .= " WHERE s.ref_int = '".$this->db->escape($ref_int)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($idprof1)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($idprof2)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($idprof3)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof5) $sql .= " WHERE s.idprof5 = '".$this->db->escape($idprof5)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof6) $sql .= " WHERE s.idprof6 = '".$this->db->escape($idprof6)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($email)   $sql .= " WHERE email = '".$this->db->escape($email)."' AND s.entity IN (".getEntity($this->element, 1).")";
+		$sql .= ' WHERE s.entity IN ('.getEntity($this->element, 1).')';
+        if ($rowid)   $sql .= ' AND s.rowid = '.$rowid;
+        if ($ref)     $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
+        if ($ref_ext) $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
+        if ($ref_int) $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
+        if ($idprof1) $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
+        if ($idprof2) $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
+        if ($idprof3) $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
+        if ($idprof4) $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
+        if ($idprof5) $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
+        if ($idprof6) $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
+        if ($email)   $sql .= " AND email = '".$this->db->escape($email)."'";
 
         $resql=$this->db->query($sql);
         if ($resql)

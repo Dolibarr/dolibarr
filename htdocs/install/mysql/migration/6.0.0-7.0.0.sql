@@ -42,6 +42,11 @@ ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
 
+ALTER TABLE llx_contrat MODIFY COLUMN ref varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_customer varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_supplier varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(50);
+
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
