@@ -68,6 +68,7 @@ $in_bookkeeping = GETPOST('in_bookkeeping','aZ09');
 if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 
 $now = dol_now();
+
 $action = GETPOST('action','aZ09');
 
 // Security check
