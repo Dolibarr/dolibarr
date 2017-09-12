@@ -926,7 +926,7 @@ if ($source == 'contractline')
     {
     	$amount=$contractline->total_ttc;
 
-    	if ($contractline->fk_product && ! empty($conf->global-PAYMENT_USE_NEW_PRICE_FOR_CONTRACTLINES))
+    	if ($contractline->fk_product && ! empty($conf->global->PAYMENT_USE_NEW_PRICE_FOR_CONTRACTLINES))
     	{
     		$product=new Product($db);
     		$result=$product->fetch($contractline->fk_product);
