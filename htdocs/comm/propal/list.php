@@ -73,6 +73,10 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
+
 $viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut','alpha');
@@ -80,9 +84,6 @@ $object_statut=GETPOST('propal_statut','alpha');
 $sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
-$search_day=GETPOST("search_day","int");
-$search_month=GETPOST("search_month","int");
-$search_year=GETPOST("search_year","int");
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -371,9 +372,10 @@ if ($resql)
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
-	if ($search_month)              $param.='&search_month='.urlencode($search_month);
-	if ($search_year)               $param.='&search_year='.urlencode($search_year);
-    if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year='.urlencode($search_year);
+	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
     if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
     if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
@@ -613,7 +615,7 @@ if ($resql)
 	// Date
 	if (! empty($arrayfields['p.date']['checked']))
 	{
-	    print '<td class="liste_titre" colspan="1" align="center">';
+	    print '<td class="liste_titre" align="center">';
     	//print $langs->trans('Month').': ';
     	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
     	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
@@ -624,7 +626,7 @@ if ($resql)
 	// Date end
 	if (! empty($arrayfields['p.fin_validite']['checked']))
 	{
-	   print '<td class="liste_titre" colspan="1">&nbsp;</td>';
+	   print '<td class="liste_titre">&nbsp;</td>';
 	}
 	if (! empty($arrayfields['p.total_ht']['checked']))
 	{
