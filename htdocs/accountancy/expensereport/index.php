@@ -104,29 +104,6 @@ if ($action == 'validatehistory') {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
-} elseif ($action == 'fixaccountancycode') {
-	$error = 0;
-	$db->begin();
-
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sql1 .= " SET fk_code_ventilation = 0";
-	$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN ';
-	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-
-	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
-
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
-	} else {
-		$db->commit();
-		setEventMessage($langs->trans('Done'), 'mesgs');
-	}
 } elseif ($action == 'cleanaccountancycode') {
 	$error = 0;
 	$db->begin();
@@ -140,7 +117,7 @@ if ($action == 'validatehistory') {
 	$sql1.= " AND er.entity IN (" . getEntity('accountancy') . ")";
 	$sql1.=")";
 
-	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	dol_syslog("htdocs/accountancy/customer/index.php cleanaccountancycode", LOG_DEBUG);
 
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -168,13 +145,25 @@ print $langs->trans("DescVentilExpenseReport") . '<br>';
 print $langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
 
-//print '<div class="inline-block divButAction">';
-// TODO Remove this. Should be done always or into the repair.php script.
-if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
-//print '</div>';
-
-
-
+// Clean database
+$db->begin();
+$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+$sql1 .= " SET fk_code_ventilation = 0";
+$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN ';
+$sql1 .= '	(SELECT accnt.rowid ';
+$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+$resql1 = $db->query($sql1);
+if (! $resql1) {
+	$error ++;
+	$db->rollback();
+	setEventMessage($db->lasterror(), 'errors');
+} else {
+	$db->commit();
+}
+// End clean database
 
 
 $y = $year_current;
