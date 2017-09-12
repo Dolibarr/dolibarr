@@ -1554,6 +1554,4 @@ class FactureLigneRec extends CommonInvoiceLine
 
     }
 
-=======
->>>>>>> branch '6.0' of git@github.com:Dolibarr/dolibarr.git
 }
