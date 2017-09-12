@@ -36,7 +36,7 @@ $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
-    
+
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
@@ -50,7 +50,11 @@ foreach($linkedObjectBlock as $key => $objectlink)
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
-	<td align="right"></td>
+	<td align="right">
+	<?php
+		print $objectlink->getLibStatut(3);
+	?>
+	</td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
 <?php
