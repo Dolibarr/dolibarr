@@ -103,10 +103,10 @@ function showOnlinePaymentUrl($type,$ref)
 	$langs->load("paybox");
 	$servicename='Online';
 
-	$out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
-	$url=getOnlinePaymentUrl(0,$type,$ref);
-	$out.='<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
-	$out.=ajax_autoselect("onlinepaymenturl", 0);
+	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
+	$url = getOnlinePaymentUrl(0,$type,$ref);
+	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
+	$out.= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
 
@@ -126,6 +126,7 @@ function getOnlinePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
 	global $conf;
 
 	$ref=str_replace(' ','',$ref);
+	$out='';
 
 	if ($type == 'free')
 	{
@@ -210,7 +211,7 @@ function getOnlinePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
 	}
 
 	// For multicompany
-	$out.="&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+	if (! empty($out)) $out.="&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
 
 	return $out;
 }
