@@ -73,6 +73,7 @@ class ActionsCardService
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -229,7 +230,7 @@ class ActionsCardService
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
@@ -287,7 +288,7 @@ class ActionsCardService
 	}
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response
