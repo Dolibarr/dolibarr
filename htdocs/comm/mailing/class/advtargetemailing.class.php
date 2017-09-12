@@ -640,16 +640,16 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[]=$this->transformToSQL('t.firstname',$arrayquery['contact_firstname']);
 			}
 			if (!empty($arrayquery['contact_country']) && count($arrayquery['contact_country'])) {
-				$sqlwhere[]= " (t.fk_pays IN (".$db->escape(implode(',',$arrayquery['contact_country']))."))";
+				$sqlwhere[]= " (t.fk_pays IN (".$this->db->escape(implode(',',$arrayquery['contact_country']))."))";
 			}
 			if (!empty($arrayquery['contact_status']) && count($arrayquery['contact_status'])>0) {
-				$sqlwhere[]= " (t.statut IN (".$db->escape(implode(',',$arrayquery['contact_status']))."))";
+				$sqlwhere[]= " (t.statut IN (".$this->db->escape(implode(',',$arrayquery['contact_status']))."))";
 			}
 			if (!empty($arrayquery['contact_civility']) && count($arrayquery['contact_civility'])>0) {
-				$sqlwhere[]= " (t.civility IN ('".$db->escape(implode("','",$arrayquery['contact_civility']))."'))";
+				$sqlwhere[]= " (t.civility IN ('".$this->db->escape(implode("','",$arrayquery['contact_civility']))."'))";
 			}
 			if ($arrayquery['contact_no_email']!='') {
-				$sqlwhere[]= " (t.no_email='".$db->escape($arrayquery['contact_no_email'])."')";
+				$sqlwhere[]= " (t.no_email='".$this->db->escape($arrayquery['contact_no_email'])."')";
 			}
 			if ($arrayquery['contact_update_st_dt']!='') {
 				$sqlwhere[]= " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";
