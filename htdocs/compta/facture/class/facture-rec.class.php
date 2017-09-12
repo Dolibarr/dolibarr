@@ -1355,7 +1355,6 @@ class FactureRec extends CommonInvoice
  */
 class FactureLigneRec extends CommonInvoiceLine
 {
-
 	public $element='facturedetrec';
 	public $table_element='facturedet_rec';
 
@@ -1364,36 +1363,40 @@ class FactureLigneRec extends CommonInvoiceLine
      *
      *	@return		int		<0 if KO, >0 if OK
      */
-    function delete()
+    function delete(User $user, $notrigger = false)
     {
-        global $conf,$langs,$user;
+    	$error=0;
 
-        $error=0;
+	    $this->db->begin();
 
-        $this->db->begin();
+	    if (! $error) {
+	        if (! $notrigger) {
+	            // Call triggers
+	            $result=$this->call_trigger('LINEBILLREC_DELETE', $user);
+	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
+	            // End call triggers
+	        }
+	    }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".($this->rowid > 0 ? $this->rowid : $this->id);
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        if ($this->db->query($sql) )
-        {
-        	// Call trigger
-        	$result=$this->call_trigger('LINEBILLREC_DELETE',$user);
-        	if ($result < 0)
-        	{
-        		$this->db->rollback();
-        		return -1;
-        	}
-        	// End call triggers
+	    if (! $error)
+	    {
+    		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
 
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error()." sql=".$sql;
-            $this->db->rollback();
-            return -1;
-        }
+    		$res = $this->db->query($sql);
+    		if($res===false) {
+    		    $error++;
+    		    $this->errors[] = $this->db->lasterror();
+    		}
+	    }
+
+    	// Commit or rollback
+		if ($error) {
+		    $this->db->rollback();
+		    return -1;
+		} else {
+		    $this->db->commit();
+		    return 1;
+		}
     }
 
 
@@ -1551,4 +1554,6 @@ class FactureLigneRec extends CommonInvoiceLine
 
     }
 
+=======
+>>>>>>> branch '6.0' of git@github.com:Dolibarr/dolibarr.git
 }
