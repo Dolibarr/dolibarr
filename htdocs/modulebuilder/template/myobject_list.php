@@ -67,10 +67,10 @@ $confirm    = GETPOST('confirm','alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage','alpha');
+$optioncss  = GETPOST('optioncss','aZ');
 
 $id			= GETPOST('id','int');
-$backtopage = GETPOST('backtopage');
-$optioncss  = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
