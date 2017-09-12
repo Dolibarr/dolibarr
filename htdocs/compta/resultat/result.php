@@ -41,7 +41,7 @@ $selectcpt = GETPOST('cpt_bk');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel','alpha');
-$showaccountdetail = GETPOST('showaccountdetail','aZ09');
+$showaccountdetail = GETPOST('showaccountdetail','aZ09')?GETPOST('showaccountdetail','aZ09'):'no';
 
 
 $date_startmonth=GETPOST('date_startmonth','int');

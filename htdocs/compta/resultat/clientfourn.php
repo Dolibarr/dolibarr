@@ -44,7 +44,7 @@ $date_startyear=GETPOST('date_startyear','int');
 $date_endmonth=GETPOST('date_endmonth','int');
 $date_endday=GETPOST('date_endday','int');
 $date_endyear=GETPOST('date_endyear','int');
-$showaccountdetail = GETPOST('showaccountdetail','aZ09');
+$showaccountdetail = GETPOST('showaccountdetail','aZ09')?GETPOST('showaccountdetail','aZ09'):'no';
 
 // Security check
 $socid = GETPOST('socid','int');
