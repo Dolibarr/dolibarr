@@ -4307,16 +4307,15 @@ else if ($id > 0 || ! empty($ref))
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		// Link for paypal payment
-		if (! empty($conf->paypal->enabled) && $object->statut != 0) {
-			include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
-			print showPaypalPaymentUrl('invoice', $object->ref);
-		}
 
-		// Link for stripe payment
-		if (! empty($conf->stripe->enabled) && $object->statut != 0) {
-			include_once DOL_DOCUMENT_ROOT . '/stripe/lib/stripe.lib.php';
-			print showStripePaymentUrl('invoice', $object->ref);
+		// Show online payment link
+		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+
+		if ($object->statut != 0 && $useonlinepayment)
+		{
+			print '<br>';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			print showOnlinePaymentUrl('invoice', $object->ref);
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

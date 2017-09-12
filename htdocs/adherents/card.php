@@ -1743,14 +1743,19 @@ else
 		// Show links to link elements
 		/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 		 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-
-		 // Link for paypal payment
-		 /*
-		 if (! empty($conf->paypal->enabled) && $object->statut != 0) {
-		 include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
-		 print showPaypalPaymentUrl('invoice', $object->ref);
-		 }
 		 */
+
+		// Shon online payment link
+		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+
+		if ($useonlinepayment)
+		{
+			print '<br>';
+
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			print showOnlinePaymentUrl('membersubscription', $object->ref);
+		}
+
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
