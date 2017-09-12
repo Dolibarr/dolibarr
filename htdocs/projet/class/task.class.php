@@ -2006,7 +2006,7 @@ class TaskComment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int			         	<=0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger=0)
+	function update(User $user, $notrigger=0)
 	{
 		global $conf, $langs;
 		$error=0;
