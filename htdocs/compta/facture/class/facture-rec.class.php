@@ -480,7 +480,7 @@ class FactureRec extends CommonInvoice
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0, $idwarehouse=-1)
+	function delete(User $user, $notrigger=0, $idwarehouse=-1)
 	{
 	    $rowid=$this->id;
 
@@ -1361,7 +1361,9 @@ class FactureLigneRec extends CommonInvoiceLine
     /**
      * 	Delete line in database
      *
-     *	@return		int		<0 if KO, >0 if OK
+     *  @param		User	$user		Object user
+     *  @param		int		$notrigger	Disable triggers
+     *	@return		int					<0 if KO, >0 if OK
      */
     function delete(User $user, $notrigger = false)
     {
