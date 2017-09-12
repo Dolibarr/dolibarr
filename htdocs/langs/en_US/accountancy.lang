@@ -157,6 +157,7 @@ AccountingAccountGroupsDesc=You can define here some groups of accounting accoun
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
+ByYear=By year
 NotMatch=Not Set
 DeleteMvt=Delete Ledger lines
 DelYear=Year to delete
