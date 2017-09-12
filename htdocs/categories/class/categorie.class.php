@@ -1549,8 +1549,10 @@ class Categorie extends CommonObject
 		}
 
 		if (file_exists($dir)) {
-			if (is_array($file['name']) && count($file['name']) > 0) {
-				for($i = 0; $i <= count($file['name']); $i ++) {
+			if (is_array($file['name']) && count($file['name']) > 0)
+			{
+				$nbfile = count($file['name']);
+				for ($i = 0; $i <= $nbfile; $i ++) {
 
 					$originImage = $dir . $file['name'][$i];
 
