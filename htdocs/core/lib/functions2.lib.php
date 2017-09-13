@@ -1808,6 +1808,11 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 		$module='ficheinter';
 		$subelement='fichinter';
 	}
+	if ($objecttype == 'task') {
+		$classpath = 'projet/class';
+		$module='projet';
+		$subelement='task';
+	}
 
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
@@ -2243,7 +2248,7 @@ function getModuleDirForApiClass($module)
 
 /*
  * Return 2 hexa code randomly
- * 
+ *
  * @param	$min	int	Between 0 and 255
  * @param	$max	int	Between 0 and 255
  * @return String
@@ -2254,7 +2259,7 @@ function random_color_part($min=0,$max=255) {
 
 /*
  * Return hexadecimal color randomly
- * 
+ *
  * @param	$min	int	Between 0 and 255
  * @param	$max	int	Between 0 and 255
  * @return String
