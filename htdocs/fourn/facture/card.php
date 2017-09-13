@@ -2815,7 +2815,7 @@ else
 	                // List of actions on element
 	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	                $formactions=new FormActions($db);
-	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
+	                $somethingshown = $formactions->showactions($object,'invoice_supplier',$socid,1,'listaction'.($genallowed?'largetitle':''));
 
 					print '</div></div></div>';
 	                //print '</td></tr></table>';
