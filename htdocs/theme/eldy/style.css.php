@@ -3817,18 +3817,45 @@ pre#editfilecontentaceeditorid {
 #comment div {
 	box-sizing:border-box;
 }
-
 #comment .comment {
     border-radius:7px;
-    padding:7px 10px;
     margin-bottom:10px;
+    overflow:hidden;
+}
+#comment .comment-table {
+    display:table;
+    height:100%;
+}
+#comment .comment-cell {
+    display:table-cell;
 }
 #comment .comment-info {
     font-size:0.8em;
-    margin-top:5px;
+    border-right:1px solid #dedede;
+    margin-right:10px;
+    width:160px;
+    text-align:center;
+    background:rgba(255,255,255,0.5);
+    vertical-align:middle;
+    padding:10px 2px;
 }
 #comment .comment-info a {
     color:inherit;
+}
+#comment .comment-right {
+    vertical-align:top;
+}
+#comment .comment-description {
+    padding:10px;
+    vertical-align:top;
+}
+#comment .comment-delete {
+    width: 100px;
+    text-align:center;
+    vertical-align:middle;
+}
+#comment .comment-delete:hover {
+    background:rgba(250,20,20,0.8);
 }
 #comment textarea {
     width: 100%;
