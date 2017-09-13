@@ -342,7 +342,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// Multicurrency
-	if ($conf->multicurrency->enabled && $multicurrency_tx != 1)
+	if ($multicurrency_tx != 1)
 	{
 		// Recal function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
 		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0);
@@ -371,6 +371,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[17] = $result[1];
 		$result[18] = $result[2];
 		$result[19] = $result[3];
+		$result[20] = $result[4];
+		$result[21] = $result[5];
+		$result[22] = $result[6];
+		$result[23] = $result[7];
+		$result[24] = $result[8];
+		$result[25] = $result[9];
+		$result[26] = $result[10];
 	}
 
 	//var_dump($result);
