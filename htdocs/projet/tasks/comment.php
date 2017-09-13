@@ -348,20 +348,25 @@ if ($id > 0 || ! empty($ref))
 		// List of comments
 		if(!empty($task->comments)) {
 			// Default color for current user
-			$TColors = array($user->id => 'efefef');
+			$TColors = array($user->id => array('bgcolor'=>'efefef','color'=>'555'));
 			$first = true;
 			foreach($task->comments as $comment) {
 				$fk_user = $comment->fk_user;
 				$userstatic->fetch($fk_user);
 				if(empty($TColors[$fk_user])) {
-					$TColors[$fk_user] = random_color(180,240);
+					$bgcolor = random_color(180,240);
+					if(!empty($userstatic->color)) {
+						$bgcolor = $userstatic->color;
+					}
+					$color = (colorIsLight($bgcolor))?'555':'fff';
+					$TColors[$fk_user] = array('bgcolor'=>$bgcolor,'color'=>$color);
 				}
-				print '<div class="width100p clearboth">';
+				print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
 				if($comment->fk_user == $user->id) {
 					print '<div class="width25p float">&nbsp;</div>';
 				}
 				
-				print '<div class="width75p float comment" style="background-color:#'.$TColors[$fk_user].'">';
+				print '<div class="width75p float comment" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
 				print '<div class="comment-description">';
 				print $comment->description;
 				print '</div>';
@@ -377,6 +382,8 @@ if ($id > 0 || ! empty($ref))
 				if($comment->fk_user != $user->id) {
 					print '<div class="width25p float">&nbsp;</div>';
 				}
+				print '<div class="clearboth"></div>';
+				print '</div>';
 				
 				$first = false;
 			}
