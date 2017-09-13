@@ -365,6 +365,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[19] = price2num($pu_devise, 'MU');
 		*/
 	}
+	else
+	{
+		$result[16] = price2num($result[0], 'MT');
+		$result[17] = price2num($result[1], 'MT');
+		$result[18] = price2num($result[2], 'MT');
+		$result[19] = price2num($result[3], 'MU');
+	}
 
 	//var_dump($result);
 	// initialize result array
