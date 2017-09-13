@@ -747,6 +747,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Set societeforaction.
         if ($object->socid > 0)    $societeforaction->fetch($object->socid);
 
+        $projectid = isset($object->fk_project)?$object->fk_project:0;
+        if ($object->element == 'project') $projectid = $object->id;
+
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
@@ -754,7 +757,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
 		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
-		$actioncomm->fk_project  = isset($object->fk_project)?$object->fk_project:0;
+		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;

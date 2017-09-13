@@ -1762,7 +1762,7 @@ else
         /* Already in tab Agenda/Events
         include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'member', $socid);
+		$somethingshown = $formactions->showactions($object, 'member', $socid, 1);
 		*/
 		print '</div></div></div>';
 

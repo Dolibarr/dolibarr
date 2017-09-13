@@ -1708,7 +1708,7 @@ else if ($id > 0 || ! empty($ref))
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
-		$somethingshown=$formactions->showactions($object,'fichinter',$socid);
+		$somethingshown = $formactions->showactions($object,'fichinter',$socid,1);
 
 		print '</div></div></div>';
 	}

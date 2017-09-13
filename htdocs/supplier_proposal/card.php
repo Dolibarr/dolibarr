@@ -1806,7 +1806,7 @@ if ($action == 'create')
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid);
+		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid, 1);
 
 		print '</div></div></div>';
 	}
