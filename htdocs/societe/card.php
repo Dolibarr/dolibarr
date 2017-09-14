@@ -186,7 +186,6 @@ if (empty($reshook))
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
 					'Societe' => '/societe/class/societe.class.php',
-					'Bookmark' => '/bookmarks/class/bookmark.class.php',
 					'Categorie' => '/categories/class/categorie.class.php',
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
@@ -1045,7 +1044,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+	    $selected=GETPOST('client','int')!=''?GETPOST('client','int'):$object->client;
         print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1">&nbsp;</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
@@ -1072,7 +1071,7 @@ else
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
             $default = -1;
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
-            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
+            print $form->selectyesno("fournisseur", (GETPOST('fournisseur','int')!=''?GETPOST('fournisseur','int'):(GETPOST("type",'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type",'alpha') == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';

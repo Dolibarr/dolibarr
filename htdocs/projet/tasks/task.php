@@ -588,6 +588,11 @@ if ($id > 0 || ! empty($ref))
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
+
 			print '</div></div></div>';
 		}
 	}

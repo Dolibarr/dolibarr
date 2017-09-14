@@ -832,44 +832,50 @@ if ($mode == 'marketplace')
 
     if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
     {
-	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span>';
+	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
+	    $previouslink = $dolistore->get_previous_link();
+	    $nextlink = $dolistore->get_next_link();
+
+	    print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">'
 
 	    ?>
-	    	<br><br>
-
-	        <div class="tabBar">
-	            <form method="POST" id="searchFormList" action="<?php echo $dolistore->url ?>">
+	            <form method="POST" class="centpercent" id="searchFormList" action="<?php echo $dolistore->url ?>">
 	            	<input type="hidden" name="mode" value="marketplace" />
-	                <div class="divsearchfield"><?php echo $langs->trans('Mot-cle') ?>:
+	                <div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
 	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 	                </div>
 	                <div class="divsearchfield">
-	                    <input class="button butAction searchDolistore" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-	                    <a class="button butActionDelete" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Tout afficher') ?></a>
-	                </div><br><br><br style="clear: both">
+	                    <input class="button" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
+	                    <a class="button" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
+
+	                    &nbsp;
+					</div>
+	                <div class="divsearchfield right">
+	                <?php
+	                print $previouslink;
+	                print $nextlink;
+	                ?>
+	                </div>
 	            </form>
-	        </div>
+
+	   <?php
+
+	   print '</div></div>';
+	   print '<div class="clearboth"></div>';
+
+	   ?>
+
 	        <div id="category-tree-left">
 	            <ul class="tree">
 	                <?php echo $dolistore->get_categories(); ?>
 	            </ul>
 	        </div>
 	        <div id="listing-content">
-	            <table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">
-	                <thead>
-	                    <tr class="liste_titre">
-	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
-	                    </tr>
-	                </thead>
+	            <table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 	                <tbody id="listOfModules">
 	                    <?php echo $dolistore->get_products($categorie); ?>
 	                </tbody>
-	                <tfoot>
-	                    <tr class="liste_titre">
-	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
-	                    </tr>
-	                </tfoot>
 	            </table>
 	        </div>
 

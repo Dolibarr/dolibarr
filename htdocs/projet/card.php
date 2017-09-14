@@ -1198,6 +1198,10 @@ elseif ($object->id > 0)
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+        $formactions = new FormActions($db);
+        $somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', 10);
 
         print '</div></div></div>';
     }

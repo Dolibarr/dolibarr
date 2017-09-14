@@ -42,6 +42,11 @@ ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
 
+ALTER TABLE llx_contrat MODIFY COLUMN ref varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_customer varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_supplier varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(50);
+
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
@@ -63,7 +68,7 @@ ALTER TABLE llx_mailing MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
-ALTER TABLE llx_bookmark DROP COLUM fk_soc;
+ALTER TABLE llx_bookmark DROP COLUMN fk_soc;
  
 ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 
@@ -98,14 +103,14 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     fk_range        integer DEFAULT 0 NOT NULL,
     coef            double DEFAULT 0 NOT NULL,
     offset          double DEFAULT 0 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
@@ -113,7 +118,7 @@ CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     range_ik    double DEFAULT 0 NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
 ('EX_KME', 'ExpLabelKm', 1, '625100'),
@@ -247,6 +252,18 @@ UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'PROD';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE';
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
+
+
+CREATE TABLE llx_projet_task_comment (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    datec datetime  DEFAULT NULL,
+    tms timestamp,
+    description text NOT NULL,
+    fk_user integer DEFAULT NULL,
+    fk_task integer DEFAULT NULL,
+    entity integer DEFAULT 1,
+    import_key varchar(125) DEFAULT NULL
+)ENGINE=innodb;
 
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;

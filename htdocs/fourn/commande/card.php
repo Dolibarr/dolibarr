@@ -1459,7 +1459,7 @@ if ($action=='create')
 			});
 			</script>';
         }
-        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 	}
 	print '</td>';
 
@@ -2732,7 +2732,8 @@ elseif (! empty($object->id))
 		    print '</form>';
 		    print "<br>";
 		}
-if ($action != 'makeorder')
+
+		if ($action != 'makeorder')
 		{
     		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -2791,7 +2792,7 @@ if ($action != 'makeorder')
         // List of actions on element
         include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
         $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
+        $somethingshown = $formactions->showactions($object,'order_supplier',$socid,1,'listaction'.($genallowed?'largetitle':''));
 
 
 

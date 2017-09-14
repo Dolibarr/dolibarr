@@ -248,8 +248,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 // Page
 $texthelp=$langs->trans("PageUrlForDefaultValues");
-if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php');
-else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php');
+if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php', 'societe/card.php?abc=val1&def=val2');
+else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/card.php?abc=val1&def=val2');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'page,param','',$param,'',$sortfield,$sortorder);
 // Field

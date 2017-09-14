@@ -147,119 +147,38 @@ print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
+dol_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateall">';
 
-print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-// Login/Pass required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
-print "</td></tr>\n";
-
-// Mail required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_MAIL_REQUIRED',(! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0),1);
-print "</td></tr>\n";
-
-// Send mail information is on by default
-print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
-print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL',(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0),1);
-print "</td></tr>\n";
-
-// Insert subscription into bank account
-print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
-$arraychoices=array('0'=>$langs->trans("None"));
-if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("MoreActionBankDirect");
-if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
-if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
-print '<td>';
-print $form->selectarray('ADHERENT_BANK_USE',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
-print '</td>';
-print "</tr>\n";
-
-// Use vat for invoice creation
-if ($conf->facture->enabled)
-{
-	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (! empty($conf->banque->enabled))
-	{
-		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
-		print '</td>';
-	}
-	else
-	{
-		print '<td align="right">';
-		print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
-		print '</td>';
-	}
-	print "</tr>\n";
-
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-	{
-		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-		print '<td>';
-		$form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
-		print '</td>';
-	}
-	print "</tr>\n";
-}
-
-print '</table>';
-
-print '<center>';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-print '</center>';
-
-print '</form>';
-
-print '<br>';
-
-
 /*
- * Edition info modele document
+ * Editing global variables not related to a specific theme
  */
 $constantes=array(
-		'ADHERENT_CARD_TYPE',
-//		'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
+		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
+		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
+		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
+		'ADHERENT_AUTOREGISTER_MAIL',
+		'ADHERENT_MAIL_VALID_SUBJECT',
+		'ADHERENT_MAIL_VALID',
+		'ADHERENT_MAIL_COTIS_SUBJECT',
+		'ADHERENT_MAIL_COTIS',
+		'ADHERENT_MAIL_RESIL_SUBJECT',
+		'ADHERENT_MAIL_RESIL',
+		'ADHERENT_MAIL_FROM',
 		);
 
-print load_fiche_titre($langs->trans("MembersCards"),'','');
-
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
 $helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
 $helptext.='%YEAR%, %MONTH%, %DAY%';
 
-form_constantes($constantes, 0, $helptext);
-
-print '<br>';
-
-
-/*
- * Edition info modele document
- */
-$constantes=array('ADHERENT_ETIQUETTE_TYPE','ADHERENT_ETIQUETTE_TEXT');
-
-print load_fiche_titre($langs->trans("MembersTickets"),'','');
-
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
 $helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-$helptext.='%YEAR%, %MONTH%, %DAY%';
+//$helptext.='%YEAR%, %MONTH%, %DAY%';	// Not supported
 
 form_constantes($constantes, 0, $helptext);
 

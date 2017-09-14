@@ -398,6 +398,7 @@ if (empty($reshook))
 						}
 
 						// Now we create same links to contact than the ones found on origin object
+						/* Useless, already into the create
 						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
 						    $originforcontact = $object->origin;
@@ -420,7 +421,7 @@ if (empty($reshook))
 						        }
 						    }
 						    else dol_print_error($resqlcontact);
-						}
+						}*/
 
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
@@ -1491,7 +1492,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -2591,7 +2592,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'order', $socid);
+			$somethingshown = $formactions->showactions($object, 'order', $socid, 1);
 
 			print '</div></div></div>';
 		}

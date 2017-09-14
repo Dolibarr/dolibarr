@@ -1303,6 +1303,7 @@ if (empty($reshook))
 						}
 
 						// Now we create same links to contact than the ones found on origin object
+						/* Useless, already into the create
 						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
     						$originforcontact = $object->origin;
@@ -1325,7 +1326,7 @@ if (empty($reshook))
                                 }
     						}
     						else dol_print_error($resqlcontact);
-						}
+						}*/
 
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
@@ -2259,7 +2260,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -3209,6 +3210,14 @@ else if ($id > 0 || ! empty($ref))
 		$facthatreplace = new Facture($db);
 		$facthatreplace->fetch($objectidnext);
 		print ' (' . $langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)) . ')';
+	}
+
+	if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+		$discount = new DiscountAbsolute($db);
+		$result = $discount->fetch(0, $object->id);
+		if ($result > 0){
+		    print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(), $discount->getNomUrl(1, 'discount')).'<br>';
+		}
 	}
 	print '</td></tr>';
 
@@ -4311,16 +4320,15 @@ else if ($id > 0 || ! empty($ref))
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		// Link for paypal payment
-		if (! empty($conf->paypal->enabled) && $object->statut != 0) {
-			include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
-			print showPaypalPaymentUrl('invoice', $object->ref);
-		}
 
-		// Link for stripe payment
-		if (! empty($conf->stripe->enabled) && $object->statut != 0) {
-			include_once DOL_DOCUMENT_ROOT . '/stripe/lib/stripe.lib.php';
-			print showStripePaymentUrl('invoice', $object->ref);
+		// Show online payment link
+		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+
+		if ($object->statut != 0 && $useonlinepayment)
+		{
+			print '<br>';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			print showOnlinePaymentUrl('invoice', $object->ref);
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -4328,7 +4336,7 @@ else if ($id > 0 || ! empty($ref))
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'invoice', $socid);
+		$somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
 
 		print '</div></div></div>';
 	}

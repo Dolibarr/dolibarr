@@ -789,13 +789,9 @@ if ($rowid > 0)
             if ($object->statut > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
             else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 
-            print "<br>\n";
-
             print '</div>';
-            print '<br>';
         }
     }
-
 
     /*
      * List of subscriptions
@@ -882,23 +878,20 @@ if ($rowid > 0)
         {
             dol_print_error($db);
         }
-
-
-        // Link for paypal payment
-        if (! empty($conf->paypal->enabled))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-            print showPaypalPaymentUrl('membersubscription',$object->ref);
-        }
-
-        // Link for stripe payment
-        if (! empty($conf->stripe->enabled))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
-            print showStripePaymentUrl('membersubscription',$object->ref);
-        }
-
     }
+
+
+    // Shon online payment link
+    $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+
+    if ($useonlinepayment)
+    {
+    	print '<br>';
+
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+    	print showOnlinePaymentUrl('membersubscription', $object->ref);
+    }
+
 
     /*
      * Add new subscription form

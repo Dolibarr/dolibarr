@@ -485,9 +485,10 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:hover, .buttonDelete:hover   {
-	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	/* warning: having a larger shadow has side effect when button is completely on left of a table */
+	-moz-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:disabled, .buttonDelete:disabled {
 	opacity: 0.4;
@@ -826,6 +827,16 @@ div.fiche>form>div.div-table-responsive {
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
+
+.width20p { width:20%; }
+.width25p { width:25%; }
+.width40p { width:40%; }
+.width50p { width:50%; }
+.width60p { width:60%; }
+.width75p { width:75%; }
+.width80p { width:80%; }
+.width100p { width:100%; }
+
 
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
@@ -3797,6 +3808,29 @@ pre#editfilecontentaceeditorid {
 
 #types textarea {
     height: 100px;
+}
+
+
+/* ============================================================================== */
+/*  Comments                                                                   	  */
+/* ============================================================================== */
+
+#comment div {
+	box-sizing:border-box;
+}
+
+#comment .comment {
+    border-radius:7px;
+    padding:7px 10px;
+    margin-bottom:10px;
+}
+#comment .comment-info {
+    font-size:0.8em;
+    color:#555;
+    margin-top:5px;
+}
+#comment textarea {
+    width: 100%;
 }
 
 

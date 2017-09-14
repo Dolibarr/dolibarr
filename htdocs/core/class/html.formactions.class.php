@@ -155,16 +155,18 @@ class FormActions
      *	@param	int		$socid			socid of user
      *  @param	int		$forceshowtitle	Show title even if there is no actions to show
      *  @param  string  $morecss        More css on table
+     *  @param	int		$max			Max number of record
+     *  @param	string	$moreparambacktopage	More param for the backtopage
      *	@return	int						<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0,$morecss='listactions')
+    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='')
     {
         global $langs,$conf,$user;
         global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
+        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', '', '', ($max?($max+1):0));
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
@@ -177,12 +179,15 @@ class FormActions
         	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
         	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
-        	else $title=$langs->trans("Actions");
+            elseif ($typeelement == 'project') $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            elseif ($typeelement == 'task') $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            else $title=$langs->trans("Actions");
 
-        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">';
+            $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');
+
+        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($urlbacktopage).'">';
         	$buttontoaddnewevent.= $langs->trans("AddEvent");
         	$buttontoaddnewevent.= '</a>';
         	print load_fiche_titre($title, $buttontoaddnewevent, '');
@@ -197,7 +202,7 @@ class FormActions
         	print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], '', $page, $param, '');
         	print_liste_field_titre('Action', $_SERVER["PHP_SELF"], '', $page, $param, '');
         	print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', $page, $param, 'align="center"');
         	print_liste_field_titre('By', $_SERVER["PHP_SELF"], '', $page, $param, '');
         	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
         	print '</tr>';
@@ -205,8 +210,11 @@ class FormActions
 
         	$userstatic = new User($this->db);
 
+        	$cursorevent = 0;
         	foreach($listofactions as $action)
         	{
+        		if ($max && $cursorevent >= $max) break;
+
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
 
@@ -226,7 +234,7 @@ class FormActions
         		}
         		print $action->type;
         		print '</td>';
-        		print '<td>'.dol_print_date($action->datep,'dayhour');
+        		print '<td align="center">'.dol_print_date($action->datep,'dayhour');
         		if ($action->datef)
         		{
 	        		$tmpa=dol_getdate($action->datep);
@@ -254,7 +262,15 @@ class FormActions
         		}
         		print '</td>';
         		print '</tr>';
+
+        		$cursorevent++;
         	}
+
+        	if ($max && $num > $max)
+        	{
+        		print '<tr class="oddeven"><td colspan="6">'.$langs->trans("More").'...</td></tr>';
+        	}
+
         	print '</table>';
         	print '</div>';
         }

@@ -402,21 +402,15 @@ if ($rowid && $action != 'edit')
     // Show links to link elements
     /*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-
-    // Link for paypal payment
-    /*
-    if (! empty($conf->paypal->enabled) && $object->statut != 0) {
-        include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
-        print showPaypalPaymentUrl('invoice', $object->ref);
-    }
     */
+
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
     // List of actions on element
     /*
     include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'invoice', $socid);
+    $somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
     */
 
     print '</div></div></div>';

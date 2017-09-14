@@ -23,4 +23,4 @@ CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     label       varchar(48) NOT NULL, 
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL	          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
