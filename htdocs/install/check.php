@@ -306,7 +306,19 @@ else
 				}
 				else
 				{
-                    require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+            require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+
+            // If password is encoded, we decode it
+            if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+            {
+                require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
+                if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+                {
+                    $dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);	// We need to set this as it is used to know the password was initially crypted
+                    $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+                }
+                else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+            }
 
     				// $conf is already instancied inside inc.php
     				$conf->db->type = $dolibarr_main_db_type;
@@ -315,12 +327,12 @@ else
     				$conf->db->name = $dolibarr_main_db_name;
     				$conf->db->user = $dolibarr_main_db_user;
     				$conf->db->pass = $dolibarr_main_db_pass;
-                    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+            $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
     				if ($db->connected && $db->database_selected)
     				{
     					$ok=true;
     				}
-                }
+        }
 			}
 		}
 
