@@ -7,14 +7,9 @@ sudo: required
 
 language: php
 
-php:
-- '5.3'
-- '5.4'
-- '5.5'
-- '5.6'
-- '7.0'
-- '7.1'
-- nightly
+# Start on every boot
+services:
+- memcached
 
 addons:
   mariadb: '10.0'
@@ -33,16 +28,21 @@ addons:
     - libapache2-mod-fastcgi
     # We need pgloader for import mysql database into pgsql
     - pgloader
- 
-# Start on every boot
-services:
-- memcached
+
+php:
+- '5.3'
+- '5.4'
+- '5.5'
+- '5.6'
+- '7.0'
+- '7.1'
+- hhvm
+- nightly
 
 env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
-  matrix:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mysql
   - DB=mariadb
@@ -57,6 +57,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
+  - php: hhvm
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
@@ -65,6 +66,8 @@ matrix:
   - php: 5.5
     env: DB=postgresql
   - php: 5.6
+    env: DB=postgresql
+  - php: nightly
     env: DB=postgresql
 
 notifications:
