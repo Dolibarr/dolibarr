@@ -1480,7 +1480,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company($societe->id, 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+        print $form->select_company($societe->id, 'socid', 's.fournisseur = 1 AND status=1', 'SelectThirdParty');
     }
     print '</td></tr>';
 
