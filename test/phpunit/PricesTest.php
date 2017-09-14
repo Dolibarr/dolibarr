@@ -1,7 +1,4 @@
 <?php
-use OAuth\OAuth1\Token\StdOAuth1Token;
-use Luracast\Restler\Data\Object;
-
 /* Copyright (C) 2010 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Juanjo Menent			<jmenent@2byte.es>
  *
