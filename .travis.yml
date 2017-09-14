@@ -43,6 +43,7 @@ env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
+  matrix:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mysql
   - DB=mariadb
