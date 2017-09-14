@@ -453,7 +453,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			
 		    // Third party
 	    	$morehtmlref.=$langs->trans("ThirdParty").': ';
-	    	if (!empty($projectstatic->thirdparty)) {
+	    	if (is_object($projectstatic->thirdparty)) {
 	    		$morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
 	    	}
 		    $morehtmlref.='</div>';
@@ -464,7 +464,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 
-        print '<div class="underbanner clearboth"></div>';
+        	print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
 		// Date start - Date end
