@@ -4213,7 +4213,7 @@ abstract class CommonObject
      *
      *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
-     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
+     *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
      */
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
