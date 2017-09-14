@@ -314,9 +314,8 @@ else
                 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
                 if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
                 {
-                    $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-                    $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-                    $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+                    $dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);	// We need to set this as it is used to know the password was initially crypted
+                    $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
                 }
                 else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
             }
