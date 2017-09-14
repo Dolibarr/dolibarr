@@ -406,6 +406,7 @@ ActionRunningNotStarted=To start
 ActionRunningShort=In progress
 ActionDoneShort=Finished
 ActionUncomplete=Uncomplete
+LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Company/Organisation
 ContactsForCompany=Contacts for this third party
 ContactsAddressesForCompany=Contacts/addresses for this third party

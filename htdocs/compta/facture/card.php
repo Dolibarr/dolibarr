@@ -1249,6 +1249,7 @@ if (empty($reshook))
 						}
 
 						// Now we create same links to contact than the ones found on origin object
+						/* Useless, already into the create
 						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
     						$originforcontact = $object->origin;
@@ -1271,7 +1272,7 @@ if (empty($reshook))
                                 }
     						}
     						else dol_print_error($resqlcontact);
-						}
+						}*/
 
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
@@ -3154,6 +3155,14 @@ else if ($id > 0 || ! empty($ref))
 		$facthatreplace = new Facture($db);
 		$facthatreplace->fetch($objectidnext);
 		print ' (' . $langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)) . ')';
+	}
+
+	if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
+		$discount = new DiscountAbsolute($db);
+		$result = $discount->fetch(0, $object->id);
+		if ($result > 0){
+		    print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(), $discount->getNomUrl(1, 'discount')).'<br>';
+		}
 	}
 	print '</td></tr>';
 

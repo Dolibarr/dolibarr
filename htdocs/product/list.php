@@ -779,13 +779,13 @@ else
  			    if (! empty($arrayfields['p.duration']['checked']))
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)[a-z]/i',$obj->duration))
+    				if (preg_match('/([^a-z]+)[a-z]/i',$obj->duration))
     				{
-	    				if (preg_match('/([0-9]+)y/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-	    				elseif (preg_match('/([0-9]+)m/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-	    				elseif (preg_match('/([0-9]+)w/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-	    				elseif (preg_match('/([0-9]+)d/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-	    				//elseif (preg_match('/([0-9]+)h/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				if (preg_match('/([^a-z]+)y/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([^a-z]+)m/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([^a-z]+)w/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([^a-z]+)d/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([^a-z]+)h/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
 	    				else print $obj->duration;
     				}
     				print '</td>';

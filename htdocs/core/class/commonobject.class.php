@@ -2263,6 +2263,8 @@ abstract class CommonObject
 
         $error=0;
 
+        $multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
+
         // Define constants to find lines to sum
         $fieldtva='total_tva';
         $fieldlocaltax1='total_localtax1';
@@ -2315,7 +2317,6 @@ abstract class CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 // Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
-				$multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
                 if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
                 {
                 	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
@@ -2333,11 +2334,14 @@ abstract class CommonObject
                 	}
                 }
 
-                $this->total_ht        += $obj->total_ht;		// The only field visible at end of line detail
+                $this->total_ht        += $obj->total_ht;		// The field visible at end of line detail
                 $this->total_tva       += $obj->total_tva;
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
+                $this->multicurrency_total_ht        += $obj->multicurrency_total_ht;		// The field visible at end of line detail
+                $this->multicurrency_total_tva       += $obj->multicurrency_total_tva;
+                $this->multicurrency_total_ttc       += $obj->multicurrency_total_ttc;
 
                 if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
                 if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
@@ -2346,7 +2350,7 @@ abstract class CommonObject
                 $total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
                 $total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-                if ($forcedroundingmode == '1')	// Check if we need adjustement onto line for vat
+                if ($forcedroundingmode == '1')	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on multicurrency
                 {
                 	$tmpvat=price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
                 	$diff=price2num($total_tva_by_vats[$obj->vatrate]-$tmpvat, 'MT', 1);
@@ -2370,25 +2374,24 @@ abstract class CommonObject
             }
 
             // Add revenue stamp to total
-            $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
+            $this->total_ttc       			+= isset($this->revenuestamp)?$this->revenuestamp:0;
+            $this->multicurrency_total_ttc  += isset($this->revenuestamp)?($this->revenuestamp * $multicurrency_tx):0;
 
 			// Situations totals
-			if ($this->situation_cycle_ref && $this->situation_counter > 1) {
+			if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
 				$prev_sits = $this->get_prev_sits();
 
-				foreach ($prev_sits as $sit) {
+				foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
 					$this->total_ht -= $sit->total_ht;
 					$this->total_tva -= $sit->total_tva;
 					$this->total_localtax1 -= $sit->total_localtax1;
 					$this->total_localtax2 -= $sit->total_localtax2;
 					$this->total_ttc -= $sit->total_ttc;
+					$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
+					$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
+					$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
 				}
 			}
-
-			// Multicurrency
-			$this->multicurrency_total_ht	+= $this->total_ht * $multicurrency_tx;
-            $this->multicurrency_total_tva	+= $this->total_tva * $multicurrency_tx;
-            $this->multicurrency_total_ttc	+= $this->total_ttc * $multicurrency_tx;
 
             $this->db->free($resql);
 
@@ -2403,7 +2406,7 @@ abstract class CommonObject
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
             if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
-            if ($this->element == 'supplier_proposal')                                      $fieldttc='total';
+            if ($this->element == 'supplier_proposal')                                     $fieldttc='total';
 
             if (empty($nodatabaseupdate))
             {
@@ -4139,7 +4142,7 @@ abstract class CommonObject
      *
      *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
-     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
+     *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
      */
     function fetch_optionals($rowid=null,$optionsArray=null)
     {
@@ -4173,7 +4176,7 @@ abstract class CommonObject
         if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
 
         // Request to get complementary values
-        if (count($optionsArray) > 0)
+        if (is_array($optionsArray) && count($optionsArray) > 0)
         {
             $sql = "SELECT rowid";
             foreach ($optionsArray as $name => $label)
@@ -5023,7 +5026,7 @@ abstract class CommonObject
 
             if (!$notrigger) {
                 // Call triggers
-                $result=$this->call_trigger(strtoupper(get_class(self)).'_CREATE',$user);
+                $result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -5185,7 +5188,7 @@ abstract class CommonObject
 
 		if (! $error && ! $notrigger) {
 		    // Call triggers
-		    $result=$this->call_trigger(strtoupper(get_class(self)).'_MODIFY',$user);
+		    $result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 		    if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 		    // End call triggers
 		}
@@ -5216,7 +5219,7 @@ abstract class CommonObject
 	    if (! $error) {
 	        if (! $notrigger) {
 	            // Call triggers
-	            $result=$this->call_trigger(strtoupper(get_class(self)).'_DELETE', $user);
+	            $result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 	            // End call triggers
 	        }

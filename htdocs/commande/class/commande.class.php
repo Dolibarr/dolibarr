@@ -920,7 +920,8 @@ class Commande extends CommonOrder
                 		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
                 		            {
                 		                $originforcontact = 'commande';
-                		                $originidforcontact = $value->id;
+							            if (is_object($value)) $originidforcontact = $value->id;
+							            else $originidforcontact = $value;
                 		                break; // We take first one
                 		            }
                 		        }
@@ -2233,7 +2234,7 @@ class Commande extends CommonOrder
         	$this->db->begin();
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-            $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
+            $sql.= " SET date_commande = ".($date ? "'".$this->db->idate($date)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             dol_syslog(__METHOD__, LOG_DEBUG);
