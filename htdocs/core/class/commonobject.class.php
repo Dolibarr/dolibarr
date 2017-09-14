@@ -5026,7 +5026,7 @@ abstract class CommonObject
 
             if (!$notrigger) {
                 // Call triggers
-                $result=$this->call_trigger(strtoupper(get_class(self)).'_CREATE',$user);
+                $result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -5188,7 +5188,7 @@ abstract class CommonObject
 
 		if (! $error && ! $notrigger) {
 		    // Call triggers
-		    $result=$this->call_trigger(strtoupper(get_class(self)).'_MODIFY',$user);
+		    $result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 		    if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 		    // End call triggers
 		}
@@ -5219,7 +5219,7 @@ abstract class CommonObject
 	    if (! $error) {
 	        if (! $notrigger) {
 	            // Call triggers
-	            $result=$this->call_trigger(strtoupper(get_class(self)).'_DELETE', $user);
+	            $result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 	            // End call triggers
 	        }
