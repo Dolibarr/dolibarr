@@ -42,12 +42,11 @@ if (! function_exists('json_encode'))
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
- * @deprecated PHP >= 5.3 supports native json_encode
  * @see json_encode()
  */
 function dol_json_encode($elements)
 {
-	dol_syslog('dol_json_encode() is deprecated. Please update your code to use native json_encode().', LOG_WARNING);
+	dol_syslog("For better permorfance, enable the native json in your PHP", LOG_WARNING);
 
 	$num=0;
 	if (is_object($elements))	// Count number of properties for an object
