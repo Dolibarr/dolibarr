@@ -81,6 +81,7 @@ if ($action == 'addcomment')
 		$object->entity = $conf->entity;
 		if ($object->create($user) > 0)
 		{
+			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
 			header('Location: '.DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$id.($withproject?'&withproject=1':''));
 			exit;
 		}
@@ -97,6 +98,7 @@ if ($action == 'deletecomment')
 	{
 		if ($object->delete($user) > 0)
 		{
+			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
 			header('Location: '.DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$id.($withproject?'&withproject=1':''));
 			exit;
 		}
@@ -348,35 +350,53 @@ if ($id > 0 || ! empty($ref))
 		// List of comments
 		if(!empty($task->comments)) {
 			// Default color for current user
-			$TColors = array($user->id => 'efefef');
+			$TColors = array($user->id => array('bgcolor'=>'efefef','color'=>'555'));
 			$first = true;
 			foreach($task->comments as $comment) {
 				$fk_user = $comment->fk_user;
 				$userstatic->fetch($fk_user);
 				if(empty($TColors[$fk_user])) {
-					$TColors[$fk_user] = random_color(180,240);
+					$bgcolor = random_color(180,240);
+					if(!empty($userstatic->color)) {
+						$bgcolor = $userstatic->color;
+					}
+					$color = (colorIsLight($bgcolor))?'555':'fff';
+					$TColors[$fk_user] = array('bgcolor'=>$bgcolor,'color'=>$color);
 				}
-				print '<div class="width100p clearboth">';
+				print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
 				if($comment->fk_user == $user->id) {
 					print '<div class="width25p float">&nbsp;</div>';
 				}
 				
-				print '<div class="width75p float comment" style="background-color:#'.$TColors[$fk_user].'">';
-				print '<div class="comment-description">';
-				print $comment->description;
-				print '</div>';
-				print '<div class="comment-info">';
+				print '<div class="width75p float comment comment-table" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
+				print '<div class="comment-info comment-cell">';
+				if (! empty($user->photo))
+				{
+					print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br/>';
+				}
 				print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
 				print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
+				print '</div>'; // End comment-info
+				
+				print '<div class="comment-cell comment-right">';
+				print '<div class="comment-table width100p">';
+				print '<div class="comment-description comment-cell">';
+				print $comment->description;
+				print '</div>'; // End comment-description
 				if(($first && $fk_user == $user->id) || $user->admin == 1) {
-					print '<br/> <a href="?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'">'.$langs->trans('Delete').'</a>';
+					print '<a class="comment-delete comment-cell" href="'.DOL_URL_ROOT.'/projet/tasks/comment.php?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
+					print img_picto('', 'delete.png');
+					print '</a>';
 				}
-				print '</div>';
-				print '</div>';
+				print '</div>'; // End comment-table
+				print '</div>'; // End comment-right
+				print '</div>'; // End comment
 				
 				if($comment->fk_user != $user->id) {
 					print '<div class="width25p float">&nbsp;</div>';
 				}
+				print '<div class="clearboth"></div>';
+				print '</div>'; // end 100p
 				
 				$first = false;
 			}
