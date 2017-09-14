@@ -57,11 +57,15 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-  - php: 7.1
   - php: nightly
-  #- env: DB=postgresql
-  # TODO
-  #- env: DB=sqlite
+  # We exclude some combinations not usefull to save Travis CPU
+  exclude:
+  - php: 5.4
+    env: DB=postgresql
+  - php: 5.5
+    env: DB=postgresql
+  - php: 5.6
+    env: DB=postgresql
 
 notifications:
   email:
