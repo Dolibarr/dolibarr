@@ -1164,14 +1164,29 @@ if ($source == 'membersubscription')
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
-		print ' ('.$langs->trans("ToComplete");
+		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ' ('.$langs->trans("ToComplete");
 		if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
-		print ')';
+		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ')';
 	}
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-	    $valtoshow=GETPOST("newamount",'int');
+		$valtoshow=GETPOST("newamount",'int');
+		// force default subscription amount to value defined into constant...
+	    if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+				$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			}
+		}
+		else {
+			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+				$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+		    }
+	    }
+	}
+	if (empty($amount) || ! is_numeric($amount))
+	{
+	    //$valtoshow=GETPOST("newamount",'int');
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
 	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
