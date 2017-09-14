@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=Foundation
 Version=Version
+Publisher=Publisher
 VersionProgram=Version program
 VersionLastInstall=Initial install version
 VersionLastUpgrade=Latest version upgrade
