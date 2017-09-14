@@ -25,6 +25,9 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Missing in 5.0
+ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
+
 -- Missing in 6.0 ?
 ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_code	varchar(255);
