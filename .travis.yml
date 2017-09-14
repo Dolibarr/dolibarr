@@ -62,11 +62,13 @@ matrix:
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
-  - php: 5.4
+  - php: '5.4'
     env: DB=postgresql
-  - php: 5.5
+  - php: '5.5'
     env: DB=postgresql
-  - php: 5.6
+  - php: '5.6'
+    env: DB=postgresql
+  - php: hhvm
     env: DB=postgresql
   - php: nightly
     env: DB=postgresql
