@@ -306,12 +306,25 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    // Else, retreive default values if we are not doing a sort
 	    elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 	    {
-	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	    	if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
 	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
-	                //var_dump($user->default_values[$relativepathstring]['createform']);
-	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+					$qualified=1;
+                	if (isset($user->default_values[$relativepathstring]['createform_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+                	{
+                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['createform_queries']);
+                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+                		{
+                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+                		}
+                	}
+					if ($qualified)
+					{
+		            	//var_dump($user->default_values[$relativepathstring]['createform']);
+		                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+					}
 	            }
 	        }
 	        // Management of default search_filters and sort order
@@ -327,7 +340,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
 	                	{
 	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
-	                		$tmpqueryarraywehave=explode('&', $_SERVER['QUERY_STRING']);
+	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
 	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
 	                		{
 	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
@@ -352,7 +365,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))
 	                	{
 	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
-	                		$tmpqueryarraywehave=explode('&', $_SERVER['QUERY_STRING']);
+	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
 	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
 	                		{
 	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
@@ -377,7 +390,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	                	if (isset($user->default_values[$relativepathstring]['filters_queries']))
 	                	{
 	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['filters_queries']);
-	                		$tmpqueryarraywehave=explode('&', $_SERVER['QUERY_STRING']);
+	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
 	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
 	                		{
 	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
