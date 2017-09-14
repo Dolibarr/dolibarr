@@ -1950,7 +1950,7 @@ class TaskComment extends CommonObject
 	 *  @param	int		$ref		ref object
 	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id, $ref='')
 	{
 		global $langs;
 
