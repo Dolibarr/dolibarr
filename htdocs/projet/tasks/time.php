@@ -453,7 +453,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			
 		    // Third party
 	    	$morehtmlref.=$langs->trans("ThirdParty").': ';
-	    	if (!empty($projectstatic->thirdparty)) {
+	    	if (is_object($projectstatic->thirdparty)) {
 	    		$morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
 	    	}
 		    $morehtmlref.='</div>';
