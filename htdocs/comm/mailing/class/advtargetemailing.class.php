@@ -658,7 +658,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[]= " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
 			}
 			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ'])>0) {
-				$sqlwhere[]= " (contactcateg.fk_categorie IN (".$db->escape(implode(",",$arrayquery['contact_categ']))."))";
+				$sqlwhere[]= " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",",$arrayquery['contact_categ']))."))";
 			}
 
 			//Standard Extrafield feature
