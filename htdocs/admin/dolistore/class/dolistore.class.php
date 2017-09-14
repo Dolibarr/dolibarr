@@ -41,7 +41,7 @@ class Dolistore
     /**
      * Constructor
      *
-     * @param array $options
+     * @param array 	$options	Options
      */
     function __construct($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
     {

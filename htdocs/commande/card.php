@@ -1441,7 +1441,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-	$absolute_discount=$soc->getAvailableDiscounts();
 
 
 	print '<form name="crea_commande" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';

@@ -43,6 +43,7 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('companies');
+$langs->load('propal');
 $langs->load('supplier_proposal');
 $langs->load('compta');
 $langs->load('bills');
@@ -1024,6 +1025,7 @@ if ($resql)
 	    $urlsource.=str_replace('&amp;','&',$param);
 
 	    $filedir=$diroutputmassaction;
+
 	    $genallowed=$user->rights->supplier_proposal->lire;
 	    $delallowed=$user->rights->supplier_proposal->lire;
 
