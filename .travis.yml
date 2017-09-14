@@ -2,6 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+# We use dist: precise to have php 5.3 available 
 dist: precise
 sudo: required
 
@@ -36,7 +37,7 @@ php:
 - '5.6'
 - '7.0'
 - '7.1'
-- hhvm
+#- hhvm		only with dist: trusty
 - nightly
 
 env:
