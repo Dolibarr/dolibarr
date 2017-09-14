@@ -674,7 +674,7 @@ abstract class CommonObject
             if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0)
             {
                 $this->error=$this->db->lasterror();
-                return -1;
+                //return -1;
             }
         }
         return 1;
