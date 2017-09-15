@@ -38,6 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  */
 class BonPrelevement extends CommonObject
 {
+	public $element='widthdraw';
+	public $table_element='prelevement_bons';
+	public $picto = 'payment';
+
     var $date_echeance;
     var $raison_sociale;
     var $reference_remise;
@@ -263,10 +267,11 @@ class BonPrelevement extends CommonObject
     /**
      *	Get object and lines from database
      *
-     *	@param	int		$rowid		id of object to load
+     *	@param	int		$rowid		Id of object to load
+     *  @param	string	$ref		Ref of direct debit
      *	@return	int					>0 if OK, <0 if KO
      */
-    function fetch($rowid)
+    function fetch($rowid, $ref='')
     {
         global $conf;
 
@@ -278,8 +283,9 @@ class BonPrelevement extends CommonObject
         $sql.= ", p.fk_user_credit";
         $sql.= ", p.statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-        $sql.= " WHERE p.rowid = ".$rowid;
-        $sql.= " AND p.entity = ".$conf->entity;
+        $sql.= " WHERE p.entity = ".$conf->entity;
+        if ($rowid > 0) $sql.= " AND p.rowid = ".$rowid;
+        else $sql.= " AND p.ref = '".$this->db->escape($ref)."'";
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $result=$this->db->query($sql);
@@ -345,7 +351,7 @@ class BonPrelevement extends CommonObject
                 $error++;
             }
 
-            if ($error == 0)
+            if (! $error)
             {
                 $facs = array();
                 $facs = $this->getListInvoices();
@@ -361,9 +367,8 @@ class BonPrelevement extends CommonObject
                 }
             }
 
-            if ($error == 0)
+            if (! $error)
             {
-
                 $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
                 $sql.= " SET statut = 2";
                 $sql.= " WHERE fk_prelevement_bons = ".$this->id;
@@ -378,7 +383,7 @@ class BonPrelevement extends CommonObject
             /*
              * End of procedure
              */
-            if ($error == 0)
+            if (! $error)
             {
                 $this->db->commit();
                 return 0;
@@ -399,10 +404,10 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *	Set withdrawal to credited status
+     *	Set direct debit order to "credited" status.
      *
-     *	@param	User		$user		id of user
-     *	@param 	int	$date		date of action
+     *	@param	User	$user			Id of user
+     *	@param 	int		$date			date of action
      *	@return	int						>0 if OK, <0 if KO
      */
     function set_infocredit($user, $date)
@@ -466,7 +471,7 @@ class BonPrelevement extends CommonObject
                         $paiement_id = $paiement->create($user);
                         if ($paiement_id < 0)
                         {
-                            dol_syslog(get_class($this)."::set_credite AddPayment Error");
+                            dol_syslog(get_class($this)."::set_infocredit AddPayment Error");
                             $error++;
                         }
                         else
@@ -474,7 +479,7 @@ class BonPrelevement extends CommonObject
                             $result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount,'','');
                             if ($result < 0)
                             {
-                                dol_syslog(get_class($this)."::set_credite AddPaymentToBank Error");
+                                dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error");
                                 $error++;
                             }
                         }
@@ -486,7 +491,7 @@ class BonPrelevement extends CommonObject
 
                         if (! $this->db->query($sql))
                         {
-                            dol_syslog(get_class($this)."::set_credite Update lines Error");
+                            dol_syslog(get_class($this)."::set_infocredit Update lines Error");
                             $error++;
                         }
 
@@ -1819,11 +1824,11 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *    Return status label for a status
+     *  Return status label for a status
      *
-     *    @param	int		$statut     id statut
-     *    @param	int		$mode   	0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-     * 	  @return	string  		    Label
+     *  @param	int		$statut     id statut
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     * 	@return	string  		    Label
      */
     function LibStatut($statut,$mode=0)
     {
@@ -1846,8 +1851,25 @@ class BonPrelevement extends CommonObject
             if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
             if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
-
         if ($mode == 3)
+        {
+            if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+            if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
+            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
+        }
+        if ($mode == 4)
+        {
+            if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
+            if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3').' '.$langs->trans($this->labelstatut[$statut]);
+            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6').' '.$langs->trans($this->labelstatut[$statut]);
+        }
+        if ($mode == 5)
+        {
+            if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
+            if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
+            if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
+        }
+        if ($mode == 6)
         {
             if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
             if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut3');

@@ -493,7 +493,7 @@ class Paiement extends CommonObject
      *
      *      @param	User	$user               Object of user making payment
      *      @param  string	$mode               'payment', 'payment_supplier'
-     *      @param  string	$label              Label to use in bank record
+     *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
