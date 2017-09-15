@@ -296,7 +296,7 @@ class FormMail extends Form
         	}
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 			//var_dump($this->param["models"]);
-        	//var_dump($arraydefaultmessage);
+        	//var_dump($model_id);
 
         	$out.= "\n".'<!-- Begin form mail --><div id="mailformdiv"></div>'."\n";
         	if ($this->withform == 1)
@@ -835,11 +835,11 @@ class FormMail extends Form
 
 
 	/**
-	 *      Return template of email
-	 *      Search into table c_email_templates
+	 *      Return templates of email with type = $type_template or type = 'all'
+	 *      This search into table c_email_templates.
 	 *
 	 * 		@param	DoliDB		$db				Database handler
-	 * 		@param	string		$type_template	Get message for key module
+	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param	int			$id				Id template to find
@@ -852,9 +852,9 @@ class FormMail extends Form
 
 		$sql = "SELECT label, topic, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
-		$sql.= " WHERE type_template='".$db->escape($type_template)."'";
+		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
-		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if (!empty($id)) $sql.= " AND rowid=".$id;
@@ -873,7 +873,7 @@ class FormMail extends Form
 				$ret['content_lines']=$obj->content_lines;
 				$ret['lang']=$obj->lang;
 			}
-			else
+			else								// If there is no template at all
 			{
 				$defaultmessage='';
 				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
