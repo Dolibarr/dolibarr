@@ -636,7 +636,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel'))
+	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
 	    $objectline = new ContratLigne($db);
 	    if ($objectline->fetch(GETPOST('elrowid')))
@@ -822,7 +822,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref_supplier')
 	{
-		$cancelbutton = GETPOST('cancel');
+		$cancelbutton = GETPOST('cancel','alpha');
 		if (!$cancelbutton) {
 
 			$result = $object->fetch($id);
@@ -846,7 +846,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref_customer')
 	{
-		$cancelbutton = GETPOST('cancel');
+		$cancelbutton = GETPOST('cancel','alpha');
 
 		if (!$cancelbutton)
 		{
@@ -871,7 +871,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref')
 	{
-	    $cancelbutton = GETPOST('cancel');
+	    $cancelbutton = GETPOST('cancel','alpha');
 
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
@@ -895,7 +895,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setdate_contrat')
 	{
-	    $cancelbutton = GETPOST('cancel');
+	    $cancelbutton = GETPOST('cancel','alpha');
 
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);

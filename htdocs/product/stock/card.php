@@ -39,7 +39,7 @@ $langs->load("companies");
 $langs->load("categories");
 
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm');
 
 $sortfield = GETPOST("sortfield",'alpha');

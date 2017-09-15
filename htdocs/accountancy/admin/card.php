@@ -40,7 +40,7 @@ $action = GETPOST('action','aZ09');
 $backtopage = GETPOST('backtopage');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 
 // Security check
 
@@ -52,7 +52,7 @@ $object = new AccountingAccount($db);
  * Action
  */
 
-if (GETPOST('cancel'))
+if (GETPOST('cancel','alpha'))
 {
 	$urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
 	header("Location: ".$urltogo);

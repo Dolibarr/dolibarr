@@ -150,7 +150,7 @@ if (empty($reshook))
 	// Action to add record
 	if ($action == 'add')
 	{
-		if (GETPOST('cancel'))
+		if (GETPOST('cancel','alpha'))
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php',1);
 			header("Location: ".$urltogo);
@@ -198,10 +198,10 @@ if (empty($reshook))
 	}
 
 	// Cancel
-	if ($action == 'update' && GETPOST('cancel')) $action='view';
+	if ($action == 'update' && GETPOST('cancel','alpha')) $action='view';
 
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel'))
+	if ($action == 'update' && ! GETPOST('cancel','alpha'))
 	{
 		$error=0;
 

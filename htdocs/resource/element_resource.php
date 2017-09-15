@@ -108,7 +108,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 }
 
 // Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel') )
+if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel','alpha') )
 {
 	$res = $object->fetch_element_resource($lineid);
 	if($res)

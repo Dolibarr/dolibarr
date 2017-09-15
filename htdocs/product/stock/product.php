@@ -53,13 +53,13 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage=GETPOST('backtopage');
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 $d_eatby=dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 $d_sellby=dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);

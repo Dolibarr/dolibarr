@@ -45,7 +45,7 @@ $langs->load('orders');
 $langs->load('commercial');
 
 $action	= GETPOST('action','aZ09');
-$cancelbutton = GETPOST('cancel');
+$cancelbutton = GETPOST('cancel','alpha');
 
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));

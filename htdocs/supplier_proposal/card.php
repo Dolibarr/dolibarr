@@ -434,7 +434,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) {
 			$object->reopen($user, SupplierProposal::STATUS_VALIDATED);
@@ -442,7 +442,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 	    // prevent browser refresh from reopening proposal several times
 	    if ($object->statut == SupplierProposal::STATUS_SIGNED) {
 			$object->setStatut(SupplierProposal::STATUS_CLOSE);
@@ -450,7 +450,7 @@ if (empty($reshook))
 	}
 
 	// Set accepted/refused
-	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		if (! GETPOST('statut')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
@@ -871,7 +871,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}

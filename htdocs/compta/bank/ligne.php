@@ -49,7 +49,7 @@ $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST("rowid",'int');
 $orig_account=GETPOST("orig_account");
 $backtopage=GETPOST('backtopage');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));

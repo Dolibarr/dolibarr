@@ -69,7 +69,7 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type','int');
 $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 $duration_value = GETPOST('duration_value');
@@ -358,7 +358,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-    	if (GETPOST('cancel'))
+    	if (GETPOST('cancel','alpha'))
         {
             $action = '';
         }
