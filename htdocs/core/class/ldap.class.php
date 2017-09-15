@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -681,7 +681,7 @@ class Ldap
 		$op = @fsockopen($host, $port, $errno, $errstr, $timeout);
 		if (!$op) return false; //DC is N/A
 		else {
-			fclose($opanak); //explicitly close open socket connection
+			fclose($op); //explicitly close open socket connection
 			return true; //DC is up & running, we can safely connect with ldap_connect
 		}
 	}
@@ -1435,5 +1435,3 @@ class Ldap
 		return 0;
 	}
 }
-
-
