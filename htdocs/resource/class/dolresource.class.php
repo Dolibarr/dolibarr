@@ -33,7 +33,7 @@ class Dolresource extends CommonObject
 	public $element='dolresource';			//!< Id that identify managed objects
 	public $table_element='resource';	//!< Name of table without prefix where object is stored
     public $picto = 'resource';
-    
+
 	public $resource_id;
 	public $resource_type;
 	public $element_id;
@@ -843,7 +843,7 @@ class Dolresource extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
 		$sql.= " resource_id=".(isset($this->resource_id)?"'".$this->db->escape($this->resource_id)."'":"null").",";
-		$sql.= " resource_type=".(isset($this->resource_type)?"'".$this->resource_type."'":"null").",";
+		$sql.= " resource_type=".(isset($this->resource_type)?"'".$this->db->escape($this->resource_type)."'":"null").",";
 		$sql.= " element_id=".(isset($this->element_id)?$this->element_id:"null").",";
 		$sql.= " element_type=".(isset($this->element_type)?"'".$this->db->escape($this->element_type)."'":"null").",";
 		$sql.= " busy=".(isset($this->busy)?$this->busy:"null").",";
@@ -1019,8 +1019,8 @@ class Dolresource extends CommonObject
         $result.=$link.$this->ref.$linkend;
         return $result;
     }
-    
-    
+
+
     /**
      *  Retourne le libelle du status d'un user (actif, inactif)
      *
@@ -1031,7 +1031,7 @@ class Dolresource extends CommonObject
     {
         return $this->LibStatut($this->status,$mode);
     }
-    
+
     /**
      *  Return the status
      *
@@ -1042,7 +1042,7 @@ class Dolresource extends CommonObject
     static function LibStatut($status,$mode=0)
     {
         global $langs;
-    
+
         return '';
-    }    
+    }
 }

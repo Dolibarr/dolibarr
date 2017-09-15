@@ -221,8 +221,8 @@ function show_array_actions_to_do($max=5)
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle as type_label,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
+	$sql.= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE a.entity = ".$conf->entity;
@@ -318,8 +318,8 @@ function show_array_last_actions_done($max=5)
 	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
+	$sql.= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE a.entity = ".$conf->entity;

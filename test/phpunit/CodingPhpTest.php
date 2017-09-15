@@ -177,10 +177,10 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/(=|sql.+)\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'db->' && $val[1] != 'esca')
+                if ($val[2] != 'db->' && $val[2] != 'esca')
                 {
                     $ok=false;
                     break;

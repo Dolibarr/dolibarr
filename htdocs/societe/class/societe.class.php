@@ -859,13 +859,13 @@ class Societe extends CommonObject
             $sql .= ",idprof5 = '". $this->db->escape($this->idprof5) ."'";
             $sql .= ",idprof6 = '". $this->db->escape($this->idprof6) ."'";
 
-            $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
+            $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->db->escape($this->tva_assuj)."'":"null");
             $sql .= ",tva_intra = '" . $this->db->escape($this->tva_intra) ."'";
             $sql .= ",status = " .$this->status;
 
             // Local taxes
-            $sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->localtax1_assuj."'":"null");
-            $sql .= ",localtax2_assuj = ".($this->localtax2_assuj!=''?"'".$this->localtax2_assuj."'":"null");
+            $sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->db->escape($this->localtax1_assuj)."'":"null");
+            $sql .= ",localtax2_assuj = ".($this->localtax2_assuj!=''?"'".$this->db->escape($this->localtax2_assuj)."'":"null");
             if($this->localtax1_assuj==1)
             {
             	if($this->localtax1_value!='')
@@ -1565,7 +1565,7 @@ class Societe extends CommonObject
             // Positionne remise courante
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql.= " SET remise_client = '".$this->db->escape($remise)."'";
-            $sql.= " WHERE rowid = " . $this->id .";";
+            $sql.= " WHERE rowid = " . $this->id;
             $resql=$this->db->query($sql);
             if (! $resql)
             {
@@ -1698,7 +1698,7 @@ class Societe extends CommonObject
         else
         	$sql.= " WHERE entity in (0, ".$conf->entity.")";
 
-        $sql.= " AND u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
+        $sql.= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".$this->id;
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -1751,7 +1751,7 @@ class Societe extends CommonObject
 
             $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
             $sql .= " (datec, fk_soc, price_level, fk_user_author)";
-            $sql .= " VALUES ('".$this->db->idate($now)."',".$this->id.",'".$this->db->escape($price_level)."',".$user->id.")";
+            $sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($price_level)."', ".$user->id.")";
 
             if (! $this->db->query($sql))
             {
@@ -2947,17 +2947,17 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Charge la liste des categories fournisseurs
+     *  Insert link supplier - category
      *
      *	@param	int		$categorie_id		Id of category
      *  @return int      					0 if success, <> 0 if error
      */
     function AddFournisseurInCategory($categorie_id)
     {
-        if ($categorie_id > 0)
+        if ($categorie_id > 0 && $this->id > 0)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
-            $sql.= " VALUES ('".$categorie_id."','".$this->id."');";
+            $sql.= " VALUES (".$categorie_id.", ".$this->id.")";
 
             if ($resql=$this->db->query($sql)) return 0;
         }

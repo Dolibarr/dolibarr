@@ -580,8 +580,8 @@ abstract class CommonObject
             $sql = "SELECT tc.rowid";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
             $sql.= " WHERE tc.element='".$this->db->escape($this->element)."'";
-            $sql.= " AND tc.source='".$source."'";
-            $sql.= " AND tc.code='".$type_contact."' AND tc.active=1";
+            $sql.= " AND tc.source='".$this->db->escape($source)."'";
+            $sql.= " AND tc.code='".$this->db->escape($type_contact)."' AND tc.active=1";
 			//print $sql;
             $resql=$this->db->query($sql);
             if ($resql)
@@ -2475,9 +2475,9 @@ abstract class CommonObject
         $sql.= ", targettype";
         $sql.= ") VALUES (";
         $sql.= $origin_id;
-        $sql.= ", '".$origin."'";
+        $sql.= ", '".$this->db->escape($origin)."'";
         $sql.= ", ".$this->id;
-        $sql.= ", '".$this->element."'";
+        $sql.= ", '".$this->db->escape($this->element)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add_object_linked", LOG_DEBUG);
@@ -3812,11 +3812,11 @@ abstract class CommonObject
 		$sql.= ", mandatory";
 		$sql.= ") VALUES (";
 		$sql.= $resource_id;
-		$sql.= ", '".$resource_type."'";
-		$sql.= ", '".$this->id."'";
-		$sql.= ", '".$this->element."'";
-		$sql.= ", '".$busy."'";
-		$sql.= ", '".$mandatory."'";
+		$sql.= ", '".$this->db->escape($resource_type)."'";
+		$sql.= ", '".$this->db->escape($this->id)."'";
+		$sql.= ", '".$this->db->escape($this->element)."'";
+		$sql.= ", '".$this->db->escape($busy)."'";
+		$sql.= ", '".$this->db->escape($mandatory)."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);

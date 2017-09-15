@@ -296,23 +296,23 @@ class ActionComm extends CommonObject
         $sql.= "elementtype,";
         $sql.= "entity";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->db->idate($now)."',";
-        $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
-        $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
-        $sql.= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '')?"'".$this->durationp."'":"null").",";	// deprecated
+        $sql.= "'".$this->db->idate($now)."', ";
+        $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
+        $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").", ";
+        $sql.= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '')?"'".$this->db->escape($this->durationp)."'":"null").", ";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
-        $sql.= (isset($this->type_code)?" '".$this->type_code."'":"null").",";
-        $sql.= ((isset($this->socid) && $this->socid > 0)?" '".$this->socid."'":"null").",";
-        $sql.= ((isset($this->fk_project) && $this->fk_project > 0)?" '".$this->fk_project."'":"null").",";
-        $sql.= " '".$this->db->escape($this->note)."',";
-        $sql.= ((isset($this->contactid) && $this->contactid > 0)?"'".$this->contactid."'":"null").",";
-        $sql.= (isset($user->id) && $user->id > 0 ? "'".$user->id."'":"null").",";
-        $sql.= ($userownerid>0?"'".$userownerid."'":"null").",";
-        $sql.= ($userdoneid>0?"'".$userdoneid."'":"null").",";
-        $sql.= "'".$this->db->escape($this->label)."','".$this->percentage."','".$this->priority."','".$this->fulldayevent."','".$this->db->escape($this->location)."','".$this->punctual."',";
-        $sql.= "'".$this->transparency."',";
-        $sql.= (! empty($this->fk_element)?$this->fk_element:"null").",";
-        $sql.= (! empty($this->elementtype)?"'".$this->elementtype."'":"null").",";
+        $sql.= (isset($this->type_code)?" '".$this->db->escape($this->type_code)."'":"null").", ";
+        $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
+        $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
+        $sql.= " '".$this->db->escape($this->note)."', ";
+        $sql.= ((isset($this->contactid) && $this->contactid > 0) ? $this->contactid:"null").", ";
+        $sql.= (isset($user->id) && $user->id > 0 ? $user->id:"null").", ";
+        $sql.= ($userownerid>0 ? $userownerid:"null").", ";
+        $sql.= ($userdoneid>0 ? $userdoneid:"null").", ";
+        $sql.= "'".$this->db->escape($this->label)."','".$this->db->escape($this->percentage)."','".$this->db->escape($this->priority)."','".$this->db->escape($this->fulldayevent)."','".$this->db->escape($this->location)."','".$this->db->escape($this->punctual)."', ";
+        $sql.= "'".$this->db->escape($this->transparency)."', ";
+        $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
+        $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
         $sql.= $conf->entity;
         $sql.= ")";
 
@@ -758,11 +758,11 @@ class ActionComm extends CommonObject
         $sql.= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'":"null");
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
-        $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null");	// deprecated
+        $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->db->escape($this->durationp)."'":"null");	// deprecated
         $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
-        $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
-        $sql.= ", fk_soc =". ($socid > 0 ? "'".$socid."'":"null");
-        $sql.= ", fk_contact =". ($contactid > 0 ? "'".$contactid."'":"null");
+        $sql.= ", fk_project =". ($this->fk_project > 0 ? $this->fk_project:"null");
+        $sql.= ", fk_soc =". ($socid > 0 ? $socid:"null");
+        $sql.= ", fk_contact =". ($contactid > 0 ? $contactid:"null");
         $sql.= ", priority = '".$this->db->escape($this->priority)."'";
         $sql.= ", fulldayevent = '".$this->db->escape($this->fulldayevent)."'";
         $sql.= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'":"null");
@@ -770,8 +770,8 @@ class ActionComm extends CommonObject
         $sql.= ", fk_user_mod = ".$user->id;
         $sql.= ", fk_user_action=".($userownerid > 0 ? "'".$userownerid."'":"null");
         $sql.= ", fk_user_done=".($userdoneid > 0 ? "'".$userdoneid."'":"null");
-        if (! empty($this->fk_element)) $sql.= ", fk_element=".($this->fk_element?$this->fk_element:"null");
-        if (! empty($this->elementtype)) $sql.= ", elementtype=".($this->elementtype?"'".$this->elementtype."'":"null");
+        if (! empty($this->fk_element)) $sql.= ", fk_element=".($this->fk_element?$this->db->escape($this->fk_element):"null");
+        if (! empty($this->elementtype)) $sql.= ", elementtype=".($this->elementtype?"'".$this->db->escape($this->elementtype)."'":"null");
         $sql.= " WHERE id=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
