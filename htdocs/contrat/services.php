@@ -237,6 +237,23 @@ if (! empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $fi
 if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1)."'";
 if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2)."'";
 if (! empty($filter_opcloture) && $filter_opcloture != -1 && $filter_datecloture != '') $sql.= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture)."'";
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+	$crit=$val;
+	$tmpkey=preg_replace('/search_options_/','',$key);
+	$typ=$extrafields->attribute_type[$tmpkey];
+	$mode_search_extrafields=0;
+	if (in_array($typ, array('int','double'))) $mode_search_extrafields=1;    // Search on a numeric
+	
+	if ($val && ( ($crit != '' && in_array($typ, array('sellist'))) || ! empty($crit)))
+	{
+		$sql .= ' AND ef.'.$tmpkey.'='.$crit;
+	} else if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) {		
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search_extrafields);
+	}
+}
+
 $sql .= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
@@ -464,7 +481,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
             {
                 $crit=$val;
                 $tmpkey=preg_replace('/search_options_/','',$key);
@@ -473,6 +490,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
                 if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
                 print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
             }
+			else
+			{
+				// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+			}
             print '</td>';
         }
     }
