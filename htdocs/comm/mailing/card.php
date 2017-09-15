@@ -738,7 +738,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
+	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','',0);
 	print '</td></tr>';
 
 	print '</table>';
@@ -1098,13 +1098,13 @@ else
 
             // Background color
             /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-            print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
+            print $htmlother->selectColor($object->bgcolor,'bgcolor','',0);
             print '</td></tr>';*/
 
 			print '</table>';
 
 		    // Message
-			print '<div style="padding-top: 10px" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
+			print '<div style="padding-top: 10px; background: '.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
 			{
 				$readonly=1;
@@ -1252,7 +1252,7 @@ else
 
 		    // Background color
 			print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-			print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
+			print $htmlother->selectColor($object->bgcolor,'bgcolor','',0);
 			print '</td></tr>';
 
 			print '</table>';
