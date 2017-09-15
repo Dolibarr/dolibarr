@@ -240,20 +240,17 @@ if (! empty($filter_opcloture) && $filter_opcloture != -1 && $filter_datecloture
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode_search_extrafields=0;
-	if (in_array($typ, array('int','double'))) $mode_search_extrafields=1;    // Search on a numeric
-	
-	if ($val && ( ($crit != '' && in_array($typ, array('sellist'))) || ! empty($crit)))
-	{
-		$sql .= ' AND ef.'.$tmpkey.'='.$crit;
-	} else if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) {		
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search_extrafields);
-	}
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode_search_extrafields=0;
+    if (in_array($typ, array('int','double','real'))) $mode_search_extrafields=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode_search_extrafields=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search_extrafields);
+    }
 }
-
 $sql .= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
