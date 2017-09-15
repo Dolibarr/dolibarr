@@ -120,11 +120,11 @@ class Bookmark extends CommonObject
         $sql.= ",title,favicon,position";
         $sql.= ",entity";
         $sql.= ") VALUES (";
-        $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
+        $sql.= ($this->fk_user > 0 ? $this->fk_user:"0").",";
         $sql.= " '".$this->db->idate($now)."',";
-        $sql.= " '".$this->url."', '".$this->target."',";
-        $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
-        $sql.= ", '".$conf->entity."'";
+        $sql.= " '".$this->db->escape($this->url)."', '".$this->db->escape($this->target)."',";
+        $sql.= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', '".$this->db->escape($this->position)."'";
+        $sql.= ", ".$this->db->escape($conf->entity);
         $sql.= ")";
 
         dol_syslog("Bookmark::update", LOG_DEBUG);
@@ -168,7 +168,7 @@ class Bookmark extends CommonObject
 		if (empty($this->position)) $this->position=0;
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
-        $sql.= " SET fk_user = ".($this->fk_user > 0?"'".$this->fk_user."'":"0");
+        $sql.= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user :"0");
         $sql.= " ,dateb = '".$this->db->idate($this->datec)."'";
         $sql.= " ,url = '".$this->db->escape($this->url)."'";
         $sql.= " ,target = '".$this->db->escape($this->target)."'";

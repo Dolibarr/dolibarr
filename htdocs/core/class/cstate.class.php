@@ -85,10 +85,10 @@ class Cstate // extends CommonObject
 		$sql.= "nom,";
 		$sql.= "active";
         $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
+		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
 		$sql.= " ".(! isset($this->code_departement)?'NULL':"'".$this->db->escape($this->code_departement)."'").",";
 		$sql.= " ".(! isset($this->nom)?'NULL':"'".$this->db->escape($this->nom)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'")."";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'")."";
 		$sql.= ")";
 
 		$this->db->begin();

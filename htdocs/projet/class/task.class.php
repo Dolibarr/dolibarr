@@ -301,7 +301,7 @@ class Task extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
         $sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
-		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"'".$this->id."'").",";
+		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"'".$this->db->escape($this->id)."'").",";
         $sql.= " fk_task_parent=".(isset($this->fk_task_parent)?$this->fk_task_parent:"null").",";
         $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
@@ -1251,7 +1251,7 @@ class Task extends CommonObject
             $newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->db->escape($this->id).")";
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
@@ -1303,7 +1303,7 @@ class Task extends CommonObject
         if (! $error)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective - '".$this->timespent_duration."'";
+            $sql.= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration?$this->timespent_duration:0);
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
@@ -1899,7 +1899,7 @@ class TaskComment extends CommonObject
 		$sql.= ", '".(isset($this->fk_task)?$this->fk_task:"null")."'";
 		$sql.= ", '".(isset($this->fk_user)?$this->fk_user:"null")."'";
 		$sql.= ", ".(!empty($this->entity)?$this->entity:'1');
-		$sql.= ", ".(!empty($this->import_key)?"'".$this->import_key."'":"null");
+		$sql.= ", ".(!empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
 
 		//var_dump($this->db);
@@ -2024,7 +2024,7 @@ class TaskComment extends CommonObject
 		$sql.= " fk_task=".(isset($this->fk_task)?$this->fk_task:"null").",";
 		$sql.= " fk_user=".(isset($this->fk_user)?$this->fk_user:"null").",";
 		$sql.= " entity=".(!empty($this->entity)?$this->entity:'1').",";
-		$sql.= " import_key=".(!empty($this->import_key)?"'".$this->import_key."'":"null");
+		$sql.= " import_key=".(!empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();

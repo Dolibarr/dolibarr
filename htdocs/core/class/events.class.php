@@ -126,12 +126,12 @@ class Events // extends CommonObject
 		$sql.= "fk_user,";
 		$sql.= "description";
 		$sql.= ") VALUES (";
-		$sql.= " '".$this->type."',";
+		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
-		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
+		$sql.= " '".$this->db->escape($_SERVER['REMOTE_ADDR'])."',";
+		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".$this->db->escape(dol_trunc($_SERVER['HTTP_USER_AGENT'],250))."'":'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
-		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
+		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
 		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
 		$sql.= ")";
 

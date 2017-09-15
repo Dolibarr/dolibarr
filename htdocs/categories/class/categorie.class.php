@@ -311,7 +311,7 @@ class Categorie extends CommonObject
 		$sql.= " import_key,";
 		$sql.= " entity";
 		$sql.= ") VALUES (";
-		$sql.= $this->fk_parent.",";
+		$sql.= $this->db->escape($this->fk_parent).",";
 		$sql.= "'".$this->db->escape($this->label)."',";
 		$sql.= "'".$this->db->escape($this->description)."',";
 		$sql.= "'".$this->db->escape($this->color)."',";
@@ -319,10 +319,10 @@ class Categorie extends CommonObject
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',";
-		$sql.= $type.",";
+		$sql.= "'".$this->db->escape($this->visible)."',";
+		$sql.= $this->db->escape($type).",";
 		$sql.= (! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":'null').",";
-		$sql.= $conf->entity;
+		$sql.= $this->db->escape($conf->entity);
 		$sql.= ")";
 
 		$res = $this->db->query($sql);

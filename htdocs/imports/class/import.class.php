@@ -45,7 +45,7 @@ class Import
 
 	var $error;
 	var $errors;
-	
+
 
 	/**
 	 *    Constructor
@@ -242,7 +242,7 @@ class Import
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'import_model (';
 		$sql.= 'fk_user, label, type, field';
 		$sql.= ')';
-		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
+		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->db->escape($this->datatoimport)."', '".$this->db->escape($this->hexa)."')";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);

@@ -143,14 +143,14 @@ class Holiday extends CommonObject
         $sql.= "fk_user_create,";
         $sql.= "entity";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->fk_user."',";
+        $sql.= "'".$this->db->escape($this->fk_user)."',";
         $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->db->escape($this->description)."',";
         $sql.= " '".$this->db->idate($this->date_debut)."',";
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
-        $sql.= " '".$this->fk_validator."',";
+        $sql.= " '".$this->db->escape($this->fk_validator)."',";
         $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;

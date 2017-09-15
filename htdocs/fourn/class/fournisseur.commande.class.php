@@ -1414,7 +1414,7 @@ class CommandeFournisseur extends CommonOrder
                             if ($remise_percent == 0 && $prod->remise_percent !=0)
                             	$remise_percent =$prod->remise_percent;
 
-				
+
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -2678,14 +2678,14 @@ class CommandeFournisseur extends CommonOrder
                 if ($db->num_rows($query))
                 {
                     $obj = $db->fetch_object($query);
-    
+
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
                     {
                         $string = $obj->label != '-' ? $obj->label : '';
                     }
                     return $string;
-                }    
+                }
             }
             else dol_print_error($db);
         }
@@ -3129,15 +3129,15 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= " ".($this->date_end?"'".$this->db->idate($this->date_end)."'":"null").",";
         if ($this->fk_product) { $sql.= $this->fk_product.","; }
         else { $sql.= "null,"; }
-        $sql.= "'".$this->product_type."',";
-        $sql.= "'".$this->qty."', ";
+        $sql.= "'".$this->db->escape($this->product_type)."',";
+        $sql.= "'".$this->db->escape($this->qty)."', ";
 
-        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->db->escape($this->vat_src_code)."'").",";
         $sql.= " ".$this->tva_tx.", ";
         $sql.= " ".$this->localtax1_tx.",";
         $sql.= " ".$this->localtax2_tx.",";
-        $sql.= " '".$this->localtax1_type."',";
-        $sql.= " '".$this->localtax2_type."',";
+        $sql.= " '".$this->db->escape($this->localtax1_type)."',";
+        $sql.= " '".$this->db->escape($this->localtax2_type)."',";
         $sql.= " ".$this->remise_percent.", ".price2num($this->subprice,'MU').", '".$this->db->escape($this->ref_supplier)."',";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";

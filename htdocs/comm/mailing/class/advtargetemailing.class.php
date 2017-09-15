@@ -121,7 +121,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= " ".(! isset($this->name)?'NULL':"'".$this->db->escape($this->name)."'").",";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " ".(! isset($this->fk_mailing)?'NULL':"'".$this->fk_mailing."'").",";
+		$sql.= " ".(! isset($this->fk_mailing)?'NULL':"'".$this->db->escape($this->fk_mailing)."'").",";
 		$sql.= " ".(! isset($this->filtervalue)?'NULL':"'".$this->db->escape($this->filtervalue)."'").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->idate(dol_now())."',";
