@@ -41,6 +41,9 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN seuil_stock_alerte SET DEFAULT NULL;
+
 ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
