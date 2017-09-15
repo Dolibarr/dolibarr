@@ -189,7 +189,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (GETPOST('urlfrom','alpha')) $_SESSION["urlfrom"]=GETPOST('urlfrom','alpha');
 	else unset($_SESSION["urlfrom"]);
 
-	if (! GETPOST("username")) $focus_element='username';
+	if (! GETPOST("username",'alpha')) $focus_element='username';
 	else $focus_element='password';
 
 	$demologin='';

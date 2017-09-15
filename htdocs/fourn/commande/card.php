@@ -542,7 +542,7 @@ if (empty($reshook))
 	/*
 	 *	Updating a line in the order
 	 */
-	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
+	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel','alpha'))
 	{
 		$tva_tx = GETPOST('tva_tx');
 
@@ -1170,7 +1170,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel'))
+	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel','alpha'))
 	{
 	    $ws_url         = $object->thirdparty->webservices_url;
 	    $ws_key         = $object->thirdparty->webservices_key;
@@ -2269,7 +2269,7 @@ elseif (! empty($object->id))
 	/*
 	 * Action webservice
 	 */
-	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel'))
+	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel','alpha'))
 	{
 		$mode        = GETPOST('mode', 'alpha');
 		$ws_url      = $object->thirdparty->webservices_url;

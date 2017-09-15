@@ -201,7 +201,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->lastresult)?'NULL':"'".$this->db->escape($this->lastresult)."'").",";
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':"'".$this->db->idate($this->datelastresult)."'").",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
-		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
+		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
 		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";

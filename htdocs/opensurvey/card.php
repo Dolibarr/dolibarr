@@ -35,7 +35,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Initialisation des variables
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $numsondage = '';
 

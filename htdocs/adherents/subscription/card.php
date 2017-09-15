@@ -39,7 +39,7 @@ $errmsg='';
 $action=GETPOST("action",'alpha');
 $rowid=GETPOST("rowid","int")?GETPOST("rowid","int"):GETPOST("id","int");
 $typeid=GETPOST("typeid","int");
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm');
 
 if (! $user->rights->adherent->cotisation->lire)

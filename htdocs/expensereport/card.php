@@ -49,7 +49,7 @@ $langs->load("bills");
 $langs->load("mails");
 
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debutday'), GETPOST('date_debutyear'));

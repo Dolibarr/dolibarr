@@ -171,8 +171,8 @@ class ChargeSociales extends CommonObject
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, date_creation)";
         $sql.= " VALUES (".$this->type;
-        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
-        $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
+        $sql.= ", ".($this->fk_account>0 ? $this->fk_account:'NULL');
+        $sql.= ", ".($this->mode_reglement_id>0 ? $this->mode_reglement_id:"NULL");
         $sql.= ", '".$this->db->escape($this->lib)."'";
         $sql.= ", '".$this->db->idate($this->date_ech)."'";
 		$sql.= ", '".$this->db->idate($this->periode)."'";

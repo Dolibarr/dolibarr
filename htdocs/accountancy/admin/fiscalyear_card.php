@@ -20,6 +20,7 @@
  * \ingroup     Advanced accountancy
  * \brief       Page to show a fiscal year
  */
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';

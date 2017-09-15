@@ -325,10 +325,10 @@ class Adherent extends CommonObject
         $sql.= " '".$this->db->idate($this->datec)."'";
         $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
         $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be created by a guest or a script
-        $sql.= ", null, null, '".$this->morphy."'";
-        $sql.= ", '".$this->typeid."'";
+        $sql.= ", null, null, '".$this->db->escape($this->morphy)."'";
+        $sql.= ", ".$this->typeid;
         $sql.= ", ".$conf->entity;
-        $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null");
+        $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -447,17 +447,17 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-        $sql.= " civility = ".(!is_null($this->civility_id)?"'".$this->civility_id."'":"null");
+        $sql.= " civility = ".(!is_null($this->civility_id)?$this->db->escape($this->civility_id):"null");
         $sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
         $sql.= ", lastname=" .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
         $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
-        $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
+        $sql.= ", fk_soc="  .($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
         $sql.= ", zip="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
-        $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
-        $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
+        $sql.= ", country=".($this->country_id>0?$this->db->escape($this->country_id):"null");
+        $sql.= ", state_id=".($this->state_id>0?$this->db->escape($this->state_id):"null");
         $sql.= ", email='".$this->db->escape($this->email)."'";
         $sql.= ", skype='".$this->db->escape($this->skype)."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
@@ -465,7 +465,7 @@ class Adherent extends CommonObject
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
         $sql.= ", note_private=" .($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
         $sql.= ", note_public=" .($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
-        $sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
+        $sql.= ", photo="   .($this->photo?"'".$this->db->escape($this->photo)."'":"null");
         $sql.= ", public='".$this->db->escape($this->public)."'";
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;

@@ -141,7 +141,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", nb_gen_max";
 			$sql.= ", auto_validate";
 			$sql.= ") VALUES (";
-			$sql.= "'".$this->titre."'";
+			$sql.= "'".$this->db->escape($this->titre)."'";
 			$sql.= ", ".$facsrc->socid;
 			$sql.= ", ".$conf->entity;
 			$sql.= ", '".$this->db->idate($now)."'";
@@ -149,11 +149,11 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".(!empty($facsrc->remise)?$this->remise:'0');
 			$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 			$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
-			$sql.= ", '".$user->id."'";
+			$sql.= ", '".$this->db->escape($user->id)."'";
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
-			$sql.= ", '".$facsrc->cond_reglement_id."'";
-			$sql.= ", '".$facsrc->mode_reglement_id."'";
+			$sql.= ", '".$this->db->escape($facsrc->cond_reglement_id)."'";
+			$sql.= ", '".$this->db->escape($facsrc->mode_reglement_id)."'";
 			$sql.= ", ".$this->usenewprice;
 			$sql.= ", ".$this->frequency;
 			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
@@ -1504,7 +1504,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
     	$sql.= ", localtax2_tx=".price2num($this->localtax2_tx);
     	$sql.= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-    	$sql.= ", fk_product=".(! empty($this->fk_product)?"'".$this->fk_product."'":"null");
+    	$sql.= ", fk_product=".($this->fk_product > 0 ? $this->fk_product :"null");
     	$sql.= ", product_type=".$this->product_type;
     	$sql.= ", remise_percent='".price2num($this->remise_percent)."'";
     	$sql.= ", subprice='".price2num($this->subprice)."'";

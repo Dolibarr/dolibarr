@@ -61,7 +61,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $action=GETPOST('action','aZ09');
 $section=GETPOST("section");
 if (! $section)
