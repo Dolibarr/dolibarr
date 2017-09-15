@@ -41,7 +41,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);

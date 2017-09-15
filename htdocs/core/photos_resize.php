@@ -36,7 +36,7 @@ $action=GETPOST('action','alpha');
 $modulepart=GETPOST('modulepart','alpha')?GETPOST('modulepart','alpha'):'produit|service';
 $original_file = GETPOST("file");
 $backtourl=GETPOST('backtourl');
-$cancel=GETPOST("cancel");
+$cancel=GETPOST('cancel','alpha');
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');

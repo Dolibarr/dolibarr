@@ -38,7 +38,7 @@ $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'margindetail';   // To manage different context of search
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $optioncss  = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
@@ -75,8 +75,8 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks

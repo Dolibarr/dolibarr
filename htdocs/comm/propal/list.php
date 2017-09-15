@@ -169,8 +169,8 @@ $object = new Propal($db);	// To be passed as parameter of executeHooks that nee
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -420,7 +420,7 @@ if ($resql)
 	{
 	    $langs->load("mails");
 
-	    if (! GETPOST('cancel'))
+	    if (! GETPOST('cancel','alpha'))
 	    {
 	        $objecttmp=new Propal($db);
 	        $listofselectedid=array();

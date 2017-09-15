@@ -55,7 +55,7 @@ $mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
-$cancel     = GETPOST('cancel');
+$cancel     = GETPOST('cancel','alpha');
 
 // Users/Groups management only in master entity if transverse mode
 if (($action == 'create' || $action == 'adduserldap') && ! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)

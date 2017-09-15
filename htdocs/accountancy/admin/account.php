@@ -37,7 +37,7 @@ $langs->load("salaries");
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 
@@ -84,8 +84,8 @@ $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accounting
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha')) { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
