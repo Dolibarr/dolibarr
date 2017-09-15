@@ -98,12 +98,12 @@ if ($id > 0 || ! empty($ref))
 
     $param=($mode=='mine'?'&mode=mine':'');
 
-    
+
 
     // Project card
-    
+
     $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-    
+
     $morehtmlref='<div class="refidno">';
     // Title
     $morehtmlref.=$object->title;
@@ -113,29 +113,29 @@ if ($id > 0 || ! empty($ref))
         $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
     }
     $morehtmlref.='</div>';
-    
+
     // Define a complementary filter for search of next/prev ref.
     if (! $user->rights->projet->all->lire)
     {
         $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
         $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
     }
-    
+
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-    
-    
+
+
     print '<div class="fichecenter">';
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border" width="100%">';
-    
+
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
     if ($object->public) print $langs->trans('SharedProject');
     else print $langs->trans('PrivateProject');
     print '</td></tr>';
-    
+
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start,'dayhour');
@@ -145,45 +145,45 @@ if ($id > 0 || ! empty($ref))
 	print ($end?$end:'?');
 	if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
-    
+
     // Budget
     print '<tr><td>'.$langs->trans("Budget").'</td><td>';
     if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
     print '</td></tr>';
-    
+
     // Other attributes
     $cols = 2;
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-    
+
     print '</table>';
-    
+
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border" width="100%">';
-    
+
     // Description
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
     print nl2br($object->description);
     print '</td></tr>';
-    
+
     // Categories
     if($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
         print $form->showCategories($object->id,'project',1);
         print "</td></tr>";
     }
-    
+
     print '</table>';
-    
+
     print '</div>';
     print '</div>';
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
-    
+
     dol_fiche_end();
 }
 
@@ -307,9 +307,14 @@ if (count($tasksarray)>0)
 	    $dateformatinput2="%m/%d/%Y";   // How the date for data are formated
   		//var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
+
+	    print '<div class="div-table-responsive">';
+
 	    print '<div id="tabs" class="gantt" style="width: 80vw; border: 1px solid #ACACAC;">'."\n";
 		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
+
+		print '</div>';
 	}
 	else
 	{

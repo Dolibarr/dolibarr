@@ -506,7 +506,7 @@ class SupplierProposal extends CommonObject
                 if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
                 // Mise a jour informations denormalisees au niveau de la propale meme
-                $result=$this->update_price(1,'auto');	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                $result=$this->update_price(1,'auto',0,$this->thirdparty);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -1661,7 +1661,7 @@ class SupplierProposal extends CommonObject
                	if (! empty($conf->global->MAIN_MULTILANGS))
                	{
                		$outputlangs = new Translate("",$conf);
-               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->thirdparty->default_lang);
+               		$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
                		$outputlangs->setDefaultLang($newlang);
                	}
                	//$ret=$object->fetch($id);    // Reload to get new records
@@ -2563,10 +2563,9 @@ class SupplierProposal extends CommonObject
 
 
 /**
- *	\class      SupplierProposalLine
- *	\brief      Class to manage supplier_proposal lines
+ *	Class to manage supplier_proposal lines
  */
-class SupplierProposalLine  extends CommonObjectLine
+class SupplierProposalLine extends CommonObjectLine
 {
     var $db;
     var $error;
@@ -2798,6 +2797,7 @@ class SupplierProposalLine  extends CommonObjectLine
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
         if (empty($this->fk_unit)) $this->fk_unit=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2829,27 +2829,27 @@ class SupplierProposalLine  extends CommonObjectLine
         $sql.= ' ref_fourn,';
 		$sql.= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
         $sql.= " VALUES (".$this->fk_supplier_proposal.",";
-        $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
+        $sql.= " ".($this->fk_parent_line>0?"'".$this->db->escape($this->fk_parent_line)."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
-        $sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
-        $sql.= " '".$this->product_type."',";
-        $sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
+        $sql.= " ".($this->fk_product?"'".$this->db->escape($this->fk_product)."'":"null").",";
+        $sql.= " '".$this->db->escape($this->product_type)."',";
+        $sql.= " ".($this->fk_remise_except?"'".$this->db->escape($this->fk_remise_except)."'":"null").",";
         $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
-		$sql.= " '".$this->localtax1_type."',";
-		$sql.= " '".$this->localtax2_type."',";
-        $sql.= " ".price2num($this->subprice).",";
+		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
+		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
+        $sql.= " ".(!empty($this->subprice)?price2num($this->subprice):"null").",";
         $sql.= " ".price2num($this->remise_percent).",";
-        $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
+        $sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";
         $sql.= " ".price2num($this->total_localtax1).",";
         $sql.= " ".price2num($this->total_localtax2).",";
         $sql.= " ".price2num($this->total_ttc).",";
-        $sql.= " ".(!empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
+        $sql.= " ".(!empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null").",";
         $sql.= " ".(isset($this->pa_ht)?"'".price2num($this->pa_ht)."'":"null").",";
         $sql.= ' '.$this->special_code.',';
         $sql.= ' '.$this->rang.',';
@@ -2982,6 +2982,7 @@ class SupplierProposalLine  extends CommonObjectLine
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
         if (empty($this->fk_unit)) $this->fk_unit=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -3024,7 +3025,7 @@ class SupplierProposalLine  extends CommonObjectLine
             $sql.= " , total_localtax1=".price2num($this->total_localtax1)."";
             $sql.= " , total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null");
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= " , buy_price_ht=".price2num($this->pa_ht);
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");

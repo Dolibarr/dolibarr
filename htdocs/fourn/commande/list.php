@@ -172,8 +172,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha')) { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -185,7 +185,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
         $ordermonth='';
         $orderyear='';
@@ -535,9 +535,9 @@ if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname
 if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
 
 //Required triple check because statut=0 means draft filter
-if (GETPOST('statut', 'alpha') !== '')
+if (GETPOST('statut', 'intcomma') !== '')
 {
-	$sql .= " AND cf.fk_statut IN (".$db->escape(GETPOST('statut', 'alpha')).")";
+	$sql .= " AND cf.fk_statut IN (".$db->escape($db->escape(GETPOST('statut', 'intcomma'))).")";
 }
 if ($search_status != '' && $search_status >= 0)
 {
@@ -589,8 +589,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -688,7 +689,7 @@ if ($resql)
 	{
 	    $langs->load("mails");
 
-	    if (! GETPOST('cancel'))
+	    if (! GETPOST('cancel','alpha'))
 	    {
 	        $objecttmp=new CommandeFournisseur($db);
 	        $listofselectedid=array();
@@ -1052,7 +1053,7 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}

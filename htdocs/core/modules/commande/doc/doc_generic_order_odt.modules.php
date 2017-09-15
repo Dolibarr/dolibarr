@@ -275,9 +275,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				dol_mkdir($conf->commande->dir_temp);
 
 
-				// If BILLING contact defined on invoice, we use it
+				// If CUSTOMER contact defined on order, we use it
 				$usecontact=false;
-				$arrayidcontact=$object->getIdContact('external','BILLING');
+				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
@@ -289,7 +289,11 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				{
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->thirdparty;
+					else {
+                        $socobject = $object->thirdparty;
+               			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+            			$contactobject = $object->contact;
+                    }
 				}
 				else
 				{
@@ -356,8 +360,12 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
+                // retrieve contact information for use in order as contact_xxx tags
+        		$array_thirdparty_contact = array();
+        		if ($usecontact)
+            			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				
@@ -459,6 +467,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

@@ -20,7 +20,7 @@
 /**
  *   	\file       htdocs/holiday/list.php
  *		\ingroup    holiday
- *		\brief      List of holiday.
+ *		\brief      List of holiday
  */
 
 require('../main.inc.php');
@@ -63,14 +63,13 @@ $month_start     = GETPOST('month_start');
 $year_start      = GETPOST('year_start');
 $month_end       = GETPOST('month_end');
 $year_end        = GETPOST('year_end');
-$search_employe  = GETPOST('search_employe');
+$search_employee = GETPOST('search_employee');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
-$type            = GETPOST('type','int');
+$search_type     = GETPOST('search_type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'cp.rowid'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname'
@@ -82,7 +81,7 @@ $fieldstosearchall = array(
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_ref="";
 	$month_create="";
@@ -91,10 +90,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$year_start="";
 	$month_end="";
 	$year_end="";
-	$search_employe="";
+	$search_employee="";
 	$search_valideur="";
 	$search_statut="";
-	$type='';
+	$search_type='';
 }
 
 
@@ -121,13 +120,13 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 
 $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 
-// WHERE
+// Ref
 if(!empty($search_ref))
 {
-    $filter.= " AND cp.rowid LIKE '%".$db->escape($search_ref)."%'\n";
+    $filter.= " AND cp.rowid = ".$db->escape($search_ref);
 }
 
-// DATE START
+// Start date
 if($year_start > 0) {
     if($month_start > 0) {
     	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,1))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,1))."')";
@@ -142,7 +141,7 @@ if($year_start > 0) {
     }
 }
 
-// DATE FIN
+// End date
 if($year_end > 0) {
     if($month_end > 0) {
     	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,1))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,1))."')";
@@ -157,7 +156,7 @@ if($year_end > 0) {
     }
 }
 
-// DATE CREATE
+// Create date
 if($year_create > 0) {
     if($month_create > 0) {
     	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,$month_create,1))."' AND '".$db->idate(dol_get_last_day($year_create,$month_create,1))."')";
@@ -172,17 +171,22 @@ if($year_create > 0) {
     }
 }
 
-// EMPLOYE
-if(!empty($search_employe) && $search_employe != -1) {
-    $filter.= " AND cp.fk_user = '".$db->escape($search_employe)."'\n";
+// Employee
+if(!empty($search_employee) && $search_employee != -1) {
+    $filter.= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
 }
 
-// VALIDEUR
+// Validator
 if(!empty($search_valideur) && $search_valideur != -1) {
     $filter.= " AND cp.fk_validator = '".$db->escape($search_valideur)."'\n";
 }
 
-// STATUT
+// Type
+if (!empty($search_type) && $search_type != -1) {
+	$filter.= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+}
+
+// Status
 if(!empty($search_statut) && $search_statut != -1) {
     $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
 }
@@ -194,7 +198,6 @@ if (!empty($sall))
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
-if ($type > 0) $filter.=' AND cp.fk_type IN ('.$db->escape($type).')';
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -257,9 +260,16 @@ if ($id > 0)
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-    print '<div class="underbanner clearboth"></div>';
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
+	    print '<div class="underbanner clearboth"></div>';
 
-    print '<br>';
+	    print '<br>';
+
+	    showMyBalance($holiday, $user_id);
+	}
+
+	dol_fiche_end();
 }
 else
 {
@@ -267,23 +277,44 @@ else
     //print count($holiday->holiday);
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, count($holiday->holiday), 'title_hrm.png', 0, '', '', $limit);
 
-	dol_fiche_head('');
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
+		dol_fiche_head('');
+
+		showMyBalance($holiday, $user_id);
+
+		dol_fiche_end();
+	}
 }
 
-$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
 
-$out='';
-$typeleaves=$holiday->getTypes(1,1);
-foreach($typeleaves as $key => $val)
+
+/**
+ * Show balance of user
+ *
+ * @param 	Holiday	$holiday	Object $holiday
+ * @param	int		$user_id	User id
+ * @return	string				Html code with balance
+ */
+function showMyBalance($holiday, $user_id)
 {
-	$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
-	$nb_holiday += $nb_type;
-	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
-}
-print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
-print $out;
+	global $conf, $langs;
 
-dol_fiche_end();
+	$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
+
+	$out='';
+	$nb_holiday=0;
+	$typeleaves=$holiday->getTypes(1,1);
+	foreach($typeleaves as $key => $val)
+	{
+		$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
+		$nb_holiday += $nb_type;
+		$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+	}
+	print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+	print $out;
+}
+
 
 
 if ($id > 0) print '<br>';
@@ -297,34 +328,34 @@ if ($sall)
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-// FILTRES
+// Filters
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre" align="left">';
 print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
 
-// DATE CREATE
+// Create date
 print '<td class="liste_titre" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.dol_escape_htmltag($month_create).'">';
 $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
-// UTILISATEUR
+// User
 if ($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_employee,"search_employee",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
 {
     //print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($user->id,"search_employee",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
     print '</td>';
 }
 
-// APPROVER
+// Approve
 if($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
@@ -352,30 +383,30 @@ foreach($typeleaves as $key => $val)
     //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
     $arraytypeleaves[$val['rowid']]=$labeltoshow;
 }
-print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+print $form->selectarray('search_type', $arraytypeleaves, (GETPOST('search_type')?GETPOST('search_type'):''), 1);
 print '</td>';
 
-// DUREE
+// Duration
 print '<td class="liste_titre">&nbsp;</td>';
 
-// DATE DEBUT
+// Start date
 print '<td class="liste_titre" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.dol_escape_htmltag($month_start).'">';
 $formother->select_year($year_start,'year_start',1, $min_year, $max_year);
 print '</td>';
 
-// DATE FIN
+// End date
 print '<td class="liste_titre" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.dol_escape_htmltag($month_end).'">';
 $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';
 
-// STATUT
+// Status
 print '<td class="liste_titre maxwidthonsmartphone maxwidth200" align="right">';
 $holiday->selectStatutCP($search_statut);
 print '</td>';
 
-// ACTION
+// Actions
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
@@ -384,15 +415,15 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("DateDebCP",$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("DateFinCP",$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -404,7 +435,7 @@ if (! empty($holiday->holiday))
 
 	foreach($holiday->holiday as $infos_CP)
 	{
-		// Utilisateur
+		// User
 		$userstatic->id=$infos_CP['fk_user'];
 		$userstatic->lastname=$infos_CP['user_lastname'];
 		$userstatic->firstname=$infos_CP['user_firstname'];
@@ -412,7 +443,7 @@ if (! empty($holiday->holiday))
 		$userstatic->statut=$infos_CP['user_statut'];
 		$userstatic->photo=$infos_CP['user_photo'];
 
-		// Valideur
+		// Validator
 		$approbatorstatic->id=$infos_CP['fk_validator'];
 		$approbatorstatic->lastname=$infos_CP['validator_lastname'];
 		$approbatorstatic->firstname=$infos_CP['validator_firstname'];

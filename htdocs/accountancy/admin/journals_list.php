@@ -41,7 +41,7 @@ $rowid=GETPOST('rowid','alpha');
 $code=GETPOST('code','alpha');
 
 // Security access
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -58,7 +58,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -134,6 +134,7 @@ $elementList = array();
 			'2' => $langs->trans('AccountingJournalType2'),
 			'3' => $langs->trans('AccountingJournalType3'),
 			'4' => $langs->trans('AccountingJournalType4'),
+			'5' => $langs->trans('AccountingJournalType5'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 
@@ -422,6 +423,7 @@ if ($id)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
 
+    print '<div class="div-table-responsive">';
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -488,7 +490,7 @@ if ($id)
 
         if (empty($reshook))
         {
-       		fieldList($fieldlist,$obj,$tabname[$id],'add');
+       		fieldListJournal($fieldlist,$obj,$tabname[$id],'add');
         }
 
         print '<td colspan="4" align="right">';
@@ -593,7 +595,7 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldListJournal($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td align="center" colspan="4">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
@@ -690,6 +692,7 @@ if ($id)
     }
 
     print '</table>';
+	print '</div>';
 
     print '</form>';
 }
@@ -710,7 +713,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldListJournal($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
 	global $form, $mysoc;

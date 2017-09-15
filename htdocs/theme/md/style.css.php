@@ -64,7 +64,7 @@ require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
-if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);
+if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login'],'',1);
 
 
 // Define css type
@@ -282,7 +282,9 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-.liste_titre input[name=monthvalid], .liste_titre input[name=search_smonth], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre input[name=month_lim] {
+.liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
+.liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
+.liste_titre input[name=month_lim] {
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -337,6 +339,50 @@ input.smallpadd {	/* Used for timesheet input */
 }
 input.buttongen {
 	vertical-align: middle;
+}
+input.buttonpayment {
+	width: 300px;
+	margin-bottom: 15px;
+	background-image: none;
+	line-height: 24px;
+	padding: 8px;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 26px;
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 24px;
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentpaypal {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentpaybox {
+	background-image: url(<?php echo dol_buildpath($path.'/paybox/img/object_paybox.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentstripe {
+	background-image: url(<?php echo dol_buildpath($path.'/stripe/img/object_stripe.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
 }
 span.timesheetalreadyrecorded input {
     border: none;
@@ -540,14 +586,23 @@ textarea.centpercent {
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
+.paddingleft2 {
+	padding-<?php print $left; ?>: 2px;
+}
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
+}
+.paddingright2 {
+	padding-<?php print $right; ?>: 2px;
 }
 .cursorpointer {
 	cursor: pointer;
 }
 .cursormove {
 	cursor: move;
+}
+.cursornotallowed {
+	cursor: not-allowed;
 }
 .badge {
 	display: inline-block;
@@ -667,10 +722,17 @@ div.myavailability {
 	margin-bottom: 12px;
 }
 
+
 /* For the long description of module */
 .moduledesclong p img,.moduledesclong p a img {
     max-width: 90% !important;
     height: auto !important;
+}
+.imgdoc {
+    margin: 18px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 25px #aaa;
+    max-width: calc(100% - 56px);
 }
 
 
@@ -698,7 +760,7 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-    display: inline-flex;
+    <?php if (in_array($conf->browser->browsername, array('chrome','firefox'))) echo 'display: inline-flex;' ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -708,10 +770,11 @@ div.fiche>form>div.div-table-responsive {
 .thumbstat150 {
 	flex: 1 1 150px;
 }
-.thumbstat, thumbstat150 {
+.thumbstat, .thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
+	display: inline;
     width: 100%;
     justify-content: flex-start;
     align-self: flex-start;
@@ -794,8 +857,20 @@ div.fiche>form>div.div-table-responsive {
 }
 
 /* Force values for small screen 570 */
+@media only screen and (max-width: 767px)
+{
+	body {
+		font-size: <?php print $fontsize+1; ?>px;
+	}
+}
+
+/* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	body {
+		font-size: <?php print $fontsize+1; ?>px;
+	}
+
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
 
     .tdoverflowonsmartphone {
@@ -1159,6 +1234,10 @@ div.attacharea {
 	padding-top: 18px;
 	padding-bottom: 10px;
 }
+div.attachareaformuserfileecm {
+	padding-top: 0;
+	padding-bottom: 0;
+}
 div.arearef {
 	padding-top: 2px;
 	padding-bottom: 5px;
@@ -1418,6 +1497,10 @@ div.mainmenu {
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
 	background-position-x: center;
+}
+
+div.mainmenu.billing {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>);
 }
 
 div.mainmenu.accountancy {
@@ -1740,6 +1823,7 @@ img.login, img.printer, img.entity {
 	height: 16px;
     background-size: contain;
 	vertical-align: text-bottom;
+	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
     border-radius: 9px;
@@ -1937,25 +2021,8 @@ td.ecmroot {
 }
 
 .largebutton {
-    /*background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -ms-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-
-    background: #FFF;
-    background-repeat: repeat-x !important;
-    */
-	border-top: 1px solid #CCC !important;
-
-    /*-moz-border-radius: 2px 2px 2px 2px !important;
-	-webkit-border-radius: 2px 2px 2px 2px !important;
-	border-radius: 2px 2px 2px 2px !important;
-    -moz-box-shadow: 2px 2px 4px #f4f4f4;
-    -webkit-box-shadow: 2px 2px 4px #f4f4f4;
-    box-shadow: 2px 2px 4px #f4f4f4;*/
-
-    padding: 10px 4px 14px 4px !important;
+	/* border-top: 1px solid #CCC !important; */
+    padding: 0px 4px 14px 4px !important;
     min-height: 32px;
 }
 
@@ -2148,7 +2215,6 @@ span.butAction, span.butActionDelete {
 }
 
 
-/* Prepare for bootstrap look */
 .button, .butAction, .butActionDelete, .butActionRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
@@ -2244,7 +2310,10 @@ a.butAction:hover, a.butActionDelete:hover {
 	opacity: 0.9;
 }
 
-/* End bootstrap */
+.butActionTransparent {
+	color: #222 ! important;
+	background-color: transparent ! important;
+}
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
 .butActionRefused {
@@ -2613,6 +2682,15 @@ div.pagination li.paginationafterarrows {
 }
 */
 
+ul.noborder li:nth-child(odd):not(.liste_titre) {
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
+}
+
+
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
@@ -2674,7 +2752,7 @@ tr.pair:last-of-type td, tr.impair:last-of-type td {
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-td.nobottom, td.nobottom {
+tr.nobottom td, tr.nobottom , td.nobottom {
     border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
@@ -2713,19 +2791,19 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 {
 	height: 26px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
+div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
+    border-bottom: 1px solid #FDFFFF;
 
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
-    border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, tr.liste_titre td, th.liste_titre, form.liste_titre div, div.liste_titre
+tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
-	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'FDFFFF'); ?>;
+	border-bottom: 1px solid #aaa;
 }
 /* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */
 tr:first-child th.liste_titre {
@@ -2879,7 +2957,7 @@ div .tdtop {
 }
 .boxstats {
     padding: 3px;
-    width: 105px;
+    width: 100px;
 }
 .boxstats130 {
     width: 135px;
@@ -3056,15 +3134,13 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #303035;
+  color: #fff;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0e0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #868;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: #989;
 }
 
 div.warning a, div.info a, div.error a {
@@ -3155,7 +3231,7 @@ div.titre {
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -3415,10 +3491,17 @@ a.websitebuttonsitepreview img {
 	width: 26px;
 	display: inline-block;
 }
+a.websitebuttonsitepreviewdisabled img {
+	opacity: 0.2;
+}
 .websiteiframenoborder {
 	border: 0px;
 }
-
+.websitehelp {
+    vertical-align: middle;
+    float: right;
+    padding-top: 8px;
+}
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */
@@ -3493,6 +3576,17 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	       height:18px;
 	       cursor:pointer;
 	     }
+
+
+/* ============================================================================== */
+/* Gantt
+/* ============================================================================== */
+
+td.gtaskname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
@@ -3727,6 +3821,33 @@ a.cke_dialog_ui_button
 a.cke_dialog_ui_button_ok span {
     text-shadow: none !important;
     color: #333 !important;
+}
+
+
+/* ============================================================================== */
+/*  ACE editor                                                                    */
+/* ============================================================================== */
+.ace_editor {
+    border: 1px solid #ddd;
+	margin: 0;
+}
+.aceeditorstatusbar {
+        margin: 0;
+        padding: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 20px;
+        color: #666;
+}
+.ace_status-indicator {
+        color: gray;
+        position: relative;
+        right: 0;
+        border-left: 1px solid;
+}
+pre#editfilecontentaceeditorid {
+    margin-top: 5px;
 }
 
 

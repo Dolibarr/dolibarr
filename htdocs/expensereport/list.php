@@ -2,7 +2,7 @@
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -130,8 +130,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -140,7 +140,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha'))		// Both test must be present to be compatible with all browsers
 {
     $search_ref="";
     $search_user="";
@@ -253,8 +253,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -488,7 +489,7 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}

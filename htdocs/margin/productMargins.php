@@ -207,9 +207,9 @@ if ($result)
 
 	//var_dump($conf->global->MARGIN_TYPE);
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice=$langs->trans('BuyingPrice');
+	    $labelcostprice='BuyingPrice';
 	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice=$langs->trans('CostPrice');
+	    $labelcostprice='CostPrice';
 
 	$moreforfilter='';
 
@@ -219,20 +219,20 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {
-  		print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$id,'',$sortfield,$sortorder);
-  		print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$id,'align="center"',$sortfield,$sortorder);
+  		print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$id,'',$sortfield,$sortorder);
+  		print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$id,'align="center"',$sortfield,$sortorder);
   	}
   	else
   	{
-  		print_liste_field_titre($langs->trans("ProductService"),$_SERVER["PHP_SELF"],"p.ref","","&amp;id=".$id,'',$sortfield,$sortorder);
+  		print_liste_field_titre("ProductService",$_SERVER["PHP_SELF"],"p.ref","","&amp;id=".$id,'',$sortfield,$sortorder);
   	}
-	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;id=".$id,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$cumul_achat = 0;

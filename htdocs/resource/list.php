@@ -76,8 +76,9 @@ foreach ($search_array_options as $key => $val)
 		$param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	$mode=0;
-	if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-	if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
 	{
 		$filter['ef.'.$tmpkey]=natural_search('ef.'.$tmpkey, $crit, $mode);
 	}
@@ -130,7 +131,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -247,7 +248,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
 			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
         }
     }
 }
@@ -311,7 +312,9 @@ if ($ret)
 }
 else
 {
-    print '<tr><td class="opacitymedium">'.$langs->trans('NoResourceInDatabase').'</td></tr>';
+    $colspan=1;
+    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 print '</table>';

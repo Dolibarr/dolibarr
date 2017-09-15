@@ -1,6 +1,5 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <year>  <name of author>
+/* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled. Language code is found on url.
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
@@ -51,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 session_cache_limiter(FALSE);
 
-// Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined) and load permission if we need to use them in CSS
+// Load user to have $user->conf loaded (not done by default here because of NOLOGIN constant defined) and load permission if we need to use them in CSS
 /*if (empty($user->id) && ! empty($_SESSION['dol_login']))
 {
     $user->fetch('',$_SESSION['dol_login']);

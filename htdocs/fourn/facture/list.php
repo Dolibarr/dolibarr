@@ -109,7 +109,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -183,8 +183,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -194,7 +194,7 @@ if (empty($reshook))
 {
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x"))		// All test must be present to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha'))		// All tests must be present to be compatible with all browsers
     {
         $search_all="";
         $search_user='';
@@ -237,6 +237,7 @@ if (empty($reshook))
     $objectclass='FactureFournisseur';
     $objectlabel='SupplierInvoices';
     $permtoread = $user->rights->fournisseur->facture->lire;
+    $permtocreate = $user->rights->fournisseur->facture->creer;
     $permtodelete = $user->rights->fournisseur->facture->supprimer;
     $uploaddir = $conf->fournisseur->facture->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -372,8 +373,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -426,6 +428,7 @@ if ($resql)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
+		if (empty($search_societe)) $search_societe = $soc->name;
 	}
 
 	$param='&socid='.$socid;
@@ -463,7 +466,8 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
+	    'validate'=>$langs->trans("Validate"),
+		//'presend'=>$langs->trans("SendByMail"),
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
@@ -489,9 +493,9 @@ if ($resql)
 	{
 	    $langs->load("mails");
 
-	    if (! GETPOST('cancel'))
+	    if (! GETPOST('cancel','alpha'))
 	    {
-	        $objecttmp=new FactureFourn($db);
+	    	$objecttmp=new FactureFournisseur($db);
 	        $listofselectedid=array();
 	        $listofselectedthirdparties=array();
 	        $listofselectedref=array();
@@ -890,7 +894,7 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}

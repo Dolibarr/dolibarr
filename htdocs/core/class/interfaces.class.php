@@ -120,7 +120,7 @@ class Interfaces
 
                         if (! $qualified)
                         {
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
+                            //dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
                             continue;
                         }
 
@@ -231,7 +231,7 @@ class Interfaces
      */
     function getTriggersList($forcedirtriggers=null)
     {
-        global $conf, $langs;
+        global $conf, $langs, $db;
 
         $files = array();
         $fullpath = array();
@@ -262,6 +262,8 @@ class Interfaces
                 {
                     if (is_readable($newdir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/',$file,$reg))
                     {
+                        if (preg_match('/\.back$/',$file)) continue;
+
 						$part1=$reg[1];
 						$part2=$reg[2];
 						$part3=$reg[3];
@@ -309,7 +311,7 @@ class Interfaces
             	continue;
             }
 
-            $objMod = new $modName($this->db);
+            $objMod = new $modName($db);
 
             // Define disabledbyname and disabledbymodule
             $disabledbyname=0;
@@ -323,8 +325,9 @@ class Interfaces
             {
                 $module=preg_replace('/^mod/i','',$reg[2]);
                 $constparam='MAIN_MODULE_'.strtoupper($module);
-                if (strtolower($reg[2]) == 'all') $disabledbymodule=0;
+                if (strtolower($module) == 'all') $disabledbymodule=0;
                 else if (empty($conf->global->$constparam)) $disabledbymodule=2;
+                $triggers[$j]['module']=strtolower($module);
             }
 
 			// We set info of modules
@@ -335,7 +338,7 @@ class Interfaces
             $triggers[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
             $triggers[$j]['version'] = $objMod->getVersion();
             $triggers[$j]['status'] = img_picto($langs->trans("Active"),'tick');
-            if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = "&nbsp;";
+            if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = '';
 
             $text ='<b>'.$langs->trans("Description").':</b><br>';
             $text.=$objMod->getDesc().'<br>';

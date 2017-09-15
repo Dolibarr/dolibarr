@@ -347,7 +347,7 @@ function dolRotateImage($file_path)
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
- *    	@return    string						Full path of thumb or '' if it fails
+ *    	@return    string						Full path of thumb or '' if it fails or 'Error...' if it fails
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
 {

@@ -43,6 +43,7 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('companies');
+$langs->load('propal');
 $langs->load('supplier_proposal');
 $langs->load('compta');
 $langs->load('bills');
@@ -167,8 +168,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -177,7 +178,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -284,7 +285,7 @@ if ($search_montant_vat != '') $sql.= natural_search("sp.tva", $search_montant_v
 if ($search_montant_ttc != '') $sql.= natural_search("sp.total", $search_montant_ttc, 1);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
-if ($search_status >= 0 && $search_status != '') $sql.= ' AND sp.fk_statut IN ('.$search_status.')';
+if ($search_status >= 0 && $search_status != '') $sql.= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -323,8 +324,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -418,7 +420,7 @@ if ($resql)
 	{
 	    $langs->load("mails");
 
-	    if (! GETPOST('cancel'))
+	    if (! GETPOST('cancel','alpha'))
 	    {
 	        $objecttmp=new SupplierProposal($db);
 	        $listofselectedid=array();
@@ -734,7 +736,7 @@ if ($resql)
 				$align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -1023,6 +1025,7 @@ if ($resql)
 	    $urlsource.=str_replace('&amp;','&',$param);
 
 	    $filedir=$diroutputmassaction;
+
 	    $genallowed=$user->rights->supplier_proposal->lire;
 	    $delallowed=$user->rights->supplier_proposal->lire;
 

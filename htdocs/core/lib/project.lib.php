@@ -175,6 +175,17 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
+	
+	// Manage discussion
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK))
+	{
+		$nbComments= $object->getNbComments();
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
+		$head[$h][1] = $langs->trans("TaskCommentLinks");
+		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
+		$head[$h][2] = 'task_comment';
+		$h++;
+	}
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
@@ -187,7 +198,7 @@ function task_prepare_head($object)
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
-
+    
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -629,15 +640,32 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '<tr class="oddeven">'."\n";
 
 				// User
+				/*
 				print '<td class="nowrap">';
 				print $fuser->getNomUrl(1, 'withproject', 'time');
 				print '</td>';
+				*/
+
+				// Project
+				print "<td>";
+				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				print "</td>";
 
 				// Ref
 				print '<td>';
 				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
 				print $taskstatic->getNomUrl(1,'withproject');
 				print '</td>';
+
+				if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
+				{
+				    // Thirdparty
+				    print '<td class="tdoverflowmax100">';
+				    $thirdpartystatic->id=$lines[$i]->socid;
+				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print '</td>';
+				}
 
 				// Label task
 				print "<td>";
@@ -651,21 +679,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
-
-				// Project
-				print "<td>";
-				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";
-
-				if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
-				{
-				    // Thirdparty
-				    print '<td class="tdoverflowmax100">';
-				    $thirdpartystatic->id=$lines[$i]->socid;
-				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
-				    print '</td>';
-				}
 
 				// Planned Workload
 				print '<td align="right">';
@@ -743,7 +756,13 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				// Warning
 				print '<td align="right">';
    				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
-   				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $langs->transnoentitiesnoconv("AssignTaskToUser", '...')));
+   				else if ($disabledtask)
+   				{
+   					$titleassigntask = $langs->trans("AssignTaskToMe");
+   					if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');
+
+   					print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $titleassigntask));
+   				}
 				print '</td>';
 
 				print "</tr>\n";
@@ -832,12 +851,35 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     $workloadforid[$projectstatic->id]=1;
 			    }
 
+				$projectstatic->id=$lines[$i]->fk_project;
+				$projectstatic->ref=$lines[$i]->projectref;
+				$projectstatic->title=$lines[$i]->projectlabel;
+				$projectstatic->public=$lines[$i]->public;
+				$projectstatic->thirdparty_name=$lines[$i]->thirdparty_name;
+
 				print '<tr class="oddeven">'."\n";
 
 				// User
+				/*
 				print '<td class="nowrap">';
 				print $fuser->getNomUrl(1, 'withproject', 'time');
 				print '</td>';
+				*/
+
+				// Project
+				print '<td class="nowrap">';
+				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				print "</td>";
+
+				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
+				{
+				    // Thirdparty
+				    print '<td class="tdoverflowmax100">';
+				    $thirdpartystatic->id=$lines[$i]->thirdparty_id;
+				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				    print $thirdpartystatic->getNomUrl(1, 'project');
+				    print '</td>';
+				}
 
 				// Ref
 				print '<td class="nowrap">';
@@ -859,26 +901,6 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
-
-				// Project
-				print '<td class="nowrap">';
-				$projectstatic->id=$lines[$i]->fk_project;
-				$projectstatic->ref=$lines[$i]->projectref;
-				$projectstatic->title=$lines[$i]->projectlabel;
-				$projectstatic->public=$lines[$i]->public;
-				$projectstatic->thirdparty_name=$lines[$i]->thirdparty_name;
-				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";
-
-				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
-				{
-				    // Thirdparty
-				    print '<td class="tdoverflowmax100">';
-				    $thirdpartystatic->id=$lines[$i]->thirdparty_id;
-				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				    print $thirdpartystatic->getNomUrl(1, 'project');
-				    print '</td>';
-				}
 
 				// Planned Workload
 				print '<td align="right">';
@@ -957,7 +979,13 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 		        // Warning
 				print '<td align="right">';
    				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
-   				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $langs->transnoentitiesnoconv("AssignTaskToUser", '...')));
+   				else if ($disabledtask)
+   				{
+   					$titleassigntask = $langs->trans("AssignTaskToMe");
+   					if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');
+
+   					print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $titleassigntask));
+   				}
 				print '</td>';
 
 		        print "</tr>\n";
@@ -1136,19 +1164,19 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 
     	print '<tr class="liste_titre">';
     	print_liste_field_titre($title.' <span class="badge">'.$num.'</span>',$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+    	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     	{
-    		print_liste_field_titre($langs->trans("OpportunityAmount"),"","","","",'align="right"',$sortfield,$sortorder);
-    		print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("OpportunityAmount","","","","",'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("OpportunityStatus","","","","",'align="right"',$sortfield,$sortorder);
     	}
     	if (empty($conf->global->PROJECT_HIDE_TASKS))
     	{
-            print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
-            if (! in_array('plannedworkload', $hiddenfields))  print_liste_field_titre($langs->trans("PlannedWorkload"),"","","","",'align="right"',$sortfield,$sortorder);
-            if (! in_array('declaredprogress', $hiddenfields)) print_liste_field_titre($langs->trans("ProgressDeclared"),"","","","",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre("Tasks","","","","",'align="right"',$sortfield,$sortorder);
+            if (! in_array('plannedworkload', $hiddenfields))  print_liste_field_titre("PlannedWorkload","","","","",'align="right"',$sortfield,$sortorder);
+            if (! in_array('declaredprogress', $hiddenfields)) print_liste_field_titre("ProgressDeclared","","","","",'align="right"',$sortfield,$sortorder);
     	}
-    	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Status","","","","",'align="right"',$sortfield,$sortorder);
     	print "</tr>\n";
 
 		while ($i < $num)

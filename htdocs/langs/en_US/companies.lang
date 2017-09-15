@@ -50,6 +50,7 @@ Lastname=Last name
 Firstname=First name
 PostOrFunction=Job position
 UserTitle=Title
+NatureOfThirdParty=Nature of Third party
 Address=Address
 State=State/Province
 StateShort=State

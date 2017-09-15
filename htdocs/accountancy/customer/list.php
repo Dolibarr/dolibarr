@@ -33,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -60,6 +62,10 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
+
 $btn_ventil = GETPOST('ventil', 'alpha');
 
 // Load variable for pagination
@@ -95,11 +101,11 @@ $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOU
  * Action
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
 	$search_lineid = '';
 	$search_ref = '';
@@ -109,6 +115,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
+	$search_month = '';
+	$search_year = '';
 }
 
 // Mass actions
@@ -174,12 +182,13 @@ if ($massaction == 'ventil') {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader('', $langs->trans("Ventilation"));
 
 // Customer Invoice lines
 $sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line,";
+$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
@@ -189,7 +198,8 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accounta
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND product_type <= 2";
-$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
+$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='' OR p.accountancy_code_sell NOT IN
+	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accounting_account as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid ='" . $conf->global->CHARTOFACCOUNTS . "'))";
 // Add search filter like
 if ($search_lineid) {
     $sql .= natural_search("l.rowid", $search_lineid, 1);
@@ -214,6 +224,19 @@ if (strlen(trim($search_account))) {
 }
 if (strlen(trim($search_vat))) {
     $sql .= natural_search("l.tva_tx",$search_vat,1);
+}
+if ($search_month > 0)
+{
+	if ($search_year > 0 && empty($search_day))
+		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+		else if ($search_year > 0 && ! empty($search_day))
+			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
+			else
+				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
+}
+else if ($search_year > 0)
+{
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
@@ -245,6 +268,15 @@ if ($result) {
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($search_lineid)      $param.='&search_lineid='.urlencode($search_lineid);
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year='.urlencode($search_year);
+	if ($search_invoice)     $param.='&search_invoice='.urlencode($search_invoice);
+	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+	if ($search_desc)        $param.='&search_desc='.urlencode($search_desc);
+	if ($search_amount)      $param.='&search_amount='.urlencode($search_amount);
+	if ($search_vat)         $param.='&search_vat='.urlencode($search_vat);
 
 	$arrayofmassactions =  array(
 	    'ventil'=>$langs->trans("Ventilate")
@@ -279,7 +311,11 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre center">';
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+   	$formother->select_year($search_year,'search_year',1, 20, 5);
+	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
@@ -294,16 +330,16 @@ if ($result) {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("LineId"), $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef, f.facnumber, l.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("ProductRef"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre($langs->trans("ProductLabel"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AccountAccountingSuggest"), '', '', '', '', 'align="center"');
-	print_liste_field_titre($langs->trans("IntoAccount"), '', '', '', '', 'align="center"');
+	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.facnumber, l.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', 'align="center"');
+	print_liste_field_titre("IntoAccount", '', '', '', '', 'align="center"');
 	$checkpicto='';
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
@@ -387,7 +423,7 @@ if ($result) {
 		if ($objp->vat_tx_l != $objp->vat_tx_p)
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		print '<td style="' . $code_vat_differ . '" align="right">';
-		print price($objp->tva_tx_line);
+		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
 		// Current account

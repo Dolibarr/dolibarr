@@ -156,4 +156,7 @@ NoContactWithCategoryFound=No contact/address with a category found
 NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found
 OutGoingEmailSetup=Outgoing email setup
 InGoingEmailSetup=Incoming email setup
+OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
+DefaultOutgoingEmailSetup=Default outgoing email setup
+
 

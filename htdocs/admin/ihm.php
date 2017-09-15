@@ -55,7 +55,7 @@ if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
  * Action
  */
 
-if (GETPOST('cancel'))
+if (GETPOST('cancel','alpha'))
 {
     $action='';
 }

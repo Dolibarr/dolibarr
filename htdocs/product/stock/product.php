@@ -32,6 +32,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -50,15 +51,15 @@ $langs->load("stocks");
 $langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 $d_eatby=dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 $d_sellby=dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
@@ -614,7 +615,7 @@ if ($id > 0 || $ref)
 		}
 
         // Stock alert threshold
-        print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td>';
+        print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1),'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td>';
         print $form->editfieldval("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
 
@@ -655,7 +656,7 @@ if ($id > 0 || $ref)
 		{
 		    if ($found) $helpondiff.='<br>'; else $found=1;
 		    $helpondiff.=$langs->trans("ProductQtyInCustomersOrdersRunning").': '.$object->stats_commande['qty'];
-		    $result=$object->load_stats_commande(0,'0');
+		    $result=$object->load_stats_commande(0,'0', 1);
 		    if ($result < 0) dol_print_error($db,$object->error);
 		    $helpondiff.=' ('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')';
 		}
@@ -664,7 +665,7 @@ if ($id > 0 || $ref)
 		if (! empty($conf->expedition->enabled))
 		{
 		    if ($found) $helpondiff.='<br>'; else $found=1;
-		    $result=$object->load_stats_sending(0,'2');
+		    $result=$object->load_stats_sending(0,'2', 1);
 		    $helpondiff.=$langs->trans("ProductQtyInShipmentAlreadySent").': '.$object->stats_expedition['qty'];
 		}
 
@@ -672,9 +673,9 @@ if ($id > 0 || $ref)
 		if (! empty($conf->fournisseur->enabled))
 		{
 		    if ($found) $helpondiff.='<br>'; else $found=1;
-		    $result=$object->load_stats_commande_fournisseur(0,'3,4');
+		    $result=$object->load_stats_commande_fournisseur(0,'3,4', 1);
 		    $helpondiff.=$langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
-		    $result=$object->load_stats_commande_fournisseur(0,'0,1,2');
+		    $result=$object->load_stats_commande_fournisseur(0,'0,1,2', 1);
 		    if ($result < 0) dol_print_error($db,$object->error);
 		    $helpondiff.=' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')';
 		}
@@ -769,13 +770,13 @@ if (empty($reshook))
 
 	    if ($user->rights->stock->mouvement->creer)
 	    {
-	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
 	    }
 
 	    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
 	    if ($user->rights->stock->mouvement->creer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		print '</div>';
@@ -823,6 +824,8 @@ $sql.= " AND ps.fk_product = ".$object->id;
 $sql.= " ORDER BY e.label";
 
 $entrepotstatic=new Entrepot($db);
+$product_lot_static=new Productlot($db);
+
 $total=0;
 $totalvalue=$totalvaluesell=0;
 
@@ -867,6 +870,11 @@ if ($resql)
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
+				$product_lot_static->id = $pdluo->lotid;
+				$product_lot_static->batch = $pdluo->batch;
+				$product_lot_static->eatby = $pdluo->eatby;
+				$product_lot_static->sellby = $pdluo->sellby;
+
 			    if ($action == 'editline' && GETPOST('lineid','int') == $pdluo->id)
 			    { //Current line edit
 			        print "\n".'<tr>';
@@ -891,12 +899,14 @@ if ($resql)
 				{
                     print "\n".'<tr><td align="right">';
                     print img_picto($langs->trans("Tranfer"),'uparrow','class="hideonsmartphone"').' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("TransferStock").'</a>';
 					// Disabled, because edition of stock content must use the "Correct stock menu".
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
                     //print img_edit().'</a></td>';
-                    print '<td align="right">'.$pdluo->batch.'</td>';
+                    print '<td align="right">';
+                    print $product_lot_static->getNomUrl(1);
+                    print '</td>';
                     print '<td align="center">'. dol_print_date($pdluo->eatby,'day') .'</td>';
                     print '<td align="center">'. dol_print_date($pdluo->sellby,'day') .'</td>';
                     print '<td align="right">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';

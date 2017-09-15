@@ -162,10 +162,10 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	$outputlangs = $langs;
-	if (GETPOST('lang_id'))
+	if (GETPOST('lang_id','aZ09'))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang(GETPOST('lang_id'));
+		$outputlangs->setDefaultLang(GETPOST('lang_id','aZ09'));
 	}
 	$result= $object->generateDocument($object->modelpdf, $outputlangs);
 	if ($result <= 0)
@@ -459,7 +459,9 @@ if ($id > 0 || ! empty($ref))
 
 			    // Third party
 			    $morehtmlref.=$langs->trans("ThirdParty").': ';
-			    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+			    if (!empty($projectstatic->thirdparty)) {
+                    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+			    }
 			    $morehtmlref.='</div>';
 			}
 
@@ -585,6 +587,11 @@ if ($id > 0 || ! empty($ref))
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
 
 			print '</div></div></div>';
 		}

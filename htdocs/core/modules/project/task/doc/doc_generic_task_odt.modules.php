@@ -829,6 +829,8 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

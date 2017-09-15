@@ -118,7 +118,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
@@ -330,10 +330,11 @@ if (empty($user->societe_id))
 
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
+	            //$sep=($conf->dol_use_jmobile?'<br>':' ');
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            $boxstat.='<div class="boxstats">';
-	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
-	            $boxstat.='<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
+	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
+	            $boxstat.='<span class="boxstatsindicator">'.img_object("",$icons[$key],'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
 	            $boxstat.='</div>';
 	            $boxstat.='</a>';
 	        }
@@ -448,7 +449,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->supplier_invoice->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
+if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fournisseur->facture->lire))
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);
@@ -541,12 +542,11 @@ if ($showweather)
     $boxwork.='</tr>';
 }
 
-$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer">';
-
 // Show dashboard
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
+	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
         if (empty($boad->nbtodo)) $nbworkboardempty++;
@@ -556,6 +556,7 @@ if (! empty($valid_dashboardlines))
 
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
+        $sep=($conf->dol_use_jmobile?'<br>':' ');
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
         $boxwork .= '</div>';
@@ -564,7 +565,7 @@ if (! empty($valid_dashboardlines))
             $boxwork .= '<div class="dashboardlinelatecoin nowrap">';
             $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
             //$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
-            $boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+            $boxwork .= img_picto($textlate, "warning_white", 'class="inline-block hideonsmartphone valigntextbottom"').'';
             $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
             $boxwork .= $board->nbtodolate;
             $boxwork .= '</span>';
@@ -581,11 +582,12 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='</td></tr>';
 }
 else
 {
     $boxwork.='<tr class="nohover">';
-    $boxwork.='<td colspan="4" class="nohover valignmiddle opacitymedium">';
+    $boxwork.='<td class="nohover valignmiddle opacitymedium">';
     $boxwork.=$langs->trans("NoOpenedElementToProcess");
     $boxwork.='</td>';
     $boxwork.='</tr>';

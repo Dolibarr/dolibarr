@@ -39,7 +39,6 @@ EndProcessing=Processo foi finalizado.
 NoAccountSelected=Nenhuma conta da Contabilidade selecionada
 VentilatedinAccount=Vinculado a conta contábil com sucesso
 NotVentilatedinAccount=Não vinculado a conta contábil
-XLineSuccessfullyBinded=%s produtos/serviços vinculados com sucesso a uma conta da Contabilidade
 XLineFailedToBeBinded=%s produtos/serviços não estão vinculados a qualquer conta da Contabilidade
 ACCOUNTING_LIMIT_LIST_VENTILATION=Numero de elementos para vincular, mostrado por página (máximo recomendado: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Iniciar a página "Vinculações a fazer" ordenando pelos elementos mais recentes
@@ -82,7 +81,6 @@ DescVentilDoneSupplier=Consulte aqui a lista das linhas de faturas de fornecedor
 ValidateHistory=Vincular Automaticamente
 AutomaticBindingDone=Vinculação automática realizada
 ErrorAccountancyCodeIsAlreadyUse=Erro, você não pode excluir esta conta contábil, pois ela esta em uso
-MvtNotCorrectlyBalanced=Movimento sem o equilíbrio correto. Crédito = %s. Débito = %s
 ListOfProductsWithoutAccountingAccount=Lista de produtos não vinculados a qualquer conta da Contabilidade
 ChangeBinding=Alterar a vinculação
 AccountingJournalType2=De vendas

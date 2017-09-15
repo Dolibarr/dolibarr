@@ -23,7 +23,7 @@
  */
 /**
  * \file		htdocs/accountancy/supplier/card.php
- * \ingroup		Accountancy
+ * \ingroup		Advanced accountancy
  * \brief		Card expense report ventilation
  */
 require '../../main.inc.php';
@@ -56,7 +56,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "expensereport_det";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
-		
+
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');

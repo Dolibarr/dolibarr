@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
- * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@zendsi.com>
- * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  *
@@ -190,8 +190,9 @@ function getBrowserInfo($user_agent)
 	}
 
 	// OS
-	if (preg_match('/linux/i', $user_agent))	{ $os='linux'; }
+	if (preg_match('/linux/i', $user_agent))			{ $os='linux'; }
 	elseif (preg_match('/macintosh/i', $user_agent))	{ $os='macintosh'; }
+	elseif (preg_match('/windows/i', $user_agent))		{ $os='windows'; }
 
 	// Name
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))      { $name='firefox';   $version=$reg[2]; }
@@ -201,7 +202,8 @@ function getBrowserInfo($user_agent)
 	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  }
 	elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg))   { $name='safari';    $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))    { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
 	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) { $name='lynxlinks'; $version=$reg[4]; }
 
 	if ($tablet) {
@@ -245,7 +247,7 @@ function dol_shutdown()
  *  @param	string	$check	     Type of check
  *                                  ''=no check (deprecated)
  *                                  'none'=no check (only for param that should have very rich content)
- *                                  'int'=check it's numeric
+ *                                  'int'=check it's numeric (integer or float)
  *                                  'alpha'=check it's text and sign
  *                                  'aZ'=check it's a-z only
  *                                  'aZ09'=check it's simple alpha string (recommended for keys)
@@ -257,14 +259,18 @@ function dol_shutdown()
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
  *  @return string|string[]      Value found (string or array), or '' if check fails
- *
- *  @TODO Set default value for check to alpha. Check all WYSIWYG edition (email and description...) is still ok with rich text.
  */
-function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
+function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=NULL)
 {
     global $mysoc,$user,$conf;
 
     if (empty($paramname)) return 'BadFirstParameterForGETPOST';
+    if (empty($check))
+    {
+    	dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+    	// Enable this line to know who call the GETPOST with '' $check parameter.
+    	//var_dump(debug_backtrace()[0]);
+    }
 
     if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
@@ -275,12 +281,14 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 
 	if (empty($method) || $method == 3 || $method == 4)
 	{
+
     	$relativepathstring = $_SERVER["PHP_SELF"];
     	// Clean $relativepathstring
     	if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
     	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-    	//var_dump($relativepathstring);
+		//var_dump($relativepathstring);
+		//var_dump($user->default_values);
 
         // Code for search criteria persistence.
     	// Retrieve values if restore_lastsearch_values is set and there is saved values
@@ -302,12 +310,25 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    // Else, retreive default values if we are not doing a sort
 	    elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 	    {
-	        if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+	    	if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
 	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
-	                //var_dump($user->default_values[$relativepathstring]['createform']);
-	                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+					$qualified=1;
+                	if (isset($user->default_values[$relativepathstring]['createform_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+                	{
+                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['createform_queries']);
+                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+                		{
+                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+                		}
+                	}
+					if ($qualified)
+					{
+		            	//var_dump($user->default_values[$relativepathstring]['createform']);
+		                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+					}
 	            }
 	        }
 	        // Management of default search_filters and sort order
@@ -317,34 +338,85 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
 	            {
 	                //var_dump($user->default_values[$relativepathstring]);
-	                if ($paramname == 'sortfield')
+	                if ($paramname == 'sortfield')			// Sorted on which fields ?
 	                {
-	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
-	                    {
-	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-	                        {
-	                            if ($out) $out.=', ';
-	                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
-	                        }
-	                    }
+	                	$qualified=1;
+	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+	                	{
+	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
+	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                		{
+	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+	                		}
+	                	}
+						if ($qualified)
+						{
+		                	if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
+		                    {
+		                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+		                        {
+		                            if ($out) $out.=', ';
+		                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
+		                        }
+		                    }
+						}
 	                }
-	                elseif ($paramname == 'sortorder')
+	                elseif ($paramname == 'sortorder')		// ASC or DESC ?
 	                {
-	                    if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
-	                    {
-	                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-	                        {
-	                            if ($out) $out.=', ';
-	                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
-	                        }
-	                    }
+	                	$qualified=1;
+	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))
+	                	{
+	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
+	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                		{
+	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+	                		}
+	                	}
+						if ($qualified)
+						{
+		                	if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
+		                    {
+		                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
+		                        {
+		                            if ($out) $out.=', ';
+		                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
+		                        }
+		                    }
+						}
 	                }
 	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
 	                {
-	                    $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-	                    $out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+	                	$qualified=1;
+	                	if (isset($user->default_values[$relativepathstring]['filters_queries']))
+	                	{
+	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['filters_queries']);
+	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                		{
+	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
+	                		}
+	                	}
+						if ($qualified)
+						{
+		                	if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+		                	{
+		                		// We made a search from quick search menu, do we still use default filter ?
+		                		if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+		                		{
+		                    		$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                    		$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+		                		}
+		                	}
+		                	else
+		                	{
+		                    	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                    	$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+		                	}
+						}
 	                }
 	            }
 	        }
@@ -352,15 +424,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 
 	}
 
-	if (empty($check) && ! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-	   dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
-	   // Enable this line to know who call the GETPOST with empty $check parameter.
-	   //var_dump(debug_backtrace()[0]);
-	}
-
-	if (! empty($check))
-	{
 	    // Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
 	    // Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
 	    // We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
@@ -407,7 +470,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    {
 	        case 'none':
 	            break;
-	        case 'int':
+	        case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
 	            if (! is_numeric($out)) { $out=''; }
 	            break;
 	        case 'intcomma':
@@ -429,7 +492,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            break;
 	        case 'aZ09':
 	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9_\-]+/i',$out)) $out='';
+	            if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
 	            break;
 	        case 'array':
 	            if (! is_array($out) || empty($out)) $out=array();
@@ -450,7 +513,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            $out=filter_var($out, $filter, $options);
 	            break;
 	    }
-	}
 
     // Code for search criteria persistence.
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
@@ -624,18 +686,26 @@ function dol_buildpath($path, $type=0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  Property that are reference are also new object (true clone)
+ *  With native = 0: Property that are reference are also new object (true clone). This means $this->db is not valid.
+ *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db is still valid.
  *
  * 	@param	object	$object		Object to clone
+ *  @param	int		$native		Native method or true method
  *	@return object				Object clone
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
-function dol_clone($object)
+function dol_clone($object, $native=0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
-	//$myclone = clone $object;                    // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable
-	$myclone=unserialize(serialize($object));
+	if (empty($native))
+	{
+		$myclone=unserialize(serialize($object));
+	}
+	else
+	{
+		$myclone = clone $object;     // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
+	}
 
 	return $myclone;
 }
@@ -746,7 +816,8 @@ function dol_string_unaccent($str)
 }
 
 /**
- *	Clean a string from all punctuation characters to use it as a ref or login
+ *	Clean a string from all punctuation characters to use it as a ref or login.
+ *  This is a more complete function than dol_sanitizeFileName.
  *
  *	@param	string	$str            	String to clean
  * 	@param	string	$newstr				String to replace forbidden chars with
@@ -757,7 +828,7 @@ function dol_string_unaccent($str)
  */
 function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
-	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=");
+	$forbidden_chars_to_replace=array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°');  // more complete than dol_sanitizeFileName
 	$forbidden_chars_to_remove=array();
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
@@ -1126,7 +1197,7 @@ function dol_get_fiche_end($notab=0)
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
- *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+ *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
  *  @param	string	$morehtmlref  	More html to show after ref
  *  @param	string	$moreparam  	More param to add in nav link url.
@@ -1181,10 +1252,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			}
+			//}
         }
 	}
 	else
@@ -1225,8 +1296,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                           && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
                            )
                         {
-                            $ret = dol_convert_file($file, 'png', $fileimage);
-                            if ($ret < 0) $error++;
+                        	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+                        	{
+                            	$ret = dol_convert_file($file, 'png', $fileimage);
+                            	if ($ret < 0) $error++;
+                        	}
                         }
 
                         $heightforphotref=70;
@@ -1261,7 +1335,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                 }
             }
 
-            if (! $phototoshow && $conf->browser->layout != 'phone')      // Show No photo link (picto of pbject)
+            if (! $phototoshow)      // Show No photo link (picto of pbject)
             {
                 $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
                 if ($object->element == 'action')
@@ -1277,7 +1351,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                     if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
     				$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
                 }
-                $morehtmlleft.='<!-- No photo to show --><div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+                $morehtmlleft.='<!-- No photo to show -->';
+                $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+
                 $morehtmlleft.='</div>';
             }
         }
@@ -1319,6 +1395,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
         else $morehtmlstatus.=$object->getLibStatut(4);
 	}
+	elseif ($object->element == 'facturerec')
+	{
+        if ($object->frequency==0) $morehtmlstatus.=$object->getLibStatut(2);
+        else $morehtmlstatus.=$object->getLibStatut(4);
+	}
 	else { // Generic case
 	    $tmptxt=$object->getLibStatut(6);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
@@ -1332,7 +1413,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if ($object->element != 'product' && $object->element != 'bookmark')
+	if ($object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories')
 	{
     	$morehtmlref.='<div class="refidno">';
     	$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -2462,12 +2543,12 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible. 0 for no limit. Final string size can be 1 more (if size was max+1) or 3 more (if we added ...)
+ *	@param  int		$size				Max string size visible (excluding ...). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added ..., or if size was max+1 or max+2 or max+3 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
  *  @param  int     $display            Trunc is use to display and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
- *	@return string						Truncated string
+ *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0, $display=0)
 {
@@ -2483,9 +2564,10 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	if ($trunc == 'right')
 	{
 		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-        if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:1)))
+		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
 		return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
 		else
+		//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
 		return $string;
 	}
 	elseif ($trunc == 'middle')
@@ -2503,7 +2585,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 	elseif ($trunc == 'left')
 	{
 		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+1))
+		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
 		return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
 		else
 		return $string;
@@ -2543,7 +2625,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($pictoisfullpath)
 	{
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
 		$fullpathpicto = $picto;
 	}
 	else
@@ -2565,7 +2647,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
 		// If alt path are defined, define url where img file is, according to physical path
 		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
 		{
@@ -3234,7 +3316,12 @@ function dol_print_error($db='',$error='',$errors=null)
 	}
 
 	if (empty($dolibarr_main_prod)) print $out;
-	else define("MAIN_CORE_ERROR", 1);
+	else
+	{
+		print $langs->trans("DolibarrHasDetectedError").'. ';
+		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
+		define("MAIN_CORE_ERROR", 1);
+	}
 	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
@@ -3270,31 +3357,34 @@ function dol_print_error_email($prefixcode, $errormessage='')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *  @param	string	$tooltip	 Tooltip
  *	@return	void
  */
-function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="", $tooltip="")
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix, 0, $tooltip);
 }
 
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        Translation key of field
- *	@param	int		$thead		 0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
- *	@param	string	$file        Url used when we click on sort picto
- *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
- *	@param	string	$begin       ("" by defaut)
- *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
- *	@param  string	$sortfield   Current field used to sort (Ex: 'd.datep,d.id')
- *	@param  string	$sortorder   Current sort order (Ex: 'asc,desc')
- *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
+ *	@param	string	$name        		Translation key of field
+ *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	string	$file        		Url used when we click on sort picto
+ *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable.
+ *	@param	string	$begin       		("" by defaut)
+ *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
+ *	@param  string	$moreattrib  		Add more attributes on th ("" by defaut, example: 'align="center"'). To add more css class, use param $prefix.
+ *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
+ *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
+ *  @param	string	$disablesortlink	1=Disable sort link
+ *  @param	string	$tooltip	 		Tooltip
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="")
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $disablesortlink=0, $tooltip='')
 {
-	global $conf, $langs;
+	global $conf, $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	$sortorder=strtoupper($sortorder);
@@ -3310,13 +3400,12 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	$field1=trim($tmpfield[0]);            // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
 	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
-
 	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -3335,9 +3424,10 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		}
 	}
 
-	$out.=$langs->trans($name);
+	if ($tooltip) $out.=$form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
+	else $out.=$langs->trans($name);
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
 		$out.='</a>';
 	}
@@ -3510,8 +3600,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle" align="right">';
-	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
-	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
+	if ($sortfield) $options .= "&sortfield=".$sortfield;
+	if ($sortorder) $options .= "&sortorder=".$sortorder;
 	// Show navigation bar
 	$pagelist = '';
 	if ($savlimit != 0 && ($page > 0 || $num > $limit))
@@ -3558,7 +3648,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'').'>'.($page+1)."</li>";
 		}
 	}
+
 	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
+
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -3684,7 +3776,13 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 		$info_bits |= 1;
 	}
 
-	$ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
+	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	else
+	{
+		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		$ret=$rate.($addpercent?'%':'');
+	}
 	if ($info_bits & 1) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
@@ -3766,7 +3864,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else
 		{
@@ -4159,7 +4257,7 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
  *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
- *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type1, rate localtax2, accountancycodecust, accountancycodesupp)
+ *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid=0)
@@ -4763,22 +4861,57 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
  * Return first line of text. Cut will depends if content is HTML or not.
  *
  * @param 	string	$text		Input text
+ * @param	int		$nboflines  Nb of lines to get (default is 1 = first line only)
  * @return	string				Output text
  * @see dol_nboflines_bis, dol_string_nohtmltag, dol_escape_htmltag
  */
-function dolGetFirstLineOfText($text)
+function dolGetFirstLineOfText($text, $nboflines=1)
 {
-	if (dol_textishtml($text))
+	if ($nboflines == 1)
 	{
-		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
-		$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
+		if (dol_textishtml($text))
+		{
+			$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
+			$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
 
+		}
+		else
+		{
+	    	$firstline=preg_replace('/[\n\r].*/','',$text);
+		}
+    	return $firstline.((strlen($firstline) != strlen($text))?'...':'');
 	}
 	else
 	{
-    	$firstline=preg_replace('/[\n\r].*/','',$text);
+		$ishtml=0;
+		if (dol_textishtml($text))
+		{
+			$text=preg_replace('/\n/','',$text);
+			$ishtml=1;
+			$repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
+		}
+		else
+		{
+			$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
+		}
+
+		$text = strtr($text, $repTable);
+		if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+		else $pattern = '/(<br[^>]*>)/U';							// /U is to have UNGREEDY regex to limit to one html tag.
+		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+		$firstline='';
+		$i=0;
+		$nba = count($a);	// 2x nb of lines in $a because $a contains also a line for each new line separator
+		while (($i < $nba) && ($i < ($nboflines * 2)))
+		{
+			if ($i % 2 == 0) $firstline .= $a[$i];
+			elseif (($i < (($nboflines * 2) - 1)) && ($i < ($nba - 1))) $firstline .= ($ishtml?"<br>\n":"\n");
+			$i++;
+		}
+		unset($a);
+    	return $firstline.(($i < $nba)?'...':'');
 	}
-    return $firstline.((strlen($firstline) != strlen($text))?'...':'');
 }
 
 
@@ -4940,7 +5073,7 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	Return nb of lines of a formated text with \n and <br> (we can't have both \n and br)
+ *	Return nb of lines of a formated text with \n and <br> (WARNING: string must not have mixed \n and br separators)
  *
  *	@param	string	$text      		Text
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
@@ -4976,6 +5109,8 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 			}
 		}
 	}
+
+	unset($a);
 	return $nblines;
 }
 
@@ -5674,8 +5809,8 @@ function dol_osencode($str)
  * 		@param	DoliDB	$db			Database handler
  * 		@param	string	$key		Code or Id to get Id or Code
  * 		@param	string	$tablename	Table name without prefix
- * 		@param	string	$fieldkey	Field for code
- * 		@param	string	$fieldid	Field for id
+ * 		@param	string	$fieldkey	Field for search ('code' or 'id')
+ * 		@param	string	$fieldid	Field to get ('id' or 'code')
  *      @return int					<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
@@ -5837,6 +5972,7 @@ function picto_from_langcode($codelang)
  *          		            	        'supplier_invoice' to add a tab in supplier invoice view
  *                  		    	        'invoice'          to add a tab in customer invoice view
  *                          			    'order'            to add a tab in customer order view
+ *                          				'contract'		   to add a tabl in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view
  *                              			'user'             to add a tab in user view
@@ -6124,14 +6260,16 @@ function dol_getmypid()
  *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
  *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
- *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
- * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
+ *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
 function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
+
+    $value=trim($value);
 
     if ($mode == 0)
     {
@@ -6193,29 +6331,39 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
-	            	$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '') . $field . " LIKE '";
+					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
-	            	$tmpcrit=trim($tmpcrit);
-	            	$tmpcrit2=$tmpcrit;
-	            	$tmpbefore='%'; $tmpafter='%';
-	            	if (preg_match('/^[\^\$]/', $tmpcrit))
-	            	{
-	            	    $tmpbefore='';
-	            	    $tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
-	            	}
-					if (preg_match('/[\^\$]$/', $tmpcrit))
-	            	{
-	            	    $tmpafter='';
-	            	    $tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
-	            	}
-	            	$newres .= $tmpbefore;
-	            	$newres .= $db->escape($tmpcrit2);
-	            	$newres .= $tmpafter;
-	            	$newres .= "'";
-	            	if (empty($tmpcrit2))
-	            	{
-	            	    $newres .= ' OR ' . $field . " IS NULL";
-	            	}
+					if (preg_match('/\.(id|rowid)$/', $field))	// Special cas for rowid that is sometimes a ref so used as a search field
+					{
+						$newres .= $field . " = " . (is_numeric(trim($tmpcrit))?trim($tmpcrit):'0');
+					}
+					else
+					{
+						$newres .= $field . " LIKE '";
+
+		            	$tmpcrit=trim($tmpcrit);
+		            	$tmpcrit2=$tmpcrit;
+		            	$tmpbefore='%'; $tmpafter='%';
+		            	if (preg_match('/^[\^\$]/', $tmpcrit))
+		            	{
+		            	    $tmpbefore='';
+		            	    $tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
+		            	}
+						if (preg_match('/[\^\$]$/', $tmpcrit))
+		            	{
+		            	    $tmpafter='';
+		            	    $tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
+		            	}
+		            	$newres .= $tmpbefore;
+		            	$newres .= $db->escape($tmpcrit2);
+		            	$newres .= $tmpafter;
+		            	$newres .= "'";
+		            	if ($tmpcrit2 == '')
+		            	{
+		            	    $newres .= ' OR ' . $field . " IS NULL";
+		            	}
+					}
+
 	            	$i3++;
 				}
 				$i2++;	// a criteria was added to string
@@ -6403,3 +6551,43 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
     return $mime;
 }
 
+/**
+ * Return value from dictionary
+ *
+ * @param string	$tablename		name of dictionary
+ * @param string	$field			the value to return
+ * @param int		$id				id of line
+ * @param bool		$checkentity	add filter on entity
+ * @param string	$rowidfield		name of the column rowid
+ */
+function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
+{
+	global $dictvalues,$db,$langs;
+
+	if (!isset($dictvalues[$tablename]))
+	{
+		$dictvalues[$tablename] = array();
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
+		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql))
+			{
+				$dictvalues[$tablename][$obj->{$rowidfield}] = $obj;
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	if (!empty($dictvalues[$tablename][$id])) return $dictvalues[$tablename][$id]->{$field}; // Found
+	else // Not found
+	{
+		if ($id > 0) return $id;
+		return '';
+	}
+}

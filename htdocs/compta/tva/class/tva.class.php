@@ -106,12 +106,12 @@ class Tva extends CommonObject
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
-		$sql.= " '".$this->amount."',";
-		$sql.= " '".$this->label."',";
-		$sql.= " '".$this->note."',";
-		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
-		$sql.= " '".$this->fk_user_creat."',";
-		$sql.= " '".$this->fk_user_modif."'";
+		$sql.= " '".$this->db->escape($this->amount)."',";
+		$sql.= " '".$this->db->escape($this->label)."',";
+		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
+		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
 
 		$sql.= ")";
 
@@ -173,18 +173,15 @@ class Tva extends CommonObject
 
 		// Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
-
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " datep=".$this->db->idate($this->datep).",";
-		$sql.= " datev=".$this->db->idate($this->datev).",";
+		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		$sql.= " datep='".$this->db->idate($this->datep)."',";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
 		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".$this->fk_bank.",";
 		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
-		$sql.= " fk_user_modif=".$this->fk_user_modif."";
-
-
+		$sql.= " fk_user_modif=".($this->fk_user_modif>0?$this->fk_user_modif:$user->id)."";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -538,11 +535,11 @@ class Tva extends CommonObject
 		$sql.= "'".$this->db->idate($this->datep)."'";
         $sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
-        $sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+        $sql.= ", '".$this->db->escape($this->type_payment)."'";
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.= ", '".$user->id."'";
+        $sql.= ", '".$this->db->escape($user->id)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
         $sql.= ")";
@@ -580,7 +577,7 @@ class Tva extends CommonObject
 					} else {
 						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), '', '', $user);
 					}
-						
+
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
 					{
@@ -731,7 +728,7 @@ class Tva extends CommonObject
 	{
 	    return $this->LibStatut($this->statut,$mode);
 	}
-	
+
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *

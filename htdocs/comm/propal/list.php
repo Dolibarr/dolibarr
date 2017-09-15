@@ -73,16 +73,17 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
-$viewstatut=GETPOST('viewstatut');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
+
+$viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$object_statut=GETPOST('propal_statut');
+$object_statut=GETPOST('propal_statut','alpha');
 
 $sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
-$day=GETPOST("day","int");
-$month=GETPOST("month","int");
-$year=GETPOST("year","int");
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -168,8 +169,8 @@ $object = new Propal($db);	// To be passed as parameter of executeHooks that nee
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -178,7 +179,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -197,9 +198,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
-	$year='';
-    $month='';
-    $day='';
+	$search_year='';
+    $search_month='';
+    $search_day='';
 	$viewstatut='';
 	$object_statut='';
 	$toselect='';
@@ -295,18 +296,18 @@ if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-if ($month > 0)
+if ($search_month > 0)
 {
-    if ($year > 0 && empty($day))
-    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-    else if ($year > 0 && ! empty($day))
-    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    if ($search_year > 0 && empty($search_day))
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+    else if ($search_year > 0 && ! empty($search_day))
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
     else
-    $sql.= " AND date_format(p.datep, '%m') = '".$db->escape($month)."'";
+    $sql.= " AND date_format(p.datep, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($year > 0)
+else if ($search_year > 0)
 {
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
@@ -320,8 +321,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -355,6 +357,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfProposals') . ' - '.$soc->name;
+		if (empty($search_societe)) $search_societe = $soc->name;
 	}
 	else
 	{
@@ -369,9 +372,10 @@ if ($resql)
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
-	if ($month)              $param.='&month='.urlencode($month);
-	if ($year)               $param.='&year='.urlencode($year);
-    if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year='.urlencode($search_year);
+	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
     if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
     if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
@@ -416,7 +420,7 @@ if ($resql)
 	{
 	    $langs->load("mails");
 
-	    if (! GETPOST('cancel'))
+	    if (! GETPOST('cancel','alpha'))
 	    {
 	        $objecttmp=new Propal($db);
 	        $listofselectedid=array();
@@ -611,19 +615,18 @@ if ($resql)
 	// Date
 	if (! empty($arrayfields['p.date']['checked']))
 	{
-	    print '<td class="liste_titre" colspan="1" align="center">';
+	    print '<td class="liste_titre" align="center">';
     	//print $langs->trans('Month').': ';
-    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+    	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
     	//print '&nbsp;'.$langs->trans('Year').': ';
-    	$syear = $year;
-    	$formother->select_year($syear,'year',1, 20, 5);
+    	$formother->select_year($search_year,'search_year',1, 20, 5);
     	print '</td>';
 	}
 	// Date end
 	if (! empty($arrayfields['p.fin_validite']['checked']))
 	{
-	   print '<td class="liste_titre" colspan="1">&nbsp;</td>';
+	   print '<td class="liste_titre">&nbsp;</td>';
 	}
 	if (! empty($arrayfields['p.total_ht']['checked']))
 	{
@@ -734,7 +737,7 @@ if ($resql)
 				$align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -755,7 +758,6 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-
     	$objectstatic->id=$obj->rowid;
     	$objectstatic->ref=$obj->ref;
 
@@ -768,7 +770,7 @@ if ($resql)
     		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
     		print '<td class="nobordernopadding nowrap">';
-    		print $objectstatic->getNomUrl(1);
+    		print $objectstatic->getNomUrl(1, '', '', 0, 1);
     		print '</td>';
             // Warning
             $warnornote='';

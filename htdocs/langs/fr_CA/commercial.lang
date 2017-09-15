@@ -5,6 +5,7 @@ ConfirmDeleteAction=Êtes-vous sûr de vouloir supprimer cet événement?
 ActionOnCompany=Société associée
 ActionOnContact=Contact connexe
 ThirdPartiesOfSaleRepresentative=Personnes tierces ayant un représentant commercial
+SaleRepresentativesOfThirdParty=Représentants commerciaux de tiers
 LastDoneTasks=Dernières %s actions complétées
 LastActionsToDo=Le plus ancien %s actions non complétées
 ActionAC_OTH_AUTO=Événements insérés automatiquement

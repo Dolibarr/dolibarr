@@ -87,11 +87,11 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LocationSummary"), $_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
+    print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
+    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
     if ($num)
@@ -120,7 +120,7 @@ if ($result)
             print "</tr>\n";
             $total += price2num($objp->estimatedvalue,'MU');
             $totalsell += price2num($objp->sellvalue,'MU');
-            
+
             $i++;
         }
 
@@ -134,7 +134,7 @@ if ($result)
     }
 
     $db->free($result);
-    
+
     print "</table>";
 
     print '<br>';

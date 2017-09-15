@@ -181,8 +181,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -191,7 +191,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_user='';
     $search_sale='';
@@ -474,8 +474,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -531,6 +532,7 @@ if ($resql)
     {
         $soc = new Societe($db);
         $soc->fetch($socid);
+		if (empty($search_societe)) $search_societe = $soc->name;
     }
 
     $param='&socid='.$socid;
@@ -594,6 +596,7 @@ if ($resql)
 
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -609,7 +612,7 @@ if ($resql)
 	{
 		$langs->load("mails");
 
-		if (! GETPOST('cancel'))
+		if (! GETPOST('cancel','alpha'))
 		{
 			$objecttmp=new Facture($db);
 			$listofselectedid=array();
@@ -977,7 +980,7 @@ if ($resql)
                 $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
             }
         }
     }
@@ -1253,10 +1256,10 @@ if ($resql)
             // Status
             if (! empty($arrayfields['f.fk_statut']['checked']))
             {
-                print '<td align="right" class="nowrap">';
-                print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
-                print "</td>";
-                if (! $i) $totalarray['nbfield']++;
+            	print '<td align="right" class="nowrap">';
+            	print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
+            	print "</td>";
+            	if (! $i) $totalarray['nbfield']++;
             }
 
     		// Action column

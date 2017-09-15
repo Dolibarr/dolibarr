@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $search_user_id = GETPOST('search_user_id', 'int');
 
@@ -70,7 +70,9 @@ $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
 $description=GETPOST('description');
-$planned_workload=GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60;
+$planned_workloadhour=(GETPOST('planned_workloadhour','int')?GETPOST('planned_workloadhour','int'):0);
+$planned_workloadmin=(GETPOST('planned_workloadmin','int')?GETPOST('planned_workloadmin','int'):0);
+$planned_workload=$planned_workloadhour*3600+$planned_workloadmin*60;
 
 $userAccess=0;
 
@@ -81,7 +83,7 @@ $userAccess=0;
  */
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_user_id="";
     $toselect='';
@@ -494,6 +496,7 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
+	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	if (count($tasksarray) > 0)
@@ -536,6 +539,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print "</table>";
+	print '</div>';
 
 	print '</form>';
 

@@ -125,9 +125,9 @@ class Holiday extends CommonObject
         $now=dol_now();
 
         // Check parameters
-        if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
-        if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
-        if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0) { $this->error="ErrorBadParameter"; return -1; }
+        if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameterFkUser"; return -1; }
+        if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameterFkValidator"; return -1; }
+        if (empty($this->fk_type) || ! is_numeric($this->fk_type) || $this->fk_type < 0) { $this->error="ErrorBadParameterFkType"; return -1; }
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
@@ -143,14 +143,14 @@ class Holiday extends CommonObject
         $sql.= "fk_user_create,";
         $sql.= "entity";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->fk_user."',";
+        $sql.= "'".$this->db->escape($this->fk_user)."',";
         $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->db->escape($this->description)."',";
         $sql.= " '".$this->db->idate($this->date_debut)."',";
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
-        $sql.= " '".$this->fk_validator."',";
+        $sql.= " '".$this->db->escape($this->fk_validator)."',";
         $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;

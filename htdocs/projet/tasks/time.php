@@ -96,7 +96,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_date='';
     $search_datehour='';
@@ -442,7 +442,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 
 		$morehtmlref='';
-
+		
 		// Project
 		if (empty($withproject))
 		{
@@ -450,10 +450,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
 		    $morehtmlref.='<br>';
-
+			
 		    // Third party
-		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    	$morehtmlref.=$langs->trans("ThirdParty").': ';
+	    	if (is_object($projectstatic->thirdparty)) {
+	    		$morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    	}
 		    $morehtmlref.='</div>';
 		}
 
@@ -462,7 +464,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 
-        print '<div class="underbanner clearboth"></div>';
+        	print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
 		// Date start - Date end
@@ -807,7 +809,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				$align=$extrafields->getAlignFlag($key);
         			$sortonfield = "ef.".$key;
         			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-        			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+        			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
                }
     	   }
     	}*/
@@ -956,7 +958,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             }
 
 			// Fields from hook
-			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$task_time);
 			$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 

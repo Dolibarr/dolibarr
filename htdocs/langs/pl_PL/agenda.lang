@@ -2,6 +2,7 @@
 IdAgenda=ID zdarzenia
 Actions=Wydarzenia
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agendy
 LocalAgenda=Kalendarz wewnętrzny
 ActionsOwnedBy=Wydarzenie własnością
@@ -34,7 +35,7 @@ AgendaSetupOtherDesc= Ta strona zawiera opcje, pozwalające eksportować Twoje z
 AgendaExtSitesDesc=Ta strona pozwala zdefiniować zewnętrzne źródła kalendarzy, aby zobaczyć uwzględnić zapisane tam zdarzenia w agendzie Dolibarr'a.
 ActionsEvents=Zdarzenia, dla których Dolibarr stworzy automatycznie zadania w agendzie
 ##### Agenda event labels #####
-NewCompanyToDolibarr=Third party %s created
+NewCompanyToDolibarr=Kontrahent %s utworzony
 ContractValidatedInDolibarr=Umowa% s potwierdzone
 PropalClosedSignedInDolibarr=Wniosek% s podpisana
 PropalClosedRefusedInDolibarr=Wniosek% s odmówił
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=Usunięcie faktury %s
 InvoicePaidInDolibarr=Faktura% s zmieniła się zwrócić
 InvoiceCanceledInDolibarr=Faktura% s anulowana
 MemberValidatedInDolibarr=% S potwierdzone państwa
+MemberModifiedInDolibarr=Użytkownik %s zmodyfikowany
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Użytkownik usunął%
 MemberSubscriptionAddedInDolibarr=Zapisy na członka% s dodany
 ShipmentValidatedInDolibarr=Przesyłka %s potwierdzona
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Przesyłka% s usunięte
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Zatwierdzenie zamówienia %s
@@ -73,16 +75,20 @@ InterventionSentByEMail=Interwencja %s wysłana mailem
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Produkt %s utworzony
+PRODUCT_MODIFYInDolibarr=Produkt %s zmodyfikowany
+PRODUCT_DELETEInDolibarr=Produkt %s usunięty
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Data rozpoczęcia
 DateActionEnd=Data zakończenia
 AgendaUrlOptions1=Możesz także dodać następujące parametry do filtr wyjściowy:
-AgendaUrlOptions2=<b>login=%s</b> aby ograniczyć wyjścia do działań stworzonych lub przypisanych do użytkownika <b>%s</b>.
 AgendaUrlOptions3=<b>logina =%s</b>, aby ograniczyć wyjścia do działań będących własnością użytkownika <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> aby ograniczyć wyjścia do działań przypisanych do użytkownika <b>%s</b>
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>projekt=PROJECT_ID</b> by ograniczyć wyjścia do działań związanych z projektem <b>PROJECT_ID</b>.
-AgendaShowBirthdayEvents=Show birthdays of contacts
-AgendaHideBirthdayEvents=Hide birthdays of contacts
+AgendaShowBirthdayEvents=Wyświetlaj urodziny kontaktów
+AgendaHideBirthdayEvents=Ukryj urodziny kontaktów
 Busy=Zajęty
 ExportDataset_event1=Lista zdarzeń w agendzie
 DefaultWorkingDays=Domyślne zakres dni roboczych w tygodniu (przykład: 1-5, 1-6)

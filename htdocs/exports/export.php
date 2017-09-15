@@ -591,7 +591,7 @@ if ($step == 2 && $datatoexport)
         $i++;
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td class="nowrap">';
@@ -783,7 +783,7 @@ if ($step == 3 && $datatoexport)
 
 		$i++;
 		$entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-		$entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+		$entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
 		$entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
 		print '<td class="nowrap">';
@@ -978,7 +978,7 @@ if ($step == 4 && $datatoexport)
         print '<tr class="oddeven">';
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td class="nowrap">';

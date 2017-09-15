@@ -91,10 +91,10 @@ class Ctypent // extends CommonObject
 
         $sql.= ") VALUES (";
 
-		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->id."'").",";
+		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->active($this->active)."'").",";
 		$sql.= " ".(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'")."";
 
 

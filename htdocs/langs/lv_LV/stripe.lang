@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Maksājiet ar kredītkarti vai joslu
+FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lapu, lai klients varētu veikt maksājumu par Dolibarr objektiem
+PaymentForm=Maksājuma formu
+WelcomeOnPaymentPage=Laipni lūdzam mūsu tiešsaistes maksājumu pakalpojumu
+ThisScreenAllowsYouToPay=Šis ekrāns ļauj jums veikt tiešsaistes maksājumu %s.
+ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas darīt
+ToComplete=Lai pabeigtu
+YourEMail=Nosūtīt saņemt maksājuma apstiprinājumu
+STRIPE_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
+Creditor=Kreditors
+PaymentCode=Maksājuma kods
+StripeDoPayment=Iet uz maksājumu
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Nākamais
+ToOfferALinkForOnlinePayment=URL %s maksājumu
+ToOfferALinkForOnlinePaymentOnOrder=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klienta pasūtījuma
+ToOfferALinkForOnlinePaymentOnInvoice=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klientu rēķina
+ToOfferALinkForOnlinePaymentOnContractLine=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu līguma līnijas
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL piedāvāt %s tiešsaistes maksājumu lietotāja saskarni par brīvu summu
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu locekli abonementu
+YouCanAddTagOnUrl=Jūs varat arī pievienot url parametrs <b>&amp; Tag = <i>vērtība,</i></b> kādu no šiem URL (nepieciešams tikai bezmaksas samaksu), lai pievienotu savu maksājumu komentāru tagu.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Šajā lapā apliecina, ka jūsu maksājums ir reģistrēts. Paldies.
+YourPaymentHasNotBeenRecorded=Jūs maksājums nav reģistrēts, un darījums tika atcelts. Paldies.
+AccountParameter=Konta parametri
+UsageParameter=Izmantošanas parametri
+InformationToFindParameters=Palīdzēt atrast savu %s konta informāciju
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Nosaukums pārdevējam
+CSSUrlForPaymentForm=CSS stila lapas url maksājuma formu
+MessageOK=Ziņu kopā ar apstiprinātu maksājuma atgriešanās lapā
+MessageKO=Ziņa par atcelto maksājumu atgriešanās lapā
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Slepena testa atslēga
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

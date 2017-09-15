@@ -57,7 +57,7 @@ $search_ref = GETPOST('search_ref','alpha');
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_ref="";
 }
@@ -125,9 +125,9 @@ if ($result)
   print '</tr>';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
-  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
-  print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"","","",'align="center"');
+  print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
+  print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
+  print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"","","",'align="center"');
   print "</tr>\n";
 
   while ($i < min($num,$limit))

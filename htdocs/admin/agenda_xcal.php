@@ -71,11 +71,11 @@ if ($actionsave)
 
 if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;
 
-llxHeader();
+$wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
-print '<br>';
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -174,8 +174,8 @@ $message.='<br>';
 print $message;
 
 $message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
-//$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptionsNotAdmin",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);
 

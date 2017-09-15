@@ -716,6 +716,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -729,6 +730,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -1369,8 +1371,13 @@ class Expedition extends CommonObject
                 $line->line_id          = $obj->line_id;
                 $line->rowid            = $obj->line_id;    // TODO deprecated
                 $line->id               = $obj->line_id;
-				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+
+                $line->fk_origin     	= 'orderline';
+                $line->fk_origin_line 	= $obj->fk_origin_line;
+                $line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+
+				$line->fk_expedition    = $this->id;                // id of parent
+
 				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
@@ -1762,7 +1769,7 @@ class Expedition extends CommonObject
         if ($id=='')
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-            $sql.=" VALUES ('".$this->update['code']."','".$this->update['libelle']."','".$this->update['description']."','".$this->update['tracking']."')";
+            $sql.=" VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
             $resql = $this->db->query($sql);
         }
         else

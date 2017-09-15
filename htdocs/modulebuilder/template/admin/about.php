@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) <year>  <name of author>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,15 +81,10 @@ $head = mymoduleAdminPrepareHead();
 dol_fiche_head(
 	$head,
 	'about',
-	$langs->trans("MyModuleName"),
+	$langs->trans("ModuleMyModuleName"),
 	0,
 	'mymodule@mymodule'
 );
-
-// About page goes here
-echo $langs->trans("MyModuleAboutPage");
-
-echo '<br>';
 
 dol_include_once('/mymodule/core/modules/modMyModule.class.php');
 $tmpmodule = new modMyModule($db);

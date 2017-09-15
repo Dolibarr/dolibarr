@@ -18,15 +18,17 @@ if ($resql)    // This can fail when class is used on old database (during migra
 		$fieldname=$keyforaliasextra.'.'.$obj->name;
 		$fieldlabel=ucfirst($obj->label);
 		$typeFilter="Text";
-		switch($obj->type)
-		{
+		$typefield=preg_replace('/\(.*$/', '', $obj->type);	// double(24,8) -> double
+		switch ($typefield) {
 			case 'int':
+			case 'integer':
 			case 'double':
 			case 'price':
 				$typeFilter="Numeric";
 				break;
 			case 'date':
 			case 'datetime':
+			case 'timestamp':
 				$typeFilter="Date";
 				break;
 			case 'boolean':

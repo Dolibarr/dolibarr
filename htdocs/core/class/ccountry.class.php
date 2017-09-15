@@ -88,11 +88,11 @@ class Ccountry // extends CommonObject
 		$sql.= "label,";
 		$sql.= "active";
         $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
+		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->code_iso)?'NULL':"'".$this->db->escape($this->code_iso)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'")."";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'")."";
 		$sql.= ")";
 
 		$this->db->begin();

@@ -68,7 +68,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -602,6 +602,7 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+	print '<div class="div-table-responsive">';
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -1139,6 +1140,7 @@ if ($id)
     }
 
     print '</table>';
+	print '</div>';
 
     print '</form>';
 }
@@ -1148,7 +1150,6 @@ else
      * Show list of dictionary to show
      */
 
-    $var=true;
     $lastlineisempty=false;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';

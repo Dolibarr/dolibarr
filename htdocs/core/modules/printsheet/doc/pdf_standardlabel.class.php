@@ -61,11 +61,11 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 */
 	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
-		global $mysoc,$conf,$langs;
-		global $forceimgscalewidth,$forceimgscaleheight;
+		global $mysoc, $conf, $langs;
+		global $forceimgscalewidth, $forceimgscaleheight;
 
 		$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
-		$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
+		$imgscaleheight=(empty($forceimgscaleheight)?0.5:$forceimgscaleheight);	// Scale of image for height (1=Full height of sticker)
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -326,8 +326,6 @@ class pdf_standardlabel extends CommonStickerGenerator
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-
-
 		// Output to http stream
 		clearstatcache();
 
@@ -345,6 +343,8 @@ class pdf_standardlabel extends CommonStickerGenerator
 		header('Pragma: public');
 
 		readfile($file);
+
+		$this->result = array('fullpath'=>$file);
 
 		return 1;
 	}

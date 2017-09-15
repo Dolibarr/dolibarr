@@ -1,5 +1,4 @@
--- <one line to give the program's name and a brief idea of what it does.>
--- Copyright (C) <year>  <name of author>
+-- Copyright (C) ---Put here your own copyright and developer email---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,11 +11,18 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see http://www.gnu.org/licenses/.
+
 
 CREATE TABLE llx_myobject(
+	-- BEGIN MODULEBUILDER FIELDS
 	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
 	entity INTEGER DEFAULT 1 NOT NULL,
-	fk_othertable INTEGER NOT NULL,
-	name VARCHAR(189)
-);
+	label VARCHAR(255),
+	qty INTEGER,
+	status INTEGER,
+	date_creation DATETIME NOT NULL,
+	tms TIMESTAMP NOT NULL,
+	import_key VARCHAR(14)
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;

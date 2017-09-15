@@ -536,12 +536,12 @@ class Product extends CommonObject
 					$sql.= ", ".$this->type;
 					$sql.= ", ".price2num($price_ht);
 					$sql.= ", ".price2num($price_ttc);
-					$sql.= ", '".$this->price_base_type."'";
+					$sql.= ", '".$this->db->escape($this->price_base_type)."'";
 					$sql.= ", ".$this->status;
 					$sql.= ", ".$this->status_buy;
-					$sql.= ", '".$this->accountancy_code_buy."'";
-					$sql.= ", '".$this->accountancy_code_sell."'";
-					$sql.= ", '".$this->canvas."'";
+					$sql.= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+					$sql.= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+					$sql.= ", '".$this->db->escape($this->canvas)."'";
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
@@ -853,8 +853,8 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-			$sql.= ", localtax1_type = " . ($this->localtax1_type!=''?"'".$this->localtax1_type."'":"'0'");
-			$sql.= ", localtax2_type = " . ($this->localtax2_type!=''?"'".$this->localtax2_type."'":"'0'");
+			$sql.= ", localtax1_type = " . ($this->localtax1_type!=''?"'".$this->db->escape($this->localtax1_type)."'":"'0'");
+			$sql.= ", localtax2_type = " . ($this->localtax2_type!=''?"'".$this->db->escape($this->localtax2_type)."'":"'0'");
 
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
@@ -863,19 +863,19 @@ class Product extends CommonObject
 			$sql.= ", tobuy = " . $this->status_buy;
 			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
 			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
-			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
-			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
-			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
-			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
-			$sql.= ", width= " . ($this->width!='' ? "'".$this->width."'" : 'null');
-			$sql.= ", width_units = " . ($this->width_units!='' ? "'".$this->width_units."'" : 'null');
-			$sql.= ", height = " . ($this->height!='' ? "'".$this->height."'" : 'null');
-			$sql.= ", height_units = " . ($this->height_units!='' ? "'".$this->height_units."'" : 'null');
-			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
-			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
-			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
-			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
+			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->db->escape($this->weight)."'" : 'null');
+			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->db->escape($this->weight_units)."'": 'null');
+			$sql.= ", length = " . ($this->length!='' ? "'".$this->db->escape($this->length)."'" : 'null');
+			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->db->escape($this->length_units)."'" : 'null');
+			$sql.= ", width= " . ($this->width!='' ? "'".$this->db->escape($this->width)."'" : 'null');
+			$sql.= ", width_units = " . ($this->width_units!='' ? "'".$this->db->escape($this->width_units)."'" : 'null');
+			$sql.= ", height = " . ($this->height!='' ? "'".$this->db->escape($this->height)."'" : 'null');
+			$sql.= ", height_units = " . ($this->height_units!='' ? "'".$this->db->escape($this->height_units)."'" : 'null');
+			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->db->escape($this->surface)."'" : 'null');
+			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
+			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->db->escape($this->volume)."'" : 'null');
+			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
+			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
@@ -1439,8 +1439,8 @@ class Product extends CommonObject
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->default_vat_code."'"):"null").",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->localtax1_type."', '".$this->localtax2_type."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
+		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->db->escape($this->price_base_type)."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->db->escape($this->default_vat_code)."'"):"null").",".$this->tva_npr.",";
+		$sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::_log_price", LOG_DEBUG);
@@ -2136,11 +2136,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats commande client pour le produit/service
 	 *
-	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
-	 *  @param    int	$filtrestatut   Id statut pour filtrer sur un statut
-	 *  @return   array       			Array of stats (nb=nb of order, qty=qty ordered)
+	 *  @param    int    $socid           Id societe pour filtrer sur une societe
+	 *  @param    string $filtrestatut    Id statut pour filtrer sur un statut
+	 *  @param    int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 *  @return   array                  Array of stats (nb=nb of order, qty=qty ordered)
 	 */
-	function load_stats_commande($socid=0,$filtrestatut='')
+	function load_stats_commande($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
 
@@ -2149,12 +2150,12 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity IN (".getEntity('commande').")";
 		$sql.= " AND cd.fk_product = ".$this->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
 		if ($filtrestatut <> '') $sql.= " AND c.fk_statut in (".$filtrestatut.")";
 
@@ -2202,11 +2203,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats commande fournisseur pour le produit/service
 	 *
-	 *  @param    int		$socid       	Id societe pour filtrer sur une societe
-	 *  @param    string	$filtrestatut  	Id des statuts pour filtrer sur des statuts
-	 *  @return   array       				Tableau des stats
+	 *  @param    int      $socid           Id societe pour filtrer sur une societe
+	 *  @param    string   $filtrestatut    Id des statuts pour filtrer sur des statuts
+	 *  @param    int      $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 *  @return   array                     Tableau des stats
 	 */
-	function load_stats_commande_fournisseur($socid=0,$filtrestatut='')
+	function load_stats_commande_fournisseur($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
 
@@ -2215,12 +2217,12 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
 		$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity IN (".getEntity('supplier_order').")";
 		$sql.= " AND cd.fk_product = ".$this->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0) $sql.= " AND c.fk_soc = ".$socid;
 		if ($filtrestatut != '') $sql.= " AND c.fk_statut in (".$filtrestatut.")"; // Peut valoir 0
 
@@ -2244,11 +2246,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats expedition client pour le produit/service
 	 *
-	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
-	 *  @param    int	$filtrestatut  	Id statut pour filtrer sur un statut
-	 *  @return   array       			Tableau des stats
+	 *  @param    int    $socid           Id societe pour filtrer sur une societe
+	 *  @param    string $filtrestatut    Id statut pour filtrer sur un statut
+	 *  @param    int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 *  @return   array                   Tableau des stats
 	 */
-	function load_stats_sending($socid=0,$filtrestatut='')
+	function load_stats_sending($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
 
@@ -2259,14 +2262,14 @@ class Product extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 		$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE e.rowid = ed.fk_expedition";
 		$sql.= " AND c.rowid = cd.fk_commande";
 		$sql.= " AND e.fk_soc = s.rowid";
 		$sql.= " AND e.entity IN (".getEntity('expedition').")";
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
 		$sql.= " AND cd.fk_product = ".$this->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND e.fk_soc = ".$socid;
 		if ($filtrestatut <> '') $sql.= " AND c.fk_statut in (".$filtrestatut.")";
 
@@ -2290,11 +2293,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats réception fournisseur pour le produit/service
 	 *
-	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
-	 *  @param    int	$filtrestatut  	Id statut pour filtrer sur un statut
-	 *  @return   array       			Tableau des stats
+	 *  @param    int    $socid           Id societe pour filtrer sur une societe
+	 *  @param    string $filtrestatut    Id statut pour filtrer sur un statut
+	 *  @param    int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 *  @return   array                   Tableau des stats
 	 */
-	function load_stats_reception($socid=0,$filtrestatut='')
+	function load_stats_reception($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
 
@@ -2303,12 +2307,12 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd";
 		$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE cf.rowid = fd.fk_commande";
 		$sql.= " AND cf.fk_soc = s.rowid";
 		$sql.= " AND cf.entity IN (".getEntity('supplier_order').")";
 		$sql.= " AND fd.fk_product = ".$this->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) $sql.= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND cf.fk_soc = ".$socid;
 		if ($filtrestatut <> '') $sql.= " AND cf.fk_statut in (".$filtrestatut.")";
 
@@ -3746,7 +3750,7 @@ class Product extends CommonObject
 		$sql.= " WHERE w.entity IN (".getEntity('stock').")";
 		$sql.= " AND w.rowid = ps.fk_entrepot";
 		$sql.= " AND ps.fk_product = ".$this->id;
-		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) $sql.= " AND w.statut IN (".implode(',',$warehouseStatus).")";
+		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) $sql.= " AND w.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3801,23 +3805,23 @@ class Product extends CommonObject
 
         if (! empty($conf->commande->enabled))
         {
-            $result=$this->load_stats_commande(0,'1,2');
+            $result=$this->load_stats_commande(0,'1,2', 1);
             if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
         if (! empty($conf->expedition->enabled))
         {
-            $result=$this->load_stats_sending(0,'1,2');
+            $result=$this->load_stats_sending(0,'1,2', 1);
             if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
         if (! empty($conf->fournisseur->enabled))
         {
-            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
+            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
             if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
-            $result=$this->load_stats_reception(0,'4');
+            $result=$this->load_stats_reception(0,'4', 1);
             if ($result < 0) dol_print_error($this->db,$this->error);
             $stock_reception_fournisseur=$this->stats_reception['qty'];
         }
@@ -4018,31 +4022,7 @@ class Product extends CommonObject
 		    $filearray=array_merge($filearray, $filearrayold);
 		}
 
-        $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
-
-        //var_dump($filearray);
-        //var_dump($filearrayindatabase);
-
-        // Complete filearray with properties found into $filearrayindatabase
-        foreach($filearray as $key => $val)
-        {
-            $found=0;
-            // Search if it exists into $filearrayindatabase
-            foreach($filearrayindatabase as $key2 => $val2)
-            {
-                if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
-                {
-                    $filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
-                    $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
-                    $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
-                    $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
-                    $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
-                    $filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
-                    $found=1;
-                    break;
-                }
-            }
-        }
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
         if (count($filearray))
         {

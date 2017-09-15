@@ -35,7 +35,7 @@ print top_htmlhead('',$langs->trans('SendNewPassword'));
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -88,13 +88,19 @@ if ($disablenofollow) echo '</a>';
 </tr>
 
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
+	}
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
 	}
 }
 ?>
@@ -175,6 +181,20 @@ if (! empty($hookmanager->resArray['options'])) {
 	</div>
 <?php } ?>
 
+<?php if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
+	{
+		if ($format == 'js') {
+			echo "\n".'<!-- Javascript by hook -->';
+			echo $option."\n";
+		}
+	}
+}
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
+}
+?>
 
 </div>
 </div>	<!-- end of center -->

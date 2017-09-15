@@ -83,14 +83,14 @@ class modProduct extends DolibarrModules
 		$this->const[$r][3] = 'Module to control product codes';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "standard";
 		$this->const[$r][3] = 'Default module for document generation';
 		$this->const[$r][4] = 0;
 		$r++;*/
-		
+
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_produits.php','enabledbydefaulton'=>'Home'),
@@ -133,7 +133,7 @@ class modProduct extends DolibarrModules
 
         // Menus
         //-------
-        
+
         $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 		/* We can't enable this here because it must be enabled in both product and service module and this create duplicate insert
 		$r=0;
@@ -159,13 +159,14 @@ class modProduct extends DolibarrModules
 		$this->export_label[$r]="Products";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("produit","export"));
 		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.width'=>"Width",'p.height'=>"Height",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode','p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
-		if ($mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly']='NPR';
+		if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly']='NPR';
 		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.stock'=>'Stock','p.seuil_stock_alerte'=>'StockLimit','p.desiredstock'=>'DesiredStock','p.pmp'=>'PMPValue'));
 		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.barcode'=>'BarCode'));
 		if (! empty($conf->fournisseur->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('s.nom'=>'Supplier','pf.ref_fourn'=>'SupplierRef','pf.unitprice'=>'SuppliersPrices'));
 		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('p.cost_price'=>'CostPrice'));
 		if (! empty($conf->global->EXPORTTOOL_CATEGORIES)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('group_concat(cat.label)'=>'Categories'));
 		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel','l.description'=>'TranslatedDescription','l.note'=>'TranslatedNote'));
+		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Numeric",'p.width'=>"Numeric",'p.height'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.stock'=>'Numeric','p.seuil_stock_alerte'=>'Numeric','p.desiredstock'=>'Numeric','p.pmp'=>'Numeric','p.cost_price'=>'Numeric'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r],array('p.barcode'=>'Text'));
@@ -189,7 +190,7 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->fournisseur->enabled)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
 		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
 		if (! empty($conf->global->EXPORTTOOL_CATEGORIES)) $this->export_sql_order[$r] =' GROUP BY p.rowid'; 	// FIXME The group by used a generic value to say "all fields in select except function fields"
-		    
+
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 			// Exports product multiprice
@@ -203,7 +204,7 @@ class modProduct extends DolibarrModules
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation');
-			if ($mysoc->useNPR()) $this->export_fields_array[$r]['pr.recuperableonly']='NPR';
+			if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['pr.recuperableonly']='NPR';
 			//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
 			$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 				'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
@@ -246,7 +247,7 @@ class modProduct extends DolibarrModules
     		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'product_association as pa, '.MAIN_DB_PREFIX.'product as p2';
     		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
     		$this->export_sql_end[$r] .=' AND p.rowid = pa.fk_product_pere AND p2.rowid = pa.fk_product_fils';
-		}		
+		}
 
 		// Imports
 		//--------
@@ -262,8 +263,9 @@ class modProduct extends DolibarrModules
 		$this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.duration'=>"Duration",'p.customcode'=>'CustomCode','p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.datec'=>'DateCreation');
 		if (! empty($conf->stock->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.seuil_stock_alerte'=>'StockLimit','p.desiredstock'=>'DesiredStock','p.pmp'=>'PMPValue'));
 		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.cost_price'=>'CostPrice'));
-		if ($mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.recuperableonly'=>'NPR'));
+		if (is_object($mysoc) && $mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.recuperableonly'=>'NPR'));
 		if (! empty($conf->barcode->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.barcode'=>'BarCode'));
+		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
 		// Add extra fields
 		$import_extrafield_sample=array();
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity IN (0, ".$conf->entity.')';
@@ -331,7 +333,7 @@ class modProduct extends DolibarrModules
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx'=>'PriceLevelVATRate',
 				'pr.date_price'=>'DateCreation*');
-			if ($mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('pr.recuperableonly'=>'NPR'));
+			if (is_object($mysoc) && $mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('pr.recuperableonly'=>'NPR'));
 			$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','pr.recuperableonly'=>'^[0|1]$');
 			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",
 				'pr.price_base_type'=>"HT",'pr.price_level'=>"1",

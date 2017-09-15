@@ -27,8 +27,9 @@
  */
 class EcmDirectory // extends CommonObject
 {
-	//public $element='ecm_directories';			//!< Id that identify managed objects
+	public $element='ecm_directories';			//!< Id that identify managed objects
 	//public $table_element='ecm_directories';	//!< Name of table without prefix where object is stored
+	var $picto = 'dir';
 
 	var $id;
 
@@ -133,12 +134,12 @@ class EcmDirectory // extends CommonObject
 			$sql.= "fk_user_c";
 			$sql.= ") VALUES (";
 			$sql.= " '".$this->db->escape($this->label)."',";
-			$sql.= " '".$conf->entity."',";
-			$sql.= " '".$this->fk_parent."',";
+			$sql.= " '".$this->db->escape($conf->entity)."',";
+			$sql.= " '".$this->db->escape($this->fk_parent)."',";
 			$sql.= " '".$this->db->escape($this->description)."',";
 			$sql.= " ".$this->cachenbofdoc.",";
 			$sql.= " '".$this->db->idate($this->date_c)."',";
-			$sql.= " '".$this->fk_user_c."'";
+			$sql.= " '".$this->db->escape($this->fk_user_c)."'";
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -511,6 +512,31 @@ class EcmDirectory // extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+
+	/**
+	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->status,$mode);
+	}
+
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
+	 *  @return string 			       	Label of status
+	 */
+	static function LibStatut($status,$mode=0)
+	{
+		global $langs;
+		return '';
 	}
 
 

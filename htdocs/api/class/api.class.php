@@ -42,10 +42,11 @@ class DolibarrApi
     /**
      * Constructor
      *
-     * @param	DoliDb	$db		      Database handler
-     * @param   string  $cachedir     Cache dir
+     * @param	DoliDb	$db		        Database handler
+     * @param   string  $cachedir       Cache dir
+     * @param   boolean $refreshCache   Update cache
      */
-    function __construct($db, $cachedir='')
+    function __construct($db, $cachedir='', $refreshCache=false)
     {
         global $conf;
 
@@ -54,7 +55,7 @@ class DolibarrApi
 
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
-        $this->r = new Restler($production_mode);
+        $this->r = new Restler($production_mode, $refreshCache);
 
         $this->r->setAPIVersion(1);
     }
@@ -66,7 +67,7 @@ class DolibarrApi
      *
      * @return array
      */
-    /* Disabled, most APIs does not share same signature for method index 
+    /* Disabled, most APIs does not share same signature for method index
     function index()
     {
         return array(
@@ -93,9 +94,9 @@ class DolibarrApi
         unset($object->linkedObjects);
 
         unset($object->lines); // should be ->lines
-        
+
         unset($object->fields);
-        
+
         unset($object->oldline);
 
         unset($object->error);
@@ -175,7 +176,7 @@ class DolibarrApi
 	 * @throws RestException
 	 */
 	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
-        
+
 		// Features/modules to check
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {

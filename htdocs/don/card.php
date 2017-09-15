@@ -46,7 +46,7 @@ $langs->load("bills");
 
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
@@ -345,7 +345,7 @@ if ($action == 'create')
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
 	print '<td>';
 
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
@@ -355,7 +355,7 @@ if ($action == 'create')
 	// Private note
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td>';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
@@ -542,7 +542,7 @@ if (! empty($id) && $action != 'edit')
 	$hselected='card';
 
 	$head = donation_prepare_head($object);
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'generic');
 
 	// Print form confirm
 	print $formconfirm;

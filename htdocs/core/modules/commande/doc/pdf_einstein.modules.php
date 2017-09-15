@@ -45,28 +45,28 @@ class pdf_einstein extends ModelePDFCommandes
      * @var DoliDb Database handler
      */
     public $db;
-	
+
 	/**
      * @var string model name
      */
     public $name;
-	
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-	
+
 	/**
      * @var string document type
      */
     public $type;
-	
+
 	/**
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.3 = array(5, 3)
      */
-	public $phpmin = array(5, 2); 
-	
+	public $phpmin = array(5, 2);
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
@@ -146,7 +146,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 		$this->posxdiscount=162;
 		$this->postotalht=174;
-		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
@@ -240,11 +240,11 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$pdf->SetAutoPageBreak(1,0);
-				
+
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
-                
+
                 if (class_exists('TCPDF'))
                 {
                     $pdf->setPrintHeader(false);
@@ -263,10 +263,10 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Order"));
+				$pdf->SetSubject($outputlangs->transnoentities("PdfOrderTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfOrderTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -317,16 +317,16 @@ class pdf_einstein extends ModelePDFCommandes
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
-	
+
 						// Rect prend une longueur en 3eme param
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
-	
+
 						$tab_top = $nexY+6;
 						$height_incoterms += 4;
 					}
 				}
-				
+
 				// Affiche notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
@@ -478,7 +478,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
-					
+
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 					$localtax1_rate=$object->lines[$i]->localtax1_tx;
@@ -562,15 +562,10 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Show square
 				if ($pagenb == 1)
-				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				}
 				else
-				{
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				}
+				$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
@@ -585,24 +580,26 @@ class pdf_einstein extends ModelePDFCommandes
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 				*/
-				
+
 				// Pied de page
-				$this->_pagefoot($pdf,$object,$outputlangs);
-				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+				$this->_pagefoot($pdf, $object, $outputlangs);
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
-				$pdf->Output($file,'F');
+				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -862,6 +859,8 @@ class pdf_einstein extends ModelePDFCommandes
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
 
+		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
@@ -953,7 +952,7 @@ class pdf_einstein extends ModelePDFCommandes
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+						$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1035,7 +1034,6 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetFillColor(224,224,224);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
-				$total_ttc = ($conf->multicurrency->enabled && $object->multiccurency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 			}
@@ -1048,7 +1046,7 @@ class pdf_einstein extends ModelePDFCommandes
 		//$creditnoteamount=$object->getSumCreditNotesUsed();
 		//$depositsamount=$object->getSumDepositsUsed();
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
-		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if (! empty($object->paye)) $resteapayer=0;
 
 		if ($deja_regle > 0)
@@ -1201,7 +1199,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="Order")
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="PdfOrderTitle")
 	{
 		global $conf,$langs,$hookmanager;
 
@@ -1294,7 +1292,7 @@ class pdf_einstein extends ModelePDFCommandes
 		        $pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 		    }
 		}
-		
+
 		$posy+=2;
 
 		// Show list of linked objects

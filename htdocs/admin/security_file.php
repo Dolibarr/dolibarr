@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
  *
@@ -103,6 +103,7 @@ else if ($action == 'delete')
 	exit;
 }
 
+
 /*
  * View
  */
@@ -130,6 +131,7 @@ dol_fiche_head($head, 'file', $langs->trans("Security"), -1);
 // Upload options
 $var=false;
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
@@ -192,6 +194,7 @@ print "</td>";
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

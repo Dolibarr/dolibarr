@@ -312,7 +312,7 @@ if (empty($reshook))
 
 										$outputlangs = $langs;
 										$newlang='';
-										if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+										if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 										if (empty($newlang)) $newlang=$srcobject->thirdparty->default_lang;
 										if (! empty($newlang))
 										{
@@ -585,7 +585,7 @@ if (empty($reshook))
 				{
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -636,7 +636,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel'))
+	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
 	    $objectline = new ContratLigne($db);
 	    if ($objectline->fetch(GETPOST('elrowid')))
@@ -752,7 +752,13 @@ if (empty($reshook))
 	// Close all lines
 	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-	    $object->cloture($user);
+	    $object->closeAll($user);
+	}
+
+	// Close all lines
+	else if ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
+	{
+	    $object->activateAll($user);
 	}
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
@@ -816,7 +822,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref_supplier')
 	{
-		$cancelbutton = GETPOST('cancel');
+		$cancelbutton = GETPOST('cancel','alpha');
 		if (!$cancelbutton) {
 
 			$result = $object->fetch($id);
@@ -840,7 +846,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref_customer')
 	{
-		$cancelbutton = GETPOST('cancel');
+		$cancelbutton = GETPOST('cancel','alpha');
 
 		if (!$cancelbutton)
 		{
@@ -865,7 +871,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref')
 	{
-	    $cancelbutton = GETPOST('cancel');
+	    $cancelbutton = GETPOST('cancel','alpha');
 
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
@@ -889,7 +895,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setdate_contrat')
 	{
-	    $cancelbutton = GETPOST('cancel');
+	    $cancelbutton = GETPOST('cancel','alpha');
 
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
@@ -922,7 +928,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		if (! empty($conf->global->MAIN_MULTILANGS)) {
 			$outputlangs = new Translate("", $conf);
-			$newlang = (GETPOST('lang_id') ? GETPOST('lang_id') : $object->thirdparty->default_lang);
+			$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$ret = $object->fetch($id); // Reload to get new records
@@ -1153,6 +1159,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1311,6 +1318,11 @@ else
         if ($action == 'close')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
+
+        }
+        if ($action == 'activate')
+        {
+        	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
 
         }
 
@@ -1482,7 +1494,7 @@ else
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 	        $sql.= " cd.fk_unit,";
-            $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity";
+            $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
             $sql.= " WHERE cd.rowid = ".$object->lines[$cursorline-1]->id;
@@ -1513,7 +1525,7 @@ else
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
                     print '<tr '.$bcnd[$var].' valign="top">';
-                    // Libelle
+                    // Label
                     if ($objp->fk_product > 0)
                     {
                         print '<td>';
@@ -1521,19 +1533,21 @@ else
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
 						$productstatic->entity=$objp->pentity;
-                        $text = $productstatic->getNomUrl(1,'',20);
-                        if ($objp->label)
+						$productstatic->label=$objp->plabel;
+						$text = $productstatic->getNomUrl(1,'',20);
+                        if ($objp->plabel)
                         {
                         	$text .= ' - ';
-                        	$productstatic->ref=$objp->label;
-                        	$text .= $productstatic->getNomUrl(0,'',16);
+                        	//$productstatic->ref=$objp->label;
+                        	//$text .= $productstatic->getNomUrl(0,'',16);
+                        	$text .= $objp->plabel;
                         }
                         $description = $objp->description;
 
 	                    // Add description in form
 						if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 						{
-							$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							$text .= (! empty($objp->description) && $objp->description!=$objp->plabel)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 							$description = '';	// Already added into main visible desc
 						}
 
@@ -1543,7 +1557,7 @@ else
                     }
                     else
 					{
-                        print '<td>'.dol_htmlentitiesbr($objp->description)."</td>\n";
+                        print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
                     }
                     // TVA
                     print '<td align="center">';
@@ -1614,7 +1628,7 @@ else
                         print $langs->trans("DateStartPlanned").': ';
                         if ($objp->date_debut)
                         {
-                            print dol_print_date($db->jdate($objp->date_debut));
+                            print dol_print_date($db->jdate($objp->date_debut), 'day');
                             // Warning si date prevu passee et pas en service
                             if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) {
                     		    $warning_delay=$conf->contrat->services->inactifs->warning_delay / 3600 / 24;
@@ -1627,7 +1641,7 @@ else
                         print $langs->trans("DateEndPlanned").': ';
                         if ($objp->date_fin)
                         {
-                            print dol_print_date($db->jdate($objp->date_fin));
+                            print dol_print_date($db->jdate($objp->date_fin), 'day');
                             if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) {
                     		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
                                 $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
@@ -1782,7 +1796,7 @@ else
             {
                 $dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-                $comment      = GETPOST('comment');
+                $comment      = GETPOST('comment','alpha');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
             }
@@ -1794,8 +1808,16 @@ else
             {
                 $dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-                $comment      = GETPOST('comment');
-                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+                $comment      = GETPOST('comment','alpha');
+
+                if (empty($dateactend))
+                {
+                    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEndReal")), null, 'errors');
+                }
+                else
+                {
+                    $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne','int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+                }
                 print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
             }
 
@@ -1838,21 +1860,21 @@ else
                 // Si pas encore active
                 if (! $objp->date_debut_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle);
+                    if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
                     else print $langs->trans("ContractStatusNotRunning");
                 }
                 // Si active et en cours
                 if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    print dol_print_date($objp->date_debut_reelle);
+                    print dol_print_date($objp->date_debut_reelle, 'day');
                 }
                 // Si desactive
                 if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    print dol_print_date($objp->date_debut_reelle);
+                    print dol_print_date($objp->date_debut_reelle, 'day');
                     print ' &nbsp;-&nbsp; ';
                     print $langs->trans("DateEndReal").': ';
-                    print dol_print_date($objp->date_fin_reelle);
+                    print dol_print_date($objp->date_fin_reelle, 'day');
                 }
                 if (! empty($objp->comment)) print "<br>".$objp->comment;
                 print '</td>';
@@ -1918,9 +1940,11 @@ else
                 /**
                  * Disable a contract line
                  */
-                print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action=closeline" method="post">';
+                print '<!-- Form to disabled a line -->'."\n";
+                print '<form name="closeline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'" method="post">';
 
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="action" value="closeline">';
 
                 print '<table class="noborder tableforservicepart2 boxtablenobottom" width="100%">';
 
@@ -1957,7 +1981,7 @@ else
                 print '</td></tr>';
 
                 print '<tr '.$bc[false].'>';
-                print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.GETPOST('comment').'"></td>';
+                print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
                 print '<td class="nohover right">';
                 print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"> &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2033,7 +2057,7 @@ else
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
-            if ($object->statut == 1 && $nbofservices)
+            if ($object->statut == 1)
             {
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
@@ -2058,6 +2082,10 @@ else
             	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
             }
 
+            if ($object->nbofservicesclosed > 0)
+            {
+            	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+            }
             if ($object->nbofservicesclosed < $nbofservices)
             {
                 //if (! $numactive)
@@ -2108,9 +2136,9 @@ else
     		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
-    			// Show links to link elements
-    			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-    			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
     		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -2118,7 +2146,7 @@ else
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'contract', $socid);
+			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1);
 
 
     		print '</div></div></div>';

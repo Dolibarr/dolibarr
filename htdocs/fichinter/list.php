@@ -128,8 +128,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -141,7 +141,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-	if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 	{
 		$search_ref="";
 		$search_company="";
@@ -223,8 +223,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -252,6 +253,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	if ($socid > 0)
+	{
+		$soc = new Societe($db);
+		$soc->fetch($socid);
+		if (empty($search_company)) $search_company = $soc->name;
+	}
 
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -410,12 +418,12 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['s.nom']['checked']))          print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['f.description']['checked']))  print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"f.ref","",$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['s.nom']['checked']))          print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['f.description']['checked']))  print_liste_field_titre("Description",$_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['fd.description']['checked'])) print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
-    if (! empty($arrayfields['fd.date']['checked']))        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['fd.duree']['checked']))       print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['fd.date']['checked']))        print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"fd.date","",$param,'align="center"',$sortfield,$sortorder);
+    if (! empty($arrayfields['fd.duree']['checked']))       print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],"fd.duree","",$param,'align="right"',$sortfield,$sortorder);
     // Extra fields
     if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     {
@@ -426,7 +434,7 @@ if ($resql)
                 $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
             }
         }
     }
@@ -434,9 +442,9 @@ if ($resql)
     $parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"f.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-    if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"f.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-    if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre("DateCreationShort",$_SERVER["PHP_SELF"],"f.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre("DateModificationShort",$_SERVER["PHP_SELF"],"f.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"f.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 

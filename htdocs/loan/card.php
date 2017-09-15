@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017	Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,8 @@ $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $cancel=GETPOST('cancel','alpha');
+
+$projectid = GETPOST('projectid','int');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -132,7 +135,7 @@ if (empty($reshook))
     			$object->rate					= $rate;
     			$object->note_private 			= GETPOST('note_private');
     			$object->note_public 			= GETPOST('note_public');
-    			$object->fk_project 			= GETPOST('fk_project');
+    			$object->fk_project 			= GETPOST('projectid','int');
 
     			$accountancy_account_capital	= GETPOST('accountancy_account_capital');
     			$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -214,7 +217,7 @@ if (empty($reshook))
 	if ($action == 'classin' && $user->rights->loan->write)
 	{
     	$object->fetch($id);
-	    $result = $object->setProject(GETPOST('projectid'));
+	    $result = $object->setProject($projectid);
 		if ($result < 0)
 		    setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -308,7 +311,7 @@ if ($action == 'create')
 
     	print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-        $numproject=$formproject->select_projects(-1,GETPOST("fk_project"),'fk_project',16,0,1,1);
+        $numproject=$formproject->select_projects(-1, $projectid, 'projectid', 16, 0, 1, 1);
 
         print '</td></tr>';
     }
@@ -335,7 +338,7 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		// Accountancy_account_capital
-        print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+        print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
         print '<td>';
 		print $formaccounting->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
         print '</td></tr>';
@@ -415,7 +418,7 @@ if ($id > 0)
             print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("Loan"), 0, 'bill');
+		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
 		print '<script type="text/javascript">' . "\n";
 		print '  	function popEcheancier() {' . "\n";
@@ -442,21 +445,21 @@ if ($id > 0)
 	    {
 	        $langs->load("projects");
 	        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	        if ($user->rights->commande->creer)
+	        if ($user->rights->loan->write)
 	        {
-	            if ($action != 'classify')
-	                $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	                if ($action == 'classify') {
-	                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                    $morehtmlref.='</form>';
-	                } else {
-	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	                }
+                if ($action != 'classify')
+	        		$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                if ($action == 'classify') {
+                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                    $morehtmlref.='</form>';
+                } else {
+                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                }
 	        } else {
 	            if (! empty($object->fk_project)) {
 	                $proj = new Project($db);
@@ -712,9 +715,9 @@ if ($id > 0)
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
-		}
 
-		if ($action == 'edit') print "</form>\n";
+		    print '</form>';
+		}
 
 		/*
 		 *   Buttons actions

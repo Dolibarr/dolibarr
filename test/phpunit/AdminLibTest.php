@@ -115,7 +115,7 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testConvertTime2Seconds
+     * testVersionCompare
      *
      * @return	void
      */

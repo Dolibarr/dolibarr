@@ -13,13 +13,36 @@
 -- flush privileges;
 
 
--- Requests to change character set and collation of a varchar column.
+-- Request to change default pagecode + colation of database
+-- ALTER DATABASE name_of_database CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+-- Request to change default pagecode + colation of table
+-- ALTER TABLE name_of_table CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+-- Request to change character set and collation of a varchar column.
 -- utf8 and utf8_unicode_ci is recommended (or even better utf8mb4 and utf8mb4_unicode_ci with mysql 5.5.3+)
+-- ALTER TABLE name_of_table MODIFY field VARCHAR(20) CHARACTER SET utf8;
+-- ALTER TABLE name_of_table MODIFY field VARCHAR(20) COLLATE utf8_unicode_ci;
+-- You can check with 'show full columns from mytablename';
 
--- ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
--- ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
--- You can check with 'show full columns from llx_accounting_account';
 
+
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) COLLATE utf8_unicode_ci;
 
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
@@ -31,9 +54,19 @@
 
 -- Requests to clean corrupted data
 
+-- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid;
+-- -- a tester VPGSQL9.5 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid ON CONFLICT DO NOTHING;
+-- -- avant 9.5 faire en variant x pour qu'au 2eme passage, le premier doublon soit dans la tabel cible
+-- -- INSERT INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) 
+-- -- SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author 
+-- -- from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e
+-- -- WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid 
+-- -- AND NOT EXISTS (SELECT 1 FROM llx_product_lot as b WHERE b.fk_product=ps.fk_product and pb.batch=b.batch) LIMIT x
+
 
 UPDATE llx_user set api_key = null where api_key = '';
 
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -92,9 +125,14 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 update llx_product_batch set batch = '' where batch = 'Non d&eacute;fini';
 update llx_product_batch set batch = '' where batch = 'Non défini';
 
+update llx_stock_mouvement set batch = null where batch = 'Non d&eacute;fini';
+update llx_stock_mouvement set batch = null where batch = 'Non défini';
+
 DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+
+
 
 -- Merge splitted lines into one in table llx_product_batch 
 DROP TABLE tmp_llx_product_batch;
@@ -122,7 +160,8 @@ delete from llx_categorie where fk_parent not in (select rowid from tmp_categori
 drop table tmp_categorie;
 -- Fix: delete orphelin category.
 delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
-delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_fournisseur where fk_categorie not in (select rowid from llx_categorie where type = 1);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type = 2);
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
@@ -197,7 +236,7 @@ update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
 
--- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_links. Use several times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
@@ -206,7 +245,7 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_product. Use several times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
@@ -215,13 +254,22 @@ update llx_product set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_product_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_societe. Use several times if you still have duplicate.
 drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_societe_double;
 update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
 drop table tmp_societe_double;
+
+
+-- Sequence to removed duplicated values of llx_accounting_account. Use several times if you still have duplicate.
+drop table tmp_accounting_account_double;
+--select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
+create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
+--select * from tmp_accounting_account_double;
+delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
+drop table tmp_accounting_account_double;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
@@ -308,6 +356,14 @@ DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_m
 drop table tmp_c_shipment_mode;
 
 
+-- Restore id of user on link for payment of expense report
+drop table tmp_bank_url_expense_user;
+create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
+update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
+drop table tmp_bank_url_expense_user;
+
+
+
 -- Clean product prices
 --delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 
 -- Set product prices into llx_product with last price into llx_product_prices
@@ -353,4 +409,3 @@ drop table tmp_c_shipment_mode;
 -- Backport a change of value into the hourly rate. 
 -- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 
-  

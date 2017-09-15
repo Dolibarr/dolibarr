@@ -707,9 +707,10 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
+ * @param	User		$objuser		Object user we need data from.
  * @return 	string						New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true, $objuser=null)
 {
     global $conf,$user;
 
@@ -780,6 +781,22 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$masktype_value='';
     }
 
+    // Extract value for user
+    if (preg_match('/\{(u+)\}/i',$mask,$regType))
+    {
+    	$lastname = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    	if (is_object($objuser)) $lastname = $objuser->lastname;
+
+    	$maskuser=$regType[1];
+    	$maskuser_value=substr($lastname,0,dol_strlen($regType[1]));// get n first characters of user firstname (where n is length in mask)
+    	$maskuser_value=str_pad($maskuser_value,dol_strlen($regType[1]),"#",STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
+    }
+    else
+    {
+    	$maskuser='';
+    	$maskuser_value='';
+    }
+
     // Personalized field {XXX-1} à {XXX-9}
     /*$maskperso=array();
     $maskpersonew=array();
@@ -805,6 +822,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(u+)\}/i',$maskuser_value,$maskwithonlyymcode);
     /*foreach($maskperso as $key => $val)
     {
         $maskwithonlyymcode=preg_replace('/'.$val.'/i', $maskpersonew[$key], $maskwithonlyymcode);
@@ -951,6 +969,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
     if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
+    if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
 
     // Get counter in database
     $counter=0;
@@ -994,6 +1013,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),$counterpadded,$maskLike);
         if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
         if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
+        if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
 
         $ref='';
         $sql = "SELECT ".$field." as ref";
@@ -1113,6 +1133,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $masktype_maskbefore='{'.$masktype.'}';
             $masktype_maskafter=$masktype_value;
             $numFinal = str_replace($masktype_maskbefore,$masktype_maskafter,$numFinal);
+        }
+
+        // Now we replace the user
+        if ($maskuser)
+        {
+        	$maskuser_maskbefore='{'.$maskuser.'}';
+        	$maskuser_maskafter=$maskuser_value;
+        	$numFinal = str_replace($maskuser_maskbefore,$maskuser_maskafter,$numFinal);
         }
     }
 
@@ -1780,6 +1808,11 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 		$module='ficheinter';
 		$subelement='fichinter';
 	}
+	if ($objecttype == 'task') {
+		$classpath = 'projet/class';
+		$module='projet';
+		$subelement='task';
+	}
 
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
@@ -2118,11 +2151,45 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 }
 
 /**
+ *	Return true if the color is light
+ *
+ *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @return	int							-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ */
+function colorIsLight($stringcolor)
+{
+	$res = -1;
+	if (!empty($stringcolor))
+	{
+		$res = 0;
+		$tmp=explode(',', $stringcolor);
+		if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
+		{
+			$r = $tmp[0];
+			$g = $tmp[1];
+			$b = $tmp[2];
+		}
+		else
+		{
+			$hexr=$stringcolor[0].$stringcolor[1];
+			$hexg=$stringcolor[2].$stringcolor[3];
+			$hexb=$stringcolor[4].$stringcolor[5];
+			$r = hexdec($hexr);
+			$g = hexdec($hexg);
+			$b = hexdec($hexb);
+		}
+		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+		if ($bright > 0.6) $res = 1;
+	}
+	return $res;
+}
+
+/**
  * Applies the Cartesian product algorithm to an array
  * Source: http://stackoverflow.com/a/15973172
  *
- * @param array $input Array of products
- * @return array Array of combinations
+ * @param   array $input    Array of products
+ * @return  array           Array of combinations
  */
 function cartesianArray(array $input) {
     // filter out empty values
@@ -2144,4 +2211,93 @@ function cartesianArray(array $input) {
     }
 
     return $result;
+}
+
+
+/**
+ * Get name of directory where the api_...class.php file is stored
+ *
+ * @param   string  $module     Module name
+ * @return  string              Directory name
+ */
+function getModuleDirForApiClass($module)
+{
+    $moduledirforclass=$module;
+
+    if (in_array($module, array('login', 'access', 'status', 'documents'))) {
+        $moduledirforclass = 'api';
+    }
+    if (preg_match('/^dictionary/', $module)) {
+        $moduledirforclass = 'api';
+    }
+
+    if ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
+        $moduledirforclass = 'societe';
+    }
+    if ($module == 'propale' || $module == 'proposals') {
+        $moduledirforclass = 'comm/propal';
+    }
+    elseif ($module == 'agenda' || $module == 'agendaevents') {
+        $moduledirforclass = 'comm/action';
+    }
+    elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
+        $moduledirforclass = 'adherents';
+    }
+    elseif ($module == 'banque' || $module == 'bankaccounts') {
+        $moduledirforclass = 'compta/bank';
+    }
+    elseif ($module == 'category' || $module == 'categorie') {
+        $moduledirforclass = 'categories';
+    }
+    elseif ($module == 'order' || $module == 'orders') {
+        $moduledirforclass = 'commande';
+    }
+    elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
+        $moduledirforclass = 'compta/facture';
+    }
+    elseif ($module == 'products') {
+        $moduledirforclass = 'product';
+    }
+    elseif ($module == 'project' || $module == 'projects' || $module == 'tasks') {
+        $moduledirforclass = 'projet';
+    }
+    elseif ($module == 'task') {
+        $moduledirforclass = 'projet';
+    }
+    elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
+        $moduledirforclass = 'product/stock';
+    }
+    elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
+        $moduledirforclass = 'fourn';
+    }
+    elseif ($module == 'expensereports') {
+        $moduledirforclass = 'expensereport';
+    }
+    elseif ($module == 'users') {
+        $moduledirforclass = 'user';
+    }
+
+    return $moduledirforclass;
+}
+
+/*
+ * Return 2 hexa code randomly
+ *
+ * @param	$min	int	Between 0 and 255
+ * @param	$max	int	Between 0 and 255
+ * @return String
+ */
+function random_color_part($min=0,$max=255) {
+	return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+}
+
+/*
+ * Return hexadecimal color randomly
+ *
+ * @param	$min	int	Between 0 and 255
+ * @param	$max	int	Between 0 and 255
+ * @return String
+ */
+function random_color($min=0, $max=255) {
+	return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
 }

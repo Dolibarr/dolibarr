@@ -62,10 +62,7 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 	    $classname = 'class="tmenu menuhider"';
 	    $idsel='menu';
 
-	    if (empty($noout)) print_start_menu_entry_auguria($idsel,$classname,$showmode);
-	    if (empty($noout)) print_text_menu_entry_auguria('', 1, '#', $id, $idsel, $classname, $atarget);
-	    if (empty($noout)) print_end_menu_entry_auguria($showmode);
-	    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
+	    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
 	$num = count($newTabMenu);
@@ -84,10 +81,10 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 				$url = $shorturl = $tmp[0];
 				$param = (isset($tmp[1])?$tmp[1]:'');
 
-				// Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
+				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
 			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($newTabMenu[$i]['url']))
 			    {
-			        $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['url'].'&leftmenu=';
+			        $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			    }
 			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($newTabMenu[$i]['url']))
 			    {
@@ -95,7 +92,10 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 			    }
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url,1).($param?'?'.$param:'');
-				$shorturl = $shorturl.($param?'?'.$param:'');
+				//$shorturl = $shorturl.($param?'?'.$param:'');
+				$shorturl = $url;
+
+				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/','',$shorturl);
 			}
 
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
@@ -118,10 +118,18 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 		}
 		else if ($showmode == 2) $classname='class="tmenu"';
 
-		if (empty($noout)) print_start_menu_entry_auguria($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry_auguria($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget));
-		if (empty($noout)) print_end_menu_entry_auguria($showmode);
-		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), '');
+		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu']?$newTabMenu[$i]['leftmenu']:''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
+	}
+
+	// Sort on position
+	$menu->liste = dol_sort_array($menu->liste, 'position');
+
+	// Output menu entries
+	foreach($menu->liste as $menkey => $menuval)
+	{
+        if (empty($noout)) print_start_menu_entry_auguria($menuval['idsel'],$menuval['classname'],$menuval['enabled']);
+	    if (empty($noout)) print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url']!='#'?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
+	    if (empty($noout)) print_end_menu_entry_auguria($menuval['enabled']);
 	}
 
 	$showmode=1;
@@ -293,6 +301,16 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
         print "<!-- End SearchForm -->\n";
 	}
 
+	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	{
+	    print "\n";
+	    print "<!-- Begin Bookmarks -->\n";
+	    print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	    print $moredata['bookmarks'];
+	    print '</div>'."\n";
+	    print "<!-- End Bookmarks -->\n";
+	}
+
 	// We update newmenu with entries found into database
 	$menuArbo = new Menubase($db,'auguria');
 	$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
@@ -333,13 +351,14 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
+		$newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " ORDER BY label";
+		$sql.= " AND active = 1";
+		$sql.= " ORDER BY label DESC";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -354,16 +373,17 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					$objp = $db->fetch_object($resql);
 
 					$nature='';
+
 					// Must match array $sourceList defined into journals_list.php
-					if ($objp->nature == 2) $nature="sells";
-					if ($objp->nature == 3) $nature="purchases";
-					if ($objp->nature == 4) $nature="bank";
-					if ($objp->nature == 5) $nature="expensereports";
+					if ($objp->nature == 2 && ! empty($conf->facture->enabled)) $nature="sells";
+					if ($objp->nature == 3 && ! empty($conf->fournisseur->enabled)) $nature="purchases";
+					if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
+					if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
 					if ($objp->nature == 1) $nature="various";
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if (empty($conf->global->MAIN_FEATURES_LEVEL))
+					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 					{
 						if ($nature == 'various' || $nature == 'hasnew') $nature='';
 					}
@@ -554,16 +574,6 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		}
 
 		if ($altok) print '<div class="blockvmenuend"></div>';    // End menu block
-	}
-
-	if (is_array($moredata) && ! empty($moredata['bookmarks']))
-	{
-	        print "\n";
-	        print "<!-- Begin Bookmarks -->\n";
-	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-	        print $moredata['bookmarks'];
-	        print '</div>'."\n";
-	        print "<!-- End Bookmarks -->\n";
 	}
 
 	return count($menu_array);
