@@ -75,7 +75,7 @@ class UserGroup extends CommonObject
 	 *	@param      string	$groupname	name du groupe a charger
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function fetch($id='', $groupname='')
+	function fetch($id='', $groupname='', $load_members = true)
 	{
 		global $conf;
 
@@ -107,7 +107,8 @@ class UserGroup extends CommonObject
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
 
-				$this->members=$this->listUsersForGroup();
+				if($load_members)
+					$this->members=$this->listUsersForGroup();
 
 
 				// Retreive all extrafield for group
@@ -138,7 +139,7 @@ class UserGroup extends CommonObject
 	 *	@param		int		$userid 	User id to search
 	 * 	@return		array     			Array of groups objects
 	 */
-	function listGroupsForUser($userid)
+	function listGroupsForUser($userid, $load_members = true)
 	{
 		global $conf, $user;
 
@@ -168,7 +169,7 @@ class UserGroup extends CommonObject
 				if (! array_key_exists($obj->rowid, $ret))
 				{
 					$newgroup=new UserGroup($this->db);
-					$newgroup->fetch($obj->rowid);
+					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid]=$newgroup;
 				}
 
