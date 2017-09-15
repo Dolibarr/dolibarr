@@ -611,7 +611,7 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
-				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','san_alpha'));
+				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','alpha'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
