@@ -123,7 +123,7 @@ class Ldap
 
 		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION;	// Filter on user
 		$this->filtermember        = $conf->global->LDAP_MEMBER_FILTER;		// Filter on member
-		
+
 		// Users
 		$this->attr_login      = $conf->global->LDAP_FIELD_LOGIN; //unix
 		$this->attr_sambalogin = $conf->global->LDAP_FIELD_LOGIN_SAMBA; //samba, activedirectory
@@ -176,34 +176,40 @@ class Ldap
 			{
 				if ($connected) break;
 				if (empty($host)) continue;
-	
+
 				if (preg_match('/^ldap/',$host))
 				{
-					$this->connection = ldap_connect($host);
+					if ($this->serverPing($host) === true) {
+						$this->connection = ldap_connect($host);
+					}
+					else continue;
 				}
 				else
 				{
-					$this->connection = ldap_connect($host,$this->serverPort);
+					if ($this->serverPing($host, $this->serverPort) === true) {
+						$this->connection = ldap_connect($host,$this->serverPort);
+					}
+					else continue;
 				}
-	
+
 				if (is_resource($this->connection))
 				{
 					// Begin TLS if requested by the configuration
-	    			if (! empty($conf->global->LDAP_SERVER_USE_TLS)) 
+	    			if (! empty($conf->global->LDAP_SERVER_USE_TLS))
 	    			{
-	    			    if (! ldap_start_tls($this->connection)) 
+	    			    if (! ldap_start_tls($this->connection))
 	    			    {
 	    			        dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
 	    			        $connected = 0;
 	    			        $this->close();
 	    				}
 	    			}
-			
+
 					// Execute the ldap_set_option here (after connect and before bind)
 					$this->setVersion();
 					ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
-	
-	
+
+
 					if ($this->serverType == "activedirectory")
 					{
 						$result=$this->setReferrals();
@@ -256,7 +262,7 @@ class Ldap
 						}
 					}
 				}
-	
+
 				if (! $connected) $this->close();
 			}
 		}
@@ -659,6 +665,24 @@ class Ldap
 		else
 		{
 			return -1;
+		}
+	}
+
+	/**
+	 * Ping a server before ldap_connect for avoid waiting
+	 *
+	 * @param string		$host		Server host or address
+	 * @param int		$port		Server port (default 389)
+	 * @param int		$timeout		Timeout in second (default 1s)
+	 * @return boolean				true or false
+	 */
+	function serverPing($host, $port=389, $timeout=1)
+	{
+		$op = @fsockopen($host, $port, $errno, $errstr, $timeout);
+		if (!$op) return false; //DC is N/A
+		else {
+			fclose($opanak); //explicitly close open socket connection
+			return true; //DC is up & running, we can safely connect with ldap_connect
 		}
 	}
 

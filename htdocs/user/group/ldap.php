@@ -206,12 +206,10 @@ if ($result > 0)
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 print '</table>';
 
 llxFooter();
-
 $db->close();
-
