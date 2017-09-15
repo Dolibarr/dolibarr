@@ -260,9 +260,10 @@ class PaymentTerm // extends CommonObject
      *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return     int       			  	<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
-    {
-    	global $conf, $langs;
+	function update($user=null, $notrigger=0)
+	{
+		global $conf, $langs;
+
 		$error=0;
 
 		// Clean parameters
@@ -281,8 +282,8 @@ class PaymentTerm // extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
 		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
 		$sql.= " sortorder=".(isset($this->sortorder)?$this->sortorder:"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
@@ -291,44 +292,38 @@ class PaymentTerm // extends CommonObject
 		$sql.= " type_cdr=".(isset($this->type_cdr)?$this->type_cdr:"null").",";
 		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
-<<<<<<< HEAD
-
-
-        $sql.= " WHERE rowid = " . $this->id;
-        $sql.= " AND entity = " . getEntity('c_payment_term', 2);
-=======
-        $sql.= " WHERE rowid=".$this->id;
->>>>>>> branch 'develop' of https://github.com/Dolibarr/dolibarr.git
+		$sql.= " WHERE rowid = " . $this->id;
+		$sql.= " AND entity = " . getEntity('c_payment_term', 2);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
+				// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// End call triggers
+			}
 		}
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
@@ -338,7 +333,7 @@ class PaymentTerm // extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 
  	/**
