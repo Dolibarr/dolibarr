@@ -1131,6 +1131,35 @@ class FormMail extends Form
 				'__UNSUBSCRIBE__' => 'TagUnsubscribe'
 				//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 			);
+
+			$onlinepaymentenabled = 0;
+			if (! empty($conf->paypal->enabled)) $onlinepaymentenabled++;
+			if (! empty($conf->paybox->enabled)) $onlinepaymentenabled++;
+			if (! empty($conf->stripe->enabled)) $onlinepaymentenabled++;
+			if ($onlinepaymentenabled && ! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+			{
+				$vars['__SECUREKEYPAYMENT__']=$conf->global->PAYMENT_SECURITY_TOKEN;
+				if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+				{
+					if ($conf->adherent->enabled) $vars['__SECUREKEYPAYMENT_MEMBER__']='SecureKeyPAYMENTUniquePerMember';
+					if ($conf->facture->enabled)  $vars['__SECUREKEYPAYMENT_INVOICE__']='SecureKeyPAYMENTUniquePerInvoice';
+					if ($conf->commande->enabled) $vars['__SECUREKEYPAYMENT_ORDER__']='SecureKeyPAYMENTUniquePerOrder';
+					if ($conf->contrat->enabled)  $vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='SecureKeyPAYMENTUniquePerContractLine';
+				}
+			}
+			else
+			{
+				/* No need to show into tooltip help, option is not enabled
+				$vars['__SECUREKEYPAYMENT__']='';
+				$vars['__SECUREKEYPAYMENT_MEMBER__']='';
+				$vars['__SECUREKEYPAYMENT_INVOICE__']='';
+				$vars['__SECUREKEYPAYMENT_ORDER__']='';
+				$vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='';
+				*/
+			}
+
+			// Old vars removed from doc
+			/*
 			if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 			{
 				$vars['__SECUREKEYPAYPAL__']='SecureKeyPaypal';
@@ -1146,7 +1175,7 @@ class FormMail extends Form
 			{
 				$vars['__SECUREKEYPAYPAL__']='';
 				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
-			}
+			}*/
 		}
 
 		$parameters=array('mode'=>$mode);
