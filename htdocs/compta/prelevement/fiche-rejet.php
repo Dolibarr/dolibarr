@@ -41,6 +41,7 @@ if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id','int');
+$ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;

@@ -43,6 +43,7 @@ if ($user->societe_id > 0) accessforbidden();
 // Get supervariables
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
+$ref = GETPOST('ref', 'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -265,7 +266,10 @@ if ($result)
       	print '<tr class="liste_total">';
      	print '<td>'.$langs->trans("Total").'</td>';
       	print '<td>&nbsp;</td>';
-      	print '<td align="right">'.price($total)."</td>\n";
+      	print '<td align="right">';
+		if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		print price($total);
+      	print "</td>\n";
       	print '<td>&nbsp;</td>';
       	print '<td>&nbsp;</td>';
       	print "</tr>\n";

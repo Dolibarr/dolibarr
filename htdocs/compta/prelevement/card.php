@@ -45,6 +45,7 @@ if ($user->societe_id > 0) accessforbidden();
 // Get supervariables
 $action = GETPOST('action','alpha');
 $id = GETPOST('id','int');
+$ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid','int');
 
 // Load variable for pagination
@@ -396,7 +397,10 @@ if ($id > 0 || $ref)
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
-			print '<td align="right">'.price($total)."</td>\n";
+			print '<td align="right">';
+			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+			print price($total);
+			print "</td>\n";
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
 		}
