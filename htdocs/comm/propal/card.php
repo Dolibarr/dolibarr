@@ -611,7 +611,7 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
-				$result=$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','alpha'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1686,6 +1686,18 @@ if ($action == 'create')
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	if ($action == 'statut')
+	{
+		//Form to close proposal (signed or not)
+		$formquestion = array(
+				array('type' => 'select','name' => 'statut','label' => $langs->trans("CloseAs"),'values' => array(2=>$object->labelstatut [2],3=>$object->labelstatut [3])),
+				//array('type' => 'other','name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '<textarea cols="30" rows="' . ROWS_3 . '" wrap="soft" name="note_private" id="note_private">'.$object->note_private.'</textarea>'));
+				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => $object->note_private));
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), '', 'setstatut', $formquestion, '', 1, 250);
+
+	}
+
 	// Confirm delete
 	else if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
@@ -2213,35 +2225,6 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	if ($action == 'statut')
-	{
-		/*
-		 * Form to close proposal (signed or not)
-		 */
-		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		$form_close .= '<table class="border" width="100%">';
-		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';
-		$form_close .= '<input type="hidden" name="action" value="setstatut">';
-		$form_close .= '<select id="statut" name="statut" class="flat">';
-		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">' . $object->labelstatut [2] . '</option>';
-		$form_close .= '<option value="3">' . $object->labelstatut [3] . '</option>';
-		$form_close .= '</select>';
-		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td align="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
-		$form_close .= $object->note;
-		$form_close .= '</textarea></td></tr>';
-		$form_close .= '<tr><td align="center" colspan="2">';
-		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
-		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
-		$form_close .= '<a name="close">&nbsp;</a>';
-		$form_close .= '</td>';
-		$form_close .= '</tr></table></form>';
-
-		print $form_close;
-	}
-
 	/*
 	 * Boutons Actions
 	 */
@@ -2253,7 +2236,7 @@ if ($action == 'create')
 		                                                                                               // modified by hook
 		if (empty($reshook))
 		{
-			if ($action != 'statut' && $action != 'editline')
+			if ($action != 'editline')
 			{
 				// Validate
 				if ($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
