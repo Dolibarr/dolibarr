@@ -1105,7 +1105,7 @@ else
 
 		    // Message
 			print '<div style="padding-top: 10px; background: '.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
-			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
+			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')	// CKEditor does not apply the color of the div into its content area
 			{
 				$readonly=1;
 				// Editeur wysiwyg
