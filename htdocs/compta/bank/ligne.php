@@ -48,7 +48,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST("rowid",'int');
 $orig_account=GETPOST("orig_account");
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
 
 // Security check

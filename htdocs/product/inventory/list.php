@@ -69,7 +69,7 @@ $toselect   = GETPOST('toselect', 'array');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'inventorylist';   // To manage different context of search
 
 $id			= GETPOST('id','int');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $optioncss  = GETPOST('optioncss','alpha');
 
 // Load variable for pagination

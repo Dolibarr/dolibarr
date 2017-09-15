@@ -45,7 +45,7 @@ $langs->load("productbatch");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $batch  	= GETPOST('batch','alpha');
 $productid  = GETPOST('productid','int');
 $ref        = GETPOST('ref','alpha');       // ref is productid_batch

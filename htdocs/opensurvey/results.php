@@ -520,7 +520,7 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
 	print '<form name="formulaire" action="" method="POST">'."\n";
-	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage','alpha').'">';
 
 	print '<div class="center">'."\n";
 	print "<br><br>"."\n";

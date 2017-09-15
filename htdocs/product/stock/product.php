@@ -51,7 +51,7 @@ $langs->load("stocks");
 $langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 

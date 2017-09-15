@@ -38,7 +38,7 @@ $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'margindetail';   // To manage different context of search
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $optioncss  = GETPOST('optioncss','alpha');
 
 // Load variable for pagination

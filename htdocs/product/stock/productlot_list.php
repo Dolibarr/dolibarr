@@ -45,7 +45,7 @@ $langs->load("users");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $myparam	= GETPOST('myparam','alpha');
 
 

@@ -37,7 +37,7 @@ $langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel','alpha');

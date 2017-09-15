@@ -48,7 +48,7 @@ $id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-$backtopage=GETPOST("backtopage");
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 $result=restrictedArea($user,'stock');
