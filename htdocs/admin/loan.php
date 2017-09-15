@@ -23,7 +23,7 @@
  */
 
 require '../main.inc.php';
-	
+
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
@@ -47,7 +47,7 @@ $list = array (
 /*
  * Actions
  */
- 
+
 if ($action == 'update')
 {
     $error = 0;
@@ -99,7 +99,7 @@ foreach ($list as $key)
 	print '<tr class="oddeven value">';
 
 	// Param
-	$label = $langs->trans($key); 
+	$label = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value
@@ -120,7 +120,7 @@ print '</tr>';
 print '</form>';
 print "</table>\n";
 
-print '<br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 llxFooter();
 $db->close();

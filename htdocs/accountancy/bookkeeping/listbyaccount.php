@@ -315,7 +315,7 @@ while ($i < min($num, $limit))
 
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
 	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';
