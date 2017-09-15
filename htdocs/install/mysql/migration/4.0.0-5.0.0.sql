@@ -61,6 +61,8 @@ ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
 ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
 
+ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
+
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
 ALTER TABLE llx_commandedet ADD COLUMN fk_commandefourndet integer DEFAULT NULL after import_key;   -- link to detail line of commande fourn (resplenish)
