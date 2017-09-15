@@ -714,6 +714,7 @@ CreateDraft=Create draft
 SetToDraft=Back to draft
 ClickToEdit=Click to edit
 EditWithEditor=Edit with CKEditor
+EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
 ObjectDeleted=Object %s deleted
 ByCountry=By country

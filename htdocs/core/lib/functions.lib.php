@@ -259,14 +259,18 @@ function dol_shutdown()
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
  *  @return string|string[]      Value found (string or array), or '' if check fails
- *
- *  @TODO Set default value for check to alpha. Check all WYSIWYG edition (email and description...) is still ok with rich text.
  */
-function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
+function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=NULL)
 {
     global $mysoc,$user,$conf;
 
     if (empty($paramname)) return 'BadFirstParameterForGETPOST';
+    if (empty($check))
+    {
+    	dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+    	// Enable this line to know who call the GETPOST with '' $check parameter.
+    	//var_dump(debug_backtrace()[0]);
+    }
 
     if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
@@ -420,15 +424,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 
 	}
 
-	if (empty($check) && ! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-	   dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param not defined, when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
-	   // Enable this line to know who call the GETPOST with empty $check parameter.
-	   //var_dump(debug_backtrace()[0]);
-	}
-
-	if (! empty($check))
-	{
 	    // Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
 	    // Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
 	    // We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
@@ -518,7 +513,6 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	            $out=filter_var($out, $filter, $options);
 	            break;
 	    }
-	}
 
     // Code for search criteria persistence.
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
