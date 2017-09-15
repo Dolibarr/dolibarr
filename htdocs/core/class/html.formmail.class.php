@@ -330,7 +330,7 @@ class FormMail extends Form
         	if (count($modelmail_array)>0)
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-        	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
+        	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
@@ -499,7 +499,7 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$withtoselected=GETPOST("receiver");     // Array of selected value
+        				$withtoselected=GETPOST("receiver",'none');     // Array of selected value
         				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
         				{
         				    $withtoselected = array_keys($tmparray);

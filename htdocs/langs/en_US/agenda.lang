@@ -66,6 +66,7 @@ OrderApprovedInDolibarr=Order %s approved
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Order %s go back to draft status
 ProposalSentByEMail=Commercial proposal %s sent by EMail
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Customer order %s sent by EMail
 InvoiceSentByEMail=Customer invoice %s sent by EMail
 SupplierOrderSentByEMail=Supplier order %s sent by EMail

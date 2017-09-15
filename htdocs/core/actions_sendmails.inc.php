@@ -424,7 +424,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     						$interface=new Interfaces($db);
     						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-    						if ($result < 0) {
+							if ($result < 0) {
     							$error++; $errors=$interface->errors;
     						}
 						}

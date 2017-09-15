@@ -245,6 +245,8 @@ ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN label varchar(255) NOT NULL;
+
 ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
 UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
@@ -259,6 +261,7 @@ UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE'
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
 
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SENTBYMAIL','Contract sent by mail','Executed when a contract is sent by mail','contrat',18);
 
 CREATE TABLE llx_projet_task_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
