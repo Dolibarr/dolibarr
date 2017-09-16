@@ -83,6 +83,7 @@ $result = restrictedArea($user, 'commande', $id,'');
 
 $diroutputmassaction=$conf->commande->dir_output . '/temp/massgeneration/'.$user->id;
 
+// Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -206,7 +207,8 @@ if (empty($reshook))
     $permtoread = $user->rights->commande->lire;
     $permtodelete = $user->rights->commande->supprimer;
     $uploaddir = $conf->commande->dir_output;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    $trigger_name='ORDER_SENTBYMAIL';
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// TODO Move this into mass action include
     if ($massaction == 'confirm_createbills') {
@@ -994,8 +996,6 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        print '<tr class="oddeven">';
-
         $notshippable=0;
         $warning = 0;
         $text_info='';
@@ -1017,6 +1017,8 @@ if ($resql)
         $generic_commande->total_ht = $obj->total_ht;
         $generic_commande->total_tva = $obj->total_tva;
         $generic_commande->total_ttc = $obj->total_ttc;
+
+        print '<tr class="oddeven">';
 
         // Ref
         if (! empty($arrayfields['c.ref']['checked']))

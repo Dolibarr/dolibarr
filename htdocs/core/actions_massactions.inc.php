@@ -73,6 +73,8 @@ if (! $error && $massaction == 'confirm_presend')
     if (! $error)
     {
         $thirdparty=new Societe($db);
+        if ($objecttmp->element == 'expensereport') $thirdparty=new User($db);
+
         $objecttmp=new $objectclass($db);
         $listofobjectid=array();
         $listofobjectthirdparties=array();
@@ -86,6 +88,7 @@ if (! $error && $massaction == 'confirm_presend')
                 $listofobjectid[$toselectid]=$toselectid;
                 $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
                 if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
+                if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
                 $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
             }
@@ -203,8 +206,17 @@ if (! $error && $massaction == 'confirm_presend')
                 // Test recipient
 	            if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
 	            {
-	             	$object->fetch_thirdparty();
-	               	$sendto = $object->thirdparty->email;
+	            	if ($object->element == 'expensereport')
+	            	{
+						$fuser = new User($db);
+						$fuser->fetch($object->fk_user_author);
+						$sendto = $fuser->email;
+	            	}
+	            	else
+	            	{
+	            		$object->fetch_thirdparty();
+	               		$sendto = $object->thirdparty->email;
+	            	}
 	            }
 
 	            if (empty($sendto))
@@ -357,18 +369,32 @@ if (! $error && $massaction == 'confirm_presend')
                             $object->fk_element		= $objid;
                             $object->elementtype	= $object->element;
 
-                            // Appel des triggers
-                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                            $interface=new Interfaces($db);
-                            $result=$interface->run_triggers('BILL_SENTBYMAIL',$object,$user,$langs,$conf);
-                            if ($result < 0) { $error++; $errors=$interface->errors; }
-                            // Fin appel triggers
+                            $triggername = strtoupper(get_class($object)) .'_SENTBYMAIL';
+                            if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
+                            if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
+                            if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
+                            if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYEMAIL';
+                            if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
+                            if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
+                            if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
+                            if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
 
-                            if ($error)
+                            if (! empty($trigger_name))
                             {
-                                setEventMessages($db->lasterror(), $errors, 'errors');
-                                dol_syslog("Error in trigger BILL_SENTBYMAIL ".$db->lasterror(), LOG_ERR);
+	                            // Appel des triggers
+	                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	                            $interface=new Interfaces($db);
+	                            $result=$interface->run_triggers($trigger_name, $object, $user, $langs, $conf);
+	                            if ($result < 0) { $error++; $errors=$interface->errors; }
+	                            // Fin appel triggers
+
+	                            if ($error)
+	                            {
+	                                setEventMessages($db->lasterror(), $errors, 'errors');
+	                                dol_syslog("Error in trigger ".$trigger_name.' '.$db->lasterror(), LOG_ERR);
+	                            }
                             }
+
                             $nbsent++;
                         }
                     }

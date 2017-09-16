@@ -42,6 +42,8 @@ if (! GETPOST('cancel', 'alpha'))
 			$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 			if ($objecttmp->element == 'societe')
 				$thirdpartyid = $objecttmp->id;
+			if ($objecttmp->element == 'expensereport')
+				$thirdpartyid = $objecttmp->fk_user_author;
 			$listofselectedthirdparties[$thirdpartyid] = $thirdpartyid;
 			$listofselectedref[$thirdpartyid][$toselectid] = $objecttmp->ref;
 		}
@@ -80,10 +82,19 @@ if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selec
 {
 	$liste = array();
 	$thirdpartyid = array_shift($listofselectedthirdparties);
-	$soc = new Societe($db);
-	$soc->fetch($thirdpartyid);
-	foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
-		$liste[$key] = $value;
+	if ($objecttmp->element == 'expensereport')
+	{
+		$fuser = new User($db);
+		$fuser->fetch($thirdpartyid);
+		$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+	}
+	else
+	{
+		$soc = new Societe($db);
+		$soc->fetch($thirdpartyid);
+		foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
+			$liste[$key] = $value;
+		}
 	}
 	$formmail->withtoreadonly = 0;
 } else {
