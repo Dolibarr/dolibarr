@@ -132,7 +132,16 @@ $langs->load("mails");
     $formmail->param['models_id']=GETPOST('modelmailselected','int');
     $formmail->param['id']=join(',',$arrayofselected);
     //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-    print $formmail->get_form();
+    if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB)
+    {
+    	$langs->load("errors");
+    	print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
+    	print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
+    	$arrayofmassactions=array();
+    }
+	else
+	{
+    	print $formmail->get_form();
+	}
 
 dol_fiche_end();
