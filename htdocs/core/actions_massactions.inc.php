@@ -52,7 +52,7 @@ if (! $error && count($toselect) > $maxformassaction)
     $error++;
 }
 
-if (! $error && $massaction == 'confirm_presend' && GETPOST('modelselected'))  // If we change the template, we must not send email, but keep on send email form
+if (! $error && $massaction == 'confirm_presend' && ! GETPOST('sendmail'))  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 {
     $massaction='presend';
 }
@@ -85,6 +85,7 @@ if (! $error && $massaction == 'confirm_presend')
             {
                 $listofobjectid[$toselectid]=$toselectid;
                 $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+                if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
                 $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
             }
@@ -172,74 +173,90 @@ if (! $error && $massaction == 'confirm_presend')
             $attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
             $listofqualifiedid=array();
             $listofqualifiedref=array();
+            $thirdpartywithoutemail=array();
+
             foreach($listofobjectref[$thirdpartyid] as $objectid => $object)
             {
                 //var_dump($thirdpartyid.' - '.$objectid.' - '.$object->statut);
-
-                if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
+                if ($objectclass == 'Propal' && $object->statut == Propal::STATUS_DRAFT)
                 {
                 	$langs->load("errors");
                     $nbignored++;
-                    $resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
+                    $resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue; // Payment done or started or canceled
                 }
-                if ($objectclass == 'Commande' && $object->statut == Commande::STATUS_DRAFT)
+            	if ($objectclass == 'Commande' && $object->statut == Commande::STATUS_DRAFT)
                 {
                 	$langs->load("errors");
                     $nbignored++;
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue;
                 }
-
-                // Read document
-                // TODO Use future field $object->fullpathdoc to know where is stored default file
-                // TODO If not defined, use $object->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
-                $filename=dol_sanitizeFileName($object->ref).'.pdf';
-                $filedir=$uploaddir . '/' . dol_sanitizeFileName($object->ref);
-                $file = $filedir . '/' . $filename;
-                $mime = dol_mimetype($file);
-
-                if (dol_is_file($file))
+                if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
                 {
-                    if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
-                    {
-                        $object->fetch_thirdparty();
-                        $sendto = $object->thirdparty->email;
-                    }
-
-                    if (empty($sendto))
-                    {
-                        //print "No recipient for thirdparty ".$object->thirdparty->name;
-                        $nbignored++;
-                        continue;
-                    }
-
-                    if (dol_strlen($sendto))
-                    {
-                        // Create form object
-                        $attachedfiles=array(
-                            'paths'=>array_merge($attachedfiles['paths'],array($file)),
-                            'names'=>array_merge($attachedfiles['names'],array($filename)),
-                            'mimes'=>array_merge($attachedfiles['mimes'],array($mime))
-                        );
-                    }
-
-                    $listofqualifiedid[$objectid]=$object;
-                    $listofqualifiedref[$objectid]=$object->ref;
+                	$langs->load("errors");
+                	$nbignored++;
+                	$resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
+                	continue; // Payment done or started or canceled
                 }
-                else
-                {
-                    $nbignored++;
-                    $langs->load("errors");
-                    $resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div><br>';
-                    dol_syslog('Failed to read file: '.$file, LOG_WARNING);
-                    continue;
-                }
+
+                // Test recipient
+	            if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
+	            {
+	             	$object->fetch_thirdparty();
+	               	$sendto = $object->thirdparty->email;
+	            }
+
+	            if (empty($sendto))
+	            {
+	               	//print "No recipient for thirdparty ".$object->thirdparty->name;
+	               	$nbignored++;
+	                if (empty($thirdpartywithoutemail[$object->thirdparty->id]))
+	                {
+	                	$resaction.='<div class="error">'.$langs->trans('NoRecipientEmail',$object->thirdparty->name).'</div><br>';
+	                }
+	               	dol_syslog('No recipient for thirdparty: '.$object->thirdparty->name, LOG_WARNING);
+	               	$thirdpartywithoutemail[$object->thirdparty->id]=1;
+	               	continue;
+	            }
+
+	            if ($_POST['addmaindocfile'])
+	            {
+	            	// TODO Use future field $object->fullpathdoc to know where is stored default file
+	            	// TODO If not defined, use $object->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
+	            	$filename=dol_sanitizeFileName($object->ref).'.pdf';
+	            	$filedir=$uploaddir . '/' . dol_sanitizeFileName($object->ref);
+	            	$file = $filedir . '/' . $filename;
+	            	$mime = dol_mimetype($file);
+
+       	            if (dol_is_file($file))
+		            {
+		                	// Create form object
+		                	$attachedfiles=array(
+		                	'paths'=>array_merge($attachedfiles['paths'],array($file)),
+		                	'names'=>array_merge($attachedfiles['names'],array($filename)),
+		                	'mimes'=>array_merge($attachedfiles['mimes'],array($mime))
+		                	);
+		            }
+		            else
+		            {
+	    	                $nbignored++;
+	        	            $langs->load("errors");
+	            	        $resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div><br>';
+	                	    dol_syslog('Failed to read file: '.$file, LOG_WARNING);
+	                    	continue;
+		            }
+	            }
+
+	            // Object of thirdparty qualified
+	            $listofqualifiedid[$objectid]=$object;
+	            $listofqualifiedref[$objectid]=$object->ref;
+
 
                 //var_dump($listofqualifiedref);
             }
 
-            // Loop on each qualified objects of the thirdparty
+            // Send email if there is at least one qualified record
             if (count($listofqualifiedid) > 0)
             {
                 $langs->load("commercial");
@@ -264,8 +281,8 @@ if (! $error && $massaction == 'confirm_presend')
                 }
 
                 $replyto = $from;
-                $subject = GETPOST('subject');
-                $message = GETPOST('message');
+                $subject = GETPOST('subject','none');
+                $message = GETPOST('message','none');
                 $sendtocc = GETPOST('sentocc');
                 $sendtobcc = '';
                 if ($objectclass == 'Propale') 				$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);
@@ -275,28 +292,18 @@ if (! $error && $massaction == 'confirm_presend')
                 if ($objectclass == 'CommandeFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO);
                 if ($objectclass == 'FactureFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO);
 
+                $objecttmp=new $objectclass($db);
+                $objecttmp->thirdparty = $thirdparty;
 
-                $substitutionarray=array(
-                	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-                	'__ID__' => join(', ',array_keys($listofqualifiedid)),
-                    '__EMAIL__' => $thirdparty->email,
-                    '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-                    '__FACREF__' => join(', ',$listofqualifiedref),            // For backward compatibility
-                    '__ORDERREF__' => join(', ',$listofqualifiedref),          // For backward compatibility
-                    '__PROPREF__' => join(', ',$listofqualifiedref),           // For backward compatibility
-                    '__REF__' => join(', ',$listofqualifiedref),
-                    '__REFCLIENT__' => $thirdparty->name,
-					'__SIGNATURE__' =>  (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?dol_string_nohtmltag($user->signature):'')
-                	/* not available on all object
-					/'__FIRSTNAME__'=>(is_object($object)?$object->firstname:''),
-					'__LASTNAME__'=>(is_object($object)?$object->lastname:''),
-					'__FULLNAME__'=>(is_object($object)?$object->getFullName($langs):''),
-					'__ADDRESS__'=>(is_object($object)?$object->address:''),
-					'__ZIP__'=>(is_object($object)?$object->zip:''),
-					'__TOWN_'=>(is_object($object)?$object->town:''),
-					'__COUNTRY__'=>(is_object($object)?$object->country:''),
-					*/
-                );
+                // Make substitution in email content
+                $substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
+                $substitutionarray['__ID__'] = join(', ',array_keys($listofqualifiedid));
+                $substitutionarray['__EMAIL__'] = $thirdparty->email;
+                $substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+                $substitutionarray['__REF__'] = join(', ',$listofqualifiedref);
+
+                $parameters=array('mode'=>'formemail');
+                complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
                 $subject=make_substitutions($subject, $substitutionarray);
                 $message=make_substitutions($message, $substitutionarray);
@@ -408,6 +415,12 @@ if (! $error && $massaction == 'confirm_presend')
 
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
 {
+	if (empty($diroutputmassaction))
+	{
+		dol_print_error(null, 'include of actions_massactions.inc.php is done but var $diroutputmassaction was not defined');
+		exit;
+	}
+
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -458,15 +471,15 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $outputlangs->setDefaultLang($newlang);
     }
 
-    if (!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT)) 
+    if (!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT))
     {
     	// Create output dir if not exists
 		dol_mkdir($diroutputmassaction);
-	
+
 		// Defined name of merged file
 		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
 		$filename=preg_replace('/\s/','_',$filename);
-	
+
 		// Save merged file
 		if ($filter=='paye:0')
 		{
@@ -502,7 +515,13 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     }
     else {
 	    // Create empty PDF
-	    $pdf=pdf_getInstance();
+    	$formatarray=pdf_getFormat();
+    	$page_largeur = $formatarray['width'];
+    	$page_hauteur = $formatarray['height'];
+    	$format = array($page_largeur,$page_hauteur);
+
+	    $pdf=pdf_getInstance($format);
+
 	    if (class_exists('TCPDF'))
 	    {
 			$pdf->setPrintHeader(false);

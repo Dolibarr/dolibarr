@@ -132,7 +132,7 @@ MaxNbOfLinesForBoxes=Max number of lines for widgets
 PositionByDefault=Default order
 Position=Position
 MenusDesc=Menu managers set content of the two menu bars (horizontal and vertical).
-MenusEditorDesc=The menu editor allows you to define custom menu entries. Use it carefully to avoid instability and permanently unreachable menu entries.<br />Some modules add menu entries (in menu <b>All</b> mostly). If you remove some of these entries by mistake, you can restore them disabling and reenabling the module.
+MenusEditorDesc=The menu editor allows you to define custom menu entries. Use it carefully to avoid instability and permanently unreachable menu entries.<br>Some modules add menu entries (in menu <b>All</b> mostly). If you remove some of these entries by mistake, you can restore them disabling and reenabling the module.
 MenuForUsers=Menu for users
 LangFile=.lang file
 System=System
@@ -313,7 +313,7 @@ SetupIsReadyForUse=Module deployment is finished. You must however enable and se
 NotExistsDirect=The alternative root directory is not defined to an existing directory.<br>
 InfDirAlt=Since version 3, it is possible to define an alternative root directory. This allows you to store, into a dedicated directory, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
 InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
-YouCanSubmitFile=For this step, you can submit your package file here :
+YouCanSubmitFile=For this step, you can submit the .zip file of module package here :
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Go to the page that updates the database structure and data: %s.
 LastStableVersion=Latest stable version

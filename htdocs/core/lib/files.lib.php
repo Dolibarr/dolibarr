@@ -2283,6 +2283,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	    }
 	    $original_file=$conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
+	else if ($modulepart == 'massfilesarea_contract' && !empty($conf->contrat->dir_output))
+	{
+		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->contrat->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
 
 	// Wrapping for interventions
 	else if (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output))

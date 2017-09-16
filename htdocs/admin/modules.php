@@ -55,7 +55,7 @@ $options['categorie'] = ((GETPOST('categorie', 'int')?GETPOST('categorie', 'int'
 $options['start']     = ((GETPOST('start', 'int')?GETPOST('start', 'int'):0) + 0);
 $options['end']       = ((GETPOST('end', 'int')?GETPOST('end', 'int'):0) + 0);
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore($options);
+$dolistore            = new Dolistore();
 
 
 if (! $user->admin)
@@ -832,6 +832,10 @@ if ($mode == 'marketplace')
 
     if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
     {
+    	// $options is array with filter criterias
+    	//var_dump($options);
+    	$dolistore->getRemoteData($options);
+
 	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
 	    $previouslink = $dolistore->get_previous_link();

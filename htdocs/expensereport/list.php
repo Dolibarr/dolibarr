@@ -322,6 +322,16 @@ if ($resql)
 	$title = $langs->trans("ListTripsAndExpenses");
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
+	if ($massaction == 'presend')
+	{
+		$topicmail="SendInterventionRef";
+		$modelmail="fichinter_send";
+		$objecttmp=new Intervention($db);
+		$trackid='int'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
+	}
+
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);

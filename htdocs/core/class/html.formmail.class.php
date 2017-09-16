@@ -63,6 +63,7 @@ class FormMail extends Form
     var $withtoccc;
     var $withtopic;
     var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+    var $withmaindocfile;		// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
     var $withbody;
 
     var $withfromreadonly;
@@ -103,7 +104,8 @@ class FormMail extends Form
         $this->withtoccc=0;
         $this->witherrorsto=0;
         $this->withtopic=1;
-        $this->withfile=0;
+        $this->withfile=0;			// 1=Add section "Attached files". 2=Can add files.
+        $this->withmaindocfile=0;	// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
         $this->withbody=1;
 
         $this->withfromreadonly=1;
@@ -220,6 +222,7 @@ class FormMail extends Form
     /**
      *	Show the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+     *  this->withmaindocfile
      *
      *	@param	string	$addfileaction		Name of action when posting file attachments
      *	@param	string	$removefileaction	Name of action when removing file attachments
@@ -233,6 +236,7 @@ class FormMail extends Form
     /**
      *	Get the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+     *  this->withfile
      *  this->param:	Contains more parameteres like email templates info
      *
      *	@param	string	$addfileaction		Name of action when posting file attachments
@@ -296,16 +300,25 @@ class FormMail extends Form
         	}
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 			//var_dump($this->param["models"]);
+        	//var_dump($model_id);
         	//var_dump($arraydefaultmessage);
 
-        	$out.= "\n".'<!-- Begin form mail --><div id="mailformdiv"></div>'."\n";
+        	$out.= "\n".'<!-- Begin form mail type='.$this->param["models"].' --><div id="mailformdiv"></div>'."\n";
         	if ($this->withform == 1)
         	{
         		$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
-				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
+        		$out.= '<a id="formmail" name="formmail"></a>';
+        		$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
         		$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
-        		$out.= '<a id="formmail" name="formmail"></a>';
+        	}
+        	if (! empty($this->withfrom))
+        	{
+        		if (! empty($this->withfromreadonly))
+        		{
+        			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
+        			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
+        		}
         	}
         	foreach ($this->param as $key=>$value)
         	{
@@ -330,7 +343,7 @@ class FormMail extends Form
         	if (count($modelmail_array)>0)
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-        	    $out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
+        	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
@@ -340,7 +353,7 @@ class FormMail extends Form
         	elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
         	        'propal_send','order_send','facture_send',
         	        'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
-        	        'invoice_supplier_send','thirdparty','all'
+        	        'invoice_supplier_send','thirdparty','contract','all'
            	    )))
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
@@ -359,14 +372,17 @@ class FormMail extends Form
         	// Substitution array
         	if (! empty($this->withsubstit))
         	{
-        		$out.= '<tr><td colspan="2">';
+        		$out.= '<tr><td colspan="2" align="right">';
+        		//$out.='<div class="floatright">';
         		$help="";
         		foreach($this->substit as $key => $val)
         		{
-        			$help.=$key.' -> '.$langs->trans($val).'<br>';
+        			$help.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
         		}
-        		$out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help);
+        		if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
+        		else $out.= $form->textwithpicto($langs->trans($this->withsubstit), $help, 1, 'help', '', 0, 2, 'substittooltip');																// New usage
         		$out.= "</td></tr>\n";
+        		//$out.='</div>';
         	}
 
         	// From
@@ -374,9 +390,7 @@ class FormMail extends Form
         	{
         		if (! empty($this->withfromreadonly))
         		{
-        			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
-        			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
-        			$out.= '<tr><td width="180" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
+        			$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
 
                     if (! ($this->fromtype === 'user' && $this->fromid > 0)
                         && ! ($this->fromtype === 'company')
@@ -429,9 +443,9 @@ class FormMail extends Form
                             }
                         }
                         $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+                        //$out.= ajax_combobox('fromtype');
                     }
 
-        			$out.= "</td></tr>\n";
         			$out.= "</td></tr>\n";
         		}
         		else
@@ -499,7 +513,7 @@ class FormMail extends Form
         				{
         				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
         				}
-        				$withtoselected=GETPOST("receiver");     // Array of selected value
+        				$withtoselected=GETPOST("receiver",'none');     // Array of selected value
         				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
         				{
         				    $withtoselected = array_keys($tmparray);
@@ -632,9 +646,12 @@ class FormMail extends Form
         	// Topic
         	if (! empty($this->withtopic))
         	{
-        		$defaulttopic="";
-        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
-        		elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+        		$defaulttopic=GETPOST('subject','none');
+				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				{
+        			if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
+        			elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+				}
 
         		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
@@ -660,9 +677,22 @@ class FormMail extends Form
         		$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
 
         		$out.= '<td>';
+        		if (! empty($this->withmaindocfile))
+        		{
+        			if ($this->withmaindocfile == 1)
+        			{
+        				$out.='<input type="checkbox" name="addmaindocfile" value="1" />';
+        			}
+        			if ($this->withmaindocfile == -1)
+        			{
+        				$out.='<input type="checkbox" name="addmaindocfile" checked="checked" />';
+        			}
+        			$out.=' '.$langs->trans("JoinMainDoc").'.<br>';
+        		}
+
         		if (is_numeric($this->withfile))
         		{
-	        		// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+					// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 	        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 	        		$out.= '<script type="text/javascript" language="javascript">';
 	        		$out.= 'jQuery(document).ready(function () {';
@@ -685,7 +715,7 @@ class FormMail extends Form
 	        				$out.= '<br></div>';
 	        			}
 	        		}
-	        		else
+	        		else if (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
 	        		{
 	        			$out.= $langs->trans("NoAttachedFiles").'<br>';
 	        		}
@@ -701,15 +731,19 @@ class FormMail extends Form
         		{
         			$out.=$this->withfile;
         		}
+
         		$out.= "</td></tr>\n";
         	}
 
         	// Message
         	if (! empty($this->withbody))
         	{
-        		$defaultmessage="";
-        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
-        		elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+        		$defaultmessage=GETPOST('message','none');
+				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				{
+					if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
+       				elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+				}
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
@@ -835,11 +869,11 @@ class FormMail extends Form
 
 
 	/**
-	 *      Return template of email
-	 *      Search into table c_email_templates
+	 *      Return templates of email with type = $type_template or type = 'all'
+	 *      This search into table c_email_templates.
 	 *
 	 * 		@param	DoliDB		$db				Database handler
-	 * 		@param	string		$type_template	Get message for key module
+	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param	int			$id				Id template to find
@@ -852,9 +886,9 @@ class FormMail extends Form
 
 		$sql = "SELECT label, topic, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
-		$sql.= " WHERE type_template='".$db->escape($type_template)."'";
+		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
-		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if (!empty($id)) $sql.= " AND rowid=".$id;
@@ -873,7 +907,7 @@ class FormMail extends Form
 				$ret['content_lines']=$obj->content_lines;
 				$ret['lang']=$obj->lang;
 			}
-			else
+			else								// If there is no template at all
 			{
 				$defaultmessage='';
 				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
@@ -997,17 +1031,19 @@ class FormMail extends Form
 
 
 	/**
-	 * Set substit array from object
+	 * Set substit array from object. This is call when suggesting the email template into forms to send email.
+	 * TODO Replace with getCommonSubstitutionArray with param onlykey = 2
 	 *
-	 * @param	CommonObject	   $object		  Object to use
-	 * @param   Translate  $outputlangs   Object lang
+	 * @param	CommonObject	$object		   Object to use
+	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
+	 * @see getCommonSubstitutionArray
 	 */
 	function setSubstitFromObject($object, $outputlangs=null)
 	{
 		global $conf, $user;
 		$this->substit['__REF__'] = $object->ref;
-		$this->substit['__REFCLIENT__'] = isset($object->ref_client) ? $object->ref_client : '';
+		$this->substit['__REFCLIENT__'] = isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : '');
 		$this->substit['__REFSUPPLIER__'] = isset($object->ref_supplier) ? $object->ref_supplier : '';
 
 		$this->substit['__DATE_YMD__'] = isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '';
@@ -1027,7 +1063,7 @@ class FormMail extends Form
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
 
-        // Create dinamic tags for __EXTRAFIELD_FIELD__
+        // Create dynamic tags for __EXTRAFIELD_FIELD__
         $extrafields = new ExtraFields($this->db);
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
         $object->fetch_optionals($object->id, $extralabels);
@@ -1035,7 +1071,7 @@ class FormMail extends Form
             $this->substit['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
         }
 
-        //Fill substit_lines with each object lines content
+        // Fill substit_lines with each object lines content
         if (is_array($object->lines))
         {
             foreach ($object->lines as $line)
@@ -1073,13 +1109,14 @@ class FormMail extends Form
 	}
 
 	/**
-	 * Get list of substition keys available for emails.
-	 * This include the complete_substitutions_array. TODO Include the getCommonSubstitutionArray().
+	 * Get list of substitution keys available for emails. This is used for tooltips help.
+	 * This include the complete_substitutions_array.
 	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
+	 * @param	Object	$object		Object if applicable
 	 * @return	array               Array of substitution values for emails.
 	 */
-	static function getAvailableSubstitKey($mode='formemail')
+	static function getAvailableSubstitKey($mode='formemail', $object=null)
 	{
 		global $conf, $langs;
 
@@ -1088,20 +1125,20 @@ class FormMail extends Form
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$vars=array(
-				'__REF__',
-				'__REFCLIENT__',
-				'__REFSUPPLIER__',
-			    '__THIRDPARTY_ID__',
-			    '__THIRDPARTY_NAME__',
-			    '__PROJECT_ID__',
-			    '__PROJECT_REF__',
-			    '__PROJECT_NAME__',
-				'__CONTACTCIVNAME__',
-				'__AMOUNT__',
-				'__AMOUNT_WO_TAX__',
-				'__AMOUNT_VAT__',
-			    '__PERSONALIZED__',			// Paypal link will be added here in form mode
-				'__SIGNATURE__',
+				'__REF__'=>'__REF__',
+				'__REFCLIENT__'=>'__REFCLIENT__',
+				'__REFSUPPLIER__'=>'__REFSUPPLIER__',
+			    '__THIRDPARTY_ID__'=>'__THIRDPARTY_ID__',
+			    '__THIRDPARTY_NAME__'=>'__THIRDPARTY_NAME__',
+			    '__PROJECT_ID__'=>'__PROJECT_ID__',
+			    '__PROJECT_REF__'=>'__PROJECT_REF__',
+			    '__PROJECT_NAME__'=>'__PROJECT_NAME__',
+				'__CONTACTCIVNAME__'=>'__CONTACTCIVNAME__',
+				'__AMOUNT__'=>'__AMOUNT__',
+				'__AMOUNT_WO_TAX__'=>'__AMOUNT_WO_TAX__',
+				'__AMOUNT_VAT__'=>'__AMOUNT_VAT__',
+			    '__PERSONALIZED__'=>'__PERSONALIZED__',				// Paypal link will be added here in form mode
+				'__SIGNATURE__'=>'__SIGNATURE__',
 			);
 			if ($mode == 'formwithlines')
 			{
@@ -1179,7 +1216,7 @@ class FormMail extends Form
 		}
 
 		$parameters=array('mode'=>$mode);
-		$tmparray=getCommonSubstitutionArray($langs);
+		$tmparray=getCommonSubstitutionArray($langs, 2, null, $object);
 		complete_substitutions_array($tmparray, $langs, null, $parameters);
 		foreach($tmparray as $key => $val)
 		{

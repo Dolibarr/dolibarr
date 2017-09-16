@@ -946,7 +946,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 {
 	print '<br><br>';
 	print_titre($langs->trans('AddNewProductStockWarehouse'));
-	//print '<br />';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="action" value="addlimitstockwarehouse">';

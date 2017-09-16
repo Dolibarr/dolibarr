@@ -293,13 +293,13 @@ jQuery(document).ready(function() {
 $arrayofselected=is_array($toselect)?$toselect:array();
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 foreach($search as $key => $val)
 {
     $param.= '&search_'.$key.'='.urlencode($search[$key]);
 }
-if ($optioncss != '')     $param.='&optioncss='.$optioncss;
+if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {

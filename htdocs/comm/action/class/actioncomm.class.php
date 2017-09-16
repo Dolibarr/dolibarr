@@ -863,7 +863,7 @@ class ActionComm extends CommonObject
      *   @param		string	$limit			Limit number of answers
      *   @return	array or string			Error string if KO, array with actions if OK
      */
-    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='', $sortfield='datep', $sortorder='DESC', $limit=0)
+    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='', $sortfield='a.datep', $sortorder='DESC', $limit=0)
     {
         global $conf, $langs;
 
@@ -880,7 +880,7 @@ class ActionComm extends CommonObject
         }
         if (! empty($filter)) $sql.= $filter;
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
-		if ($limit) $sql.=$db->plimit($limit);
+		$sql.=$db->plimit($limit, 0);
 
         dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);

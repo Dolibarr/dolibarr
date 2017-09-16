@@ -2084,7 +2084,7 @@ else
 								print '<td style="text-align:center;">';
 								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-								print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 								print '</td>';
 						}
 

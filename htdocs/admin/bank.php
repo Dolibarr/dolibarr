@@ -399,7 +399,7 @@ print '</table>';
 
 
 
-print '<br /><br />';
+print '<br><br>';
 
 
 /*
