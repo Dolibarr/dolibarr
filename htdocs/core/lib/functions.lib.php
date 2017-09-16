@@ -4823,20 +4823,25 @@ function picto_required()
 
 
 /**
- *	Clean a string from all HTML tags and entities
+ *	Clean a string from all HTML tags and entities.
+ *  This function differs from strip_tags because:
+ *  - <br> are replace with \n
+ *  - if entities are found, they are decoded before the strip
+ *  - you can decide to convert line feed into spaces
  *
- *	@param	string	$StringHtml			String to clean
+ *	@param	string	$stringtoclean		String to clean
  *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
- * 	@see		dol_escape_htmltag
+ * 	@see	dol_escape_htmltag strip_tags
  */
-function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
+function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
 {
+	// TODO Try to replace with strip_tags($stringtoclean)
 	$pattern = "/<[^<>]+>/";
-	$StringHtml = preg_replace('/<br[^>]*>/', "\n", $StringHtml);
-	$temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
+	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
+	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);
 
     // Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
     $temp = preg_replace($pattern,"",$temp);    // pass 1
@@ -4852,8 +4857,8 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 	{
 		$temp = str_replace("  "," ",$temp);
 	}
-	$CleanString = trim($temp);
-	return $CleanString;
+
+	return trim($temp);
 }
 
 
