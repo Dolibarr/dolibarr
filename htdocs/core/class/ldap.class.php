@@ -1411,8 +1411,8 @@ class Ldap
 	/**
 	 *	Return available value of group GID
 	 *
-	 *	@param		string		Key of group
-	 *	@return     int         	gid number
+	 *	@param	string	$keygroup	Key of group
+	 *	@return	int					gid number
 	 */
 	function getNextGroupGid($keygroup='LDAP_KEY_GROUPS')
 	{
