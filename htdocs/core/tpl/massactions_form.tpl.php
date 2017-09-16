@@ -127,7 +127,7 @@ if (is_object($object) && $object->element == 'contrat' && is_array($object->lin
 }
 
 $parameters = array(
-'mode' => 'formemail'
+	'mode' => 'formemail'
 );
 complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 

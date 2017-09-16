@@ -390,7 +390,7 @@ class FormMail extends Form
         	{
         		if (! empty($this->withfromreadonly))
         		{
-        			$out.= '<tr><td class="titlefield fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
+        			$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
 
                     if (! ($this->fromtype === 'user' && $this->fromid > 0)
                         && ! ($this->fromtype === 'company')

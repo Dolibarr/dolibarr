@@ -494,7 +494,7 @@ if (! $sall)
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';
-    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
+    $sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
     $sql.= ' state.code_departement, state.nom';
 
     foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
