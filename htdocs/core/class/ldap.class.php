@@ -1411,13 +1411,16 @@ class Ldap
 	/**
 	 *	Return available value of group GID
 	 *
+	 *	@param		string		Key of group
 	 *	@return     int         	gid number
 	 */
-	function getNextGroupGid()
+	function getNextGroupGid($keygroup='LDAP_KEY_GROUPS')
 	{
 		global $conf;
 
-		$search='('.$conf->global->LDAP_KEY_GROUPS.'=*)';
+		if (empty($keygroup)) $keygroup='LDAP_KEY_GROUPS';
+
+		$search='('.$conf->global->$keygroup.'=*)';
 		$result = $this->search($this->groups,$search);
 		if($result)
 		{

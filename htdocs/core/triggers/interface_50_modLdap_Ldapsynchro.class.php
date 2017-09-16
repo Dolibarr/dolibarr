@@ -271,7 +271,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					// Get a gid number for objectclass PosixGroup
 					if (in_array('posixGroup',$info['objectclass'])) {
-						$info['gidNumber'] = $ldap->getNextGroupGid();
+						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 
 					$result=$ldap->add($dn,$info,$user);
@@ -429,6 +429,33 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn=$object->_load_ldap_dn($info);
 
 					$result=$ldap->add($dn,$info,$user);
+
+					// For member type
+					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+					{
+						$membertype=new AdherentType($this->db);
+						if ($object->typeid > 0)
+						{
+							$membertype->fetch($object->typeid);
+
+							$oldinfo=$membertype->_load_ldap_info();
+							$olddn=$membertype->_load_ldap_dn($oldinfo);
+
+							// Verify if entry exist
+							$container=$membertype->_load_ldap_dn($oldinfo,1);
+							$search = "(".$membertype->_load_ldap_dn($oldinfo,2).")";
+							$records=$ldap->search($container,$search);
+							if (count($records) && $records['count'] == 0)
+							{
+								$olddn = '';
+							}
+
+							$info=$membertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+							$dn=$membertype->_load_ldap_dn($info);
+
+							$result=$ldap->update($dn,$info,$user,$olddn);
+						}
+					}
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -518,6 +545,59 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn=$object->_load_ldap_dn($info);
 
 					$result=$ldap->update($dn,$info,$user,$olddn);
+
+					// For member type
+					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+					{
+						if ($object->oldcopy->typeid != $object->typeid)
+						{
+							/*
+							 * Add member in new member type
+							 */
+							$newmembertype=new AdherentType($this->db);
+							$newmembertype->fetch($object->typeid);
+
+							$oldinfo=$newmembertype->_load_ldap_info();
+							$olddn=$newmembertype->_load_ldap_dn($oldinfo);
+
+							// Verify if entry exist
+							$container=$newmembertype->_load_ldap_dn($oldinfo,1);
+							$search = "(".$newmembertype->_load_ldap_dn($oldinfo,2).")";
+							$records=$ldap->search($container,$search);
+							if (count($records) && $records['count'] == 0)
+							{
+								$olddn = '';
+							}
+
+							$info=$newmembertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+							$dn=$newmembertype->_load_ldap_dn($info);
+
+							$result=$ldap->update($dn,$info,$user,$olddn);
+
+							/*
+							 * Remove member in old member type
+							 */
+							$oldmembertype=new AdherentType($this->db);
+							$oldmembertype->fetch($object->oldcopy->typeid);
+
+							$oldinfo=$oldmembertype->_load_ldap_info();
+							$olddn=$oldmembertype->_load_ldap_dn($oldinfo);
+
+							// Verify if entry exist
+							$container=$oldmembertype->_load_ldap_dn($oldinfo,1);
+							$search = "(".$oldmembertype->_load_ldap_dn($oldinfo,2).")";
+							$records=$ldap->search($container,$search);
+							if (count($records) && $records['count'] == 0)
+							{
+								$olddn = '';
+							}
+
+							$info=$oldmembertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+							$dn=$oldmembertype->_load_ldap_dn($info);
+
+							$result=$ldap->update($dn,$info,$user,$olddn);
+						}
+					}
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -585,13 +665,125 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn=$object->_load_ldap_dn($info);
 
 					$result=$ldap->delete($dn);
+
+					// For member type
+					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+					{
+						if ($object->typeid > 0)
+						{
+							/*
+							 * Remove member in member type
+							 */
+							$membertype=new AdherentType($this->db);
+							$membertype->fetch($object->typeid);
+
+							$oldinfo=$membertype->_load_ldap_info();
+							$olddn=$membertype->_load_ldap_dn($oldinfo);
+
+							// Verify if entry exist
+							$container=$membertype->_load_ldap_dn($oldinfo,1);
+							$search = "(".$membertype->_load_ldap_dn($oldinfo,2).")";
+							$records=$ldap->search($container,$search);
+							if (count($records) && $records['count'] == 0)
+							{
+								$olddn = '';
+							}
+
+							$info=$membertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+							$dn=$membertype->_load_ldap_dn($info);
+
+							$result=$ldap->update($dn,$info,$user,$olddn);
+						}
+					}
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
-        }
+		}
 
-        return $result;
-    }
+		// Members types
+		elseif ($action == 'MEMBER_TYPE_CREATE')
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+			{
+				$ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
+				{
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+
+					// Get a gid number for objectclass PosixGroup
+					if (in_array('posixGroup',$info['objectclass'])) {
+						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_MEMBERS_TYPE');
+					}
+
+					$result=$ldap->add($dn,$info,$user);
+				}
+
+				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+			}
+		}
+		elseif ($action == 'MEMBER_TYPE_MODIFY')
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+			{
+				$ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
+				{
+					if (empty($object->oldcopy) || ! is_object($object->oldcopy))
+					{
+						dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
+						$object->oldcopy = clone $object;
+					}
+
+					$oldinfo=$object->oldcopy->_load_ldap_info();
+					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
+
+					// Verify if entry exist
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
+					$records=$ldap->search($container,$search);
+					if (count($records) && $records['count'] == 0)
+					{
+						$olddn = '';
+					}
+
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+
+					$result=$ldap->update($dn,$info,$user,$olddn);
+				}
+
+				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+			}
+		}
+		elseif ($action == 'MEMBER_TYPE_DELETE')
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+			{
+				$ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
+				{
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+
+					$result=$ldap->delete($dn);
+				}
+
+				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+			}
+		}
+
+		return $result;
+	}
 
 }

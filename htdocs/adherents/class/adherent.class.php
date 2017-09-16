@@ -714,109 +714,108 @@ class Adherent extends CommonObject
      *  Fonction qui supprime l'adherent et les donnees associees
      *
      *  @param	int		$rowid		Id of member to delete
-     *	@param	User	$user		User object
+     *	@param	User		$user		User object
      *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
      */
-    function delete($rowid, $user, $notrigger=0)
-    {
-        global $conf, $langs;
+	function delete($rowid, $user, $notrigger=0)
+	{
+		global $conf, $langs;
 
-        $result = 0;
+		$result = 0;
 		$error=0;
 		$errorflag=0;
 
 		// Check parameters
 		if (empty($rowid)) $rowid=$this->id;
 
-        $this->db->begin();
+		$this->db->begin();
 
-        if (! $error && ! $notrigger)
-        {
-            // Call trigger
-            $result=$this->call_trigger('MEMBER_DELETE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
-        }
+		// Remove category
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (! $resql)
+		{
+			$error++;
+			$this->error .= $this->db->lasterror();
+			$errorflag=-1;
+		}
 
-        // Remove category
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if (! $resql)
-        {
-        	$error++;
-        	$this->error .= $this->db->lasterror();
-        	$errorflag=-1;
+		// Remove subscription
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".$rowid;
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag=-2;
+			}
+		}
 
-        }
+		// Remove linked user
+		if (! $error)
+		{
+			$ret=$this->setUserId(0);
+			if ($ret < 0)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag=-3;
+			}
+		}
 
-        // Remove subscription
-        if (! $error)
-        {
-        	 $sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".$rowid;
-        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        	$resql=$this->db->query($sql);
-        	if (! $resql)
-        	{
-        		$error++;
-        		$this->error .= $this->db->lasterror();
-        		$errorflag=-2;
-        	}
-        }
+		// Removed extrafields
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					$errorflag=-4;
+					dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+				}
+			}
+		}
 
-        // Remove linked user
-        if (! $error)
-        {
-        	$ret=$this->setUserId(0);
-        	if ($ret < 0)
-        	{
-        		$error++;
-        		$this->error .= $this->db->lasterror();
-        		$errorflag=-3;
-        	}
-        }
+		// Remove adherent
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag=-5;
+			}
+		}
 
-        // Removed extrafields
-        if (! $error)
-        {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        	{
-        		$result=$this->deleteExtraFields();
-        		if ($result < 0)
-        		{
-        			$error++;
-        			$errorflag=-4;
-        			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-        		}
-        	}
-        }
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('MEMBER_DELETE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
 
-        // Remove adherent
-        if (! $error)
-        {
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        	$resql=$this->db->query($sql);
-        	if (! $resql)
-        	{
-        		$error++;
-        		$this->error .= $this->db->lasterror();
-        		$errorflag=-5;
-        	}
-        }
-
-        if (! $error)
-        {
-        	$this->db->commit();
-        	return 1;
-        }
-        else
-        {
-        	$this->db->rollback();
-        	return $errorflag;
-        }
-    }
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return $errorflag;
+		}
+	}
 
 
     /**

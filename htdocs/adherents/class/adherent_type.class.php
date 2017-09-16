@@ -61,6 +61,8 @@ class AdherentType extends CommonObject
 	public $vote;
 	/** @var bool Email sent during validation */
 	public $mail_valid;
+	/** @var array Array of members */
+	public $members=array();
 
 
 	/**
@@ -250,83 +252,137 @@ class AdherentType extends CommonObject
 		}
 	}
 
-    /**
-     *  Fonction qui permet de recuperer le status de l'adherent
-     *
-     *  @param 		int		$rowid		Id of member type to load
-     *  @return		int					<0 if KO, >0 if OK
-     */
-    function fetch($rowid)
-    {
-        $sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
-        $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-        $sql .= " WHERE d.rowid = ".$rowid;
+	/**
+	 *  Fonction qui permet de recuperer le status de l'adherent
+	 *
+	 *  @param 		int		$rowid			Id of member type to load
+	 *  @param		bool		$load_members	Load members or not
+	 *  @return		int						<0 if KO, >0 if OK
+	 */
+	function fetch($rowid, $load_members = true)
+	{
+		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+		$sql .= " WHERE d.rowid = ".$rowid;
 
-        dol_syslog("Adherent_type::fetch", LOG_DEBUG);
+		dol_syslog("Adherent_type::fetch", LOG_DEBUG);
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
-                $this->label          = $obj->label;
-                $this->statut         = $obj->statut;
-                $this->subscription   = $obj->subscription;
-                $this->mail_valid     = $obj->mail_valid;
-                $this->note           = $obj->note;
-                $this->vote           = $obj->vote;
-            }
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            return -1;
-        }
-    }
+				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
+				$this->label          = $obj->label;
+				$this->statut         = $obj->statut;
+				$this->subscription   = $obj->subscription;
+				$this->mail_valid     = $obj->mail_valid;
+				$this->note           = $obj->note;
+				$this->vote           = $obj->vote;
 
-    /**
-     *  Return list of members' type
-     *
-     *  @return 	array	List of types of members
-     */
-    function liste_array()
-    {
-        global $conf,$langs;
+				if ($load_members) {
+					$this->members=$this->listMembersForMemberType();
+				}
+			}
 
-        $adherenttypes = array();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
-        $sql = "SELECT rowid, libelle as label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-	$sql.= " WHERE entity IN (".getEntity('adherent').")";
+	/**
+	 *  Return list of members' type
+	 *
+	 *  @return 	array	List of types of members
+	 */
+	function liste_array()
+	{
+		global $conf,$langs;
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $nump = $this->db->num_rows($resql);
+		$adherenttypes = array();
 
-            if ($nump)
-            {
-                $i = 0;
-                while ($i < $nump)
-                {
-                    $obj = $this->db->fetch_object($resql);
+		$sql = "SELECT rowid, libelle as label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql.= " WHERE entity IN (".getEntity('adherent').")";
 
-                    $adherenttypes[$obj->rowid] = $langs->trans($obj->label);
-                    $i++;
-                }
-            }
-        }
-        else
-        {
-            print $this->db->error();
-        }
-        return $adherenttypes;
-    }
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump)
+			{
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($resql);
+
+					$adherenttypes[$obj->rowid] = $langs->trans($obj->label);
+					$i++;
+				}
+			}
+		}
+		else
+		{
+			print $this->db->error();
+		}
+		return $adherenttypes;
+	}
+
+	/**
+	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
+	 *
+	 * 	@param	string	$excludefilter		Filter to exclude
+	 *  @param	int		$mode				0=Return array of member instance, 1=Return array of members id only
+	 * 	@return	mixed						Array of members or -1 on error
+	 */
+	function listMembersForMemberType($excludefilter='', $mode=0)
+	{
+		global $conf, $user;
+
+		$ret=array();
+
+		$sql = "SELECT a.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+		$sql.= " WHERE a.entity IN (".getEntity('member').")";
+		$sql.= " AND a.fk_adherent_type = ".$this->id;
+		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
+
+		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				if (! array_key_exists($obj->rowid, $ret))
+				{
+					if ($mode != 1)
+					{
+						$memberstatic=new Adherent($this->db);
+						$memberstatic->fetch($obj->rowid);
+						$ret[$obj->rowid]=$memberstatic;
+					}
+					else $ret[$obj->rowid]=$obj->rowid;
+				}
+			}
+
+			$this->db->free($resql);
+
+			return $ret;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
     /**
      *    	Return clicable name (with picto eventually)
@@ -445,60 +501,63 @@ class AdherentType extends CommonObject
 		);
 	}
 
-    /**
-     *     getMailOnValid
-     *
-     *     @return string     Return mail model
-     */
-    function getMailOnValid()
-    {
-        global $conf;
+	/**
+	 *     getMailOnValid
+	 *
+	 *     @return string     Return mail model
+	 */
+	function getMailOnValid()
+	{
+		global $conf;
 
-        if (! empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid)))
-        {
-            return $this->mail_valid;
-        }
-        else
-        {
-            return $conf->global->ADHERENT_MAIL_VALID;
-        }
-    }
+		if (! empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid)))
+		{
+			return $this->mail_valid;
+		}
+		else
+		{
+			return $conf->global->ADHERENT_MAIL_VALID;
+		}
+	}
 
-    /**
-     *     getMailOnSubscription
-     *
-     *     @return string     Return mail model
-     */
-    function getMailOnSubscription()
-    {
-        global $conf;
-	// mail_subscription not  defined so never used
-        if (! empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription)))  // Property not yet defined
-        {
-            return $this->mail_subscription;
-        }
-        else
-        {
-            return $conf->global->ADHERENT_MAIL_COTIS;
-        }
-    }
+	/**
+	 *     getMailOnSubscription
+	 *
+	 *     @return string     Return mail model
+	 */
+	function getMailOnSubscription()
+	{
+		global $conf;
 
-    /**
-     *     getMailOnResiliate
-     *
-     *     @return string     Return mail model
-     */
-    function getMailOnResiliate()
-    {
-        global $conf;
-	// NOTE mail_resiliate not defined so never used
-        if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
-        {
-            return $this->mail_resiliate;
-        }
-        else
-        {
-            return $conf->global->ADHERENT_MAIL_RESIL;
-        }
-    }
+		// mail_subscription not  defined so never used
+		if (! empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription)))  // Property not yet defined
+		{
+			return $this->mail_subscription;
+		}
+		else
+		{
+			return $conf->global->ADHERENT_MAIL_COTIS;
+		}
+	}
+
+	/**
+	 *     getMailOnResiliate
+	 *
+	 *     @return string     Return mail model
+	 */
+	function getMailOnResiliate()
+	{
+		global $conf;
+
+		// NOTE mail_resiliate not defined so never used
+		if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
+		{
+			return $this->mail_resiliate;
+		}
+		else
+		{
+			return $conf->global->ADHERENT_MAIL_RESIL;
+		}
+	}
+
 }

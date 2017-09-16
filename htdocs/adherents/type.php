@@ -113,7 +113,24 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 	if ($ret < 0) $error++;
 
-	if ($object->label)
+	if (empty($object->label)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), null, 'errors');
+	}
+	else {
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$result = $db->query($sql);
+		if ($result) {
+			$num = $db->num_rows($result);
+		}
+		if ($num) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists",$login), null, 'errors');
+		}
+	}
+
+	if (! $error)
 	{
 		$id=$object->create($user);
 		if ($id > 0)
@@ -123,13 +140,12 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		}
 		else
 		{
-			$mesg=$object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
 	}
 	else
 	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 		$action = 'create';
 	}
 }
@@ -137,6 +153,8 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 if ($action == 'update' && $user->rights->adherent->configurer)
 {
 	$object->fetch($rowid);
+
+	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
 	$object->subscription	= (int) trim($subscription);
