@@ -1082,7 +1082,7 @@ class Form
         	$sql.=")";
         }
         $sql.=$this->db->order("nom","ASC");
-		if ($limit > 0) $sql.=$this->db->plimit($limit);
+		$sql.=$this->db->plimit($limit, 0);
 
 		// Build output string
         dol_syslog(get_class($this)."::select_thirdparty_list", LOG_DEBUG);
@@ -1966,7 +1966,7 @@ class Form
             $sql.= ' GROUP BY'.$selectFields;
         }
         $sql.= $db->order("p.ref");
-        $sql.= $db->plimit($limit);
+        $sql.= $db->plimit($limit, 0);
 
         // Build output string
         dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
@@ -2390,7 +2390,7 @@ class Form
         	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
-        $sql.= $db->plimit($limit);
+        $sql.= $db->plimit($limit, 0);
 
         // Build output string
 

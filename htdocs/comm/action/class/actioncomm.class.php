@@ -880,7 +880,7 @@ class ActionComm extends CommonObject
         }
         if (! empty($filter)) $sql.= $filter;
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
-		if ($limit) $sql.=$db->plimit($limit);
+		$sql.=$db->plimit($limit, 0);
 
         dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);
