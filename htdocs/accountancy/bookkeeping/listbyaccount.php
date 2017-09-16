@@ -209,7 +209,7 @@ print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] 
 
 $viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'',$limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'', $limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
