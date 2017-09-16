@@ -93,9 +93,12 @@ $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 $toselect = GETPOST('toselect', 'array');
+$filter = GETPOST('filtre','alpha');
 
 $option = GETPOST('option');
-if ($option == 'late') $filter = 'paye:0';
+if ($option == 'late') {
+	$filter = 'paye:0';
+}
 
 $search_all = GETPOST('sall', 'alphanohtml');
 $search_label = GETPOST("search_label","alpha");
