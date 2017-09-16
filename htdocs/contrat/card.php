@@ -2241,9 +2241,19 @@ else
 			$formmail->withbody = 1;
 			$formmail->withdeliveryreceipt = 1;
 			$formmail->withcancel = 1;
-			// Tableau des substitutions
+			// Array of substitutions
+			$formmail->withsubstit='AvailableVariables';
 			$formmail->setSubstitFromObject($object);
-			$formmail->substit ['__CONTRACTREF__'] = $object->ref;
+			$datenextexpiration='';
+			foreach($object->lines as $line)
+			{
+				if ($line->statut != 4) continue;
+				if ($line->date_fin_prevue > $datenextexpiration) $datenextexpiration = $line->date_fin_prevue;
+			}
+			$formmail->substit['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+			$formmail->substit['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__CONTACTCIVNAME__']='';
 
 			$custcontact = '';
 			$contactarr = array();
@@ -2255,7 +2265,7 @@ else
 				{
 					if ($contact['libelle'] == $langs->trans('TypeContact_contract_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
-						$contactstatic->fetch($contact ['id']);
+						$contactstatic->fetch($contact['id']);
 						$custcontact = $contactstatic->getFullName($langs, 1);
 					}
 				}

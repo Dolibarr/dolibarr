@@ -5186,25 +5186,32 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 
 
 /**
- * Return array of possible common substitutions.
+ * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate	$outputlangs	Output language
- * @param   int         $onlykey        Do not calculate heavy values of keys (performance enhancement when we need only the keys)
- * @param   array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'objectamount', 'date', 'user', ...)
+ * @param   int         $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are trunc and html sanitized (to use for help tooltip)
+ * @param   array       $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  * @param   Object      $object         Object for keys on object
  * @return	array						Array of substitutions
+ * @see setSubstitFromObject
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $object=null)
 {
-    global $conf, $mysoc, $user;
+    global $db, $conf, $mysoc, $user;
 
     $substitutionarray=array();
 
+    if (empty($exclude) || ! in_array('system', $exclude))
+    {
+    	$substitutionarray=array_merge($substitutionarray, array(
+    		'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT
+    	));
+    }
     if (empty($exclude) || ! in_array('mycompany', $exclude))
     {
         $substitutionarray=array_merge($substitutionarray, array(
-            '__MYCOMPANY_NAME__' => $mysoc->name,
-            '__MYCOMPANY_EMAIL__' => $mysoc->email,
+            '__MYCOMPANY_NAME__'    => $mysoc->name,
+            '__MYCOMPANY_EMAIL__'   => $mysoc->email,
             '__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
             '__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
             '__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -5215,17 +5222,42 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
         ));
     }
+    if (is_object($object) && (empty($exclude) || ! in_array('object', $exclude)))
+    {
+	    $substitutionarray['__ID__'] = $object->id;
+    	$substitutionarray['__REF__'] = $object->ref;
+    	$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
+    	$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
+
+    	$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
+    	$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+
+    	$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
+    	$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+    	$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+
+    	// Create dynamic tags for __EXTRAFIELD_FIELD__
+    	if ($object->table_element && $object->id > 0)
+    	{
+	    	$extrafieldstmp = new ExtraFields($db);
+	    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+	    	$object->fetch_optionals($object->id, $extralabels);
+	    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
+	    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+	    	}
+    	}
+    }
     if (empty($exclude) || ! in_array('objectamount', $exclude))
     {
-        if (is_object($object))       // For backward compatibility
-        {
-            $substitutionarray['__TOTAL_TTC__']    =is_object($object)?$object->total_ttc:'';
-            $substitutionarray['__TOTAL_HT__']     =is_object($object)?$object->total_ht:'';
-            $substitutionarray['__TOTAL_VAT__']    =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
-        }
-        $substitutionarray['__AMOUNT__']       =is_object($object)?$object->total_ttc:'';
-        $substitutionarray['__AMOUNT_WO_TAX__']=is_object($object)?$object->total_ht:'';
-        $substitutionarray['__AMOUNT_VAT__']   =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+		$substitutionarray['__DATE_YMD__'] = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
+		$substitutionarray['__DATE_DUE_YMD__'] = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
+    	$substitutionarray['__AMOUNT__']       = is_object($object)?$object->total_ttc:'';
+        $substitutionarray['__AMOUNT_WO_TAX__']= is_object($object)?$object->total_ht:'';
+        $substitutionarray['__AMOUNT_VAT__']   = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        // For backward compatibility
+        $substitutionarray['__TOTAL_TTC__']    = is_object($object)?$object->total_ttc:'';
+        $substitutionarray['__TOTAL_HT__']     = is_object($object)?$object->total_ht:'';
+        $substitutionarray['__TOTAL_VAT__']    = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
     }
 
     if (empty($exclude) || ! in_array('date', $exclude))
@@ -5265,7 +5297,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__USER_LASTNAME__' => $user->lastname,
             '__USER_FIRSTNAME__' => $user->firstname,
             '__USER_FULLNAME__' => $user->getFullName($outputlangs),
-            '__USER_SUPERVISOR_ID__' => $user->fk_user
+            '__USER_SUPERVISOR_ID__' => $user->fk_user,
+        	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
         ));
     }
     if (! empty($conf->multicompany->enabled))

@@ -344,23 +344,25 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 
-			$substitutionarray=array(
-				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__ID__' => (is_object($object)?$object->id:''),
-				'__EMAIL__' => $sendto,
-				'__CHECK_READ__' => (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'',
-				'__REF__' => (is_object($object)?$object->ref:''),
-				'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?dol_string_nohtmltag($user->signature):'')
-				/* not available on all object
-				/'__FIRSTNAME__'=>(is_object($object)?$object->firstname:''),
-				'__LASTNAME__'=>(is_object($object)?$object->lastname:''),
-				'__FULLNAME__'=>(is_object($object)?$object->getFullName($langs):''),
-				'__ADDRESS__'=>(is_object($object)?$object->address:''),
-				'__ZIP__'=>(is_object($object)?$object->zip:''),
-				'__TOWN_'=>(is_object($object)?$object->town:''),
-				'__COUNTRY__'=>(is_object($object)?$object->country:''),
-				*/
-			);
+			// Make substitution in email content
+			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
+			$substitutionarray['__EMAIL__'] = $sendto;
+			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'';
+			// Add specific substitution for contracts
+			if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
+			{
+				$datenextexpiration='';
+				foreach($object->lines as $line)
+				{
+					if ($line->statut != 4) continue;
+					if ($line->date_fin_prevue > $datenextexpiration) $datenextexpiration = $line->date_fin_prevue;
+				}
+				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+			}
+
+			$parameters=array('mode'=>'formemail');
+			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 			$subject=make_substitutions($subject, $substitutionarray);
 			$message=make_substitutions($message, $substitutionarray);

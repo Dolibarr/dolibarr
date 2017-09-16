@@ -359,13 +359,14 @@ class FormMail extends Form
         	// Substitution array
         	if (! empty($this->withsubstit))
         	{
-        		$out.= '<tr><td colspan="2">';
+        		$out.= '<tr><td colspan="2" align="right">';
         		$help="";
         		foreach($this->substit as $key => $val)
         		{
-        			$help.=$key.' -> '.$langs->trans($val).'<br>';
+        			$help.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
         		}
-        		$out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help);
+        		if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
+        		else $out.= $form->textwithpicto($langs->trans($this->withsubstit), $help, 1, 'help', '', 0, 2, 'substittooltip');																// New usage
         		$out.= "</td></tr>\n";
         	}
 
@@ -997,17 +998,19 @@ class FormMail extends Form
 
 
 	/**
-	 * Set substit array from object
+	 * Set substit array from object. This is call when suggesting the email template into forms to send email.
+	 * TODO Replace with getCommonSubstitutionArray with param onlykey = 2
 	 *
-	 * @param	CommonObject	   $object		  Object to use
-	 * @param   Translate  $outputlangs   Object lang
+	 * @param	CommonObject	$object		   Object to use
+	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
+	 * @see getCommonSubstitutionArray
 	 */
 	function setSubstitFromObject($object, $outputlangs=null)
 	{
 		global $conf, $user;
 		$this->substit['__REF__'] = $object->ref;
-		$this->substit['__REFCLIENT__'] = isset($object->ref_client) ? $object->ref_client : '';
+		$this->substit['__REFCLIENT__'] = isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : '');
 		$this->substit['__REFSUPPLIER__'] = isset($object->ref_supplier) ? $object->ref_supplier : '';
 
 		$this->substit['__DATE_YMD__'] = isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '';
@@ -1027,7 +1030,7 @@ class FormMail extends Form
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
 
-        // Create dinamic tags for __EXTRAFIELD_FIELD__
+        // Create dynamic tags for __EXTRAFIELD_FIELD__
         $extrafields = new ExtraFields($this->db);
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
         $object->fetch_optionals($object->id, $extralabels);
@@ -1035,7 +1038,7 @@ class FormMail extends Form
             $this->substit['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
         }
 
-        //Fill substit_lines with each object lines content
+        // Fill substit_lines with each object lines content
         if (is_array($object->lines))
         {
             foreach ($object->lines as $line)
@@ -1073,13 +1076,14 @@ class FormMail extends Form
 	}
 
 	/**
-	 * Get list of substition keys available for emails.
-	 * This include the complete_substitutions_array. TODO Include the getCommonSubstitutionArray().
+	 * Get list of substitution keys available for emails.
+	 * This include the complete_substitutions_array.
 	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
+	 * @param	Object	$object		Object if applicable
 	 * @return	array               Array of substitution values for emails.
 	 */
-	static function getAvailableSubstitKey($mode='formemail')
+	static function getAvailableSubstitKey($mode='formemail', $object=null)
 	{
 		global $conf, $langs;
 
@@ -1088,20 +1092,20 @@ class FormMail extends Form
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$vars=array(
-				'__REF__',
-				'__REFCLIENT__',
-				'__REFSUPPLIER__',
-			    '__THIRDPARTY_ID__',
-			    '__THIRDPARTY_NAME__',
-			    '__PROJECT_ID__',
-			    '__PROJECT_REF__',
-			    '__PROJECT_NAME__',
-				'__CONTACTCIVNAME__',
-				'__AMOUNT__',
-				'__AMOUNT_WO_TAX__',
-				'__AMOUNT_VAT__',
-			    '__PERSONALIZED__',			// Paypal link will be added here in form mode
-				'__SIGNATURE__',
+				'__REF__'=>'__REF__',
+				'__REFCLIENT__'=>'__REFCLIENT__',
+				'__REFSUPPLIER__'=>'__REFSUPPLIER__',
+			    '__THIRDPARTY_ID__'=>'__THIRDPARTY_ID__',
+			    '__THIRDPARTY_NAME__'=>'__THIRDPARTY_NAME__',
+			    '__PROJECT_ID__'=>'__PROJECT_ID__',
+			    '__PROJECT_REF__'=>'__PROJECT_REF__',
+			    '__PROJECT_NAME__'=>'__PROJECT_NAME__',
+				'__CONTACTCIVNAME__'=>'__CONTACTCIVNAME__',
+				'__AMOUNT__'=>'__AMOUNT__',
+				'__AMOUNT_WO_TAX__'=>'__AMOUNT_WO_TAX__',
+				'__AMOUNT_VAT__'=>'__AMOUNT_VAT__',
+			    '__PERSONALIZED__'=>'__PERSONALIZED__',				// Paypal link will be added here in form mode
+				'__SIGNATURE__'=>'__SIGNATURE__',
 			);
 			if ($mode == 'formwithlines')
 			{
@@ -1179,7 +1183,7 @@ class FormMail extends Form
 		}
 
 		$parameters=array('mode'=>$mode);
-		$tmparray=getCommonSubstitutionArray($langs);
+		$tmparray=getCommonSubstitutionArray($langs, 0, null, $object);
 		complete_substitutions_array($tmparray, $langs, null, $parameters);
 		foreach($tmparray as $key => $val)
 		{

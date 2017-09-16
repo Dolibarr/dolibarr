@@ -275,28 +275,18 @@ if (! $error && $massaction == 'confirm_presend')
                 if ($objectclass == 'CommandeFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO);
                 if ($objectclass == 'FactureFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO);
 
+                $objecttmp=new $objectclass($db);
+                $objecttmp->thirdparty = $thirdparty;
 
-                $substitutionarray=array(
-                	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-                	'__ID__' => join(', ',array_keys($listofqualifiedid)),
-                    '__EMAIL__' => $thirdparty->email,
-                    '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-                    '__FACREF__' => join(', ',$listofqualifiedref),            // For backward compatibility
-                    '__ORDERREF__' => join(', ',$listofqualifiedref),          // For backward compatibility
-                    '__PROPREF__' => join(', ',$listofqualifiedref),           // For backward compatibility
-                    '__REF__' => join(', ',$listofqualifiedref),
-                    '__REFCLIENT__' => $thirdparty->name,
-					'__SIGNATURE__' =>  (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?dol_string_nohtmltag($user->signature):'')
-                	/* not available on all object
-					/'__FIRSTNAME__'=>(is_object($object)?$object->firstname:''),
-					'__LASTNAME__'=>(is_object($object)?$object->lastname:''),
-					'__FULLNAME__'=>(is_object($object)?$object->getFullName($langs):''),
-					'__ADDRESS__'=>(is_object($object)?$object->address:''),
-					'__ZIP__'=>(is_object($object)?$object->zip:''),
-					'__TOWN_'=>(is_object($object)?$object->town:''),
-					'__COUNTRY__'=>(is_object($object)?$object->country:''),
-					*/
-                );
+                // Make substitution in email content
+                $substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
+                $substitutionarray['__ID__'] = join(', ',array_keys($listofqualifiedid));
+                $substitutionarray['__EMAIL__'] = $thirdparty->email;
+                $substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+                $substitutionarray['__REF__'] = join(', ',$listofqualifiedref);
+
+                $parameters=array('mode'=>'formemail');
+                complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
                 $subject=make_substitutions($subject, $substitutionarray);
                 $message=make_substitutions($message, $substitutionarray);
@@ -458,15 +448,15 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $outputlangs->setDefaultLang($newlang);
     }
 
-    if (!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT)) 
+    if (!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT))
     {
     	// Create output dir if not exists
 		dol_mkdir($diroutputmassaction);
-	
+
 		// Defined name of merged file
 		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
 		$filename=preg_replace('/\s/','_',$filename);
-	
+
 		// Save merged file
 		if ($filter=='paye:0')
 		{
