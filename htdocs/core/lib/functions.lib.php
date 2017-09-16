@@ -5234,12 +5234,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     	$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
     	$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-    	$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
-    	$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+    	if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
+    	{
+    		$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
+    		$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+    	}
 
-    	$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
-    	$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-    	$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+    	if (is_object($object->projet) && $object->projet->id > 0)
+    	{
+    		$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
+    		$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+    	}
 
     	// Create dynamic tags for __EXTRAFIELD_FIELD__
     	if ($object->table_element && $object->id > 0)
@@ -5251,6 +5257,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 	    	}
     	}
+
+    	$substitutionarray['__ONLINE_PAYMENT_XXX__'] = 'todo';
     }
     if (empty($exclude) || ! in_array('objectamount', $exclude))
     {
