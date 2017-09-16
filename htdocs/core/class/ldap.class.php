@@ -195,15 +195,15 @@ class Ldap
 				if (is_resource($this->connection))
 				{
 					// Begin TLS if requested by the configuration
-	    			if (! empty($conf->global->LDAP_SERVER_USE_TLS))
-	    			{
-	    			    if (! ldap_start_tls($this->connection))
-	    			    {
-	    			        dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
-	    			        $connected = 0;
-	    			        $this->close();
-	    				}
-	    			}
+					if (! empty($conf->global->LDAP_SERVER_USE_TLS))
+					{
+						if (! ldap_start_tls($this->connection))
+						{
+							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
+							$connected = 0;
+							$this->close();
+						}
+					}
 
 					// Execute the ldap_set_option here (after connect and before bind)
 					$this->setVersion();
