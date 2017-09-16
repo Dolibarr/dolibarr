@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2002		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
@@ -22,7 +22,6 @@
  *	\file       htdocs/adherents/class/adherent_type.class.php
  *	\ingroup    member
  *	\brief      File of class to manage members types
- *	\author     Rodolphe Quiedeville
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -64,140 +63,192 @@ class AdherentType extends CommonObject
 	public $mail_valid;
 
 
-    /**
+	/**
 	 *	Constructor
 	 *
 	 *	@param 		DoliDB		$db		Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-        $this->statut = 1;
-    }
+	 */
+	function __construct($db)
+	{
+		$this->db = $db;
+		$this->statut = 1;
+	}
 
 
-    /**
-     *  Fonction qui permet de creer le status de l'adherent
-     *
-     *  @param      User		$user		User making creation
-     *  @return     int						>0 if OK, < 0 if KO
-     */
-    function create($user)
-    {
-        global $conf;
+	/**
+	 *  Fonction qui permet de creer le status de l'adherent
+	 *
+	 *  @param	User		$user			User making creation
+	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
+	 *  @return	int						>0 if OK, < 0 if KO
+	 */
+	function create($user,$notrigger=0)
+	{
+		global $conf;
 
-        $this->statut=(int) $this->statut;
-        $this->label=(!empty($this->libelle)?trim($this->libelle):trim($this->label));
+		$error=0;
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
-        $sql.= "libelle";
-        $sql.= ", entity";
-        $sql.= ") VALUES (";
-        $sql.= "'".$this->db->escape($this->label)."'";
-        $sql.= ", ".$conf->entity;
-        $sql.= ")";
+		$this->statut=(int) $this->statut;
+		$this->label=trim($this->label);
 
-        dol_syslog("Adherent_type::create", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
-            return $this->update($user);
-        }
-        else
-        {
-            $this->error=$this->db->error().' sql='.$sql;
-            return -1;
-        }
-    }
+		$this->db->begin();
 
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
+		$sql.= "libelle";
+		$sql.= ", entity";
+		$sql.= ") VALUES (";
+		$sql.= "'".$this->db->escape($this->label)."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ")";
 
-    /**
-     *  Met a jour en base donnees du type
-     *
-     *	@param		User	$user	Object user making change
-     *  @return		int				>0 if OK, < 0 if KO
-     */
-    function update($user)
-    {
-    	global $hookmanager,$conf;
+		dol_syslog("Adherent_type::create", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
 
-    	$error=0;
+			$result = $this->update($user,1);
+			if ($result < 0)
+			{
+				$this->db->rollback();
+				return -3;
+			}
 
-    	$this->label=(!empty($this->libelle)?trim($this->libelle):trim($this->label));
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('MEMBER_TYPE_CREATE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
-        $sql.= "SET ";
-        $sql.= "statut = ".$this->statut.",";
-        $sql.= "libelle = '".$this->db->escape($this->label) ."',";
-        $sql.= "subscription = '".$this->db->escape($this->subscription)."',";
-        $sql.= "note = '".$this->db->escape($this->note)."',";
-        $sql.= "vote = '".$this->db->escape($this->vote)."',";
-        $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
-        $sql.= " WHERE rowid =".$this->id;
+			if (! $error)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-        	$action='update';
+	/**
+	 *  Met a jour en base donnees du type
+	 *
+	 *  	@param	User		$user			Object user making change
+	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
+	 *  @return	int						>0 if OK, < 0 if KO
+	 */
+	function update($user,$notrigger=0)
+	{
+		global $conf, $hookmanager;
 
-        	// Actions on extra fields (by external module or standard code)
-        	$hookmanager->initHooks(array('membertypedao'));
-        	$parameters=array('membertype'=>$this->id);
-        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-        	if (empty($reshook))
-        	{
-        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        		{
-        			$result=$this->insertExtraFields();
-        			if ($result < 0)
-        			{
-        				$error++;
-        			}
-        		}
-        	}
-        	else if ($reshook < 0) $error++;
+		$error=0;
 
+		$this->label=trim($this->label);
 
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error().' sql='.$sql;
-            return -1;
-        }
-    }
+		$this->db->begin();
 
-    /**
-     *	Fonction qui permet de supprimer le status de l'adherent
-     *
-     *	@param      int		$rowid		Id of member type to delete
-     *  @return		int					>0 if OK, 0 if not found, < 0 if KO
-     */
-    function delete($rowid='')
-    {
-    	if (empty($rowid)) $rowid=$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
+		$sql.= "SET ";
+		$sql.= "statut = ".$this->statut.",";
+		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
+		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
+		$sql.= "note = '".$this->db->escape($this->note)."',";
+		$sql.= "vote = '".$this->db->escape($this->vote)."',";
+		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
+		$sql.= " WHERE rowid =".$this->id;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = ".$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$action='update';
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->affected_rows($resql))
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        else
-        {
-            print "Err : ".$this->db->error();
-            return 0;
-        }
-    }
+			// Actions on extra fields (by external module or standard code)
+			$hookmanager->initHooks(array('membertypedao'));
+			$parameters=array('membertype'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
+
+			if (! $error && ! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('MEMBER_TYPE_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+				return -$error;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *	Fonction qui permet de supprimer le status de l'adherent
+	 *
+	 *  @return		int					>0 if OK, 0 if not found, < 0 if KO
+	 */
+	function delete()
+	{
+		global $user;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			// Call trigger
+			$result=$this->call_trigger('MEMBER_TYPE_DELETE',$user);
+			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
+			// End call triggers
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
     /**
      *  Fonction qui permet de recuperer le status de l'adherent
@@ -223,7 +274,6 @@ class AdherentType extends CommonObject
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
                 $this->label          = $obj->label;
-                $this->libelle        = $obj->label;	// For backward compatibility
                 $this->statut         = $obj->statut;
                 $this->subscription   = $obj->subscription;
                 $this->mail_valid     = $obj->mail_valid;
@@ -250,7 +300,7 @@ class AdherentType extends CommonObject
 
         $adherenttypes = array();
 
-        $sql = "SELECT rowid, libelle";
+        $sql = "SELECT rowid, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
 	$sql.= " WHERE entity IN (".getEntity('adherent').")";
 
@@ -266,7 +316,7 @@ class AdherentType extends CommonObject
                 {
                     $obj = $this->db->fetch_object($resql);
 
-                    $adherenttypes[$obj->rowid] = $langs->trans($obj->libelle);
+                    $adherenttypes[$obj->rowid] = $langs->trans($obj->label);
                     $i++;
                 }
             }
@@ -278,12 +328,11 @@ class AdherentType extends CommonObject
         return $adherenttypes;
     }
 
-
     /**
      *    	Return clicable name (with picto eventually)
      *
      *		@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param		int		$maxlen			length max libelle
+     *		@param		int		$maxlen			length max label
      *		@return		string					String with URL
      */
     function getNomUrl($withpicto=0,$maxlen=0)
@@ -291,7 +340,7 @@ class AdherentType extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowTypeCard",$this->libelle);
+        $label=$langs->trans("ShowTypeCard",$this->label);
 
         $link = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
@@ -300,20 +349,101 @@ class AdherentType extends CommonObject
 
         if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$linkend;
+        $result.=$link.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
         return $result;
     }
-
 
     /**
      *     getLibStatut
      *
      *     @return string     Return status of a type of member
      */
-    function getLibStatut()
-    {
-    	return '';
-    }
+	function getLibStatut()
+	{
+		return '';
+	}
+
+	/**
+	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *
+	 *	@param		array	$info		Info array loaded by _load_ldap_info
+	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *									2=Return key only (uid=qqq)
+	 *	@return		string				DN
+	 */
+	function _load_ldap_dn($info,$mode=0)
+	{
+		global $conf;
+		$dn='';
+		if ($mode==0) $dn=$conf->global->LDAP_KEY_MEMBERS_TYPES."=".$info[$conf->global->LDAP_KEY_MEMBERS_TYPES].",".$conf->global->LDAP_MEMBER_TYPE_DN;
+		if ($mode==1) $dn=$conf->global->LDAP_MEMBER_TYPE_DN;
+		if ($mode==2) $dn=$conf->global->LDAP_KEY_MEMBERS_TYPES."=".$info[$conf->global->LDAP_KEY_MEMBERS_TYPES];
+		return $dn;
+	}
+
+
+	/**
+	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
+	 *
+	 *	@return		array		Tableau info des attributs
+	 */
+	function _load_ldap_info()
+	{
+		global $conf,$langs;
+
+		$info=array();
+
+		// Object classes
+		$info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS);
+
+		// Champs
+		if ($this->label && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
+		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = $this->note;
+		if (! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS))
+		{
+			$valueofldapfield=array();
+			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
+			{
+				$member=new Adherent($this->db);
+				$member->fetch($val->id);
+				$info2 = $member->_load_ldap_info();
+				$valueofldapfield[] = $member->_load_ldap_dn($info2);
+			}
+			$info[$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
+		}
+		return $info;
+	}
+
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+		global $conf, $user, $langs;
+
+		// Initialise parametres
+		$this->id = 0;
+		$this->ref = 0;
+		$this->specimen=1;
+
+		$this->label='MEMBERS TYPE SPECIMEN';
+		$this->note='This is a note';
+		$this->mail_valid='This is welcome email';
+		$this->subscription=1;
+		$this->vote=0;
+
+		$this->statut=1;
+
+		// Members of this member type is just me
+		$this->members=array(
+			$user->id => $user
+		);
+	}
 
     /**
      *     getMailOnValid
