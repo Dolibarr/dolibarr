@@ -49,6 +49,7 @@ NbOfUniqueEMails=Nb of unique emails
 NbOfEMails=Nb of EMails
 TotalNbOfDistinctRecipients=Number of distinct recipients
 NoTargetYet=No recipients defined yet (Go on tab 'Recipients')
+NoRecipientEmail=No recipient email for %s
 RemoveRecipient=Remove recipient
 YouCanAddYourOwnPredefindedListHere=To create your email selector module, see htdocs/core/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=When using test mode, substitutions variables are replaced by generic values

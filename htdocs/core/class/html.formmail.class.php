@@ -63,6 +63,7 @@ class FormMail extends Form
     var $withtoccc;
     var $withtopic;
     var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+    var $withmaindocfile;		// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
     var $withbody;
 
     var $withfromreadonly;
@@ -103,7 +104,8 @@ class FormMail extends Form
         $this->withtoccc=0;
         $this->witherrorsto=0;
         $this->withtopic=1;
-        $this->withfile=0;
+        $this->withfile=0;			// 1=Add section "Attached files". 2=Can add files.
+        $this->withmaindocfile=0;	// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
         $this->withbody=1;
 
         $this->withfromreadonly=1;
@@ -220,6 +222,7 @@ class FormMail extends Form
     /**
      *	Show the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+     *  this->withmaindocfile
      *
      *	@param	string	$addfileaction		Name of action when posting file attachments
      *	@param	string	$removefileaction	Name of action when removing file attachments
@@ -233,6 +236,7 @@ class FormMail extends Form
     /**
      *	Get the form to input an email
      *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+     *  this->withfile
      *  this->param:	Contains more parameteres like email templates info
      *
      *	@param	string	$addfileaction		Name of action when posting file attachments
@@ -297,6 +301,7 @@ class FormMail extends Form
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 			//var_dump($this->param["models"]);
         	//var_dump($model_id);
+        	//var_dump($arraydefaultmessage);
 
         	$out.= "\n".'<!-- Begin form mail type='.$this->param["models"].' --><div id="mailformdiv"></div>'."\n";
         	if ($this->withform == 1)
@@ -348,7 +353,7 @@ class FormMail extends Form
         	elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
         	        'propal_send','order_send','facture_send',
         	        'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
-        	        'invoice_supplier_send','thirdparty','all'
+        	        'invoice_supplier_send','thirdparty','contract','all'
            	    )))
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
@@ -641,9 +646,12 @@ class FormMail extends Form
         	// Topic
         	if (! empty($this->withtopic))
         	{
-        		$defaulttopic="";
-        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
-        		elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+        		$defaulttopic=GETPOST('subject','none');
+				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				{
+        			if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
+        			elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+				}
 
         		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
@@ -669,9 +677,22 @@ class FormMail extends Form
         		$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
 
         		$out.= '<td>';
+        		if (! empty($this->withmaindocfile))
+        		{
+        			if ($this->withmaindocfile == 1)
+        			{
+        				$out.='<input type="checkbox" name="addmaindocfile" value="1" />';
+        			}
+        			if ($this->withmaindocfile == -1)
+        			{
+        				$out.='<input type="checkbox" name="addmaindocfile" checked="checked" />';
+        			}
+        			$out.=' '.$langs->trans("JoinMainDoc").'.<br>';
+        		}
+
         		if (is_numeric($this->withfile))
         		{
-	        		// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+					// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 	        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 	        		$out.= '<script type="text/javascript" language="javascript">';
 	        		$out.= 'jQuery(document).ready(function () {';
@@ -694,7 +715,7 @@ class FormMail extends Form
 	        				$out.= '<br></div>';
 	        			}
 	        		}
-	        		else
+	        		else if (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
 	        		{
 	        			$out.= $langs->trans("NoAttachedFiles").'<br>';
 	        		}
@@ -710,15 +731,19 @@ class FormMail extends Form
         		{
         			$out.=$this->withfile;
         		}
+
         		$out.= "</td></tr>\n";
         	}
 
         	// Message
         	if (! empty($this->withbody))
         	{
-        		$defaultmessage="";
-        		if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
-        		elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+        		$defaultmessage=GETPOST('message','none');
+				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				{
+					if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
+       				elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+				}
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))

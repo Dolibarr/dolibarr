@@ -85,6 +85,7 @@ if (! $error && $massaction == 'confirm_presend')
             {
                 $listofobjectid[$toselectid]=$toselectid;
                 $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+                if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
                 $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
             }
@@ -172,74 +173,90 @@ if (! $error && $massaction == 'confirm_presend')
             $attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
             $listofqualifiedid=array();
             $listofqualifiedref=array();
+            $thirdpartywithoutemail=array();
+
             foreach($listofobjectref[$thirdpartyid] as $objectid => $object)
             {
                 //var_dump($thirdpartyid.' - '.$objectid.' - '.$object->statut);
-
-                if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
+                if ($objectclass == 'Propal' && $object->statut == Propal::STATUS_DRAFT)
                 {
                 	$langs->load("errors");
                     $nbignored++;
-                    $resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
+                    $resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue; // Payment done or started or canceled
                 }
-                if ($objectclass == 'Commande' && $object->statut == Commande::STATUS_DRAFT)
+            	if ($objectclass == 'Commande' && $object->statut == Commande::STATUS_DRAFT)
                 {
                 	$langs->load("errors");
                     $nbignored++;
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$object->ref).'</div><br>';
                     continue;
                 }
-
-                // Read document
-                // TODO Use future field $object->fullpathdoc to know where is stored default file
-                // TODO If not defined, use $object->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
-                $filename=dol_sanitizeFileName($object->ref).'.pdf';
-                $filedir=$uploaddir . '/' . dol_sanitizeFileName($object->ref);
-                $file = $filedir . '/' . $filename;
-                $mime = dol_mimetype($file);
-
-                if (dol_is_file($file))
+                if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
                 {
-                    if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
-                    {
-                        $object->fetch_thirdparty();
-                        $sendto = $object->thirdparty->email;
-                    }
-
-                    if (empty($sendto))
-                    {
-                        //print "No recipient for thirdparty ".$object->thirdparty->name;
-                        $nbignored++;
-                        continue;
-                    }
-
-                    if (dol_strlen($sendto))
-                    {
-                        // Create form object
-                        $attachedfiles=array(
-                            'paths'=>array_merge($attachedfiles['paths'],array($file)),
-                            'names'=>array_merge($attachedfiles['names'],array($filename)),
-                            'mimes'=>array_merge($attachedfiles['mimes'],array($mime))
-                        );
-                    }
-
-                    $listofqualifiedid[$objectid]=$object;
-                    $listofqualifiedref[$objectid]=$object->ref;
+                	$langs->load("errors");
+                	$nbignored++;
+                	$resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
+                	continue; // Payment done or started or canceled
                 }
-                else
-                {
-                    $nbignored++;
-                    $langs->load("errors");
-                    $resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div><br>';
-                    dol_syslog('Failed to read file: '.$file, LOG_WARNING);
-                    continue;
-                }
+
+                // Test recipient
+	            if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
+	            {
+	             	$object->fetch_thirdparty();
+	               	$sendto = $object->thirdparty->email;
+	            }
+
+	            if (empty($sendto))
+	            {
+	               	//print "No recipient for thirdparty ".$object->thirdparty->name;
+	               	$nbignored++;
+	                if (empty($thirdpartywithoutemail[$object->thirdparty->id]))
+	                {
+	                	$resaction.='<div class="error">'.$langs->trans('NoRecipientEmail',$object->thirdparty->name).'</div><br>';
+	                }
+	               	dol_syslog('No recipient for thirdparty: '.$object->thirdparty->name, LOG_WARNING);
+	               	$thirdpartywithoutemail[$object->thirdparty->id]=1;
+	               	continue;
+	            }
+
+	            if ($_POST['addmaindocfile'])
+	            {
+	            	// TODO Use future field $object->fullpathdoc to know where is stored default file
+	            	// TODO If not defined, use $object->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
+	            	$filename=dol_sanitizeFileName($object->ref).'.pdf';
+	            	$filedir=$uploaddir . '/' . dol_sanitizeFileName($object->ref);
+	            	$file = $filedir . '/' . $filename;
+	            	$mime = dol_mimetype($file);
+
+       	            if (dol_is_file($file))
+		            {
+		                	// Create form object
+		                	$attachedfiles=array(
+		                	'paths'=>array_merge($attachedfiles['paths'],array($file)),
+		                	'names'=>array_merge($attachedfiles['names'],array($filename)),
+		                	'mimes'=>array_merge($attachedfiles['mimes'],array($mime))
+		                	);
+		            }
+		            else
+		            {
+	    	                $nbignored++;
+	        	            $langs->load("errors");
+	            	        $resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div><br>';
+	                	    dol_syslog('Failed to read file: '.$file, LOG_WARNING);
+	                    	continue;
+		            }
+	            }
+
+	            // Object of thirdparty qualified
+	            $listofqualifiedid[$objectid]=$object;
+	            $listofqualifiedref[$objectid]=$object->ref;
+
 
                 //var_dump($listofqualifiedref);
             }
 
-            // Loop on each qualified objects of the thirdparty
+            // Send email if there is at least one qualified record
             if (count($listofqualifiedid) > 0)
             {
                 $langs->load("commercial");

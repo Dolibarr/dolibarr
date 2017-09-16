@@ -600,6 +600,13 @@ if ($resql)
                 print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
                 print '</span>';
             }
+
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->contrat->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
+            print '</td>';
+
             print '</td>';
         }
         if (! empty($arrayfields['c.ref_customer']['checked']))

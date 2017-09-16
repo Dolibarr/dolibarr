@@ -345,6 +345,7 @@ $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
+$thirdpartystatic=new Societe($db);
 
 llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
@@ -355,7 +356,7 @@ $sql.= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
@@ -1010,12 +1011,12 @@ if ($resql)
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
                 print '<td class="tdoverflowmax200">';
-                $thirdparty=new Societe($db);
-                $thirdparty->id=$obj->socid;
-                $thirdparty->name=$obj->name;
-                $thirdparty->client=$obj->client;
-                $thirdparty->code_client=$obj->code_client;
-                print $thirdparty->getNomUrl(1,'customer');
+                $thirdpartystatic->id=$obj->socid;
+                $thirdpartystatic->name=$obj->name;
+                $thirdpartystatic->client=$obj->client;
+                $thirdpartystatic->code_client=$obj->code_client;
+                $thirdpartystatic->email=$obj->email;
+                print $thirdpartystatic->getNomUrl(1,'customer');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
     		}

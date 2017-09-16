@@ -540,6 +540,7 @@ MonthShort10=Oct
 MonthShort11=Nov
 MonthShort12=Dec
 AttachedFiles=Attached files and documents
+JoinMainDoc=Join main document
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
