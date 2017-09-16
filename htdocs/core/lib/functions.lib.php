@@ -5255,9 +5255,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
         $substitutionarray['__AMOUNT_WO_TAX__']= is_object($object)?$object->total_ht:'';
         $substitutionarray['__AMOUNT_VAT__']   = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
         // For backward compatibility
-        $substitutionarray['__TOTAL_TTC__']    = is_object($object)?$object->total_ttc:'';
-        $substitutionarray['__TOTAL_HT__']     = is_object($object)?$object->total_ht:'';
-        $substitutionarray['__TOTAL_VAT__']    = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        if ($onlykey != 2)
+        {
+        	$substitutionarray['__TOTAL_TTC__']    = is_object($object)?$object->total_ttc:'';
+        	$substitutionarray['__TOTAL_HT__']     = is_object($object)?$object->total_ht:'';
+        	$substitutionarray['__TOTAL_VAT__']    = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        }
     }
 
     if (empty($exclude) || ! in_array('date', $exclude))

@@ -264,8 +264,8 @@ if (! $error && $massaction == 'confirm_presend')
                 }
 
                 $replyto = $from;
-                $subject = GETPOST('subject');
-                $message = GETPOST('message');
+                $subject = GETPOST('subject','none');
+                $message = GETPOST('message','none');
                 $sendtocc = GETPOST('sentocc');
                 $sendtobcc = '';
                 if ($objectclass == 'Propale') 				$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);

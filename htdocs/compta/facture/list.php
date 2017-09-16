@@ -687,7 +687,8 @@ if ($resql)
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
-		// Tableau des substitutions
+		// Array of substitution
+		// TODO Use getCommonSubstitutionArray like in actions_sendmails.inc.php
 		$formmail->substit['__REF__']='__REF__';	// We want to keep the tag
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag

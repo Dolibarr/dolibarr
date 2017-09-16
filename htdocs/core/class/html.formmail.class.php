@@ -302,10 +302,18 @@ class FormMail extends Form
         	if ($this->withform == 1)
         	{
         		$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
-				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
+        		$out.= '<a id="formmail" name="formmail"></a>';
+        		$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
         		$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
-        		$out.= '<a id="formmail" name="formmail"></a>';
+        	}
+        	if (! empty($this->withfrom))
+        	{
+        		if (! empty($this->withfromreadonly))
+        		{
+        			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
+        			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
+        		}
         	}
         	foreach ($this->param as $key=>$value)
         	{
@@ -360,6 +368,7 @@ class FormMail extends Form
         	if (! empty($this->withsubstit))
         	{
         		$out.= '<tr><td colspan="2" align="right">';
+        		//$out.='<div class="floatright">';
         		$help="";
         		foreach($this->substit as $key => $val)
         		{
@@ -368,6 +377,7 @@ class FormMail extends Form
         		if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
         		else $out.= $form->textwithpicto($langs->trans($this->withsubstit), $help, 1, 'help', '', 0, 2, 'substittooltip');																// New usage
         		$out.= "</td></tr>\n";
+        		//$out.='</div>';
         	}
 
         	// From
@@ -375,9 +385,7 @@ class FormMail extends Form
         	{
         		if (! empty($this->withfromreadonly))
         		{
-        			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
-        			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
-        			$out.= '<tr><td width="180" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
+        			$out.= '<tr><td class="titlefield fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
 
                     if (! ($this->fromtype === 'user' && $this->fromid > 0)
                         && ! ($this->fromtype === 'company')
@@ -430,9 +438,9 @@ class FormMail extends Form
                             }
                         }
                         $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+                        //$out.= ajax_combobox('fromtype');
                     }
 
-        			$out.= "</td></tr>\n";
         			$out.= "</td></tr>\n";
         		}
         		else
@@ -1076,7 +1084,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 * Get list of substitution keys available for emails.
+	 * Get list of substitution keys available for emails. This is used for tooltips help.
 	 * This include the complete_substitutions_array.
 	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
@@ -1183,7 +1191,7 @@ class FormMail extends Form
 		}
 
 		$parameters=array('mode'=>$mode);
-		$tmparray=getCommonSubstitutionArray($langs, 0, null, $object);
+		$tmparray=getCommonSubstitutionArray($langs, 2, null, $object);
 		complete_substitutions_array($tmparray, $langs, null, $parameters);
 		foreach($tmparray as $key => $val)
 		{
