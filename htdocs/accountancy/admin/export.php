@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -37,10 +37,10 @@ $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
 
-// Security check
-if (empty($user->admin) && empty($user->rights->accounting->chartofaccount))
+// Security access
+if (empty($user->rights->accounting->chartofaccount))
 {
-    accessforbidden();
+	accessforbidden();
 }
 
 $action = GETPOST('action', 'alpha');
@@ -53,13 +53,6 @@ $main_option = array (
 $model_option = array (
 		'ACCOUNTING_EXPORT_SEPARATORCSV',
 		'ACCOUNTING_EXPORT_DATE'
-		/*
-		'ACCOUNTING_EXPORT_PIECE',
-		'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
-		'ACCOUNTING_EXPORT_LABEL',
-		'ACCOUNTING_EXPORT_AMOUNT',
-		'ACCOUNTING_EXPORT_DEVISE'
-		*/
 );
 
 /*
@@ -121,16 +114,12 @@ llxHeader();
 
 $form = new Form($db);
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+// $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
-
-$head = admin_accounting_prepare_head();
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
-
-dol_fiche_head($head, 'export', $langs->trans("Configuration"), -1, 'cron');
 
 $var = true;
 
@@ -244,8 +233,6 @@ if ($num2) {
 
 	print "</table>\n";
 }
-
-dol_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
 
