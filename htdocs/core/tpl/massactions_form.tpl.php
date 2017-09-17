@@ -60,17 +60,14 @@ dol_fiche_head(null, '', '');
 // Cree l'objet formulaire mail
 include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 $formmail = new FormMail($db);
-$formmail->withform = - 1;
+$formmail->withform = -1;
 $formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (! empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 if ($formmail->fromtype === 'user')
 {
 	$formmail->fromid = $user->id;
 }
-if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1)) // If bit 1 is set
-{
-	$formmail->trackid = $trackid;
-}
+$formmail->trackid = $trackid;
 if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
 {
 	include DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';

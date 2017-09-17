@@ -2485,7 +2485,6 @@ else
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
 			// Array of substitutions
-			$formmail->withsubstit='AvailableVariables';
 			$formmail->setSubstitFromObject($object);
 			$formmail->substit['__THIRDPARTY_ID__']=$object->id;		// substit in setSubstitFromObject was wrong for this one
 			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;	// substit in setSubstitFromObject was wrong for this one

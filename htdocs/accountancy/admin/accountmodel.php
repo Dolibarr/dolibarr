@@ -740,15 +740,6 @@ if ($id)
         print '</td>';
         print "</tr>";
 
-        if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates')
-        {
-        	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
-        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        	$tmp=FormMail::getAvailableSubstitKey('formemail');
-        	print implode(', ', $tmp);
-        	print '</td></tr>';
-        }
-
         $colspan=count($fieldlist)+3;
         if ($id == 4) $colspan++;
 
