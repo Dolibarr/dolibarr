@@ -230,7 +230,7 @@ if ($id > 0 || ! empty($ref))
 						$societestatic->fetch($objp->socid);
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datep)) . "</td>";
+						print dol_print_date($db->jdate($objp->datep), 'dayhour') . "</td>";
 						print "<td align=\"center\">" . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->amount) . '</td>' . "\n";
 						print '<td align="right">' . $propalstatic->LibStatut($objp->statut, 5) . '</td>';
