@@ -145,7 +145,7 @@ if ($action == 'add')
         if ($id > 0)
         {
             // Category association
-            $categories = GETPOST('categories');
+            $categories = GETPOST('categories', 'array');
             $object->setCategories($categories);
 
             $_GET["id"]=$id;            // Force chargement page en mode visu
@@ -239,7 +239,7 @@ if ($action == 'update')
         if ($result >= 0)
         {
             // Category association
-            $categories = GETPOST('categories');
+            $categories = GETPOST('categories', 'array');
             $object->setCategories($categories);
 
             $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
