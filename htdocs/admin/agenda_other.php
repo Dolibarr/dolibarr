@@ -373,11 +373,12 @@ $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AG
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
+// TODO Remove to use the default generic feature
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
-$formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2);
+$formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
