@@ -259,7 +259,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 		}
-		
+
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
@@ -286,14 +286,14 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		dol_banner_tab($task, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
-		
+
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
-		
+
 		// Nb comments
-		print '<td class="tdtop">'.$langs->trans("TaskNbComments").'</td><td>';
+		print '<td class="titlefield">'.$langs->trans("TaskNbComments").'</td><td>';
 		print $task->getNbComments();
 		print '</td></tr>';
 
@@ -307,46 +307,46 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 		dol_fiche_end();
-		
-		
+
+
 		print '<br>';
 		print '<div id="comment">';
-		
+
 		// Add comment
-		
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="addcomment">';
 		print '<input type="hidden" name="id" value="'.$task->id.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-		
+
 		print '<table class="noborder nohover" width="100%">';
-		
+
 		print '<tr class="liste_titre">';
 		print '<td width="25%">'.$langs->trans("Comments").'</td>';
 		print '<td width="25%"></td>';
 		print '<td width="25%"></td>';
 		print '<td width="25%"></td>';
 		print "</tr>\n";
-		
+
 		print '<tr class="oddeven">';
 		print '<td></td>';
-		
+
 		// Description
 		print '<td colspan="2">';
-		
+
 		$desc = ($_POST['comment_description']?$_POST['comment_description']:'');
-		
+
 		$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '100%');
 		print $doleditor->Create(1);
-		
+
 		print '</td>';
-		
+
 		print '<td align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 		print '</td></tr>';
 		print '</table></form>';
-		
+
 		// List of comments
 		if(!empty($task->comments)) {
 			// Default color for current user
@@ -367,7 +367,7 @@ if ($id > 0 || ! empty($ref))
 				if($comment->fk_user == $user->id) {
 					print '<div class="width25p float">&nbsp;</div>';
 				}
-				
+
 				print '<div class="width75p float comment comment-table" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
 				print '<div class="comment-info comment-cell">';
 				if (! empty($user->photo))
@@ -377,7 +377,7 @@ if ($id > 0 || ! empty($ref))
 				print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
 				print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
 				print '</div>'; // End comment-info
-				
+
 				print '<div class="comment-cell comment-right">';
 				print '<div class="comment-table width100p">';
 				print '<div class="comment-description comment-cell">';
@@ -391,17 +391,17 @@ if ($id > 0 || ! empty($ref))
 				print '</div>'; // End comment-table
 				print '</div>'; // End comment-right
 				print '</div>'; // End comment
-				
+
 				if($comment->fk_user != $user->id) {
 					print '<div class="width25p float">&nbsp;</div>';
 				}
 				print '<div class="clearboth"></div>';
 				print '</div>'; // end 100p
-				
+
 				$first = false;
 			}
 		}
-		
+
 		print '<br>';
 		print '</div>';
 

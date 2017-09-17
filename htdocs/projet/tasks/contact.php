@@ -187,7 +187,7 @@ if ($id > 0 || ! empty($ref))
     		// Tabs for project
     		$tab='tasks';
     		$head=project_prepare_head($projectstatic);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+    		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
     		$param=($mode=='mine'?'&mode=mine':'');
 
@@ -272,7 +272,10 @@ if ($id > 0 || ! empty($ref))
             print '<div class="clearboth"></div>';
 
     		dol_fiche_end();
+
+    		print '<br>';
 		}
+
 
 		// To verify role of users
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
