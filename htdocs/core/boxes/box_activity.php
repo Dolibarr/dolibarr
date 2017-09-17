@@ -438,11 +438,6 @@ class box_activity extends ModeleBoxes
         			'td' => 'align="center"',
         			'text'=>$langs->trans("NoRecordedInvoices"),
         			);
-        	} else {
-        		$this->info_box_contents[0][0] = array(
-        		'td' => '',
-        		'maxlength'=>500, 'text' => ($db->error().' sql='.$sql),
-        		);
         	}
         }
 
