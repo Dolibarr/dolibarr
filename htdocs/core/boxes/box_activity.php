@@ -77,7 +77,6 @@ class box_activity extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        $totalMnt = 0;
         $totalnb = 0;
         $line = 0;
         $cachetime = 3600;
@@ -173,7 +172,6 @@ class box_activity extends ModeleBoxes
         			'td' => 'class="right"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
         			);
-        			$totalMnt += $data[$j]->Mnttot;
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $propalstatic->LibStatut($data[$j]->fk_statut,3),
@@ -255,7 +253,6 @@ class box_activity extends ModeleBoxes
                         'td' => 'class="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
-                    $totalMnt += $data[$j]->Mnttot;
                     $this->info_box_contents[$line][4] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $commandestatic->LibStatut($data[$j]->fk_statut,0,3),
@@ -342,10 +339,8 @@ class box_activity extends ModeleBoxes
         			);
 
         			// We add only for the current year
-        			if ($data[$j]->annee == date("Y")) {
-        				$totalnb += $data[$j]->nb;
-        				$totalMnt += $data[$j]->Mnttot;
-        			}
+       				$totalnb += $data[$j]->nb;
+
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $facturestatic->LibStatut(1,$data[$j]->fk_statut,3),
@@ -396,10 +391,9 @@ class box_activity extends ModeleBoxes
         	}
 
         	if (! empty($data)) {
-        		$j=0;
-
         		$alreadypaid=-1;
 
+        		$j=0;
         		while ($j < count($data)) {
         			$billurl="search_status=".$data[$j]->fk_statut."&amp;paye=0";
         			$this->info_box_contents[$line][0] = array(
@@ -425,7 +419,6 @@ class box_activity extends ModeleBoxes
         			'td' => 'class="right"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
         			);
-        			$totalMnt += $objp->Mnttot;
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3, $alreadypaid),
