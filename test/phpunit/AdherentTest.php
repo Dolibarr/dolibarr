@@ -138,8 +138,8 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
         $localobject=new AdherentType($this->savdb);
         $localobject->statut=1;
-        $localobject->libelle='Adherent type test';
-        $localobject->cotisation=1;
+        $localobject->label='Adherent type test';
+        $localobject->subscription=1;
         $localobject->vote=1;
         $result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";

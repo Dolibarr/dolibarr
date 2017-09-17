@@ -163,7 +163,7 @@ if (! empty($conf->adherent->enabled))
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
 	$arraylist['1']=$langs->trans("DolibarrToLDAP");
-	//$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr").' ('.$langs->trans("SupportedForLDAPImportScriptOnly").')';
+	$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr").' ('.$langs->trans("SupportedForLDAPImportScriptOnly").')';
 	print $form->selectarray('activememberstypes',$arraylist,$conf->global->LDAP_MEMBER_TYPE_ACTIVE);
 	print '</td><td>'.$langs->trans("LDAPDnMemberTypeActiveExample").'</td></tr>';
 }
