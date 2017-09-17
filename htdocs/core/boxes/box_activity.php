@@ -147,7 +147,7 @@ class box_activity extends ModeleBoxes
         	if (! empty($data))
         	{
         		$j=0;
-        		while ($line < count($data))
+        		while ($j < count($data))
         		{
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="left" width="16"',
@@ -230,7 +230,7 @@ class box_activity extends ModeleBoxes
 
             if (! empty($data)) {
                 $j=0;
-                while ($line < count($data)) {
+                while ($j < count($data)) {
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
@@ -315,7 +315,7 @@ class box_activity extends ModeleBoxes
 
         	if (! empty($data)) {
         		$j=0;
-        		while ($line < count($data)) {
+        		while ($j < count($data)) {
         			$billurl="search_status=2&amp;paye=1&amp;year=".$data[$j]->annee;
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="left" width="16"',
@@ -400,7 +400,7 @@ class box_activity extends ModeleBoxes
 
         		$alreadypaid=-1;
 
-        		while ($line < count($data)) {
+        		while ($j < count($data)) {
         			$billurl="search_status=".$data[$j]->fk_statut."&amp;paye=0";
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="left" width="16"',
