@@ -376,7 +376,7 @@ class box_activity extends ModeleBoxes
         		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         		$sql.= " WHERE f.entity = ".$conf->entity;
         		$sql.= " AND f.fk_soc = s.rowid";
-        		$sql.= " AND paye=0";
+        		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND paye=0";
         		$sql.= " GROUP BY f.fk_statut";
         		$sql.= " ORDER BY f.fk_statut DESC";
 
@@ -402,6 +402,8 @@ class box_activity extends ModeleBoxes
         	$cumuldata=array_merge($cumuldata, $data);
         	if (! empty($data)) {
         		$j=0;
+
+        		$alreadypaid=-1;
 
         		while ($line < count($cumuldata)) {
         			$billurl="search_status=".$data[$j]->fk_statut."&amp;paye=0";
@@ -431,7 +433,7 @@ class box_activity extends ModeleBoxes
         			$totalMnt += $objp->Mnttot;
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
-        			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3),
+        			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3, $alreadypaid),
         			);
         			$line++;
         			$j++;
