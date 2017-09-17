@@ -1255,6 +1255,7 @@ class Account extends CommonObject
         $label = '<u>' . $langs->trans("ShowAccount") . '</u>';
         $label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
         $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        $label .= '<br><b>' . $langs->trans("AccountCurrency") . ':</b> ' . $this->currency_code;
         if (! empty($conf->accounting->enabled))
         {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
