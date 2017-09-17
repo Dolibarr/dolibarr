@@ -250,12 +250,10 @@ class FormActions
         		}
         		print '</td>';
         		print '<td>';
-        		if (! empty($action->author->id))
+        		if (! empty($action->userownerid))
         		{
-        			$userstatic->id = $action->author->id;
-        			$userstatic->firstname = $action->author->firstname;
-        			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1, '', 0, 0, 16, 0, '', '');
+        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
+        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
         		}
         		print '</td>';
         		print '<td align="right">';
