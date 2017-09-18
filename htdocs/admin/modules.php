@@ -254,7 +254,7 @@ if ($action == 'reset' && $user->admin)
 
 $form = new Form($db);
 
-$morejs  = array("/admin/dolistore/js/dolistore.js.php");
+//$morejs  = array("/admin/dolistore/js/dolistore.js.php");
 $morecss = array("/admin/dolistore/css/dolistore.css");
 
 // Set dir where external modules are installed
