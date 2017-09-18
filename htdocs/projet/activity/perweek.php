@@ -515,7 +515,6 @@ else
 print "</table>";
 print '</div>';
 
-print '<input type="hidden" name="timestamp" value="1425423513"/>'."\n";
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';

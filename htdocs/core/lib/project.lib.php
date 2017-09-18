@@ -187,7 +187,7 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
-	
+
 	// Manage discussion
 	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK))
 	{
@@ -210,7 +210,7 @@ function task_prepare_head($object)
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
-    
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -751,6 +751,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 		        $alreadyspent='';
 		        if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
 
+		        $idw = 0;
+
 				$tableCell='';
 				$tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
                 $tableCell.=' + ';
@@ -758,6 +760,15 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$tableCell.=$form->select_duration($lines[$i]->id.'duration','',$disabledtask,'text',0,1);
 				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
+
+				$modeinput='hours';
+
+				print '<script type="text/javascript">';
+				print "jQuery(document).ready(function () {\n";
+				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
+				print "})\n";
+				print '</script>';
+
 				print '</td>';
 
 				print '<td align="right">';
@@ -983,8 +994,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     }
                   	$tableCell.='<input type="text" alt="'.($disabledtask?'':$alttitle).'" title="'.($disabledtask?'':$alttitle).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 	        		$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
-                   	$tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
-                    $tableCell.='</td>';
+                   	$tableCell.=' onkeyup="updateTotal('.$idw.',\''.$modeinput.'\')"';
+                   	$tableCell.=' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
+                   	$tableCell.='</td>';
                     print $tableCell;
 		        }
 
