@@ -237,6 +237,21 @@ foreach ($search_array_options as $key => $val)
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+
+/* If a group by is required
+$sql.= " GROUP BY "
+foreach($object->fields as $key => $val)
+{
+    $sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+*/
+
 $sql.=$db->order($sortfield,$sortorder);
 
 // Count total nb of records
