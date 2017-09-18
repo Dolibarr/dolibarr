@@ -1382,6 +1382,18 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/expensereport/list.php?search_status=2&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("ListToApprove"), 2, $user->rights->expensereport->approve);
 				$newmenu->add("/expensereport/stats/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->expensereport->lire);
 			}
+
+			if (! empty($conf->projet->enabled))
+			{
+				if (empty($conf->global->PROJECT_HIDE_TASKS))
+				{
+					$langs->load("projects");
+
+					$search_project_user = GETPOST('search_project_user','int');
+
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
+				}
+			}
 		}
 
 
