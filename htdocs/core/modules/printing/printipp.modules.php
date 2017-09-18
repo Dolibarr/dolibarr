@@ -77,7 +77,7 @@ class printing_printipp extends PrintingDriver
      */
     function print_file($file, $module, $subdir='')
     {
-        global $conf, $user, $db;
+        global $conf, $user;
         $error = 0;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
@@ -92,7 +92,7 @@ class printing_printipp extends PrintingDriver
 
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$module."' AND driver = 'printipp' AND userid = ".$user->id;
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             $obj = $this->db->fetch_object($result);
@@ -116,7 +116,7 @@ class printing_printipp extends PrintingDriver
                 }
             }
         }
-        else dol_print_error($db);
+        else dol_print_error($this->db);
 
         // Set number of copy
         $ipp->setCopies($obj->copy);
@@ -163,7 +163,7 @@ class printing_printipp extends PrintingDriver
         $var = true;
         foreach ($list as $value)
         {
-            
+
             $printer_det = $this->get_printer_detail($value);
             $html.= "<tr ".$bc[$var].">";
             $html.= '<td>'.$value.'</td>';

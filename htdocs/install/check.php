@@ -365,7 +365,7 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-        print '<br /><br />';
+        print '<br><br>';
 
 		$foundrecommandedchoice=0;
 
@@ -534,13 +534,13 @@ else
 
         if (count($notavailable_choices)) {
 
-            print '<br />';
+            print '<br>';
             print '<div id="AShowChoices">';
             print '<img src="../theme/eldy/img/1downarrow.png"> <a href="#">'.$langs->trans('ShowNotAvailableOptions').'</a>';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
-            print '<br />';
+            print '<br>';
             print '<table width="100%" class="listofchoices">';
             foreach ($notavailable_choices as $choice) {
                 print $choice;

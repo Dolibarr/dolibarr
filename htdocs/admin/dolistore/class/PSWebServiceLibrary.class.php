@@ -286,7 +286,7 @@ class PrestaShopWebservice
 	 * $xml = $ws->get(array('resource' => 'orders', 'id' => 1));
 	 *	// Here in $xml, a SimpleXMLElement object you can parse
 	 * foreach ($xml->children()->children() as $attName => $attValue)
-	 * 	echo $attName.' = '.$attValue.'<br />';
+	 * 	echo $attName.' = '.$attValue.'<br>';
 	 * }
 	 * catch (PrestaShopWebserviceException $ex)
 	 * {

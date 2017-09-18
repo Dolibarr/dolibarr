@@ -575,7 +575,7 @@ if (GETPOST('delsoc'))
 
 // List of mass actions available
 $arrayofmassactions =  array(
-//    'presend'=>$langs->trans("SendByMail"),
+    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
@@ -604,6 +604,16 @@ foreach(array(1,2,3,4,5,6) as $key)
 		if (preg_match('/\((.*)\)/i',$label,$reg)) $label=$reg[1];
 		$textprofid[$key]=$langs->trans("ProfIdShortDesc",$key,$mysoc->country_code,$label);
 	}
+}
+
+if ($massaction == 'presend')
+{
+	$topicmail="SendEmail";
+	$modelmail="thirdparty";
+	$objecttmp=new Societe($db);
+	$trackid='thi'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 }
 
 if ($search_all)
