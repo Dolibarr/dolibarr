@@ -19,14 +19,14 @@
  */
 
 /**
- * \file htdocs/product/stats/propal.php
+ * \file 	htdocs/product/stats/supplier_proposal.php
  * \ingroup product service propal
- * \brief Page des stats des propals pour un produit
+ * \brief 	Page des stats des propals pour un produit
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
@@ -56,7 +56,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder = "DESC";
-if (! $sortfield) $sortfield = "p.datep";
+if (! $sortfield) $sortfield = "p.date_valid";
 
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
@@ -70,7 +70,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
  * View
  */
 
-$propalstatic = new Propal($db);
+$propalstatic = new SupplierProposal($db);
 $societestatic=new Societe($db);
 
 $form = new Form($db);
@@ -125,18 +125,18 @@ if ($id > 0 || ! empty($ref))
 		if ($user->rights->propale->lire)
 		{
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
-			$sql .= " p.ref_client,";
-			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
+			//$sql .= " p.ref_supplier,";
+			$sql .= "p.date_valid, p.fk_statut as statut, d.rowid, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= "," . MAIN_DB_PREFIX . "propal as p";
-			$sql .= ", " . MAIN_DB_PREFIX . "propaldet as d";
+			$sql .= "," . MAIN_DB_PREFIX . "supplier_proposal as p";
+			$sql .= ", " . MAIN_DB_PREFIX . "supplier_proposaldet as d";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
-			$sql .= " AND d.fk_propal = p.rowid";
+			$sql .= " AND d.fk_supplier_proposal = p.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))
 				$sql .= ' AND MONTH(p.datep) IN (' . $search_month . ')';
@@ -206,7 +206,7 @@ if ($id > 0 || ! empty($ref))
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre("DatePropal", $_SERVER["PHP_SELF"], "p.datep", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("DatePropal", $_SERVER["PHP_SELF"], "p.date_valid", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "p.total", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
@@ -224,13 +224,12 @@ if ($id > 0 || ! empty($ref))
 						print '<td>';
 						$propalstatic->id=$objp->propalid;
 						$propalstatic->ref=$objp->ref;
-						$propalstatic->ref_client=$objp->ref_client;
 						print $propalstatic->getNomUrl(1);
 						 print "</td>\n";
 						$societestatic->fetch($objp->socid);
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datep), 'dayhour') . "</td>";
+						print dol_print_date($db->jdate($objp->date_valid), 'dayhour') . "</td>";
 						print "<td align=\"center\">" . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->amount) . '</td>' . "\n";
 						print '<td align="right">' . $propalstatic->LibStatut($objp->statut, 5) . '</td>';

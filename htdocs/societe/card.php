@@ -490,7 +490,7 @@ if (empty($reshook))
                     }
 
 					// Customer categories association
-					$custcats = GETPOST( 'custcats', 'array' );
+					$custcats = GETPOST('custcats', 'array');
 					$object->setCategories($custcats, 'customer');
 
 					// Supplier categories association
@@ -607,7 +607,7 @@ if (empty($reshook))
                 }
 
 				// Customer categories association
-				$categories = GETPOST( 'custcats', 'array' );
+				$categories = GETPOST('custcats', 'array');
 				$object->setCategories($categories, 'customer');
 
 				// Supplier categories association
@@ -2484,10 +2484,10 @@ else
 			$formmail->withbody=1;
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
-			// Tableau des substitutions
-			//$formmail->setSubstitFromObject($object);
-			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
-			$formmail->substit['__SIGNATURE__']=$user->signature;
+			// Array of substitutions
+			$formmail->setSubstitFromObject($object);
+			$formmail->substit['__THIRDPARTY_ID__']=$object->id;		// substit in setSubstitFromObject was wrong for this one
+			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;	// substit in setSubstitFromObject was wrong for this one
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
 

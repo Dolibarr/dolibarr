@@ -3353,16 +3353,16 @@ function dol_print_error_email($prefixcode, $errormessage='')
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$td          Options of attribute td ("" by defaut, example: 'align="center"')
+ *	@param  string	$moreattrib  Options of attribute td ("" by defaut, example: 'align="center"')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
  *  @param	string	$tooltip	 Tooltip
  *	@return	void
  */
-function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="", $tooltip="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="", $tooltip="")
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix, 0, $tooltip);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip);
 }
 
 /**
@@ -3414,13 +3414,13 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 		if ($field1 != $sortfield1) // We are on another field
 		{
-            if (preg_match('/^DESC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-            else $out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+            if (preg_match('/^DESC/', $sortorder)) $out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
+            else $out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
 		else                      // We are of first sorting criteria
 		{
-            if (preg_match('/^ASC/', $sortorder)) $out.= '<a href="'.$file.'?sortfield='.$sortfield.'&sortorder=desc&begin='.$begin.$options.'">';
-		    else $out.= '<a href="'.$file.'?sortfield='.$sortfield.'&sortorder=asc&begin='.$begin.$options.'">';
+            if (preg_match('/^ASC/', $sortorder)) $out.= '<a class="reposition" href="'.$file.'?sortfield='.$sortfield.'&sortorder=desc&begin='.$begin.$options.'">';
+		    else $out.= '<a class="reposition" href="'.$file.'?sortfield='.$sortfield.'&sortorder=asc&begin='.$begin.$options.'">';
 		}
 	}
 
@@ -4823,20 +4823,25 @@ function picto_required()
 
 
 /**
- *	Clean a string from all HTML tags and entities
+ *	Clean a string from all HTML tags and entities.
+ *  This function differs from strip_tags because:
+ *  - <br> are replace with \n
+ *  - if entities are found, they are decoded before the strip
+ *  - you can decide to convert line feed into spaces
  *
- *	@param	string	$StringHtml			String to clean
+ *	@param	string	$stringtoclean		String to clean
  *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
- * 	@see		dol_escape_htmltag
+ * 	@see	dol_escape_htmltag strip_tags
  */
-function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
+function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
 {
+	// TODO Try to replace with strip_tags($stringtoclean)
 	$pattern = "/<[^<>]+>/";
-	$StringHtml = preg_replace('/<br[^>]*>/', "\n", $StringHtml);
-	$temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
+	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
+	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);
 
     // Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
     $temp = preg_replace($pattern,"",$temp);    // pass 1
@@ -4852,8 +4857,8 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 	{
 		$temp = str_replace("  "," ",$temp);
 	}
-	$CleanString = trim($temp);
-	return $CleanString;
+
+	return trim($temp);
 }
 
 
@@ -5186,25 +5191,32 @@ function dol_concatdesc($text1,$text2,$forxml=false)
 
 
 /**
- * Return array of possible common substitutions.
+ * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate	$outputlangs	Output language
- * @param   int         $onlykey        Do not calculate heavy values of keys (performance enhancement when we need only the keys)
- * @param   array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'objectamount', 'date', 'user', ...)
+ * @param   int         $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are trunc and html sanitized (to use for help tooltip)
+ * @param   array       $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  * @param   Object      $object         Object for keys on object
  * @return	array						Array of substitutions
+ * @see setSubstitFromObject
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $object=null)
 {
-    global $conf, $mysoc, $user;
+    global $db, $conf, $mysoc, $user;
 
     $substitutionarray=array();
 
+    if (empty($exclude) || ! in_array('system', $exclude))
+    {
+    	$substitutionarray=array_merge($substitutionarray, array(
+    		'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT
+    	));
+    }
     if (empty($exclude) || ! in_array('mycompany', $exclude))
     {
         $substitutionarray=array_merge($substitutionarray, array(
-            '__MYCOMPANY_NAME__' => $mysoc->name,
-            '__MYCOMPANY_EMAIL__' => $mysoc->email,
+            '__MYCOMPANY_NAME__'    => $mysoc->name,
+            '__MYCOMPANY_EMAIL__'   => $mysoc->email,
             '__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
             '__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
             '__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -5215,17 +5227,53 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
         ));
     }
+    if (is_object($object) && (empty($exclude) || ! in_array('object', $exclude)))
+    {
+	    $substitutionarray['__ID__'] = $object->id;
+    	$substitutionarray['__REF__'] = $object->ref;
+    	$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
+    	$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
+
+    	if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
+    	{
+    		$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
+    		$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+    	}
+
+    	if (is_object($object->projet) && $object->projet->id > 0)
+    	{
+    		$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
+    		$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+    	}
+
+    	// Create dynamic tags for __EXTRAFIELD_FIELD__
+    	if ($object->table_element && $object->id > 0)
+    	{
+	    	$extrafieldstmp = new ExtraFields($db);
+	    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+	    	$object->fetch_optionals($object->id, $extralabels);
+	    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
+	    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+	    	}
+    	}
+
+    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
+    }
     if (empty($exclude) || ! in_array('objectamount', $exclude))
     {
-        if (is_object($object))       // For backward compatibility
+		$substitutionarray['__DATE_YMD__'] = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
+		$substitutionarray['__DATE_DUE_YMD__'] = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
+    	$substitutionarray['__AMOUNT__']       = is_object($object)?$object->total_ttc:'';
+        $substitutionarray['__AMOUNT_WO_TAX__']= is_object($object)?$object->total_ht:'';
+        $substitutionarray['__AMOUNT_VAT__']   = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        // For backward compatibility
+        if ($onlykey != 2)
         {
-            $substitutionarray['__TOTAL_TTC__']    =is_object($object)?$object->total_ttc:'';
-            $substitutionarray['__TOTAL_HT__']     =is_object($object)?$object->total_ht:'';
-            $substitutionarray['__TOTAL_VAT__']    =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+        	$substitutionarray['__TOTAL_TTC__']    = is_object($object)?$object->total_ttc:'';
+        	$substitutionarray['__TOTAL_HT__']     = is_object($object)?$object->total_ht:'';
+        	$substitutionarray['__TOTAL_VAT__']    = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
         }
-        $substitutionarray['__AMOUNT__']       =is_object($object)?$object->total_ttc:'';
-        $substitutionarray['__AMOUNT_WO_TAX__']=is_object($object)?$object->total_ht:'';
-        $substitutionarray['__AMOUNT_VAT__']   =is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
     }
 
     if (empty($exclude) || ! in_array('date', $exclude))
@@ -5265,7 +5313,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__USER_LASTNAME__' => $user->lastname,
             '__USER_FIRSTNAME__' => $user->firstname,
             '__USER_FULLNAME__' => $user->getFullName($outputlangs),
-            '__USER_SUPERVISOR_ID__' => $user->fk_user
+            '__USER_SUPERVISOR_ID__' => $user->fk_user,
+        	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
         ));
     }
     if (! empty($conf->multicompany->enabled))

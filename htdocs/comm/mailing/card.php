@@ -1224,7 +1224,6 @@ else
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'title_generic');
 
-
 			dol_fiche_head(null, '', '', -1);
 
 			print '<table class="border" width="100%">';

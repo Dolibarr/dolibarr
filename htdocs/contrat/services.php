@@ -285,7 +285,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader(null, $langs->trans("Services"));
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
 if ($search_name)      $param.='&amp;search_name='.urlencode($search_name);
@@ -326,6 +326,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title=$langs->trans("ListOfServices");
 if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"

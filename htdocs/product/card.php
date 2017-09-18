@@ -340,7 +340,7 @@ if (empty($reshook))
             if ($id > 0)
             {
 				// Category association
-				$categories = GETPOST('categories');
+				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -444,7 +444,7 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						$categories = GETPOST('categories');
+						$categories = GETPOST('categories', 'array');
 						$object->setCategories($categories);
 
                         $action = 'view';

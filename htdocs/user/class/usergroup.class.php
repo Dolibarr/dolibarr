@@ -71,9 +71,10 @@ class UserGroup extends CommonObject
 	/**
 	 *	Charge un objet group avec toutes ces caracteristiques (except ->members array)
 	 *
-	 *	@param      int		$id			id du groupe a charger
-	 *	@param      string	$groupname	name du groupe a charger
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@param      int		$id				Id of group to load
+	 *	@param      string	$groupname		Name of group to load
+	 *  @param		boolean	$load_members	Load all members of the group
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function fetch($id='', $groupname='', $load_members = true)
 	{
@@ -136,8 +137,9 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of groups objects for a particular user
 	 *
-	 *	@param		int		$userid 	User id to search
-	 * 	@return		array     			Array of groups objects
+	 *	@param		int		$userid 		User id to search
+	 *  @param		boolean	$load_members	Load all members of the group
+	 * 	@return		array     				Array of groups objects
 	 */
 	function listGroupsForUser($userid, $load_members = true)
 	{

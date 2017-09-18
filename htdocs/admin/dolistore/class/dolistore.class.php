@@ -40,41 +40,52 @@ class Dolistore
 
     /**
      * Constructor
-     *
-     * @param array 	$options	Options
      */
-    function __construct($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
+    function __construct()
     {
         global $conf, $langs;
-
-        $this->start     = $options['start'];
-        $this->end       = $options['end'];
-        $this->per_page  = $options['per_page'];
-        $this->categorie = $options['categorie'];
-        $this->search    = $options['search'];
 
         $this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
         $this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';
         $this->vat_rate  = 1.2; // 20% de TVA
         $this->debug_api = false;
 
-        if ($this->end == 0) {
+        $langtmp    = explode('_', $langs->defaultlang);
+        $lang       = $langtmp[0];
+        $lang_array = array('en'=>0, 'fr'=>1, 'es'=>2, 'it'=>3, 'de'=>4);	// Into table ps_lang of Prestashop - 1
+        if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
+        $this->lang = $lang_array[$lang];
+    }
+
+    /**
+     * Load data from remote Dolistore market place.
+     * This fills ->categories
+     *
+     * @param 	array 	$options	Options
+     * @return	void
+     */
+    function getRemoteData($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
+    {
+        global $conf, $langs;
+
+    	$this->start     = $options['start'];
+        $this->end       = $options['end'];
+        $this->per_page  = $options['per_page'];
+        $this->categorie = $options['categorie'];
+        $this->search    = $options['search'];
+
+    	if ($this->end == 0) {
             $this->end = $this->per_page;
         }
 
-        $langtmp    = explode('_', $langs->defaultlang);
-        $lang       = $langtmp[0];
-        $lang_array = array('fr'=>1, 'en'=>2, 'es'=>3, 'it'=>4, 'de'=>5);
-        if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
-        $this->lang = $lang_array[$lang]; // 1=fr 2=en ...
-
-        try {
+    	try {
             $this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
                 $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
 
             // Here we set the option array for the Webservice : we want products resources
             $opt             = array();
             $opt['resource'] = 'products';
+
             // make a search to limit the id returned.
             if ($this->search != '') {
                 $opt2        = array();
@@ -102,7 +113,9 @@ class Dolistore
             $opt['sort']           = 'id_desc';
             $opt['filter[active]'] = '[1]';
             $opt['limit']          = "$this->start,$this->end";
-            // Call
+			// $opt['filter[id]'] contais list of product id that are result of search
+
+            // Call API to get the detail
             $xml                   = $this->api->get($opt);
             $this->products        = $xml->products->children();
 
@@ -124,7 +137,12 @@ class Dolistore
         }
     }
 
-
+	/**
+	 * Return tree of Dolistore categories. $this->categories must have been loaded before.
+	 *
+	 * @param 	int			$parent		Id of parent category
+	 * @return 	string
+	 */
     function get_categories($parent = 0)
     {
     	if (!isset($this->categories)) die('not possible');

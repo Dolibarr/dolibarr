@@ -178,11 +178,11 @@ print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans(
 
 if ($_SESSION['allow_comments']) $allow_comments = 'checked';
 if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked':'';
-print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br />'."\n";
+print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br>'."\n";
 
 if ($_SESSION['allow_spy']) $allow_spy = 'checked';
 if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked':'';
-print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br />'."\n";
+print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br>'."\n";
 
 if (GETPOST('choix_sondage'))
 {

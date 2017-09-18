@@ -224,7 +224,7 @@ if (empty($reshook))
                 $action = 'create';
 			} else {
 				// Categories association
-				$contcats = GETPOST( 'contcats', 'array' );
+				$contcats = GETPOST( 'contcats', 'array');
 				$object->setCategories($contcats);
 			}
         }
@@ -383,7 +383,7 @@ if (empty($reshook))
 				$db->query( $sql );
 
 				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array' );
+				$categories = GETPOST( 'contcats', 'array');
 				$object->setCategories($categories);
 
                 $object->old_lastname='';
