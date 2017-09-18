@@ -163,6 +163,56 @@ function updateTotal(days,mode)
                 }
             }
         }
+
+        // Add data on the perday view
+        jQuery('.inputhour').each(function( index ) {
+        	if (this.value)
+        	{
+                var taskTime= new Date(0);
+        		/*console.log(total.getHours())
+        		console.log(this.value)
+            	alert(element.value);*/
+                if (this.value)
+                {   
+                	console.log(this.value+':00')
+                	result=parseTime(this.value+':00',taskTime);
+                }
+                else
+                {
+                	result=parseTime(this.innerHTML+':00',taskTime);
+                }
+                if (result >= 0)
+                {
+                	total.setHours(total.getHours()+taskTime.getHours());
+                }
+        		console.log(total.getHours())
+            }
+        });
+        // Add data on the perday view
+        jQuery('.inputminute').each(function( index ) {
+        	if (this.value)
+        	{
+                var taskTime= new Date(0);
+        		/* console.log(total.getHours())
+        		console.log(this.value)
+            	alert(element.value);*/
+                if (this.value)
+                {   
+                	console.log('00:'+this.value)
+                	result=parseTime('00:'+"00".substring(0, 2 - this.value.length) + this.value,taskTime);
+                }
+                else
+                {
+                	result=parseTime('00:'+"00".substring(0, 2 - this.innerHTML) + this.innerHTML,taskTime);
+                }
+                if (result >= 0)
+                {
+                	total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+                }
+        		console.log(total.getMinutes())
+            }
+        });
+        
         if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
         {
         	document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
