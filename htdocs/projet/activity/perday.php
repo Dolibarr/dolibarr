@@ -332,8 +332,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 //var_dump($projectsrole);
 //var_dump($taskrole);
 
-
-llxHeader("",$title,"");
+llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
@@ -489,6 +488,16 @@ if (count($tasksarray) > 0)
 {
 	$j=0;
 	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
+
+	$colspan = 8;
+	if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) $colspan++;
+
+	print '<tr class="liste_total">
+                <td class="liste_total" colspan="'.$colspan.'">'.$langs->trans("Total").'</td>
+                <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
+                <td class="liste_total"></td>
+                <td class="liste_total"></td>
+                </tr>';
 }
 else
 {
@@ -497,16 +506,20 @@ else
 print "</table>";
 print '</div>';
 
+print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
+
 print '<div class="center">';
 print '<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
 
+$modeinput='hours';
 
 print '<script type="text/javascript">';
 print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '    jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '    updateTotal(0,\''.$modeinput.'\');';
 print "});";
 print '</script>';
 
