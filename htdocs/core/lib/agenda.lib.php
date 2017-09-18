@@ -142,7 +142,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
 		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
+		$formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2, 'minwidth100');
 		print '</td></tr>';
 	}
 

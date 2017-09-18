@@ -1082,7 +1082,7 @@ if ($action == 'create')
 		    $disableedit=1;
 		    $disablemove=1;
 		    $disableremove=1;
-		    $ret = $object->printObjectLines('', $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		    $ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1493,7 +1493,7 @@ else
 		{
 		    //$disableedit=1;
 		    //$disablemove=1;
-		    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		    $ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		// Form to add new line
@@ -1504,7 +1504,7 @@ else
     		    $var = true;
 
     		    // Add free products/services
-    		    $object->formAddObjectLine(0, $mysoc, $soc);                          // No date selector for template invoice
+    		    $object->formAddObjectLine(0, $mysoc, $object->thirdparty);                          // No date selector for template invoice
 
     		    $parameters = array();
     		    $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

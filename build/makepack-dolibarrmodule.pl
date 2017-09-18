@@ -3,6 +3,7 @@
 # \file         build/makepack-dolibarrmodule.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
 # \author       (c)2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \contributor  (c)2017 Nicolas ZABOURI <info@inovea-conseil.com>
 #----------------------------------------------------------------------------
 
 use Cwd;
@@ -134,7 +135,15 @@ foreach my $PROJECT (@PROJECTLIST) {
 	# Get version $MAJOR, $MINOR and $BUILD
 	print "Version detected for module ".$PROJECT.": ";
 	$result=open(IN,"<".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php");
-	if (! $result) { die "Error: Can't open descriptor file ".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php for reading.\n"; }
+	$custom=false;
+	if (! $result) { 
+                $result=open(IN,"<".$SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php");
+                if (! $result) {
+                    die "Error: Can't open descriptor file ".$SOURCE."/htdocs/(or /htdocs/custom/)".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php for reading.\n"; 
+                }else{
+                    $custom = true;
+                }
+        }
     while(<IN>)
     {
     	if ($_ =~ /this->version\s*=\s*'([\d\.]+)'/) { $PROJVERSION=$1; break; }
@@ -294,8 +303,11 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.old`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.postgres`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf*sav*`;
+		    if($custom){
+                        $ret=`cp -r $BUILDROOT/$PROJECTLC/htdocs/custom/* $BUILDROOT/$PROJECTLC/htdocs/.`;
+		    }
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom`;
-	        $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
+	            $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/test`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/Thumbs.db $BUILDROOT/$PROJECTLC/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/*/Thumbs.db`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/CVS* $BUILDROOT/$PROJECTLC/*/CVS* $BUILDROOT/$PROJECTLC/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/*/CVS*`;
