@@ -841,13 +841,18 @@ if (empty($reshook))
 	                        $line->fk_facture = $object->id;
 	                        $line->fk_parent_line = $fk_parent_line;
 
-	                        $line->subprice =-$line->subprice; // invert price for object
+	                        $line->subprice = -$line->subprice; // invert price for object
 	                        $line->pa_ht = $line->pa_ht;       // we choosed to have buy/cost price always positive, so no revert of sign here
-	                        $line->total_ht=-$line->total_ht;
-	                        $line->total_tva=-$line->total_tva;
-	                        $line->total_ttc=-$line->total_ttc;
-	                        $line->total_localtax1=-$line->total_localtax1;
-	                        $line->total_localtax2=-$line->total_localtax2;
+	                        $line->total_ht = -$line->total_ht;
+	                        $line->total_tva = -$line->total_tva;
+	                        $line->total_ttc = -$line->total_ttc;
+	                        $line->total_localtax1 = -$line->total_localtax1;
+	                        $line->total_localtax2 = -$line->total_localtax2;
+
+	                        $line->multicurrency_subprice = -$line->multicurrency_subprice;
+	                        $line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+	                        $line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+	                        $line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
 	                        $result = $line->insert(0, 1);     // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
