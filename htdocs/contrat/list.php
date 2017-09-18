@@ -53,6 +53,7 @@ $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_contract=GETPOST('search_contract');
+$search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
 $sall=GETPOST('sall', 'alphanohtml');
 $search_status=GETPOST('search_status');
@@ -161,6 +162,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_type='';
 	$search_country='';
 	$search_contract="";
+	$search_ref_customer="";
 	$search_ref_supplier="";
     $search_user='';
     $search_sale='';
@@ -245,6 +247,7 @@ else if ($year > 0)
 }
 if ($search_name) $sql .= natural_search('s.nom', $search_name);
 if ($search_contract) $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
+if (!empty($search_ref_customer)) $sql .= natural_search(array('c.ref_customer'), $search_ref_customer);
 if (!empty($search_ref_supplier)) $sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
 if ($search_sale > 0)
 {
@@ -431,13 +434,13 @@ if ($resql)
     if (! empty($arrayfields['c.ref_customer']['checked']))
     {
         print '<td class="liste_titre">';
-        print '<input type="text" class="flat" size="6" name="search_ref_customer value="'.dol_escape_htmltag($search_ref_customer).'">';
+        print '<input type="text" class="flat" size="6" name="search_ref_customer" value="'.dol_escape_htmltag($search_ref_customer).'">';
         print '</td>';
     }
     if (! empty($arrayfields['c.ref_supplier']['checked']))
     {
         print '<td class="liste_titre">';
-        print '<input type="text" class="flat" size="6" name="search_ref_supplier value="'.dol_escape_htmltag($search_ref_supplier).'">';
+        print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
         print '</td>';
     }
     if (! empty($arrayfields['s.nom']['checked']))

@@ -343,7 +343,7 @@ class FormMail extends Form
         	if (count($modelmail_array)>0)
         	{
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-        	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
+        	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
@@ -370,7 +370,7 @@ class FormMail extends Form
         	$out.= '<table class="border" width="100%">'."\n";
 
         	// Substitution array
-        	if (! empty($this->withsubstit))
+        	if (! empty($this->withsubstit))		// Unset of set ->withsubstit=0 to disable this.
         	{
         		$out.= '<tr><td colspan="2" align="right">';
         		//$out.='<div class="floatright">';
@@ -380,7 +380,7 @@ class FormMail extends Form
         			$help.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
         		}
         		if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
-        		else $out.= $form->textwithpicto($langs->trans($this->withsubstit), $help, 1, 'help', '', 0, 2, 'substittooltip');																// New usage
+        		else $out.= $form->textwithpicto($langs->trans('AvailableVariables'), $help, 1, 'help', '', 0, 2, 'substittooltip');															// New usage
         		$out.= "</td></tr>\n";
         		//$out.='</div>';
         	}
@@ -746,24 +746,31 @@ class FormMail extends Form
 				}
 
         		// Complete substitution array
-        		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
+        		$paymenturl='';
+        		if (! empty($conf->global->PAYMENT_ADD_PAYMENT_URL)		// Option to enable to add online link into __PERSONALIZED__
+        			|| (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
+        		)
         		{
-        			require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-
-        			$langs->load('paypal');
-
-        			// Set the paypal message and url link into __PERSONALIZED__ key
-        			if ($this->param["models"]=='order_send')
+        			if (empty($this->substit['__REF__']))
         			{
-        				$url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']?$this->substit['__ORDERREF__']:$this->substit['__REF__']);
-        				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
+        				//$paymenturl='LinkToPayOnlineNotAvailableInThisContext';
+        				$paymenturl='';
         			}
-        			if ($this->param["models"]=='facture_send')
+        			else
         			{
-        				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__REF__']);
-        				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
+	        			// Set the online payment message and url link into __PERSONALIZED__ key
+	        			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	        			$langs->load('paypal');
+	        			$typeforonlinepayment='free';
+	        			if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
+	        			if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
+	       				$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
+	       				//$paymenturl=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
+	       				$paymenturl=$url;
         			}
         		}
+        		$this->substit['__PERSONALIZED__']=$paymenturl;
+        		$this->substit['__ONLINE_PAYMENT_URL__']='YY'.$paymenturl;
 
                 //Add lines substitution key from each line
                 $lines = '';
@@ -849,7 +856,7 @@ class FormMail extends Form
         	{
 	        	$out.= '<script type="text/javascript" language="javascript">';
 		        $out.= 'jQuery(document).ready(function () {';
-				$out.= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is calle at every key pressed ! */
+				$out.= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
 	    						if (code == 13) {
 	        						e.preventDefault();

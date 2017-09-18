@@ -11,9 +11,10 @@ NEW: complete_head_from_modules() in ldap_prepare_head()
 
 WARNING: 
 
-Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The methode "cloture" on contact were renamed into "closeAll".
-
+* The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
+  __PROPALREF__, ...)
 
 
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****

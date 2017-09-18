@@ -42,6 +42,8 @@ if (! GETPOST('cancel', 'alpha'))
 			$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 			if ($objecttmp->element == 'societe')
 				$thirdpartyid = $objecttmp->id;
+			if ($objecttmp->element == 'expensereport')
+				$thirdpartyid = $objecttmp->fk_user_author;
 			$listofselectedthirdparties[$thirdpartyid] = $thirdpartyid;
 			$listofselectedref[$thirdpartyid][$toselectid] = $objecttmp->ref;
 		}
@@ -58,17 +60,14 @@ dol_fiche_head(null, '', '');
 // Cree l'objet formulaire mail
 include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 $formmail = new FormMail($db);
-$formmail->withform = - 1;
+$formmail->withform = -1;
 $formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (! empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 if ($formmail->fromtype === 'user')
 {
 	$formmail->fromid = $user->id;
 }
-if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1)) // If bit 1 is set
-{
-	$formmail->trackid = $trackid;
-}
+$formmail->trackid = $trackid;
 if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
 {
 	include DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
@@ -80,10 +79,19 @@ if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selec
 {
 	$liste = array();
 	$thirdpartyid = array_shift($listofselectedthirdparties);
-	$soc = new Societe($db);
-	$soc->fetch($thirdpartyid);
-	foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
-		$liste[$key] = $value;
+	if ($objecttmp->element == 'expensereport')
+	{
+		$fuser = new User($db);
+		$fuser->fetch($thirdpartyid);
+		$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+	}
+	else
+	{
+		$soc = new Societe($db);
+		$soc->fetch($thirdpartyid);
+		foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
+			$liste[$key] = $value;
+		}
 	}
 	$formmail->withtoreadonly = 0;
 } else {

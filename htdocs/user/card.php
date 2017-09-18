@@ -260,7 +260,7 @@ if (empty($reshook)) {
 				}
             			if (! empty($conf->categorie->enabled)) {
 					// Categories association
-					$usercats = GETPOST( 'usercats', 'array' );
+					$usercats = GETPOST('usercats', 'array');
 					$object->setCategories($usercats);
 				}
 				$db->commit();
@@ -478,7 +478,7 @@ if (empty($reshook)) {
             	if (! $error && ! count($object->errors))
             	{
             		// Then we add the associated categories
-            		$categories = GETPOST( 'usercats', 'array' );
+            		$categories = GETPOST('usercats', 'array');
             		$object->setCategories($categories);
             	}
 

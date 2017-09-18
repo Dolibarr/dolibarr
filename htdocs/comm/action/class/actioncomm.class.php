@@ -851,7 +851,8 @@ class ActionComm extends CommonObject
     }
 
     /**
-     *   Load all objects with filters
+     *   Load all objects with filters.
+     *   WARNING: This make a fetch on all records instead of making one request with a join.
      *
      *   @param		DoliDb	$db				Database handler
      *   @param		int		$socid			Filter by thirdparty

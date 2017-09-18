@@ -5258,7 +5258,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    	}
     	}
 
-    	$substitutionarray['__ONLINE_PAYMENT_XXX__'] = 'todo';
+    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
     }
     if (empty($exclude) || ! in_array('objectamount', $exclude))
     {

@@ -2242,7 +2242,6 @@ else
 			$formmail->withdeliveryreceipt = 1;
 			$formmail->withcancel = 1;
 			// Array of substitutions
-			$formmail->withsubstit='AvailableVariables';
 			$formmail->setSubstitFromObject($object);
 			$datenextexpiration='';
 			foreach($object->lines as $line)

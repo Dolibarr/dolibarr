@@ -64,36 +64,63 @@ if (! $error && $massaction == 'confirm_presend')
     $langs->load("mails");
     include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    if (!$error && !isset($user->email))
-    {
-        $error++;
-        setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
-    }
+    $listofobjectid=array();
+    $listofobjectthirdparties=array();
+    $listofobjectref=array();
 
     if (! $error)
     {
         $thirdparty=new Societe($db);
+        if ($objecttmp->element == 'expensereport') $thirdparty=new User($db);
+
         $objecttmp=new $objectclass($db);
-        $listofobjectid=array();
-        $listofobjectthirdparties=array();
-        $listofobjectref=array();
         foreach($toselect as $toselectid)
         {
-            $objecttmp=new $objectclass($db);	// must create new instance because instance is saved into $listofobjectref array for future use
+            $objecttmp=new $objectclass($db);	// we must create new instance because instance is saved into $listofobjectref array for future use
             $result=$objecttmp->fetch($toselectid);
             if ($result > 0)
             {
                 $listofobjectid[$toselectid]=$toselectid;
                 $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
                 if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
+                if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
                 $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
             }
         }
-        //var_dump($listofobjectthirdparties);exit;
+    }
 
+    // Check mandatory parameters
+    if (empty($user->email))
+    {
+        $error++;
+        setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
+        $massaction='presend';
+    }
 
-        // Loop on each thirdparty
+    $receiver=$_POST['receiver'];
+    if (! is_array($receiver))
+    {
+    	if (empty($receiver) || $receiver == '-1') $receiver=array();
+    	else $receiver=array($receiver);
+    }
+    if (count($receiver) == 0 && count($listofobjectthirdparties) == 1)	// if only one recipient, receiver is mandatory
+    {
+     	$error++;
+       	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
+       	$massaction='presend';
+    }
+
+    if (! GETPOST('subject','none'))
+    {
+    	$error++;
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTopic")), null, 'warnings');
+    	$massaction='presend';
+    }
+
+    // Loop on each recipient/thirdparty
+    if (! $error)
+    {
         foreach ($listofobjectthirdparties as $thirdpartyid)
         {
             $result = $thirdparty->fetch($thirdpartyid);
@@ -109,12 +136,6 @@ if (! $error && $massaction == 'confirm_presend')
             $sendtoid = array();
 
             // Define $sendto
-            $receiver=$_POST['receiver'];
-            if (! is_array($receiver))
-            {
-            	if ($receiver == '-1') $receiver=array();
-            	else $receiver=array($receiver);
-            }
             $tmparray=array();
             if (trim($_POST['sendto']))
             {
@@ -203,8 +224,17 @@ if (! $error && $massaction == 'confirm_presend')
                 // Test recipient
 	            if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
 	            {
-	             	$object->fetch_thirdparty();
-	               	$sendto = $object->thirdparty->email;
+	            	if ($object->element == 'expensereport')
+	            	{
+						$fuser = new User($db);
+						$fuser->fetch($object->fk_user_author);
+						$sendto = $fuser->email;
+	            	}
+	            	else
+	            	{
+	            		$object->fetch_thirdparty();
+	               		$sendto = $object->thirdparty->email;
+	            	}
 	            }
 
 	            if (empty($sendto))
@@ -357,18 +387,32 @@ if (! $error && $massaction == 'confirm_presend')
                             $object->fk_element		= $objid;
                             $object->elementtype	= $object->element;
 
-                            // Appel des triggers
-                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                            $interface=new Interfaces($db);
-                            $result=$interface->run_triggers('BILL_SENTBYMAIL',$object,$user,$langs,$conf);
-                            if ($result < 0) { $error++; $errors=$interface->errors; }
-                            // Fin appel triggers
+                            $triggername = strtoupper(get_class($object)) .'_SENTBYMAIL';
+                            if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
+                            if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
+                            if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
+                            if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYEMAIL';
+                            if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
+                            if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
+                            if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
+                            if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
 
-                            if ($error)
+                            if (! empty($trigger_name))
                             {
-                                setEventMessages($db->lasterror(), $errors, 'errors');
-                                dol_syslog("Error in trigger BILL_SENTBYMAIL ".$db->lasterror(), LOG_ERR);
+	                            // Appel des triggers
+	                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	                            $interface=new Interfaces($db);
+	                            $result=$interface->run_triggers($trigger_name, $object, $user, $langs, $conf);
+	                            if ($result < 0) { $error++; $errors=$interface->errors; }
+	                            // Fin appel triggers
+
+	                            if ($error)
+	                            {
+	                                setEventMessages($db->lasterror(), $errors, 'errors');
+	                                dol_syslog("Error in trigger ".$trigger_name.' '.$db->lasterror(), LOG_ERR);
+	                            }
                             }
+
                             $nbsent++;
                         }
                     }
@@ -407,10 +451,10 @@ if (! $error && $massaction == 'confirm_presend')
             //setEventMessages($langs->trans("EMailSentToNRecipients", 0), null, 'warnings');  // May be object has no generated PDF file
             setEventMessages($resaction, null, 'warnings');
         }
-    }
 
-    $action='list';
-    $massaction='';
+        $action='list';
+    	$massaction='';
+    }
 }
 
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
@@ -592,7 +636,7 @@ if ($action == 'remove_file')
     $action='';
 }
 
-// Validate  records
+// Validate records
 if (! $error && $massaction == 'validate' && $permtocreate)
 {
 	if ($object->element == 'invoice_supplier' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
@@ -664,8 +708,19 @@ if (! $error && $massaction == 'delete' && $permtodelete)
     	$result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
+        	// Refuse deletion for some status ?
+        	/*
+       		if ($objectclass == 'Facture' && $objecttmp->status == Facture::STATUS_DRAFT)
+       		{
+       			$langs->load("errors");
+       			$nbignored++;
+       			$resaction.='<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction',$object->ref).'</div><br>';
+       			continue;
+       		}*/
+
             if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
             else $result = $objecttmp->delete($user);
+
             if ($result <= 0)
             {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');

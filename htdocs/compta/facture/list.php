@@ -110,8 +110,8 @@ if (! $sortfield) $sortfield='f.datef';
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='invoicelist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'invoicelist';
 
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
@@ -606,6 +606,7 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 

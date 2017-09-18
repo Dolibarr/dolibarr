@@ -41,6 +41,9 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER TABLE llx_c_paiement        ADD COLUMN position        integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_c_payment_term    ADD COLUMN position        integer NOT NULL DEFAULT 0;
+
 ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN seuil_stock_alerte SET DEFAULT NULL;
 
@@ -261,7 +264,15 @@ UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE'
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
 
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(24) NOT NULL;
+
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SENTBYMAIL','Contract sent by mail','Executed when a contract is sent by mail','contrat',18);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_VALIDATE','Price request validated','Executed when a commercial proposal is validated','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_SENTBYMAIL','Price request sent by mail','Executed when a commercial proposal is sent by mail','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_SIGNED','Price request closed signed','Executed when a customer proposal is closed signed','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_REFUSED','Price request closed refused','Executed when a customer proposal is closed refused','proposal_supplier',10);
+
 
 CREATE TABLE llx_projet_task_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -273,6 +284,19 @@ CREATE TABLE llx_projet_task_comment (
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
+
+-- Accountancy - Remove old constants
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_PURCHASE_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SOCIAL_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_MISCELLANEOUS_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_GROUPBYACCOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_GLOBAL_ACCOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_LABEL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_AMOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_DEVISE')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_PIECE')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPENSEREPORT_JOURNAL')__;
 
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
