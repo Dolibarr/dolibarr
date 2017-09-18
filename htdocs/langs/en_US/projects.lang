@@ -210,8 +210,4 @@ OppStatusLOST=Lost
 Budget=Budget
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
-TaskCommentLinks=Comments
-TaskNbComments=Number of comments
-TaskComment=Task's comments space
-CommentAdded=Comment added
-CommentDeleted=Comment deleted
+AllowCommentOnProject=Allow user comments on projects

@@ -919,6 +919,15 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowCommentOnProject").'</td>';
+
+print '<td align="center" width="300">';
+echo ajax_constantonoff('PROJECT_ALLOW_COMMENT_ON_PROJECT');
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowCommentOnTask").'</td>';
 
 print '<td align="center" width="300">';

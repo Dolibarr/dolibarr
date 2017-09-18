@@ -209,8 +209,4 @@ OppStatusLOST=Perdu
 Budget=Budget
 #Comments trans
 AllowCommentOnTask=Autoriser les commentaires entre utilisateurs sur les tâches
-TaskCommentLinks=Commentaires
-TaskNbComments=Nombre de commentaires
-TaskComment=Tâches espace commentaires
-CommentAdded=Commentaire ajouté avec succès
-CommentDeleted=Commentaire supprimé avec succès
+AllowCommentOnProject=Autoriser les commentaires entre utilisateurs sur les projets

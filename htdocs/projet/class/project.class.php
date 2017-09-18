@@ -441,6 +441,7 @@ class Project extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 $this->fetch_optionals();
+                $this->fetchComments();
 
                 return 1;
             }
