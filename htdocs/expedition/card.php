@@ -1317,7 +1317,7 @@ if ($action == 'create')
 					$line = new ExpeditionLigne($db);
 					$line->fetch_optionals($object->id,$extralabelslines);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
-					print '<tr '.$bc[$var].'>';
+					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 					print '</tr>';
 				}
