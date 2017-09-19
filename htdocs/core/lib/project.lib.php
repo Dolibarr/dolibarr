@@ -733,8 +733,9 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '</td>';
 
 				$cssonholiday='';
-				if (! $isavailable[$preselectedday]['morning'])   $cssonholiday.='onholidaymorning ';
-				if (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+				if (! $isavailable[$preselectedday]['morning'] && ! $isavailable[$preselectedday]['afternoon'])   $cssonholiday.='onholidayallday ';
+				elseif (! $isavailable[$preselectedday]['morning'])   $cssonholiday.='onholidaymorning ';
+				elseif (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
 				// Duration
 				print '<td align="right" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
@@ -970,8 +971,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
 					$cssonholiday='';
-					if (! $isavailable[$tmpday]['morning']) $cssonholiday.='onholidaymorning ';
-					if (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+					if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+					elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+					elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
 					$tmparray=dol_getdate($tmpday);
 		        	$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
