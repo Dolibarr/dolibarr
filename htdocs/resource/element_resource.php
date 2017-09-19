@@ -108,7 +108,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 }
 
 // Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel') )
+if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel','alpha') )
 {
 	$res = $object->fetch_element_resource($lineid);
 	if($res)
@@ -238,13 +238,13 @@ else
 		        }
 			}
 			$morehtmlref.='</div>';
-			
+
 			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
 			print '<div class="fichecenter">';
-				
+
 			print '<div class="underbanner clearboth"></div>';
-				
+
 			print '<table class="border" width="100%">';
 
 			// Type
@@ -315,7 +315,7 @@ else
 			print '</table>';
 
 			print '</div>';
-			
+
 			dol_fiche_end();
 		}
 	}
@@ -364,16 +364,16 @@ else
         $fichinter = new Fichinter($db);
         $fichinter->fetch($element_id, $element_ref);
         $fichinter->fetch_thirdparty();
-        
-		if (is_object($fichinter)) 
+
+		if (is_object($fichinter))
 		{
 			$head=fichinter_prepare_head($fichinter);
 			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-			
-			
+
+
 			$morehtmlref='<div class="refidno">';
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -414,9 +414,9 @@ else
 				}
 			}
 			$morehtmlref.='</div>';
-			
+
 			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
-			
+
 			dol_fiche_end();
 		}
 	}
@@ -440,7 +440,7 @@ else
 		{
 			$element_prop = getElementProperties($resource_obj);
 
-			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
+			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br>';
 
 			$path = '';
 			if(strpos($resource_obj,'@'))

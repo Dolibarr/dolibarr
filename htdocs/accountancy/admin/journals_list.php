@@ -174,7 +174,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
 
@@ -423,6 +423,7 @@ if ($id)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
 
+    print '<div class="div-table-responsive">';
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -489,7 +490,7 @@ if ($id)
 
         if (empty($reshook))
         {
-       		fieldList($fieldlist,$obj,$tabname[$id],'add');
+       		fieldListJournal($fieldlist,$obj,$tabname[$id],'add');
         }
 
         print '<td colspan="4" align="right">';
@@ -594,7 +595,7 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldListJournal($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td align="center" colspan="4">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
@@ -691,6 +692,7 @@ if ($id)
     }
 
     print '</table>';
+	print '</div>';
 
     print '</form>';
 }
@@ -711,7 +713,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldListJournal($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
 	global $form, $mysoc;

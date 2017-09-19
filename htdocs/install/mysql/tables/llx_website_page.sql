@@ -29,6 +29,7 @@ CREATE TABLE llx_website_page
 	fk_page       integer,          
 	content		  mediumtext,		-- text is not enough in size
     status        integer DEFAULT 1,
+	grabbed_from   varchar(255),
     fk_user_create integer,
     fk_user_modif  integer,
     date_creation  datetime,

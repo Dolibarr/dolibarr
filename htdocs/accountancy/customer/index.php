@@ -108,29 +108,6 @@ if ($action == 'validatehistory') {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
-} elseif ($action == 'fixaccountancycode') {
-	$error = 0;
-	$db->begin();
-
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sql1 .= " SET fk_code_ventilation = 0";
-	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
-	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-
-	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
-
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
-	} else {
-		$db->commit();
-		setEventMessage($langs->trans('Done'), 'mesgs');
-	}
 } elseif ($action == 'cleanaccountancycode') {
 	$error = 0;
 	$db->begin();
@@ -144,7 +121,7 @@ if ($action == 'validatehistory') {
 	$sql1.= " AND f.entity IN (" . getEntity('accountancy') . ")";
 	$sql1.=")";
 
-	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	dol_syslog("htdocs/accountancy/customer/index.php cleanaccountancycode", LOG_DEBUG);
 
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -169,13 +146,29 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
+// Clean database
+$db->begin();
+$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+$sql1 .= " SET fk_code_ventilation = 0";
+$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
+$sql1 .= '	(SELECT accnt.rowid ';
+$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+$resql1 = $db->query($sql1);
+if (! $resql1) {
+	$error ++;
+	$db->rollback();
+	setEventMessage($db->lasterror(), 'errors');
+} else {
+	$db->commit();
+}
+// End clean database
+
 print $langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
-//print '<div class="inline-block divButAction">';
-// TODO Remove this. Should be done always or into the repair.php script.
-if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
-//print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
@@ -205,6 +198,7 @@ $buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?ye
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
@@ -213,8 +207,8 @@ for($i = 1; $i <= 12; $i ++) {
 }
 print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
-$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') . " AS codecomptable,";
-$sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
+$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
+$sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
 	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
@@ -240,8 +234,20 @@ if ($resql) {
 
 	while ( $row = $db->fetch_row($resql)) {
 
-		print '<tr class="oddeven"><td>' . length_accountg($row[0]) . '</td>';
-		print '<td align="left">' . $row[1] . '</td>';
+		print '<tr class="oddeven"><td>';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("Unknown");
+		}
+		else print length_accountg($row[0]);
+		print '</td>';
+		print '<td align="left">';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+		}
+		else print $row[1];
+		print '</td>';
 		for($i = 2; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
 		}
@@ -254,13 +260,14 @@ if ($resql) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
+print '</div>';
 
 print '<br>';
 
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
@@ -269,8 +276,8 @@ for($i = 1; $i <= 12; $i ++) {
 }
 print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
-$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') . " AS codecomptable,";
-$sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
+$sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
+$sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
 	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
 }
@@ -296,7 +303,20 @@ if ($resql) {
 
 	while ( $row = $db->fetch_row($resql)) {
 
-		print '<tr class="oddeven"><td>' . length_accountg($row[0]) . '</td>';
+		print '<tr class="oddeven"><td>';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("Unknown");
+		}
+		else print length_accountg($row[0]);
+		print '</td>';
+		print '<td align="left">';
+		if ($row[0] == 'tobind')
+		{
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+		}
+		else print $row[1];
+		print '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		for($i = 2; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
@@ -310,7 +330,7 @@ if ($resql) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
+print '</div>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report that should rely on result of this step ?
@@ -321,6 +341,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	print_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print "<br>\n";
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
 	for($i = 1; $i <= 12; $i ++) {
@@ -362,10 +383,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		print $db->lasterror(); // Show last sql error
 	}
 	print "</table>\n";
+	print '</div>';
 
 
 	if (! empty($conf->margin->enabled)) {
 		print "<br>\n";
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td width="400">' . $langs->trans("TotalMarge") . '</td>';
 		for($i = 1; $i <= 12; $i ++) {
@@ -408,6 +431,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 			print $db->lasterror(); // Show last sql error
 		}
 		print "</table>\n";
+		print '</div>';
 	}
 }
 

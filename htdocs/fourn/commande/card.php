@@ -365,21 +365,29 @@ if (empty($reshook))
 	    {
 	    	$productsupplier = new ProductFournisseur($db);
 
-	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))	// TODO this test seems useless
 	    	{
 				$idprod=0;
 				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 			}
-
-	    	if (GETPOST('idprodfournprice') > 0)
+			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			{
+				$idprod=$reg[1];
+				$res=$productsupplier->fetch($idprod);
+				// Call to init properties of $productsupplier
+				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
+				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+			}
+	    	elseif (GETPOST('idprodfournprice') > 0)
 	    	{
-	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
+			    $qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
+			    //$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+	    		$res=$productsupplier->fetch($idprod);
 	    	}
 
 	    	if ($idprod > 0)
 	    	{
-	    		$res=$productsupplier->fetch($idprod);
-
 	    		$label = $productsupplier->label;
 
 	    		$desc = $productsupplier->description;
@@ -400,8 +408,8 @@ if (empty($reshook))
 	    			$tva_tx,
 	    			$localtax1_tx,
 	    			$localtax2_tx,
+	    			$idprod,
 	    			$productsupplier->id,
-	    			GETPOST('idprodfournprice'),
 	    			$productsupplier->fourn_ref,
 	    			$remise_percent,
 	    			'HT',
@@ -534,7 +542,7 @@ if (empty($reshook))
 	/*
 	 *	Updating a line in the order
 	 */
-	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
+	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel','alpha'))
 	{
 		$tva_tx = GETPOST('tva_tx');
 
@@ -1162,7 +1170,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel'))
+	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel','alpha'))
 	{
 	    $ws_url         = $object->thirdparty->webservices_url;
 	    $ws_key         = $object->thirdparty->webservices_key;
@@ -1451,6 +1459,7 @@ if ($action=='create')
 			});
 			</script>';
         }
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 	}
 	print '</td>';
 
@@ -2105,6 +2114,7 @@ elseif (! empty($object->id))
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
 	$forceall=1; $senderissupplier=1; $dateSelector=0;
+	if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 
 	// Show object lines
 	$inputalsopricewithtax=0;
@@ -2259,7 +2269,7 @@ elseif (! empty($object->id))
 	/*
 	 * Action webservice
 	 */
-	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel'))
+	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel','alpha'))
 	{
 		$mode        = GETPOST('mode', 'alpha');
 		$ws_url      = $object->thirdparty->webservices_url;
@@ -2722,7 +2732,8 @@ elseif (! empty($object->id))
 		    print '</form>';
 		    print "<br>";
 		}
-if ($action != 'makeorder')
+
+		if ($action != 'makeorder')
 		{
     		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -2781,7 +2792,7 @@ if ($action != 'makeorder')
         // List of actions on element
         include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
         $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
+        $somethingshown = $formactions->showactions($object,'order_supplier',$socid,1,'listaction'.($genallowed?'largetitle':''));
 
 
 

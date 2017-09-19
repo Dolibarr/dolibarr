@@ -84,7 +84,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}
 
 		$this->posxpicture=$this->posxweightvol - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
-		
+
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 		    $this->posxweightvol-=20;
@@ -92,7 +92,7 @@ class pdf_rouget extends ModelePdfExpedition
 		    $this->posxqtyordered-=20;
 		    $this->posxqtytoship-=20;
 		}
-		
+
 		if (! empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
 		{
 		    $this->posxweightvol += ($this->posxqtytoship - $this->posxqtyordered);
@@ -139,17 +139,17 @@ class pdf_rouget extends ModelePdfExpedition
         if (! empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE))
         {
             $objphoto = new Product($this->db);
-        
+
             for ($i = 0 ; $i < $nblignes ; $i++)
             {
                 if (empty($object->lines[$i]->fk_product)) continue;
-        
+
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
-                
+
 				$pdir = get_exdir($object->lines[$i]->fk_product,2,0,0,$objphoto,'product') . $object->lines[$i]->fk_product ."/photos/";
 				$dir = $conf->product->dir_output.'/'.$pdir;
-				
+
 				$realpath='';
 
                 foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
@@ -169,17 +169,17 @@ class pdf_rouget extends ModelePdfExpedition
                             {
                                 $filename=$obj['photo'];
                             }
-        
+
                             $realpath = $dir.$filename;
                             break;
                 }
-        
+
                 if ($realpath) $realpatharray[$i]=$realpath;
             }
         }
-        
-        if (count($realpatharray) == 0) $this->posxpicture=$this->posxweightvol;        
-        
+
+        if (count($realpatharray) == 0) $this->posxpicture=$this->posxweightvol;
+
 		if ($conf->expedition->dir_output)
 		{
 			// Definition de $dir et $file
@@ -219,7 +219,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 				// Set nblignes with the new facture lines content after hook
 				$nblignes = count($object->lines);
-				
+
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
 				$heightforinfotot = 8;	// Height reserved to output the info and total part
@@ -282,11 +282,11 @@ class pdf_rouget extends ModelePdfExpedition
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
-	
+
 						// Rect prend une longueur en 3eme param
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
-	
+
 						$tab_top = $nexY+6;
 						$height_incoterms += 4;
 					}
@@ -343,7 +343,7 @@ class pdf_rouget extends ModelePdfExpedition
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
-					
+
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
 				}
@@ -400,7 +400,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 					$pdf->startTransaction();
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
-						
+
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -434,10 +434,10 @@ class pdf_rouget extends ModelePdfExpedition
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription=$pdf->GetY();
-					
+
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
-					
+
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -456,29 +456,29 @@ class pdf_rouget extends ModelePdfExpedition
 
 					$pdf->SetXY($this->posxweightvol, $curY);
 					$weighttxt='';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight) 
+					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
 					{
 					    $weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->weight_units,"weight");
 					}
 					$voltxt='';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume) 
+					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
 					{
 					    $voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0,"volume");
 					}
-	
+
 					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt, 0, 0, false, true, 'C');
 					//$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
-				
+
 					if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
 					{
 					   $pdf->SetXY($this->posxqtyordered, $curY);
 					   $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked,'','C');
 					}
-					
+
 					$pdf->SetXY($this->posxqtytoship, $curY);
 					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
 
-					if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) 
+					if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT))
 					{
 						$pdf->SetXY($this->posxpuht, $curY);
 						$pdf->MultiCell(($this->posxtotalht - $this->posxpuht-1), 3, price($object->lines[$i]->subprice, 0, $outputlangs),'','R');
@@ -489,7 +489,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 					$nexY+=3;
 					if ($weighttxt && $voltxt) $nexY+=2;
-					
+
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
@@ -548,7 +548,7 @@ class pdf_rouget extends ModelePdfExpedition
 				}
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -614,7 +614,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}*/
 		if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED)) $largcol2 = ($this->posxqtyordered - $this->posxweightvol);
 		else $largcol2 = ($this->posxqtytoship - $this->posxweightvol);
-		
+
 		$useborder=0;
 		$index = 0;
 
@@ -628,12 +628,12 @@ class pdf_rouget extends ModelePdfExpedition
 		$totalOrdered=$tmparray['ordered'];
 		$totalToShip=$tmparray['toship'];
 		// Set trueVolume and volume_units not currently stored into database
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) 
+		if ($object->trueWidth && $object->trueHeight && $object->trueDepth)
 		{
 		    $object->trueVolume=price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
 		    $object->volume_units=$object->size_units * 3;
 		}
-		
+
 		if ($totalWeight!='') $totalWeighttoshow=showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		if ($totalVolume!='') $totalVolumetoshow=showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
 		if ($object->trueWeight) $totalWeighttoshow=showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
@@ -642,48 +642,48 @@ class pdf_rouget extends ModelePdfExpedition
     	$pdf->SetFillColor(255,255,255);
     	$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
     	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
-    	
+
         if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
         {
             $pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
         	$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', 1);
         }
-        
+
     	$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
     	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
-        
+
 		if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {
 
 	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
-        
+
 	    	$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
 
 		}
-    	 
+
 		// Total Weight
 		if ($totalWeighttoshow)
 		{
     		$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * $index);
     		$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', 1);
-    		
+
     		$index++;
 		}
 		if ($totalVolumetoshow)
 		{
     		$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * $index);
     		$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', 1);
-		
+
 		    $index++;
 		}
 		if (! $totalWeighttoshow && ! $totalVolumetoshow) $index++;
-    	
+
 		$pdf->SetTextColor(0,0,0);
 
 		return ($tab2_top + ($tab2_hl * $index));
 	}
-	
+
 	/**
 	 *   Show table for lines
 	 *
@@ -730,7 +730,7 @@ class pdf_rouget extends ModelePdfExpedition
 			$pdf->SetXY($this->posxweightvol-1, $tab_top+1);
 			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 2, $outputlangs->transnoentities("WeightVolShort"),'','C');
 		}
-		
+
         if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
         {
             $pdf->line($this->posxqtyordered-1, $tab_top, $this->posxqtyordered-1, $tab_top + $tab_height);
@@ -740,14 +740,14 @@ class pdf_rouget extends ModelePdfExpedition
     			$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 2, $outputlangs->transnoentities("QtyOrdered"),'','C');
     		}
         }
-        
+
 		$pdf->line($this->posxqtytoship-1, $tab_top, $this->posxqtytoship-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqtytoship, $tab_top+1);
 			$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
 		}
-		
+
 		if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {
 
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
@@ -756,7 +756,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$pdf->SetXY($this->posxpuht-1, $tab_top+1);
 				$pdf->MultiCell(($this->posxtotalht - $this->posxpuht), 2, $outputlangs->transnoentities("PriceUHT"),'','C');
 			}
-		
+
 			$pdf->line($this->posxtotalht-1, $tab_top, $this->posxtotalht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{
@@ -765,7 +765,7 @@ class pdf_rouget extends ModelePdfExpedition
 			}
 
 		}
-		
+
 	}
 
 	/**
@@ -782,7 +782,7 @@ class pdf_rouget extends ModelePdfExpedition
 		global $conf,$langs,$mysoc;
 
 		$langs->load("orders");
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -798,7 +798,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetFont('','B', $default_font_size + 3);
 
 		$w = 110;
-		
+
 		$posy=$this->marge_haute;
 		$posx=$this->page_largeur-$this->marge_droite-$w;
 
@@ -865,7 +865,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetFont('','', $default_font_size + 1);
 
 		$posy+=5;
-		
+
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
@@ -878,7 +878,7 @@ class pdf_rouget extends ModelePdfExpedition
     			$pdf->SetTextColor(0,0,60);
     			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"day",false,$outputlangs,true), '', 'R');
 		}
-		
+
 		if (! empty($object->thirdparty->code_client))
 		{
 			$posy+=4;
@@ -906,7 +906,7 @@ class pdf_rouget extends ModelePdfExpedition
 			if ($result >= 0)
 			{
 			    //$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
-			    			 
+
 				$pdf->SetFont('','', $default_font_size - 2);
 				$text=$linkedobject->ref;
 				if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
@@ -941,7 +941,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 			$hautcadre=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
-				
+
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
@@ -952,7 +952,7 @@ class pdf_rouget extends ModelePdfExpedition
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFillColor(255,255,255);
-			
+
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B',$default_font_size);

@@ -88,11 +88,11 @@ dol_mkdir($dir);
 $stats = new CommandeStats($db, $socid, $mode, ($userid>0?$userid:0));
 if ($mode == 'customer')
 {
-    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
 }
 if ($mode == 'supplier')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
 }
 
 

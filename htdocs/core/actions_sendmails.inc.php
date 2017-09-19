@@ -258,7 +258,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-			$message = $_POST['message'];
+			$message = GETPOST('message','none');
+			$subject = GETPOST('subject','none');
 
 			// Make a change into HTML code to allow to include images from medias directory with an external reabable URL.
 			// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
@@ -278,7 +279,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			if ($action == 'send' || $action == 'relance')
 			{
-				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
 				$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
 				if ($message)
 				{
@@ -344,8 +344,33 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 
-			// Send mail
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
+			// Make substitution in email content
+			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
+			$substitutionarray['__EMAIL__'] = $sendto;
+			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'';
+			// Add specific substitution for contracts
+			if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
+			{
+				$datenextexpiration='';
+				foreach($object->lines as $line)
+				{
+					if ($line->statut != 4) continue;
+					if ($line->date_fin_prevue > $datenextexpiration) $datenextexpiration = $line->date_fin_prevue;
+				}
+				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+			}
+
+			$parameters=array('mode'=>'formemail');
+			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
+
+			$subject=make_substitutions($subject, $substitutionarray);
+			$message=make_substitutions($message, $substitutionarray);
+
+			// Send mail (substitutionarray must be done just before this)
+			if (empty($sendcontext)) $sendcontext = 'standard';
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid,'', $sendcontext);
+
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');
@@ -401,7 +426,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     						$interface=new Interfaces($db);
     						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-    						if ($result < 0) {
+							if ($result < 0) {
     							$error++; $errors=$interface->errors;
     						}
 						}

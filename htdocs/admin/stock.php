@@ -246,7 +246,7 @@ $found++;
 
 /*if (! $found)
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
 	print "</tr>\n";
@@ -329,7 +329,7 @@ $found++;
 
 /*if (! $found)
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
 	print "</tr>\n";
@@ -433,7 +433,7 @@ if ($virtualdiffersfromphysical)
 }
 
 
-print '<br />';
+print '<br>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
 	print '<table class="noborder" width="100%">';
@@ -441,7 +441,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="center" width="100">&nbsp;</td>'."\n";
-	
+
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
@@ -454,7 +454,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
@@ -467,7 +467,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT").'</td>';
@@ -480,7 +480,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	print '</table>';
 }
 
@@ -492,7 +492,7 @@ print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
 if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-    
+
     print '<tr class="oddeven">';
     print '<td width="60%">'.$langs->trans("UseDispatchStatus").'</td>';
     print '<td width="160" align="right">';
@@ -536,7 +536,7 @@ print '<br>';
 If not used by a module, I still need to understand in which case user may need this now we can set rule on product page.
 if ($conf->global->PRODUIT_SOUSPRODUITS)
 {
-	
+
 
 	print '<tr class="oddeven">';
 	print '<td width="60%">'.$langs->trans("IndependantSubProductStock").'</td>';

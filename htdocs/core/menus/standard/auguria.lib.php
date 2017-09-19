@@ -351,14 +351,14 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
+		$newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " active = 1";
-		$sql.= " ORDER BY label";
+		$sql.= " AND active = 1";
+		$sql.= " ORDER BY label DESC";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -373,6 +373,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					$objp = $db->fetch_object($resql);
 
 					$nature='';
+
 					// Must match array $sourceList defined into journals_list.php
 					if ($objp->nature == 2 && ! empty($conf->facture->enabled)) $nature="sells";
 					if ($objp->nature == 3 && ! empty($conf->fournisseur->enabled)) $nature="purchases";
@@ -382,7 +383,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if (empty($conf->global->MAIN_FEATURES_LEVEL))
+					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 					{
 						if ($nature == 'various' || $nature == 'hasnew') $nature='';
 					}

@@ -77,38 +77,44 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  */
 function test_sql_and_script_inject($val, $type)
 {
-    $sql_inj = 0;
+    $inj = 0;
     // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
     if ($type != 2)
     {
-        $sql_inj += preg_match('/delete\s+from/i',	 $val);
-        $sql_inj += preg_match('/create\s+table/i',	 $val);
-        $sql_inj += preg_match('/update.+set.+=/i',  $val);
-        $sql_inj += preg_match('/insert\s+into/i', 	 $val);
-        $sql_inj += preg_match('/select.+from/i', 	 $val);
-        $sql_inj += preg_match('/union.+select/i', 	 $val);
-        $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-        $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
+        $inj += preg_match('/delete\s+from/i',	 $val);
+        $inj += preg_match('/create\s+table/i',	 $val);
+        $inj += preg_match('/update.+set.+=/i',  $val);
+        $inj += preg_match('/insert\s+into/i', 	 $val);
+        $inj += preg_match('/select.+from/i', 	 $val);
+        $inj += preg_match('/union.+select/i', 	 $val);
+        $inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+        $inj += preg_match('/(\.\.%2f)+/i',		 $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
     // When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
-    $sql_inj += preg_match('/<script/i', $val);
-    if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
-    $sql_inj += preg_match('/base[\s]+href/si', $val);
-    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-    $sql_inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-    $sql_inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-    if ($type == 1)
-    {
-        $sql_inj += preg_match('/javascript:/i', $val);
-        $sql_inj += preg_match('/vbscript:/i', $val);
-    }
+	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
+    $inj += preg_match('/<script/i', $val);
+	$inj += preg_match('/<iframe/i', $val);
+	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
+    if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
+    $inj += preg_match('/base[\s]+href/si', $val);
+    $inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+    $inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
+    $inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
+    $inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
+    //$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
+	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val);		// refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+    //if ($type == 1)
+    //{
+        $inj += preg_match('/javascript:/i', $val);
+        $inj += preg_match('/vbscript:/i', $val);
+    //}
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-    if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
-    if ($type == 2) $sql_inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
-    return $sql_inj;
+    if ($type == 1) $inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
+    if ($type == 2) $inj += preg_match('/[;"]/', $val);		// PHP_SELF is a file system path. It can contains spaces.
+    return $inj;
 }
 
 /**
@@ -1075,10 +1081,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";      				// Do not index
         print '<meta name="viewport" content="width=device-width, initial-scale=1.0">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
-        // Favicon. Note, even if we remove this meta, the browser and android webview try to find a favicon.ico
+        // Favicon
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
-        print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
+        if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
         //if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
@@ -1214,15 +1220,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
-            // jQuery blockUI
-            if (! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI) || defined('REQUIRE_JQUERY_BLOCKUI'))
-            {
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/blockUI/jquery.blockUI.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            	print '<script type="text/javascript">'."\n";
-            	print 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working2.gif".'\';'."\n";
-            	print '</script>'."\n";
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/blockUI.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-            }
             // Flot
             if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && ! defined('DISABLE_JQUERY_FLOT'))
             {
@@ -1327,7 +1324,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // Add datepicker default options
             if (! defined('DISABLE_DATE_PICKER'))
             {
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
             }
 
             // JS forced by modules (relative url starting with /)
@@ -1973,7 +1970,7 @@ if (! function_exists("llxFooter"))
     		print '<script type="text/javascript">
             	jQuery(document).ready(function () {
             		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(($conf->browser->layout == 'phone' ? 400 : 700),'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-            		jQuery(".classfortooltiponclicktext").dialog({ width: 500, autoOpen: false });
+            		jQuery(".classfortooltiponclicktext").dialog({ width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false });
             		jQuery(".classfortooltiponclick").click(function () {
             		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
             		    if ($(this).attr(\'dolid\'))

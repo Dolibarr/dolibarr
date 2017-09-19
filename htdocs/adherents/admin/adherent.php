@@ -203,7 +203,7 @@ if ($conf->facture->enabled)
 		print '</td>';
 	}
 	print "</tr>\n";
-	
+
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
@@ -260,40 +260,6 @@ $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
 $helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
 $helptext.='%YEAR%, %MONTH%, %DAY%';
-
-form_constantes($constantes, 0, $helptext);
-
-print '<br>';
-
-
-/*
- * Editing global variables not related to a specific theme
- */
-$constantes=array(
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
-		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_MAIL',
-		'ADHERENT_MAIL_VALID_SUBJECT',
-		'ADHERENT_MAIL_VALID',
-		'ADHERENT_MAIL_COTIS_SUBJECT',
-		'ADHERENT_MAIL_COTIS',
-		'ADHERENT_MAIL_RESIL_SUBJECT',
-		'ADHERENT_MAIL_RESIL',
-		'ADHERENT_MAIL_FROM',
-		);
-
-print load_fiche_titre($langs->trans("Other"),'','');
-
-$helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-$helptext.='%YEAR%, %MONTH%, %DAY%';
-
-$helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-//$helptext.='%YEAR%, %MONTH%, %DAY%';	// Not supported
 
 form_constantes($constantes, 0, $helptext);
 

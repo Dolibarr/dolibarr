@@ -287,15 +287,15 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
 /**
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complate filearray.
- * 
- * @param	$filearray		Array of files get using dol_dir_list
- * @param	$relativedir	Relative dir from DOL_DATA_ROOT
+ *
+ * @param	array	$filearray		Array of files get using dol_dir_list
+ * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
 function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 {
 	global $db, $user;
-	
+
 	$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
 
 	//var_dump($filearray);
@@ -672,7 +672,7 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
- * Copy a dir to another dir.
+ * Copy a dir to another dir. This include recursive subdirectories.
  *
  * @param	string	$srcfile			Source file (a directory)
  * @param	string	$destfile			Destination file (a directory)
@@ -714,7 +714,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
         $dir_handle=opendir($ossrcfile);
         while ($file=readdir($dir_handle))
         {
-            if ($file!="." && $file!="..")
+            if ($file != "." && $file != ".." && ! is_link($ossrcfile."/".$file))
             {
                 if (is_dir($ossrcfile."/".$file))
                 {
@@ -1084,7 +1084,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 /**
  *  Remove a file or several files with a mask.
- *  This delete file physically but also database indexes. 
+ *  This delete file physically but also database indexes.
  *
  *  @param	string	$file           File to delete or mask of files to delete
  *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
@@ -1239,7 +1239,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 
                 if ($item != "." && $item != "..")
                 {
-                    if (is_dir(dol_osencode("$dir/$item")))
+                    if (is_dir(dol_osencode("$dir/$item")) && ! is_link(dol_osencode("$dir/$item")))
                     {
                         $count=dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted);
                     }
@@ -1334,7 +1334,7 @@ function dol_meta_create($object)
 {
 	global $conf;
 
-	// Create meta file		
+	// Create meta file
 	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;	// By default, no metafile.
 
 	// Define parent dir of elements
@@ -1391,7 +1391,7 @@ function dol_meta_create($object)
 
 		return 1;
 	}
-	else 
+	else
 	{
 		dol_syslog('FailedToDetectDirInDolMetaCreateFor'.$object->element, LOG_WARNING);
 	}
@@ -1654,34 +1654,41 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
- *  @return	int					<0 if KO, >0 if OK
+ *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
 function dol_convert_file($fileinput,$ext='png',$fileoutput='')
 {
 	global $langs;
 
-	$image=new Imagick();
-	$ret = $image->readImage($fileinput);
-	if ($ret)
+	if (class_exists('Imagick'))
 	{
-		$ret = $image->setImageFormat($ext);
+		$image=new Imagick();
+		$ret = $image->readImage($fileinput);
 		if ($ret)
 		{
-			if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
+			$ret = $image->setImageFormat($ext);
+			if ($ret)
+			{
+				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
-			$count = $image->getNumberImages();
-			$ret = $image->writeImages($fileoutput, true);
-			if ($ret) return $count;
-			else return -3;
+				$count = $image->getNumberImages();
+				$ret = $image->writeImages($fileoutput, true);
+				if ($ret) return $count;
+				else return -3;
+			}
+			else
+			{
+				return -2;
+			}
 		}
 		else
 		{
-			return -2;
+			return -1;
 		}
 	}
 	else
 	{
-		return -1;
+		return 0;
 	}
 }
 
@@ -1929,7 +1936,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
 {
 	global $user, $conf, $db;
-	global $dolibarr_main_data_root;
+	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
 
 	if (! is_object($fuser)) $fuser=$user;
 
@@ -1957,13 +1964,23 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
 	    $accessallowed=1;
-	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	    $original_file=$conf->medias->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
 	elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root))
 	{
 	    $accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 	    $original_file=$dolibarr_main_data_root.'/'.$original_file;
+	}
+	// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+	elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root))
+	{
+		// Dir for custom dirs
+		$tmp=explode(',', $dolibarr_main_document_root_alt);
+		$dirins = $tmp[0];
+
+	    $accessallowed=($user->admin && preg_match('/^module_.*\.zip$/', basename($original_file)));
+	    $original_file=$dirins.'/'.$original_file;
 	}
 	// Wrapping for some images
 	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
@@ -2265,6 +2282,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	        $accessallowed=1;
 	    }
 	    $original_file=$conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_contract' && !empty($conf->contrat->dir_output))
+	{
+		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->contrat->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 
 	// Wrapping for interventions

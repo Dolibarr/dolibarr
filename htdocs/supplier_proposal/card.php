@@ -434,7 +434,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) {
 			$object->reopen($user, SupplierProposal::STATUS_VALIDATED);
@@ -442,7 +442,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 	    // prevent browser refresh from reopening proposal several times
 	    if ($object->statut == SupplierProposal::STATUS_SIGNED) {
 			$object->setStatut(SupplierProposal::STATUS_CLOSE);
@@ -450,7 +450,7 @@ if (empty($reshook))
 	}
 
 	// Set accepted/refused
-	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		if (! GETPOST('statut')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
@@ -574,7 +574,7 @@ if (empty($reshook))
 			{
 			    $productsupplier = new ProductFournisseur($db);
 
-			    if (empty($conf->global->SUPPLIER_PROPOSAL_WITH_NOPRICEDEFINED))
+			    if (empty($conf->global->SUPPLIER_PROPOSAL_WITH_NOPRICEDEFINED))	// TODO this test seems useless
 			    {
 			        $idprod=0;
 			        if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
@@ -589,8 +589,9 @@ if (empty($reshook))
 			    }
 			    elseif (GETPOST('idprodfournprice') > 0)
 			    {
-			        //$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
-			        $idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), -1);        // We force qty to -1 to be sure to find if a supplier price exist
+			        //$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
+			    	$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+			    	$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
                     $res=$productsupplier->fetch($idprod);
 			    }
 
@@ -600,7 +601,7 @@ if (empty($reshook))
 			        $price_base_type = $productsupplier->fourn_price_base_type;
 			        $type = $productsupplier->type;
 			        $label = $productsupplier->label;
-			        $desc = $productsupplier->description;			        
+			        $desc = $productsupplier->description;
 			        if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 			        $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
@@ -870,7 +871,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1062,6 +1063,7 @@ if ($action == 'create')
 	} else {
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1804,7 +1806,7 @@ if ($action == 'create')
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid);
+		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid, 1);
 
 		print '</div></div></div>';
 	}

@@ -277,7 +277,15 @@ class pdf_soleil extends ModelePDFFicheinter
 						$curX = $this->posxdesc-1;
 
 						// Description of product line
-						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+                                                if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR))
+                                                {
+						        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+                                                }
+                                                else
+                                                {
+                                                        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'day',false,$outputlangs,true);
+                                                }
+
 						if ($objectligne->duration > 0)
 						{
 							$txt.=" - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
@@ -294,7 +302,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pageposafter=$pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
 							$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-							$pdf->writeHTMLCell(0, 0, $curX, $curY, $txt.'<br>'.$desc, LR, 1, 0);
+							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
 							$pageposafter=$pdf->getPage();
 							$posyafter=$pdf->GetY();
 							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;

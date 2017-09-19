@@ -32,6 +32,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -50,15 +51,15 @@ $langs->load("stocks");
 $langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 $d_eatby=dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 $d_sellby=dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
@@ -823,6 +824,8 @@ $sql.= " AND ps.fk_product = ".$object->id;
 $sql.= " ORDER BY e.label";
 
 $entrepotstatic=new Entrepot($db);
+$product_lot_static=new Productlot($db);
+
 $total=0;
 $totalvalue=$totalvaluesell=0;
 
@@ -867,6 +870,11 @@ if ($resql)
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
+				$product_lot_static->id = $pdluo->lotid;
+				$product_lot_static->batch = $pdluo->batch;
+				$product_lot_static->eatby = $pdluo->eatby;
+				$product_lot_static->sellby = $pdluo->sellby;
+
 			    if ($action == 'editline' && GETPOST('lineid','int') == $pdluo->id)
 			    { //Current line edit
 			        print "\n".'<tr>';
@@ -896,7 +904,9 @@ if ($resql)
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
                     //print img_edit().'</a></td>';
-                    print '<td align="right">'.$pdluo->batch.'</td>';
+                    print '<td align="right">';
+                    print $product_lot_static->getNomUrl(1);
+                    print '</td>';
                     print '<td align="center">'. dol_print_date($pdluo->eatby,'day') .'</td>';
                     print '<td align="center">'. dol_print_date($pdluo->sellby,'day') .'</td>';
                     print '<td align="right">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
@@ -936,7 +946,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 {
 	print '<br><br>';
 	print_titre($langs->trans('AddNewProductStockWarehouse'));
-	//print '<br />';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="action" value="addlimitstockwarehouse">';

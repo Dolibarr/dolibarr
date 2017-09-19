@@ -55,7 +55,7 @@ CronSaveSucess=Save successfully
 CronNote=Comment
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
-StatusAtInstall=Status at installation
+StatusAtInstall=Status at module installation
 CronStatusActiveBtn=Enable
 CronStatusInactiveBtn=Disable
 CronTaskInactive=This job is disabled
@@ -72,7 +72,7 @@ CronFrom=From
 # Info
 # Common
 CronType=Job type
-CronType_method=Call method of a Dolibarr Class
+CronType_method=Call method of a PHP Class
 CronType_command=Shell command
 CronCannotLoadClass=Cannot load class %s or object %s
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.

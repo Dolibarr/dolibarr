@@ -25,12 +25,63 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Missing in 5.0
+ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
+
+-- Missing in 6.0 ?
+ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_code	varchar(255);
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+
+ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+
+
+-- For 7.0
+
+ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN seuil_stock_alerte SET DEFAULT NULL;
+
+ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
+
+ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
+
+ALTER TABLE llx_contrat MODIFY COLUMN ref varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_customer varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_supplier varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(50);
+
+
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
+
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'DEPENSES',  'Expenses of products/services',             'Exemple: 6xxxxx', 0, 0, '',                '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3, 'PROFIT',    'Balance',                                   '',                0, 1, 'VENTES+DEPENSES', '30', 1, 1);
+
+UPDATE llx_c_accounting_category set code = 'VENTES',   range_account='7xxxxx' where code = 'VTE';
+UPDATE llx_c_accounting_category set code = 'DEPENSES', range_account='6xxxxx' where code = 'MAR';
+UPDATE llx_c_accounting_category set code = 'PROFIT',   range_account='Balance', formula = 'VENTES+DEPENSES' where code = 'MARGE';
+
+ALTER TABLE llx_menu MODIFY COLUMN perms text;
+
+ALTER TABLE llx_mailing MODIFY COLUMN titre varchar(128);
+ALTER TABLE llx_mailing MODIFY COLUMN sujet varchar(128);
+
+ALTER TABLE llx_mailing MODIFY COLUMN langs varchar(64);
+
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
+
+ALTER TABLE llx_bookmark DROP COLUMN fk_soc;
+ 
+ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
+ALTER TABLE llx_website_page ADD COLUMN grabbed_from varchar(255);
 
 ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
 UPDATE llx_website_page set status = 1 WHERE status IS NULL;
@@ -55,25 +106,25 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     datec           datetime  DEFAULT NULL,
     tms             timestamp,
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
-    fk_range        integer DEFAULT 0 NOT NULL,	  	  
-    coef            double DEFAULT 0 NOT NULL,  
-    offset          double DEFAULT 0 NOT NULL	          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+    fk_range        integer DEFAULT 0 NOT NULL,
+    coef            double DEFAULT 0 NOT NULL,
+    offset          double DEFAULT 0 NOT NULL
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL	          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+    active      integer DEFAULT 1 NOT NULL
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     fk_c_exp_tax_cat integer DEFAULT 1 NOT NULL,
-    range_ik    double DEFAULT 0 NOT NULL,   
+    range_ik    double DEFAULT 0 NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL		          
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+    active      integer DEFAULT 1 NOT NULL
+)ENGINE=innodb;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
 ('EX_KME', 'ExpLabelKm', 1, '625100'),
@@ -188,3 +239,54 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
+
+ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
+
+ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN label varchar(255) NOT NULL;
+
+ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
+
+UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_KO'  where name = 'PAYPAL_MESSAGE_KO';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_CREDITOR'    where name = 'PAYPAL_CREDITOR';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_CSS_URL'     where name = 'PAYPAL_CSS_URL';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_NEWFORMTEXT' where name = 'PAYPAL_NEWFORMTEXT';
+UPDATE llx_const set name = 'ONLINE_PAYMENT_LOGO'        where name = 'PAYPAL_LOGO';
+
+UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'PROD';
+UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE';
+UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
+UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SENTBYMAIL','Contract sent by mail','Executed when a contract is sent by mail','contrat',18);
+
+CREATE TABLE llx_projet_task_comment (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    datec datetime  DEFAULT NULL,
+    tms timestamp,
+    description text NOT NULL,
+    fk_user integer DEFAULT NULL,
+    fk_task integer DEFAULT NULL,
+    entity integer DEFAULT 1,
+    import_key varchar(125) DEFAULT NULL
+)ENGINE=innodb;
+
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) COLLATE utf8_unicode_ci;

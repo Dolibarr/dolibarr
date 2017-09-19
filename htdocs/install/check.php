@@ -306,7 +306,19 @@ else
 				}
 				else
 				{
-                    require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+            require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+
+            // If password is encoded, we decode it
+            if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+            {
+                require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
+                if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+                {
+                    $dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);	// We need to set this as it is used to know the password was initially crypted
+                    $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+                }
+                else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+            }
 
     				// $conf is already instancied inside inc.php
     				$conf->db->type = $dolibarr_main_db_type;
@@ -315,12 +327,12 @@ else
     				$conf->db->name = $dolibarr_main_db_name;
     				$conf->db->user = $dolibarr_main_db_user;
     				$conf->db->pass = $dolibarr_main_db_pass;
-                    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+            $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
     				if ($db->connected && $db->database_selected)
     				{
     					$ok=true;
     				}
-                }
+        }
 			}
 		}
 
@@ -353,7 +365,7 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-        print '<br /><br />';
+        print '<br><br>';
 
 		$foundrecommandedchoice=0;
 
@@ -522,13 +534,13 @@ else
 
         if (count($notavailable_choices)) {
 
-            print '<br />';
+            print '<br>';
             print '<div id="AShowChoices">';
             print '<img src="../theme/eldy/img/1downarrow.png"> <a href="#">'.$langs->trans('ShowNotAvailableOptions').'</a>';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
-            print '<br />';
+            print '<br>';
             print '<table width="100%" class="listofchoices">';
             foreach ($notavailable_choices as $choice) {
                 print $choice;

@@ -29,8 +29,9 @@
  */
 
 require ("../main.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -80,6 +81,8 @@ if (! $sortorder) $sortorder='DESC';
 $id=GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $id);
+
+$diroutputmassaction=$conf->contrat->dir_output . '/temp/massgeneration/'.$user->id;
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
@@ -136,8 +139,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Action
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -184,7 +187,8 @@ if (empty($reshook))
  */
 
 $now=dol_now();
-$form=new Form($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
 $contracttmp = new Contrat($db);
@@ -255,8 +259,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -333,8 +338,8 @@ if ($resql)
 
     // List of mass actions available
     $arrayofmassactions =  array(
-        //'presend'=>$langs->trans("SendByMail"),
-        //'builddoc'=>$langs->trans("PDFMerge"),
+        'presend'=>$langs->trans("SendByMail"),
+        'builddoc'=>$langs->trans("PDFMerge"),
     );
     if ($user->rights->contrat->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
     if ($massaction == 'presend') $arrayofmassactions=array();
@@ -350,6 +355,16 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
+
+    if ($massaction == 'presend')
+    {
+    	$topicmail="SendContractRef";
+    	$modelmail="contract";
+    	$objecttmp=new Contrat($db);
+    	$trackid='con'.$object->id;
+
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
+    }
 
 	if ($sall)
     {
@@ -585,6 +600,13 @@ if ($resql)
                 print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
                 print '</span>';
             }
+
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->contrat->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
+            print '</td>';
+
             print '</td>';
         }
         if (! empty($arrayfields['c.ref_customer']['checked']))
@@ -749,6 +771,25 @@ if ($resql)
     print '</div>';
 
     print '</form>';
+
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+    {
+    	/*
+    	 * Show list of available documents
+    	 */
+    	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+    	$urlsource.=str_replace('&amp;','&',$param);
+
+    	$filedir=$diroutputmassaction;
+    	$genallowed=$user->rights->contrat->lire;
+    	$delallowed=$user->rights->contrat->lire;
+
+    	print $formfile->showdocuments('massfilesarea_contract','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+    }
+    else
+    {
+    	print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+    }
 }
 else
 {

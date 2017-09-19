@@ -108,8 +108,8 @@ if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin
  * Action
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
@@ -370,6 +370,7 @@ print '<div class="inline-block divButAction"><a class="butActionDelete" name="b
 
 print '</div>';
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre_filter">';
@@ -501,6 +502,7 @@ print '<td colspan="2"></td>';
 print '</tr>';
 
 print "</table>";
+print '</div>';
 
 print '</form>';
 

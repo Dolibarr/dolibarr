@@ -289,7 +289,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
     if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
@@ -602,6 +602,7 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+	print '<div class="div-table-responsive">';
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
@@ -1139,6 +1140,7 @@ if ($id)
     }
 
     print '</table>';
+	print '</div>';
 
     print '</form>';
 }

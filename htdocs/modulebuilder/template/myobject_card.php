@@ -132,7 +132,7 @@ if (empty($reshook))
             if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
             $object->$key=GETPOST($key,'alpha');
-            if ($val['notnull'] && $object->$key == '')
+            if ($val['notnull'] > 0 && $object->$key == '')
             {
                 $error++;
                 setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -170,7 +170,7 @@ if (empty($reshook))
         {
             $object->$key=GETPOST($key,'alpha');
             if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
-            if ($val['notnull'] && $object->$key == '')
+            if ($val['notnull'] > 0 && $object->$key == '')
             {
                 $error++;
                 setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -265,7 +265,7 @@ if ($action == 'create')
 	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
     	print '<tr id="field_'.$key.'"><td';
     	print ' class="titlefieldcreate';
-    	if ($val['notnull']) print ' fieldrequired';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
     	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
@@ -300,7 +300,7 @@ if (($id || $ref) && $action == 'edit')
 	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
     	print '<tr><td';
     	print ' class="titlefieldcreate';
-    	if ($val['notnull']) print ' fieldrequired';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
     	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
@@ -421,7 +421,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
     	print '<tr><td';
     	print ' class="titlefieldcreate';
-    	if ($val['notnull']) print ' fieldrequired';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
     	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
@@ -505,7 +505,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'myobject', $socid);
+	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1);
 
 	    print '</div></div></div>';
 	}

@@ -775,11 +775,11 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
         $sql.= ", '".$this->db->escape($this->modelpdf)."'";
-        $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
-        $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
+        $sql.= ", ".($this->cond_reglement_id>0?$this->cond_reglement_id:"null");
+        $sql.= ", ".($this->mode_reglement_id>0?$this->mode_reglement_id:"null");
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
-        $sql.= ", ".($this->availability_id>0?"'".$this->availability_id."'":"null");
-        $sql.= ", ".($this->demand_reason_id>0?"'".$this->demand_reason_id."'":"null");
+        $sql.= ", ".($this->availability_id>0?$this->availability_id:"null");
+        $sql.= ", ".($this->demand_reason_id>0?$this->demand_reason_id:"null");
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
@@ -920,7 +920,8 @@ class Commande extends CommonOrder
                 		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
                 		            {
                 		                $originforcontact = 'commande';
-                		                $originidforcontact = $value->id;
+							            if (is_object($value)) $originidforcontact = $value->id;
+							            else $originidforcontact = $value;
                 		                break; // We take first one
                 		            }
                 		        }
@@ -2233,7 +2234,7 @@ class Commande extends CommonOrder
         	$this->db->begin();
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-            $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
+            $sql.= " SET date_commande = ".($date ? "'".$this->db->idate($date)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             dol_syslog(__METHOD__, LOG_DEBUG);
@@ -3994,18 +3995,18 @@ class OrderLine extends CommonOrderLine
 		$sql.= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql.= ')';
         $sql.= " VALUES (".$this->fk_commande.",";
-        $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
+        $sql.= " ".($this->fk_parent_line>0?"'".$this->db->escape($this->fk_parent_line)."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " '".price2num($this->qty)."',";
-        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->db->escape($this->vat_src_code)."'").",";
         $sql.= " '".price2num($this->tva_tx)."',";
         $sql.= " '".price2num($this->localtax1_tx)."',";
         $sql.= " '".price2num($this->localtax2_tx)."',";
-		$sql.= " '".$this->localtax1_type."',";
-		$sql.= " '".$this->localtax2_type."',";
+		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
+		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
         $sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
-        $sql.= " '".$this->product_type."',";
+        $sql.= " '".$this->db->escape($this->product_type)."',";
         $sql.= " '".price2num($this->remise_percent)."',";
         $sql.= " ".($this->subprice!=''?"'".price2num($this->subprice)."'":"null").",";
         $sql.= " ".($this->price!=''?"'".price2num($this->price)."'":"null").",";
@@ -4015,7 +4016,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' '.$this->rang.',';
 		$sql.= ' '.(! empty($this->fk_fournprice)?$this->fk_fournprice:"null").',';
 		$sql.= ' '.price2num($this->pa_ht).',';
-        $sql.= " '".$this->info_bits."',";
+        $sql.= " '".$this->db->escape($this->info_bits)."',";
         $sql.= " '".price2num($this->total_ht)."',";
         $sql.= " '".price2num($this->total_tva)."',";
         $sql.= " '".price2num($this->total_localtax1)."',";

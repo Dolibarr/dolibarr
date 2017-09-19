@@ -35,7 +35,7 @@ $langs->load("accountancy");
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $action = GETPOST('action','aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk', 'array');
@@ -98,7 +98,7 @@ dol_fiche_head();
 
 print '<table class="border" width="100%">';
 // Category
-print '<tr><td>' . $langs->trans("AccountingCategory") . '</td>';
+print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
 print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
@@ -110,14 +110,26 @@ if (! empty($cat_id))
 	if ($return < 0) {
 		setEventMessages(null, $accountingcategory->errors, 'errors');
 	}
-	print '<tr><td>' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
+	print '<tr><td class="tdtop">' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
 	print '<td>';
+
+	$arraykeyvalue=array();
+	foreach($accountingcategory->lines_cptbk as $key => $val)
+	{
+		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' (' . $val->label_compte . ($val->doc_ref?' '.$val->doc_ref:'').')';
+	}
+
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-		print '<select class="flat minwidth200" size="' . count($obj) . '" name="cpt_bk[]" multiple>';
+
+		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
+		print '<br>';
+		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
 		foreach ( $accountingcategory->lines_cptbk as $cpt ) {
 			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
 		}
 		print '</select><br>';
+		print ajax_combobox('cpt_bk');
+		*/
 		print '<input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
 	}
 	print '</td></tr>';

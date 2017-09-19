@@ -28,8 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
 /**
- *	\class      mailing_contacts1
- *	\brief      Class to offer a selector of emailing targets with Rule 'Poire'.
+ *	Class to offer a selector of emailing targets from contacts
  */
 class mailing_contacts1 extends MailingTargets
 {
@@ -39,7 +38,7 @@ class mailing_contacts1 extends MailingTargets
 	var $require_module=array("societe");               // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                               // Module mailing actif pour user admin ou non
 	var $picto='contact';
-	
+
 	var $db;
 
 
@@ -101,8 +100,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " AND c.no_email = 0";
 		$sql.= " AND c.statut = 1";
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -118,10 +116,86 @@ class mailing_contacts1 extends MailingTargets
 		$langs->load("companies");
 		$langs->load("commercial");
 		$langs->load("suppliers");
+		$langs->load("categories");
 
 		$s='';
-		$s.='<select name="filter" class="flat">';
+
+		// Add filter on job position
+		$sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+		/*$sql.= " AND sp.email != ''";    // Note that null != '' is false
+		 $sql.= " AND sp.no_email = 0";
+		 $sql.= " AND sp.statut = 1";*/
+		$sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
+		$sql.= " GROUP BY sp.poste";
+		$sql.= " ORDER BY sp.poste";
+		$resql = $this->db->query($sql);
+
+		$s.=$langs->trans("PostOrFunction").': ';
+		$s.='<select name="filter_jobposition" class="flat">';
+		$s.='<option value="all">&nbsp;</option>';
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$s.='<option value="'.dol_escape_htmltag($obj->poste).'">'.dol_escape_htmltag($obj->poste).' ('.$obj->nb.')</option>';
+				$i++;
+			}
+		}
+		else dol_print_error($this->db);
+		$s.='</select>';
+
+		$s.=' ';
+
+		// Filter on contact category
+		$s .= $langs->trans("ContactCategoriesShort").': ';
+		$sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
+		$sql.= " FROM ";
+		$sql.= " ".MAIN_DB_PREFIX."socpeople as sp,";
+		$sql.= " ".MAIN_DB_PREFIX."categorie as c,";
+		$sql.= " ".MAIN_DB_PREFIX."categorie_contact as cs";
+		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
+		//$sql.= " AND sp.no_email = 0";
+		//$sql.= " AND sp.email != ''";
+		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		$sql.= " AND cs.fk_categorie = c.rowid";
+		$sql.= " AND cs.fk_socpeople = sp.rowid";
+		$sql.= " GROUP BY c.label";
+		$sql.= " ORDER BY c.label";
+		$resql = $this->db->query($sql);
+
+		$s.='<select name="filter_category" class="flat">';
+		$s.='<option value="all">&nbsp;</option>';
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+					$i++;
+				}
+			}
+			else
+			{
+				$s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
+			}
+		}
+		else dol_print_error($this->db);
+		$s.='</select>';
+
+		$s.='<br>';
+
 		// Add prospect of a particular level
+		$s.=$langs->trans("NatureOfThirdParty").': ';
+		$s.='<select name="filter" class="flat">';
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql.= " WHERE active > 0";
@@ -132,7 +206,7 @@ class mailing_contacts1 extends MailingTargets
 			$num = $this->db->num_rows($resql);
 			if ($num) $s.='<option value="all">&nbsp;</option>';
 			else $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
-            $s.='<option value="prospects">'.$langs->trans("ThirdPartyProspects").'</option>';
+			$s.='<option value="prospects">'.$langs->trans("ThirdPartyProspects").'</option>';
 
 			$i = 0;
 			while ($i < $num)
@@ -144,10 +218,96 @@ class mailing_contacts1 extends MailingTargets
 				$i++;
 			}
 		}
+		else dol_print_error($this->db);
 		$s.='<option value="customers">'.$langs->trans("ThirdPartyCustomers").'</option>';
 		//$s.='<option value="customersidprof">'.$langs->trans("ThirdPartyCustomersWithIdProf12",$langs->trans("ProfId1"),$langs->trans("ProfId2")).'</option>';
 		$s.='<option value="suppliers">'.$langs->trans("ThirdPartySuppliers").'</option>';
 		$s.='</select>';
+
+		$s.= ' ';
+
+		// Filter on thirdparty category
+		$s .= $langs->trans("CustomersProspectsCategoriesShort").': ';
+		$sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
+		$sql.= " FROM ";
+		$sql.= " ".MAIN_DB_PREFIX."socpeople as sp,";
+		$sql.= " ".MAIN_DB_PREFIX."categorie as c,";
+		$sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
+		//$sql.= " AND sp.no_email = 0";
+		//$sql.= " AND sp.email != ''";
+		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		$sql.= " AND cs.fk_categorie = c.rowid";
+		$sql.= " AND cs.fk_soc = sp.fk_soc";
+		$sql.= " GROUP BY c.label";
+		$sql.= " ORDER BY c.label";
+		$resql = $this->db->query($sql);
+
+		$s.='<select name="filter_category_customer" class="flat">';
+		$s.='<option value="all">&nbsp;</option>';
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+					$i++;
+				}
+			}
+			else
+			{
+				$s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
+			}
+		}
+		else dol_print_error($this->db);
+		$s.='</select>';
+
+		$s.= ' ';
+
+		// Filter on thirdparty category
+		$s .= $langs->trans("SuppliersCategoriesShort").': ';
+		$sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
+		$sql.= " FROM ";
+		$sql.= " ".MAIN_DB_PREFIX."socpeople as sp,";
+		$sql.= " ".MAIN_DB_PREFIX."categorie as c,";
+		$sql.= " ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
+		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
+		//$sql.= " AND sp.no_email = 0";
+		//$sql.= " AND sp.email != ''";
+		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		$sql.= " AND cs.fk_categorie = c.rowid";
+		$sql.= " AND cs.fk_soc = sp.fk_soc";
+		$sql.= " GROUP BY c.label";
+		$sql.= " ORDER BY c.label";
+		$resql = $this->db->query($sql);
+
+		$s.='<select name="filter_category_supplier" class="flat">';
+		$s.='<option value="all">&nbsp;</option>';
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+					$i++;
+				}
+			}
+			else
+			{
+				$s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
+			}
+		}
+		else dol_print_error($this->db);
+		$s.='</select>';
+
 		return $s;
 	}
 
@@ -168,12 +328,18 @@ class mailing_contacts1 extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
+	 *  @param  array	$filtersarray   Optional filter data (deprecated)
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		global $conf, $langs;
+
+		$filter = GETPOST('filter','alpha');
+		$filter_jobposition = GETPOST('filter_jobposition','alpha');
+		$filter_category = GETPOST('filter_category','alpha');
+		$filter_category_customer = GETPOST('filter_category_customer','alpha');
+		$filter_category_supplier = GETPOST('filter_category_supplier','alpha');
 
 		$cibles = array();
 
@@ -197,27 +363,43 @@ class mailing_contacts1 extends MailingTargets
 		}
 		else dol_print_error($this->db);
 
-		// La requete doit retourner: id, email, fk_contact, name, firstname, other
-		$sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact,";
-		$sql.= " c.lastname, c.firstname, c.civility as civility_id,";
+		// Request must return: id, email, fk_contact, lastname, firstname, other
+		$sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact, sp.lastname, sp.firstname, sp.civility as civility_id, sp.poste as jobposition,";
 		$sql.= " s.nom as companyname";
-		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
-		$sql.= " WHERE c.entity IN (".getEntity('societe').")";
-		$sql.= " AND c.email <> ''";
-		$sql.= " AND c.no_email = 0";
-		$sql.= " AND c.statut = 1";
-		$sql.= " AND c.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		foreach($filtersarray as $key)
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+    	if ($filter_category <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c";
+    	if ($filter_category <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_contact as cs";
+    	if ($filter_category_customer <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c2";
+    	if ($filter_category_customer <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as c2s";
+    	if ($filter_category_supplier <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c3";
+    	if ($filter_category_supplier <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
+    	$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+		$sql.= " AND sp.email <> ''";
+		$sql.= " AND sp.no_email = 0";
+		$sql.= " AND sp.statut = 1";
+		$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+		// Filter on category
+		if ($filter_category <> 'all') $sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_socpeople = sp.rowid";
+    	if ($filter_category <> 'all') $sql.= " AND c.label = '".$this->db->escape($filter_category)."'";
+		if ($filter_category_customer <> 'all') $sql.= " AND c2s.fk_categorie = c2.rowid AND c2s.fk_soc = sp.fk_soc";
+    	if ($filter_category_customer <> 'all') $sql.= " AND c2.label = '".$this->db->escape($filter_category_customer)."'";
+		if ($filter_category_supplier <> 'all') $sql.= " AND c3s.fk_categorie = c3.rowid AND c3s.fk_soc = sp.fk_soc";
+    	if ($filter_category_supplier <> 'all') $sql.= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
+    	// Filter on nature
+		$key = $filter;
 		{
-			if ($key == 'prospects') $sql.= " AND s.client=2";
 			//print "xx".$key;
+			if ($key == 'prospects') $sql.= " AND s.client=2";
 			foreach($prospectlevel as $codelevel=>$valuelevel) if ($key == 'prospectslevel'.$codelevel) $sql.= " AND s.fk_prospectlevel='".$codelevel."'";
 			if ($key == 'customers') $sql.= " AND s.client=1";
 			if ($key == 'suppliers') $sql.= " AND s.fournisseur=1";
 		}
-		$sql.= " ORDER BY c.email";
-		//print "x".$sql;
+		// Filter on job position
+		$key = $filter_jobposition;
+		if (! empty($key) && $key != 'all') $sql.= " AND sp.poste ='".$this->db->escape($key)."'";
+		$sql.= " ORDER BY sp.email";
+		//print "wwwwwwx".$sql;
 
 		// Stocke destinataires dans cibles
 		$result=$this->db->query($sql);
@@ -242,8 +424,9 @@ class mailing_contacts1 extends MailingTargets
                     		'firstname' => $obj->firstname,
                     		'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
-                                ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')),
-                            'source_url' => $this->url($obj->id),
+                                ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')).';'.
+                                ($langs->transnoentities("JobPosition").'='.$obj->jobposition),
+							'source_url' => $this->url($obj->id),
                             'source_id' => $obj->id,
                             'source_type' => 'contact'
 					);

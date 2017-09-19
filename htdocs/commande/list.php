@@ -149,8 +149,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -445,7 +445,7 @@ llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
@@ -546,8 +546,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -660,102 +661,16 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	// TODO Move this into an invluce
 	if ($massaction == 'presend')
 	{
-	    $langs->load("mails");
+		$topicmail="SendOrderRef";
+		$modelmail="order_send";
+		$objecttmp=new Commande($db);
+		$trackid='ord'.$object->id;
 
-	    if (! GETPOST('cancel'))
-	    {
-	        $objecttmp=new Commande($db);
-	        $listofselectedid=array();
-	        $listofselectedthirdparties=array();
-	        $listofselectedref=array();
-	        foreach($arrayofselected as $toselectid)
-	        {
-	            $result=$objecttmp->fetch($toselectid);
-	            if ($result > 0)
-	            {
-	                $listofselectedid[$toselectid]=$toselectid;
-	                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
-	                $listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
-	                $listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
-	            }
-	        }
-	    }
-
-	    print '<input type="hidden" name="massaction" value="confirm_presend">';
-
-	    dol_fiche_head(null, '', '');
-
-	    $topicmail="SendOrderRef";
-	    $modelmail="order_send";
-
-	    // Cree l'objet formulaire mail
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	    $formmail = new FormMail($db);
-	    $formmail->withform=-1;
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-	    {
-	        $formmail->trackid='ord'.$object->id;
-	    }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-	    {
-	        include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	        $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-	    }
-	    $formmail->withfrom=1;
-	    $liste=$langs->trans("AllRecipientSelected");
-	    if (count($listofselectedthirdparties) == 1)
-	    {
-	        $liste=array();
-	        $thirdpartyid=array_shift($listofselectedthirdparties);
-	        $soc=new Societe($db);
-	        $soc->fetch($thirdpartyid);
-	        foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-	        {
-	            $liste[$key]=$value;
-	        }
-	        $formmail->withtoreadonly=0;
-	    }
-	    else
-	    {
-	        $formmail->withtoreadonly=1;
-	    }
-	    $formmail->withto=$liste;
-	    $formmail->withtofree=0;
-	    $formmail->withtocc=1;
-	    $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-	    $formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-	    $formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
-	    $formmail->withbody=1;
-	    $formmail->withdeliveryreceipt=1;
-	    $formmail->withcancel=1;
-	    // Tableau des substitutions
-	    $formmail->substit['__REF__']='__REF__';	// We want to keep the tag
-	    $formmail->substit['__SIGNATURE__']=$user->signature;
-	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
-	    $formmail->substit['__PERSONALIZED__']='';
-	    $formmail->substit['__CONTACTCIVNAME__']='';
-
-	    // Tableau des parametres complementaires du post
-	    $formmail->param['action']=$action;
-	    $formmail->param['models']=$modelmail;
-	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
-	    $formmail->param['id']=join(',',$arrayofselected);
-	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-	    print $formmail->get_form();
-
-	    dol_fiche_end();
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 	}
-	elseif ($massaction == 'createbills')
+	if ($massaction == 'createbills')
 	{
 		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
@@ -1233,6 +1148,7 @@ if ($resql)
         $companystatic->code_client = $obj->code_client;
 		$companystatic->name=$obj->name;
 		$companystatic->client=$obj->client;
+		$companystatic->email=$obj->email;
 
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked']))

@@ -1084,12 +1084,30 @@ class DoliDBPgsql extends DoliDB
 	{
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
 
-		// TODO May not work with pgsql. May need to run a second request. If it works, just remove the comment
-		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
+		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')
+		{
+        	// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
+        	if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text')
+        	{
+        		$sqlbis="UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+        		$this->query($sqlbis);
+        	}
+        	elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
+        	{
+        		$sqlbis="UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+        		$this->query($sqlbis);
+        	}
+		}
+
+		if ($field_desc['default'] != '')
+		{
+			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
+        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+		}
 
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
