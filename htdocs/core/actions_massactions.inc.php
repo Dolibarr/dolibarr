@@ -51,7 +51,7 @@ if (! $error && count($toselect) > $maxformassaction)
     $error++;
 }
 
-if (! $error && $massaction == 'confirm_presend' && GETPOST('modelselected'))  // If we change the template, we must not send email, but keep on send email form
+if (! $error && $massaction == 'confirm_presend' && ! GETPOST('sendmail'))  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 {
     $massaction='presend';
 }
@@ -407,6 +407,12 @@ if (! $error && $massaction == 'confirm_presend')
 
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
 {
+	if (empty($diroutputmassaction))
+	{
+		dol_print_error(null, 'include of actions_massactions.inc.php is done but var $diroutputmassaction was not defined');
+		exit;
+	}
+
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -502,7 +508,13 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     }
     else {
 	    // Create empty PDF
-	    $pdf=pdf_getInstance();
+    	$formatarray=pdf_getFormat();
+    	$page_largeur = $formatarray['width'];
+    	$page_hauteur = $formatarray['height'];
+    	$format = array($page_largeur,$page_hauteur);
+
+	    $pdf=pdf_getInstance($format);
+
 	    if (class_exists('TCPDF'))
 	    {
 			$pdf->setPrintHeader(false);

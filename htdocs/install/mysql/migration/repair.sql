@@ -89,6 +89,7 @@ delete from llx_livraison where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
+delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 

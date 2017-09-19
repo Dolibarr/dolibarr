@@ -418,6 +418,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
     			print '</div>';
 			}
+			else
+			{
+				print '<br>';
+			}
 		}
 	}
 
@@ -442,7 +446,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 
 		$morehtmlref='';
-		
+
 		// Project
 		if (empty($withproject))
 		{
@@ -450,7 +454,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
 		    $morehtmlref.='<br>';
-			
+
 		    // Third party
 	    	$morehtmlref.=$langs->trans("ThirdParty").': ';
 	    	if (is_object($projectstatic->thirdparty)) {
@@ -464,7 +468,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 
-        	print '<div class="underbanner clearboth"></div>';
+        print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
 		// Date start - Date end
@@ -491,7 +495,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<table class="border" width="100%">';
 
 		// Progress declared
-		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td>';
 		print $object->progress.' %';
 		print '</td></tr>';
 
@@ -503,7 +507,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration']/$object->planned_workload*100, 2).' %';
 			else print '0 %';
 		}
-		else print '';
+		else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
 		print '</td></tr>';
 
 		print '</table>';

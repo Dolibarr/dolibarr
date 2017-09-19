@@ -510,6 +510,7 @@ ALTER TABLE llx_user_rights DROP FOREIGN KEY fk_user_rights_fk_user_user;
 ALTER TABLE llx_user_rights DROP INDEX uk_user_rights;
 ALTER TABLE llx_user_rights DROP INDEX fk_user;
 ALTER TABLE llx_user_rights ADD UNIQUE INDEX uk_user_rights (entity, fk_user, fk_id);
+DELETE FROM llx_user_rights WHERE fk_user NOT IN (select rowid from llx_user);
 ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
 
 ALTER TABLE llx_usergroup_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;

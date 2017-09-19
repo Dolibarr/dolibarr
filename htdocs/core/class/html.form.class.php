@@ -1918,7 +1918,7 @@ class Form
         $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
         if (count($warehouseStatusArray))
         {
-            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$db->escape(implode(',',$warehouseStatusArray)).'))';
+            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$this->db->escape(implode(',',$warehouseStatusArray)).'))';
         }
 
         if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -5500,6 +5500,8 @@ class Form
         	print '<br><!-- showLinkedObjectBlock -->';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
 
+
+    		print '<div class="div-table-responsive-no-min">';
             print '<table class="noborder allwidth">';
 
             print '<tr class="liste_titre">';
@@ -5593,6 +5595,7 @@ class Form
         	}
 
         	print '</table>';
+			print '</div>';
 
         	return $nbofdifferenttypes;
         }
