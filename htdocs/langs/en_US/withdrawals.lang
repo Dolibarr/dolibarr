@@ -12,7 +12,7 @@ WithdrawalsLines=Direct debit order lines
 RequestStandingOrderToTreat=Request for direct debit payment order to process
 RequestStandingOrderTreated=Request for direct debit payment order processed
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Withdraw status must be set to 'credited' before declaring reject on specific lines.
-NbOfInvoiceToWithdraw=Nb. of invoice with direct debit order
+NbOfInvoiceToWithdraw=Nb. of qualified invoice with waiting direct debit order
 NbOfInvoiceToWithdrawWithInfo=Nb. of customer invoice with direct debit payment orders having defined bank account information
 InvoiceWaitingWithdraw=Invoice waiting for direct debit
 AmountToWithdraw=Amount to withdraw
@@ -94,6 +94,7 @@ SEPAFrstOrRecur=Type of payment
 ModeRECUR=Reccurent payment
 ModeFRST=One-off payment
 PleaseCheckOne=Please check one only
+DirectDebitOrderCreated=Direct debit order %s created
 
 ### Notifications 
 InfoCreditSubject=Payment of direct debit payment order %s by the bank
