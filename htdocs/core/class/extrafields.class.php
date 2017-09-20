@@ -1708,7 +1708,7 @@ class ExtraFields
 				if (! empty($onlykey) && $key != $onlykey) continue;
 
 				$key_type = $this->attribute_type[$key];
-				if($this->attribute_required[$key] && !GETPOST("options_$key",2))
+				if ($this->attribute_required[$key] && empty($_POST["options_".$key])) // Check if empty without GETPOST, value can be alpha, int, array, etc...
 				{
 					$nofillrequired++;
 					$error_field_required[] = $value;
@@ -1721,7 +1721,7 @@ class ExtraFields
 				}
 				else if (in_array($key_type,array('checkbox','chkbxlst')))
 				{
-					$value_arr=GETPOST("options_".$key);
+					$value_arr=GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
 						$value_key=implode($value_arr,',');
 					}else {
@@ -1740,7 +1740,7 @@ class ExtraFields
 				$object->array_options["options_".$key]=$value_key;
 			}
 
-			if($nofillrequired) {
+			if ($nofillrequired) {
 				$langs->load('errors');
 				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ',$error_field_required), null, 'errors');
 				return -1;
