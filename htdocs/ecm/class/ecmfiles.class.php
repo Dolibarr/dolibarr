@@ -46,7 +46,7 @@ class EcmFiles //extends CommonObject
 
 	/**
 	 */
-	public $label;
+	public $label;					// hash of file md5_file(dol_osencode($destfull)), so MD5 of file content
 	public $entity;
 	public $filename;
 	public $filepath;

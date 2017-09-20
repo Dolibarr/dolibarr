@@ -249,17 +249,42 @@ print dol_print_size($totalsize);
 print '</td></tr>';
 */
 
+$relativetodocument = 'ecm/'.$relativepath;		// $relativepath is relative to ECM dir, we need relative to document
 $filepath=$relativepath.$file->label;
+$filepathtodocument=$relativetodocument.$file->label;
 
 print '<tr><td>'.$langs->trans("HashSaved").'</td><td>';
 $ecmfile = new EcmFiles($db);
-print $filepath;
+//$filenametosearch=basename($filepath);
+//$filedirtosearch=basedir($filepath);
+$ecmfile->fetch(0, '', $filepathtodocument);
+if (! empty($ecmfile->label))
+{
+	print $ecmfile->label;
+}
+else
+{
+	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
+}
 print '</td></tr>';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+print '<tr><td>'.$langs->trans("DirectDownloadInternalLink").'</td><td>';
+$modulepart='ecm';
+$forcedownload=1;
+$rellink='/document.php?modulepart='.$modulepart;
+if ($forcedownload) $rellink.='&attachment=1';
+if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
+$rellink.='&file='.urlencode($filepath);
+$fulllink=$urlwithroot.$rellink;
+print img_picto('','object_globe.png').' ';
+print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("DirectDownloadLink").'</td><td>';
 $modulepart='ecm';
@@ -269,12 +294,15 @@ if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
-print img_picto('','object_globe.png').' ';
-print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
-print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+// TODO
+//print img_picto('','object_globe.png').' ';
+//print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+//print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
 print '</td></tr>';
+
 print '</table>';
 
+print ajax_autoselect('downloadinternallink');
 print ajax_autoselect('downloadlink');
 
 dol_fiche_end();
