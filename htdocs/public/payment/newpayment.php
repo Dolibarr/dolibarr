@@ -808,7 +808,7 @@ if ($source == 'invoice')
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
     print '</td></tr>'."\n";
 
 	// Debitor
@@ -821,8 +821,8 @@ if ($source == 'invoice')
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag(GETPOST("source",'alpha')).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
@@ -846,12 +846,20 @@ if ($source == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+
+	// Add download link
+	if (GETPOST('download','int') > 0)
+	{
+		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">';
+		print $invoice->getDirectExternalLink(1);
+		print '</td></tr>'."\n";
+	}
 
     // Shipping address
     $shipToName=$invoice->thirdparty->name;
