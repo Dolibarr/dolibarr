@@ -383,15 +383,19 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
 /**
  *    Return state translated from an id. Return value is always utf8 encoded and without entities.
  *
- *    @param	int			$id         	id of state (province/departement)
+ *    @param    int			$id         	id of state (province/departement)
  *    @param    int			$withcode   	'0'=Return label,
  *    										'1'=Return string code + label,
  *    						  				'2'=Return code,
  *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
+ *    @param    int			$withregion   	'0'=Ignores region,
+ *    										'1'=Add region name/code/id as needed to output,
  *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @return   string      				String with state code or state name (Return value is always utf8 encoded and without entities)
+ *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
+ *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id,$withcode='',$dbtouse=0,$withregion='',$outputlangs='',$entconv=1,$searchlabel='')
+function getState($id,$withcode='',$dbtouse=0,$withregion='',$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 

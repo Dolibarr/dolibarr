@@ -442,6 +442,7 @@ abstract class CommonObject
      *
      * 	@param		int			$withcountry		1=Add country into address string
      *  @param		string		$sep				Separator to use to build string
+     *  @param		int         $withregion			1=Add region into address string
      *	@return		string							Full address string
      */
     function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
