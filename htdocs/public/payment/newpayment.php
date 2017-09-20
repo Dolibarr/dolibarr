@@ -67,6 +67,7 @@ $amount=price2num(GETPOST("amount",'alpha'));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 $source = GETPOST("s",'alpha')?GETPOST("s",'alpha'):GETPOST("source",'alpha');
+$download = GETPOST('d','int')?GETPOST('d','int'):GETPOST('download','int');
 
 if (! $action)
 {
@@ -854,7 +855,7 @@ if ($source == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Add download link
-	if (GETPOST('download','int') > 0)
+	if ($download > 0)
 	{
 		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
 		print '</td><td class="CTableRow'.($var?'1':'2').'">';

@@ -19,12 +19,12 @@
  *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 
@@ -103,11 +103,9 @@ if (! empty($_GET["fileid"]))
 
 
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * Actions
+ */
 
 if ($action == 'cancel')
 {
@@ -166,11 +164,9 @@ if ($action == 'update')
 
 
 
-/*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -253,6 +249,13 @@ print dol_print_size($totalsize);
 print '</td></tr>';
 */
 
+$filepath=$relativepath.$file->label;
+
+print '<tr><td>'.$langs->trans("HashSaved").'</td><td>';
+$ecmfile = new EcmFiles($db);
+print $filepath;
+print '</td></tr>';
+
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -264,7 +267,6 @@ $forcedownload=1;
 $rellink='/document.php?modulepart='.$modulepart;
 if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
-$filepath=$relativepath.$file->label;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
 print img_picto('','object_globe.png').' ';
