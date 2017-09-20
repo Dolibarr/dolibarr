@@ -186,7 +186,7 @@ abstract class CommonObject
 	 * @var string
 	 * @see getFullAddress()
 	 */
-	public $country;
+    public $country;
 	/**
 	 * @var int
 	 * @see getFullAddress(), country
@@ -196,7 +196,32 @@ abstract class CommonObject
 	 * @var string
 	 * @see getFullAddress(), isInEEC(), country
 	 */
-	public $country_code;
+    public $country_code;
+    /**
+	 * @var string
+	 * @see getFullAddress()
+	 */
+	public $state;
+	/**
+	 * @var int
+	 * @see getFullAddress(), state
+	 */
+	public $state_id;
+	/**
+	 * @var string
+	 * @see getFullAddress(), state
+	 */
+    public $state_code;
+    /**
+	 * @var string
+	 * @see getFullAddress(), region
+	 */
+	public $region;
+	/**
+	 * @var string
+	 * @see getFullAddress(), region
+	 */
+    public $region_code;
 
 	/**
 	 * @var int
@@ -418,15 +443,25 @@ abstract class CommonObject
      *  @param		string		$sep				Separator to use to build string
      *	@return		string							Full address string
      */
-    function getFullAddress($withcountry=0,$sep="\n")
+    function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
     {
     	if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
     	{
     		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
     		$tmparray=getCountry($this->country_id,'all');
     		$this->country_code=$tmparray['code'];
-    		$this->country     =$tmparray['label'];
-    	}
+            $this->country     =$tmparray['label'];
+        }
+
+        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_cpde)))
+    	{
+    		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
+    		$tmparray=getState($this->state_id,'all',0,1);
+    		$this->state_code   =$tmparray['code'];
+            $this->state        =$tmparray['label'];
+            $this->region_code  =$tmparray['region_code'];
+            $this->region       =$tmparray['region'];
+        }
 
     	return dol_format_address($this, $withcountry, $sep);
     }
@@ -465,7 +500,7 @@ abstract class CommonObject
 		$out='<!-- BEGIN part to show address block -->';
 
 		$outdone=0;
-		$coords = $this->getFullAddress(1,', ');
+		$coords = $this->getFullAddress(1,', ',$conf->global->MAIN_SHOW_REGION_IN_STATE);
 		if ($coords)
 		{
 			if (! empty($conf->use_javascript_ajax))
@@ -483,7 +518,12 @@ abstract class CommonObject
 		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state)
 		{
-			$out.=($outdone?' - ':'').$this->state;
+            if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1 && $this->region) {
+                $out.=($outdone?' - ':'').$this->region.' - '.$this->state;
+            }
+            else {
+                $out.=($outdone?' - ':'').$this->state;
+            }
 			$outdone++;
 		}
 

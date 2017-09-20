@@ -391,13 +391,13 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
  *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @return   string      				String with state code or state name (Return value is always utf8 encoded and without entities)
  */
-function getState($id,$dbtouse=0)
+function getState($id,$withcode='',$dbtouse=0,$withregion='',$outputlangs='',$entconv=1,$searchlabel='')
 {
-    global $db,$langs,$conf;
+    global $db,$langs;
 
     if (! is_object($dbtouse)) $dbtouse=$db;
 
-    $sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
+    $sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
     $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
     $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".$id;
     $sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
@@ -410,21 +410,40 @@ function getState($id,$dbtouse=0)
         $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
-            if(!empty($conf->global->MAIN_SHOW_STATE_CODE) && $conf->global->MAIN_SHOW_STATE_CODE == 1) {
-                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1) {
+            $label=((! empty($obj->name) && $obj->name!='-')?$obj->name:'');
+            if (is_object($outputlangs))
+            {
+                $outputlangs->load("dict");
+                if ($entconv) $label=($obj->code && ($outputlangs->trans("State".$obj->code)!="State".$obj->code))?$outputlangs->trans("State".$obj->code):$label;
+                else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("State".$obj->code)!="State".$obj->code))?$outputlangs->transnoentitiesnoconv("State".$obj->code):$label;
+            }
+
+            if ($withcode == 1) {
+                if ($withregion == 1) {
                     return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
                 else {
                     return $label = $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
             }
-            else {
-                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1) {
+            else if ($withcode == 2) {
+                if ($withregion == 1) {
                     return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
                 else {
                     return $label = ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
+            }
+            else if ($withcode === 'all') {
+                if ($withregion == 1) {
+                    return array('id'=>$obj->id,'code'=>$obj->code,'label'=>$label,'region_code'=>$obj->region_code,'region'=>$obj->region_name);
+                }
+                else {
+                    return array('id'=>$obj->id,'code'=>$obj->code,'label'=>$label);
+                }
+            }
+            else {
+                return $label;
             }
         }
         else

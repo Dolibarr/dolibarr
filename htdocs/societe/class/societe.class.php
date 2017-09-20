@@ -3050,16 +3050,29 @@ class Societe extends CommonObject
     	$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
     	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
     	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
-		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 
-        /* Disabled: we don't want any SQL request into method setMySoc. This method set object from env only.
-        If we need label, label must be loaded by output that need it from id (label depends on output language)
-        require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-        if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
-            $this->state_id= $conf->global->MAIN_INFO_SOCIETE_STATE;
-            $this->state = getState($this->state_id);
-        }
-		*/
+        // We define state_id, state_code and state
+    	$state_id=$state_code=$state_label='';
+    	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+    	{
+    		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);
+    		$state_id=$tmp[0];
+    		if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label" or "id:code:label:region_code:region"
+    		{
+    			$state_code=$tmp[1];
+    			$state_label=$tmp[2];
+    		}
+    		else                    // For backward compatibility
+    		{
+    			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    			$state_code=getState($state_id,2,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+    			$state_label=getState($state_id,0,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+    		}
+    	}
+    	$this->state_id=$state_id;
+    	$this->state_code=$state_code;
+    	$this->state=$state_label;
+    	if (is_object($langs)) $this->state=($langs->trans('State'.$state_code)!='State'.$state_code)?$langs->trans('State'.$state_code):$state_label;
 
     	$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
