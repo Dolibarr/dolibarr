@@ -69,7 +69,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_contact']=array('text'=>'Contact');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -85,7 +85,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -95,7 +95,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 /*
  * Statistics area
  */
- 
+
 $third = array(
 		'customer' => 0,
 		'prospect' => 0,
@@ -138,7 +138,16 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
     if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'data'=>round($third['supplier']));
     if (! empty($conf->societe->enabled))                                                              $dataseries[]=array('label'=>$langs->trans("Others"),'data'=>round($third['other']));
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',0,'',0);
+
+    $px1 = new DolGraph;
+	$px1->SetWidth(300);
+	$px1->SetHeight(180);
+	$px1->SetData($data);
+	$px1->SetLegend(1);
+	$px1->SetType('pie');
+	$px1->setShowPercent(1);
+    $px1->SetCombine(0);
+	$px1->show();
     print '</td></tr>'."\n";
 }
 else
@@ -211,7 +220,15 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			if ($i > $nbmax)
 				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
 			$data=array('series'=>$dataseries);
-			dol_print_graph('statscategclient',300,180,$data,1,'pie',0);
+
+            $px1 = new DolGraph;
+        	$px1->SetWidth(300);
+        	$px1->SetHeight(180);
+        	$px1->SetData($data);
+        	$px1->SetLegend(1);
+        	$px1->SetType('pie');
+        	$px1->setShowPercent(0);
+        	$px1->show();
 		}
 		else
 		{
@@ -219,7 +236,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
@@ -281,7 +298,7 @@ if ($result)
         {
             $objp = $db->fetch_object($result);
 
-            
+
             print '<tr class="oddeven">';
             // Name
             print '<td class="nowrap">';

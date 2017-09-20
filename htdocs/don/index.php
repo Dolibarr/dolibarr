@@ -87,7 +87,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_donation']=array('text'=>'Donation');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -103,7 +103,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -125,7 +125,15 @@ if ($conf->use_javascript_ajax)
 {
     print '<tr '.$bc[false].'><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+
+	$px1 = new DolGraph;
+	$px1->SetWidth(300);
+	$px1->SetHeight(180);
+	$px1->SetData($data);
+	$px1->SetLegend(1);
+	$px1->SetType('pie');
+	$px1->setShowPercent(1);
+	$px1->show();
     print '</td></tr>';
 }
 
@@ -141,7 +149,7 @@ $totalnb=0;
 $var=true;
 foreach ($listofstatus as $status)
 {
-    
+
     print '<tr class="oddeven">';
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
@@ -191,7 +199,7 @@ if ($resql)
         $var = True;
         while ($i < $num)
         {
-            
+
             $obj = $db->fetch_object($resql);
 
             print '<tr class="oddeven">';

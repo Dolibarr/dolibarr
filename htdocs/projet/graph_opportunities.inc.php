@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
@@ -48,7 +48,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $db->free($resql);
 
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
-	    
+
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
 	    $var=true;
@@ -67,7 +67,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-	            
+
 	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
@@ -78,7 +78,16 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    {
 	        print '<tr class="impair"><td align="center" colspan="2">';
    	        $data=array('series'=>$dataseries);
-   	        dol_print_graph('stats',360,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
+
+			$px1 = new DolGraph;
+			$px1->SetWidth(300);
+			$px1->SetHeight(180);
+			$px1->SetData($data);
+			$px1->SetLegend(1);
+			$px1->SetType('pie');
+			$px1->setShowPercent(1);
+			$px1->SetCombine(0);
+			$px1->show();
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)

@@ -125,7 +125,7 @@ if ($resql)
         $dataseries[]=array('label'=>$supplier_proposalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-            
+
             print '<tr class="oddeven">';
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -136,7 +136,16 @@ if ($resql)
     {
         print '<tr '.$bc[false].'><td align="center" colspan="2">';
         $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+
+		$px1 = new DolGraph;
+		$px1->SetWidth(300);
+		$px1->SetHeight(180);
+		$px1->SetData($data);
+		$px1->SetLegend(1);
+		$px1->SetType('pie');
+		$px1->setShowPercent(1);
+		$px1->SetCombine(0);
+		$px1->show();
         print '</td></tr>';
     }
 
@@ -178,7 +187,7 @@ if (! empty($conf->supplier_proposal->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 
@@ -236,7 +245,7 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			
+
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -317,7 +326,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
