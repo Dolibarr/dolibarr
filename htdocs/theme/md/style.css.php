@@ -341,11 +341,13 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	width: 300px;
+	min-width: 280px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
+	background: none;
+	border: 2px solid #666666;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
@@ -3237,7 +3239,7 @@ div.titre {
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
-#dolpaymenttable { width: 600px; font-size: 13px; }
+#dolpaymenttable { max-width: 600px; font-size: 16px; }
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
