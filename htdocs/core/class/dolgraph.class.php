@@ -124,7 +124,7 @@ class DolGraph
 	/**
 	 * Set value to combine records
 	 *
-	 * @param 	float	$val
+	 * @param 	float	$val	Rate between 0 and 100 to decide threshold  to create a group "other"
 	 * @return 	boolean
 	 */
 	function SetCombine($val)
