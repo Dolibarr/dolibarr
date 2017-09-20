@@ -715,6 +715,9 @@ class FactureRec extends CommonInvoice
 	    dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
+	    // Clean parameters
+	    if (empty($remise_percent)) $remise_percent = 0;
+
 	    // Check parameters
 	    if ($type < 0) return -1;
 
