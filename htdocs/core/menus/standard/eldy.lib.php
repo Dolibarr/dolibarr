@@ -977,7 +977,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $newmenu->add("/accountancy/admin/defaultaccounts.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"),2, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 50);
 				if (! empty($conf->banque->enabled))
 				{
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $newmenu->add("/compta/bank/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuBankAccounts"),2, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_bank', 51);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $newmenu->add("/compta/bank/index.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"),2, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_bank', 51);
 				}
 				if (! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
 				{
@@ -1381,6 +1381,18 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/expensereport/list.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->expensereport->lire);
 				$newmenu->add("/expensereport/list.php?search_status=2&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("ListToApprove"), 2, $user->rights->expensereport->approve);
 				$newmenu->add("/expensereport/stats/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->expensereport->lire);
+			}
+
+			if (! empty($conf->projet->enabled))
+			{
+				if (empty($conf->global->PROJECT_HIDE_TASKS))
+				{
+					$langs->load("projects");
+
+					$search_project_user = GETPOST('search_project_user','int');
+
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
+				}
 			}
 		}
 

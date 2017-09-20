@@ -145,9 +145,9 @@ if ($prev_id > 0 || $ref)
 
 
 // List of invoices
-$sql = "SELECT pf.rowid";
-$sql.= ",f.rowid as facid, f.facnumber as ref, f.total_ttc";
-$sql.= ", s.rowid as socid, s.nom as name, pl.statut";
+$sql = "SELECT pf.rowid,";
+$sql.= " f.rowid as facid, f.facnumber as ref, f.total_ttc,";
+$sql.= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -202,14 +202,14 @@ if ($result)
   	print '<tr class="liste_titre">';
   	print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
   	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
-  	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre("AmountInvoice",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre("AmountRequested",$_SERVER["PHP_SELF"],"pl.amount_requested","",$param,'align="right"',$sortfield,$sortorder);
   	print_liste_field_titre("StatusDebitCredit",$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-  	$var=false;
-
-  	$total = 0;
+  	$totalinvoices = 0;
+	$totalamount_requested = 0;
 
   	while ($i < min($num, $limit))
     {
@@ -231,8 +231,11 @@ if ($result)
       	print $thirdpartytmp->getNomUrl(1);
       	print "</td>\n";
 
-      	// Amount
+      	// Amount of invoice
       	print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+
+      	// Amount requested
+      	print '<td align="right">'.price($obj->amount_requested)."</td>\n";
 
       	// Status of requests
       	print '<td align="center">';
@@ -256,7 +259,8 @@ if ($result)
 
       	print "</tr>\n";
 
-      	$total += $obj->total_ttc;
+      	$totalinvoices += $obj->total_ttc;
+      	$totalamount_requested += $obj->amount_requested;
 
       	$i++;
     }
@@ -267,8 +271,11 @@ if ($result)
      	print '<td>'.$langs->trans("Total").'</td>';
       	print '<td>&nbsp;</td>';
       	print '<td align="right">';
-		if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
-		print price($total);
+		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.
+      	if ($totalamount_requested != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		print "</td>\n";
+      	print '<td align="right">';
+		print price($totalamount_requested);
       	print "</td>\n";
       	print '<td>&nbsp;</td>';
       	print '<td>&nbsp;</td>';

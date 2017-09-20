@@ -384,10 +384,17 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+/* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.1);
     margin-right: 1px !important;
+}
+td.onholidaymorning, td.onholidayafternoon {
+	background-color: #fdf6f2;
+}
+td.onholidayallday {
+	background-color: #f4eede;
 }
 
 select.flat, form.flat select {

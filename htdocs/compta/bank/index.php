@@ -46,7 +46,7 @@ $toselect = GETPOST('toselect', 'array');
 $search_ref=GETPOST('search_ref','alpha');
 $search_label=GETPOST('search_label','alpha');
 $search_number=GETPOST('search_number','alpha');
-$statut=GETPOST('statut')?GETPOST('statut', 'alpha'):'opened';                      // 'all' or ''='opened'
+$search_status=GETPOST('search_status')?GETPOST('search_status', 'alpha'):'opened';                      // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss','alpha');
 
 // Security check
@@ -123,11 +123,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
-    $statut = 'all';
     $search_ref='';
     $search_label='';
     $search_number='';
-    $search_statut='';
+    $search_status='';
 }
 
 
@@ -153,8 +152,8 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bankcacount_extrafields as ef on (c.rowid = ef.fk_object)";
 $sql.= " WHERE entity IN (".getEntity('bank_account').")";
-if ($statut == 'opened')  $sql.= " AND clos = 0";
-if ($statut == 'closed')  $sql.= " AND clos = 1";
+if ($search_status == 'opened')  $sql.= " AND clos = 0";
+if ($search_status == 'closed')  $sql.= " AND clos = 1";
 if ($search_ref != '')    $sql.=natural_search('b.ref', $search_ref);
 if ($search_label != '')  $sql.=natural_search('b.label', $search_label);
 if ($search_number != '') $sql.=natural_search('b.number', $search_number);
@@ -222,7 +221,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_ref != '')      $param.='&search_ref='.$search_ref;
 if ($search_label != '')    $param.='&search_label='.$search_label;
 if ($search_number != '')   $param.='&search_number='.$search_number;
-if ($statut != '')          $param.='&statut='.$statut;
+if ($search_status != '')   $param.='&search_status='.$search_status;
 if ($show_files)            $param.='&show_files=' .$show_files;
 if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
@@ -377,7 +376,7 @@ if (! empty($arrayfields['b.tms']['checked']))
     print '<td class="liste_titre">';
     print '</td>';
 }
-// Statut
+// Status
 if (! empty($arrayfields['b.clos']['checked']))
 {
     print '<td class="liste_titre center">';
@@ -385,7 +384,7 @@ if (! empty($arrayfields['b.clos']['checked']))
         'opened'=>$langs->trans("Opened"),
         'closed'=>$langs->trans("Closed")
     );
-    print $form->selectarray("statut", $array, $statut, 1);
+    print $form->selectarray("search_status", $array, $search_status, 1);
     print '</td>';
 }
 // Balance
@@ -584,7 +583,7 @@ foreach ($accounts as $key=>$type)
 	    if (! $i) $totalarray['nbfield']++;
     }
 
-    // Statut
+    // Status
     if (! empty($arrayfields['b.clos']['checked']))
     {
 		print '<td align="center">'.$acc->getLibStatut(5).'</td>';

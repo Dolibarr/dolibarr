@@ -211,7 +211,8 @@ if ($ok)
 	$extrafields=new ExtraFields($db);
 	$listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
 				'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
-				'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
+				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
+				'actioncomm'=>'actioncomm',
 				'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach($listofmodulesextra as $tablename => $elementtype)
@@ -302,6 +303,10 @@ if ($ok)
 	        }
 
 	        print "</td><td>&nbsp;</td></tr>\n";
+	    }
+	    else
+	    {
+	    	dol_print_error($db);
 	    }
 	}
 }
