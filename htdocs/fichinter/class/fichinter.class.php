@@ -63,6 +63,23 @@ class Fichinter extends CommonObject
 	var $lines = array();
 
 	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Billed
+	 */
+	const STATUS_BILLED = 2;
+	/**
+	 * Closed
+	 */
+	const STATUS_CLOSED = 3;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
@@ -561,6 +578,7 @@ class Fichinter extends CommonObject
 
 		return price2num($amount, 'MT');
 	}
+
 
 	/**
 	 *  Create a document onto disk according to template module.

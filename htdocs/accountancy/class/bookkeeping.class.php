@@ -71,6 +71,7 @@ class BookKeeping extends CommonObject
 	/**
 	 */
 	public $doc_date;
+	public $date_lim_reglement;
 	public $doc_type;
 	public $doc_ref;
 	public $fk_doc;
@@ -255,6 +256,7 @@ class BookKeeping extends CommonObject
 
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
 				$sql .= "doc_date";
+				$sql .= ", date_lim_reglement";
 				$sql .= ", doc_type";
 				$sql .= ", doc_ref";
 				$sql .= ", fk_doc";
@@ -277,6 +279,7 @@ class BookKeeping extends CommonObject
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
 				$sql .= "'" . $this->db->idate($this->doc_date) . "'";
+				$sql .= ",'" . $this->db->idate($this->date_lim_reglement) . "'";
 				$sql .= ",'" . $this->db->escape($this->doc_type) . "'";
 				$sql .= ",'" . $this->db->escape($this->doc_ref) . "'";
 				$sql .= "," . $this->fk_doc;
@@ -444,6 +447,7 @@ class BookKeeping extends CommonObject
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . $mode.'(';
 		$sql .= 'doc_date,';
+		$sql .= 'date_lim_reglement,';
 		$sql .= 'doc_type,';
 		$sql .= 'doc_ref,';
 		$sql .= 'fk_doc,';
@@ -466,6 +470,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
 		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->doc_date) . "'") . ',';
+		$sql .= ' ' . (! isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'" . $this->db->idate($this->date_lim_reglement) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ',';
 		$sql .= ' ' . (empty($this->fk_doc) ? '0' : $this->fk_doc) . ',';
@@ -540,6 +545,7 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.doc_date,";
+		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.doc_type,";
 		$sql .= " t.doc_ref,";
 		$sql .= " t.fk_doc,";
@@ -577,6 +583,7 @@ class BookKeeping extends CommonObject
 				$this->id = $obj->rowid;
 
 				$this->doc_date = $this->db->jdate($obj->doc_date);
+				$this->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$this->doc_type = $obj->doc_type;
 				$this->doc_ref = $obj->doc_ref;
 				$this->fk_doc = $obj->fk_doc;
@@ -1217,18 +1224,17 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by piece number
 	 *
-	 * @param int $piecenum peicenum to delete
-	 * @param string $mode Mode
-	 * @return int Result
+	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @return 	int 				Result
 	 */
-	function deleteMvtNum($piecenum, $mode) {
+	function deleteMvtNum($piecenum) {
 		global $conf;
 
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element. $mode;
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 

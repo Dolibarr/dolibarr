@@ -358,8 +358,11 @@ class SMTPs
 		// This is done here because '@fsockopen' will not give me this
 		// information if it failes to connect because it can't find the HOST
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
 		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -373,7 +376,7 @@ class SMTPs
 		{
 			//See if we can connect to the SMTP server
 			if ($this->socket = @fsockopen(
-    			$this->getHost(),       // Host to 'hit', IP or domain
+    			preg_replace('@tls://@i','',$this->getHost()),       // Host to 'hit', IP or domain
     			$this->getPort(),       // which Port number to use
     			$this->errno,           // actual system level error
     			$this->errstr,          // and any text that goes with the error
@@ -416,16 +419,17 @@ class SMTPs
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
-		{
-		    $host=preg_replace('@tls://@i','',$host);	// Remove prefix
-		    $host='tls://'.$host;
-		}
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
+		if ($usetls) $host='tls://'.$host;
+
 		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
 		{
-			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+			if ($usetls)
 			{
 			    /*
 			    The following dialog illustrates how a client and server can start a TLS STARTTLS session
@@ -443,7 +447,7 @@ class SMTPs
                 // Second pass EHLO
                 C: EHLO client-domain.com
                 S: 250-server-domain.com
-                S: 250 AUTH LOGIN			    
+                S: 250 AUTH LOGIN
 			    C: <continues by sending an SMTP command
 			    */
 				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
@@ -470,7 +474,7 @@ class SMTPs
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
-				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time 
+				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
 				{
@@ -528,8 +532,12 @@ class SMTPs
 			{
 				// Send the RFC821 specified HELO.
 				$host=$this->getHost();
+				$usetls = preg_match('@tls://@i',$host);
+
 				$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
 				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
 			}
 
@@ -1251,8 +1259,11 @@ class SMTPs
         */
 
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
 		$host=dol_getprefix('email');
 

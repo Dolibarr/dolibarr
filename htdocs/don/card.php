@@ -46,7 +46,7 @@ $langs->load("bills");
 
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
@@ -764,6 +764,10 @@ if (! empty($id) && $action != 'edit')
 	$delallowed	=	$user->rights->don->supprimer;
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+
+	// Show links to link elements
+	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

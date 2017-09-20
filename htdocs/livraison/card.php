@@ -54,7 +54,7 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 $id = GETPOST('id', 'int');

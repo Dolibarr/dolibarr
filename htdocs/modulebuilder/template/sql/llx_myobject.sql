@@ -11,12 +11,12 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_myobject(
-	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
 	-- BEGIN MODULEBUILDER FIELDS
+	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
 	entity INTEGER DEFAULT 1 NOT NULL,
 	label VARCHAR(255),
 	qty INTEGER,

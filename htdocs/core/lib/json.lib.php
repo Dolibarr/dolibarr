@@ -19,14 +19,14 @@
 
 /**
  *	    \file       htdocs/core/lib/json.lib.php
- *		\brief      Functions to emulate json function for PHP < 5.3 compatibility
+ *		\brief      Functions to emulate json function when there were not activated
  * 		\ingroup	core
  */
 
 if (! function_exists('json_encode'))
 {
 	/**
-	 * Implement json_encode for PHP that does not support it
+	 * Implement json_encode for PHP that does not have module enabled.
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string

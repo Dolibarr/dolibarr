@@ -51,7 +51,7 @@ $id=GETPOST('id','int');
 $msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $idproduct = GETPOST('idproduct','int');
 $year = GETPOST("year");
 $month = GETPOST("month");
@@ -112,8 +112,8 @@ $object = new MouvementStock($db);	// To be passed as parameter of executeHooks 
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks

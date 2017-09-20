@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
  *
@@ -102,6 +102,7 @@ else if ($action == 'delete')
 	Header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
+
 
 /*
  * View

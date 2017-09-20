@@ -73,7 +73,7 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.status FROM ".MAIN_DB_PREFIX."website as f";
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX."website as f";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -81,15 +81,15 @@ $tabsqlsort[1] ="ref ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[1] = "ref,description";
+$tabfield[1] = "ref,description,virtualhost";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[1] = "ref,description";
+$tabfieldvalue[1] = "ref,description,virtualhost";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[1] = "ref,description,entity";
+$tabfieldinsert[1] = "ref,description,virtualhost,entity";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -103,7 +103,7 @@ $tabcond[1] = (! empty($conf->websites->enabled));
 
 // List of help for fields
 $tabhelp=array();
-$tabhelp[1]  = array();
+$tabhelp[1]  = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/websites/<i>websiteref</i>'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -114,7 +114,7 @@ $tabfieldcheck[1]  = array();
 $elementList = array();
 $sourceList=array();
 
-// Actions add or modify an entry into a dictionary
+// Actions add or modify a website
 if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
     $listfield=explode(',',$tabfield[$id]);
@@ -126,12 +126,25 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if (! isset($_POST[$value]) || $_POST[$value]=='')  // Fields that are not mandatory
+        if ((! isset($_POST[$value]) || $_POST[$value]=='')
+			&& (! in_array($listfield[$f], array('virtualhost'))))        // Fields that are not mandatory
         {
             $ok=0;
             $fieldnamekey=$listfield[$f];
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
+		if ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
+        {
+			$ok=0;
+            $fieldnamekey=$listfield[$f];
+			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
+        }
+    }
+
+    // Clean parameters
+    if (! empty($_POST['ref']))
+    {
+    	$websitekey=strtolower($_POST['ref']);
     }
 
     // Si verif ok et action add, on ajoute la ligne
@@ -153,6 +166,12 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             }
         }
 
+        /* $website=new Website($db);
+        $website->ref=
+        $website->description=
+        $website->virtualhost=
+        $website->create($user); */
+
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
@@ -171,6 +190,9 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             if ($value == 'entity') {
             	$_POST[$listfieldvalue[$i]] = $conf->entity;
             }
+            if ($value == 'ref') {
+            	$_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
+            }
             if ($i) $sql.=",";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
@@ -182,6 +204,29 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
+			global $dolibarr_main_data_root;
+			$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websitekey;
+			$filehtmlheader=$pathofwebsite.'/htmlheader.html';
+			$filecss=$pathofwebsite.'/styles.css.php';
+			$filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
+			$fileindex=$pathofwebsite.'/index.php';
+
+        	// Css file
+        	$csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+        	$csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THE FILE styles.css.php. Change affects all pages of website. -->'."\n";
+        	$csscontent.= '<?php '."\n";
+        	$csscontent.= "header('Content-type: text/css');\n";
+        	$csscontent.= "?>"."\n";
+        	$csscontent.= '<!-- END -->'."\n";
+        	$csscontent.= 'body { margin: 0; }'."\n";
+
+        	dol_syslog("Save file css into ".$filecss);
+
+        	dol_mkdir($pathofwebsite);
+        	$result = file_put_contents($filecss, $csscontent);
+        	if (! empty($conf->global->MAIN_UMASK))
+        		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
+
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	unset($_POST);	// Clean $_POST array, we keep only
         }
@@ -201,6 +246,8 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
+
+        $db->begin();
 
         $website=new Website($db);
         $rowid=GETPOST('rowid','int');
@@ -236,14 +283,41 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             $newname = dol_sanitizeFileName(GETPOST('ref','aZ09'));
             if ($newname != $website->ref)
             {
-                $srcfile=DOL_DATA_ROOT.'/websites/'.$website->ref;
-                $destfile=DOL_DATA_ROOT.'/websites/'.$newname;
-                @rename($srcfile, $destfile);
+	            $srcfile=DOL_DATA_ROOT.'/websites/'.$website->ref;
+	            $destfile=DOL_DATA_ROOT.'/websites/'.$newname;
+
+            	if (dol_is_dir($destfile))
+            	{
+            		$error++;
+            		setEventMessages($langs->trans('ErrorDirAlreadyExists', $destfile), null, 'errors');
+            	}
+            	else
+            	{
+	                @rename($srcfile, $destfile);
+
+		            // We must now rename $website->ref into $newname inside files
+		            $arrayreplacement = array($website->ref.'/htmlheader.html' => $newname.'/htmlheader.html');
+		            $listofilestochange = dol_dir_list($destfile, 'files', 0, '\.php$');
+					foreach ($listofilestochange as $key => $value)
+		            {
+		            	dolReplaceInFile($value['fullname'], $arrayreplacement);
+		            }
+            	}
             }
         }
         else
         {
-            setEventMessages($db->error(), null, 'errors');
+        	$error++;
+            setEventMessages($db->lasterror(), null, 'errors');
+        }
+
+        if (! $error)
+        {
+        	$db->commit();
+        }
+        else
+        {
+        	$db->rollback();
         }
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
@@ -393,7 +467,11 @@ if ($id)
             {
                 print '<td class="'.$align.'">';
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-            	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+            	elseif (! empty($tabhelp[$id][$value]))
+           		{
+           			if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
+           			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+           		}
             	else print $valuetoshow;
                 print '</td>';
              }

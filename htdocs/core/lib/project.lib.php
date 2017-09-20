@@ -176,6 +176,17 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
+	// Manage discussion
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK))
+	{
+		$nbComments= $object->getNbComments();
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
+		$head[$h][1] = $langs->trans("TaskCommentLinks");
+		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
+		$head[$h][2] = 'task_comment';
+		$h++;
+	}
+
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$nbNote = 0;
@@ -565,10 +576,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @param	int			$preselectedday			Preselected day
- * @param   boolean     $var                    Var for css of lines
+ * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @return  $inc
  */
-function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $preselectedday='', $var=false)
+function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -721,20 +732,36 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print $tableCell;
 				print '</td>';
 
+				$cssonholiday='';
+				if (! $isavailable[$preselectedday]['morning'] && ! $isavailable[$preselectedday]['afternoon'])   $cssonholiday.='onholidayallday ';
+				elseif (! $isavailable[$preselectedday]['morning'])   $cssonholiday.='onholidaymorning ';
+				elseif (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
 				// Duration
-				print '<td align="right">';
+				print '<td align="center" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
 
 				$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
 		        $alreadyspent='';
 		        if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
 
+		        $idw = 0;
+
 				$tableCell='';
 				$tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
-                $tableCell.=' + ';
+                $tableCell.='<span class="hideonsmartphone"> + </span>';
 				//$tableCell.='&nbsp;&nbsp;&nbsp;';
 				$tableCell.=$form->select_duration($lines[$i]->id.'duration','',$disabledtask,'text',0,1);
 				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
+
+				$modeinput='hours';
+
+				print '<script type="text/javascript">';
+				print "jQuery(document).ready(function () {\n";
+				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
+				print "})\n";
+				print '</script>';
+
 				print '</td>';
 
 				print '<td align="right">';
@@ -761,8 +788,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 			$level++;
 			if ($lines[$i]->id > 0)
 			{
-			    if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $var);
-			    else projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $var);
+			    if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable);
+			    else projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable);
 			}
 			$level--;
 		}
@@ -774,7 +801,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 	return $inc;
 }
-
 
 
 /**
@@ -790,10 +816,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param   string		$tasksrole				Array of roles user has on task
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
- * @param   boolean     $var                    Var for css of lines
+ * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @return  $inc
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $var=false)
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -829,7 +855,6 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			    // Break on a new project
     			if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
     			{
-    				//$var = ! $var;
     				$lastprojectid=$lines[$i]->fk_project;
     				$projectstatic->id = $lines[$i]->fk_project;
     			}
@@ -944,13 +969,19 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				for ($idw = 0; $idw < 7; $idw++)
 		        {
 					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+
+					$cssonholiday='';
+					if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+					elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+					elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
 					$tmparray=dol_getdate($tmpday);
 		        	$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
 		        	$alreadyspent='';
 		        	if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
                     $alttitle=$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']);
 
-                    $tableCell ='<td align="center" class="hide'.$idw.'">';
+                    $tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').'">';
                     if ($alreadyspent)
                     {
                         $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
@@ -960,8 +991,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     }
                   	$tableCell.='<input type="text" alt="'.($disabledtask?'':$alttitle).'" title="'.($disabledtask?'':$alttitle).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 	        		$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
-                   	$tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
-                    $tableCell.='</td>';
+                   	$tableCell.=' onkeyup="updateTotal('.$idw.',\''.$modeinput.'\')"';
+                   	$tableCell.=' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
+                   	$tableCell.='</td>';
                     print $tableCell;
 		        }
 
@@ -985,8 +1017,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			$level++;
 			if ($lines[$i]->id > 0)
 			{
-			    if ($parent == 0) projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $var);
-			    else projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $var);
+			    if ($parent == 0) projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable);
+			    else projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable);
 			}
 			$level--;
 		}
@@ -1140,7 +1172,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount, p.dateo, p.datee";
 	$sql2.= " ORDER BY p.title, p.ref";
 
-	$var=true;
 	$resql = $db->query($sql2);
 	if ($resql)
 	{

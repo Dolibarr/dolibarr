@@ -166,7 +166,10 @@ class FormActions
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', '', '', ($max?($max+1):0));
+        $sortfield='a.datep';
+        $sortorder='DESC';
+
+        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
@@ -192,19 +195,19 @@ class FormActions
         	$buttontoaddnewevent.= '</a>';
         	print load_fiche_titre($title, $buttontoaddnewevent, '');
 
-        	$page=0; $param=''; $sortfield='a.datep';
+        	$page=0; $param='';
 
         	$total = 0;
 
         	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre('Action', $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', $page, $param, 'align="center"');
-        	print_liste_field_titre('By', $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
+        	print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Action', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
         	print '</tr>';
         	print "\n";
 
@@ -247,12 +250,10 @@ class FormActions
         		}
         		print '</td>';
         		print '<td>';
-        		if (! empty($action->author->id))
+        		if (! empty($action->userownerid))
         		{
-        			$userstatic->id = $action->author->id;
-        			$userstatic->firstname = $action->author->firstname;
-        			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1, '', 0, 0, 16, 0, '', '');
+        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
+        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
         		}
         		print '</td>';
         		print '<td align="right">';
@@ -320,7 +321,7 @@ class FormActions
 		}
 		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected);
+			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

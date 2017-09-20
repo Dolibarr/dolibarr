@@ -82,7 +82,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefixinvoice."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 		$resql=$db->query($sql);
 		if ($resql)
@@ -103,7 +103,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefixcreditnote."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -124,7 +124,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefixdeposit."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -202,7 +202,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         {
         	$date=$object->date;	// This is invoice date (not creation date)
         	$yymm = strftime("%y%m",$date);
-        	
+
         	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         	else $num = sprintf("%04s",$max+1);
 

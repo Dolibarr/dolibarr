@@ -110,8 +110,8 @@ if (! $sortfield) $sortfield='f.datef';
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='invoicelist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'invoicelist';
 
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
@@ -181,8 +181,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -345,6 +345,7 @@ $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
+$thirdpartystatic=new Societe($db);
 
 llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
@@ -355,7 +356,7 @@ $sql.= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
@@ -493,7 +494,7 @@ if (! $sall)
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';
-    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
+    $sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
     $sql.= ' state.code_departement, state.nom';
 
     foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
@@ -605,106 +606,18 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
 	if ($massaction == 'presend')
 	{
-		$langs->load("mails");
-
-		if (! GETPOST('cancel'))
-		{
-			$objecttmp=new Facture($db);
-			$listofselectedid=array();
-			$listofselectedthirdparties=array();
-			$listofselectedref=array();
-			foreach($arrayofselected as $toselectid)
-			{
-				$result=$objecttmp->fetch($toselectid);
-				if ($result > 0)
-				{
-					$listofselectedid[$toselectid]=$toselectid;
-					$thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
-					$listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
-					$listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
-				}
-			}
-		}
-
-		print '<input type="hidden" name="massaction" value="confirm_presend">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-
-		dol_fiche_head(null, '', '');
-
 		$topicmail="SendBillRef";
 		$modelmail="facture_send";
+		$objecttmp=new Facture($db);
+		$trackid='inv'.$object->id;
 
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->withform=-1;
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-		{
-			$formmail->trackid='inv'.$object->id;
-		}
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
-		}
-		$formmail->withfrom=1;
-		$liste=$langs->trans("AllRecipientSelected");
-		if (count($listofselectedthirdparties) == 1)
-		{
-			$liste=array();
-			$thirdpartyid=array_shift($listofselectedthirdparties);
-   			$soc=new Societe($db);
-    		$soc->fetch($thirdpartyid);
-        	foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-        	{
-        		$liste[$key]=$value;
-        	}
-			$formmail->withtoreadonly=0;
-		}
-		else
-		{
-			$formmail->withtoreadonly=1;
-		}
-		$formmail->withto=$liste;
-		$formmail->withtofree=0;
-		$formmail->withtocc=1;
-		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-		$formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
-		$formmail->withbody=1;
-		$formmail->withdeliveryreceipt=1;
-		$formmail->withcancel=1;
-		// Tableau des substitutions
-		$formmail->substit['__REF__']='__REF__';	// We want to keep the tag
-		$formmail->substit['__SIGNATURE__']=$user->signature;
-		$formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
-		$formmail->substit['__PERSONALIZED__']='';
-		$formmail->substit['__CONTACTCIVNAME__']='';
-
-		// Tableau des parametres complementaires du post
-		$formmail->param['action']=$action;
-		$formmail->param['models']=$modelmail;
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['facid']=join(',',$arrayofselected);
-		// TODO We should use $formmail->param['id']=join(',',$arrayofselected);
-		//$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-		print $formmail->get_form();
-
-        dol_fiche_end();
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 	}
 
     if ($sall)
@@ -1099,12 +1012,12 @@ if ($resql)
     		if (! empty($arrayfields['s.nom']['checked']))
     		{
                 print '<td class="tdoverflowmax200">';
-                $thirdparty=new Societe($db);
-                $thirdparty->id=$obj->socid;
-                $thirdparty->name=$obj->name;
-                $thirdparty->client=$obj->client;
-                $thirdparty->code_client=$obj->code_client;
-                print $thirdparty->getNomUrl(1,'customer');
+                $thirdpartystatic->id=$obj->socid;
+                $thirdpartystatic->name=$obj->name;
+                $thirdpartystatic->client=$obj->client;
+                $thirdpartystatic->code_client=$obj->code_client;
+                $thirdpartystatic->email=$obj->email;
+                print $thirdpartystatic->getNomUrl(1,'customer');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
     		}

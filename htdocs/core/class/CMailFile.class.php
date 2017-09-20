@@ -116,13 +116,14 @@ class CMailFile
 
 		$this->sendcontext = $sendcontext;
 
+		// Define this->sendmode
 		$this->sendmode = '';
-		if ($this->sendcontext == 'emailing') $this->sendmode = $conf->global->EMAILING_MAIL_SENDMODE;
+		if ($this->sendcontext == 'emailing' && !empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default')
+		{
+			$this->sendmode = $conf->global->MAIN_MAIL_SENDMODE_EMAILING;
+		}
 		if (empty($this->sendmode)) $this->sendmode=$conf->global->MAIN_MAIL_SENDMODE;
 		if (empty($this->sendmode)) $this->sendmode='mail';
-
-		$this->sendsetup = array();
-
 
 		// We define end of line (RFC 821).
 		$this->eol="\r\n";
@@ -145,7 +146,7 @@ class CMailFile
 		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3);	// Force md5 hash (does not contains special chars)
 
 		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid sendcontext=$sendcontext", LOG_DEBUG);
-		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
 
 		if (empty($subject))
 		{
@@ -497,9 +498,7 @@ class CMailFile
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array(
-					'maildao'
-			));
+			$hookmanager->initHooks(array('maildao'));
 			$reshook = $hookmanager->executeHooks('doactions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if (! empty($reshook))
 			{
@@ -542,6 +541,22 @@ class CMailFile
 				return false;
 			}
 
+			$keyforsmtpserver='MAIN_MAIL_SMTP_SERVER';
+			$keyforsmtpport  ='MAIN_MAIL_SMTP_PORT';
+			$keyforsmtpid    ='MAIN_MAIL_SMTPS_ID';
+			$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW';
+			$keyfortls       ='MAIN_MAIL_EMAIL_TLS';
+			$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS';
+			if ($this->sendcontext == 'emailing' && !empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default')
+			{
+				$keyforsmtpserver='MAIN_MAIL_SMTP_SERVER_EMAILING';
+				$keyforsmtpport  ='MAIN_MAIL_SMTP_PORT_EMAILING';
+				$keyforsmtpid    ='MAIN_MAIL_SMTPS_ID_EMAILING';
+				$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW_EMAILING';
+				$keyfortls       ='MAIN_MAIL_EMAIL_TLS_EMAILING';
+				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
+			}
+
 			// Action according to choosed sending method
 			if ($this->sendmode == 'mail')
 			{
@@ -558,9 +573,9 @@ class CMailFile
 					@ini_set('sendmail_from',$this->getValidAddress($this->addr_from,2));
 				}
 
-				// Forcage parametres
-				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
-				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+				// Force parameters
+				if (! empty($conf->global->$keyforsmtpserver)) ini_set('SMTP',$conf->global->$keyforsmtpserver);
+				if (! empty($conf->global->$keyforsmtpport))   ini_set('smtp_port',$conf->global->$keyforsmtpport);
 
 				$dest=$this->getValidAddress($this->addr_to,2);
 				if (! $dest)
@@ -620,9 +635,9 @@ class CMailFile
 					@ini_restore('sendmail_from');
 				}
 
-				// Forcage parametres
-				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
-				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
+				// Restore parameters
+				if (! empty($conf->global->$keyforsmtpserver))	ini_restore('SMTP');
+				if (! empty($conf->global->$keyforsmtpport)) 	ini_restore('smtp_port');
 			}
 			else if ($this->sendmode == 'smtps')
 			{
@@ -632,28 +647,30 @@ class CMailFile
 				$this->smtps->setTransportType(0);	// Only this method is coded in SMTPs library
 
 				// Clean parameters
-				if (empty($conf->global->MAIN_MAIL_SMTP_SERVER)) $conf->global->MAIN_MAIL_SMTP_SERVER=ini_get('SMTP');
-				if (empty($conf->global->MAIN_MAIL_SMTP_PORT))   $conf->global->MAIN_MAIL_SMTP_PORT=ini_get('smtp_port');
-
-				// TODO Manage alternative parameters
+				if (empty($conf->global->$keyforsmtpserver)) $conf->global->$keyforsmtpserver=ini_get('SMTP');
+				if (empty($conf->global->$keyforsmtpport))   $conf->global->$keyforsmtpport=ini_get('smtp_port');
 
 				// If we use SSL/TLS
-				$server=$conf->global->MAIN_MAIL_SMTP_SERVER;
-				if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
-				$port=$conf->global->MAIN_MAIL_SMTP_PORT;
+				$server=$conf->global->$keyforsmtpserver;
+				$secure='';
+				if (! empty($conf->global->$keyfortls) && function_exists('openssl_open')) $secure='ssl';
+				if (! empty($conf->global->$keyforstarttls) && function_exists('openssl_open')) $secure='tls';
+				$server=($secure?$secure.'://':'').$server;
+
+				$port=$conf->global->$keyforsmtpport;
 
 				$this->smtps->setHost($server);
 				$this->smtps->setPort($port); // 25, 465...;
 
 				$loginid=''; $loginpass='';
-				if (! empty($conf->global->MAIN_MAIL_SMTPS_ID))
+				if (! empty($conf->global->$keyforsmtpid))
 				{
-					$loginid = $conf->global->MAIN_MAIL_SMTPS_ID;
+					$loginid = $conf->global->$keyforsmtpid;
 					$this->smtps->setID($loginid);
 				}
-				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW))
+				if (! empty($conf->global->$keyforsmtppw))
 				{
-					$loginpass = $conf->global->MAIN_MAIL_SMTPS_PW;
+					$loginpass = $conf->global->$keyforsmtppw;
 					$this->smtps->setPW($loginpass);
 				}
 
@@ -661,14 +678,14 @@ class CMailFile
 				$from=$this->smtps->getFrom('org');
 				if (! $from)
 				{
-					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Sender address '$from' invalid";
+					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
 				$dest=$this->smtps->getTo();
 				if (! $dest)
 				{
-					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
+					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
@@ -694,26 +711,24 @@ class CMailFile
 			}
 			else if ($this->sendmode == 'swiftmailer')
 			{
-
 				// Use Swift Mailer library
 				// ------------------------------------------
 				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 
-				// Forcage parametres
-				if (empty($conf->global->MAIN_MAIL_SMTP_SERVER)) $conf->global->MAIN_MAIL_SMTP_SERVER=ini_get('SMTP');
-				if (empty($conf->global->MAIN_MAIL_SMTP_PORT))   $conf->global->MAIN_MAIL_SMTP_PORT=ini_get('smtp_port');
+				// Clean parameters
+				if (empty($conf->global->$keyforsmtpserver)) $conf->global->$keyforsmtpserver=ini_get('SMTP');
+				if (empty($conf->global->$keyforsmtpport))   $conf->global->$keyforsmtpport=ini_get('smtp_port');
 
 				// If we use SSL/TLS
-				$server=$conf->global->MAIN_MAIL_SMTP_SERVER;
+				$server=$conf->global->$keyforsmtpserver;
 				$secure='';
-				//var_dump(stream_get_transports());
-				if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $secure='ssl';
-				if (! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $secure='tls';
+				if (! empty($conf->global->$keyfortls) && function_exists('openssl_open')) $secure='ssl';
+				if (! empty($conf->global->$keyforstarttls) && function_exists('openssl_open')) $secure='tls';
 
-				$this->transport = Swift_SmtpTransport::newInstance($server, $conf->global->MAIN_MAIL_SMTP_PORT, $secure);
+				$this->transport = Swift_SmtpTransport::newInstance($server, $conf->global->$keyforsmtpport, $secure);
 
-				if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) $this->transport->setUsername($conf->global->MAIN_MAIL_SMTPS_ID);
-				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->transport->setPassword($conf->global->MAIN_MAIL_SMTPS_PW);
+				if (! empty($conf->global->$keyforsmtpid)) $this->transport->setUsername($conf->global->$keyforsmtpid);
+				if (! empty($conf->global->$keyforsmtppw)) $this->transport->setPassword($conf->global->$keyforsmtppw);
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
 				// Create the Mailer using your created Transport
@@ -1164,13 +1179,30 @@ class CMailFile
 	function check_server_port($host,$port)
 	{
 		global $conf;
+
 		$_retVal=0;
 		$timeout=5;	// Timeout in seconds
 
 		if (function_exists('fsockopen'))
 		{
+			$keyforsmtpserver='MAIN_MAIL_SMTP_SERVER';
+			$keyforsmtpport  ='MAIN_MAIL_SMTP_PORT';
+			$keyforsmtpid    ='MAIN_MAIL_SMTPS_ID';
+			$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW';
+			$keyfortls       ='MAIN_MAIL_EMAIL_TLS';
+			$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS';
+			if ($this->sendcontext == 'emailing' && !empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default')
+			{
+				$keyforsmtpserver='MAIN_MAIL_SMTP_SERVER_EMAILING';
+				$keyforsmtpport  ='MAIN_MAIL_SMTP_PORT_EMAILING';
+				$keyforsmtpid    ='MAIN_MAIL_SMTPS_ID_EMAILING';
+				$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW_EMAILING';
+				$keyfortls       ='MAIN_MAIL_EMAIL_TLS_EMAILING';
+				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
+			}
+
 			// If we use SSL/TLS
-			if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $host='ssl://'.$host;
+			if (! empty($conf->global->$keyfortls) && function_exists('openssl_open')) $host='ssl://'.$host;
 			// tls smtp start with no encryption
 			//if (! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
 

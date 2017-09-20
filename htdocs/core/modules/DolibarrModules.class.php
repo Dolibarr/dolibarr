@@ -363,10 +363,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 
 
-
-
-
-
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -380,6 +376,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
 	// We need constructor into function unActivateModule into admin.lib.php
+
 
     /**
      * Enables a module.
@@ -1429,7 +1426,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->const_name."_TABS_%'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->db->escape($this->const_name)."_TABS_%'";
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::delete_tabs", LOG_DEBUG);
@@ -1489,7 +1486,18 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
-					$this->db->query($sql);
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						dol_syslog($this->db->lasterror(), LOG_ERR);
+						if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
+						{
+							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->db->lasterror();
+							$err++;
+							break;
+						}
+					}
 				}
 				$i++;
 			}
@@ -2011,7 +2019,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_DIR_%'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_DIR_%'";
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::delete_dirs", LOG_DEBUG);
@@ -2120,7 +2128,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
 
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-                $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
+                $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
                 $sql.= " AND entity = ".$entity;
 
                 dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
@@ -2161,5 +2169,4 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	{
 		return $this->_remove(array(), $options);
 	}
-
 }

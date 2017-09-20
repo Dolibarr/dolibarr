@@ -53,7 +53,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    if ($action == 'update' && !GETPOST('cancel')) {
+    if ($action == 'update' && !GETPOST('cancel','alpha')) {
         $edituser = new User($db);
         $edituser->fetch($id);
 

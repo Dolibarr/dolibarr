@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/cron/cron/list.php
+ *  \file       htdocs/cron/list.php
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
@@ -357,11 +357,7 @@ if ($num > 0)
 		if (empty($obj)) break;
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
 
-		// title profil
-		if ($style=='pair') {$style='impair';}
-		else {$style='pair';}
-
-		print '<tr class="'.$style.'">';
+		print '<tr class="oddeven">';
 
 		print '<td class="nowrap">';
 		print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$obj->rowid.'">';

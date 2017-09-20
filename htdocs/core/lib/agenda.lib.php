@@ -54,6 +54,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	$langs->load("companies");
 
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions=new FormActions($db);
+
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -94,9 +97,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
-
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions=new FormActions($db);
 
 		// Type
 		print '<tr>';
@@ -221,8 +221,8 @@ function show_array_actions_to_do($max=5)
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle as type_label,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
+	$sql.= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE a.entity = ".$conf->entity;
@@ -318,8 +318,8 @@ function show_array_last_actions_done($max=5)
 	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
+	$sql.= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE a.entity = ".$conf->entity;
@@ -411,6 +411,14 @@ function agenda_prepare_head()
 	$head[$h][1] = $langs->trans("AutoActions");
 	$head[$h][2] = 'autoactions';
 	$h++;
+
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	$head[$h][1] = $langs->trans("Reminders");
+	$head[$h][2] = 'reminders';
+	$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("ExportCal");

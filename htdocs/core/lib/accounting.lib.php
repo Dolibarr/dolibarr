@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,40 +22,6 @@
  * 	\ingroup	Advanced accountancy
  * 	\brief		Library of accountancy functions
  */
-
-/**
- *	Prepare array with list of admin tabs
- *
- *	@param	AccountingAccount	$object		Object instance we show card
- *	@return	array							Array of tabs to show
- */
-function admin_accounting_prepare_head(AccountingAccount $object=null)
-{
-	global $langs, $conf;
-
-	$h = 0;
-	$head = array ();
-
-	$head[$h][0] = dol_buildpath('/accountancy/admin/index.php', 1);
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h ++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/export.php';
-	$head[$h][1] = $langs->trans("ExportOptions");
-	$head[$h][2] = 'export';
-	$h ++;
-
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
-
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin', 'remove');
-
-	return $head;
-}
 
 /**
  *	Prepare array with list of tabs
@@ -201,9 +167,10 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
     $head[$h][1] = $langs->trans("Journalization");
     $head[$h][2] = 'journal';
 
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+
     dol_fiche_head($head, 'journal');
 
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
     foreach($moreparam as $key => $value)
     {
         print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
@@ -251,11 +218,11 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     print '</table>';
 
-    print '<br><div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+    dol_fiche_end();
+
+    print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
     print '</form>';
-
-    dol_fiche_end();
 
     print "\n<!-- fin cartouche journal -->\n\n";
 }

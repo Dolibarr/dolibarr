@@ -82,24 +82,24 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $paymentType        = $_SESSION['paymentType'];
     $FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
     $ipaddress          = $_SESSION['ipaddress'];
-    
+
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
     $result=$interface->run_triggers('STRIPE_PAYMENT_KO',$object,$user,$langs,$conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
-    
+
     // Send an email
     $sendemail = '';
-    if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))  $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    
+    if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))  $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
+
     if ($sendemail)
     {
         // Get on url call
     	$sendto=$sendemail;
     	$from=$conf->global->MAILING_EMAIL_FROM;
-    
+
     	// Define link to login card
     	$appli=constant('DOL_APPLICATION_TITLE');
     	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -112,7 +112,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	    else $appli.=" ".DOL_VERSION;
     	}
     	else $appli.=" ".DOL_VERSION;
-    	
+
     	$urlback=$_SERVER["REQUEST_URI"];
     	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
     	$content="";
@@ -124,7 +124,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
     	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
     	$mailfile = new CMailFile($topic, $sendto, $from, $content);
-    
+
     	$result=$mailfile->sendfile();
     	if ($result)
     	{
@@ -140,7 +140,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
 }
 
 $head='';
-if (! empty($conf->global->STRIPE_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->STRIPE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -153,11 +153,13 @@ print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
-if (! empty($conf->global->STRIPE_MESSAGE_KO)) print $conf->global->STRIPE_MESSAGE_KO;
+$key='ONLINE_PAYMENT_MESSAGE_KO';
+if (! empty($conf->global->$key)) print $conf->global->$key;
+
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

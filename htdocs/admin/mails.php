@@ -119,7 +119,7 @@ $server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_S
 if (! $server) $server='127.0.0.1';
 
 
-$wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
+$wikihelp='EN:Setup_EMails|FR:Paramétrage_EMails|ES:Configuración_EMails';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
@@ -131,6 +131,14 @@ $head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
 $head[$h][1] = $langs->trans("OutGoingEmailSetup");
 $head[$h][2] = 'common';
 $h++;
+
+if ($conf->mailing->enabled)
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
+	$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+	$head[$h][2] = 'common_emailing';
+	$h++;
+}
 
 $head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
 $head[$h][1] = $langs->trans("DictionaryEMailTemplates");
@@ -243,7 +251,7 @@ if ($action == 'edit')
 	$var=true;
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
 
@@ -467,7 +475,7 @@ else
 	$var=true;
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
 

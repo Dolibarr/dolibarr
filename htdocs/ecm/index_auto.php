@@ -23,9 +23,6 @@
  *	\brief      Main page for ECM section area
  */
 
-if (! defined('REQUIRE_JQUERY_LAYOUT'))  define('REQUIRE_JQUERY_LAYOUT','1');
-if (! defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
@@ -50,10 +47,12 @@ $result = restrictedArea($user, 'ecm', 0);
 // Get parameters
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','aZ09');
-$section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
-$module=GETPOST("module");
+$section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
+$module=GETPOST('module','alpha');
 if (! $section) $section=0;
-$section_dir=GETPOST('section_dir');
+$section_dir=GETPOST('section_dir','alpha');
+
+$search_doc_ref=GETPOST('search_doc_ref','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -88,54 +87,12 @@ $error=0;
  *	Actions
  */
 
-// Upload file
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-	// Define relativepath and upload_dir
-    $relativepath='';
-	if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
-	else $relativepath=$section_dir;
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-
-	if (empty($_FILES['userfile']['tmp_name']))
-	{
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-	}
-
-	if (! $error)
-	{
-		if (dol_mkdir($upload_dir) >= 0)
-		{
-			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				$result=$ecmdir->changeNbOfFiles('+');
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
-				}
-			}
-		}
-		else
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
-		}
-	}
+	$search_doc_ref='';
 }
+
 
 
 
@@ -154,7 +111,6 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 	else
 	{
-		//TODO: Translate
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -203,6 +159,8 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 }
 
 // Refresh directory view
+// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
     $ecmdirtmp = new EcmDirectory($db);
@@ -348,8 +306,9 @@ if ($action == 'refreshmanual')
 //print $_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index.php file
 
-$morejs=array();
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
+//$morejs=array();
+$morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
@@ -395,8 +354,10 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 $classviewhide='inline-block';
 
 
+
+
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
+dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
 
 // Start container of all panels
@@ -407,11 +368,11 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 <?php
 
 // Start top panel, toolbar
-print '<div class="toolbarbutton">';
+print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 $url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
@@ -497,7 +458,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 }
 
 
-// End left banner
+// End left panel
 ?>
 </div>
 <div id="ecm-layout-center" class="<?php echo $classviewhide; ?>">
@@ -523,7 +484,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 // End of page
 
 
-dol_fiche_end(1);
+dol_fiche_end();
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

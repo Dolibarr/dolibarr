@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,13 +52,16 @@ if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main
 if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule","other"));
+$langs->loadLangs(array("mymodule@mymodule","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
+$ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -82,11 +85,9 @@ foreach($object->fields as $key => $val)
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
-}
+// Security check - Protection if external user
+//if ($user->societe_id > 0) access_forbidden();
+//if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'mymodule', $id);
 
 // fetch optionals attributes and labels
@@ -113,13 +114,11 @@ if (empty($reshook))
 
 	if ($cancel)
 	{
-		if ($action != 'addlink')
+		if (! empty($backtopage))
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
-			header("Location: ".$urltogo);
+			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
 		$action='';
 	}
 
@@ -128,10 +127,10 @@ if (empty($reshook))
 	{
         foreach ($object->fields as $key => $val)
         {
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
             $object->$key=GETPOST($key,'alpha');
-            if ($val['notnull'] && $object->$key == '')
+            if ($val['notnull'] > 0 && $object->$key == '')
             {
                 $error++;
                 setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -168,8 +167,8 @@ if (empty($reshook))
 	    foreach ($object->fields as $key => $val)
         {
             $object->$key=GETPOST($key,'alpha');
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;
-            if ($val['notnull'] && $object->$key == '')
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+            if ($val['notnull'] > 0 && $object->$key == '')
             {
                 $error++;
                 setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -214,6 +213,15 @@ if (empty($reshook))
 			else setEventMessages($object->error, null, 'errors');
 		}
 	}
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+	// Actions to send emails
+	$trigger_name='MYOBJECT_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
+	$trackid='myobject'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -226,6 +234,7 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
+$formfile=new FormFile($db);
 
 llxHeader('','MyObject','');
 
@@ -260,12 +269,14 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;
-    	print '<tr><td';
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+    	print '<tr id="field_'.$key.'"><td';
     	print ' class="titlefieldcreate';
-    	if ($val['notnull']) print ' fieldrequired';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
     	print '"';
-    	print '>'.$langs->trans($val['label']).'</td><td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td></tr>';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '</tr>';
 	}
 	print '</table>'."\n";
 
@@ -291,8 +302,17 @@ if (($id || $ref) && $action == 'edit')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_EDIT
+	foreach($object->fields as $key => $val)
+	{
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+    	print '<tr><td';
+    	print ' class="titlefieldcreate';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '</tr>';
+	}
 	print '</table>';
 
 	dol_fiche_end();
@@ -311,14 +331,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = mymodule_prepare_head($object);
-	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+	$head = myobjectPrepareHead($object);
+	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirmation of action xxxx
@@ -346,12 +366,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 
-
 	// Object card
 	// ------------------------------------------------------------
-
-	$linkback = '<a href="' . DOL_URL_ROOT . '/mymodule/myobject_list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -405,9 +422,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_VIEW
 
+	foreach($object->fields as $key => $val)
+	{
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+    	print '<tr><td';
+    	print ' class="titlefieldcreate';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '</tr>';
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -419,7 +445,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-
+	// ...
 
 	print '</table>';
 	print '</div>';
@@ -477,7 +503,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -486,132 +512,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'order', $socid);
+	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1);
 
 	    print '</div></div></div>';
 	}
 
+	// Presend form
+	$modelmail='myobject';
+	$defaulttopic='Information';
+	$diroutput = $conf->mymodule->dir_output;
+	$trackid = 'myobject'.$object->id;
 
-	/*
-	 * Action presend
-	 */
-    /*
-	if ($action == 'presend')
-	{
-		$object->fetch_projet();
-
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file = $fileparams['fullname'];
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('commercial');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file)) {
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
-			}
-			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
-		}
-
-		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-		print '<div class="clearboth"></div>';
-		print '<br>';
-		print load_fiche_titre($langs->trans('SendOrderByMail'));
-
-		dol_fiche_head('');
-
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		$formmail->trackid='ord'.$object->id;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-		}
-		$formmail->withfrom = 1;
-		$liste = array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
-			$liste [$key] = $value;
-		$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
-		$formmail->withtocc = $liste;
-		$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-		if (empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
-		} else if (! empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
-		}
-		$formmail->withfile = 2;
-		$formmail->withbody = 1;
-		$formmail->withdeliveryreceipt = 1;
-		$formmail->withcancel = 1;
-		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
-		$formmail->substit ['__ORDERREF__'] = $object->ref;
-
-		$custcontact = '';
-		$contactarr = array();
-		$contactarr = $object->liste_contact(- 1, 'external');
-
-		if (is_array($contactarr) && count($contactarr) > 0)
-		{
-			foreach ($contactarr as $contact)
-			{
-				if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
-					$contactstatic = new Contact($db);
-					$contactstatic->fetch($contact ['id']);
-					$custcontact = $contactstatic->getFullName($langs, 1);
-				}
-			}
-
-			if (! empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'order_send';
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['orderid'] = $object->id;
-		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
-
-		// Init list of files
-		if (GETPOST("mode") == 'init') {
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-		}
-
-		// Show form
-		print $formmail->get_form();
-
-		dol_fiche_end();
-	}*/
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 

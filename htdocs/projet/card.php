@@ -187,7 +187,7 @@ if (empty($reshook))
 	        if (! $error && !empty($object->id) > 0)
 	        {
 	        	// Category association
-	        	$categories = GETPOST('categories');
+	        	$categories = GETPOST('categories', 'array');
 	        	$result=$object->setCategories($categories);
 	        	if ($result<0) {
 		        	$langs->load("errors");
@@ -282,7 +282,7 @@ if (empty($reshook))
 		        else setEventMessages($object->error, $object->errors, 'errors');
 	    	}else {
 	    		// Category association
-	    		$categories = GETPOST('categories');
+	    		$categories = GETPOST('categories', 'array');
 	    		$result=$object->setCategories($categories);
 	    		if ($result < 0)
 	    		{
@@ -553,7 +553,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     $array=array();
     if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
     if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
-    print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):(isset($conf->global->PROJECT_DEFAULT_PUBLIC)?$conf->global->PROJECT_DEFAULT_PUBLIC:$object->public));
+    print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):$object->public);
     print '</td></tr>';
 
     // Date start

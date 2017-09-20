@@ -408,6 +408,8 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

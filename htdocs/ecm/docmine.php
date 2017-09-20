@@ -138,7 +138,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 }
 
 // Update description
-if ($action == 'update' && ! GETPOST('cancel'))
+if ($action == 'update' && ! GETPOST('cancel','alpha'))
 {
 	$error=0;
 

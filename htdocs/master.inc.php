@@ -152,17 +152,13 @@ else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
 }
-else if (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
+else if (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
 {
 	$conf->entity = GETPOST("entity",'int');
 }
 else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 {
 	$conf->entity = DOLENTITY;
-}
-else if (!empty($_COOKIE['DOLENTITY']))						    // For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
-{
-	$conf->entity = $_COOKIE['DOLENTITY'];
 }
 
 // Sanitize entity

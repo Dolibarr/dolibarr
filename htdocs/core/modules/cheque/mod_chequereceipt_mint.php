@@ -73,7 +73,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -107,7 +107,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " WHERE ref like '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);

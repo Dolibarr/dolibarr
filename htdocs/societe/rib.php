@@ -204,7 +204,8 @@ if (empty($reshook))
     		$account->proprio         = GETPOST('proprio','alpha');
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur');
-
+    		$account->rum             = GETPOST('rum','alpha');
+    
     		// This test can be done only once properties were set
     		if ($account->needIBAN() == 1)
     		{
@@ -870,7 +871,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-    	print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"><br>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
     	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
     	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));

@@ -47,7 +47,7 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/l
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
+if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -55,7 +55,7 @@ $mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
-$cancel     = GETPOST('cancel');
+$cancel     = GETPOST('cancel','alpha');
 
 // Users/Groups management only in master entity if transverse mode
 if (($action == 'create' || $action == 'adduserldap') && ! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
@@ -260,7 +260,7 @@ if (empty($reshook)) {
 				}
             			if (! empty($conf->categorie->enabled)) {
 					// Categories association
-					$usercats = GETPOST( 'usercats', 'array' );
+					$usercats = GETPOST('usercats', 'array');
 					$object->setCategories($usercats);
 				}
 				$db->commit();
@@ -366,6 +366,9 @@ if (empty($reshook)) {
 				$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 				$object->dateemployment = $dateemployment;
+
+				$object->default_range = GETPOST('default_range');
+				$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -475,7 +478,7 @@ if (empty($reshook)) {
             	if (! $error && ! count($object->errors))
             	{
             		// Then we add the associated categories
-            		$categories = GETPOST( 'usercats', 'array' );
+            		$categories = GETPOST('usercats', 'array');
             		$object->setCategories($categories);
             	}
 
@@ -715,6 +718,7 @@ if ($action == 'create' || $action == 'adduserldap')
         if (is_array($liste) && count($liste))
         {
         	print $form->selectarray('users', $liste, '', 1);
+        	print ajax_combobox('users');
         }
        	print '</td><td align="center">';
        	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
@@ -1112,6 +1116,20 @@ if ($action == 'create' || $action == 'adduserldap')
 	 }
 	 */
 
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+	{
+		print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+		print '<td>';
+		print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+		print '<td>';
+		$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+		print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+		print '</td></tr>';
+	}
+
     // Other attributes
     $parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1500,6 +1518,19 @@ else
 		    print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
 		    print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 		    print "</tr>\n";
+
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td class="fk_c_exp_tax_cat">';
+				print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				print $object->default_range;
+				print '</td></tr>';
+			}
 
 		    // Multicompany
 		    // This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
@@ -2413,6 +2444,20 @@ else
                 print "</tr>\n";
             }
 
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td>';
+				print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+				print '</td></tr>';
+			}
+
             // Multicompany
             // This is now done with hook formObjectOptions
             /*
@@ -2493,7 +2538,7 @@ else
     		// List of actions on element
     		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     		$formactions = new FormActions($db);
-    		$somethingshown = $formactions->showactions($object, 'user', $socid);
+    		$somethingshown = $formactions->showactions($object, 'user', $socid, 1);
 
 
             print '</div></div></div>';

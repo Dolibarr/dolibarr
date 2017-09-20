@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -58,6 +60,10 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
+
 $btn_ventil = GETPOST('ventil', 'alpha');
 
 // Load variable for pagination
@@ -91,8 +97,8 @@ $accounting = new AccountingAccount($db);
  * Action
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
@@ -103,14 +109,16 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $search_amount = '';
     $search_account = '';
     $search_vat = '';
+    $search_month = '';
+    $search_year = '';
 }
 
 // Mass actions
-$objectclass='Skeleton';
-$objectlabel='Skeleton';
-$permtoread = $user->rights->accounting->read;
-$permtodelete = $user->rights->accounting->delete;
-$uploaddir = $conf->accounting->dir_output;
+$objectclass='ExpenseReport';
+$objectlabel='ExpenseReport';
+$permtoread = $user->rights->expensereport->read;
+$permtodelete = $user->rights->expensereport->delete;
+$uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 if ($massaction == 'ventil') {
@@ -169,6 +177,7 @@ if ($massaction == 'ventil') {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 
@@ -203,6 +212,19 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
     $sql .= natural_search("erd.tva_tx",$search_vat,1);
 }
+if ($search_month > 0)
+{
+	if ($search_year > 0 && empty($search_day))
+		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+		else if ($search_year > 0 && ! empty($search_day))
+			$sql.= " AND erd.date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
+			else
+				$sql.= " AND date_format(erd.date, '%m') = '".$db->escape($search_month)."'";
+}
+else if ($search_year > 0)
+{
+	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+}
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -228,6 +250,15 @@ if ($result) {
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($search_lineid)      $param.='&search_lineid='.urlencode($search_lineid);
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year='.urlencode($search_year);
+	if ($search_expensereport) $param.='&search_expensereport='.urlencode($search_expensereport);
+	if ($search_label)       $param.='&search_label='.urlencode($search_label);
+	if ($search_desc)        $param.='&search_desc='.urlencode($search_desc);
+	if ($search_amount)      $param.='&search_amount='.urlencode($search_amount);
+	if ($search_vat)         $param.='&search_vat='.urlencode($search_vat);
 
 	$arrayofmassactions =  array(
 	    'ventil'=>$langs->trans("Ventilate")
@@ -263,7 +294,11 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre center">';
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+   	$formother->select_year($search_year,'search_year',1, 20, 5);
+	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
@@ -313,6 +348,7 @@ if ($result) {
 		// Ref Expense report
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
+		// Date
 		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 
 		// Fees label

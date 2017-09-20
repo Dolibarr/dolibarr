@@ -524,7 +524,6 @@ print "<br>";
 
 /*
  * Other options
- *
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"),'','');

@@ -41,7 +41,7 @@ if (!$user->rights->cron->create) accessforbidden();
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $backtourl=GETPOST('backtourl','alpha');
 $securitykey = GETPOST('securitykey','alpha');
 

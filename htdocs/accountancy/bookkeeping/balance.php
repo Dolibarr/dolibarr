@@ -28,7 +28,9 @@ require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
@@ -51,9 +53,8 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
-if (GETPOST("button_export_csv_x") || GETPOST("button_export_csv.x") || GETPOST("button_export_csv")) {
-	$action = 'export_csv';
-}
+if (GETPOST("exportcsv")) $action = 'export_csv';
+
 
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
 
@@ -66,8 +67,18 @@ $formother = new FormOther($db);
 $form = new Form($db);
 
 if (empty($search_date_start)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+
+	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+	$year_start = dol_print_date(dol_now(), '%Y');
+	$year_end = $year_start + 1;
+	$month_end = $month_start - 1;
+	if ($month_end < 1)
+	{
+		$month_end = 12;
+		$year_end--;
+	}
+	$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+	$search_date_end = dol_get_last_day($year_end, $month_end);
 }
 if ($sortorder == "")
 	$sortorder = "ASC";
@@ -136,7 +147,7 @@ if ($action == 'export_csv') {
 }
 
 else {
-	$title_page = $langs->trans("AccountBalance") . (($search_date_start || $search_date_end) ? ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end) : '');
+	$title_page = $langs->trans("AccountBalance");
 
 	llxHeader('', $title_page);
 
@@ -156,7 +167,7 @@ else {
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
-	$button = '<input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
 
 	$moreforfilter = '';
@@ -199,7 +210,7 @@ else {
 	print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Solde", $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 

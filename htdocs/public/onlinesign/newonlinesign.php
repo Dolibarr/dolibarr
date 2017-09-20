@@ -164,7 +164,7 @@ print '<!-- Form to sign -->'."\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
+// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
 $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
@@ -205,8 +205,8 @@ if (! empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 }
 if (empty($text))
 {
-    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage").'</strong><br></td></tr>'."\n";
-    $text.='<tr><td class="textpublicpayment"><br>'.$langs->trans("ThisScreenAllowsYouToSignDocFrom",$creditor).'<br><br></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage").'</strong></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom",$creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 

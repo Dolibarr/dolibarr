@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 MenuBankCash=Bank/Cash
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Bank name
 FinancialAccount=Account
 BankAccount=Bank account
@@ -154,4 +156,5 @@ DocumentModelBan=Template to print a page with BAN information.
 NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
-ShowVariousPayment=Show miscellaneous payments 
+ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments

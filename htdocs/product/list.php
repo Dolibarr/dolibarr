@@ -52,14 +52,14 @@ $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
 $sall=GETPOST('sall', 'alphanohtml');
-$sref=GETPOST("sref");
-$sbarcode=GETPOST("sbarcode");
-$snom=GETPOST("snom");
+$search_ref=GETPOST("search_ref");
+$search_barcode=GETPOST("search_barcode");
+$search_label=GETPOST("search_label");
 $search_type = GETPOST("search_type",'int');
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
-$tosell = GETPOST("tosell", 'int');
-$tobuy = GETPOST("tobuy", 'int');
+$search_tosell = GETPOST("search_tosell", 'int');
+$search_tobuy = GETPOST("search_tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
 $search_tobatch = GETPOST("search_tobatch",'int');
@@ -193,8 +193,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -209,12 +209,12 @@ if (empty($reshook))
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
     	$sall="";
-    	$sref="";
-    	$snom="";
-    	$sbarcode="";
+    	$search_ref="";
+    	$search_label="";
+    	$search_barcode="";
     	$search_categ=0;
-    	$tosell="";
-    	$tobuy="";
+    	$search_tosell="";
+    	$search_tobuy="";
     	$search_tobatch='';
     	$search_type='';
     	$search_accountancy_code_sell='';
@@ -298,11 +298,11 @@ else
     	if ($search_type == 1) $sql.= " AND p.fk_product_type = 1";
     	else $sql.= " AND p.fk_product_type <> 1";
     }
-	if ($sref)     $sql .= natural_search('p.ref', $sref);
-	if ($snom)     $sql .= natural_search('p.label', $snom);
-	if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
-    if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
-    if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
+	if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
+	if ($search_label)     $sql .= natural_search('p.label', $search_label);
+	if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
+    if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($search_tosell);
+    if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($search_tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
     if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
@@ -396,22 +396,22 @@ else
 	    $param='';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	    if ($search_categ > 0) $param.="&amp;search_categ=".urlencode($search_categ);
-    	if ($sref) $param="&amp;sref=".urlencode($sref);
-    	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".urlencode($search_ref_supplier);
-    	if ($sbarcode) $param.=($sbarcode?"&amp;sbarcode=".urlencode($sbarcode):"");
-    	if ($snom) $param.="&amp;snom=".urlencode($snom);
-    	if ($sall) $param.="&amp;sall=".urlencode($sall);
-    	if ($tosell != '') $param.="&amp;tosell=".urlencode($tosell);
-    	if ($tobuy != '') $param.="&amp;tobuy=".urlencode($tobuy);
-    	if ($fourn_id > 0) $param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    	if ($seach_categ) $param.=($search_categ?"&amp;search_categ=".urlencode($search_categ):"");
-    	if ($type != '') $param.='&amp;type='.urlencode($type);
-    	if ($search_type != '') $param.='&amp;search_type='.urlencode($search_type);
+    	if ($sall) $param.="&sall=".urlencode($sall);
+	    if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
+    	if ($search_ref) $param="&search_ref=".urlencode($search_ref);
+    	if ($search_ref_supplier) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
+    	if ($search_barcode) $param.=($search_barcode?"&search_barcode=".urlencode($search_barcode):"");
+    	if ($search_label) $param.="&search_label=".urlencode($search_label);
+    	if ($search_tosell != '') $param.="&search_tosell=".urlencode($search_tosell);
+    	if ($search_tobuy != '') $param.="&search_tobuy=".urlencode($search_tobuy);
+    	if ($fourn_id > 0) $param.=($fourn_id?"&fourn_id=".$fourn_id:"");
+    	if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
+    	if ($type != '') $param.='&type='.urlencode($type);
+    	if ($search_type != '') $param.='&search_type='.urlencode($search_type);
     	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-    	if ($search_tobatch) $param="&amp;search_ref_supplier=".urlencode($search_ref_supplier);
-    	if ($search_accountancy_code_sell) $param="&amp;search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
-    	if ($search_accountancy_code_buy) $param="&amp;search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
+    	if ($search_tobatch) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
+    	if ($search_accountancy_code_sell) $param="&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
+    	if ($search_accountancy_code_buy) $param="&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
     	// Add $param from extra fields
 	    foreach ($search_array_options as $key => $val)
 	    {
@@ -517,7 +517,7 @@ else
     		if (! empty($arrayfields['p.ref']['checked']))
     		{
     			print '<td class="liste_titre" align="left">';
-    			print '<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">';
+    			print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
     			print '</td>';
     		}
     	    if (! empty($arrayfields['pfp.ref_fourn']['checked']))
@@ -529,7 +529,7 @@ else
     		if (! empty($arrayfields['p.label']['checked']))
     		{
     			print '<td class="liste_titre" align="left">';
-		   		print '<input class="flat" type="text" name="snom" size="12" value="'.dol_escape_htmltag($snom).'">';
+		   		print '<input class="flat" type="text" name="search_label" size="12" value="'.dol_escape_htmltag($search_label).'">';
     			print '</td>';
     		}
     		// Type
@@ -544,7 +544,7 @@ else
     		if (! empty($arrayfields['p.barcode']['checked']))
     		{
     			print '<td class="liste_titre">';
-    			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($sbarcode).'">';
+    			print '<input class="flat" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
     			print '</td>';
     		}
     		// Duration
@@ -610,7 +610,26 @@ else
 			{
 			   foreach($extrafields->attribute_label as $key => $val)
 			   {
-					if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+					if (! empty($arrayfields["ef.".$key]['checked'])) {
+						$align=$extrafields->getAlignFlag($key);
+						$typeofextrafield=$extrafields->attribute_type[$key];
+						print '<td class="liste_titre'.($align?' '.$align:'').'">';
+						if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
+						{
+							$crit=$val;
+							$tmpkey=preg_replace('/search_options_/','',$key);
+							$searchclass='';
+							if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+							if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+							print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+						}
+						else
+						{
+							// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+							echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+						}
+						print '</td>';
+					}
 			   }
 			}
     		// Fields from hook
@@ -632,13 +651,13 @@ else
     		if (! empty($arrayfields['p.tosell']['checked']))
     		{
 	    		print '<td class="liste_titre" align="right">';
-	            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+	            print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$search_tosell,1);
 	            print '</td >';
     		}
 			if (! empty($arrayfields['p.tobuy']['checked']))
     		{
 	            print '<td class="liste_titre" align="right">';
-	            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
+	            print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$search_tobuy,1);
 	            print '</td>';
     		}
             print '<td class="liste_titre" align="middle">';

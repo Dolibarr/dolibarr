@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("products");
 $langs->load("categories");
@@ -143,12 +143,14 @@ foreach($allparams as $key => $value) {
 /*
  * View
  */
+
 llxHeader();
+
 $form=new Form($db);
 $formother = new FormOther($db);
 
 // Show report header
-$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
+$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
 
 if ($modecompta=="CREANCES-DETTES") {
 	$calcmode=$langs->trans("CalcModeDebt");
@@ -163,7 +165,7 @@ if ($modecompta=="CREANCES-DETTES") {
 		$description.= $langs->trans("DepositsAreIncluded");
 	}
 
-	$builddate=time();
+	$builddate=dol_now();
 } else {
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -173,16 +175,19 @@ if ($modecompta=="CREANCES-DETTES") {
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 
-	$builddate=time();
+	$builddate=dol_now();
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
+
+
+$name=array();
 
 // SQL request
 $catotal=0;
@@ -266,7 +271,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-    
+
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
@@ -283,11 +288,11 @@ if ($modecompta == 'CREANCES-DETTES')
     print $langs->trans("Type"). ': ';
     $form->select_type_of_lines(isset($selected_type)?$selected_type:-1,'search_type',1,1,1);
     print '</td>';
-	
+
     print '<td colspan="5" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
-	
+
 	// Array header
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre(
@@ -357,7 +362,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	if (count($name)) {
 		foreach($name as $key=>$value) {
-			
+
 			print '<tr class="oddeven">';
 
 			// Product
@@ -369,15 +374,15 @@ if ($modecompta == 'CREANCES-DETTES')
 			}
 
 			print "<td>".$linkname."</td>\n";
-			
+
 			// Quantity
 			print '<td align="right">';
 			print $qty[$key];
 			print '</td>';
-			
+
 			// Percent;
 			print '<td align="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
-	
+
 			// Amount w/o VAT
 			print '<td align="right">';
 			/*if ($key > 0) {
@@ -388,7 +393,7 @@ if ($modecompta == 'CREANCES-DETTES')
 			print price($amount_ht[$key]);
 			//print '</a>';
 			print '</td>';
-	
+
 			// Amount with VAT
 			print '<td align="right">';
 			/*if ($key > 0) {
@@ -399,12 +404,12 @@ if ($modecompta == 'CREANCES-DETTES')
 			print price($amount[$key]);
 			//print '</a>';
 			print '</td>';
-	
+
 			// Percent;
 			print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
-	
+
 			// TODO: statistics?
-	
+
 			print "</tr>\n";
 			$i++;
 		}
@@ -423,7 +428,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	}
 	print "</table>";
 	print '</div>';
-	
+
 	print '</form>';
 } else {
 	// $modecompta != 'CREANCES-DETTES'
