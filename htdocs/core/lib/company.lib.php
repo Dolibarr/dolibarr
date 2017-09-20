@@ -388,9 +388,9 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
  *    										'1'=Return string code + label,
  *    						  				'2'=Return code,
  *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
+ *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param    int			$withregion   	'0'=Ignores region,
  *    										'1'=Add region name/code/id as needed to output,
- *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
  *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
