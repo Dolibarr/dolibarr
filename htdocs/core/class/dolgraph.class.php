@@ -67,7 +67,7 @@ class DolGraph
 	var $showlegend=1;
 	var $showpointvalue=1;
 	var $showpercent=0;
-	var $combine=0;				// 0.05 if you want to combine records < 5% into "other"
+	var $combine=0;				// 0.05 if you want to / records < 5% into "other"
 	var $graph;     			// Objet Graph (Artichow, Phplot...)
 	var $error;
 
@@ -121,6 +121,17 @@ class DolGraph
 		//print 'bgcolor: '.join(',',$this->bgcolor).'<br>';
 	}
 
+	/**
+	 * Set value to combine records
+	 *
+	 * @param 	float	$val	Rate between 0 and 100 to decide threshold  to create a group "other"
+	 * @return 	boolean
+	 */
+	function SetCombine($val)
+	{
+		$this->combine = $val;
+		return true;
+	}
 
 	/**
 	 * Set Y precision
@@ -1071,4 +1082,3 @@ class DolGraph
 	}
 
 }
-

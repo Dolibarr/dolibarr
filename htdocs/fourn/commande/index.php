@@ -119,7 +119,7 @@ if ($resql)
 		$dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-			
+
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
@@ -130,7 +130,16 @@ if ($resql)
 	{
 		print '<tr class="impair"><td align="center" colspan="2">';
 		$data=array('series'=>$dataseries);
-		dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+
+        $px1 = new DolGraph;
+    	$px1->SetWidth(300);
+    	$px1->SetHeight(180);
+    	$px1->SetData($data);
+    	$px1->SetLegend(1);
+    	$px1->SetType('pie');
+    	$px1->setShowPercent(1);
+        $px1->SetCombine(0);
+    	$px1->show();
 		print '</td></tr>';
 	}
 	//if ($totalinprocess != $total)
@@ -177,7 +186,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
@@ -225,7 +234,7 @@ if (! empty($conf->fournisseur->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -268,7 +277,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -324,7 +333,7 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			
+
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';

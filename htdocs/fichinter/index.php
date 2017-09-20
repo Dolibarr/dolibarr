@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015	   Charlie Benke		<charlie@patas-monkey.com>
- 
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,15 @@ if ($resql)
     {
         print '<tr class="impair"><td align="center" colspan="2">';
         $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1);
+
+		$px1 = new DolGraph;
+		$px1->SetWidth(300);
+		$px1->SetHeight(180);
+		$px1->SetData($data);
+		$px1->SetLegend(1);
+		$px1->SetType('pie');
+		$px1->setShowPercent(1);
+		$px1->show();
         print '</td></tr>';
     }
     $var=true;
@@ -138,7 +146,7 @@ if ($resql)
     {
         if (! $conf->use_javascript_ajax)
         {
-            
+
             print '<tr class="oddeven">';
             print '<td>'.$fichinterstatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
@@ -190,7 +198,7 @@ if (! empty($conf->ficheinter->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -240,7 +248,7 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-			
+
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -311,7 +319,7 @@ if (! empty($conf->ficheinter->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';

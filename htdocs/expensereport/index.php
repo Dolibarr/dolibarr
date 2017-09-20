@@ -125,7 +125,16 @@ if ($conf->use_javascript_ajax)
 {
     print '<tr '.$bc[0].'><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',320,180,$data,1,'pie',0,'',0);
+
+    $px1 = new DolGraph;
+	$px1->SetWidth(300);
+	$px1->SetHeight(180);
+	$px1->SetData($data);
+	$px1->SetLegend(1);
+	$px1->SetType('pie');
+	$px1->setShowPercent(1);
+    $px1->SetCombine(0);
+	$px1->show();
     print '</td></tr>';
 }
 
@@ -208,7 +217,7 @@ if ($result)
 			print $expensereportstatic->LibStatut($obj->fk_status,3);
             print '</td>';
             print '</tr>';
-            
+
             $i++;
         }
 

@@ -226,7 +226,15 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			if ($i > $nbmax)
 				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
 			$data=array('series'=>$dataseries);
-			dol_print_graph('statscategproduct',300,180,$data,1,'pie',0);
+
+			$px1 = new DolGraph;
+			$px1->SetWidth(300);
+			$px1->SetHeight(180);
+			$px1->SetData($data);
+			$px1->SetLegend(1);
+			$px1->SetType('pie');
+			$px1->setShowPercent(0);
+			$px1->show();
 		}
 		else
 		{
@@ -492,4 +500,3 @@ function activitytrim($product_type)
 			print '</table>';
 	}
 }
-
