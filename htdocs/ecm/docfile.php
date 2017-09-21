@@ -19,12 +19,12 @@
  *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 
@@ -38,6 +38,9 @@ $langs->load("propal");
 $langs->load("bills");
 $langs->load("contracts");
 $langs->load("categories");
+
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 if (!$user->rights->ecm->setup) accessforbidden();
 
@@ -61,8 +64,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$cancel=GETPOST('cancel');
-$action=GETPOST('action','aZ09');
 $section=GETPOST("section");
 if (! $section)
 {
@@ -87,29 +88,33 @@ if (! $result > 0)
 $relativepath=$ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
+$fullpath=$conf->ecm->dir_output.'/'.$relativepath.$urlfile;
+
+$file = new stdClass();
+$file->section_id=$ecmdir->id;
+$file->label=$urlfile;
+
+$relativetodocument = 'ecm/'.$relativepath;		// $relativepath is relative to ECM dir, we need relative to document
+$filepath=$relativepath.$file->label;
+$filepathtodocument=$relativetodocument.$file->label;
+
+// Try to load object from index
+$object = new ECMFiles($db);
+$result=$object->fetch(0, '', $filepathtodocument);
+if (! ($result >= 0))
+{
+	dol_print_error($db, $object->error, $object->errors);
+	exit;
+}
+
+
+
 
 /*
-$ecmfile = new ECMFile($db);
-if (! empty($_GET["fileid"]))
-{
-	$result=$ecmfile->fetch($_GET["fileid"]);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmfile->error);
-		exit;
-	}
-}
-*/
+ * Actions
+ */
 
-
-
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
-
-if ($action == 'cancel')
+if ($cancel)
 {
     $action ='';
     if ($backtourl)
@@ -119,7 +124,7 @@ if ($action == 'cancel')
     }
     else
     {
-        header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager&section='.$section);
+        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.$urlfile.'&section='.$section);
         exit;
     }
 }
@@ -129,8 +134,9 @@ if ($action == 'update')
 {
     $error=0;
 
-    $oldlabel=GETPOST('urlfile');
-    $newlabel=GETPOST('label');
+    $oldlabel=GETPOST('urlfile', 'alpha');
+    $newlabel=GETPOST('label', 'alpha');
+	$shareenabled = GETPOST('shareenabled', 'alpha');
 
     //$db->begin();
 
@@ -144,7 +150,7 @@ if ($action == 'update')
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
     {
-        $result=dol_move($oldfile, $newfile);
+        $result=dol_move($oldfile, $newfile);		// This include update of database
         if (! $result)
         {
             $langs->load('errors');
@@ -153,44 +159,62 @@ if ($action == 'update')
         }
     }
 
+    // Now we update index of file
+    $db->begin();
+
     if (! $error)
     {
-        //$db->commit();
+		if (is_object($object))
+		{
+			if ($shareenabled)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				$object->share = getRandomPassword(true);
+			}
+			else
+			{
+				$object->share = '';
+			}
+			$result = $object->update($user);
+			if ($result < 0)
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+    }
+
+    if (!$error)
+    {
+        $db->commit();
         $urlfile=$newlabel;
     }
     else
     {
-        //$db->rollback();
+        $db->rollback();
     }
 }
 
 
 
-/*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
-
-llxHeader();
+/*
+ * View
+ */
 
 $form=new Form($db);
 
-$fullpath=$conf->ecm->dir_output.'/'.$relativepath.$urlfile;
-
-$file = new stdClass();
-$file->section_id=$ecmdir->id;
-$file->label=$urlfile;
+llxHeader();
 
 $head = ecm_file_prepare_head($file);
 
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="section" value="'.$section.'">';
     print '<input type="hidden" name="urlfile" value="'.$urlfile.'">';
 	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
 }
 
 dol_fiche_head($head, 'card', $langs->trans("File"), 0, 'generic');
@@ -221,11 +245,11 @@ while ($tmpecmdir && $result > 0)
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print ' -> ';
-if (GETPOST('action','aZ09') == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
+if ($action == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
 else print $urlfile;
 print '</td></tr>';
 /*print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';
 	print $ecmdir->description;
@@ -253,31 +277,89 @@ print dol_print_size($totalsize);
 print '</td></tr>';
 */
 
+print '<tr><td>'.$langs->trans("HashOfFileContent").'</td><td>';
+$object = new EcmFiles($db);
+//$filenametosearch=basename($filepath);
+//$filedirtosearch=basedir($filepath);
+$object->fetch(0, '', $filepathtodocument);
+if (! empty($object->label))
+{
+	print $object->label;
+}
+else
+{
+	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
+}
+print '</td></tr>';
+
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-print '<tr><td>'.$langs->trans("DirectDownloadLink").'</td><td>';
+print '<tr><td>'.$langs->trans("DirectDownloadInternalLink").'</td><td>';
 $modulepart='ecm';
 $forcedownload=1;
 $rellink='/document.php?modulepart='.$modulepart;
 if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
-$filepath=$relativepath.$file->label;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
 print img_picto('','object_globe.png').' ';
-print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
-print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+else print $fulllink;
+if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
 print '</td></tr>';
+
+print '<tr><td>';
+if ($action != 'edit') print $langs->trans("DirectDownloadLink");
+else print $langs->trans("FileSharedViaALink");
+print '</td><td>';
+if (! empty($object->share))
+{
+	if ($action != 'edit')
+	{
+		$modulepart='ecm';
+		$forcedownload=1;
+		$rellink='/document.php?modulepart='.$modulepart;
+		if ($forcedownload) $rellink.='&attachment=1';
+		if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
+		//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
+		$fulllink=$urlwithroot.$rellink;
+		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;			// Hash of file path
+		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
+		if (! empty($object->share))  $fulllink.='&hashp='.$object->share;			// Hash for public share
+		print img_picto('','object_globe.png').' ';
+		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+		else print $fulllink;
+		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+	}
+	else
+	{
+		print '<input type="checkbox" name="shareenabled"'.($object->share?' checked="checked"':'').' /> ';
+	}
+}
+else
+{
+	if ($action != 'edit')
+	{
+		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
+	}
+	else
+	{
+		print '<input type="checkbox" name="shareenabled"'.($object->share?' checked="checked"':'').' /> ';
+	}
+}
+print '</td></tr>';
+
 print '</table>';
 
+print ajax_autoselect('downloadinternallink');
 print ajax_autoselect('downloadlink');
 
 dol_fiche_end();
 
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
     print '<div class="center">';
     print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
@@ -290,13 +372,13 @@ if ($_GET["action"] == 'edit')
 
 
 // Confirmation de la suppression d'une ligne categorie
-if ($_GET['action'] == 'delete_file')
+if ($action == 'delete_file')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
 
 }
 
-if ($_GET["action"] != 'edit')
+if ($action != 'edit')
 {
 	// Actions buttons
 	print '<div class="tabsAction">';
@@ -305,7 +387,7 @@ if ($_GET["action"] != 'edit')
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 
-        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtourl='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
+        //print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtourl='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
     }
 /*
 	if ($user->rights->ecm->setup)

@@ -48,7 +48,7 @@ $langs->load('compta');
 $langs->load('bills');
 $langs->load('projects');
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
@@ -86,10 +86,6 @@ $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $search_project_ref=GETPOST('search_project_ref','alpha');
 
-$page  = GETPOST('page','int');
-$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');
-
 $status=GETPOST('statut','alpha');
 $billed=GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
@@ -114,11 +110,11 @@ if (! $sortorder) $sortorder='DESC';
 
 if ($search_status == '') $search_status=-1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='supplierorderlist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierorderlist';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('orderlist'));
+$hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -172,8 +168,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -207,6 +203,7 @@ if (empty($reshook))
         $search_total_ht='';
         $search_total_vat='';
         $search_total_ttc='';
+    	$search_project_ref='';
         $search_status=-1;
         $orderyear='';
         $ordermonth='';
@@ -216,16 +213,12 @@ if (empty($reshook))
         $deliveryyear='';
         $billed='';
         $toselect='';
-    	$search_project_ref='';
         $search_array_options=array();
-
-        // Mass actions
-        $objectclass='Commande';
-        $objectlabel='Orders';
-        $permtoread = $user->rights->commande->lire;
-        $permtodelete = $user->rights->commande->supprimer;
-        $uploaddir = $conf->commande->dir_output;
-    	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    }
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+    	|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    {
+    	$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
 
     // Mass actions
@@ -581,7 +574,6 @@ if ($search_total_ht != '') $sql.= natural_search('cf.total_ht', $search_total_h
 if ($search_total_vat != '') $sql.= natural_search('cf.tva', $search_total_vat, 1);
 if ($search_total_ttc != '') $sql.= natural_search('cf.total_ttc', $search_total_ttc, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
-
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -650,6 +642,7 @@ if ($resql)
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".$search_project_ref;
 	if ($billed != '')          $param.="&billed=".$billed;
     if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
@@ -663,7 +656,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
+	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
@@ -678,108 +671,24 @@ if ($resql)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	// TODO Move this into an invluce
 	if ($massaction == 'presend')
 	{
-	    $langs->load("mails");
+		$topicmail="SendOrderRef";
+		$modelmail="order_supplier_send";
+		$objecttmp=new CommandeFournisseur($db);
+		$trackid='sord'.$object->id;
 
-	    if (! GETPOST('cancel'))
-	    {
-	        $objecttmp=new CommandeFournisseur($db);
-	        $listofselectedid=array();
-	        $listofselectedthirdparties=array();
-	        $listofselectedref=array();
-	        foreach($arrayofselected as $toselectid)
-	        {
-	            $result=$objecttmp->fetch($toselectid);
-	            if ($result > 0)
-	            {
-	                $listofselectedid[$toselectid]=$toselectid;
-	                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
-	                $listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
-	                $listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
-	            }
-	        }
-	    }
-
-	    print '<input type="hidden" name="massaction" value="confirm_presend">';
-
-	    dol_fiche_head(null, '', '');
-
-	    $topicmail="SendOrderRef";
-	    $modelmail="order_send";
-
-	    // Cree l'objet formulaire mail
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	    $formmail = new FormMail($db);
-	    $formmail->withform=-1;
-	    $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-	    if($formmail->fromtype === 'user'){
-	        $formmail->fromid = $user->id;
-
-	    }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-	    {
-	        $formmail->trackid='ord'.$object->id;
-	    }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-	    {
-	        include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	        $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-	    }
-	    $formmail->withfrom=1;
-	    $liste=$langs->trans("AllRecipientSelected");
-	    if (count($listofselectedthirdparties) == 1)
-	    {
-	        $liste=array();
-	        $thirdpartyid=array_shift($listofselectedthirdparties);
-	        $soc=new Societe($db);
-	        $soc->fetch($thirdpartyid);
-	        foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-	        {
-	            $liste[$key]=$value;
-	        }
-	        $formmail->withtoreadonly=0;
-	    }
-	    else
-	    {
-	        $formmail->withtoreadonly=1;
-	    }
-	    $formmail->withto=$liste;
-	    $formmail->withtofree=0;
-	    $formmail->withtocc=1;
-	    $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-	    $formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-	    $formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
-	    $formmail->withbody=1;
-	    $formmail->withdeliveryreceipt=1;
-	    $formmail->withcancel=1;
-	    // Tableau des substitutions
-	    $formmail->substit['__REF__']='__REF__';	// We want to keep the tag
-	    $formmail->substit['__SIGNATURE__']=$user->signature;
-	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
-	    $formmail->substit['__PERSONALIZED__']='';
-	    $formmail->substit['__CONTACTCIVNAME__']='';
-
-	    // Tableau des parametres complementaires du post
-	    $formmail->param['action']=$action;
-	    $formmail->param['models']=$modelmail;
-	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
-	    $formmail->param['id']=join(',',$arrayofselected);
-	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-	    print $formmail->get_form();
-
-	    dol_fiche_end();
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 	}
-	elseif ($massaction == 'createbills')
+
+	if ($massaction == 'createbills')
 	{
 	    //var_dump($_REQUEST);
 	    print '<input type="hidden" name="massaction" value="confirm_createbills">';

@@ -177,10 +177,10 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/(=|sql.+)\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'db->' && $val[1] != 'esca')
+                if ($val[2] != 'db->' && $val[2] != 'esca')
                 {
                     $ok=false;
                     break;
@@ -199,13 +199,13 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             preg_match_all('/(...................)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'dol_escape_htmltag(')
+                if ($val[1] != 'dol_escape_htmltag(' && $val[1] != 'l_string_nohtmltag(')
                 {
                     $ok=false;
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
 
 
             // Test that first param of print_liste_field_titre is a translation key and not the translated value

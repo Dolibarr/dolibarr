@@ -538,11 +538,13 @@ class Contrat extends CommonObject
 	/**
 	 *    Load a contract from database
 	 *
-	 *    @param	int		$id     Id of contract to load
-	 *    @param	string	$ref	Ref
-	 *    @return   int     		<0 if KO, id of contract if OK
+	 *    @param	int		$id     		Id of contract to load
+	 *    @param	string	$ref			Ref
+	 *    @param	string	$ref_customer	Customer ref
+	 *    @param	string	$ref_supplier	Supplier ref
+	 *    @return   int     				<0 if KO, 0 if not found, Id of contract if OK
 	 */
-	function fetch($id,$ref='')
+	function fetch($id, $ref='', $ref_customer='', $ref_supplier='')
 	{
 		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
 		$sql.= " ref_supplier, ref_customer,";
@@ -553,12 +555,20 @@ class Contrat extends CommonObject
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
+		if (! $id) $sql.=" WHERE entity IN (".getEntity('contract', 0).")";
+		else $sql.= " WHERE rowid=".$id;
+		if ($ref_customer)
+		{
+			$sql.= " AND ref_customer = '".$this->db->escape($ref_customer)."'";
+		}
+		if ($ref_supplier)
+		{
+			$sql.= " AND ref_supplier = '".$this->db->escape($ref_supplier)."'";
+		}
 		if ($ref)
 		{
-			$sql.= " WHERE ref='".$this->db->escape($ref)."'";
-			$sql.= " AND entity IN (".getEntity('contract', 0).")";
+			$sql.= " AND ref='".$this->db->escape($ref)."'";
 		}
-		else $sql.= " WHERE rowid=".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -628,7 +638,7 @@ class Contrat extends CommonObject
 			{
 				dol_syslog(get_class($this)."::Fetch Erreur contrat non trouve");
 				$this->error="Contract not found";
-				return -2;
+				return 0;
 			}
 		}
 		else
@@ -928,7 +938,7 @@ class Contrat extends CommonObject
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
 		$sql.= ",".($this->fk_project>0?$this->fk_project:"NULL");
-		$sql.= ", ".(dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
+		$sql.= ", ".(dol_strlen($this->ref)<=0 ? "null" : "'".$this->db->escape($this->ref)."'");
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
@@ -2834,6 +2844,7 @@ class ContratLigne extends CommonObjectLine
 		if (empty($this->total_ttc)) $this->total_ttc = 0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
+		if (empty($this->remise_percent)) $this->remise_percent = 0;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -2872,7 +2883,7 @@ class ContratLigne extends CommonObjectLine
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat=".$this->fk_contrat.",";
-		$sql.= " fk_product=".($this->fk_product?"'".$this->fk_product."'":'null').",";
+		$sql.= " fk_product=".($this->fk_product?"'".$this->db->escape($this->fk_product)."'":'null').",";
 		$sql.= " statut=".$this->statut.",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " description='".$this->db->escape($this->description)."',";
@@ -3009,16 +3020,16 @@ class ContratLigne extends CommonObjectLine
 		if ($this->date_fin_validite > 0)   { $sql.= ",date_fin_validite"; }
 		$sql.= ") VALUES ($this->fk_contrat, '', '" . $this->db->escape($this->description) . "',";
 		$sql.= ($this->fk_product>0 ? $this->fk_product : "null").",";
-		$sql.= " '".$this->qty."',";
-		$sql.= " '".$this->vat_src_code."',";
-		$sql.= " '".$this->tva_tx."',";
-		$sql.= " '".$this->localtax1_tx."',";
-		$sql.= " '".$this->localtax2_tx."',";
-		$sql.= " '".$this->localtax1_type."',";
-		$sql.= " '".$this->localtax2_type."',";
+		$sql.= " '".$this->db->escape($this->qty)."',";
+		$sql.= " '".$this->db->escape($this->vat_src_code)."',";
+		$sql.= " '".$this->db->escape($this->tva_tx)."',";
+		$sql.= " '".$this->db->escape($this->localtax1_tx)."',";
+		$sql.= " '".$this->db->escape($this->localtax2_tx)."',";
+		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
+		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql.= " ".price2num($this->remise_percent).",".price2num($this->subprice).",";
 		$sql.= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
-		$sql.= " '".$this->info_bits."',";
+		$sql.= " '".$this->db->escape($this->info_bits)."',";
 		$sql.= " ".price2num($this->price_ht).",".price2num($this->remise).",";
 		if ($this->fk_fournprice > 0) $sql.= ' '.$this->fk_fournprice.',';
 		else $sql.= ' null,';

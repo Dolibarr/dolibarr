@@ -1426,7 +1426,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->const_name."_TABS_%'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->db->escape($this->const_name)."_TABS_%'";
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::delete_tabs", LOG_DEBUG);
@@ -2019,7 +2019,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_DIR_%'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_DIR_%'";
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::delete_dirs", LOG_DEBUG);
@@ -2128,7 +2128,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
 
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-                $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
+                $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
                 $sql.= " AND entity = ".$entity;
 
                 dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);

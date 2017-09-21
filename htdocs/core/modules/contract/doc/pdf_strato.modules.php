@@ -83,6 +83,7 @@ class pdf_strato extends ModelePDFContract
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
+
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
@@ -397,7 +398,7 @@ class pdf_strato extends ModelePDFContract
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;
 			}
 			else
@@ -465,17 +466,20 @@ class pdf_strato extends ModelePDFContract
 
 		if (empty($hidebottom))
 		{
-			$pdf->SetXY(20,230);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name),0,'L',0);
+			$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite)/2);
+			$posy = $tab_top + $tab_height + 3 + 3;
 
-			$pdf->SetXY(20,235);
-			$pdf->MultiCell(80,25, '', 1);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name),0,'L',0);
 
-			$pdf->SetXY(110,230);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name),0,'L',0);
+			$pdf->SetXY($this->marge_gauche, $posy + 5);
+			$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 20, '', 1);
 
-			$pdf->SetXY(110,235);
-			$pdf->MultiCell(80,25, '', 1);
+			$pdf->SetXY($posmiddle + 5, $posy);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name),0,'L',0);
+
+			$pdf->SetXY($posmiddle + 5, $posy + 5);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite - $posmiddle - 5, 20, '', 1);
 		}
 	}
 

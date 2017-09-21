@@ -115,14 +115,14 @@ class FormProduct
 		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (".$db->escape(implode(',',$warehouseStatus)).")";
+			$sql.= " AND e.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
 		}
 		else
 		{
 			$sql.= " AND e.statut = 1";
 		}
 
-		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$db->escape(implode(',', $exclude)).')';
+		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
 
 		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description, e.fk_parent";
 		$sql.= " ORDER BY e.label";

@@ -83,11 +83,12 @@ class Conf
 		$this->file				= new stdClass();
 		$this->db				= new stdClass();
 		$this->global			= new stdClass();
-		$this->mycompany		= new stdClass();
-		$this->admin			= new stdClass();
+		$this->mycompany			= new stdClass();
+		$this->admin				= new stdClass();
 		$this->user				= new stdClass();
 		$this->syslog			= new stdClass();
 		$this->browser			= new stdClass();
+		$this->medias			= new stdClass();
 		$this->multicompany		= new stdClass();
 
 		//! Charset for HTML output and for storing data in memory
@@ -96,7 +97,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->expedition_bon	= new stdClass();
-		$this->livraison_bon	= new stdClass();
+		$this->livraison_bon		= new stdClass();
 		$this->fournisseur		= new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
@@ -106,12 +107,12 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
-		$this->usergroup		= new stdClass();
+		$this->usergroup			= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
-		$this->expensereport    = new stdClass();
+		$this->expensereport		= new stdClass();
 	}
 
 
@@ -321,6 +322,10 @@ class Conf
 		// For propal storage
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
+
+		// For medias storage
+		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
+		$this->medias->multidir_temp		= array($this->entity => $rootfordata."/medias/temp");
 
 		// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 

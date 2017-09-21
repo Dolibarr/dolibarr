@@ -956,7 +956,7 @@ class Form
      */
     function select_thirdparty($selected='', $htmlname='socid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
-   		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+   		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0, $limit);
     }
 
     /**
@@ -1082,7 +1082,7 @@ class Form
         	$sql.=")";
         }
         $sql.=$this->db->order("nom","ASC");
-		if ($limit > 0) $sql.=$this->db->plimit($limit);
+		$sql.=$this->db->plimit($limit, 0);
 
 		// Build output string
         dol_syslog(get_class($this)."::select_thirdparty_list", LOG_DEBUG);
@@ -1919,7 +1919,7 @@ class Form
         $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
         if (count($warehouseStatusArray))
         {
-            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$db->escape(implode(',',$warehouseStatusArray)).'))';
+            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$this->db->escape(implode(',',$warehouseStatusArray)).'))';
         }
 
         if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -1966,7 +1966,7 @@ class Form
             $sql.= ' GROUP BY'.$selectFields;
         }
         $sql.= $db->order("p.ref");
-        $sql.= $db->plimit($limit);
+        $sql.= $db->plimit($limit, 0);
 
         // Build output string
         dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
@@ -2390,7 +2390,7 @@ class Form
         	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
-        $sql.= $db->plimit($limit);
+        $sql.= $db->plimit($limit, 0);
 
         // Build output string
 
@@ -3392,7 +3392,7 @@ class Form
                 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
                 $bankstatic=new Account($this->db);
                 $bankstatic->fetch($selected);
-                print $this->textwithpicto($bankstatic->getNomUrl(1),$langs->trans("AccountCurrency").'&nbsp;'.$bankstatic->currency_code);
+                print $bankstatic->getNomUrl(1);
             } else {
                 print "&nbsp;";
             }
@@ -4297,7 +4297,7 @@ class Form
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
-        print $this->selectcurrency($selected,$htmlname);
+        print $this->selectCurrency($selected,$htmlname);
     }
 
     /**
@@ -4307,35 +4307,40 @@ class Form
      *  @param  string	$htmlname    name of HTML select list
      * 	@return	string
      */
-    function selectCurrency($selected='',$htmlname='currency_id')
-    {
-        global $conf,$langs,$user;
+	function selectCurrency($selected='',$htmlname='currency_id')
+	{
+		global $conf,$langs,$user;
 
-        $langs->loadCacheCurrencies('');
+		$langs->loadCacheCurrencies('');
 
-        $out='';
+		$out='';
 
-        if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
+		if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-        foreach ($langs->cache_currencies as $code_iso => $currency)
-        {
-        	if ($selected && $selected == $code_iso)
-        	{
-        		$out.= '<option value="'.$code_iso.'" selected>';
-        	}
-        	else
-        	{
-        		$out.= '<option value="'.$code_iso.'">';
-        	}
-        	$out.= $currency['label'];
-        	$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
-        	$out.= '</option>';
-        }
-        $out.= '</select>';
-        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-        return $out;
-    }
+		$out.= '<select class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'" id="'.$htmlname.'">';
+		foreach ($langs->cache_currencies as $code_iso => $currency)
+		{
+			if ($selected && $selected == $code_iso)
+			{
+				$out.= '<option value="'.$code_iso.'" selected>';
+			}
+			else
+			{
+				$out.= '<option value="'.$code_iso.'">';
+			}
+			$out.= $currency['label'];
+			$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+			$out.= '</option>';
+		}
+		$out.= '</select>';
+		if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+
+		// Make select dynamic
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		$out .= ajax_combobox($htmlname);
+
+		return $out;
+	}
 
 	/**
      *	Return array of currencies in user language
@@ -5036,16 +5041,16 @@ class Form
         }
         elseif ($typehour=='text' || $typehour=='textselect')
         {
-        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($hourSelected != '')?((int) $hourSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '')?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
-        else $retstring.=':';
+        else $retstring.='<span class="hideonsmartphone">:</span>';
 
         // Minutes
         if ($minunderhours) $retstring.='<br>';
-        else $retstring.="&nbsp;";
+        else $retstring.='<span class="hideonsmartphone">&nbsp;</span>';
 
         if ($typehour=='select' || $typehour=='textselect')
         {
@@ -5060,7 +5065,7 @@ class Form
         }
         elseif ($typehour=='text' )
         {
-        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
         }
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
@@ -5547,6 +5552,8 @@ class Form
         	print '<br><!-- showLinkedObjectBlock -->';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
 
+
+    		print '<div class="div-table-responsive-no-min">';
             print '<table class="noborder allwidth">';
 
             print '<tr class="liste_titre">';
@@ -5640,6 +5647,7 @@ class Form
         	}
 
         	print '</table>';
+			print '</div>';
 
         	return $nbofdifferenttypes;
         }

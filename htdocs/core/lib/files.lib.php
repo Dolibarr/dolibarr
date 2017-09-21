@@ -1537,7 +1537,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
     					    $ecmfile=new EcmFiles($db);
     					    $ecmfile->filepath = $rel_dir;
     					    $ecmfile->filename = $filename;
-    					    $ecmfile->label = md5_file(dol_osencode($destfull));
+    					    $ecmfile->label = md5_file(dol_osencode($destfull));	// MD5 of file content
     					    $ecmfile->fullpath_orig = $TFile['name'][$i];
     					    $ecmfile->gen_or_uploaded = 'uploaded';
     					    $ecmfile->description = '';    // indexed content
@@ -1648,7 +1648,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 }
 
 /**
- * 	Convert an image file into anoher format.
+ * 	Convert an image file into another format.
  *  This need Imagick php extension.
  *
  *  @param	string	$fileinput  Input file name
@@ -1656,14 +1656,19 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  *  @param	string	$fileoutput	Output filename
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
-function dol_convert_file($fileinput,$ext='png',$fileoutput='')
+function dol_convert_file($fileinput, $ext='png', $fileoutput='')
 {
 	global $langs;
 
 	if (class_exists('Imagick'))
 	{
 		$image=new Imagick();
-		$ret = $image->readImage($fileinput);
+		try {
+			$ret = $image->readImage($fileinput);
+		} catch(Exception $e) {
+			dol_syslog("Failed to read image using Imagick. Try to install package 'apt-get install ghostscript'.", LOG_WARNING);
+			return 0;
+		}
 		if ($ret)
 		{
 			$ret = $image->setImageFormat($ext);
@@ -1964,7 +1969,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
 	    $accessallowed=1;
-	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	    $original_file=$conf->medias->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
 	elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root))
@@ -2282,6 +2287,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	        $accessallowed=1;
 	    }
 	    $original_file=$conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	else if ($modulepart == 'massfilesarea_contract' && !empty($conf->contrat->dir_output))
+	{
+		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->contrat->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 
 	// Wrapping for interventions

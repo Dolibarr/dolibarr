@@ -159,7 +159,7 @@ if (! empty($conf->global->$key)) print $conf->global->$key;
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

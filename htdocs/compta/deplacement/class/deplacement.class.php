@@ -107,7 +107,7 @@ class Deplacement extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
-		$sql.= ", '".$this->type."'";
+		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);

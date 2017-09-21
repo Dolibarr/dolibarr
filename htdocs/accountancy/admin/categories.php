@@ -35,7 +35,7 @@ $langs->load("accountancy");
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $action = GETPOST('action','aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk', 'array');

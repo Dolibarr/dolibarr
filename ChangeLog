@@ -5,11 +5,16 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 7.0.0 compared to 6.0.* *****
 
+For developers:
+NEW: Add hook addAdminLdapOptions and doAction in ldap admin page
+NEW: complete_head_from_modules() in ldap_prepare_head()
+
 WARNING: 
 
-Following changes may create regression for some external modules, but were necessary to make Dolibarr better:
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The methode "cloture" on contact were renamed into "closeAll".
-
+* The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
+  __PROPALREF__, ...)
 
 
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
@@ -162,6 +167,9 @@ Following changes may create regression for some external modules, but were nece
 content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
 hook specifications so you must return output into "resprint".
 
+***** ChangeLog for 5.0.6 compared to 5.0.5 *****
+FIX: Removed a bad symbolic link into custom directory.
+FIX: Renaming a resource ref rename also the directory of attached files.
 
 ***** ChangeLog for 5.0.5 compared to 5.0.4 *****
 FIX: #7075 : bad path for document

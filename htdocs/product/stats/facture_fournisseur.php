@@ -229,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td>' . $societestatic->getNomUrl(1) . '</td>';
 						print "<td>" . $objp->code_client . "</td>\n";
                    		print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datef)) . "</td>";
+						print dol_print_date($db->jdate($objp->datef), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5) . '</td>';

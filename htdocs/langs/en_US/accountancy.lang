@@ -33,6 +33,7 @@ AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
+AccountWithNonZeroValues=Accounts with non zero values
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -56,7 +57,7 @@ AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for speci
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s. 
-AccountancyAreaDescBank=STEP %s: Define accounting accounts for each bank and financial accounts. For this, go on the card of each financial account. You can start from page %s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
@@ -65,6 +66,7 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
 MenuAccountancy=Accountancy
 Selectchartofaccounts=Select active chart of accounts
 ChangeAndLoad=Change and load
@@ -76,6 +78,7 @@ ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 AccountAccountingSuggest=Accounting account suggested
 MenuDefaultAccounts=Default accounts
+MenuBankAccounts=Bank accounts
 MenuVatAccounts=Vat accounts
 MenuTaxAccounts=Tax accounts
 MenuExpenseReportAccounts=Expense report accounts
@@ -156,6 +159,7 @@ AccountingAccountGroupsDesc=You can define here some groups of accounting accoun
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
+ByYear=By year
 NotMatch=Not Set
 DeleteMvt=Delete Ledger lines
 DelYear=Year to delete
@@ -166,7 +170,7 @@ DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
@@ -226,7 +230,7 @@ AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
 Nature=Nature
-AccountingJournalType1=Various operation
+AccountingJournalType1=Miscellaneous operation
 AccountingJournalType2=Sales
 AccountingJournalType3=Purchases
 AccountingJournalType4=Bank
@@ -252,14 +256,14 @@ ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with accounting account for sales.
 OptionModeProductBuyDesc=Show all products with accounting account for purchases.
-CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
+CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Reset all bindings for selected year
 PredefinedGroups=Predefined groups
 WithoutValidAccount=Without valid dedicated account
@@ -279,5 +283,6 @@ BookeppingLineAlreayExists=Lines already existing into bookeeping
 NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
+UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate. 

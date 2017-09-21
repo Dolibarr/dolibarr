@@ -313,7 +313,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				{
 					$socobject=$object->client;
 				}
-				
+
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
@@ -332,7 +332,7 @@ class doc_generic_user_odt extends ModelePDFUser
 					$this->error=$e->getMessage();
 					return -1;
 				}
-				
+
 				// Make substitutions into odt
 				$array_user=$this->get_substitutionarray_user($object,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
@@ -366,7 +366,7 @@ class doc_generic_user_odt extends ModelePDFUser
 					{
 					}
 				}
-				
+
 				// Replace labels translated
 				$tmparray=$outputlangs->get_translations_for_substitutions();
 				foreach($tmparray as $key=>$value)
@@ -422,12 +422,13 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
-	function get_substitutionarray_object($object,$outputlangs) {
+	function get_substitutionarray_object($object,$outputlangs,$array_key='object') {
+		$array_other=array();
 		foreach($object as $key => $value) {
-			if(!is_array($value) && !is_object($value)) {
-	    	$array_other['object_'.$key] = $value;
+			if (!is_array($value) && !is_object($value)) {
+				$array_other[$array_key.'_'.$key] = $value;
 			}
-	     }
+		}
 		return $array_other;
 	}
 

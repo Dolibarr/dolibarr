@@ -506,12 +506,12 @@ class Paiement extends CommonObject
 
 
     /**
-     *      Add a record into bank for payment with links between this bank record and invoices of payment.
+     *      Add a record into bank for payment + links between this bank record and sources of payment.
      *      All payment properties (this->amount, this->amounts, ...) must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
      *      @param  string	$mode               'payment', 'payment_supplier'
-     *      @param  string	$label              Label to use in bank record
+     *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
@@ -595,10 +595,11 @@ class Paiement extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if (! $error  && $label != '(WithdrawalPayment)')
+                //if (! $error && $label != '(WithdrawalPayment)')
+                if (! $error)
                 {
                     $linkaddedforthirdparty=array();
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have invoices always for same third party but we loop in case of.
                     {
                         if ($mode == 'payment')
                         {

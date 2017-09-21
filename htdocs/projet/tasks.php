@@ -39,7 +39,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $search_user_id = GETPOST('search_user_id', 'int');
 

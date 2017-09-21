@@ -185,7 +185,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
     if (isset($_POST["country"]) && ($_POST["country"] <= 0))

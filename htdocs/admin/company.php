@@ -157,7 +157,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("object",'nohtml'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("fiscalmonthstart",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START",'alpha'),'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "FACTURE_TVAOPTION", GETPOST("optiontva",'alpha'),'chaine',0,'',$conf->entity);
 
@@ -547,8 +547,8 @@ if ($action == 'edit' || $action == 'updateedit')
 	print "</tr>\n";
 
 
-	print '<tr class="oddeven"><td><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',0,1) . '</td></tr>';
+	print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
+	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'SOCIETE_FISCAL_MONTH_START',0,1) . '</td></tr>';
 
 	print "</table>";
 

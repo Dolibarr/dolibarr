@@ -209,7 +209,7 @@ print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] 
 
 $viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'',$limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'', $limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
@@ -315,7 +315,7 @@ while ($i < min($num, $limit))
 
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
 	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';

@@ -69,7 +69,7 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type','int');
 $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 $duration_value = GETPOST('duration_value');
@@ -340,7 +340,7 @@ if (empty($reshook))
             if ($id > 0)
             {
 				// Category association
-				$categories = GETPOST('categories');
+				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -358,7 +358,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-    	if (GETPOST('cancel'))
+    	if (GETPOST('cancel','alpha'))
         {
             $action = '';
         }
@@ -444,7 +444,7 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						$categories = GETPOST('categories');
+						$categories = GETPOST('categories', 'array');
 						$object->setCategories($categories);
 
                         $action = 'view';

@@ -143,14 +143,14 @@ class Holiday extends CommonObject
         $sql.= "fk_user_create,";
         $sql.= "entity";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->fk_user."',";
+        $sql.= "'".$this->db->escape($this->fk_user)."',";
         $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->db->escape($this->description)."',";
         $sql.= " '".$this->db->idate($this->date_debut)."',";
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
-        $sql.= " '".$this->fk_validator."',";
+        $sql.= " '".$this->db->escape($this->fk_validator)."',";
         $sql.= " ".$this->fk_type.",";
         $sql.= " ".$user->id.",";
         $sql.= " ".$conf->entity;
@@ -284,7 +284,7 @@ class Holiday extends CommonObject
      *  @param      string	$filter     SQL Filter
      *  @return     int      			-1 if KO, 1 if OK, 2 if no result
      */
-    function fetchByUser($user_id,$order='',$filter='')
+    function fetchByUser($user_id, $order='', $filter='')
     {
         global $langs, $conf;
 
@@ -692,13 +692,17 @@ class Holiday extends CommonObject
     }
 
     /**
-     *	verifDateHolidayCP
+     *	Check if a user is on holiday (partially or completely) into a period.
+     *  This function can be used to avoid to have 2 leave requests on same period for example.
+     *  Warning: It consumes a lot of memory because it load in ->holiday all holiday of a dedicated user at each call.
      *
      * 	@param 	int		$fk_user		Id user
-     * 	@param 	date	$dateDebut		Start date
-     * 	@param 	date	$dateFin		End date
-     *  @param	int		$halfday		Tag to define half day when holiday start and end
-     * 	@return boolean
+     * 	@param 	date	$dateDebut		Start date of period to check
+     * 	@param 	date	$dateFin		End date of period to check
+     *  @param	int		$halfday		Tag to define how start and end the period to check:
+     *  	    						0:Full days, 2:Sart afternoon end monring, -1:Start afternoon, 1:End morning
+     * 	@return boolean					False is on holiday at least partially into the period, True is never on holiday during chcked period.
+     *  @see verifDateHolidayForTimestamp
      */
     function verifDateHolidayCP($fk_user, $dateDebut, $dateFin, $halfday=0)
     {
@@ -710,14 +714,103 @@ class Holiday extends CommonObject
         	if ($infos_CP['statut'] == 5) continue;		// ignore not validated holidays
 
         	// TODO Also use halfday for the check
-            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
-            {
-                return false;
-            }
+        	if ($halfday == 0)
+        	{
+	            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+	            {
+	                return false;
+	            }
+        	}
+            elseif ($halfday == -1)
+        	{
+	            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+	            {
+	                return false;
+	            }
+        	}
+            elseif ($halfday == 1)
+        	{
+	            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+	            {
+	                return false;
+	            }
+        	}
+            elseif ($halfday == 2)
+        	{
+	            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+	            {
+	                return false;
+	            }
+        	}
+        	else
+        	{
+        		dol_print_error('', 'Bad value of parameter halfday when calling function verifDateHolidayCP');
+        	}
         }
 
         return true;
+    }
 
+
+    /**
+     *	Check a user is not on holiday for a particular timestamp
+     *
+     * 	@param 	int			$fk_user				Id user
+     *  @param	timestamp	$timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
+     * 	@return array								array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
+     *  @see verifDateHolidayCP
+     */
+    function verifDateHolidayForTimestamp($fk_user, $timestamp)
+    {
+    	global $langs, $conf;
+
+    	$isavailablemorning=true;
+    	$isavailableafternoon=true;
+
+    	$sql = "SELECT cp.rowid, cp.date_debut as date_start, cp.date_fin as date_end, cp.halfday";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
+    	$sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
+    	$sql.= " AND cp.fk_user = ".(int) $fk_user;
+   		$sql.= " AND date_debut <= '".$this->db->idate($timestamp)."' AND date_fin >= '".$this->db->idate($timestamp)."'";
+
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num_rows = $this->db->num_rows($resql);	// Note, we can have 2 records if on is morning and the other one is afternoon
+    		if ($num_rows > 0)
+    		{
+	    		$i=0;
+	    		while ($i < $num_rows)
+	    		{
+	    			$obj = $this->db->fetch_object($resql);
+
+	    			// Note: $obj->halday is  0:Full days, 2:Sart afternoon end morning, -1:Start afternoon, 1:End morning
+	    			$arrayofrecord[$obj->rowid]=array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday);
+	    			$i++;
+	    		}
+
+    			// We found a record, user is on holiday by default, so is not available is true.
+	    		$isavailablemorning = true;
+	    		foreach($arrayofrecord as $record)
+	    		{
+					if ($timestamp == $record['date_start'] && $record['halfday'] == 2)  continue;
+					if ($timestamp == $record['date_start'] && $record['halfday'] == -1) continue;
+	    			$isavailablemorning = false;
+	    			break;
+	    		}
+    			$isavailableafternoon = true;
+	    		foreach($arrayofrecord as $record)
+	    		{
+					if ($timestamp == $record['date_end'] && $record['halfday'] == 2) continue;
+					if ($timestamp == $record['date_end'] && $record['halfday'] == 1) continue;
+	    			$isavailableafternoon = false;
+	    			break;
+	    		}
+    		}
+    	}
+    	else dol_print_error($this->db);
+
+   		return array('morning'=>$isavailablemorning, 'afternoon'=>$isavailableafternoon);
     }
 
 

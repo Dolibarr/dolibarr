@@ -2,19 +2,15 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
+# We use dist: precise to have php 5.3 available 
 dist: precise
 sudo: required
 
 language: php
 
-php:
-- '5.3'
-- '5.4'
-- '5.5'
-- '5.6'
-- '7.0'
-- '7.1'
-- nightly
+# Start on every boot
+services:
+- memcached
 
 addons:
   mariadb: '10.0'
@@ -33,10 +29,16 @@ addons:
     - libapache2-mod-fastcgi
     # We need pgloader for import mysql database into pgsql
     - pgloader
- 
-# Start on every boot
-services:
-- memcached
+
+php:
+- '5.3'
+- '5.4'
+- '5.5'
+- '5.6'
+- '7.0'
+- '7.1'
+#- hhvm		only with dist: trusty
+- nightly
 
 env:
   global:
@@ -57,11 +59,22 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-  - php: 7.1
+  - php: hhvm
   - php: nightly
-  #- env: DB=postgresql
-  # TODO
-  #- env: DB=sqlite
+  # We exclude some combinations not usefull to save Travis CPU
+  exclude:
+  - php: '5.4'
+    env: DB=postgresql
+  - php: '5.5'
+    env: DB=postgresql
+  - php: '5.6'
+    env: DB=postgresql
+  - php: '7.0'
+    env: DB=postgresql
+  - php: hhvm
+    env: DB=postgresql
+  - php: nightly
+    env: DB=postgresql
 
 notifications:
   email:

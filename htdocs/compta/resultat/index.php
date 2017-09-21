@@ -118,7 +118,7 @@ $exportlink='';
 // Affiche en-tete du rapport
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$name=$langs->trans("AnnualSummaryDueDebtMode");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
@@ -132,7 +132,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 else if ($modecompta=="RECETTES-DEPENSES") {
-	$name=$langs->trans("AnnualSummaryInputOutputMode");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
@@ -145,7 +145,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 }
 else if ($modecompta=="BOOKKEEPING")
 {
-	$name=$langs->trans("AnnualSummaryDueDebtMode");
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -636,12 +636,12 @@ if (! empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $m
 
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
-	$sql = "SELECT p.label as nom, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+	$sql = "SELECT p.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "payment_salary as p";
 	$sql .= " WHERE p.entity = " . $conf->entity;
-	$sql .= " GROUP BY p.label, dm";
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+	$sql .= " GROUP BY p.label, dm";
 
 	dol_syslog("get social salaries payments");
 	$result = $db->query($sql);

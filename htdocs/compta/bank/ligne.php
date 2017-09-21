@@ -48,8 +48,8 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST("rowid",'int');
 $orig_account=GETPOST("orig_account");
-$backtopage=GETPOST('backtopage');
-$cancel=GETPOST('cancel');
+$backtopage=GETPOST('backtopage','alpha');
+$cancel=GETPOST('cancel','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));

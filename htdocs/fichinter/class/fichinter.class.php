@@ -559,9 +559,10 @@ class Fichinter extends CommonObject
 	/**
 	 *	Returns amount based on user thm
 	 *
-	 *	@return     float amount
+	 *	@return     float 		Amount
 	 */
-	function getAmount() {
+	function getAmount()
+	{
 		global $db;
 
 		$amount = 0;
@@ -571,13 +572,44 @@ class Fichinter extends CommonObject
 
 		$thm = $this->author->thm;
 
-		foreach($this->lines as &$line) {
-
-			$amount+=$line->qty * $thm;
-
+		foreach($this->lines as $line) {
+			$amount += ($line->duration / 60 / 60 * $thm);
 		}
 
-		return $amount;
+		return price2num($amount, 'MT');
+	}
+
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param      string                  $modele         Force model to use ('' to not force)
+	 *  @param      Translate               $outputlangs    Object langs to use for output
+	 *  @param      int                     $hidedetails    Hide details of lines
+	 *  @param      int                     $hidedesc       Hide description
+	 *  @param      int                     $hideref        Hide ref
+	 *  @return     int                                     0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs;
+
+		$langs->load("interventions");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'soleil';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->FICHEINTER_ADDON_PDF)) {
+				$modele = $conf->global->FICHEINTER_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/fichinter/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	/**

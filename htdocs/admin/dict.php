@@ -662,7 +662,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
     if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
@@ -1142,7 +1142,7 @@ if ($id)
         }
 
         if ($id == 4) print '<td></td>';
-        print '<td colspan="3" align="right">';
+        print '<td colspan="3" align="center">';
         if ($action != 'edit')
         {
         	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';

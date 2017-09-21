@@ -187,7 +187,7 @@ if (empty($reshook))
 	        if (! $error && !empty($object->id) > 0)
 	        {
 	        	// Category association
-	        	$categories = GETPOST('categories');
+	        	$categories = GETPOST('categories', 'array');
 	        	$result=$object->setCategories($categories);
 	        	if ($result<0) {
 		        	$langs->load("errors");
@@ -282,7 +282,7 @@ if (empty($reshook))
 		        else setEventMessages($object->error, $object->errors, 'errors');
 	    	}else {
 	    		// Category association
-	    		$categories = GETPOST('categories');
+	    		$categories = GETPOST('categories', 'array');
 	    		$result=$object->setCategories($categories);
 	    		if ($result < 0)
 	    		{
@@ -528,7 +528,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         print '</td><td class="maxwidthonsmartphone">';
         $filteronlist='';
         if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-       	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+       	$text=$form->select_company(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
         if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
         {
         	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
@@ -747,7 +747,7 @@ elseif ($object->id > 0)
             print '</td><td>';
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-            $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), '', 0, 0, 'minwidth300');
+            $text=$form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 	        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		    {
 	            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
@@ -1198,6 +1198,10 @@ elseif ($object->id > 0)
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+        $formactions = new FormActions($db);
+        $somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', 10);
 
         print '</div></div></div>';
     }

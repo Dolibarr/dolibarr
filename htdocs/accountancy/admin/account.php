@@ -37,7 +37,7 @@ $langs->load("salaries");
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 
@@ -53,12 +53,10 @@ if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'sortorder');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -84,8 +82,8 @@ $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accounting
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha')) { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks

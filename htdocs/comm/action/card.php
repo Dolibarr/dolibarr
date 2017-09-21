@@ -397,7 +397,7 @@ if ($action == 'update')
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
-		$object->fk_action   = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
+		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
 		$object->label       = GETPOST("label");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
@@ -407,8 +407,6 @@ if ($action == 'update')
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$object->contactid   = GETPOST("contactid",'int');
-		//$object->societe->id = $_POST["socid"];			// deprecated
-		//$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = GETPOST("projectid",'int');
 		$object->note        = GETPOST("note");
 		$object->pnote       = GETPOST("note");
@@ -670,7 +668,7 @@ if ($action == 'create')
 	}
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
@@ -869,7 +867,7 @@ if ($id > 0)
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
-		$object->fk_action   = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
+		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
 		$object->label       = GETPOST("label");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
@@ -879,8 +877,6 @@ if ($id > 0)
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$object->contactid   = GETPOST("contactid",'int');
-		//$object->societe->id = $_POST["socid"];			// deprecated
-		//$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = GETPOST("projectid",'int');
 
 		$object->note = GETPOST("note");

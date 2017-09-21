@@ -289,7 +289,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
     if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
@@ -739,15 +739,6 @@ if ($id)
         }
         print '</td>';
         print "</tr>";
-
-        if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates')
-        {
-        	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
-        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        	$tmp=FormMail::getAvailableSubstitKey('formemail');
-        	print implode(', ', $tmp);
-        	print '</td></tr>';
-        }
 
         $colspan=count($fieldlist)+3;
         if ($id == 4) $colspan++;

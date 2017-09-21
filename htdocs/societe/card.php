@@ -56,7 +56,7 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
-$cancel     = GETPOST('cancel');
+$cancel     = GETPOST('cancel','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
@@ -186,7 +186,6 @@ if (empty($reshook))
 				$objects = array(
 					'Adherent' => '/adherents/class/adherent.class.php',
 					'Societe' => '/societe/class/societe.class.php',
-					'Bookmark' => '/bookmarks/class/bookmark.class.php',
 					'Categorie' => '/categories/class/categorie.class.php',
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',
@@ -422,7 +421,7 @@ if (empty($reshook))
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
         // Check parameters
-        if (! GETPOST("cancel"))
+        if (! GETPOST('cancel','alpha'))
         {
             if (! empty($object->email) && ! isValidEMail($object->email))
             {
@@ -491,7 +490,7 @@ if (empty($reshook))
                     }
 
 					// Customer categories association
-					$custcats = GETPOST( 'custcats', 'array' );
+					$custcats = GETPOST('custcats', 'array');
 					$object->setCategories($custcats, 'customer');
 
 					// Supplier categories association
@@ -581,7 +580,7 @@ if (empty($reshook))
 
             if ($action == 'update')
             {
-                if (GETPOST("cancel"))
+                if (GETPOST('cancel','alpha'))
                 {
                 	if (! empty($backtopage))
                 	{
@@ -608,7 +607,7 @@ if (empty($reshook))
                 }
 
 				// Customer categories association
-				$categories = GETPOST( 'custcats', 'array' );
+				$categories = GETPOST('custcats', 'array');
 				$object->setCategories($categories, 'customer');
 
 				// Supplier categories association
@@ -1045,7 +1044,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+	    $selected=GETPOST('client','int')!=''?GETPOST('client','int'):$object->client;
         print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1">&nbsp;</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
@@ -1072,7 +1071,7 @@ else
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
             $default = -1;
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
-            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
+            print $form->selectyesno("fournisseur", (GETPOST('fournisseur','int')!=''?GETPOST('fournisseur','int'):(GETPOST("type",'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type",'alpha') == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
@@ -1977,7 +1976,7 @@ else
 		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
 	    }
 
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -2485,10 +2484,10 @@ else
 			$formmail->withbody=1;
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
-			// Tableau des substitutions
-			//$formmail->setSubstitFromObject($object);
-			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
-			$formmail->substit['__SIGNATURE__']=$user->signature;
+			// Array of substitutions
+			$formmail->setSubstitFromObject($object);
+			$formmail->substit['__THIRDPARTY_ID__']=$object->id;		// substit in setSubstitFromObject was wrong for this one
+			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;	// substit in setSubstitFromObject was wrong for this one
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
 

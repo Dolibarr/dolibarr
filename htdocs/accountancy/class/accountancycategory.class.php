@@ -354,7 +354,7 @@ class AccountancyCategory
 		}
 		if ($thirdparty_code != 'nofilter')
 		{
-			$sql .= " AND thirdparty_code = '".$ths->db->escape($thirdparty_code)."'";
+			$sql .= " AND thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
 		}
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);

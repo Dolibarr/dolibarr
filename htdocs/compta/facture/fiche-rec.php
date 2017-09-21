@@ -121,7 +121,8 @@ $arrayfields=array(
     'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
     'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
     'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
-    'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
+	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 );
 // Extra fields
@@ -138,8 +139,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -147,7 +148,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (GETPOST('cancel')) $action='';
+    if (GETPOST('cancel','alpha')) $action='';
 
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
@@ -299,7 +300,7 @@ if (empty($reshook))
     // Delete
     if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer)
     {
-    	$object->delete();
+    	$object->delete($user);
     	header("Location: " . $_SERVER['PHP_SELF'] );
     	exit;
     }
@@ -727,7 +728,7 @@ if (empty($reshook))
         }
     }
 
-    elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel'))
+    elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel','alpha'))
     {
     	if (! $object->fetch($id) > 0)	dol_print_error($db);
     	$object->fetch_thirdparty();
@@ -934,6 +935,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 $companystatic = new Societe($db);
+$invoicerectmp = new FactureRec($db);
 
 $now = dol_now();
 $tmparray=dol_getdate($now);
@@ -993,7 +995,10 @@ if ($action == 'create')
 		    '__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%B').')',
 		    '__INVOICE_PREVIOUS_YEAR__' => $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'y'),'%Y').')',
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')',
-		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
+		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')',
+			// Only on template invoices
+			'__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__' => $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')',
+		    '__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__' => $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency),'dayhour').')',
 		);
 		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
 
@@ -1117,7 +1122,7 @@ if ($action == 'create')
 		    $disableedit=1;
 		    $disablemove=1;
 		    $disableremove=1;
-		    $ret = $object->printObjectLines('', $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		    $ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1312,7 +1317,10 @@ else
 		    '__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')',
 		    '__INVOICE_PREVIOUS_YEAR__' => $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'),'%Y').')',
 		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
-		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
+		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')',
+			// Only on template invoices
+			'__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__' => $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')',
+		    '__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__' => $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency),'dayhour').')',
 		);
 		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
 
@@ -1409,7 +1417,7 @@ else
 		{
 		    	if ($object->frequency > 0)
 		    	{
-				print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+					print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
 		    	}
 		    	else
 		    	{
@@ -1533,7 +1541,7 @@ else
 		{
 		    //$disableedit=1;
 		    //$disablemove=1;
-		    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		    $ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		// Form to add new line
@@ -1544,7 +1552,7 @@ else
     		    $var = true;
 
     		    // Add free products/services
-    		    $object->formAddObjectLine(0, $mysoc, $soc);                          // No date selector for template invoice
+    		    $object->formAddObjectLine(0, $mysoc, $object->thirdparty);                          // No date selector for template invoice
 
     		    $parameters = array();
     		    $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1617,7 +1625,7 @@ else
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
+		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
 		$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
 		$sql.= " f.datec, f.tms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
@@ -1625,7 +1633,7 @@ else
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql.= " WHERE f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= ' AND f.entity IN ('.getEntity('facture').')';
 		if (! $user->rights->societe->client->voir && ! $socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
@@ -1723,7 +1731,7 @@ else
             print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
             print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
+	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
 
 			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
@@ -1837,6 +1845,12 @@ else
 			    print '<td class="liste_titre">';
 			    print '</td>';
 			}
+			// Status
+			if (! empty($arrayfields['status']['checked']))
+			{
+			    print '<td class="liste_titre" align="center">';
+			    print '</td>';
+			}
 			// Action column
 			print '<td class="liste_titre" align="middle">';
 			$searchpicto=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
@@ -1855,8 +1869,9 @@ else
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'],$_SERVER['PHP_SELF'],"f.nb_gen_done","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.date_last_gen']['checked'])) print_liste_field_titre($arrayfields['f.date_last_gen']['label'],$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.datec","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.tms","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 			print "</tr>\n";
 
@@ -1870,6 +1885,11 @@ else
 
 					$companystatic->id=$objp->socid;
 					$companystatic->name=$objp->name;
+
+					$invoicerectmp->id=$objp->id;
+					$invoicerectmp->frequency=$objp->frequency;
+					$invoicerectmp->suspend=$objp->suspend;
+					$invoicerectmp->unit_frequency=$objp->unit_frequency;
 
 					print '<tr class="oddeven">';
 
@@ -1926,6 +1946,12 @@ else
 					{
 					   print '<td align="center">';
 					   print dol_print_date($db->jdate($objp->tms),'dayhour');
+					   print '</td>';
+					}
+					if (! empty($arrayfields['status']['checked']))
+					{
+					   print '<td align="center">';
+					   print $invoicerectmp->getLibStatut(3,0);
 					   print '</td>';
 					}
 					// Action column

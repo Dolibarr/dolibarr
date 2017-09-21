@@ -56,7 +56,7 @@ $search_id=trim(GETPOST("search_id","int"));
 $search_nom=trim(GETPOST("search_nom"));
 $search_alias=trim(GETPOST("search_alias"));
 $search_nom_only=trim(GETPOST("search_nom_only"));
-$search_barcode=trim(GETPOST("sbarcode"));
+$search_barcode=trim(GETPOST("search_barcode"));
 $search_customer_code=trim(GETPOST('search_customer_code'));
 $search_supplier_code=trim(GETPOST('search_supplier_code'));
 $search_account_customer_code=trim(GETPOST('search_account_customer_code'));
@@ -208,8 +208,8 @@ $object = new Societe($db);
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -217,8 +217,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Did we click on purge search criteria ?
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -259,24 +259,24 @@ if (empty($reshook))
     	$search_array_options=array();
     }
 
-    // Mass actions
-    $objectclass='Societe';
-    $objectlabel='ThirdParty';
-    $permtoread = $user->rights->societe->lire;
-    $permtodelete = $user->rights->societe->supprimer;
-    $uploaddir = $conf->societe->dir_output;
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	// Mass actions
+	$objectclass='Societe';
+	$objectlabel='ThirdParty';
+	$permtoread = $user->rights->societe->lire;
+	$permtodelete = $user->rights->societe->supprimer;
+	$uploaddir = $conf->societe->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-    if ($action == 'setstcomm')
-    {
-        $object = new Client($db);
-        $result=$object->fetch(GETPOST('stcommsocid'));
-        $object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-        $result=$object->update($object->id, $user);
-        if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+	if ($action == 'setstcomm')
+	{
+		$object = new Client($db);
+		$result=$object->fetch(GETPOST('stcommsocid'));
+		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
+		$result=$object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
 
-        $action='';
-    }
+		$action='';
+	}
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
@@ -542,7 +542,7 @@ if ($search_customer_code != '') $param.= "&search_customer_code=".urlencode($se
 if ($search_supplier_code != '') $param.= "&search_supplier_code=".urlencode($search_supplier_code);
 if ($search_account_customer_code != '') $param.= "&search_account_customer_code=".urlencode($search_account_customer_code);
 if ($search_account_supplier_code != '') $param.= "&search_account_supplier_code=".urlencode($search_account_supplier_code);
-if ($search_barcode != '') $param.= "&sbarcode=".urlencode($search_barcode);
+if ($search_barcode != '') $param.= "&search_barcode=".urlencode($search_barcode);
 if ($search_idprof1 != '') $param.= '&search_idprof1='.urlencode($search_idprof1);
 if ($search_idprof2 != '') $param.= '&search_idprof2='.urlencode($search_idprof2);
 if ($search_idprof3 != '') $param.= '&search_idprof3='.urlencode($search_idprof3);
@@ -575,7 +575,7 @@ if (GETPOST('delsoc'))
 
 // List of mass actions available
 $arrayofmassactions =  array(
-//    'presend'=>$langs->trans("SendByMail"),
+    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
@@ -604,6 +604,16 @@ foreach(array(1,2,3,4,5,6) as $key)
 		if (preg_match('/\((.*)\)/i',$label,$reg)) $label=$reg[1];
 		$textprofid[$key]=$langs->trans("ProfIdShortDesc",$key,$mysoc->country_code,$label);
 	}
+}
+
+if ($massaction == 'presend')
+{
+	$topicmail="SendEmail";
+	$modelmail="thirdparty";
+	$objecttmp=new Societe($db);
+	$trackid='thi'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 }
 
 if ($search_all)
@@ -689,7 +699,7 @@ if (! empty($arrayfields['s.name_alias']['checked']))
 if (! empty($arrayfields['s.barcode']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
+	print '<input class="flat searchstring" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
 	print '</td>';
 }
 // Customer code
@@ -995,12 +1005,12 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
     }
 }
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['s.datec']['checked']))  print_liste_field_titre($arrayfields['s.datec']['label'],$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['s.tms']['checked']))    print_liste_field_titre($arrayfields['s.tms']['label'],$_SERVER["PHP_SELF"],"s.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['s.status']['checked'])) print_liste_field_titre($arrayfields['s.status']['label'],$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['s.datec']['checked']))      print_liste_field_titre($arrayfields['s.datec']['label'],$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['s.tms']['checked']))        print_liste_field_titre($arrayfields['s.tms']['label'],$_SERVER["PHP_SELF"],"s.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['s.status']['checked']))     print_liste_field_titre($arrayfields['s.status']['label'],$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.import_key']['checked'])) print_liste_field_titre($arrayfields['s.import_key']['label'],$_SERVER["PHP_SELF"],"s.import_key","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";

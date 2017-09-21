@@ -48,11 +48,13 @@ $hookmanager->initHooks(array ('productstatspropal'));
 
 $mesg = '';
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {	$page = 0;}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder = "DESC";
@@ -230,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 						$societestatic->fetch($objp->socid);
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datep)) . "</td>";
+						print dol_print_date($db->jdate($objp->datep), 'dayhour') . "</td>";
 						print "<td align=\"center\">" . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->amount) . '</td>' . "\n";
 						print '<td align="right">' . $propalstatic->LibStatut($objp->statut, 5) . '</td>';

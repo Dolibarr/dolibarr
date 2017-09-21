@@ -448,7 +448,7 @@ $listofreferent=array(
 	'datefieldname'=>'datev',
 	'margin'=>'minus',
 	'disableamount'=>0,
-    'urlnew'=>DOL_URL_ROOT.'/compta/bank_various_payment/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'banks',
     'buttonnew'=>'AddVariousPayment',
     'testnew'=>$user->rights->banque->modifier,
@@ -643,33 +643,6 @@ foreach ($listofreferent as $key => $value)
 				$total_ttc = -$total_ttc;
 			}
 
-			/*switch ($classname) {
-				case 'FactureFournisseur':
-					$newclassname = 'SupplierInvoice';
-					break;
-				case 'Facture':
-					$newclassname = 'Bill';
-					break;
-				case 'Propal':
-					$newclassname = 'CommercialProposal';
-					break;
-				case 'Commande':
-					$newclassname = 'Order';
-					break;
-				case 'Expedition':
-					$newclassname = 'Sending';
-					break;
-				case 'Contrat':
-					$newclassname = 'Contract';
-					break;
-				case 'MouvementStock':
-					$newclassname = 'StockMovement';
-					break;
-				default:
-					$newclassname = $classname;
-			}*/
-
-			$var = ! $var;
 			print '<tr class="oddeven">';
 			// Module
 			print '<td align="left">'.$name.'</td>';
@@ -691,7 +664,6 @@ print '<td align="right" >'.price($balance_ttc).'</td>';
 print '</tr>';
 
 print "</table>";
-
 
 
 print '<br><br>';
@@ -731,7 +703,7 @@ foreach ($listofreferent as $key => $value)
 		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty)
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, array('payment_various')))
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
@@ -771,7 +743,7 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		// Remove link
+		// Remove link column
 		print '<td style="width: 24px"></td>';
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').'>'.$langs->trans("Ref").'</td>';
@@ -862,11 +834,15 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				print '<tr class="oddeven">';
+
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement')
 				{
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
+					{
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+					}
 				}
 				print "</td>\n";
 

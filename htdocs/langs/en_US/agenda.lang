@@ -66,6 +66,7 @@ OrderApprovedInDolibarr=Order %s approved
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Order %s go back to draft status
 ProposalSentByEMail=Commercial proposal %s sent by EMail
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Customer order %s sent by EMail
 InvoiceSentByEMail=Customer invoice %s sent by EMail
 SupplierOrderSentByEMail=Supplier order %s sent by EMail
@@ -84,6 +85,9 @@ EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
 EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
 EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
 EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Project %s created
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date

@@ -55,7 +55,7 @@ $mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
-$cancel     = GETPOST('cancel');
+$cancel     = GETPOST('cancel','alpha');
 
 // Users/Groups management only in master entity if transverse mode
 if (($action == 'create' || $action == 'adduserldap') && ! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
@@ -260,7 +260,7 @@ if (empty($reshook)) {
 				}
             			if (! empty($conf->categorie->enabled)) {
 					// Categories association
-					$usercats = GETPOST( 'usercats', 'array' );
+					$usercats = GETPOST('usercats', 'array');
 					$object->setCategories($usercats);
 				}
 				$db->commit();
@@ -478,7 +478,7 @@ if (empty($reshook)) {
             	if (! $error && ! count($object->errors))
             	{
             		// Then we add the associated categories
-            		$categories = GETPOST( 'usercats', 'array' );
+            		$categories = GETPOST('usercats', 'array');
             		$object->setCategories($categories);
             	}
 
@@ -2538,7 +2538,7 @@ else
     		// List of actions on element
     		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     		$formactions = new FormActions($db);
-    		$somethingshown = $formactions->showactions($object, 'user', $socid);
+    		$somethingshown = $formactions->showactions($object, 'user', $socid, 1);
 
 
             print '</div></div></div>';

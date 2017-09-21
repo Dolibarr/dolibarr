@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->loadLangs(array("orders",'sendings','deliveries','companies','compta','bills'));
 
@@ -82,6 +83,7 @@ $result = restrictedArea($user, 'commande', $id,'');
 
 $diroutputmassaction=$conf->commande->dir_output . '/temp/massgeneration/'.$user->id;
 
+// Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -118,7 +120,8 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'c.ref_client'=>array('label'=>$langs->trans("RefCustomerOrder"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
+	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
@@ -149,8 +152,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -186,6 +189,7 @@ if (empty($reshook))
     	$search_deliveryday='';
     	$search_deliverymonth='';
         $search_deliveryyear='';
+        $search_project_ref='';
         $viewstatut='';
         $billed='';
         $toselect='';
@@ -203,7 +207,8 @@ if (empty($reshook))
     $permtoread = $user->rights->commande->lire;
     $permtodelete = $user->rights->commande->supprimer;
     $uploaddir = $conf->commande->dir_output;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    $trigger_name='ORDER_SENTBYMAIL';
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// TODO Move this into mass action include
     if ($massaction == 'confirm_createbills') {
@@ -438,6 +443,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 $formcompany=new FormCompany($db);
+$projectstatic=new Project($db);
 
 $title=$langs->trans("Orders");
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
@@ -445,12 +451,13 @@ llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
-$sql.= ' c.date_creation as date_creation, c.tms as date_update';
+$sql.= ' c.date_creation as date_creation, c.tms as date_update,';
+$sql.= " p.rowid as project_id, p.ref as project_ref";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -465,6 +472,7 @@ $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
@@ -539,6 +547,7 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
+if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -626,7 +635,8 @@ if ($resql)
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
 	if ($search_total_vat != '') $param.='&search_total_vat='.$search_total_vat;
 	if ($search_total_ttc != '') $param.='&search_total_ttc='.$search_total_ttc;
-    if ($show_files)            $param.='&show_files=' .$show_files;
+	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".$search_project_ref;
+	if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($billed != '')			$param.='&billed='.$billed;
 	// Add $param from extra fields
@@ -661,102 +671,17 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	// TODO Move this into an invluce
 	if ($massaction == 'presend')
 	{
-	    $langs->load("mails");
+		$topicmail="SendOrderRef";
+		$modelmail="order_send";
+		$objecttmp=new Commande($db);
+		$trackid='ord'.$object->id;
 
-	    if (! GETPOST('cancel'))
-	    {
-	        $objecttmp=new Commande($db);
-	        $listofselectedid=array();
-	        $listofselectedthirdparties=array();
-	        $listofselectedref=array();
-	        foreach($arrayofselected as $toselectid)
-	        {
-	            $result=$objecttmp->fetch($toselectid);
-	            if ($result > 0)
-	            {
-	                $listofselectedid[$toselectid]=$toselectid;
-	                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
-	                $listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
-	                $listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
-	            }
-	        }
-	    }
-
-	    print '<input type="hidden" name="massaction" value="confirm_presend">';
-
-	    dol_fiche_head(null, '', '');
-
-	    $topicmail="SendOrderRef";
-	    $modelmail="order_send";
-
-	    // Cree l'objet formulaire mail
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	    $formmail = new FormMail($db);
-	    $formmail->withform=-1;
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-	    {
-	        $formmail->trackid='ord'.$object->id;
-	    }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-	    {
-	        include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	        $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-	    }
-	    $formmail->withfrom=1;
-	    $liste=$langs->trans("AllRecipientSelected");
-	    if (count($listofselectedthirdparties) == 1)
-	    {
-	        $liste=array();
-	        $thirdpartyid=array_shift($listofselectedthirdparties);
-	        $soc=new Societe($db);
-	        $soc->fetch($thirdpartyid);
-	        foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-	        {
-	            $liste[$key]=$value;
-	        }
-	        $formmail->withtoreadonly=0;
-	    }
-	    else
-	    {
-	        $formmail->withtoreadonly=1;
-	    }
-	    $formmail->withto=$liste;
-	    $formmail->withtofree=0;
-	    $formmail->withtocc=1;
-	    $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-	    $formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-	    $formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
-	    $formmail->withbody=1;
-	    $formmail->withdeliveryreceipt=1;
-	    $formmail->withcancel=1;
-	    // Tableau des substitutions
-	    $formmail->substit['__REF__']='__REF__';	// We want to keep the tag
-	    $formmail->substit['__SIGNATURE__']=$user->signature;
-	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
-	    $formmail->substit['__PERSONALIZED__']='';
-	    $formmail->substit['__CONTACTCIVNAME__']='';
-
-	    // Tableau des parametres complementaires du post
-	    $formmail->param['action']=$action;
-	    $formmail->param['models']=$modelmail;
-	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
-	    $formmail->param['id']=join(',',$arrayofselected);
-	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-	    print $formmail->get_form();
-
-	    dol_fiche_end();
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 	}
-	elseif ($massaction == 'createbills')
+
+	if ($massaction == 'createbills')
 	{
 		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
@@ -872,6 +797,11 @@ if ($resql)
     	print '<td class="liste_titre" align="left">';
     	print '<input class="flat" type="text" size="6" name="search_ref_customer" value="'.$search_ref_customer.'">';
     	print '</td>';
+	}
+	// Project ref
+	if (! empty($arrayfields['p.project_ref']['checked']))
+	{
+		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
@@ -1016,6 +946,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['c.ref']['checked']))            print_liste_field_titre($arrayfields['c.ref']['label'],$_SERVER["PHP_SELF"],'c.ref','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.ref_client']['checked']))     print_liste_field_titre($arrayfields['c.ref_client']['label'],$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.project_ref']['checked'])) 	  print_liste_field_titre($arrayfields['p.project_ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
@@ -1065,27 +996,35 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        print '<tr class="oddeven">';
-
         $notshippable=0;
         $warning = 0;
         $text_info='';
         $text_warning='';
         $nbprod=0;
 
+        $companystatic->id=$obj->socid;
+        $companystatic->code_client = $obj->code_client;
+        $companystatic->name=$obj->name;
+        $companystatic->client=$obj->client;
+        $companystatic->email=$obj->email;
+
+        $generic_commande->id=$obj->rowid;
+        $generic_commande->ref=$obj->ref;
+        $generic_commande->statut = $obj->fk_statut;
+        $generic_commande->date_commande = $db->jdate($obj->date_commande);
+        $generic_commande->date_livraison = $db->jdate($obj->date_delivery);
+        $generic_commande->ref_client = $obj->ref_client;
+        $generic_commande->total_ht = $obj->total_ht;
+        $generic_commande->total_tva = $obj->total_tva;
+        $generic_commande->total_ttc = $obj->total_ttc;
+
+        print '<tr class="oddeven">';
+
         // Ref
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';
-            $generic_commande->id=$obj->rowid;
-            $generic_commande->ref=$obj->ref;
-    	    $generic_commande->statut = $obj->fk_statut;
-    	    $generic_commande->date_commande = $db->jdate($obj->date_commande);
-    	    $generic_commande->date_livraison = $db->jdate($obj->date_delivery);
-            $generic_commande->ref_client = $obj->ref_client;
-            $generic_commande->total_ht = $obj->total_ht;
-            $generic_commande->total_tva = $obj->total_tva;
-            $generic_commande->total_ttc = $obj->total_ttc;
+
             $generic_commande->lines=array();
             $generic_commande->getLinesArray();
 
@@ -1230,10 +1169,16 @@ if ($resql)
     		if (! $i) $totalarray['nbfield']++;
 		}
 
-		$companystatic->id=$obj->socid;
-        $companystatic->code_client = $obj->code_client;
-		$companystatic->name=$obj->name;
-		$companystatic->client=$obj->client;
+		// Project
+		if (! empty($arrayfields['p.project_ref']['checked']))
+		{
+			$projectstatic->id=$obj->project_id;
+			$projectstatic->ref=$obj->project_ref;
+			print '<td>';
+			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
 
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked']))

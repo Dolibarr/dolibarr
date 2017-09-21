@@ -200,7 +200,7 @@ class Contact extends CommonObject
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
         $sql.= " ".$conf->entity.",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
-        $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
+        $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -319,9 +319,9 @@ class Contact extends CommonObject
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", statut = ".$this->statut;
-		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"NULL");
-		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"NULL");
-		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
+		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
+		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
+		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -492,7 +492,7 @@ class Contact extends CommonObject
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
-		$sql.= ", photo = ".($this->photo? "'".$this->photo."'" : "null");
+		$sql.= ", photo = ".($this->photo? "'".$this->db->escape($this->photo)."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql.= " WHERE rowid=".$this->db->escape($id);
 

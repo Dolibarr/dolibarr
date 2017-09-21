@@ -125,7 +125,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel) $action = '';
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
@@ -602,7 +610,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel','alpha'))
 	{
 		if (! GETPOST('statut')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
@@ -611,7 +619,7 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
-				$result=$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','alpha'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -622,7 +630,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel','alpha'))
 	{
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
@@ -638,16 +646,10 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-
-	/*
-	 * Send mail
-	 */
-
 	// Actions to send emails
     $actiontypecode='AC_OTH_AUTO';
 	$trigger_name='PROPAL_SENTBYMAIL';
-	$paramname='id';
-	$mode='emailfromproposal';
+	$autocopy='MAIN_MAIL_AUTOCOPY_PROPOSAL_TO';
 	$trackid='pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
@@ -1106,7 +1108,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel'))
+	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel','alpha'))
 	{
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
@@ -1376,7 +1378,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1684,6 +1686,18 @@ if ($action == 'create')
 		}
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	}
+
+	if ($action == 'statut')
+	{
+		//Form to close proposal (signed or not)
+		$formquestion = array(
+				array('type' => 'select','name' => 'statut','label' => $langs->trans("CloseAs"),'values' => array(2=>$object->labelstatut [2],3=>$object->labelstatut [3])),
+				//array('type' => 'other','name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '<textarea cols="30" rows="' . ROWS_3 . '" wrap="soft" name="note_private" id="note_private">'.$object->note_private.'</textarea>'));
+				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => $object->note_private));
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), '', 'setstatut', $formquestion, '', 1, 250);
+
 	}
 
 	// Confirm delete
@@ -2213,35 +2227,6 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	if ($action == 'statut')
-	{
-		/*
-		 * Form to close proposal (signed or not)
-		 */
-		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		$form_close .= '<table class="border" width="100%">';
-		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';
-		$form_close .= '<input type="hidden" name="action" value="setstatut">';
-		$form_close .= '<select id="statut" name="statut" class="flat">';
-		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">' . $object->labelstatut [2] . '</option>';
-		$form_close .= '<option value="3">' . $object->labelstatut [3] . '</option>';
-		$form_close .= '</select>';
-		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td align="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
-		$form_close .= $object->note;
-		$form_close .= '</textarea></td></tr>';
-		$form_close .= '<tr><td align="center" colspan="2">';
-		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
-		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
-		$form_close .= '<a name="close">&nbsp;</a>';
-		$form_close .= '</td>';
-		$form_close .= '</tr></table></form>';
-
-		print $form_close;
-	}
-
 	/*
 	 * Boutons Actions
 	 */
@@ -2253,7 +2238,7 @@ if ($action == 'create')
 		                                                                                               // modified by hook
 		if (empty($reshook))
 		{
-			if ($action != 'statut' && $action != 'editline')
+			if ($action != 'editline')
 			{
 				// Validate
 				if ($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
@@ -2373,128 +2358,18 @@ if ($action == 'create')
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'propal', $socid);
+		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1);
 
 		print '</div></div></div>';
 	}
 
-	/*
-	 * Action presend
- 	 */
-	if ($action == 'presend')
-	{
-		$object->fetch_projet();
+	// Presend form
+	$modelmail='propal_send';
+	$defaulttopic='SendPropalRef';
+	$diroutput = $conf->propal->dir_output;
+	$trackid = 'pro'.$object->id;
 
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file = $fileparams['fullname'];
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('commercial');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file)) {
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
-			}
-			$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
-		}
-
-		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-		print '<div class="clearboth"></div>';
-		print '<br>';
-		print load_fiche_titre($langs->trans('SendPropalByMail'));
-
-		dol_fiche_head('');
-
-		// Create form object
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		$formmail->trackid='pro'.$object->id;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'pro'.$object->id);
-		}
-		$formmail->withfrom = 1;
-		$liste = array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
-			$liste [$key] = $value;
-		$formmail->withto = GETPOST("sendto") ? GETPOST("sendto") : $liste;
-		$formmail->withtocc = $liste;
-		$formmail->withtoccc = (! empty($conf->global->MAIN_EMAIL_USECCC) ? $conf->global->MAIN_EMAIL_USECCC : false);
-		if (empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendPropalRef', '__PROPREF__');
-		} else if (! empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendPropalRef', '__PROPREF__ (__REFCLIENT__)');
-		}
-		$formmail->withfile = 2;
-		$formmail->withbody = 1;
-		$formmail->withdeliveryreceipt = 1;
-		$formmail->withcancel = 1;
-
-		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
-		$formmail->substit['__PROPREF__'] = $object->ref; // For backward compatibility
-
-		// Find the good contact adress
-		$custcontact = '';
-		$contactarr = array();
-		$contactarr = $object->liste_contact(- 1, 'external');
-
-		if (is_array($contactarr) && count($contactarr) > 0) {
-			foreach ($contactarr as $contact) {
-				if ($contact ['libelle'] == $langs->trans('TypeContact_propal_external_CUSTOMER')) {	// TODO Use code and not label
-					$contactstatic = new Contact($db);
-					$contactstatic->fetch($contact ['id']);
-					$custcontact = $contactstatic->getFullName($langs, 1);
-				}
-			}
-
-			if (! empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'propal_send';
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['id'] = $object->id;
-		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
-		// Init list of files
-		if (GETPOST("mode") == 'init') {
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-		}
-
-		print $formmail->get_form();
-
-		dol_fiche_end();
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

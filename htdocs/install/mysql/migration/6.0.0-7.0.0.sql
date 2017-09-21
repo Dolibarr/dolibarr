@@ -25,6 +25,9 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Missing in 5.0
+ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
+
 -- Missing in 6.0 ?
 ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_code	varchar(255);
@@ -34,6 +37,30 @@ ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DE
 
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+
+
+-- For 7.0
+
+
+ALTER TABLE llx_ecm_files MODIFY label varchar(128) NOT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN share varchar(128) NULL after label;
+
+
+ALTER TABLE llx_c_paiement        ADD COLUMN position        integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_c_payment_term    ADD COLUMN position        integer NOT NULL DEFAULT 0;
+
+ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte integer DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN seuil_stock_alerte SET DEFAULT NULL;
+
+ALTER TABLE llx_facture_rec ADD COLUMN suspended integer DEFAULT 0;
+
+ALTER TABLE llx_facture_rec MODIFY COLUMN titre VARCHAR(100);
+
+ALTER TABLE llx_contrat MODIFY COLUMN ref varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_customer varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_supplier varchar(50);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(50);
+
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
@@ -55,7 +82,8 @@ ALTER TABLE llx_mailing MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_facture_fourn ADD COLUMN date_pointoftax	date DEFAULT NULL;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_valid		date;
 
-
+ALTER TABLE llx_bookmark DROP COLUMN fk_soc;
+ 
 ALTER TABLE llx_website MODIFY COLUMN ref varchar(128);
 
 ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
@@ -89,14 +117,14 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     fk_range        integer DEFAULT 0 NOT NULL,
     coef            double DEFAULT 0 NOT NULL,
     offset          double DEFAULT 0 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
@@ -104,7 +132,7 @@ CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
     range_ik    double DEFAULT 0 NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL
-)ENGINE=innodb DEFAULT CHARSET=utf8;
+)ENGINE=innodb;
 
 INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
 ('EX_KME', 'ExpLabelKm', 1, '625100'),
@@ -225,6 +253,8 @@ ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN label varchar(255) NOT NULL;
+
 ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
 UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
@@ -239,6 +269,39 @@ UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE'
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
 
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(24) NOT NULL;
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SENTBYMAIL','Contract sent by mail','Executed when a contract is sent by mail','contrat',18);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_VALIDATE','Price request validated','Executed when a commercial proposal is validated','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_SENTBYMAIL','Price request sent by mail','Executed when a commercial proposal is sent by mail','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_SIGNED','Price request closed signed','Executed when a customer proposal is closed signed','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_REFUSED','Price request closed refused','Executed when a customer proposal is closed refused','proposal_supplier',10);
+
+
+CREATE TABLE llx_projet_task_comment (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    datec datetime  DEFAULT NULL,
+    tms timestamp,
+    description text NOT NULL,
+    fk_user integer DEFAULT NULL,
+    fk_task integer DEFAULT NULL,
+    entity integer DEFAULT 1,
+    import_key varchar(125) DEFAULT NULL
+)ENGINE=innodb;
+
+-- Accountancy - Remove old constants
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_PURCHASE_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SOCIAL_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_MISCELLANEOUS_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_GROUPBYACCOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_GLOBAL_ACCOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_LABEL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_AMOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_DEVISE')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_PIECE')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPENSEREPORT_JOURNAL')__;
 
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;

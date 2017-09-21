@@ -239,7 +239,7 @@ class User extends CommonObject
 			$sql.= " AND u.rowid = ".$id;
 		}
 		$sql.= " ORDER BY u.entity ASC";    // Avoid random result when there is 2 login in 2 different entities
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -312,7 +312,7 @@ class User extends CommonObject
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
-				
+
 				$this->default_range		= $obj->default_range;
 				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
 
@@ -384,7 +384,16 @@ class User extends CommonObject
 			    {
 			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
 			        {
-			            $this->default_values[$obj->page][$obj->type][$obj->param]=$obj->value;
+			        	// $obj->page is relative URL with or without params, $obj->type can be 'filters', 'sortorder', 'createform', ...
+			        	$pagewithoutquerystring=$obj->page;
+			        	$pagequeries='';
+			        	if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
+			        	{
+			        		$pagewithoutquerystring=$reg[1];
+			        		$pagequeries=$reg[2];
+			        	}
+			        	$this->default_values[$pagewithoutquerystring][$obj->type][$obj->param]=$obj->value;
+			            if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
 			        }
 			    }
 			    $this->db->free($resql);
@@ -1343,7 +1352,7 @@ class User extends CommonObject
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
-		
+
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
@@ -1396,7 +1405,7 @@ class User extends CommonObject
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql.= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql.= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
-		
+
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

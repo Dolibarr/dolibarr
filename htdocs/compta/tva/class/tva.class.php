@@ -106,12 +106,12 @@ class Tva extends CommonObject
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
-		$sql.= " '".$this->amount."',";
-		$sql.= " '".$this->label."',";
-		$sql.= " '".$this->note."',";
-		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
-		$sql.= " '".$this->fk_user_creat."',";
-		$sql.= " '".$this->fk_user_modif."'";
+		$sql.= " '".$this->db->escape($this->amount)."',";
+		$sql.= " '".$this->db->escape($this->label)."',";
+		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
+		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
 
 		$sql.= ")";
 
@@ -535,11 +535,11 @@ class Tva extends CommonObject
 		$sql.= "'".$this->db->idate($this->datep)."'";
         $sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
-        $sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+        $sql.= ", '".$this->db->escape($this->type_payment)."'";
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.= ", '".$user->id."'";
+        $sql.= ", '".$this->db->escape($user->id)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
         $sql.= ")";
