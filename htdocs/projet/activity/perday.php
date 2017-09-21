@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 $langs->load('projects');
 $langs->load('users');
@@ -84,7 +85,7 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
     $usertoprocess=$user;
 	$search_usertoprocessid=$usertoprocess->id;
 }
-elseif (search_usertoprocessid > 0)
+elseif ($search_usertoprocessid > 0)
 {
     $usertoprocess=new User($db);
     $usertoprocess->fetch($search_usertoprocessid);
@@ -484,10 +485,17 @@ print "</tr>\n";
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
 
+// Get if user is available or not for each day
+$holiday = new Holiday($db);
+$isavailable=array();
+
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse);	// $daytoparse is a date with hours = 0
+$isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
+	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable);
 
 	$colspan = 8;
 	if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) $colspan++;

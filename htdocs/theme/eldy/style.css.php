@@ -344,55 +344,53 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	width: 300px;
+	min-width: 280px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
+	background: none;
+	border: 2px solid #666666;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
 	background-size: 26px;
 	background-repeat: no-repeat;
-	background-position: 5px 5px;
+	background-position: 2px 11px;
 }
 input.buttonpaymentcheque {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
-	background-repeat: no-repeat;
-	background-position: 8px 7px;
-}
-input.buttonpaymentcb {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
 	background-size: 24px;
 	background-repeat: no-repeat;
-	background-position: 5px 4px;
-}
-input.buttonpaymentcheque {
-	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
-	background-repeat: no-repeat;
-	background-position: 5px 4px;
+	background-position: 2px 8px;
 }
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
 	background-repeat: no-repeat;
-	background-position: 8px 7px;
+	background-position: 8px 11px;
 }
 input.buttonpaymentpaybox {
 	background-image: url(<?php echo dol_buildpath($path.'/paybox/img/object_paybox.png',1) ?>);
 	background-repeat: no-repeat;
-	background-position: 8px 7px;
+	background-position: 8px 11px;
 }
 input.buttonpaymentstripe {
 	background-image: url(<?php echo dol_buildpath($path.'/stripe/img/object_stripe.png',1) ?>);
 	background-repeat: no-repeat;
-	background-position: 8px 7px;
+	background-position: 8px 11px;
 }
+/* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
 }
-
+td.onholidaymorning, td.onholidayafternoon {
+	background-color: #fdf6f2;
+}
+td.onholidayallday {
+	background-color: #f4eede;
+}
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -1086,7 +1084,7 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
-	margin: 40px !important;
+	margin: 20px !important;
 }
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
@@ -3141,7 +3139,7 @@ div.titre {
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
 
-#dolpaymenttable { width: 600px; font-size: 13px; }
+#dolpaymenttable { min-width: 310px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

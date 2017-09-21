@@ -5046,11 +5046,11 @@ class Form
         else return 'BadValueForParameterTypeHour';
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
-        else $retstring.=':';
+        else $retstring.='<span class="hideonsmartphone">:</span>';
 
         // Minutes
         if ($minunderhours) $retstring.='<br>';
-        else $retstring.="&nbsp;";
+        else $retstring.='<span class="hideonsmartphone">&nbsp;</span>';
 
         if ($typehour=='select' || $typehour=='textselect')
         {

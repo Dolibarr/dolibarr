@@ -1052,6 +1052,23 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Return link to download file from a direct external access
+	 *
+	 * @param	int				$withpicto			Add download picto into link
+	 * @return	string			HTML link to file
+	 */
+	function getDirectExternalLink($withpicto=0)
+	{
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		$url='eee';
+		return '<a href="'.$urlwithroot.'/document.php?modulepart=invoice&" target="_download" rel="noindex, nofollow">'.$this->ref.'</a>';
+	}
+
+	/**
 	 *      Return clicable link of object (with eventually picto)
 	 *
 	 *      @param	int		$withpicto       Add picto into link
@@ -1577,7 +1594,7 @@ class Facture extends CommonInvoice
 			$facligne->desc=$remise->description;   	// Description ligne
 			$facligne->vat_src_code=$remise->vat_src_code;
 			$facligne->tva_tx=$remise->tva_tx;
-			$facligne->subprice=-$remise->amount_ht;
+			$facligne->subprice = -$remise->amount_ht;
 			$facligne->fk_product=0;					// Id produit predefini
 			$facligne->qty=1;
 			$facligne->remise_percent=0;
@@ -1599,6 +1616,11 @@ class Facture extends CommonInvoice
 			$facligne->total_ht  = -$remise->amount_ht;
 			$facligne->total_tva = -$remise->amount_tva;
 			$facligne->total_ttc = -$remise->amount_ttc;
+
+			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
+			$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
+			$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
+			$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
 
 			$lineid=$facligne->insert();
 			if ($lineid > 0)

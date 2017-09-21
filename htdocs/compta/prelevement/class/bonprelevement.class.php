@@ -953,6 +953,7 @@ class BonPrelevement extends CommonObject
 	                {
 	                    $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 						$this->id = $prev_id;
+						$this->ref = $ref;
 	                }
 	                else
 					{
