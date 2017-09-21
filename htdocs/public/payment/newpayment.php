@@ -143,12 +143,11 @@ if (! empty($FULLTAG))
     $urlok.='fulltag='.urlencode($FULLTAG).'&';
     $urlko.='fulltag='.urlencode($FULLTAG).'&';
 }
-/* This make url too long. Seems not required into the back url
 if (! empty($SECUREKEY))
 {
     $urlok.='securekey='.urlencode($SECUREKEY).'&';
     $urlko.='securekey='.urlencode($SECUREKEY).'&';
-}*/
+}
 if (! empty($entity))
 {
 	$urlok.='e='.urlencode($entity).'&';
@@ -335,6 +334,10 @@ if ($action == 'dopayment')
 		$email=GETPOST("email");
 
 		$origfulltag=GETPOST("fulltag",'alpha');
+
+		// Securekey into back url useless for back url and we need an url lower than 150.
+		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
+		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
 
 		$mesg='';
 		if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
