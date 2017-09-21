@@ -157,6 +157,7 @@ class EcmFiles //extends CommonObject
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+		$sql.= 'ref,';
 		$sql.= 'label,';
 		$sql.= 'entity,';
 		$sql.= 'filename,';
@@ -174,6 +175,7 @@ class EcmFiles //extends CommonObject
 		$sql.= 'fk_user_m,';
 		$sql.= 'acl';
 		$sql .= ') VALUES (';
+		$sql .= " '".dol_hash($this->filepath.'/'.$this->filename, 3)."', ";
 		$sql .= ' '.(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(! isset($this->entity)?$conf->entity:$this->entity).',';
 		$sql .= ' '.(! isset($this->filename)?'NULL':"'".$this->db->escape($this->filename)."'").',';
@@ -232,11 +234,12 @@ class EcmFiles //extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param  int    $id          	   Id object
-	 * @param  string $ref         	   Not used yet. Will contains a hash id from filename+filepath
+	 * @param  string $ref         	   Hash of file name (filename+filepath). Not always defined on some version.
 	 * @param  string $relativepath    Relative path of file from document directory. Example: path/path2/file
+	 * @param  string $hashoffile      Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
 	 * @return int                 	   <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $relativepath = '')
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile='')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -268,11 +271,16 @@ class EcmFiles //extends CommonObject
 		if ($relativepath) {
 			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
 		}
-		elseif (null !== $ref) {
+		elseif (! empty($ref)) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+		}
+		elseif (! empty($hashoffile)) {
+			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
 		} else {
 			$sql .= ' AND t.rowid = ' . $id;
 		}
+		$this->db->plimit(1);
+		$this->db->order('t.rowid', 'ASC');		// When we search on hash of content, we take the first one.
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -484,6 +492,7 @@ class EcmFiles //extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql .= ' ref = '.dol_hash($this->filepath.'/'.$this->filename, 3);
 		$sql .= ' label = '.(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").',';
 		$sql .= ' entity = '.(isset($this->entity)?$this->entity:$conf->entity).',';
 		$sql .= ' filename = '.(isset($this->filename)?"'".$this->db->escape($this->filename)."'":"null").',';

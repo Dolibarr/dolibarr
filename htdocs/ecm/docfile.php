@@ -287,17 +287,25 @@ print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("DirectDownloadLink").'</td><td>';
-$modulepart='ecm';
-$forcedownload=1;
-$rellink='/document.php?modulepart='.$modulepart;
-if ($forcedownload) $rellink.='&attachment=1';
-if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
-$rellink.='&file='.urlencode($filepath);
-$fulllink=$urlwithroot.$rellink;
-// TODO
-//print img_picto('','object_globe.png').' ';
-//print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
-//print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+if (! empty($ecmfile->ref) || ! empty($ecmfile->label))
+{
+	$modulepart='ecm';
+	$forcedownload=1;
+	$rellink='/document.php?modulepart='.$modulepart;
+	if ($forcedownload) $rellink.='&attachment=1';
+	if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
+	//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
+	$fulllink=$urlwithroot.$rellink;
+	if (! empty($ecmfile->ref))       $fulllink.='&hashn='.$ecmfile->ref;	// Hash of file path
+	elseif (! empty($ecmfile->label)) $fulllink.='&hashc='.$ecmfile->label;	// Hash of file content
+	print img_picto('','object_globe.png').' ';
+	print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+	print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+}
+else
+{
+	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
+}
 print '</td></tr>';
 
 print '</table>';
