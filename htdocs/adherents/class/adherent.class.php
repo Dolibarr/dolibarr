@@ -729,7 +729,15 @@ class Adherent extends CommonObject
 		// Check parameters
 		if (empty($rowid)) $rowid=$this->id;
 
-		$this->db->begin();
+        $this->db->begin();
+
+        if (! $error && ! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('MEMBER_DELETE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
 		// Remove category
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
@@ -795,14 +803,6 @@ class Adherent extends CommonObject
 				$this->error .= $this->db->lasterror();
 				$errorflag=-5;
 			}
-		}
-
-		if (! $error && ! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('MEMBER_DELETE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
 		}
 
 		if (! $error)

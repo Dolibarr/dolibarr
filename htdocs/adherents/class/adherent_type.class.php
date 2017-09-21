@@ -256,10 +256,9 @@ class AdherentType extends CommonObject
 	 *  Fonction qui permet de recuperer le status de l'adherent
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
-	 *  @param		bool		$load_members	Load members or not
 	 *  @return		int						<0 if KO, >0 if OK
 	 */
-	function fetch($rowid, $load_members = true)
+	function fetch($rowid)
 	{
 		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -282,10 +281,6 @@ class AdherentType extends CommonObject
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note;
 				$this->vote           = $obj->vote;
-
-				if ($load_members) {
-					$this->members=$this->listMembersForMemberType();
-				}
 			}
 
 			return 1;
@@ -374,6 +369,8 @@ class AdherentType extends CommonObject
 			}
 
 			$this->db->free($resql);
+
+			$this->members=$ret;
 
 			return $ret;
 		}

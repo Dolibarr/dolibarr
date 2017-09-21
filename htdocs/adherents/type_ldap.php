@@ -63,6 +63,8 @@ if (empty($reshook))
 
 		if ($result > 0)
 		{
+			$object->listMembersForMemberType();
+
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
 			$olddn = $dn;    // We can say that old dn = dn as we force synchro

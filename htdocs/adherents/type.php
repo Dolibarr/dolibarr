@@ -154,6 +154,10 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 {
 	$object->fetch($rowid);
 
+	if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1') {
+		$object->listMembersForMemberType();
+	}
+
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);

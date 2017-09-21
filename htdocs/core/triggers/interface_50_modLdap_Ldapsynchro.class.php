@@ -437,6 +437,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						if ($object->typeid > 0)
 						{
 							$membertype->fetch($object->typeid);
+							$membertype->listMembersForMemberType();
 
 							$oldinfo=$membertype->_load_ldap_info();
 							$olddn=$membertype->_load_ldap_dn($oldinfo);
@@ -549,36 +550,38 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 					{
+						/*
+						 * Change member info
+						 */
+						$newmembertype=new AdherentType($this->db);
+						$newmembertype->fetch($object->typeid);
+						$newmembertype->listMembersForMemberType();
+
+						$oldinfo=$newmembertype->_load_ldap_info();
+						$olddn=$newmembertype->_load_ldap_dn($oldinfo);
+
+						// Verify if entry exist
+						$container=$newmembertype->_load_ldap_dn($oldinfo,1);
+						$search = "(".$newmembertype->_load_ldap_dn($oldinfo,2).")";
+						$records=$ldap->search($container,$search);
+						if (count($records) && $records['count'] == 0)
+						{
+							$olddn = '';
+						}
+
+						$info=$newmembertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+						$dn=$newmembertype->_load_ldap_dn($info);
+
+						$result=$ldap->update($dn,$info,$user,$olddn);
+
 						if ($object->oldcopy->typeid != $object->typeid)
 						{
-							/*
-							 * Add member in new member type
-							 */
-							$newmembertype=new AdherentType($this->db);
-							$newmembertype->fetch($object->typeid);
-
-							$oldinfo=$newmembertype->_load_ldap_info();
-							$olddn=$newmembertype->_load_ldap_dn($oldinfo);
-
-							// Verify if entry exist
-							$container=$newmembertype->_load_ldap_dn($oldinfo,1);
-							$search = "(".$newmembertype->_load_ldap_dn($oldinfo,2).")";
-							$records=$ldap->search($container,$search);
-							if (count($records) && $records['count'] == 0)
-							{
-								$olddn = '';
-							}
-
-							$info=$newmembertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
-							$dn=$newmembertype->_load_ldap_dn($info);
-
-							$result=$ldap->update($dn,$info,$user,$olddn);
-
 							/*
 							 * Remove member in old member type
 							 */
 							$oldmembertype=new AdherentType($this->db);
 							$oldmembertype->fetch($object->oldcopy->typeid);
+							$oldmembertype->listMembersForMemberType();
 
 							$oldinfo=$oldmembertype->_load_ldap_info();
 							$olddn=$oldmembertype->_load_ldap_dn($oldinfo);
@@ -676,6 +679,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							 */
 							$membertype=new AdherentType($this->db);
 							$membertype->fetch($object->typeid);
+							$membertype->listMembersForMemberType('a.rowid != ' . $object->id); // remove deleted member from the list
 
 							$oldinfo=$membertype->_load_ldap_info();
 							$olddn=$membertype->_load_ldap_dn($oldinfo);
@@ -742,6 +746,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;
 					}
 
+					$object->oldcopy->listMembersForMemberType();
+
 					$oldinfo=$object->oldcopy->_load_ldap_info();
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
@@ -753,6 +759,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					{
 						$olddn = '';
 					}
+
+					$object->listMembersForMemberType();
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
