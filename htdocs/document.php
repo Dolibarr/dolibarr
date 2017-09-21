@@ -124,7 +124,7 @@ if (! empty($hashp))
 	}
 	else
 	{
-		accessforbidden('Bad link. File was not found or removed recently.',0,0,1);
+		accessforbidden('Bad link. File was not found or sharing attribute removed recently.',0,0,1);
 	}
 }
 
