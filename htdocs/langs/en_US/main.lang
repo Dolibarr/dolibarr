@@ -793,7 +793,7 @@ ViewFlatList=View flat list
 RemoveString=Remove string '%s'
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>. 
 DirectDownloadLink=Direct download link (public/external)
-DirectDownloadInternalLink=Direct download link (need to be logged and permissions)
+DirectDownloadInternalLink=Direct download link (need to be logged and need permissions)
 Download=Download
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiscal year
@@ -810,6 +810,7 @@ ImportId=Import id
 Websites=Web sites
 Events=Events
 EMailTemplates=Emails templates
+FileNotShared=File not shared to exernal public
 # Week day
 Monday=Monday
 Tuesday=Tuesday

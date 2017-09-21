@@ -60,15 +60,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $encoding = '';
 $action=GETPOST('action','alpha');
 $original_file=GETPOST('file','alpha');		// Do not use urldecode here ($_GET are already decoded by PHP).
-$hashn=GETPOST('hashn','aZ09');
-$hashc=GETPOST('hashc','aZ09');
+$hashp=GETPOST('hashp','aZ09');
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST('urlsource','alpha');
 $entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
-if (empty($original_file) && empty($hashn) && empty($hashc)) accessforbidden('Bad link. Missing identification to find file (original_file, hasn or hashc)',0,0,1);
+if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 $socid=0;
@@ -103,12 +102,12 @@ if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
 if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
-// If we have a hash (hashc or hashn), we guess the original_file. Note: using hashn is not reliable.
-if (! empty($hashn) || ! empty($hashc))
+// If we have a hash public (hashp), we guess the original_file.
+if (! empty($hashp))
 {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	$ecmfile=new EcmFiles($db);
-	$result = $ecmfile->fetch(0, $hashn, '', $hashc);
+	$result = $ecmfile->fetch(0, '', '', '', $hashp);
 	if ($result > 0)
 	{
 		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepatch is relative to document directory

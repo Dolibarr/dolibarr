@@ -19,8 +19,9 @@
 CREATE TABLE llx_ecm_files
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  ref				varchar(128),					-- Not used yet. Will contains a hash id from filename+filepath
-  label				varchar(64) NOT NULL,			-- label contains a md5
+  ref				varchar(128),					-- contains a hash id from filename+filepath
+  label				varchar(128) NOT NULL,			-- contains hash of file content
+  share				varchar(128) NULL,				-- contains a hash for file sharing
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   filepath    		varchar(255) NOT NULL,   	    -- relative to dolibarr document dir. Example module/def
   filename          varchar(255) NOT NULL,			-- file name only without any directory
