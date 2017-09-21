@@ -76,7 +76,9 @@ $month=GETPOST('month');
 $day_date_when=GETPOST('day_date_when');
 $year_date_when=GETPOST('year_date_when');
 $month_date_when=GETPOST('month_date_when');
-$search_frequency=GETPOST('search_frequency');
+$search_recurring=GETPOST('search_recurring','int');
+$search_frequency=GETPOST('search_frequency','alpha');
+$search_unit_frequency=GETPOST('search_unit_frequency','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -117,8 +119,10 @@ $arrayfields=array(
     'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
     'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
     'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-    'f.frequency'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
-    'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
+    'recurring'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
+    'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
+	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
+	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
     'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
     'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
     'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
@@ -174,7 +178,9 @@ if (empty($reshook))
         $day_date_when='';
         $year_date_when='';
         $month_date_when='';
+        $search_recurring='';
         $search_frequency='';
+        $search_unit_frequency='';
         $search_array_options=array();
     }
 
@@ -1077,7 +1083,7 @@ if ($action == 'create')
 
 		print '<table class="border" width="100%">';
 
-		// Frequency
+		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
@@ -1549,8 +1555,6 @@ else
 		{
 		    if ($action != 'editline')
 		    {
-    		    $var = true;
-
     		    // Add free products/services
     		    $object->formAddObjectLine(0, $mysoc, $object->thirdparty);                          // No date selector for template invoice
 
@@ -1637,14 +1641,15 @@ else
 		if (! $user->rights->societe->client->voir && ! $socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
-		if ($search_ref) $sql .= natural_search('f.titre', $search_ref);
-		if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-		if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
-		if ($search_montant_vat != '') $sql.= natural_search('f.tva', $search_montant_vat, 1);
-		if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-		if ($search_frequency > 0)    $sql.= natural_search('f.frequency', $search_frequency);
-		if ($search_frequency == '1') $sql.= ' AND f.frequency > 0';
-		if ($search_frequency == '0') $sql.= ' AND (f.frequency IS NULL or f.frequency = 0)';
+		if ($search_ref)                  $sql .= natural_search('f.titre', $search_ref);
+		if ($search_societe)              $sql .= natural_search('s.nom', $search_societe);
+		if ($search_montant_ht != '')     $sql.= natural_search('f.total', $search_montant_ht, 1);
+		if ($search_montant_vat != '')    $sql.= natural_search('f.tva', $search_montant_vat, 1);
+		if ($search_montant_ttc != '')    $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
+		if ($search_recurring == '1')     $sql.= ' AND f.frequency > 0';
+		if ($search_recurring == '0')     $sql.= ' AND (f.frequency IS NULL or f.frequency = 0)';
+		if ($search_frequency != '')      $sql.= natural_search('f.frequency', $search_frequency, 1);
+		if ($search_unit_frequency != '') $sql.= natural_search('f.unit_frequency', $search_unit_frequency);
 
 		if ($month > 0)
 		{
@@ -1700,10 +1705,12 @@ else
 			if ($year_date_when)     $param.='&year_date_when=' .$year_date_when;
 			if ($search_ref)         $param.='&search_ref=' .$search_ref;
 			if ($search_societe)     $param.='&search_societe=' .$search_societe;
-			if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
-			if ($search_montant_vat != '') $param.='&search_montant_vat='.$search_montant_vat;
-			if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
-			if ($search_frequency > 0)     $param.='&search_frequency='  .$search_frequency;
+			if ($search_montant_ht != '')   $param.='&search_montant_ht=' .$search_montant_ht;
+			if ($search_montant_vat != '')  $param.='&search_montant_vat='.$search_montant_vat;
+			if ($search_montant_ttc != '')  $param.='&search_montant_ttc='.$search_montant_ttc;
+			if ($search_recurring != '' && $search_recurrning != '-1')    $param.='&search_recurring='  .$search_recurring;
+			if ($search_frequency > 0)      $param.='&search_frequency='  .$search_frequency;
+			if ($search_unit_frequency > 0) $param.='&search_unit_frequency='.$search_unit_frequency;
 			if ($option)             $param.="&option=".$option;
 			if ($optioncss != '')    $param.='&optioncss='.$optioncss;
 			// Add $param from extra fields
@@ -1775,11 +1782,25 @@ else
 			    print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 			    print '</td>';
 			}
+			if (! empty($arrayfields['recurring']['checked']))
+			{
+			    // Recurring or not
+			    print '<td class="liste_titre" align="center">';
+			    print $form->selectyesno('search_recurring', $search_recurring, 1, false, 1);
+			    print '</td>';
+			}
 			if (! empty($arrayfields['f.frequency']['checked']))
 			{
 			    // Recurring or not
 			    print '<td class="liste_titre" align="center">';
-			    print $form->selectyesno('search_frequency', $search_frequency, 1, false, 1);
+			    print '<input class="flat" type="text" size="1" name="search_frequency" value="'.dol_escape_htmltag($search_frequency).'">';
+			    print '</td>';
+			}
+			if (! empty($arrayfields['f.unit_frequency']['checked']))
+			{
+			    // Frequency unit
+			    print '<td class="liste_titre" align="center">';
+			    print '<input class="flat" type="text" size="1" name="search_unit_frequency" value="'.dol_escape_htmltag($search_unit_frequency).'">';
 			    print '</td>';
 			}
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))
@@ -1865,7 +1886,9 @@ else
 			if (! empty($arrayfields['f.total']['checked']))         print_liste_field_titre($arrayfields['f.total']['label'],$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.tva']['checked']))           print_liste_field_titre($arrayfields['f.tva']['label'],$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'],$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+			if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'],$_SERVER['PHP_SELF'],"recurring","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.frequency']['checked']))     print_liste_field_titre($arrayfields['f.frequency']['label'],$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
+			if (! empty($arrayfields['f.unit_frequency']['checked'])) print_liste_field_titre($arrayfields['f.unit_frequency']['label'],$_SERVER['PHP_SELF'],"f.unit_frequency","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'],$_SERVER['PHP_SELF'],"f.nb_gen_done","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.date_last_gen']['checked'])) print_liste_field_titre($arrayfields['f.date_last_gen']['label'],$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
@@ -1875,13 +1898,14 @@ else
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 			print "</tr>\n";
 
-
 			if ($num > 0)
 			{
-				$var=true;
+				$i=0;
+				$totalarray=array();
 				while ($i < min($num,$limit))
 				{
 					$objp = $db->fetch_object($resql);
+					if (empty($objp)) break;
 
 					$companystatic->id=$objp->socid;
 					$companystatic->name=$objp->name;
@@ -1897,62 +1921,90 @@ else
 					{
 					   print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					   print "</a></td>\n";
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['s.nom']['checked']))
 					{
 					   print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1,'customer').'</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.total']['checked']))
 					{
 					   print '<td align="right">'.price($objp->total).'</td>'."\n";
+					   if (! $i) $totalarray['nbfield']++;
+					   if (! $i) $totalarray['pos'][$totalarray['nbfield']-1]='f.total';
+					   $totalarray['val']['f.total'] += $objp->total;
 					}
 					if (! empty($arrayfields['f.tva']['checked']))
 					{
 					   print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
+					   if (! $i) $totalarray['nbfield']++;
+					   if (! $i) $totalarray['pos'][$totalarray['nbfield']-1]='f.tva';
+					   $totalarray['val']['f.tva'] += $objp->total_vat;
 					}
 					if (! empty($arrayfields['f.total_ttc']['checked']))
 					{
 					   print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
+					   if (! $i) $totalarray['nbfield']++;
+					   if (! $i) $totalarray['pos'][$totalarray['nbfield']-1]='f.total_ttc';
+					   $totalarray['val']['f.total_ttc'] += $objp->total_ttc;
+					}
+					if (! empty($arrayfields['recurring']['checked']))
+					{
+					   print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.frequency']['checked']))
 					{
-					   print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
+					   print '<td align="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
+					   if (! $i) $totalarray['nbfield']++;
+					}
+					if (! empty($arrayfields['f.unit_frequency']['checked']))
+					{
+					   print '<td align="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.nb_gen_done']['checked']))
 					{
 					    print '<td align="center">';
 					    print ($objp->frequency ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 					    print '</td>';
+					    if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.date_last_gen']['checked']))
 					{
 					   print '<td align="center">';
 					   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_last_gen),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 					   print '</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.date_when']['checked']))
 					{
 					   print '<td align="center">';
 					   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_when),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 					   print '</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.datec']['checked']))
 					{
 					   print '<td align="center">';
 					   print dol_print_date($db->jdate($objp->datec),'dayhour');
 					   print '</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['f.tms']['checked']))
 					{
 					   print '<td align="center">';
 					   print dol_print_date($db->jdate($objp->tms),'dayhour');
 					   print '</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					if (! empty($arrayfields['status']['checked']))
 					{
 					   print '<td align="center">';
 					   print $invoicerectmp->getLibStatut(3,0);
 					   print '</td>';
+					   if (! $i) $totalarray['nbfield']++;
 					}
 					// Action column
 					print '<td align="center">';
@@ -1972,8 +2024,11 @@ else
 					{
 					    print "&nbsp;";
 					}
+					if (! $i) $totalarray['nbfield']++;
 					print "</td>";
+
 					print "</tr>\n";
+
 					$i++;
 				}
 			}
@@ -1982,6 +2037,29 @@ else
 			    $colspan=1;
 			    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+			}
+
+			//var_dump($totalarray);
+			// Show total line
+			if (isset($totalarray['pos']))
+			{
+				print '<tr class="liste_total">';
+				$i=0;
+				while ($i < $totalarray['nbfield'])
+				{
+					$i++;
+					if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+					else
+					{
+						if ($i == 1)
+						{
+							if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+							else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+						}
+						print '<td></td>';
+					}
+				}
+				print '</tr>';
 			}
 
 			print "</table>";
