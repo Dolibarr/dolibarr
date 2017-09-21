@@ -22,6 +22,8 @@
  *       \brief      Page to define emailing targets
  */
 
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/comm/mailing/class/mailing.class.php';
@@ -43,13 +45,13 @@ if (! empty($conf->categorie->enabled)) {
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
 	accessforbidden();
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder)
@@ -59,14 +61,14 @@ if (! $sortfield)
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $search_nom = GETPOST("search_nom");
 $search_prenom = GETPOST("search_prenom");
 $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x")) {
+if (GETPOST('button_removefilter_x','alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
@@ -404,14 +406,8 @@ if ($_POST["button_removefilter"]) {
  * View
  */
 
-$extrajs = array (
-		'/includes/jquery/plugins/multiselect/js/ui.multiselect.js'
-);
-$extracss = array (
-		'/includes/jquery/plugins/multiselect/css/ui.multiselect.css',
-);
 
-llxHeader('', $langs->trans("MailAdvTargetRecipients"), '', '', '', '', $extrajs, $extracss);
+llxHeader('', $langs->trans("MailAdvTargetRecipients"));
 
 print '<script type="text/javascript" language="javascript">
 	$(document).ready(function() {
@@ -767,19 +763,19 @@ if ($object->fetch($id) >= 0) {
 		} else {
 			$std_soc = new Societe($db);
 			$action_search = 'query';
-			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array (
-					'thirdpartycard'
-			));
+			$hookmanager->initHooks(array ('thirdpartycard'));
+
+			$parameters=array();
 			if (! empty($advTarget->id)) {
-				$parameters = array (
-						'array_query' => $advTarget->filtervalue
-				);
+				$parameters = array('array_query' => $advTarget->filtervalue);
 			}
-			// Module extrafield feature
+			// Other attributes
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $std_soc, $action_search);
+            print $hookmanager->resPrint;
 		}
 
 		// State Contact

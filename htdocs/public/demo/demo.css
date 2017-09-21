@@ -32,16 +32,15 @@ a:hover {
 	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 }
 .csscolumns {
-    margin-left: 8px;
     margin-top: 6px;
     margin-bottom: 5px;
-    -webkit-column-count: 4; /* Chrome, Safari, Opera */
-    -moz-column-count: 4; /* Firefox */
-    column-count: 3;
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
     text-align: left;
 }
 .demomaxoveflow {
-    max-width: 100px;
+    max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -65,6 +64,11 @@ a:hover {
 }
 @media only screen and (max-width: 420px)
 {
+	.demomaxoveflow {
+	    max-width: none !important;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	}
 	.csscolumns {
 		-webkit-column-count: 1; /* Chrome, Safari, Opera */
 	    -moz-column-count: 1; /* Firefox */

@@ -229,7 +229,7 @@ else
 {
     // View mode
     
-    dol_fiche_head($head, 'perso', $title, 0, 'contact');
+    dol_fiche_head($head, 'perso', $title, -1, 'contact');
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
     

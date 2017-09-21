@@ -54,9 +54,12 @@ $morehtmlref='<div class="refidno">';
 $morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+$shownav = 1;
+if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
- 
+dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'libelle', $morehtmlref);
+
+
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 

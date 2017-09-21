@@ -464,24 +464,18 @@ class PriceGlobalVariableUpdater
             }
             $result = "";
             if ($this->type == 0) {
-                //CURL client
-                $handle = curl_init();
-                curl_setopt_array($handle, array(
-                    CURLOPT_URL => $url,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_TIMEOUT => 5,
-                    CURLOPT_POST => false,
-                    CURLOPT_HEADER => false,
-                ));
+                // Call JSON request
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+                $tmpresult=getURLContent($url);
+                $code=$tmpresult['http_code'];
+                $result=$tmpresult['content'];
 
-                $result = curl_exec($handle);
-                $code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
                 if (!isset($result)) {
                     $this->error = $langs->trans("ErrorGlobalVariableUpdater0", "empty response");
                     return -1;
                 }
                 if ($code !== 200) {
-                    $this->error = $langs->trans("ErrorGlobalVariableUpdater0", $code);
+                    $this->error = $langs->trans("ErrorGlobalVariableUpdater0", $code.' '.$tmpresult['curl_error_msg']);
                     return -1;
                 }
 

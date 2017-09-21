@@ -30,9 +30,9 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
     if ($object->id)
     {
     	if (! empty($upload_dirold) && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
-            dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
+            $result = dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
         else
-            dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
+            $result = dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
     }
 }
 elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -73,7 +73,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
             $ret = dol_delete_file($file, 0, 0, 0, $object);
             if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, $object);     // Delete file using old path
-            
+
 	        // Si elle existe, on efface la vignette
 	        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i',$file,$regs))
 	        {
@@ -152,22 +152,31 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave'))
         {
             $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom'));
             $filenameto=dol_sanitizeFileName(GETPOST('renamefileto'));
+
+            // Security:
+            // Disallow file with some extensions. We rename them.
+            // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
+            if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+            {
+                $filenameto.= '.noexe';
+            }
+
             if ($filenamefrom && $filenameto)
             {
                 $srcpath = $upload_dir.'/'.$filenamefrom;
                 $destpath = $upload_dir.'/'.$filenameto;
-    
+
                 $result = dol_move($srcpath, $destpath);
-                if ($result) 
+                if ($result)
                 {
                     $object->addThumbs($destpath);
-                    
+
                     // TODO Add revert function of addThumbs
                     //$object->delThumbs($srcpath);
-                    
+
                     setEventMessages($langs->trans("FileRenamed"), null);
                 }
-                else 
+                else
                 {
                     $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
                     setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');

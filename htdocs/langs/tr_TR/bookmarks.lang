@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Bu sayfayı yer imlerine ekleyin
+AddThisPageToBookmarks=Mevcut sayfayı yer imlerine ekle
 Bookmark=Yer imi
 Bookmarks=Yer imleri
+ListOfBookmarks=Yer imi listesi
+EditBookmarks=Yer imlerini listele/düzenle
 NewBookmark=Yeni yer imi
 ShowBookmark=Yer imine bakın
 OpenANewWindow=Yeni bir pencere açılsın
@@ -10,7 +12,7 @@ BookmarkTargetNewWindowShort=Yeni pencerede
 BookmarkTargetReplaceWindowShort=Geçerli pencerede
 BookmarkTitle=Yer imi başlığı
 UrlOrLink=İnternet Adresi
-BehaviourOnClick=İnternet adresine tıklandığında yapılacak işlem
+BehaviourOnClick=Bir yer imi URL'si seçildiğindeki davranış
 CreateBookmark=Yer imi ekleyin
 SetHereATitleForLink=Yer iminin başlığını yazın
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Dış http ya da bağıl Dolibarr İnternet adresi kullanın

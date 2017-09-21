@@ -353,10 +353,12 @@ begin
     begin
       // TODO Copy file or ask to install package ?
       //CustomMessage('YouWillInstallDoliWamp')+#13#13
-      MsgBox('The package vcredist_x86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://ccc">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
+      MsgBox('The package vcredist_x86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30679">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
     end;
-
-
+	// Pb seems similar with msvcp110.dll
+	//vcredist_x64.exe
+	
+	
     // If we have a new database version, we should only copy old my.ini file into new directory
     // and change only all basedir= strings to use new version. Like this, data dir is still correct.
     // Install of service and stop/start scripts are already rebuild by installer.

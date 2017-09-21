@@ -35,7 +35,7 @@ $langs->load('stocks');
 
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $ref = GETPOST('ref');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -75,19 +75,19 @@ if ($id > 0 || ! empty($ref))
     if ($result >= 0)
     {
         $object->fetch_thirdparty();
-        
+
         $author = new User($db);
         $author->fetch($object->user_author_id);
 
         $head = ordersupplier_prepare_head($object);
 
         $title=$langs->trans("SupplierOrder");
-        dol_fiche_head($head, 'note', $title, 0, 'order');
+        dol_fiche_head($head, 'note', $title, -1, 'order');
 
 		// Supplier order card
-	
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-		
+
 		$morehtmlref='<div class="refidno">';
 		// Ref supplier
 		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
@@ -128,19 +128,19 @@ if ($id > 0 || ! empty($ref))
 		    }
 		}
 		$morehtmlref.='</div>';
-				
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
 
-		
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-		
-		
+
+
 		$cssclass="titlefield";
         include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         print '</div>';
-        
+
         dol_fiche_end();
     }
     else

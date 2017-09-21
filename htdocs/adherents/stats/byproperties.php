@@ -67,7 +67,7 @@ $tab='byproperties';
 $data = array();
 $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, d.morphy as code";
 $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
-$sql.=" WHERE d.entity IN (".getEntity().")";
+$sql.=" WHERE d.entity IN (".getEntity('adherent').")";
 $sql.=" AND d.statut = 1";
 $sql.=" GROUP BY d.morphy";
 
@@ -101,7 +101,7 @@ else
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title
@@ -127,12 +127,10 @@ if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'');
 if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'');
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';

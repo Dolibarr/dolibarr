@@ -263,7 +263,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
-		    $nbofallowedentities=count(explode(',',getEntity('societe',1)));    // If project are shared, nb will be > 1
+		    $nbofallowedentities=count(explode(',',getEntity('societe')));    // If project are shared, nb will be > 1
 		    if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('s.entity'=>'Entity');
 		}
 		$keyforselect='societe'; $keyforelement='company'; $keyforaliasextra='extra';
@@ -286,7 +286,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
-		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe', 1).')';
+		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
@@ -323,7 +323,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
-		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity("societe", 1).')';
+		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
@@ -416,7 +416,7 @@ class modSociete extends DolibarrModules
 		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_rib');
 		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.bank'=>"Bank",
 				'sr.code_banque'=>"BankCode*",'sr.code_guichet'=>"DeskCode*",'sr.number'=>"BankAccountNumber*",
-				'sr.cle_rib'=>"BankAccountNumberKey*",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN"
+				'sr.cle_rib'=>"BankAccountNumberKey*",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN", 'sr.domiciliation'=>"BankAccountDomiciliation",'sr.proprio' => "BankAccountOwner", 'sr.owner_address' => "BankAccountOwnerAddress", 'sr.default_rib' => 'Default'
 		);
 
 		$this->import_convertvalue_array[$r]=array(
@@ -424,7 +424,7 @@ class modSociete extends DolibarrModules
 		);
 		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.bank'=>"ING",
 				'sr.code_banque'=>"0000", 'sr.code_guichet'=>"1111",'sr.number'=>"3333333333",
-				'sr.cle_rib'=>"22",'sr.bic'=>"USHINGMMXXX",'sr.iban_prefix'=>"US00 0000 1111 22 3333 3333"
+				'sr.cle_rib'=>"22",'sr.bic'=>"USHINGMMXXX",'sr.iban_prefix'=>"US00 0000 1111 22 3333 3333",'sr.domiciliation'=>"PARIS",'sr.proprio' => "Name of owner", 'sr.owner_address' => "15 paris street 75000 Paris", 'sr.default_rib' => '1 or 0'
 		);
 
 		// Import Company Salesman

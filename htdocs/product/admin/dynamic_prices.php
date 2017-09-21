@@ -54,9 +54,11 @@ if ($action == 'edit_updater') {
     }
 }
 
+
 /*
  * Actions
  */
+
 if (!empty($action) && empty($cancel)) {
     //Global variable actions
     if ($action == 'create_variable' || $action == 'edit_variable') {
@@ -166,7 +168,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
     {
 	    foreach ($arrayglobalvars as $i=>$entry) {
 	        $var = !$var;
-	        print '<tr '.$bc[$var].'>';
+	        print '<tr class="oddeven">';
 	        print '<td>'.$entry->code.'</td>';
 	        print '<td>'.$entry->description.'</td>';
 	        print '<td>'.price($entry->value).'</td>';

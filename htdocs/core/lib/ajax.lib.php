@@ -37,14 +37,21 @@
  *  @param	int		$autoselect			Automatic selection if just one value
  *  @param	array	$ajaxoptions		Multiple options array
  *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                          Ex: array('disabled'=>
- *                                          Ex: array('show'=>
- *                                          Ex: array('update_textarea'=>
+ *                                          Ex: array('disabled'=> )
+ *                                          Ex: array('show'=> )
+ *                                          Ex: array('update_textarea'=> )
+ *                                          Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
 {
     if (empty($minLength)) $minLength=1;
+
+    $dataforrenderITem='ui-autocomplete';
+    $dataforitem='ui-autocomplete-item';
+    // Allow two constant to use other values for backward compatibility
+    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem=constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem=constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 
     // Input search_htmlname is original field
     // Input htmlname is a second input field used when using ajax autocomplete.
@@ -140,6 +147,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
+    							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
     							if (ui.item.disabled) {
 									$("#" + options.option_disabled).prop("disabled", true);
     								if (options.error) {
@@ -148,28 +156,32 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     								if (options.warning) {
     									$.jnotify(options.warning, "warning", false);		// Output with jnotify the warning message
     								}
-							} else {
+								} else {
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
     						if (options.disabled) {
+    							console.log("Make action disabled on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
 									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
+    							console.log("Make action show on each "+options.show)
     							$.each(options.show, function(key, value) {
     								$("#" + value).show().trigger("show");
     							});
     						}
     						// Update an input
     						if (ui.item.update) {
+    							console.log("Make action update on each ui.item.update")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
     								$("#" + key).val(value).trigger("change");
     							});
     						}
     						if (ui.item.textarea) {
+    							console.log("Make action textarea on each ui.item.textarea")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
@@ -181,12 +193,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
 						return $("<li>")
-						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
@@ -349,12 +362,12 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
 
 /**
- * Make a input box content all selected
- * 
- * @param string	$htmlname	Id of html object 
- * @param int		$addlink	Add a link to after
+ * Make content of an input box selected when we click into input field.
+ *
+ * @param string	$htmlname	Id of html object
+ * @param string	$addlink	Add a 'link to' after
  */
-function ajax_autoselect($htmlname, $addlink=0)
+function ajax_autoselect($htmlname, $addlink='')
 {
 	global $langs;
 	$out = '<script type="text/javascript">
@@ -362,7 +375,7 @@ function ajax_autoselect($htmlname, $addlink=0)
 				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
 				});
 		    </script>';
-	if ($addlink) $out.=' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
 	return $out;
 }
 
@@ -381,7 +394,7 @@ function ajax_autoselect($htmlname, $addlink=0)
 function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
-	
+
 	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
 	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
@@ -390,13 +403,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
-    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'				    
+					minimumInputLength: '.$minLengthToAutocomplete.'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

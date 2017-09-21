@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=Посредничество %s  удалено
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
 LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=После деятельность заказчика контакт
 # Modele numérotation

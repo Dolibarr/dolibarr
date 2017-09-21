@@ -33,10 +33,12 @@ class AccountingJournal extends CommonObject
 
 	var $rowid;
 
-	var $code;
-	var $label;
-	var $nature;		// 0:various operations, 1:sale, 2:purchase, 3:bank, 9: has-new
-	var $active;
+	public $code;
+	public $label;
+	public $nature;		// 0:various operations, 1:sale, 2:purchase, 3:bank, 4:expense-report, 9: has-new
+	public $active;
+
+	public $lines;
 
 	/**
 	 * Constructor
@@ -46,369 +48,229 @@ class AccountingJournal extends CommonObject
 	function __construct($db) {
 		$this->db = $db;
 	}
-	
+
 	/**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @return	int				<0 if KO, >0 if OK
-	*/
-	function fetch($id)
-	{
-		$sql = "SELECT rowid, code, label, nature, active";
-		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-		$sql.= " WHERE rowid = ".$id;
-
-		dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ( $result )
-		{
-			$obj = $this->db->fetch_object($result);
-
-			$this->id			= $obj->rowid;
-
-			$this->code			= $obj->code;
-			$this->ref			= $obj->code;
-			$this->label		= $obj->label;
-			$this->nature	    = $obj->nature;
-			$this->active		= $obj->active;
-
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
-	
-	/**
-	 * Insert journal in database
+	 * Load an object from database
 	 *
-	 * @param	User	$user		Use making action
-	 * @param	int		$notrigger	Disable triggers
-	 * @return 	int 				<0 if KO, >0 if OK
+	 * @param	int		$rowid				Id of record to load
+	 * @param 	string 	$journal_code		Journal code
+	 * @return	int							<0 if KO, Id of record if OK and found
 	 */
-	function create($user, $notrigger = 0)
+	function fetch($rowid = null, $journal_code = null)
 	{
-		global $conf;
-		$error = 0;
-		$now = dol_now();
-		
-		// Clean parameters
-		if (isset($this->code))
-			$this->code = trim($this->code);
-		if (isset($this->label))
-			$this->label = trim($this->label);
-
-		// Check parameters
-		if (empty($this->nature) || $this->nature == '-1')
+		if ($rowid || $journal_code)
 		{
-		    $this->nature = '0';
-		}
-
-		// Insert request
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_journal(";
-		$sql .= "code";
-		$sql .= ", label";
-		$sql .= ", nature";
-		$sql .= ", active";
-		$sql .= ") VALUES (";
-		$sql .= " " . (empty($this->code) ? 'NULL' : "'" . $this->db->escape($this->code) . "'");
-		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
-		$sql .= ", " . (empty($this->nature) ? '0' : "'" . $this->db->escape($this->nature) . "'");
-		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
-		$sql .= ")";
-		
-		$this->db->begin();
-		
-		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (! $resql) {
-			$error ++;
-			$this->errors[] = "Error " . $this->db->lasterror();
-		}
-		
-		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_journal");
-			
-			// if (! $notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-			
-			// // Call triggers
-			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			// $interface=new Interfaces($this->db);
-			// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// // End call triggers
-			// }
-		}
-		
-		// Commit or rollback
-		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			$sql = "SELECT rowid, code, label, nature, active";
+			$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " WHERE";
+			if ($rowid) {
+				$sql .= " rowid = " . (int) $rowid;
+			} elseif ($journal_code) {
+				$sql .= " code = '" . $this->db->escape($journal_code) . "'";
 			}
-			$this->db->rollback();
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-			return $this->id;
-		}
-	}
-	
-	/**
-	 * Update record
-	 *
-	 * @param  User $user      Use making update
-	 * @return int             <0 if KO, >0 if OK
-	 */
-	function update($user) 
-	{
-	    // Check parameters
-	    if (empty($this->nature) || $this->nature == '-1')
-	    {
-	        $this->nature = '0';
-	    }
 
-	    $this->db->begin();
-		
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_journal ";
-		$sql .= " SET code = " . ($this->code ? "'" . $this->db->escape($this->code) . "'" : "null");
-		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
-		$sql .= " , nature = " . ($this->nature ? "'" . $this->db->escape($this->nature) . "'" : "0");
-		$sql .= " , active = '" . $this->active . "'";
-		$sql .= " WHERE rowid = " . $this->id;
-		
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return - 1;
+			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$obj = $this->db->fetch_object($result);
+
+				if ($obj) {
+					$this->id			= $obj->rowid;
+					$this->rowid		= $obj->rowid;
+
+					$this->code			= $obj->code;
+					$this->ref			= $obj->code;
+					$this->label		= $obj->label;
+					$this->nature		= $obj->nature;
+					$this->active		= $obj->active;
+
+					return $this->id;
+				} else {
+					return 0;
+				}
+			}
+			else
+			{
+				$this->error = "Error " . $this->db->lasterror();
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 		}
+		return -1;
 	}
-	
+
 	/**
-	 * Check usage of accounting journal
+	 * Load object in memory from the database
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function checkUsage() {
-		global $langs;
-		
-		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
-		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
-		$sql .= "UNION";
-		$sql .= "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
-		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
-		
-		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
+	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+		$sql = "SELECT rowid, code, label, nature, active";
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ( $filter as $key => $value ) {
+				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
+					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
+				} elseif ($key == 't.rowid' || $key == 't.active') {
+					$sqlwhere[] = $key . '=' . $value;
+				}
+			}
+		}
+		$sql .= ' WHERE 1 = 1';
+		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		}
+
+		if (! empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (! empty($limit)) {
+			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
+		}
+		$this->lines = array();
+
+		dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num > 0) {
-				$this->error = $langs->trans('ErrorAccountingJournalIsAlreadyUse');
-				return 0;
-			} else {
-				return 1;
+
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$line = new self($this->db);
+
+				$line->id = $obj->rowid;
+				$line->code = $obj->code;
+				$line->label = $obj->label;
+				$line->nature = $obj->nature;
+				$line->active = $obj->active;
+
+				$this->lines[] = $line;
 			}
+
+			$this->db->free($resql);
+
+			return $num;
 		} else {
-			$this->error = $this->db->lasterror();
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+
 			return - 1;
 		}
 	}
-	
-	/**
-	 * Delete object in database
-	 *
-	 * @param User $user User that deletes
-	 * @param int $notrigger 0=triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger = 0) {
-		$error = 0;
-		
-		$result = $this->checkUsage();
-		
-		if ($result > 0) {
-			
-			$this->db->begin();
-			
-			// if (! $error) {
-			// if (! $notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-			
-			// // Call triggers
-			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			// $interface=new Interfaces($this->db);
-			// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
-			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// // End call triggers
-			// }
-			// }
-			
-			if (! $error) {
-				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_journal";
-				$sql .= " WHERE rowid=" . $this->id;
-				
-				dol_syslog(get_class($this) . "::delete sql=" . $sql);
-				$resql = $this->db->query($sql);
-				if (! $resql) {
-					$error ++;
-					$this->errors[] = "Error " . $this->db->lasterror();
-				}
-			}
-			
-			// Commit or rollback
-			if ($error) {
-				foreach ( $this->errors as $errmsg ) {
-					dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return - 1 * $error;
-			} else {
-				$this->db->commit();
-				return 1;
-			}
-		} else {
-			return - 1;
-		}
-	}
-	
+
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
-	 * @param	int		$withpicto	0=No picto, 1=Include picto into link, 2=Only picto
-	 * @return	string				Chaine avec URL
+	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 * @param	int		$withlabel		0=No label, 1=Include label of journal
+	 * @param	int  	$nourl			1=Disable url
+	 * @param	string  $moretitle		Add more text to title tooltip
+	 * @param	int  	$notooltip		1=Disable tooltip
+	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0) {
-		global $langs;
+	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0)
+	{
+		global $langs, $conf, $user;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
 
-		$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/journals_card.php?id=' . $this->id . '">';
-		$linkend = '</a>';
+		$url = DOL_URL_ROOT . '/accountancy/admin/journals_list.php?id=35';
 
 		$picto = 'billr';
+		$label='';
 
-		$label = $langs->trans("Show") . ': ' . $this->code . ' - ' . $this->label;
+		$label = '<u>' . $langs->trans("ShowAccountingJournal") . '</u>';
+		if (! empty($this->code))
+			$label .= '<br><b>'.$langs->trans('Code') . ':</b> ' . $this->code;
+		if (! empty($this->label))
+			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+		if ($moretitle) $label.=' - '.$moretitle;
 
-		if ($withpicto)
-			$result .= ($link . img_object($label, $picto) . $linkend);
-		if ($withpicto && $withpicto != 2)
-			$result .= ' ';
-		if ($withpicto != 2)
-			$result .= $link . $this->code . ' - ' . $this->label . $linkend;
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowAccoutingJournal");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip"';
+		}
+
+		$linkstart='<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		if ($nourl)
+		{
+			$linkstart = '';
+			$linkclose = '';
+			$linkend = '';
+		}
+
+		$label_link = $this->code;
+		if ($withlabel) $label_link .= ' - ' . $this->label;
+
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+		if ($withpicto && $withpicto != 2) $result .= ' ';
+		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
 		return $result;
 	}
-	
-	/**
-	 * Deactivate journal
-	 *
-	 * @param int $id Id
-	 * @return int <0 if KO, >0 if OK
-	 */
-	function journal_deactivate($id) {
-		$result = $this->checkUsage();
-		
-		if ($result > 0) {
-			$this->db->begin();
-			
-			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_journal ";
-			$sql .= "SET active = '0'";
-			$sql .= " WHERE rowid = " . $this->db->escape($id);
-			
-			dol_syslog(get_class($this) . "::deactivate sql=" . $sql, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			
-			if ($result) {
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				return - 1;
-			}
-		} else {
-			return - 1;
-		}
-	}
-	
-	/**
-	 * Activate journal
-	 *
-	 * @param int $id Id
-	 * @return int <0 if KO, >0 if OK
-	 */
-	function journal_activate($id) {
-		$this->db->begin();
-		
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_journal ";
-		$sql .= "SET active = '1'";
-		$sql .= " WHERE rowid = " . $this->db->escape($id);
-		
-		dol_syslog(get_class($this) . "::activate sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return - 1;
-		}
-	}
-	
-	
+
 	/**
 	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court
-	 *  @return	string 			       Label of type
+	 *  @param	int		$mode		  0=libelle long, 1=libelle court
+	 *  @return	string 				   Label of type
 	 */
 	function getLibType($mode=0)
 	{
-	    return $this->LibType($this->nature,$mode);
+		return $this->LibType($this->nature,$mode);
 	}
-	
+
 	/**
 	 *  Return type of an accounting journal
 	 *
-	 *  @param	int		$nature        	Id type
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court
-	 *  @return string 			       	Label of type
+	 *  @param	int		$nature			Id type
+	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
+	 *  @return string 				   	Label of type
 	 */
 	function LibType($nature,$mode=0)
 	{
-	    global $langs;
+		global $langs;
 
 		$langs->load("accountancy");
-	
-	    if ($mode == 0)
-	    {
-	        $prefix='';
-			if ($nature == 9) return $langs->trans('AccountingJournalTypeHasNew');
-			if ($nature == 3) return $langs->trans('AccountingJournalTypeBank');
-			if ($nature == 2) return $langs->trans('AccountingJournalTypePurchase');
-	        if ($nature == 1) return $langs->trans('AccountingJournalTypeSale');
-	        if ($nature == 0) return $langs->trans('AccountingJournalTypeVariousOperation');
-	    }
-	    if ($mode == 1)
-	    {
-			if ($nature == 9) return $langs->trans('AccountingJournalTypeHasNew');
-			if ($nature == 3) return $langs->trans('AccountingJournalTypeBank');
-			if ($nature == 2) return $langs->trans('AccountingJournalTypePurchase');
-	        if ($nature == 1) return $langs->trans('AccountingJournalTypeSale');
-	        if ($nature == 0) return $langs->trans('AccountingJournalTypeVariousOperation');
-	    }
+
+		if ($mode == 0)
+		{
+			$prefix='';
+			if ($nature == 9) return $langs->trans('AccountingJournalType9');
+			if ($nature == 5) return $langs->trans('AccountingJournalType5');
+			if ($nature == 4) return $langs->trans('AccountingJournalType4');
+			if ($nature == 3) return $langs->trans('AccountingJournalType3');
+			if ($nature == 2) return $langs->trans('AccountingJournalType2');
+			if ($nature == 1) return $langs->trans('AccountingJournalType1');
+		}
+		if ($mode == 1)
+		{
+			if ($nature == 9) return $langs->trans('AccountingJournalType9');
+			if ($nature == 5) return $langs->trans('AccountingJournalType5');
+			if ($nature == 4) return $langs->trans('AccountingJournalType4');
+			if ($nature == 3) return $langs->trans('AccountingJournalType3');
+			if ($nature == 2) return $langs->trans('AccountingJournalType2');
+			if ($nature == 1) return $langs->trans('AccountingJournalType1');
+		}
 	}
 }

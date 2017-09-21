@@ -52,7 +52,7 @@ function product_prepare_head($object)
     	$head[$h][2] = 'price';
     	$h++;
 	}
-	
+
 	if (! empty($object->status_buy) || (! empty($conf->margin->enabled) && ! empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
     	if ((! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
@@ -102,7 +102,7 @@ function product_prepare_head($object)
 
 		$prodcomb = new ProductCombination($db);
 
-		if ($prodcomb->fetchByFkProductChild($object->id) == -1) 
+		if ($prodcomb->fetchByFkProductChild($object->id) == -1)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
@@ -149,11 +149,11 @@ function product_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
         if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
         if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
-        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     }
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
@@ -184,7 +184,7 @@ function productlot_prepare_head($object)
     global $db, $langs, $conf, $user;
     $langs->load("products");
     $langs->load("productbatch");
-    
+
     $h = 0;
     $head = array();
 
@@ -208,7 +208,7 @@ function productlot_prepare_head($object)
     $head[$h][2] = 'info';
     $h++;
     */
-    
+
     return $head;
 }
 
@@ -301,15 +301,15 @@ function show_stats_for_company($product,$socid)
 	global $conf,$langs,$user,$db;
 
 	$nblines = 0;
-	
-	print '<tr>';
-	print '<td align="left" width="25%" valign="top">'.$langs->trans("Referers").'</td>';
+
+	print '<tr class="liste_titre">';
+	print '<td align="left" class="tdtop" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
-	// Propals
+	// Customer proposals
 	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$nblines++;
@@ -327,7 +327,25 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Commandes clients
+	// Supplier proposals
+	if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+	{
+		$nblines++;
+		$ret=$product->load_stats_proposal_supplier($socid);
+		if ($ret < 0) dol_print_error($db);
+		$langs->load("propal");
+		print '<tr><td>';
+		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("SupplierProposals").'</a>';
+		print '</td><td align="right">';
+		print $product->stats_proposal_supplier['suppliers'];
+		print '</td><td align="right">';
+		print $product->stats_proposal_supplier['nb'];
+		print '</td><td align="right">';
+		print $product->stats_proposal_supplier['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+	// Customer orders
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$nblines++;
@@ -345,7 +363,7 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Commandes fournisseurs
+	// Supplier orders
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
 		$nblines++;
@@ -363,25 +381,7 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Contrats
-	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
-	{
-		$nblines++;
-		$ret=$product->load_stats_contrat($socid);
-		if ($ret < 0) dol_print_error($db);
-		$langs->load("contracts");
-		print '<tr><td>';
-		print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
-		print '</td><td align="right">';
-		print $product->stats_contrat['customers'];
-		print '</td><td align="right">';
-		print $product->stats_contrat['nb'];
-		print '</td><td align="right">';
-		print $product->stats_contrat['qty'];
-		print '</td>';
-		print '</tr>';
-	}
-	// Factures clients
+	// Customer invoices
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$nblines++;
@@ -399,7 +399,7 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Factures fournisseurs
+	// Supplier invoices
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
 		$nblines++;
@@ -414,6 +414,25 @@ function show_stats_for_company($product,$socid)
 		print $product->stats_facture_fournisseur['nb'];
 		print '</td><td align="right">';
 		print $product->stats_facture_fournisseur['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Contracts
+	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
+	{
+		$nblines++;
+		$ret=$product->load_stats_contrat($socid);
+		if ($ret < 0) dol_print_error($db);
+		$langs->load("contracts");
+		print '<tr><td>';
+		print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
+		print '</td><td align="right">';
+		print $product->stats_contrat['customers'];
+		print '</td><td align="right">';
+		print $product->stats_contrat['nb'];
+		print '</td><td align="right">';
+		print $product->stats_contrat['qty'];
 		print '</td>';
 		print '</tr>';
 	}
@@ -441,7 +460,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
 		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
 		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
-        $measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
+		$measuring_units[98] = $langs->transnoentitiesnoconv("WeightUnitounce");
+		$measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
 	}
 	else if ($measuring_style == 'size')
 	{

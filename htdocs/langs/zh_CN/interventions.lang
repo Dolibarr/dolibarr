@@ -41,6 +41,7 @@ InterventionDeletedInDolibarr=干预 %s 已删除
 InterventionsArea=干预区
 DraftFichinter=干预草稿
 LastModifiedInterventions= 最近变更的 %s 干预
+FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=随访客户联系
 # Modele numérotation

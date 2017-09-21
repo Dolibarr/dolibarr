@@ -11,6 +11,7 @@ YourEMail=E-mail by otrzymać potwierdzenie zapłaty
 Creditor=Wierzyciel
 PaymentCode=Kod płatności
 PayBoxDoPayment=Przejdź do płatności
+ToPay=Wykonaj płatność
 YouWillBeRedirectedOnPayBox=Zostaniesz przekierowany na zabezpieczoną stronę Paybox bys mógł podać informację z karty kredytowej.
 Continue=Dalej
 ToOfferALinkForOnlinePayment=URL %s płatności

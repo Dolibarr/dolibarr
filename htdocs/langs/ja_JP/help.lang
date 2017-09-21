@@ -11,7 +11,7 @@ TypeOfSupport=サポートのソース
 TypeSupportCommunauty=コミュニティ（無料）
 TypeSupportCommercial=コマーシャル
 TypeOfHelp=タイプ
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=ヘルプやサポートが必要ですか？
 Efficiency=効率性
 TypeHelpOnly=唯一の助け
 TypeHelpDev=+の開発を支援
@@ -22,5 +22,5 @@ ToGetHelpGoOnSparkAngels2=時には、あなたの検索を行い、現​​時
 BackToHelpCenter=それ以外の場合は、移動するには、ここをクリックして<a href="%s">センターのホームページを助けるために戻って</a> 。
 LinkToGoldMember=あなたは彼のウィジェット（ステータスおよび最大価格が自動的に更新されます）をクリックして言語（%s）にDolibarrによって事前に選択コーチのいずれかを呼び出すことができます。
 PossibleLanguages=サポートされる言語
-SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Dolibarrプロジェクトの支援、財団への加入
+SeeOfficalSupport=お使いの言語での公式Dolibarrサポート: <br><b><a href="%s" target="_blank">%s</a></b>

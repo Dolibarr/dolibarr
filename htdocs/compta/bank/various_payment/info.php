@@ -31,7 +31,7 @@ $langs->load("bills");
 $langs->load("salaries");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST('socid','int');

@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Tag/Kategorie
 Rubriques=Tagy/Kategorie
+RubriquesTransactions=Tagy/kategorie transakcí
 categories=tagy/kategorie
 NoCategoryYet=Žádný tag/kategorie tohoto typu nebyla vytvořena
 In=V
@@ -69,7 +70,7 @@ ThisCategoryHasNoProject=This category does not contain any project.
 CategId=ID tagu/kategorie
 CatSupList=Seznam tagů/kategorií dodavatelů
 CatCusList=Seznam tagů/kategorií zákazníků/cílů
-CatProdList=Seznam tagů/kategorií produktů 
+CatProdList=Seznam tagů/kategorií produktů
 CatMemberList=Seznam tagů/kategorií uživatelů
 CatContactList=Seznam kontaktů tagů/kategorií
 CatSupLinks=Spojení mezi dodavateli a tagy/kategoriemi

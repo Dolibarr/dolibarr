@@ -4,6 +4,7 @@ SuppliersOrdersArea=Birgjar pantanir area
 OrderCard=Panta kort
 OrderId=Order Id
 Order=Panta
+PdfOrderTitle=Panta
 Orders=Pantanir
 OrderLine=Pöntunarlína
 OrderDate=Panta dagsetningu

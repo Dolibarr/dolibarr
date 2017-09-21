@@ -152,7 +152,7 @@ tag 729538 -moreinfo
 
 
 
-##### Testing a package into unstable env
+##### Testing a package into a chroot environment
 
 Check you have a mysql server available from another interface than "localhost".
 Set line in /etc/mysql/my.cnf if required and restart mysql
@@ -160,9 +160,11 @@ Set line in /etc/mysql/my.cnf if required and restart mysql
 [mysqld]
 bind-address           = *
 
-Create a chroot called "unstable-amd64-sbuild".
+Create a chroot called "jessie" or "unstable".
 Chroot env is stored into /srv/chroot directory.
 > sudo sbuild-createchroot --keyring=unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
+or
+> sudo sbuild-createchroot jessie /srv/chroot/jessie http://ftp.uk.debian.org/debian
 
 Pour lister les env chroot
 > schroot -l
@@ -170,8 +172,9 @@ or
 > ls /srv/chroot
 
 Puis pour se connecter et préparer l'environnement 
-> schroot -c name_of_chroot
+> schroot -c name_of_chroot  (exemple schroot -c unstable-amd64-sbuild)
 > cat /etc/debian_chroot       to check which debian branch we are into
+> apt-get install vim dialog
 > vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
 > apt-get update
 > apt-get upgrade
@@ -385,13 +388,14 @@ http://packages.qa.debian.org
 * Package will be into release when test will be moved as stable.
 
 
-##### Send an unblock request 
+
+##### Send an unblock request to make a full update of a stable package 
 
 Use this to move from unstable to testing.
 
 reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
 Choose package "release.debian.org"
-Then "unblock"
+Then usertag "unblock"
 Then name of package "dolibarr"
 Fill message, for example:
 "Please unblock package dolibarr
@@ -401,11 +405,11 @@ so it is a better solution to validate this maintenance release than applying a 
 After discussion with ..., it appears that security holes are enough to request this unblock request."
 
 
-Use this to request an update of a stable package
+Use this to request an full update of a stable package
 
 reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
 Choose package "release.debian.org"
-Then "unblock"
+Then usertag "unblock"
 Then name of package "dolibarr"
 Fill message, for example:
 "
@@ -417,11 +421,27 @@ Pro are:
 - It fixes also stability bugs
 - Patches were already tested because deployed and used by several thousands of users.
 - It is easier for package maintener to include this official set of fixes than applying one patch after one patch for each debian report or backported each patch into a dedicated version.
-- Debian maintenance version matches with official project maintenance version (better when all fixes are not related to the way the software is packaged)
+- Debian maintenance version is inline with official project maintenance version (better when all fixes are not related to the way the software is packaged)
 Cons are: 
-- The patch include more than the only one security reported fxes
+- The patch include more than the only one security reported fixes
 
 So I just need to know if it's ok to push such a version 3.5.7 (fixes for 3.5.* branch) instead of only one fix for only the few (the only) reported debian bugs,
 since it provides more stability and is for me a more secured process.
 "
 
+##### Send an request to ask a simple fix of a stable package 
+
+Use this to ask to apply patches on a stable version.
+
+reportbug -B debian --smtphost=smtp.gmail.com:587 --smtpuser=xxxx --smtppasswd=yyyy --tls
+Choose package "release.debian.org"
+Then usertag "jessie-pu" (if tags is not available in list, choose another one, and change it later into email content text)
+Then name of package "dolibarr"
+Fill message, for example:
+"Please unblock package dolibarr
+A security error CVE-2015-3935 was reported and is fixed into package 3.5.7.
+Note that package 3.5.7 contains not only fixed for bugs reported to debian. It includes other fixes, but they are all related to stability or security,
+so it is a better solution to validate this maintenance release than applying a patch of the only CVE-2015-3935. 
+After discussion with ..., it appears that security holes are enough to request this unblock request."
+
+Note: If there is a response to ask more information, don't forget to remove the tag during answer.

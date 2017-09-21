@@ -34,8 +34,8 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 require_once __DIR__.'/../main.inc.php';
 
-// Define css type
-header('Content-type: text/javascript');
+// Define mime type
+top_httphead('text/javascript');
 
 global $langs;
 ?>

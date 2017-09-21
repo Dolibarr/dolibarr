@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Этот список содержит тольк�
 StandardContractsTemplate=Стандартный шаблон контракта
 ContactNameAndSignature=Для %s,  имя и подпись
 OnlyLinesWithTypeServiceAreUsed=Только строки с типом "Услуга" могут быть клонированы.
+CloneContract=Clone contract
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Торговый представитель подписания контракта

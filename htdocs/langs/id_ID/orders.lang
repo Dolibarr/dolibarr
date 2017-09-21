@@ -4,6 +4,7 @@ SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
 OrderId=Order Id
 Order=Order
+PdfOrderTitle=Order
 Orders=Orders
 OrderLine=Order line
 OrderDate=Tanggal Pemesanan

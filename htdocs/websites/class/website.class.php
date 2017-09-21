@@ -22,8 +22,7 @@
 /**
  * \file    websites/website.class.php
  * \ingroup websites
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \brief   File for the CRUD class of website (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -33,9 +32,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 
 /**
  * Class Website
- *
- * Put here description of your class
- * @see CommonObject
  */
 class Website extends CommonObject
 {
@@ -47,11 +43,6 @@ class Website extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website';
-
-	/**
-	 * @var WebsitePage[]  Lines of all pages
-	 */
-	public $lines = array();
 
 	/**
 	 * @var int
@@ -76,10 +67,6 @@ class Website extends CommonObject
 	/**
 	 * @var mixed
 	 */
-	public $date_modification;
-	/**
-	 * @var mixed
-	 */
 	public $tms = '';
 	/**
 	 * @var integer
@@ -89,13 +76,7 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
-	
-	
-	public $records;
-	
-	/**
-	 */
-	
+
 
 	/**
 	 * Constructor
@@ -121,9 +102,9 @@ class Website extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
+		$now=dol_now();
 
 		// Clean parameters
-		
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -136,36 +117,33 @@ class Website extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-
-		
+		if (empty($this->date_creation)) $this->date_creation = $now;
+		if (empty($this->date_modification)) $this->date_modification = $now;
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
 		$sql.= 'entity,';
 		$sql.= 'ref,';
 		$sql.= 'description,';
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
+		$sql.= 'fk_user_create,';
 		$sql.= 'date_creation,';
-		$sql.= 'date_modification';
-		
+		$sql.= 'tms';
 		$sql .= ') VALUES (';
-		
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
-		$sql .= ' '.(! isset($this->virtualhost)?'NULL':$this->virtualhost).',';
-		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
-
-		
+		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
+		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
+		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
+		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -223,12 +201,13 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_modification,";
-		$sql .= " t.tms";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+			$sql .= " WHERE t.ref = '" . $this->db->escape($ref) . "'";
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -240,22 +219,29 @@ class Website extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				
+
 				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
 				$this->description = $obj->description;
 				$this->status = $obj->status;
 				$this->fk_default_home = $obj->fk_default_home;
 				$this->virtualhost = $obj->virtualhost;
+				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->tms = $this->db->jdate($obj->tms);
-
-				
 			}
 			$this->db->free($resql);
 
-			if ($numrows) {
+			if ($numrows > 0) {
+				// Lines
+				$this->fetchLines();
+				{
+					return -3;
+				}
+			}
+
+			if ($numrows > 0) {
 				return 1;
 			} else {
 				return 0;
@@ -267,6 +253,21 @@ class Website extends CommonObject
 			return - 1;
 		}
 	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		$this->lines=array();
+
+		// Load lines with object MyObjectLine
+
+		return count($this->lines)?1:0;
+	}
+
 
 	/**
 	 * Load object in memory from the database
@@ -292,9 +293,10 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_modification,";
-		$sql .= " t.tms";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -307,7 +309,7 @@ class Website extends CommonObject
 		if (count($sqlwhere) > 0) {
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
@@ -324,16 +326,17 @@ class Website extends CommonObject
 				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
-				
+
 				$line->entity = $obj->entity;
 				$line->ref = $obj->ref;
 				$line->description = $obj->description;
 				$line->status = $obj->status;
 				$line->fk_default_home = $obj->fk_default_home;
 				$line->virtualhost = $obj->virtualhost;
+				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
-				$line->tms = $this->db->jdate($obj->tms);
 
 				$this->records[$line->id] = $line;
 			}
@@ -363,7 +366,7 @@ class Website extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -377,25 +380,20 @@ class Website extends CommonObject
 			 $this->status = trim($this->status);
 		}
 
-		
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		
 		$sql .= ' entity = '.(isset($this->entity)?$this->entity:"null").',';
 		$sql .= ' ref = '.(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").',';
 		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '')?"'".$this->db->escape($this->virtualhost)."'":"null").',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' date_modification = '.(! isset($this->date_modification) || dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'");
-
-        
+		$sql .= ' fk_user_modif = '.(! isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
+		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
+		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -482,45 +480,150 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Load an object from its id and create a new one in database
+	 * Load an object from its id and create a new one in database.
+	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param 	int 	$fromid 	Id of object to clone
+	 * @param	string	$newref		New ref
+	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone($user, $fromid, $newref)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+        global $hookmanager, $langs;
+		global $dolibarr_main_data_root;
 
-		global $user;
-		$error = 0;
-		$object = new Website($this->db);
+		$error=0;
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$object = new self($this->db);
+
+        // Check no site with ref exists
+		if ($object->fetch(0, $newref) > 0)
+		{
+			$this->error='NewRefIsAlreadyUsed';
+			return -1;
+		}
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		// Reset object
-		$object->id = 0;
+
+		$oldidforhome=$object->fk_default_home;
+
+		$pathofwebsiteold=$dolibarr_main_data_root.'/websites/'.$object->ref;
+		$pathofwebsitenew=$dolibarr_main_data_root.'/websites/'.$newref;
+		dol_delete_dir_recursive($pathofwebsitenew);
+
+		$fileindex=$pathofwebsitenew.'/index.php';
+
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
 
 		// Clear fields
-		// ...
+		$object->ref=$newref;
+		$object->fk_default_home=0;
+		$object->virtualhost='';
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
-
-		// Other options
 		if ($result < 0) {
 			$error ++;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+		if (! $error)
+		{
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
+
+			// Check symlink to medias and restore it if ko
+			$pathtomedias=DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';
+			if (! is_link(dol_osencode($pathtomediasinwebsite)))
+			{
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			}
+
+			$newidforhome=0;
+
+			// Duplicate pages
+			$objectpages = new WebsitePage($this->db);
+			$listofpages = $objectpages->fetchAll($fromid);
+			foreach($listofpages as $pageid => $objectpageold)
+			{
+				// Delete old file
+				$filetplold=$pathofwebsitenew.'/page'.$pageid.'.tpl.php';
+				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+				dol_delete_file($filetplold);
+
+				// Create new file
+				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id);
+				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
+				if (is_object($objectpagenew) && $objectpagenew->pageurl)
+				{
+		            $filealias=$pathofwebsitenew.'/'.$objectpagenew->pageurl.'.php';
+					$filetplnew=$pathofwebsitenew.'/page'.$objectpagenew->id.'.tpl.php';
+
+					// Save page alias
+					$result=dolSavePageAlias($filealias, $object, $objectpagenew);
+					if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+
+					$result=dolSavePageContent($filetplnew, $object, $objectpagenew);
+					if (! $result) setEventMessages('Failed to write file '.$filetplnew, null, 'errors');
+
+					if ($pageid == $oldidforhome)
+					{
+						$newidforhome = $objectpagenew->id;
+					}
+				}
+				else
+				{
+					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
+					$error++;
+				}
+			}
+		}
+
+		if (! $error)
+		{
+			// Restore id of home page
+			$object->fk_default_home = $newidforhome;
+		    $res = $object->update($user);
+		    if (! $res > 0)
+		    {
+		        $error++;
+		        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+		    }
+
+		    if (! $error)
+		    {
+		        dol_delete_file($fileindex);
+
+		    	$filetpl=$pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
+
+		    	$indexcontent = '<?php'."\n";
+		        $indexcontent.= '// File generated to provide a shortcut to the Home Page - DO NOT MODIFY - It is just an include.'."\n";
+		        $indexcontent.= "include_once './".basename($filetpl)."'\n";
+		        $indexcontent.= '?>'."\n";
+		        $result = file_put_contents($fileindex, $indexcontent);
+		        if (! empty($conf->global->MAIN_UMASK))
+		            @chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		    }
+		}
+
 		// End
 		if (!$error) {
 			$this->db->commit();
 
-			return $object->id;
+			return $object;
 		} else {
 			$this->db->rollback();
 
@@ -566,7 +669,7 @@ class Website extends CommonObject
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
@@ -621,8 +724,8 @@ class Website extends CommonObject
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -631,19 +734,22 @@ class Website extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+	    global $user;
+
 		$this->id = 0;
-		
+
 		$this->entity = 1;
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
+		$this->fk_user_create = $user->id;
+		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
-		$this->date_modification = dol_now();
 		$this->tms = dol_now();
 
-		
+
 	}
 
 }

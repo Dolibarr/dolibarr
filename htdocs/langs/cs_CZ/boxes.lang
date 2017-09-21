@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=přihlašovací údaje
 BoxLastRssInfos=Rss informace
 BoxLastProducts=Latest %s products/services
 BoxProductsAlertStock=Stock alerts for products
@@ -82,3 +83,4 @@ ForCustomersOrders=Zákaznické objednávky
 ForProposals=Nabídky
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
+BoxAdded=Widget byla přidána v přístrojové desce

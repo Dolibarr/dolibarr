@@ -113,10 +113,21 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtra per un anno/mese/giorno<br>YYYY
 ExportNumericFilter='NNNNN' filtra per un solo valore<br>'NNNNN+NNNNN' filtra su un range di valori<br>'&gt;NNNNN' filtra per valori inferiori<br>'&gt;NNNNN' filtra per valori superiori
 ImportFromLine=Importa a partire dalla riga numero
 EndAtLineNb=Numero dell'ultima riga
+ImportFromToLine=Import line numbers (from - to)
 SetThisValueTo2ToExcludeFirstLine=Per esempio: imposta questo valore a 3 per escludere le prime 2 righe
 KeepEmptyToGoToEndOfFile=Lascia il campo vuoto per andare alla fine del file
+SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for update attempt
+UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
+NoUpdateAttempt=No update attempt was performed, only insert
+ImportDataset_user_1=Users (employees or not) and properties
+ComputedField=Computed field
 ## filters
 SelectFilterFields=Se vuoi filtrare su qualche valore, inserisci qui il valore.
 FilteredFields=Campi filtrati
 FilteredFieldsValues=Valore per il filtro
 FormatControlRule=Controllo del formato
+## imports updates
+KeysToUseForUpdates=Chiave da utilizzare per l'aggiornamento dei dati
+NbInsert=Numero di righe inserite: %s
+NbUpdate=Numero di righe aggiornate: %s
+MultipleRecordFoundWithTheseFilters=Righe multiple sono state trovate con questi filtri: %s

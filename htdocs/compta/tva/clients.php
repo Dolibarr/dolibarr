@@ -160,7 +160,7 @@ if ($modetax==1) {	// Calculate on invoice for goods and services
 		. $langs->trans('AddExtraReport')
 		. '</input>'
 		. '<br>';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -204,7 +204,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		. $langs->trans('AddExtraReport')
 		. '</input>'
 		. '<br>';
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -220,7 +220,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		$vatsup.=' ('.$langs->trans("ToGetBack").')';
 	}
 }
-report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -260,7 +260,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra)) {
 				if($coll->assuj == '1') {
@@ -270,7 +270,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -340,7 +340,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if (empty($intra)) {
 				if ($coll->assuj == '1') {
@@ -350,7 +350,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;

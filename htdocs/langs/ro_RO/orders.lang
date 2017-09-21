@@ -4,6 +4,7 @@ SuppliersOrdersArea=Comenzi Furnizori
 OrderCard=Fişă Comandă
 OrderId=ID Comandă
 Order=Comandă
+PdfOrderTitle=Comanda
 Orders=Comenzi
 OrderLine=Linie Comandă
 OrderDate=Dată Comandă

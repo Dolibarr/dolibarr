@@ -186,8 +186,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 
-			if (isset($object->lignes) && ! isset($object->lines)) $object->lines=$object->lignes;
-
 			if (file_exists($dir))
 			{
 				// Add pdfgeneration hook
@@ -476,6 +474,8 @@ class pdf_standard extends ModeleExpenseReport
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Pas d'erreur
 			}
 			else

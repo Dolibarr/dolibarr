@@ -53,7 +53,6 @@ BoxCustomersInvoicesPerMonth=Faturas de cliente por mês
 BoxSuppliersInvoicesPerMonth=Faturas de fornecedor por mês
 BoxCustomersOrdersPerMonth=Pedidos de clientes por mês
 BoxSuppliersOrdersPerMonth=Pedidos de fornecedor por mês
-BoxProposalsPerMonth=Orçamentos por mês
 NoTooLowStockProducts=Nenhum produto abaixo do estoque mínimo
 BoxTitleLastModifiedSupplierBills=Ultimos %s notas fornecedores modificadas
 BoxTitleLatestModifiedSupplierOrders=Ultimas %s ordems de fornecedores modificadas

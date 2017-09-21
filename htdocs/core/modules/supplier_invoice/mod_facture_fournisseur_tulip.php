@@ -72,27 +72,32 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</td>';
+		$texte.= '<tr><td>'.$langs->trans("Mask");
+		//$texte.= ' ('.$langs->trans("InvoiceStandard").')';
+		$texte.= ':</td>';
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->SUPPLIER_INVOICE_TULIP_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
-		// Parametrage du prefix des replacement
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->SUPPLIER_REPLACEMENT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
-		$texte.= '</tr>';
+		if ($conf->global->MAIN_FEATURE_LEVEL >= 2)
+		{
+    		// Parametrage du prefix des replacement
+    		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
+    		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->SUPPLIER_REPLACEMENT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
+    		$texte.= '</tr>';
 
-		// Parametrage du prefix des avoirs
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->SUPPLIER_CREDIT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
-		$texte.= '</tr>';
+    		// Parametrage du prefix des avoirs
+    		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
+    		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->SUPPLIER_CREDIT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
+    		$texte.= '</tr>';
 
-		// Parametrage du prefix des acomptes
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
-		$texte.= '</tr>';
+    		// Parametrage du prefix des acomptes
+    		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
+    		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
+    		$texte.= '</tr>';
+		}
 
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -137,7 +142,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 		// Get Mask value
 		$mask = '';
-		if (is_object($object) && $object->type == 1) 
+		if (is_object($object) && $object->type == 1)
 		{
 			$mask=$conf->global->SUPPLIER_REPLACEMENT_TULIP_MASK;
 			if (! $mask)

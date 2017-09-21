@@ -81,9 +81,9 @@ if ($resql)
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
@@ -132,9 +132,9 @@ if (! empty($conf->fournisseur->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td  class="nowrap">';
+				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 				print $commandestatic->getNomUrl(1,'',16);
@@ -151,7 +151,7 @@ if (! empty($conf->fournisseur->enabled))
 			}
 			if ($total>0)
 			{
-				$var=!$var;
+				
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";
@@ -190,8 +190,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+				
+				print '<tr class="oddeven"><td class="nowrap">';
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
@@ -240,7 +240,7 @@ $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.fournisseur = 1";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY s.tms DESC";
@@ -263,9 +263,9 @@ if ($resql)
 
 	while ($obj = $db->fetch_object($resql) )
 	{
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
@@ -300,7 +300,7 @@ if (count($companystatic->SupplierCategories))
 
 	foreach ($companystatic->SupplierCategories as $rowid => $label)
 	{
-		$var=!$var;
+		
 		print "<tr ".$bc[$var].">\n";
 		print '<td>';
 		$categstatic->id=$rowid;

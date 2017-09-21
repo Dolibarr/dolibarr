@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Ta seznam vsebuje samo storitve po pogodbah s part
 StandardContractsTemplate=Predloga standardnih pogodb
 ContactNameAndSignature=Za %s, ime in podpis:
 OnlyLinesWithTypeServiceAreUsed=Klonirane bodo samo vrstice tipa "Servis"
+CloneContract=Clone contract
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisnik pogodbe

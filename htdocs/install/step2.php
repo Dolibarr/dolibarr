@@ -42,7 +42,7 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
 
@@ -86,7 +86,7 @@ if (! is_writable($conffile))
 
 if ($action == "set")
 {
-    print '<h3>'.$langs->trans("Database").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;

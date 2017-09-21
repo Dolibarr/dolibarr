@@ -1,4 +1,0 @@
-# Dolibarr language file - Source file is en_US - accountancy
-AccountingCategory=Accounting category
-ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
-WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.

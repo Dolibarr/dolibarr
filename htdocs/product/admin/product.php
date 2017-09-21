@@ -33,6 +33,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 $langs->load("admin");
@@ -45,7 +46,7 @@ if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->e
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='product';
 
 // Pricing Rules
@@ -66,11 +67,15 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_
 	dolibarr_set_const($db, 'PRODUIT_MULTIPRICES_LIMIT', 5, 'chaine', 0, '', $conf->entity);
 }
 
+$error = 0;
 
 
 /*
  * Actions
  */
+
+$nomessageinsetmoduleoptions=1;
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setcodeproduct')
 {
@@ -85,43 +90,15 @@ if ($action == 'setcodeproduct')
 	}
 }
 
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-    {
-    	if (array_key_exists('param'.$i,$_POST))
-    	{
-    		$param=GETPOST("param".$i,'alpha');
-    		$value=GETPOST("value".$i,'alpha');
-    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-	    	if (! $res > 0) $error++;
-    	}
-    }
-	if (! $error)
-    {
-        $db->commit();
-	//setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-	// message yet present at the bottom if($action)
-	//setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
-
 if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 }
 if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 }
 if ($action == 'other')
 {
@@ -154,28 +131,19 @@ if ($action == 'other')
 		}
 
 	}
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_sousproduits','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_viewProdDescInForm','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_viewProdTextsInThirdpartyLanguage','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other') {
+
 	$value = GETPOST('activate_mergePropalProductCard','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_PDF_MERGE_PROPAL", $value,'chaine',0,'',$conf->entity);
-}
-if ($action == 'other')
-{
+
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
 }
@@ -184,8 +152,8 @@ if ($action == 'specimen') // For products
 {
 	$modele= GETPOST('module','alpha');
 
-	$inter = new Fichinter($db);
-	$inter->initAsSpecimen();
+	$product = new Product($db);
+	$product->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -207,9 +175,9 @@ if ($action == 'specimen') // For products
 
 		$module = new $classname($db);
 
-		if ($module->write_file($inter,$langs) > 0)
+		if ($module->write_file($product, $langs, '') > 0)
 		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=products&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
 		}
 		else
@@ -265,30 +233,25 @@ if ($action == 'set')
 	$value = GETPOST('value');
 	if (GETPOST('value','alpha')) $res = dolibarr_set_const($db, $const, $value,'chaine',0,'',$conf->entity);
 	else $res = dolibarr_del_const($db, $const,$conf->entity);
+	if (! $res > 0) $error++;
 }
-/*else if ($action == 'useecotaxe')
-{
-	$ecotaxe = GETPOST("activate_useecotaxe");
-	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
-}*/
 
 if ($action == 'other')
 {
     $value = GETPOST('activate_units', 'alpha');
     $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+	if (! $res > 0) $error++;
 }
 
 if ($action)
 {
-	if (! $res > 0) $error++;
-
- 	if (! $error)
+    if (! $error)
     {
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
+	    setEventMessages($langs->trans("SetupNotError"), null, 'errors');
     }
 }
 
@@ -317,13 +280,11 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($title,$linkback,'title_setup');
 
 $head = product_admin_prepare_head();
-dol_fiche_head($head, 'general', $tab, 0, 'product');
+dol_fiche_head($head, 'general', $tab, -1, 'product');
 
 $form=new Form($db);
 
-/*
- * Module to manage product / services code
- */
+// Module to manage product / services code
 $dirproduct=array('/core/modules/product/');
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
@@ -368,7 +329,7 @@ foreach ($dirproduct as $dirroot)
     			if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
     			$var = !$var;
-    			print '<tr '.$bc[$var].'>'."\n";
+    			print '<tr class="oddeven">'."\n";
     			print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
@@ -403,7 +364,7 @@ foreach ($dirproduct as $dirroot)
 }
 print '</table>';
 
-// Defini tableau def des modeles
+// Module to build doc
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
@@ -425,6 +386,10 @@ else
 {
 	dol_print_error($db);
 }
+
+print '<br>';
+
+print load_fiche_titre($langs->trans("ProductDocumentTemplates"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -476,7 +441,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -495,7 +460,7 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print '<td align="center">'."\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -507,7 +472,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -520,10 +485,7 @@ foreach ($dirmodels as $reldir)
 			                    }
 					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
 					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 
 	                            print '<td align="center">';
@@ -554,7 +516,7 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 print "<br>";
-    
+
 /*
  * Other conf
  */
@@ -586,8 +548,8 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("PricingRule").'</td>';
 print '<td width="60" align="right">';
 $current_rule = 'PRODUCT_PRICE_UNIQ';
@@ -609,16 +571,16 @@ print '</tr>';
 // multiprix nombre de prix a proposer
 if (! empty($conf->global->PRODUIT_MULTIPRICES))
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
 	print '</tr>';
 }
 
 // sousproduits activation/desactivation
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
@@ -626,8 +588,8 @@ print '</td>';
 print '</tr>';
 
 // Utilisation formulaire Ajax sur choix produit
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
@@ -651,16 +613,16 @@ print '</tr>';
 
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
 	print '</tr>';
 }
 
 // Visualiser description produit dans les formulaires activation/desactivation
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
@@ -669,8 +631,8 @@ print '</tr>';
 
 // Activate propal merge produt card
 /* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
@@ -680,8 +642,8 @@ print '</tr>';
 
 // Use units
 /* Kept as hidden feature only. PRODUCT_USE_UNITS is hidden for the moment. Because it seems to be a duplicated feature with already existing field to store unit of product
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseUnits").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
@@ -692,8 +654,8 @@ print '</tr>';
 // View product description in thirdparty language
 if (! empty($conf->global->MAIN_MULTILANGS))
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
@@ -734,7 +696,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
     				if ($conf->$module->enabled)
     				{
-    					$var=!$var;
+
     					print "<tr ".$bc[$var]."><td>";
 
     					print $object->description;

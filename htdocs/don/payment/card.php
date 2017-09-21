@@ -34,7 +34,7 @@ $langs->load('companies');
 
 // Security check
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO Add rule to restrict access payment
@@ -231,8 +231,8 @@ if ($resql)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$don->fetch($objp->did);
@@ -253,7 +253,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	$db->free($resql);

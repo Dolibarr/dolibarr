@@ -27,7 +27,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");
@@ -37,8 +36,8 @@ $langs->load("accountancy");
 $langs->load("salaries");
 
 $mesg = '';
-$action = GETPOST('action');
-$cancel = GETPOST('cancel');
+$action = GETPOST('action','aZ09');
+$cancel = GETPOST('cancel','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 
@@ -53,40 +52,38 @@ if ($user->societe_id > 0) accessforbidden();
 if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'sortorder');
-$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield)
-	$sortfield = "aa.account_number";
-if (! $sortorder)
-	$sortorder = "ASC";
+if (! $sortfield) $sortfield = "aa.account_number";
+if (! $sortorder) $sortorder = "ASC";
 
 $arrayfields=array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
     'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>0),
-    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>0),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0),
+    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
+    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
 $accounting = new AccountingAccount($db);
+
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accountingaccountlist';
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha')) { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -95,10 +92,10 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     if (! empty($cancel)) $action = '';
-    
+
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-    
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
     	$search_account = "";
     	$search_label = "";
@@ -107,13 +104,13 @@ if (empty($reshook))
     	$search_pcgsubtype = "";
 		$search_array_options=array();
     }
-    
+
     if (GETPOST('change_chart'))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
-        
+
         if (! empty($chartofaccounts)) {
-        
+
             if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
                 $error ++;
             }
@@ -121,12 +118,12 @@ if (empty($reshook))
             $error ++;
         }
     }
-    
+
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
     		$result = $accounting->account_desactivate($id);
     	}
-    	
+
     	$action = 'update';
     	if ($result < 0) {
     		setEventMessages($accounting->error, $accounting->errors, 'errors');
@@ -146,6 +143,7 @@ if (empty($reshook))
 /*
  * View
  */
+
 $form=new Form($db);
 
 llxHeader('', $langs->trans("ListAccounts"));
@@ -171,7 +169,6 @@ if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_la
 if (strlen(trim($search_accountparent)))	$sql .= natural_search("aa.account_parent", $search_accountparent);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
-
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -180,7 +177,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-}	
+}
 
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -191,24 +188,32 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $params='';
+    $param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($search_account) $params.= '&amp;search_account='.urlencode($search_account);
-	if ($search_label) $params.= '&amp;search_label='.urlencode($search_label);
-	if ($search_accountparent) $params.= '&amp;search_accountparent='.urlencode($search_accountparent);
-	if ($search_pcgtype) $params.= '&amp;search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($search_account) $param.= '&search_account='.urlencode($search_account);
+	if ($search_label) $param.= '&search_label='.urlencode($search_label);
+	if ($search_accountparent) $param.= '&search_accountparent='.urlencode($search_accountparent);
+	if ($search_pcgtype) $param.= '&search_pcgtype='.urlencode($search_pcgtype);
+	if ($search_pcgsubtype) $param.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
-	print '<form method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
-	
+	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
 	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
-	
-    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
-	
+
+    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd, '', $limit);
+
 	// Box to select active chart of account
-    $var = ! $var;
     print $langs->trans("Selectchartofaccounts") . " : ";
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
     $sql = "SELECT rowid, pcg_version, label, active";
@@ -216,29 +221,27 @@ if ($resql)
     $sql .= " WHERE active = 1";
     dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
     $resqlchart = $db->query($sql);
-    $var = true;
     if ($resqlchart) {
         $numbis = $db->num_rows($resqlchart);
         $i = 0;
         while ( $i < $numbis ) {
-            $var = ! $var;
             $row = $db->fetch_row($resqlchart);
-    
+
             print '<option value="' . $row[0] . '"';
             print $pcgver == $row[0] ? ' selected' : '';
             print '>' . $row[1] . ' - ' . $row[2] . '</option>';
-    
+
             $i ++;
         }
     }
     print "</select>";
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
-    print '<br>';    
+    print '<br>';
 	print '<br>';
-	
+
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -255,13 +258,13 @@ if ($resql)
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
-	
+
     print '<tr class="liste_titre">';
 	if (! empty($arrayfields['aa.account_number']['checked']))	print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"],"aa.account_number","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['aa.label']['checked']))			print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"],"aa.label","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"],"aa.account_parent", "", $param,'align="left"',$sortfield,$sortorder);
-	if (! empty($arrayfields['aa.pcg_type']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_type']['label'],$_SERVER["PHP_SELF"],'aa.pcg_type','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'],$_SERVER["PHP_SELF"],'aa.pcg_subtype','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.pcg_type']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_type']['label'],$_SERVER["PHP_SELF"],'aa.pcg_type','',$param,'',$sortfield,$sortorder,'',$arrayfields['aa.pcg_type']['help']);
+	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'],$_SERVER["PHP_SELF"],'aa.pcg_subtype','',$param,'',$sortfield,$sortorder,'',$arrayfields['aa.pcg_subtype']['help']);
 	if (! empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'],$_SERVER["PHP_SELF"],'aa.active','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
@@ -269,14 +272,15 @@ if ($resql)
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
 
-	while ( $i < min($num, $limit) ) 
+	$i=0;
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 
 		$accountstatic->id = $obj->rowid;
 		$accountstatic->label = $obj->label;
 		$accountstatic->account_number = $obj->account_number;
-		
+
 		print '<tr class="oddeven">';
 
 		// Account number
@@ -305,7 +309,7 @@ if ($resql)
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
 				$accountparent->account_number = $obj->account_number2;
-			
+
 				print "<td>";
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
@@ -366,12 +370,11 @@ if ($resql)
 		}
 		print '</td>' . "\n";
 		if (! $i) $totalarray['nbfield']++;
-		
+
 		print "</tr>\n";
-		$var = ! $var;
 		$i++;
 	}
-	
+
 	print "</table>";
 	print "</div>";
 	print '</form>';

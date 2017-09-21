@@ -4,6 +4,7 @@ SuppliersOrdersArea=Tiekėjų užsakymų sritis
 OrderCard=Užsakyti kortelę
 OrderId=Užsakymo ID
 Order=Užsakymas
+PdfOrderTitle=Užsakymas
 Orders=Užsakymai
 OrderLine=Užsakymo eilutė
 OrderDate=Užsakymo data

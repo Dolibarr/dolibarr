@@ -46,6 +46,10 @@ $mesg='';
 
 $adherentstatic=new Adherent($db);
 
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('adherent');
+
 
 /*
  * Actions
@@ -65,9 +69,14 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     $sql.= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
     $sql.= " t.libelle as type,";
     $sql.= " c.code as country_code, c.label as country";
+    // Add fields from extrafields
+    foreach ($extrafields->attribute_label as $key => $val)
+        $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
+    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
     $sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+    $sql.= " AND d.entity IN (".getEntity('adherent').")";
     if (is_numeric($foruserid)) $sql.=" AND d.rowid=".$foruserid;
     if ($foruserlogin) $sql.=" AND d.login='".$db->escape($foruserlogin)."'";
     $sql.= " ORDER BY d.rowid ASC";
@@ -84,8 +93,26 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
     		if ($objp->country == '-') $objp->country='';
 
+    		$adherentstatic->id=$objp->rowid;
     		$adherentstatic->lastname=$objp->lastname;
     		$adherentstatic->firstname=$objp->firstname;
+
+            // format extrafiled so they can be parsed in function complete_substitutions_array
+            if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            {
+                $adherentstatic->array_options = array();
+                foreach($extrafields->attribute_label as $key => $val)
+                {
+                    $tmpkey='options_'.$key;
+                    if (!empty($objp->$tmpkey))
+                    {
+                        $adherentstatic->array_options[$tmpkey] = $objp->$tmpkey;
+                    }
+                    //if (!empty($objp->$key))
+                    //    $objp->array_options[$tmpkey] = $objp->$key;
+                    //$objp->array_options[$tmpkey] = $extrafields->showOutputField($key, $objp->$tmpkey, '', 1); //$objp->$tmpkey;
+                }
+            }
 
     		// List of values to scan for a replacement
             $substitutionarray = array (
@@ -109,7 +136,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
                 '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
                 '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/"
             );
-            complete_substitutions_array($substitutionarray, $langs);
+            complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
             // For business cards
             if (empty($mode) || $mode=='card' || $mode=='cardlogin')
@@ -123,7 +150,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
                 {
                     $nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];
                     if ($nb <= 0) $nb=1;  // Protection to avoid empty page
-                    
+
                     for($j=0;$j<$nb;$j++)
                     {
                         $arrayofmembers[]=array(

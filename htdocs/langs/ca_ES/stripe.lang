@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un cobrament en objectes de Dolibarr
+PaymentForm=Formulari de pagament
+WelcomeOnPaymentPage=Benvingut als nostres serveis de pagament en línia
+ThisScreenAllowsYouToPay=Aquesta pantalla li permet fer el seu pagament en línia destinat a %s.
+ThisIsInformationOnPayment=Aquí està la informació sobre el pagament a realitzar
+ToComplete=A completar
+YourEMail=E-mail de confirmació de pagament
+STRIPE_PAYONLINE_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
+Creditor=Beneficiari
+PaymentCode=Codi de pagament
+StripeDoPayment=Continua el pagament amb targeta
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Continuar
+ToOfferALinkForOnlinePayment=URL de pagament %s
+ToOfferALinkForOnlinePaymentOnOrder=URL que ofereix una interfície de cobrament en línia %s basada en l'import d'una comanda de client
+ToOfferALinkForOnlinePaymentOnInvoice=URL que ofereix una interfície de cobrament en línia %s basada en l'import d'una factura a client
+ToOfferALinkForOnlinePaymentOnContractLine=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofereix una interfície de pagament en línia %s per una quota de soci
+YouCanAddTagOnUrl=També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
+YourPaymentHasNotBeenRecorded=El pagament no ha estat registrat i la transacció ha estat anul·lada. Gràcies.
+AccountParameter=Paràmetres del compte
+UsageParameter=Paràmetres d'ús
+InformationToFindParameters=Informació per trobar la seva configuració de compte %s
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Nom del venedor
+CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
+MessageOK=Missatge a la pàgina de retorn de pagament confirmat
+MessageKO=Missatge a la pàgina de retorn de pagament cancel·lat
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

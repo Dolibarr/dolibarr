@@ -39,11 +39,11 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+$sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$sall = GETPOST('search_all', 'alpha');
 $sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
 $sproduct = GETPOST('sproduct', 'int');
@@ -63,7 +63,7 @@ $offset = $limit * $page;
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
     $sall="";
     $sref="";
@@ -179,14 +179,14 @@ if ($resql)
          $form->select_date('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-         $searchpitco=$form->showFilterAndCheckAddButtons(0);
-         print $searchpitco;
+         $searchpicto=$form->showFilterAndCheckAddButtons(0);
+         print $searchpicto;
          '</td>'.
          '</tr>';
 
          print '<tr class="liste_titre">';
          print_liste_field_titre(
-             $langs->trans('Ref'),
+             'Ref',
              $_SERVER['PHP_SELF'],
              'cf.ref',
              '',
@@ -196,7 +196,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('Company'),
+             'Company',
              $_SERVER['PHP_SELF'],
              's.nom',
              '',
@@ -206,7 +206,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('Author'),
+             'Author',
              $_SERVER['PHP_SELF'],
              'u.login',
              '',
@@ -216,7 +216,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('AmountTTC'),
+             'AmountTTC',
              $_SERVER['PHP_SELF'],
              'cf.total_ttc',
              '',
@@ -226,7 +226,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('OrderCreation'),
+             'OrderCreation',
              $_SERVER['PHP_SELF'],
              'cf.date_creation',
              '',
@@ -236,7 +236,7 @@ if ($resql)
              $sortorder
              );
          print_liste_field_titre(
-             $langs->trans('Status'),
+             'Status',
              $_SERVER['PHP_SELF'],
              'cf.fk_statut',
              '',
@@ -246,7 +246,7 @@ if ($resql)
              $sortorder
              );
          print '</tr>';
-          
+
     $userstatic = new User($db);
 
     while ($i < min($num,$conf->liste_limit))

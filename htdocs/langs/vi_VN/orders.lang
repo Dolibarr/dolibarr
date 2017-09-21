@@ -4,6 +4,7 @@ SuppliersOrdersArea=Khu vực đặt hàng của nhà cung cấp
 OrderCard=Thẻ đặt hàng
 OrderId=Mã đặt hàng
 Order=Đơn hàng
+PdfOrderTitle=Đơn hàng
 Orders=Đơn hàng
 OrderLine=Chi tiết đơn hàng
 OrderDate=Ngày đặt hàng

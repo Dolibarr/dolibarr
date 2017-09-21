@@ -31,5 +31,5 @@ create table llx_product_price_by_qty
   fk_user_creat 	integer,
   fk_user_modif 	integer,
   tms				timestamp,
-  import_key    	integer
+  import_key    	varchar(14)
 )ENGINE=innodb;

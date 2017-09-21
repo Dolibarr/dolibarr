@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Značka/kategorija
 Rubriques=Značke/kategorije
+RubriquesTransactions=Tags/Categories of transactions
 categories=značke/kategorije
 NoCategoryYet=Ni kreirana nobena značka/kategorija te vrste
 In=V
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=Kategorija s to referenco že obstaja
 ContentsVisibleByAllShort=Vsebina vidna vsem
 ContentsNotVisibleByAllShort=Vsebina ni vidna vsem
 DeleteCategory=Briši značko/kategorijo
-ConfirmDeleteCategory=Ali zares želite izbrisati to značko/kategorijo?
+ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=Ni določena nobena značka/kategorija
 SuppliersCategoryShort=Dobavitelji značka/kategorija
 CustomersCategoryShort=Stranke značka/kategorija

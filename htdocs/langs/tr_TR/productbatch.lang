@@ -20,5 +20,5 @@ AddDispatchBatchLine=Dağıtımda bir Raf Ömrü satırı ekle
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic increase/decrease stock mode is forced to shipping validate and manual dispatching for reception and can't be edited. Other options can be defined as you want.
 ProductDoesNotUseBatchSerial=Bu ürün parti/seri numarası kullanmıyor
 ProductLotSetup=Parti/seri modülü ayarları
-ShowCurrentStockOfLot=Show current stock for couple product/lot
-ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+ShowCurrentStockOfLot=Çift ürün/lot için mevcut stoğu göster
+ShowLogOfMovementIfLot=Çift ürün/lot için hareketler günlüğünü göster

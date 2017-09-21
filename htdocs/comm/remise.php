@@ -46,13 +46,13 @@ $backtopage = GETPOST('backtopage','alpha');
  * Actions
  */
 
-if (GETPOST('cancel') && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
 }
 
-if (GETPOST("action") == 'setremise')
+if (GETPOST('action','aZ09') == 'setremise')
 {
 	$object = new Societe($db);
 	$object->fetch($id);

@@ -266,9 +266,9 @@ if ($action == 'create')
 	{
 		$objp = $charge;
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		if ($objp->date_ech > 0)
 		{

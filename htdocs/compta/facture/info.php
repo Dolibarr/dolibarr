@@ -39,6 +39,8 @@ $ref=GETPOST("ref",'alpha');
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Info');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);

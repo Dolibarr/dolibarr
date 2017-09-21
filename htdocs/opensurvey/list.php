@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $id=GETPOST('id','alpha');
 $numsondage= $id;
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -42,7 +42,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -89,6 +89,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 
 $moreforfilter = '';
 
@@ -105,19 +106,19 @@ $arraystatus=array(''=>'&nbsp;','expired'=>$langs->trans("Expired"),'opened'=>$l
 print '<td class="liste_titre" align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.id_sondage", $param,"","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Title"), $_SERVER["PHP_SELF"], "p.titre", $param,"","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"));
-print_liste_field_titre($langs->trans("Author"), $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, $param,"","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("NbOfVoters"), $_SERVER["PHP_SELF"], "", $param,"",'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ExpireDate"), $_SERVER["PHP_SELF"], "p.date_fin", $param,"",'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "p.status", $param,"",'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", $param,"","",$sortfield,$sortorder);
+print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", $param,"","",$sortfield,$sortorder);
+print_liste_field_titre("Type");
+print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, $param,"","",$sortfield,$sortorder);
+print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", $param,"",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", $param,"",'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", $param,"",'align="center"',$sortfield,$sortorder);
 print_liste_field_titre('');
 print '</tr>'."\n";
 
@@ -132,7 +133,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-$sql.= " WHERE p.entity = ".getEntity('survey',1);
+$sql.= " WHERE p.entity = ".getEntity('survey');
 if ($status == 'expired') $sql.=" AND date_fin < '".$db->idate($now)."'";
 if ($status == 'opened') $sql.=" AND date_fin >= '".$db->idate($now)."'";
 if ($search_ref) $sql.=natural_search("p.id_sondage", $search_ref);
@@ -171,7 +172,7 @@ while ($i < min($num,$limit))
 
 	$opensurvey_static->id=$obj->id_sondage;
 	$opensurvey_static->status=$obj->status;
-	
+
 	print '<tr>';
 	print '<td>';
 	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
@@ -197,17 +198,25 @@ while ($i < min($num,$limit))
 	print '</td>';
 
 	print'<td align="right">'.$nbuser.'</td>'."\n";
-	
+
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
 	if ($db->jdate($obj->date_fin) < time()) { print ' ('.$langs->trans("Expired").')'; }
 	print '</td>';
 
 	print'<td align="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
-	
+
 	print'<td align="center"></td>'."\n";
 
 	print '</tr>'."\n";
 	$i++;
+}
+
+// If no record found
+if ($num == 0)
+{
+    $colspan=8;
+    //foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 print '</table>'."\n";

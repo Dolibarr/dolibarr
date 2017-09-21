@@ -4,6 +4,7 @@ SuppliersOrdersArea=Dodávateľské objednávky
 OrderCard=Karta objednávky
 OrderId=ID objednávky
 Order=Objednávka
+PdfOrderTitle=Objednávka
 Orders=Objednávky
 OrderLine=Objednať linka
 OrderDate=Dátum objednávky

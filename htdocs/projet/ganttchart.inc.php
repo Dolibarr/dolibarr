@@ -141,7 +141,7 @@ else
 function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_id=null)
 {
     global $dateformatinput2;
-    
+
     $start_date = $task["task_start_date"];
     $end_date = $task["task_end_date"];
     if (!$end_date) $end_date = $start_date;
@@ -195,7 +195,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 	<dt>pGroup</dt><dd>(optional) indicates whether this is a group task (parent) - Numeric; 0 = normal task, 1 = standard group task, 2 = combined group task<a href='#combinedtasks' class="footnote">*</a></dd>
 	<dt>pParent</dt><dd>(required) identifies a parent pID, this causes this task to be a child of identified task. Numeric, top level tasks should have pParent set to 0</dd>
 	<dt>pOpen</dt><dd>(required) indicates whether a standard group task is open when chart is first drawn. Value must be set for all items but is only used by standard group tasks.  Numeric, 1 = open, 0 = closed</dd>
-	<dt>pDepend</dt><dd>(optional) comma separated list of id&#39;s this task is dependent on. A line will be drawn from each listed task to this item<br />Each id can optionally be followed by a dependency type suffix. Valid values are:<blockquote>'FS' - Finish to Start (default if suffix is omitted)<br />'SF' - Start to Finish<br />'SS' - Start to Start<br />'FF' - Finish to Finish</blockquote>If present the suffix must be added directly to the id e.g. '123SS'</dd>
+	<dt>pDepend</dt><dd>(optional) comma separated list of id&#39;s this task is dependent on. A line will be drawn from each listed task to this item<br>Each id can optionally be followed by a dependency type suffix. Valid values are:<blockquote>'FS' - Finish to Start (default if suffix is omitted)<br />'SF' - Start to Finish<br />'SS' - Start to Start<br />'FF' - Finish to Finish</blockquote>If present the suffix must be added directly to the id e.g. '123SS'</dd>
 	<dt>pCaption</dt><dd>(optional) caption that will be added after task bar if CaptionType set to "Caption"</dd>
 	<dt>pNotes</dt><dd>(optional) Detailed task information that will be displayed in tool tip for this task</dd>
 	<dt>pGantt</dt><dd>(required) javascript JSGantt.GanttChart object from which to take settings.  Defaults to &quot;g&quot; for backwards compatibility</dd>
@@ -206,7 +206,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $s = "\n// Add taks id=".$task["task_id"]." level = ".$level."\n";
    // $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
     // For JSGanttImproved
-    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js(trim($name))."','".$start_date."', '".$end_date."', '".$task['task_css']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]).", '".$parent."', 1, '".($depend?$depend:$parent."SS")."', '".($percent >= 0 ? $percent.'%' : '0%')."','".$task['note']."'));";
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js(trim($name))."','".$start_date."', '".$end_date."', '".$task['task_css']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]).", '".$parent."', 1, '".($depend?$depend:$parent."SS")."', '".($percent >= 0 ? $percent.'%' : '0%')."','".dol_escape_js($task['note'])."'));";
     echo $s;
 
 

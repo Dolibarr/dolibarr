@@ -83,7 +83,7 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -132,19 +132,19 @@ if ($result)
 	print '<tr class="public_liste_titre">';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"),$langs->trans("Lastname")).'</a></td>';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
-	//print_liste_field_titre($langs->trans("DateToBirth"), $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
-	print_liste_field_titre($langs->trans("EMail"), $_SERVER["PHP_SELF"],"email",'',$param,'',$sortfield,$sortorder,'public_');
-	print_liste_field_titre($langs->trans("Zip"), $_SERVER["PHP_SELF"],"zip","",$param,'',$sortfield,$sortorder,'public_');
-	print_liste_field_titre($langs->trans("Town"), $_SERVER["PHP_SELF"],"town","",$param,'',$sortfield,$sortorder,'public_');
-	print_liste_field_titre($langs->trans("Photo"), $_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder,'public_');
+	//print_liste_field_titre("DateToBirth", $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
+	print_liste_field_titre("EMail", $_SERVER["PHP_SELF"],"email",'',$param,'',$sortfield,$sortorder,'public_');
+	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"],"zip","",$param,'',$sortfield,$sortorder,'public_');
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"],"town","",$param,'',$sortfield,$sortorder,'public_');
+	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder,'public_');
 	print "</tr>\n";
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
 	{
 		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>'."\n";
 		print '<td>'.$objp->societe.'</td>'."\n";
 		print '<td>'.$objp->email.'</td>'."\n";

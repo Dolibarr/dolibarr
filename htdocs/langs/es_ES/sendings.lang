@@ -37,7 +37,6 @@ SendingSheet=Nota de entrega
 ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedición?
 ConfirmValidateSending=¿Está seguro de querer validar esta expedición con la referencia <b>%s</b>?
 ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
-DocumentModelSimple=Modelo simple
 DocumentModelMerou=Modelo Merou A5
 WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
 StatsOnShipmentsOnlyValidated=Estadísticas realizadas únicamente sobre las expediciones validadas

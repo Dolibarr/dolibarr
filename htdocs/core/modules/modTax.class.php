@@ -139,7 +139,7 @@ class modTax extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'c_chargesociales as cc, '.MAIN_DB_PREFIX.'chargesociales as c';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
-		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('tax',1).')';
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('tax').')';
 		
 		// Import social contributions
 		$r++;

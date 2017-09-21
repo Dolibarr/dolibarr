@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Naslednji URL naslovi so na voljo kupcem za izvedbo plačil Dolibarr postavk
+PaymentForm=Obrazec za plačilo
+WelcomeOnPaymentPage=Dobrodošli v naši storitvi online plačil
+ThisScreenAllowsYouToPay=Ta zaslon omogoča online plačilo za %s.
+ThisIsInformationOnPayment=To je informacija o potrebnem plačilu
+ToComplete=Za dokončanje
+YourEMail=E-pošta za potrditev plačila
+STRIPE_PAYONLINE_SENDEMAIL=E-poštno opozorilo po plačilu (uspešno ali ne)
+Creditor=Upnik
+PaymentCode=Koda plačila
+StripeDoPayment=Plačila v postopku
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Naslednji
+ToOfferALinkForOnlinePayment=URL za %s plačila
+ToOfferALinkForOnlinePaymentOnOrder=URL naslov s ponudbo %s vmesnika za online plačila naročil
+ToOfferALinkForOnlinePaymentOnInvoice=URL naslov s ponudbo %s vmesnika za online plačila računov
+ToOfferALinkForOnlinePaymentOnContractLine=URL naslov s ponudbo %s vmesnika za online plačila po pogodbi
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL naslov s ponudbo %s vmesnika za online plačila poljubnih zneskov
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL naslov s ponudbo %s vmesnika za online plačila članarin
+YouCanAddTagOnUrl=Vsakemu od teh URL naslovov lahko tudi dodate url parameter <b>&tag=<i>vrednost</i></b> (zahtevano samo pri poljubnih plačilih) s komentarjem vašega plačila.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Ta stran potrjuje, da je bilo vaše plačilo sprejeto. Hvala.
+YourPaymentHasNotBeenRecorded=Vaše plačilo ni bilo sprejeto in prenos je bil preklican. Hvala.
+AccountParameter=Parametri računa
+UsageParameter=Parametri uporabe
+InformationToFindParameters=Pomoč pri iskanju informacij računa %s
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Ime prodajalca
+CSSUrlForPaymentForm=url CSS vzorca obrazca plačila
+MessageOK=Sporočilo na strani za potrditev plačila
+MessageKO=Sporočilo na strani za preklic plačila
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

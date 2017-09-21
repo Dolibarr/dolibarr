@@ -92,7 +92,7 @@ $datelivraison=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), G
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordersuppliercard','globalcard'));
 
 $object = new CommandeFournisseur($db);
@@ -134,7 +134,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel) $action='';
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
@@ -279,7 +287,7 @@ if (empty($reshook))
 	if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	{
 	    $db->begin();
-	    
+
 	    $langs->load('errors');
 	    $error = 0;
 
@@ -288,6 +296,7 @@ if (empty($reshook))
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
@@ -364,21 +373,29 @@ if (empty($reshook))
 	    {
 	    	$productsupplier = new ProductFournisseur($db);
 
-	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))	// TODO this test seems useless
 	    	{
 				$idprod=0;
 				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 			}
-
-	    	if (GETPOST('idprodfournprice') > 0)
+			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			{
+				$idprod=$reg[1];
+				$res=$productsupplier->fetch($idprod);
+				// Call to init properties of $productsupplier
+				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
+				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+			}
+	    	elseif (GETPOST('idprodfournprice') > 0)
 	    	{
-	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
+			    $qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
+			    //$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+	    		$res=$productsupplier->fetch($idprod);
 	    	}
 
 	    	if ($idprod > 0)
 	    	{
-	    		$res=$productsupplier->fetch($idprod);
-
 	    		$label = $productsupplier->label;
 
 	    		$desc = $productsupplier->description;
@@ -399,8 +416,8 @@ if (empty($reshook))
 	    			$tva_tx,
 	    			$localtax1_tx,
 	    			$localtax2_tx,
+	    			$idprod,
 	    			$productsupplier->id,
-	    			GETPOST('idprodfournprice'),
 	    			$productsupplier->fourn_ref,
 	    			$remise_percent,
 	    			'HT',
@@ -469,7 +486,7 @@ if (empty($reshook))
 	    if (! $error && $result > 0)
 	    {
 	        $db->commit();
-	        
+
 	    	$ret=$object->fetch($object->id);    // Reload to get new records
 
 	        // Define output language
@@ -477,7 +494,7 @@ if (empty($reshook))
 	    	{
 	    		$outputlangs = $langs;
 	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    		if (! empty($newlang)) {
 	    			$outputlangs = new Translate("", $conf);
@@ -526,14 +543,14 @@ if (empty($reshook))
 		    $db->rollback();
             setEventMessages($object->error, $object->errors, 'errors');
 	    }
-	    
+
 	    $action = '';
 	}
 
 	/*
 	 *	Updating a line in the order
 	 */
-	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
+	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel','alpha'))
 	{
 		$tva_tx = GETPOST('tva_tx');
 
@@ -628,7 +645,7 @@ if (empty($reshook))
 	    	{
 	    		$outputlangs = $langs;
 	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    		if (! empty($newlang)) {
 	    			$outputlangs = new Translate("", $conf);
@@ -657,8 +674,8 @@ if (empty($reshook))
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-				$newlang = GETPOST('lang_id');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+				$newlang = GETPOST('lang_id','aZ09');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
@@ -696,7 +713,7 @@ if (empty($reshook))
 	    	{
 	    		$outputlangs = $langs;
 	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    		if (! empty($newlang)) {
 	    			$outputlangs = new Translate("", $conf);
@@ -754,7 +771,7 @@ if (empty($reshook))
 	            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 	                $outputlangs = $langs;
 	                $newlang = '';
-	                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	                if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	                if (! empty($newlang)) {
 	                    $outputlangs = new Translate("", $conf);
@@ -795,7 +812,7 @@ if (empty($reshook))
 	        {
 	            $outputlangs = $langs;
 	            $newlang = '';
-	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 	            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	            if (! empty($newlang)) {
 	                $outputlangs = new Translate("", $conf);
@@ -895,10 +912,20 @@ if (empty($reshook))
 	    }
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+	// Actions to send emails
+	$trigger_name='ORDER_SUPPLIER_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
+	$trackid='sor'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
 	// Actions to build doc
-	$upload_dir = $conf->commande->dir_output;
+	$upload_dir = $conf->fournisseur->commande->dir_output;
 	$permissioncreate = $user->rights->fournisseur->commande->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 
 	if ($action == 'update_extras')
 	{
@@ -936,9 +963,6 @@ if (empty($reshook))
 			$action = 'edit_extras';
 		}
 	}
-
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-
 
 	/*
 	 * Create an order
@@ -1149,20 +1173,7 @@ if (empty($reshook))
 	    }
 	}
 
-	/*
-	 * Send mail
-	 */
-
-	// Actions to send emails
-	$actiontypecode='AC_SUP_ORD';
-	$trigger_name='ORDER_SUPPLIER_SENTBYMAIL';
-	$paramname='id';
-	$mode='emailfromsupplierorder';
-	$trackid='sor'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-
-	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel'))
+	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel','alpha'))
 	{
 	    $ws_url         = $object->thirdparty->webservices_url;
 	    $ws_key         = $object->thirdparty->webservices_key;
@@ -1437,7 +1448,7 @@ if ($action=='create')
 	}
 	else
 	{
-		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
+		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
         // reload page to retrieve customer informations
         if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
         {
@@ -1451,6 +1462,7 @@ if ($action=='create')
 			});
 			</script>';
         }
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 	}
 	print '</td>';
 
@@ -1573,6 +1585,7 @@ if ($action=='create')
 	// Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
@@ -1618,7 +1631,7 @@ elseif (! empty($object->id))
 
 	$res=$object->fetch_optionals($object->id,$extralabels);
 
-	
+
 	$head = ordersupplier_prepare_head($object);
 
 	$title=$langs->trans("SupplierOrder");
@@ -1755,11 +1768,11 @@ elseif (! empty($object->id))
 	// Print form confirm
 	print $formconfirm;
 
-	
+
 	// Supplier order card
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier
 	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
@@ -1799,15 +1812,15 @@ elseif (! empty($object->id))
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
-	
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	 	
+
 	print '<table class="border" width="100%">';
 
 	// Date
@@ -1996,16 +2009,15 @@ elseif (! empty($object->id))
 	}
 
 	// Other attributes
-	$cols = 2;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	
+
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border centpercent">';
 
 	if (!empty($conf->multicurrency->enabled))
@@ -2014,18 +2026,18 @@ elseif (! empty($object->id))
 	    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
-	
+
 	    // Multicurrency Amount VAT
 	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
-	
+
 	    // Multicurrency Amount TTC
 	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
 	}
-	
+
 	// Total
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
 	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
@@ -2054,19 +2066,19 @@ elseif (! empty($object->id))
 	print '</tr>';
 
 	print '</table>';
-	
+
 	// Margin Infos
 	/*if (! empty($conf->margin->enabled)) {
 	    $formmargin->displayMarginInfos($object);
 	}*/
-	
-	
+
+
 	print '</div>';
 	print '</div>';
 	print '</div>';
-	
+
 	print '<div class="clearboth"></div><br>';
-	
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 		$blocname = 'contacts';
@@ -2105,6 +2117,7 @@ elseif (! empty($object->id))
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
 	$forceall=1; $senderissupplier=1; $dateSelector=0;
+	if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 
 	// Show object lines
 	$inputalsopricewithtax=0;
@@ -2133,342 +2146,6 @@ elseif (! empty($object->id))
 
 	dol_fiche_end();
 
-
-	/*
-	 * Action presend
-	 */
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-	if ($action == 'presend')
-	{
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file=$fileparams['fullname'];
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('commercial');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file))
-		{
-			$result= $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0)
-			{
-				dol_print_error($db,$result);
-				exit;
-			}
-			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file=$fileparams['fullname'];
-		}
-
-		print '<div class="clearboth"></div>';
-		print '<br>';
-		print load_fiche_titre($langs->trans('SendOrderByMail'));
-
-		dol_fiche_head('');
-
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		$formmail->trackid='sor'.$object->id;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sor'.$object->id);
-		}
-		$formmail->withfrom=1;
-		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
-		$formmail->withtocc=$liste;
-		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__REF__');
-		$formmail->withfile=2;
-		$formmail->withbody=1;
-		$formmail->withdeliveryreceipt=1;
-		$formmail->withcancel=1;
-
-		$object->fetch_projet();
-		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
-		$formmail->substit['__ORDERREF__']=$object->ref;                  	// For backward compatibility
-		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;	// For backward compatibility
-		$formmail->substit['__SUPPLIERORDERREF__']=$object->ref_supplier;
-
-		//Find the good contact adress
-		$custcontact='';
-		$contactarr=array();
-		$contactarr=$object->liste_contact(-1,'external');
-
-		if (is_array($contactarr) && count($contactarr)>0) {
-			foreach($contactarr as $contact) {
-				if ($contact['libelle']==$langs->trans('TypeContact_order_supplier_external_BILLING')) {
-					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-					$contactstatic=new Contact($db);
-					$contactstatic->fetch($contact['id']);
-					$custcontact=$contactstatic->getFullName($langs,1);
-				}
-			}
-
-			if (!empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action']='send';
-		$formmail->param['models']='order_supplier_send';
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['orderid']=$object->id;
-		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-		// Init list of files
-		if (GETPOST("mode")=='init')
-		{
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-		}
-
-		// Show form
-		print $formmail->get_form();
-
-		dol_fiche_end();
-	}
-	/*
-	 * Action webservice
-	 */
-	elseif ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel'))
-	{
-		$mode        = GETPOST('mode', 'alpha');
-		$ws_url      = $object->thirdparty->webservices_url;
-		$ws_key      = $object->thirdparty->webservices_key;
-		$ws_user     = GETPOST('ws_user','alpha');
-		$ws_password = GETPOST('ws_password','alpha');
-
-        // NS and Authentication parameters
-        $ws_ns = 'http://www.dolibarr.org/ns/';
-        $ws_authentication = array(
-            'dolibarrkey'=>$ws_key,
-            'sourceapplication'=>'DolibarrWebServiceClient',
-            'login'=>$ws_user,
-            'password'=>$ws_password,
-            'entity'=>''
-        );
-
-        print load_fiche_titre($langs->trans('CreateRemoteOrder'),'');
-
-        //Is everything filled?
-        if (empty($ws_url) || empty($ws_key)) {
-            setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
-            $mode = "init";
-            $error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
-        } else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
-            setEventMessages($langs->trans("ErrorFieldsRequired"), null, 'errors');
-            $mode = "init";
-        }
-
-        if ($mode == "init")
-        {
-            //Table/form header
-            print '<table class="border" width="100%">';
-            print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="webservice">';
-            print '<input type="hidden" name="mode" value="check">';
-
-            if ($error_occurred)
-            {
-                print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
-                print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-            }
-            else
-            {
-                $textinput_size = "50";
-                // Webservice url
-                print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td colspan="3">'.dol_print_url($ws_url).'</td></tr>';
-                //Remote User
-                print '<tr><td>'.$langs->trans("User").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_user"></td></tr>';
-                //Remote Password
-                print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
-                //Submit button
-                print '<tr><td align="center" colspan="2">';
-                print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
-                print ' &nbsp; &nbsp; ';
-                //Cancel button
-                print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-                print '</td></tr>';
-            }
-
-            //End table/form
-            print '</form>';
-            print '</table>';
-        }
-        elseif ($mode == "check")
-        {
-            $ws_entity = '';
-            $ws_thirdparty = '';
-            $error_occurred = false;
-
-            //Create SOAP client and connect it to user
-            $soapclient_user = new nusoap_client($ws_url."/webservices/server_user.php");
-            $soapclient_user->soap_defencoding='UTF-8';
-            $soapclient_user->decodeUTF8(false);
-
-            //Get the thirdparty associated to user
-            $ws_parameters = array('authentication'=>$ws_authentication, 'id' => '', 'ref'=>$ws_user);
-            $result_user = $soapclient_user->call("getUser", $ws_parameters, $ws_ns, '');
-            $user_status_code = $result_user["result"]["result_code"];
-
-            if ($user_status_code == "OK")
-            {
-                //Fill the variables
-                $ws_entity = $result_user["user"]["entity"];
-                $ws_authentication['entity'] = $ws_entity;
-                $ws_thirdparty = $result_user["user"]["fk_thirdparty"];
-                if (empty($ws_thirdparty))
-                {
-                    setEventMessages($langs->trans("RemoteUserMissingAssociatedSoc"), null, 'errors');
-                    $error_occurred = true;
-                }
-                else
-                {
-                    //Create SOAP client and connect it to product/service
-                    $soapclient_product = new nusoap_client($ws_url."/webservices/server_productorservice.php");
-                    $soapclient_product->soap_defencoding='UTF-8';
-                    $soapclient_product->decodeUTF8(false);
-
-                    // Iterate each line and get the reference that uses the supplier of that product/service
-                    $i = 0;
-                    foreach ($object->lines as $line) {
-                        $i = $i + 1;
-                        $ref_supplier = $line->ref_supplier;
-                        $line_id = $i."º) ".$line->product_ref.": ";
-                        if (empty($ref_supplier)) {
-                            continue;
-                        }
-                        $ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $ref_supplier);
-                        $result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
-                        if (!$result_product)
-                        {
-                            setEventMessages($line_id.$langs->trans("SOAPError")." ".$soapclient_product->error_str." - ".$soapclient_product->response, null, 'errors');
-                            $error_occurred = true;
-                            break;
-                        }
-
-                        // Check the result code
-                        $status_code = $result_product["result"]["result_code"];
-                        if (empty($status_code)) //No result, check error str
-                        {
-                            setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
-                        }
-                        else if ($status_code != "OK") //Something went wrong
-                        {
-                            if ($status_code == "NOT_FOUND")
-                            {
-                                setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');
-                            }
-                            else
-                            {
-                                setEventMessages($line_id.$langs->trans("ResponseNonOK")." '".$status_code."' - '".$result_product["result"]["result_label"]."'", null, 'errors');
-                                $error_occurred = true;
-                                break;
-                            }
-                        }
-
-
-                        // Ensure that price is equal and warn user if it's not
-                        $supplier_price = price($result_product["product"]["price_net"]); //Price of client tab in supplier dolibarr
-                        $local_price = NULL; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
-
-                        $product_fourn = new ProductFournisseur($db);
-                        $product_fourn_list = $product_fourn->list_product_fournisseur_price($line->fk_product);
-                        if (count($product_fourn_list)>0)
-                        {
-                            foreach($product_fourn_list as $product_fourn_line)
-                            {
-                                //Only accept the line where the supplier is the same at this order and has the same ref
-                                if ($product_fourn_line->fourn_id == $object->socid && $product_fourn_line->fourn_ref == $ref_supplier) {
-                                    $local_price = price($product_fourn_line->fourn_price);
-                                }
-                            }
-                        }
-
-                        if ($local_price != NULL && $local_price != $supplier_price) {
-                            setEventMessages($line_id.$langs->trans("RemotePriceMismatch")." ".$supplier_price." - ".$local_price, null, 'warnings');
-                        }
-
-                        // Check if is in sale
-                        if (empty($result_product["product"]["status_tosell"])) {
-                            setEventMessages($line_id.$langs->trans("ProductStatusNotOnSellShort")." '".$ref_supplier."'", null, 'warnings');
-                        }
-                    }
-                }
-
-            }
-            elseif ($user_status_code == "PERMISSION_DENIED")
-            {
-                setEventMessages($langs->trans("RemoteUserNotPermission"), null, 'errors');
-                $error_occurred = true;
-            }
-            elseif ($user_status_code == "BAD_CREDENTIALS")
-            {
-                setEventMessages($langs->trans("RemoteUserBadCredentials"), null, 'errors');
-                $error_occurred = true;
-            }
-            else
-            {
-                setEventMessages($langs->trans("ResponseNonOK")." '".$user_status_code."'", null, 'errors');
-                $error_occurred = true;
-            }
-
-            //Form
-            print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="webservice">';
-            print '<input type="hidden" name="mode" value="send">';
-            print '<input type="hidden" name="ws_user" value="'.$ws_user.'">';
-            print '<input type="hidden" name="ws_password" value="'.$ws_password.'">';
-            print '<input type="hidden" name="ws_entity" value="'.$ws_entity.'">';
-            print '<input type="hidden" name="ws_thirdparty" value="'.$ws_thirdparty.'">';
-            if ($error_occurred)
-            {
-                print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
-            }
-            else
-            {
-                print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
-                print ' &nbsp; &nbsp; ';
-            }
-            print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-            print '</form>';
-        }
-	}
-	/*
-	 * Show buttons
-	 */
-	else
-	{
 		/**
 		 * Boutons actions
 		 */
@@ -2573,7 +2250,7 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
 					}
 				}
 
@@ -2634,19 +2311,29 @@ elseif (! empty($object->id))
 				// Create bill
 				if (! empty($conf->facture->enabled))
 				{
-					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->billed != 1))  // 2 means accepted
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
 					{
 						if ($user->rights->fournisseur->facture->creer)
 						{
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 						}
-
-						if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && !empty($object->linkedObjectsIds['invoice_supplier']))
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-						}
 					}
+				}
 
+				// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)
+				if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && $object->statut != 7 && $object->billed != 1)  // statut 2 means approved
+				{
+				    if (empty($conf->facture->enabled))
+				    {
+			            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+				    }
+				    else if (!empty($object->linkedObjectsIds['invoice_supplier']))
+				    {
+						if ($user->rights->fournisseur->facture->creer)
+						{
+				            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						}
+				    }
 				}
 
 				// Create a remote order using WebService only if module is activated
@@ -2679,7 +2366,7 @@ elseif (! empty($object->id))
 			}
 
 			print "</div>";
-		}
+
 
 
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2 && $action == 'makeorder')
@@ -2694,7 +2381,7 @@ elseif (! empty($object->id))
 		    //print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 		    print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 		    $date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-		    print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
+		    print $form->select_date($date_com,'',1,1,'',"commande",1,1,1);
 		    print '</td></tr>';
 
 		    print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -2711,7 +2398,8 @@ elseif (! empty($object->id))
 		    print '</form>';
 		    print "<br>";
 		}
-if ($action != 'makeorder')
+
+		if ($action != 'makeorder')
 		{
     		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -2734,51 +2422,271 @@ if ($action != 'makeorder')
     		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
     		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
-		{
-			// Set status to received (action=livraison)
-			print '<!-- form to record supplier order received -->'."\n";
-			print '<form action="card.php?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden"	name="action" value="livraison">';
-			print load_fiche_titre($langs->trans("Receive"),'','');
 
-			print '<table class="noborder" width="100%">';
-			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
-			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print $form->select_date('','',1,1,'',"commande",1,0,1);
-			print "</td></tr>\n";
+			if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
+			{
+				// Set status to received (action=livraison)
+				print '<!-- form to record supplier order received -->'."\n";
+				print '<form action="card.php?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden"	name="action" value="livraison">';
+				print load_fiche_titre($langs->trans("Receive"),'','');
 
-			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
-			$liv = array();
-			$liv[''] = '&nbsp;';
-			$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
-			$liv['par']	= $langs->trans("PartialWoman");
-			$liv['nev']	= $langs->trans("NeverReceived");
-			$liv['can']	= $langs->trans("Canceled");
+				print '<table class="noborder" width="100%">';
+				//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
+				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
+				print $form->select_date('','',1,1,'',"commande",1,1,1);
+				print "</td></tr>\n";
 
-			print $form->selectarray("type",$liv);
+				print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+				$liv = array();
+				$liv[''] = '&nbsp;';
+				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
+				$liv['par']	= $langs->trans("PartialWoman");
+				$liv['nev']	= $langs->trans("NeverReceived");
+				$liv['can']	= $langs->trans("Canceled");
 
-			print '</td></tr>';
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
-			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
-			print "</table>\n";
-			print "</form>\n";
-			print "<br>";
+				print $form->selectarray("type",$liv);
+
+				print '</td></tr>';
+				print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
+				print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
+				print "</table>\n";
+				print "</form>\n";
+				print "<br>";
+			}
+
+	        // List of actions on element
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	        $formactions=new FormActions($db);
+	        $somethingshown = $formactions->showactions($object,'order_supplier',$socid,1,'listaction'.($genallowed?'largetitle':''));
+
+			print '</div></div></div>';
 		}
 
-        // List of actions on element
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-        $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
+		/*
+		 * Action webservice
+		 */
+		if ($action == 'webservice' && GETPOST('mode', 'alpha') != "send" && ! GETPOST('cancel','alpha'))
+		{
+			$mode        = GETPOST('mode', 'alpha');
+			$ws_url      = $object->thirdparty->webservices_url;
+			$ws_key      = $object->thirdparty->webservices_key;
+			$ws_user     = GETPOST('ws_user','alpha');
+			$ws_password = GETPOST('ws_password','alpha');
+
+			// NS and Authentication parameters
+			$ws_ns = 'http://www.dolibarr.org/ns/';
+			$ws_authentication = array(
+			'dolibarrkey'=>$ws_key,
+			'sourceapplication'=>'DolibarrWebServiceClient',
+			'login'=>$ws_user,
+			'password'=>$ws_password,
+			'entity'=>''
+			);
+
+			print load_fiche_titre($langs->trans('CreateRemoteOrder'),'');
+
+			//Is everything filled?
+			if (empty($ws_url) || empty($ws_key)) {
+				setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
+				$mode = "init";
+				$error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
+			} else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
+				setEventMessages($langs->trans("ErrorFieldsRequired"), null, 'errors');
+				$mode = "init";
+			}
+
+			if ($mode == "init")
+			{
+				//Table/form header
+				print '<table class="border" width="100%">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="webservice">';
+				print '<input type="hidden" name="mode" value="check">';
+
+				if ($error_occurred)
+				{
+					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
+					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				}
+				else
+				{
+					$textinput_size = "50";
+					// Webservice url
+					print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td colspan="3">'.dol_print_url($ws_url).'</td></tr>';
+					//Remote User
+					print '<tr><td>'.$langs->trans("User").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_user"></td></tr>';
+					//Remote Password
+					print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
+					//Submit button
+					print '<tr><td align="center" colspan="2">';
+					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
+					print ' &nbsp; &nbsp; ';
+					//Cancel button
+					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '</td></tr>';
+				}
+
+				//End table/form
+				print '</form>';
+				print '</table>';
+			}
+			elseif ($mode == "check")
+			{
+				$ws_entity = '';
+				$ws_thirdparty = '';
+				$error_occurred = false;
+
+				//Create SOAP client and connect it to user
+				$soapclient_user = new nusoap_client($ws_url."/webservices/server_user.php");
+				$soapclient_user->soap_defencoding='UTF-8';
+				$soapclient_user->decodeUTF8(false);
+
+				//Get the thirdparty associated to user
+				$ws_parameters = array('authentication'=>$ws_authentication, 'id' => '', 'ref'=>$ws_user);
+				$result_user = $soapclient_user->call("getUser", $ws_parameters, $ws_ns, '');
+				$user_status_code = $result_user["result"]["result_code"];
+
+				if ($user_status_code == "OK")
+				{
+					//Fill the variables
+					$ws_entity = $result_user["user"]["entity"];
+					$ws_authentication['entity'] = $ws_entity;
+					$ws_thirdparty = $result_user["user"]["fk_thirdparty"];
+					if (empty($ws_thirdparty))
+					{
+						setEventMessages($langs->trans("RemoteUserMissingAssociatedSoc"), null, 'errors');
+						$error_occurred = true;
+					}
+					else
+					{
+						//Create SOAP client and connect it to product/service
+						$soapclient_product = new nusoap_client($ws_url."/webservices/server_productorservice.php");
+						$soapclient_product->soap_defencoding='UTF-8';
+						$soapclient_product->decodeUTF8(false);
+
+						// Iterate each line and get the reference that uses the supplier of that product/service
+						$i = 0;
+						foreach ($object->lines as $line) {
+							$i = $i + 1;
+							$ref_supplier = $line->ref_supplier;
+							$line_id = $i."º) ".$line->product_ref.": ";
+							if (empty($ref_supplier)) {
+								continue;
+							}
+							$ws_parameters = array('authentication' => $ws_authentication, 'id' => '', 'ref' => $ref_supplier);
+							$result_product = $soapclient_product->call("getProductOrService", $ws_parameters, $ws_ns, '');
+							if (!$result_product)
+							{
+								setEventMessages($line_id.$langs->trans("SOAPError")." ".$soapclient_product->error_str." - ".$soapclient_product->response, null, 'errors');
+								$error_occurred = true;
+								break;
+							}
+
+							// Check the result code
+							$status_code = $result_product["result"]["result_code"];
+							if (empty($status_code)) //No result, check error str
+							{
+								setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
+							}
+							else if ($status_code != "OK") //Something went wrong
+							{
+								if ($status_code == "NOT_FOUND")
+								{
+									setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');
+								}
+								else
+								{
+									setEventMessages($line_id.$langs->trans("ResponseNonOK")." '".$status_code."' - '".$result_product["result"]["result_label"]."'", null, 'errors');
+									$error_occurred = true;
+									break;
+								}
+							}
 
 
+							// Ensure that price is equal and warn user if it's not
+							$supplier_price = price($result_product["product"]["price_net"]); //Price of client tab in supplier dolibarr
+							$local_price = NULL; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
 
+							$product_fourn = new ProductFournisseur($db);
+							$product_fourn_list = $product_fourn->list_product_fournisseur_price($line->fk_product);
+							if (count($product_fourn_list)>0)
+							{
+								foreach($product_fourn_list as $product_fourn_line)
+								{
+									//Only accept the line where the supplier is the same at this order and has the same ref
+									if ($product_fourn_line->fourn_id == $object->socid && $product_fourn_line->fourn_ref == $ref_supplier) {
+										$local_price = price($product_fourn_line->fourn_price);
+									}
+								}
+							}
 
-		print '</div></div></div>';}
+							if ($local_price != NULL && $local_price != $supplier_price) {
+								setEventMessages($line_id.$langs->trans("RemotePriceMismatch")." ".$supplier_price." - ".$local_price, null, 'warnings');
+							}
+
+							// Check if is in sale
+							if (empty($result_product["product"]["status_tosell"])) {
+								setEventMessages($line_id.$langs->trans("ProductStatusNotOnSellShort")." '".$ref_supplier."'", null, 'warnings');
+							}
+						}
+					}
+
+				}
+				elseif ($user_status_code == "PERMISSION_DENIED")
+				{
+					setEventMessages($langs->trans("RemoteUserNotPermission"), null, 'errors');
+					$error_occurred = true;
+				}
+				elseif ($user_status_code == "BAD_CREDENTIALS")
+				{
+					setEventMessages($langs->trans("RemoteUserBadCredentials"), null, 'errors');
+					$error_occurred = true;
+				}
+				else
+				{
+					setEventMessages($langs->trans("ResponseNonOK")." '".$user_status_code."'", null, 'errors');
+					$error_occurred = true;
+				}
+
+				//Form
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="webservice">';
+				print '<input type="hidden" name="mode" value="send">';
+				print '<input type="hidden" name="ws_user" value="'.$ws_user.'">';
+				print '<input type="hidden" name="ws_password" value="'.$ws_password.'">';
+				print '<input type="hidden" name="ws_entity" value="'.$ws_entity.'">';
+				print '<input type="hidden" name="ws_thirdparty" value="'.$ws_thirdparty.'">';
+				if ($error_occurred)
+				{
+					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
+				}
+				else
+				{
+					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
+					print ' &nbsp; &nbsp; ';
+				}
+				print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '</form>';
+			}
+		}
+
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
+
+		// Presend form
+		$modelmail='supplier_order_send';
+		$defaulttopic='SendOrderRef';
+		$diroutput = $conf->fournisseur->commande->dir_output;
+		$trackid = 'sor'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
-
-	print '</td></tr></table>';
 }
 
 // End of page

@@ -41,7 +41,7 @@ if (! $user->admin) accessforbidden();
 
 $type=array('yesno','texte','chaine');
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $testsubscribeemail = GETPOST("testsubscribeemail");
 $testunsubscribeemail = GETPOST("testunsubscribeemail");
 

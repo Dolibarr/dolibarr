@@ -44,7 +44,7 @@ if ($id)
 
 	$head = establishment_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), 0, 'building');
+	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);

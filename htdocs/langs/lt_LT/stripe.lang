@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Sekantys URL siūlo puslapį klientui Dolibarr objektų mokėjimui
+PaymentForm=Mokėjimo forma
+WelcomeOnPaymentPage=Sveiki atvykę į mūsų interneto mokėjimo paslaugą
+ThisScreenAllowsYouToPay=Šis ekranas leidžia atlikti internetinį mokėjimą į %s
+ThisIsInformationOnPayment=Tai informacija apie reikalingą atlikti mokėjimą
+ToComplete=Užbaigti
+YourEMail=E-paštas mokėjimo patvirtinimo gavimui
+STRIPE_PAYONLINE_SENDEMAIL=E-paštas įspėjimui po mokėjimo (sėkmingas ar ne)
+Creditor=Kreditorius
+PaymentCode=Mokėjimo kodas
+StripeDoPayment=Eiti į mokėjimą
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Kitas
+ToOfferALinkForOnlinePayment=URL %s mokėjimui
+ToOfferALinkForOnlinePaymentOnOrder=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento užsakymui
+ToOfferALinkForOnlinePaymentOnInvoice=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento sąskaitai-faktūrai
+ToOfferALinkForOnlinePaymentOnContractLine=URL siūlo %s interneto mokėjimui vartotojo sąsają sutarties eilutei.
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL siūlo %s interneto mokėjimui vartotojo sąsaja nemokamam kiekiui.
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pasiūlymui %s interneto mokėjimui vartotojo sąsają nario pasirašymui.
+YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
+YourPaymentHasNotBeenRecorded=Mokėjimas nebuvo įregistruotas ir operacija buvo atšaukta. Ačiū.
+AccountParameter=Sąskaitos parametrai
+UsageParameter=Naudojimo parametrai
+InformationToFindParameters=Padėti rasti savo %s sąskaitos informaciją
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Paravėjo vardas
+CSSUrlForPaymentForm=CSS stiliaus lapo URL mokėjimo formai
+MessageOK=Pranešimas patvirtinto mokėjimo grąžinimo puslapyje
+MessageKO=Pranešimas atšaukto mokėjimo grąžinimo puslapyje
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

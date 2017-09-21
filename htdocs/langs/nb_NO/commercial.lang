@@ -19,6 +19,7 @@ ShowTask=Vis oppgave
 ShowAction=Vis handling
 ActionsReport=Handlingsrapport
 ThirdPartiesOfSaleRepresentative=Tredjeparter med salgsrepresentant
+SaleRepresentativesOfThirdParty=Salgsrepresentanter fra tredjepart
 SalesRepresentative=Salgsrepresentant
 SalesRepresentatives=Salgsrepresentanter
 SalesRepresentativeFollowUp=Salgsrepresentant (oppfølging)

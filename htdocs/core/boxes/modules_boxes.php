@@ -49,9 +49,14 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	public $max = 5;
 
 	/**
-	 * @var int Status
+	 * @var int Condition to have widget enabled
 	 */
 	public $enabled=1;
+
+	/**
+	 * @var int Condition to have widget visible (in most cases, permissions)
+	 */
+	public $hidden=0;
 
 	/**
 	 * @var int Box definition database ID
@@ -168,29 +173,29 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		}
 	}
 
-    
+
 	/**
 	 * Standard method to get content of a box
 	 *
 	 * @param   array   $head       Array with properties of box title
 	 * @param   array   $contents   Array with properties of box lines
 	 *
-	 * @return  string              
+	 * @return  string
 	 */
 	function outputBox($head = null, $contents = null)
 	{
 		global $langs, $user, $conf;
-	
+
 		// Trick to get result into a var from a function that makes print instead of return
 		// TODO Replace ob_start with param nooutput=1 into showBox
 		ob_start();
 		$result = $this->showBox($head, $contents);
 		$output = ob_get_contents();
 		ob_end_clean();
-		
+
 		return $output;
 	}
-	
+
 	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
@@ -202,6 +207,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	function showBox($head = null, $contents = null, $nooutput=0)
 	{
 		global $langs, $user, $conf;
+
+		if (! empty($this->hidden)) return '\n<!-- Box ".get_class($this)." hidden -->\n';    // Nothing done if hidden (for example when user has no permission)
 
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
@@ -248,14 +255,14 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= $s;
                 }
                 $out.= '</td>';
-                
+
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $sublink='';
                     if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
                     if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
-                    
+
                     $out.= '<td class="nocellnopadd boxclose right nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
@@ -266,7 +273,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
-                
+
                 $out.= "</tr>\n";
             }
 
@@ -278,10 +285,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 {
                     if (isset($contents[$i]))
                     {
-                        $var=!$var;
-
                         // TR
-                        if (isset($contents[$i][0]['tr'])) $out.= '<tr valign="top" '.$contents[$i][0]['tr'].'>';
+                        if (isset($contents[$i][0]['tr'])) $out.= '<tr class="tdtop" '.$contents[$i][0]['tr'].'>';
                         else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD
@@ -363,13 +368,140 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             $out = "<!-- Box ".get_class($this)." from cache -->";
             $out.= dol_readcachefile($cachedir, $filename);
         }
-        
+
         if ($nooutput) return $out;
         else print $out;
-    
+
         return '';
 	}
-	
+
+
+	/**
+	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
+	 *  List is sorted by widget filename so by priority to run.
+	 *
+	 *  @param	array	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
+	 * 	@return	array						Array list of widget
+	 */
+	static function getWidgetsList($forcedirwidget=null)
+	{
+		global $conf, $langs, $db;
+
+		$files = array();
+		$fullpath = array();
+		$relpath = array();
+		$iscoreorexternal = array();
+		$modules = array();
+		$orders = array();
+		$i = 0;
+
+		$dirwidget=array_merge(array('/core/boxes/'));
+		if (is_array($forcedirwidget))
+		{
+			$dirwidget=$forcedirwidget;
+		}
+
+		foreach($dirwidget as $reldir)
+		{
+			$dir=dol_buildpath($reldir,0);
+			$newdir=dol_osencode($dir);
+
+			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
+			if (! is_dir($newdir)) continue;
+
+			$handle=opendir($newdir);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
+				{
+					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/',$file,$reg))
+					{
+						if (preg_match('/\.back$/',$file)) continue;
+
+						$part1=$reg[1];
+
+						$modName = ucfirst($reg[1]);
+						//print "file=$file"; print "modName=$modName"; exit;
+						if (in_array($modName,$modules))
+						{
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget",$modName,"").'</div>';
+						}
+						else
+						{
+							try {
+								include_once $newdir.'/'.$file;
+							}
+							catch(Exception $e)
+							{
+								print $e->getMessage();
+							}
+						}
+
+						$files[$i] = $file;
+						$fullpath[$i] = $dir.'/'.$file;
+						$relpath[$i] = preg_replace('/^\//','',$reldir).'/'.$file;
+						$iscoreorexternal[$i] = ($reldir == '/core/boxes/'?'internal':'external');
+						$modules[$i] = $modName;
+						$orders[$i] = $part1;   // Set sort criteria value
+
+						$i++;
+					}
+				}
+				closedir($handle);
+			}
+		}
+
+		asort($orders);
+
+		$widget = array();
+		$j = 0;
+
+		// Loop on each widget
+		foreach ($orders as $key => $value)
+		{
+			$modName = $modules[$key];
+			if (empty($modName)) continue;
+
+			if (! class_exists($modName))
+			{
+				print 'Error: A widget file was found but its class "'.$modName.'" was not found.'."<br>\n";
+				continue;
+			}
+
+			$objMod = new $modName($db);
+			if (is_object($objMod))
+			{
+				// Define disabledbyname and disabledbymodule
+				$disabledbyname=0;
+				$module='';
+
+				// Check if widget file is disabled by name
+				if (preg_match('/NORUN$/i',$files[$key])) $disabledbyname=1;
+
+				// We set info of modules
+				$widget[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+				$widget[$j]['file'] = $files[$key];
+				$widget[$j]['fullpath'] = $fullpath[$key];
+				$widget[$j]['relpath'] = $relpath[$key];
+				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
+				//$widget[$j]['version'] = $objMod->getVersion();
+				$widget[$j]['status'] = img_picto($langs->trans("Active"),'tick');
+				if ($disabledbyname > 0 || $disabledbymodule > 1) $widget[$j]['status'] = '';
+
+				$text ='<b>'.$langs->trans("Description").':</b><br>';
+				$text.=$objMod->boxlabel.'<br>';
+				$text.='<br><b>'.$langs->trans("Status").':</b><br>';
+				if ($disabledbymodule == 2) $text.=$langs->trans("HooksDisabledAsModuleDisabled",$module).'<br>';
+
+				$widget[$j]['info'] = $text;
+			}
+			$j++;
+		}
+		return $widget;
+	}
+
+
 }
 
 

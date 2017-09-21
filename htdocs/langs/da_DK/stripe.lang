@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Følgende webadresser findes til at tilbyde en side til en kunde for at foretage en indbetaling på Dolibarr objekter
+PaymentForm=Betaling form
+WelcomeOnPaymentPage=Velkommen på vores online betalingstjenesten
+ThisScreenAllowsYouToPay=Dette skærmbillede giver dig mulighed for at foretage en online-betaling til %s.
+ThisIsInformationOnPayment=Dette er informationer om betaling for at gøre
+ToComplete=For at fuldføre
+YourEMail=E-mail til bekræftelse af betaling,
+STRIPE_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+Creditor=Kreditor
+PaymentCode=Betaling kode
+StripeDoPayment=Go om betaling
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Næste
+ToOfferALinkForOnlinePayment=URL til %s betaling
+ToOfferALinkForOnlinePaymentOnOrder=URL til at tilbyde en %s online betaling brugergrænseflade til en ordre
+ToOfferALinkForOnlinePaymentOnInvoice=URL til at tilbyde en %s online betaling brugergrænseflade til en faktura
+ToOfferALinkForOnlinePaymentOnContractLine=URL til at tilbyde en %s online betaling brugergrænseflade til en kontrakt linje
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betaling brugergrænseflade til et frit beløb
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betaling brugergrænseflade til et medlem abonnement
+YouCanAddTagOnUrl=Du kan også tilføje webadresseparameter <b>& tag= <i>værdi</i></b> til nogen af disse URL (kræves kun for fri betaling) for at tilføje din egen betaling kommentere tag.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Denne side bekræfter, at din betaling er registreret. Tak.
+YourPaymentHasNotBeenRecorded=Du betalingen ikke er blevet registreret, og transaktionen er blevet aflyst. Tak.
+AccountParameter=Konto parametre
+UsageParameter=Usage parametre
+InformationToFindParameters=Hjælp til at finde din %s kontooplysninger
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Navn på leverandør
+CSSUrlForPaymentForm=CSS stylesheet url til indbetalingskort
+MessageOK=Besked på validerede betaling tilbage side
+MessageKO=Besked om annulleret betaling tilbage side
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

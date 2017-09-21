@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -54,6 +54,7 @@ $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
+$code=GETPOST('code','alpha');
 
 $allowed=$user->admin;
 if ($id == 7 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;     // Tax page allowed to manager of chart account
@@ -66,27 +67,28 @@ $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
 $listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;	// To avoid too long dictionaries
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id','int');
+$search_code = GETPOST('search_code','alpha');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,26,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,35,36,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,26,0,);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -124,6 +126,8 @@ $tabname[30]= MAIN_DB_PREFIX."c_format_cards";
 //$tabname[32]= MAIN_DB_PREFIX."c_accounting_category";
 $tabname[33]= MAIN_DB_PREFIX."c_hrm_department";
 $tabname[34]= MAIN_DB_PREFIX."c_hrm_function";
+$tabname[35]= MAIN_DB_PREFIX."c_exp_tax_cat";
+$tabname[36]= MAIN_DB_PREFIX."c_exp_tax_range";
 
 // Dictionary labels
 $tablib=array();
@@ -161,6 +165,8 @@ $tablib[30]= "DictionaryFormatCards";
 //$tablib[32]= "DictionaryAccountancyCategory";
 $tablib[33]= "DictionaryDepartment";
 $tablib[34]= "DictionaryFunction";
+$tablib[35]= "DictionaryExpenseTaxCat";
+$tablib[36]= "DictionaryExpenseTaxRange";
 
 // Requests to extract data
 $tabsql=array();
@@ -188,7 +194,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT t.rowid as rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
-//$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template',1).")";
+//$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content_lines, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template').")";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
@@ -198,6 +204,8 @@ $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmar
 //$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
+$tabsql[35]= "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
+$tabsql[36]= "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -235,6 +243,8 @@ $tabsqlsort[30]="code ASC";
 //$tabsqlsort[32]="position ASC";
 $tabsqlsort[33]="code ASC";
 $tabsqlsort[34]="code ASC";
+$tabsqlsort[35]="c.label ASC";
+$tabsqlsort[36]="r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -247,7 +257,7 @@ $tabfield[6] = "code,libelle,type,color,position";
 $tabfield[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfield[8] = "code,libelle,country_id,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfield[9] = "code,label,unicode";
-$tabfield[10]= "country_id,country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle,position";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfield[13]= "code,libelle,type,accountancy_code";
@@ -270,8 +280,8 @@ $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
 //$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
-$tabfield[33]= "code,label";
-$tabfield[34]= "code,label";
+$tabfield[35]= "label";
+$tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -284,7 +294,7 @@ $tabfieldvalue[6] = "code,libelle,type,color,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[8] = "code,libelle,country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10]= "country,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[10]= "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle,position";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
@@ -309,6 +319,8 @@ $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargi
 //$tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
+$tabfieldvalue[35]= "label";
+$tabfieldvalue[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -321,7 +333,7 @@ $tabfieldinsert[6] = "code,libelle,type,color,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[8] = "code,libelle,fk_country".(! empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?',position':'');
 $tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10]= "fk_pays,code,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[10]= "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle,position";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
@@ -346,6 +358,8 @@ $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmarg
 //$tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
+$tabfieldinsert[35]= "label";
+$tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -385,6 +399,8 @@ $tabrowid[30]= "";
 //$tabrowid[32]= "";
 $tabrowid[33]= "rowid";
 $tabrowid[34]= "rowid";
+$tabrowid[35]= "";
+$tabrowid[36]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -422,6 +438,8 @@ $tabcond[30]= ! empty($conf->label->enabled);
 //$tabcond[32]= ! empty($conf->accounting->enabled);
 $tabcond[33]= ! empty($conf->hrm->enabled);
 $tabcond[34]= ! empty($conf->hrm->enabled);
+$tabcond[35]= ! empty($conf->expensereport->enabled);
+$tabcond[36]= ! empty($conf->expensereport->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -430,7 +448,7 @@ $tabhelp[2]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[3]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[4]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[5]  = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'color'=>$langs->trans("ColorFormat"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[7]  = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[8]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[9]  = array('code'=>$langs->trans("EnterAnyCode"), 'unicode'=>$langs->trans("UnicodeCurrency"));
@@ -459,6 +477,8 @@ $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->tran
 //$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[35]= array();
+$tabhelp[36]= array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -496,10 +516,20 @@ $tabfieldcheck[30] = array();
 //$tabfieldcheck[32] = array();
 $tabfieldcheck[33] = array();
 $tabfieldcheck[34] = array();
+$tabfieldcheck[35]= array();
+$tabfieldcheck[36]= array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
 
+
+// Defaut sortorder
+if (empty($sortfield))
+{
+    $tmp1 = explode(',',$tabsqlsort[$id]);
+    $tmp2 = explode(' ',$tmp1[0]);
+    $sortfield=preg_replace('/^.*\./', '', $tmp2[0]);
+}
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -568,7 +598,8 @@ if ($id == 10)
 
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
 {
-    $search_country_id = '';    
+    $search_country_id = '';
+    $search_code = '';
 }
 
 // Actions add or modify an entry into a dictionary
@@ -617,7 +648,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
     }
     // Other checks
-    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
+    if (GETPOST('actionadd') && $tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
         setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
@@ -631,7 +662,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
     	{
 	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
     if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
@@ -658,6 +689,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"]='';	// If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
+    if ($id == 10 && isset($_POST["code"]))  // Spaces are not allowed into code
+    {
+        $_POST["code"]=preg_replace('/\s/','',$_POST["code"]);
+    }
 
     // Si verif ok et action add, on ajoute la ligne
     if ($ok && GETPOST('actionadd'))
@@ -802,8 +837,8 @@ if ($action == $acts[0])
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag($code)."'";
     }
 
     $result = $db->query($sql);
@@ -822,8 +857,8 @@ if ($action == $acts[1])
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag($code)."'";
     }
 
     $result = $db->query($sql);
@@ -842,8 +877,8 @@ if ($action == 'activate_favorite')
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag($code)."'";
     }
 
     $result = $db->query($sql);
@@ -862,8 +897,8 @@ if ($action == 'disable_favorite')
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
-    elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$_GET["code"]."'";
+    elseif ($code) {
+        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag($code)."'";
     }
 
     $result = $db->query($sql);
@@ -912,10 +947,19 @@ if (empty($id))
 print "<br>\n";
 
 
+$param = '&id='.$id;
+if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
+$paramwithsearch = $param;
+if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
+if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
+if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+
+
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.$rowid.'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
 }
 //var_dump($elementList);
 
@@ -927,13 +971,11 @@ if ($id)
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
 
-    if ($search_country_id > 0)
-    {
-        if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
-        else $sql.=" WHERE ";
-        $sql.= " c.rowid = ".$search_country_id;
-    }
-    
+    if (! preg_match('/ WHERE /',$sql)) $sql.= " WHERE 1 = 1";
+    if ($search_country_id > 0) $sql.= " AND c.rowid = ".$search_country_id;
+    if ($search_code != '' && $id != 9)     $sql.= natural_search("code", $search_code);
+    if ($search_code != '' && $id == 9)     $sql.= natural_search("code_iso", $search_code);
+
     if ($sortfield)
     {
         // If sort order is "country", we use country_code instead
@@ -960,16 +1002,16 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
-    
-    print '<table class="noborder" width="100%">';
 
     // Form to add a new line
     if ($tabname[$id])
     {
         $alabelisused=0;
-        $var=false;
 
         $fieldlist=explode(',',$tabfield[$id]);
+
+	    print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder" width="100%">';
 
         // Line for title
         print '<tr class="liste_titre">';
@@ -979,38 +1021,40 @@ if ($id)
             // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
-            $align="left";
+            $class='';
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
             if ($fieldlist[$field]=='taux')            {
 				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
 				else $valuetoshow=$langs->trans("Amount");
-				$align='center';
+				$class='center';
             }
-            if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 2"; $align="center"; $sortable=0; }
-            if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2"; $align="center"; }
-            if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 3"; $align="center"; $sortable=0; }
-            if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3"; $align="center"; }
+            if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 2"; $class="center"; $sortable=0; }
+            if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2"; $class="center"; }
+            if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 3"; $class="center"; $sortable=0; }
+            if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3"; $class="center"; }
             if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
             if ($fieldlist[$field]=='type')            {
 				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
 				else $valuetoshow=$langs->trans("Type");
             }
-            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); $class='width100'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
-            	$valuetoshow=$langs->trans("Label");
-            	if ($id != 25) $valuetoshow.="*";
+            	if ($id != 25) $valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+            	else $valuetoshow=$langs->trans("Label");
             }
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+            if ($fieldlist[$field]=='libelle_facture') {
+                $valuetoshow=$form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+            }
             if ($fieldlist[$field]=='country')         {
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
                 $valuetoshow=$langs->trans("Country");
             }
-            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
+            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $class="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-            if ($fieldlist[$field]=='type_cdr')        { $valuetoshow=$langs->trans("AtEndOfMonth"); $align="center"; }
+            if ($fieldlist[$field]=='type_cdr')        { $valuetoshow=$langs->trans("AtEndOfMonth"); $class="center"; }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
             if ($fieldlist[$field]=='width' || $fieldlist[$field]=='nx')    { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height' || $fieldlist[$field]=='ny')   { $valuetoshow=$langs->trans("Height"); }
@@ -1042,7 +1086,10 @@ if ($id)
 			if ($fieldlist[$field]=='affect')          { $valuetoshow=$langs->trans("WithCounter"); }
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
-				
+			if ($fieldlist[$field]=='fk_tva')          { $valuetoshow=$langs->trans("VAT"); }
+			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
+			if ($fieldlist[$field]=='fk_c_exp_tax_cat'){ $valuetoshow=$langs->trans("CarCategory"); }
+
             if ($id == 2)	// Special cas for state page
             {
             	if ($fieldlist[$field]=='region_id') { $valuetoshow='&nbsp;'; $showfield=1; }
@@ -1051,7 +1098,7 @@ if ($id)
 
             if ($valuetoshow != '')
             {
-                print '<td align="'.$align.'">';
+                print '<td'.($class?' class="'.$class.'"':'').'>';
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
             	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
             	else print $valuetoshow;
@@ -1069,7 +1116,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print "<tr ".$bcnd[$var].">";
+        print '<!-- line to add new entry --><tr class="oddeven nodrag nodrop nohover">';
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
@@ -1087,15 +1134,15 @@ if ($id)
         $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-        if ($id == 3) unset($fieldlist[2]); // Remove field ??? if ???
+        if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 
         if (empty($reshook))
         {
-       		fieldList($fieldlist,$obj,$tabname[$id],'add');
+       		fieldList($fieldlist, $obj, $tabname[$id], 'add');
         }
 
         if ($id == 4) print '<td></td>';
-        print '<td colspan="3" align="right">';
+        print '<td colspan="3" align="center">';
         if ($action != 'edit')
         {
         	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
@@ -1106,14 +1153,17 @@ if ($id)
         $colspan=count($fieldlist)+3;
         if ($id == 4) $colspan++;
 
-        if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
-        {
-        	print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
-        }
-        print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
+        print '</table>';
+		print '</div>';
     }
 
+    print '</form>';
 
+    print '<br>';
+
+    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
 
     // List of available record in database
     dol_syslog("htdocs/admin/dict", LOG_DEBUG);
@@ -1122,25 +1172,62 @@ if ($id)
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
-        $param = '&id='.$id;
-        if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
-        $paramwithsearch = $param;
-        if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-        if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-        if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
-        
         // There is several pages
-        if ($num > $listlimit)
+        if ($num > $listlimit || $page)
         {
-            print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
             print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
-            print '</td></tr>';
+            print '<div class="clearboth"></div>';
         }
 
+	    print '<div class="div-table-responsive">';
+        print '<table class="noborder" width="100%">';
+
+        // Title line with search boxes
+        print '<tr class="liste_titre_filter">';
+        $filterfound=0;
+        foreach ($fieldlist as $field => $value)
+        {
+            $showfield=1;							  	// By defaut
+
+            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
+
+            if ($showfield)
+            {
+                if ($value == 'country')
+                {
+                    print '<td class="liste_titre">';
+                    print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth150 maxwidthonsmartphone');
+                    print '</td>';
+                    $filterfound++;
+                }
+                elseif ($value == 'code')
+                {
+                    print '<td class="liste_titre">';
+                    print '<input type="text" class="maxwidth100" name="search_code" value="'.dol_escape_htmltag($search_code).'">';
+                    print '</td>';
+                    $filterfound++;
+                }
+                else
+                {
+                    print '<td class="liste_titre">';
+                    print '</td>';
+                }
+            }
+        }
+        if ($id == 4) print '<td></td>';
+        print '<td class="liste_titre"></td>';
+    	print '<td class="liste_titre" colspan="2" align="right">';
+    	if ($filterfound)
+    	{
+        	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+        	print $searchpicto;
+    	}
+    	print '</td>';
+        print '</tr>';
+
         // Title of lines
-        print '<tr class="liste_titre liste_titre_add">';
+        print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
@@ -1173,12 +1260,17 @@ if ($id)
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
             if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+            if ($fieldlist[$field]=='position')        { $align='right'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
-            	$valuetoshow=$langs->trans("Label");
-               	if ($id != 25) $valuetoshow.="*";
+                //if ($id != 25) $valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+                //else $valuetoshow=$langs->trans("Label");
+                $valuetoshow=$langs->trans("Label");
             }
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+            if ($fieldlist[$field]=='libelle_facture') {
+                //$valuetoshow=$form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
+                $valuetoshow=$langs->trans("LabelOnDocuments");
+            }
             if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
             if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
@@ -1214,6 +1306,9 @@ if ($id)
 			if ($fieldlist[$field]=='affect')          { $valuetoshow=$langs->trans("WithCounter"); }
 			if ($fieldlist[$field]=='delay')           { $valuetoshow=$langs->trans("NoticePeriod"); }
 			if ($fieldlist[$field]=='newbymonth')      { $valuetoshow=$langs->trans("NewByMonth"); }
+			if ($fieldlist[$field]=='fk_tva')          { $valuetoshow=$langs->trans("VAT"); }
+			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
+			if ($fieldlist[$field]=='fk_c_exp_tax_cat'){ $valuetoshow=$langs->trans("CarCategory"); }
 
             // Affiche nom du champ
             if ($showfield)
@@ -1229,51 +1324,14 @@ if ($id)
         print getTitleFieldOfList('');
         print '</tr>';
 
-        // Title line with search boxes
-        print '<tr class="liste_titre">';
-        $filterfound=0;
-        foreach ($fieldlist as $field => $value)
-        {
-            $showfield=1;							  	// By defaut
-            
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
-            
-            if ($showfield)
-            {
-                if ($value == 'country')
-                {
-                    print '<td class="liste_titre">';
-                    print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
-                    print '</td>';
-                    $filterfound++;
-                }
-                else
-                {
-                    print '<td class="liste_titre"></td>';
-                }
-            }
-        }
-        if ($id == 4) print '<td></td>';
-        print '<td class="liste_titre"></td>';
-    	print '<td class="liste_titre" colspan="2" align="right">';
-    	if ($filterfound)
-    	{
-        	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-        	print $searchpitco;
-    	}
-    	print '</td>';
-        print '</tr>';
-            
         if ($num)
         {
             // Lines with values
             while ($i < $num)
             {
-                $var = ! $var;
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
-                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
+                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     $tmpaction='edit';
@@ -1282,20 +1340,20 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                    if (empty($reshook)) fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 
                     print '<td colspan="3" align="center">';
+                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                 }
                 else
                 {
 	              	$tmpaction = 'view';
-                    $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -1304,7 +1362,6 @@ if ($id)
                     {
                         foreach ($fieldlist as $field => $value)
                         {
-                            
                             $showfield=1;
                         	$align="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};
@@ -1346,7 +1403,7 @@ if ($id)
                             if ($value == 'private')
                             {
                                 $valuetoshow = yn($elementList[$valuetoshow]);
-                            }				
+                            }
                             else if ($fieldlist[$field]=='libelle_facture') {
                                 $langs->load("bills");
                                 $key=$langs->trans("PaymentCondition".strtoupper($obj->code));
@@ -1469,10 +1526,35 @@ if ($id)
 							else if ($fieldlist[$field]=='accountancy_code' || $fieldlist[$field]=='accountancy_code_sell' || $fieldlist[$field]=='accountancy_code_buy') {
                                 $valuetoshow = length_accountg($valuetoshow);
                             }
+							elseif ($fieldlist[$field] == 'fk_tva')
+							{
+								foreach ($form->cache_vatrates as $key => $Tab)
+								{
+									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow)
+									{
+										$valuetoshow = $form->cache_vatrates[$key]['libtva'];
+										break;
+									}
+								}
+							}
+							elseif ($fieldlist[$field] == 'fk_c_exp_tax_cat')
+							{
+								$valuetoshow = getDictvalue(MAIN_DB_PREFIX.'c_exp_tax_cat', 'label', $valuetoshow);
+								$valuetoshow = $langs->trans($valuetoshow);
+							}
+							elseif ($tabname[$id] == MAIN_DB_PREFIX.'c_exp_tax_cat')
+							{
+								$valuetoshow = $langs->trans($valuetoshow);
+							}
 
                             $class='tddict';
+                            if ($fieldlist[$field] == 'note' && $id == 10) $class.=' tdoverflowmax200';
                             if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
-							// Show value for field
+                            if ($fieldlist[$field] == 'code') $class.=' width100';
+                            if ($fieldlist[$field] == 'position') $class.=' right';
+                            if ($fieldlist[$field] == 'localtax1_type') $class.=' nowrap';
+                            if ($fieldlist[$field] == 'localtax2_type') $class.=' nowrap';
+                            // Show value for field
 							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
                         }
                     }
@@ -1490,9 +1572,13 @@ if ($id)
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
                     if ($obj->code == 'RECEP') $canbemodified=1;
+                    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm") $canbemodified=1;
 
+                    // Url
                     $rowidcol=$tabrowid[$id];
-                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->{$rowidcol})?$obj->{$rowidcol}:(! empty($obj->code)?$obj->code:'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
+                    // If rowidcol not defined
+                    if (empty($rowidcol) || in_array($id, array(6,7,8,13,17,19,27))) $rowidcol='rowid';
+                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((! empty($obj->{$rowidcol}) || $obj->{$rowidcol} == '0')?$obj->{$rowidcol}:(! empty($obj->code)?urlencode($obj->code):'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
                     if ($param) $url .= '&'.$param;
                     $url.='&';
 
@@ -1527,7 +1613,7 @@ if ($id)
                     {
                         print '<td align="center">';
                         if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
-                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionnary can be edited by other profile than admin
+                        //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
                     }
                     else print '<td>&nbsp;</td>';
@@ -1537,12 +1623,14 @@ if ($id)
                 $i++;
             }
         }
+
+        print '</table>';
+        print '</div>';
     }
     else {
         dol_print_error($db);
     }
 
-    print '</table>';
 
     print '</form>';
 }
@@ -1552,8 +1640,9 @@ else
      * Show list of dictionary to show
      */
 
-    $var=true;
     $lastlineisempty=false;
+
+	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     //print '<td>'.$langs->trans("Module").'</td>';
@@ -1570,14 +1659,14 @@ else
         {
         	if ($showemptyline)
         	{
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+
+        		print '<tr class="oddeven"><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 
-            $var=!$var;
+
             $value=$tabname[$i];
-            print '<tr '.$bc[$var].'><td width="50%">';
+            print '<tr class="oddeven"><td width="50%">';
             if (! empty($tabcond[$i]))
             {
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
@@ -1606,6 +1695,7 @@ else
         }
     }
     print '</table>';
+    print '</div>';
 }
 
 print '<br>';
@@ -1618,15 +1708,15 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
- *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ * 	@param		array		$fieldlist		Array of fields
+ * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
+ *  @param		string		$tabname		Name of SQL table
+ *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
 function fieldList($fieldlist, $obj='', $tabname='', $context='')
 {
-	global $conf,$langs,$db;
+	global $conf,$langs,$db,$mysoc;
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
@@ -1634,11 +1724,19 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = new FormVentilation($db);
+	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 	foreach ($fieldlist as $field => $value)
 	{
-		if ($fieldlist[$field] == 'country')
+	    if (in_array($fieldlist[$field], array('code', 'libelle', 'type')) && $tabname == MAIN_DB_PREFIX."c_actioncomm" && in_array($obj->type, array('system','systemauto')))
+        {
+            $hidden = (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'');
+            print '<td>';
+            print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$hidden.'">';
+            print $langs->trans($hidden);
+            print '</td>';
+        }
+	    elseif ($fieldlist[$field] == 'country')
 		{
 			if (in_array('region_id',$fieldlist))
 			{
@@ -1649,7 +1747,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname='country';
-			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'country_id')
@@ -1657,7 +1755,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if (! in_array('country',$fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
 			{
 				$country_id = (! empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : 0);
-				print '<td>';
+				print '<td class="tdoverflowmax100">';
 				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
 				print '</td>';
 			}
@@ -1703,8 +1801,9 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		}
 		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
 		{
+			$type = (! empty($obj->type)?$obj->type:'user'); // Check if type is different of 'user' (external module)
 			print '<td>';
-			print 'user<input type="hidden" name="type" value="user">';
+			print $type.'<input type="hidden" name="type" value="'.$type.'">';
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
@@ -1725,13 +1824,30 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print '</td>';
 		}
 		elseif (in_array($fieldlist[$field], array('libelle_facture'))) {
-			print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea></td>';
+		    print '<td>';
+		    $transfound=0;
+	        // Special case for labels
+	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term')
+	        {
+	            $langs->load("bills");
+	            $transkey="PaymentCondition".strtoupper($obj->code);
+    	        if ($langs->trans($transkey) != $transkey)
+                {
+                    $transfound=1;
+                    print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+                }
+	        }
+		    if (! $transfound)
+		    {
+		        print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
+		    }
+		    print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i',$fieldlist[$field])) {
 			print '<td><input type="text" class="flat minwidth75" value="'.price((! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'')).'" name="'.$fieldlist[$field].'"></td>';
 		}
 		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
-			print '<td><input type="text" class="flat minwidth100" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
+			print '<td class="maxxxx"><input type="text" class="flat minwidth75" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
 		}
 		elseif ($fieldlist[$field]=='unit') {
 			print '<td>';
@@ -1758,7 +1874,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			{
 			    $fieldname = $fieldlist[$field];
 				$accountancy_account = (! empty($obj->$fieldname) ? $obj->$fieldname : 0);
-				print $formaccountancy->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
+				print $formaccounting->select_account($accountancy_account, '.'.$fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
 			}
 			else
 			{
@@ -1767,18 +1883,57 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			print '</td>';
 		}
-		else
+		elseif ($fieldlist[$field] == 'fk_tva')
 		{
 			print '<td>';
-			$size=''; $class='';
-			if ($fieldlist[$field]=='code') $class='maxwidth100';
+			print $form->load_tva('fk_tva', $obj->taux, $mysoc, new Societe($db), 0, 0, '', false, -1);
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'fk_c_exp_tax_cat')
+		{
+			print '<td>';
+			print $form->selectExpenseCategories($obj->fk_c_exp_tax_cat);
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'fk_range')
+		{
+			print '<td>';
+			print $form->selectExpenseRanges($obj->fk_range);
+			print '</td>';
+		}
+		else
+		{
+			$classtd=''; $class='';
+			if ($fieldlist[$field]=='code') $classtd='width100';
 			if ($fieldlist[$field]=='affect') $class='maxwidth50';
 			if ($fieldlist[$field]=='delay') $class='maxwidth50';
 			if ($fieldlist[$field]=='position') $class='maxwidth50';
-			if ($fieldlist[$field]=='libelle') $class='quatrevingtpercent';
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $class='quatrevingtpercent';
 			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
-			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $size='size="2" ';
-			print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $class='maxwidth50';
+			print '<td class="'.$classtd.'">';
+			$transfound=0;
+			if (in_array($fieldlist[$field], array('label','libelle')))
+			{
+			    $transkey='';
+			    // Special case for labels
+			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
+			        $transkey="Civility".strtoupper($obj->code);
+			    }
+			    if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+			        $langs->load("bills");
+			        $transkey="PaymentCondition".strtoupper($obj->code);
+			    }
+			    if ($transkey && $langs->trans($transkey) != $transkey)
+			    {
+			        $transfound=1;
+			        print $form->textwithpicto($langs->trans($transkey), $langs->trans("GoIntoTranslationMenuToChangeThis"));
+			    }
+			}
+			if (! $transfound)
+			{
+                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			}
 			print '</td>';
 		}
 	}

@@ -23,16 +23,16 @@
 
 // $mysoc must be defined
 // $id must be defined
-// $actiontypecode must be defined
 // $paramname must be defined
-// $mode must be defined
-// $object and $uobject may be defined.
-
+// $mode must be defined (used to know the automatic BCC to add)
+// $trigger_name must be set (can be '')
+// $actiontypecode can be set
+// $object and $uobject may be defined
 
 /*
  * Add file in email form
-*/
-if (GETPOST('addfile'))
+ */
+if (GETPOST('addfile','alpha'))
 {
 	$trackid = GETPOST('trackid','aZ09');
 
@@ -68,7 +68,7 @@ if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll'))
+if (GETPOST('removAll','alpha'))
 {
 	$trackid = GETPOST('trackid','aZ09');
 
@@ -116,6 +116,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
 		{
 			$result=$object->fetch_thirdparty();
+			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
 		}
@@ -136,7 +137,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$sendtosocid=$possibleaccounts[1]['id'];
 					$result=$object->fetch($sendtosocid);
-						
+
 					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
 				}
 				else
@@ -154,7 +155,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 		}
-		else dol_print_error('','Use actions_sendmails.in.php for a type that is not supported');
+		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
 	}
 	else $thirdparty = $mysoc;
 
@@ -187,7 +188,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
-				else	// Id du contact
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					$sendtoid[] = $val;
@@ -217,7 +218,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 				}
-				else	// Id du contact
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -228,7 +229,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 		if (dol_strlen($sendto))
 		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+            // Define $urlwithroot
+            $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+            $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+            //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		    require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
 			$langs->load("commercial");
 
@@ -252,21 +258,27 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-			$message = $_POST['message'];
-				
+			$message = GETPOST('message','none');
+			$subject = GETPOST('subject','none');
+
+			// Make a change into HTML code to allow to include images from medias directory with an external reabable URL.
+			// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+			// become
+			// <img alt="" src="'.$urlwithroot.'viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
+			$message=preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $message);
+
 			$sendtobcc= GETPOST('sendtoccc');
-			if ($mode == 'emailfromproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
-			if ($mode == 'emailfromorder')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
-			if ($mode == 'emailfrominvoice')  $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO));
-			if ($mode == 'emailfromsupplierproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
-			if ($mode == 'emailfromsupplierorder')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
-			if ($mode == 'emailfromsupplierinvoice')  $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
+			// Autocomplete the $sendtobcc
+			// $autocopy can be MAIN_MAIL_AUTOCOPY_PROPOSAL_TO, MAIN_MAIL_AUTOCOPY_ORDER_TO, MAIN_MAIL_AUTOCOPY_INVOICE_TO, MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO...
+			if (! empty($autocopy))
+			{
+				$sendtobcc .= (empty($conf->global->$autocopy) ? '' : (($sendtobcc?", ":"").$conf->global->$autocopy));
+			}
 
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send' || $action == 'relance')
 			{
-				if (dol_strlen($_POST['subject'])) $subject = $_POST['subject'];
 				$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
 				if ($message)
 				{
@@ -332,8 +344,33 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 
-			// Send mail
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
+			// Make substitution in email content
+			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
+			$substitutionarray['__EMAIL__'] = $sendto;
+			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'';
+			// Add specific substitution for contracts
+			if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
+			{
+				$datenextexpiration='';
+				foreach($object->lines as $line)
+				{
+					if ($line->statut != 4) continue;
+					if ($line->date_fin_prevue > $datenextexpiration) $datenextexpiration = $line->date_fin_prevue;
+				}
+				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+			}
+
+			$parameters=array('mode'=>'formemail');
+			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
+
+			$subject=make_substitutions($subject, $substitutionarray);
+			$message=make_substitutions($message, $substitutionarray);
+
+			// Send mail (substitutionarray must be done just before this)
+			if (empty($sendcontext)) $sendcontext = 'standard';
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid,'', $sendcontext);
+
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');
@@ -346,7 +383,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$error=0;
 
-					// FIXME This must be moved into a trigger for action $trigger_name
+					// FIXME This must be moved into the trigger for action $trigger_name
 					if (! empty($conf->dolimail->enabled))
 					{
 						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
@@ -369,24 +406,32 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// Initialisation of datas
 					if (is_object($object))
 					{
-						$object->socid			= $sendtosocid;	// To link to a company
-						$object->sendtoid		= $sendtoid;	// To link to contacts/addresses. This is an array.
-						$object->actiontypecode	= $actiontypecode;
-						$object->actionmsg		= $actionmsg;  // Long text
-						$object->actionmsg2		= $actionmsg2; // Short text
+					    if (empty($actiontypecode)) $actiontypecode='AC_OTH_AUTO'; // Event insert into agenda automatically
+
+						$object->socid			= $sendtosocid;	   // To link to a company
+						$object->sendtoid		= $sendtoid;	   // To link to contacts/addresses. This is an array.
+						$object->actiontypecode	= $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+						$object->actionmsg		= $actionmsg;      // Long text
+						$object->actionmsg2		= $actionmsg2;     // Short text
 						$object->trackid        = $trackid;
 						$object->fk_element		= $object->id;
 						$object->elementtype	= $object->element;
+						if (is_array($attachedfiles) && count($attachedfiles)>0) {
+							$object->attachedfiles	= $attachedfiles;
+						}
 
 						// Call of triggers
-						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-						$interface=new Interfaces($db);
-						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
-						if ($result < 0) {
-							$error++; $errors=$interface->errors;
+						if (! empty($trigger_name))
+						{
+    						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    						$interface=new Interfaces($db);
+    						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
+							if ($result < 0) {
+    							$error++; $errors=$interface->errors;
+    						}
 						}
 					}
-						
+
 					if ($error)
 					{
 						dol_print_error($db);
@@ -397,8 +442,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessages($mesg, null, 'mesgs');
-						if ($conf->dolimail->enabled) header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id.'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						else header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.$object->id);
+						if ($conf->dolimail->enabled)
+						{
+						    header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
+						    exit;
+						}
+						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
 						exit;
 					}
 				}
@@ -426,7 +475,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("MailTo")), null, 'warnings');
-			dol_syslog('Try to send email with no recipiend defined', LOG_WARNING);
+			dol_syslog('Try to send email with no recipient defined', LOG_WARNING);
 			$action = 'presend';
 		}
 	}

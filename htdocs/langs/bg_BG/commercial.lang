@@ -19,6 +19,7 @@ ShowTask=Покажи задача
 ShowAction=Покажи събитие
 ActionsReport=доклад от събитие
 ThirdPartiesOfSaleRepresentative=Контрагенти с търговски представител
+SaleRepresentativesOfThirdParty=Sales representatives of third party
 SalesRepresentative=Търговски представител
 SalesRepresentatives=Търговски представители
 SalesRepresentativeFollowUp=Търговски представител (продължение)

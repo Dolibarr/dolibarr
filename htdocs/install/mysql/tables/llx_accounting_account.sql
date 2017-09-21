@@ -16,7 +16,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table of "accounts" for accountancy expert module
+-- Table of 'accounts' for accountancy expert module
 -- ============================================================================
 
 create table llx_accounting_account
@@ -34,5 +34,7 @@ create table llx_accounting_account
   fk_accounting_category 	integer DEFAULT 0,
   fk_user_author  			integer DEFAULT NULL,
   fk_user_modif   			integer DEFAULT NULL,
-  active     	  			tinyint DEFAULT 1  NOT NULL
+  active     	  			tinyint DEFAULT 1  NOT NULL,
+  import_key                varchar(14),
+  extraparams	            varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;

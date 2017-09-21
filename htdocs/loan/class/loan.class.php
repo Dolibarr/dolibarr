@@ -236,7 +236,7 @@ class Loan extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -248,7 +248,7 @@ class Loan extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)

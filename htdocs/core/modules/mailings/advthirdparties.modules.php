@@ -71,7 +71,7 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$sql= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
-				$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+				$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql.= " AND s.rowid IN (".implode(',',$socid).")";
 				$sql.= " ORDER BY email";
 
@@ -122,7 +122,7 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$sql= "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql.= " WHERE socp.entity IN (".getEntity('societe', 1).")";
+				$sql.= " WHERE socp.entity IN (".getEntity('societe').")";
 				if (count($contactid)>0) {
 					$sql.= " AND socp.rowid IN (".implode(',',$contactid).")";
 				}
@@ -211,7 +211,7 @@ class mailing_advthirdparties extends MailingTargets
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe').")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients

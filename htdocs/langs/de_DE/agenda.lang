@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID Veranstaltung
 Actions=Ereignisse
-Agenda=Terminplanung
+Agenda=Terminplan
 TMenuAgenda=Terminplanung
 Agendas=Tagesordnungen
 LocalAgenda=interne Kalender
@@ -12,7 +12,7 @@ Event=Ereignis
 Events=Ereignisse
 EventsNb=Anzahl der Ereignisse
 ListOfActions=Liste Ereignisse
-Location=Standort
+Location=Ort
 ToUserOfGroup=Für jeden Benutzer in der Gruppe
 EventOnFullDay=Ganztägig
 MenuToDoActions=Alle unvollst. Termine
@@ -24,10 +24,10 @@ ActionsAskedBy=Termine eingetragen von
 ActionsToDoBy=Ereignisse zugewiesen an
 ActionsDoneBy=Termine erledigt von
 ActionAssignedTo=Ereignis zugewiesen an
-ViewCal=Kalenderansicht
+ViewCal=Monatsansicht
 ViewDay=Tagesansicht
 ViewWeek=Wochenansicht
-ViewPerUser=Benutzeransicht
+ViewPerUser=Ansicht pro Benutzer
 ViewPerType=Anzeige pro Typ
 AutoActions= Automatische Befüllung der Tagesordnung
 AgendaAutoActionDesc= Definieren sie hier Ereignisse für die Dolibarr automatisch Termine in der Agende erstellen soll. Wenn nichts aktiviert ist, werden nur manuelle Aktionen in der Agenda erfasst und angezeigt. Automatische Protokollierung von Ereignissen auf Objekten (Validierung, Statuswechsel) werden nicht gespeichert
@@ -48,14 +48,15 @@ InvoiceDeleteDolibarr=Rechnung %s gelöscht
 InvoicePaidInDolibarr=Rechnung %s bezahlt
 InvoiceCanceledInDolibarr=Rechnung %s storniert
 MemberValidatedInDolibarr=Mitglied %s freigegeben
-MemberResiliatedInDolibarr=Member %s terminated
+MemberModifiedInDolibarr=Mitglied %s geändert
+MemberResiliatedInDolibarr=Mitglied %s aufgehoben
 MemberDeletedInDolibarr=Mitglied %s gelöscht
 MemberSubscriptionAddedInDolibarr=Abonnement für Mitglied %s hinzugefügt
 ShipmentValidatedInDolibarr=Lieferung %s freigegeben
-ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markieren
-ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markieren
+ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markiert
+ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markiert
 ShipmentDeletedInDolibarr=Lieferung %s gelöscht
-OrderCreatedInDolibarr=Order %s created
+OrderCreatedInDolibarr= Auftragserteilung %s erstellt
 OrderValidatedInDolibarr=Auftrag %s freigegeben
 OrderDeliveredInDolibarr=Bestellung %s als geliefert markieren
 OrderCanceledInDolibarr=Auftrag %s storniert
@@ -74,13 +75,17 @@ InterventionSentByEMail=Serviceauftrag %s gesendet via E-Mail
 ProposalDeleted=Angebot gelöscht
 OrderDeleted=Bestellung gelöscht
 InvoiceDeleted=Rechnung gelöscht
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginnt
 DateActionEnd=Endet
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
-AgendaUrlOptions2=<b>login=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte oder zugewiesene Ereignissen ein.
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
-AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> zugewiesene Ereignissen.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> begrenzt die Ausgabe auf die dem Projekte <b>PROJECT_ID</b> zugewiesene Ereignissen.
 AgendaShowBirthdayEvents=Geburtstage von Kontakten anzeigen
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
@@ -103,7 +108,7 @@ MyAvailability=Meine Verfügbarkeit
 ActionType=Ereignistyp
 DateActionBegin=Startzeit des Ereignis
 CloneAction=Dupliziere Ereignis
-ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
+ConfirmCloneEvent=Möchten Sie dieses Ereignis <b>%s</b> wirklich duplizieren?
 RepeatEvent=Wiederhole Ereignis
 EveryWeek=Jede Woche
 EveryMonth=Jeden Monat

@@ -19,6 +19,7 @@ ShowTask=Veure tasca
 ShowAction=Veure esdeveniment
 ActionsReport=Informe d'esdeveniments
 ThirdPartiesOfSaleRepresentative=Tercers amb agent comercial
+SaleRepresentativesOfThirdParty=Agents comercials del tercer
 SalesRepresentative=Agent comercial
 SalesRepresentatives=Agents comercials
 SalesRepresentativeFollowUp=Agent comercial (seguiment)

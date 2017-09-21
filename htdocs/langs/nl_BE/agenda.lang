@@ -1,2 +1,17 @@
 # Dolibarr language file - Source file is en_US - agenda
+ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
+AgendaAutoActionDesc=Stel hier de gebeurtenissen in waarvoor u wilt dat Dolibarr automatische een afspraak in de agenda creëert. Als er niets is aangevinkt (standaard), zullen alleen handmatige acties worden opgenomen in de agenda. Automatische tracking van acties zullen niet bewaard worden.
+NewCompanyToDolibarr=Derde %s aangemaakt
+ContractValidatedInDolibarr=Contract %s goedgekeurd
+MemberModifiedInDolibarr=Lid %s werd aangepast
+MemberResiliatedInDolibarr=Lid %s verwijderd
+ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
+ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
+ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
+ShipmentDeletedInDolibarr=Shipment %s gewist
+ProposalDeleted=Offerte verwijderd
+AgendaModelModule=Document sjablonen voor een gebeurtenis
+AgendaShowBirthdayEvents=Toon verjaardagen van contacten
+AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
+ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

@@ -43,9 +43,11 @@ LoanCalcDesc=Denne <b>boliglånskalkulatoren</b> kan brukes til å finne ut mån
 GoToInterest=%s vil gå mot INTEREST
 GoToPrincipal=%s vil gå mot PRINCIPAL
 YouWillSpend=Du kommer til å bruke %s i år %s
-ListLoanAssociatedProject=List of loan associated with the project
+ListLoanAssociatedProject=Liste over lån tilknyttet prosjektet
+AddLoan=Opprett lån
 # Admin
 ConfigLoan=Oppset av lån-modulen
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskonto kapital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard regnskapskonto  rente
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard regnskapskonto forsikring
+CreateCalcSchedule=Opprett/endre låneplan

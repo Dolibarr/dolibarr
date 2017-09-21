@@ -4,6 +4,7 @@ SuppliersOrdersArea=Sučelje narudžba dobavljačima
 OrderCard=Kartica nardžbi
 OrderId=Broj narudžbe
 Order=Narudžba
+PdfOrderTitle=Narudžba
 Orders=Narudžbe
 OrderLine=Stavka narudžbe
 OrderDate=Datum narudžbe

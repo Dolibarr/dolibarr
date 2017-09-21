@@ -71,7 +71,7 @@ function show_skin($fuser,$edit=0)
    	print '</a>';*/
    	print '</th></tr>';
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
    	print '<td>'.$langs->trans("ThemeDir").'</td>';
    	print '<td>';
    	foreach($dirskins as $dirskin)
@@ -81,8 +81,8 @@ function show_skin($fuser,$edit=0)
    	print '</td>';
    	print '</tr>';
 
-    //$var=!$var;
-    print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
+    //
+    print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
 

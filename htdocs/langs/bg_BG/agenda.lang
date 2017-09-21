@@ -48,12 +48,13 @@ InvoiceDeleteDolibarr=Фактура %s изтрита
 InvoicePaidInDolibarr=Фактура %s е променена на платена
 InvoiceCanceledInDolibarr=Фактура %s е отказана
 MemberValidatedInDolibarr=Член %s е валидиран
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Член %s е изтрит
 MemberSubscriptionAddedInDolibarr=Абонамет за член %s е добавен
 ShipmentValidatedInDolibarr=Доставка %s е валидирана
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Доставка %s е изтрита
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Поръчка %s валидирани
@@ -74,13 +75,17 @@ InterventionSentByEMail=Намеса %s изпратена по електрон
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Начална дата
 DateActionEnd=Крайна дата
 AgendaUrlOptions1=Можете да добавите и следните параметри, за да филтрирате изход:
-AgendaUrlOptions2=<b>login=%s</b> за да ограничи показването до действия създадени от или определени на потребител <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> за да ограничи показването до действия притежавани от потребител <b>%s</b>.
-AgendaUrlOptions4=<b>logint = %s</b> да се ограничи производството на действията, засегнати на потребителските <b>%s.</b>
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> за да ограничи показването до действия свързани с проект <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts

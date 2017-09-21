@@ -42,8 +42,6 @@ $oldvatrate=GETPOST('oldvatrate');
 $newvatrate=GETPOST('newvatrate');
 //$price_base_type=GETPOST('price_base_type');
 
-$objectstatic = new Product($db);
-$objectstatic2 = new ProductFournisseur($db);
 
 
 /*
@@ -74,7 +72,7 @@ if ($action == 'convert')
 		{
 			$sql = 'SELECT rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
-			$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
+			$sql.= ' WHERE entity IN ('.getEntity('product').')';
 			$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
 
 			$resql=$db->query($sql);
@@ -87,6 +85,7 @@ if ($action == 'convert')
 				{
 					$obj = $db->fetch_object($resql);
 
+					$objectstatic = new Product($db);          // Object init must be into loop to avoid to get value of previous step
 					$ret=$objectstatic->fetch($obj->rowid);
 					if ($ret > 0)
 					{
@@ -150,7 +149,8 @@ if ($action == 'convert')
 						if ($ret < 0 || $retm < 0) $error++;
 						else $nbrecordsmodified++;
 					}
-
+                    unset($objectstatic);
+                    
 					$i++;
 				}
 			}
@@ -162,7 +162,7 @@ if ($action == 'convert')
 		// Change supplier prices
 		$sql = 'SELECT pfp.rowid, pfp.fk_soc, pfp.price as price, pfp.quantity as qty, pfp.fk_availability, pfp.ref_fourn';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
-		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product',1).')';
+		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
 		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
 		$sql.= " AND s.fk_pays = '".$country_id."'";
 		//print $sql;
@@ -176,6 +176,7 @@ if ($action == 'convert')
 			{
 				$obj = $db->fetch_object($resql);
 
+                $objectstatic2 = new ProductFournisseur($db);          // Object init must be into loop to avoid to get value of previous step
 				$ret=$objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0)
 				{
@@ -207,6 +208,8 @@ if ($action == 'convert')
 					if ($ret < 0 || $retm < 0) $error++;
 					else $nbrecordsmodified++;
 				}
+				unset($objectstatic2);
+				
 				$i++;
 			}
 		}
@@ -271,16 +274,16 @@ else
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc);
@@ -288,8 +291,8 @@ else
 	print '</tr>'."\n";
 
 	/*
-	$var=!$var;
-	print '<tr '.$bc[$var].'>'."\n";
+	
+	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
 	print $form->selectPriceBaseType($price_base_type);

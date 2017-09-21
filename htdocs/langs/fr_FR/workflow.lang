@@ -2,14 +2,16 @@
 WorkflowSetup=Configuration du module workflow
 WorkflowDesc=Ce module est conçu pour modifier le comportement des actions automatiques dans l'application. Par défaut, le workflow est ouvert (vous pouvez faire les choses dans l'ordre que vous voulez). Vous pouvez toutefois activer des actions automatiques qui vous intéressent.
 ThereIsNoWorkflowToModify=Il n'y a pas de modifications de workflow disponibles avec les modules activés.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer une commande client automatiquement à la signature d'une proposition commerciale
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer une commande client automatiquement lorsqu'une proposition commerciale est signée
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer automatiquement une commande client à la signature d'un proposition commerciale (la commande sera du même montant que la proposition commerciale)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la signature d'une proposition commerciale (la facture sera du même montant que la proposition commerciale source)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la clôture d'une commande client
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition commerciale source quand la commande client dérivée est classée payée
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source quand la facture client dérivée est classée payée
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source lorsque la facture client dérivée est validée
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=A la validation d'une commande, classer la proposition commerciale source "facturée"
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classez la commande liée à expédiée quand une expédition est validée et que la quantité expédiée totale est la même que dans la commande
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
+# Autoclassify
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant des deux documents est le même)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) facturée(s) à la validation d'une facture client (si la facture est du même montant que la commande)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée à la validation de la facture client (et si le montant des deux documents est le même)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée au classement payé de la facture client (et si le montant des deux documents est le même)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source expédiée à la validation d'une expédition (si les quantité des documents sont les mêmes)
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique

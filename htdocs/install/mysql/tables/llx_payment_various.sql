@@ -19,6 +19,8 @@
 create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  num_payment           varchar(50),				-- ref
+  label                 varchar(255),
   tms                   timestamp,
   datec                 datetime,                   -- Create date
   datep                 date,                       -- date de paiement
@@ -26,9 +28,8 @@ create table llx_payment_various
   sens                  smallint DEFAULT 0 NOT NULL,-- Sens of the operation: 0 for debit operation, 1 for credit operation
   amount                double(24,8) DEFAULT 0 NOT NULL,
   fk_typepayment        integer NOT NULL,
-  num_payment           varchar(50),				-- ref
-  label                 varchar(255),
-  accountancy_code		varchar(32),
+  accountancy_code      varchar(32),
+  fk_projet             integer DEFAULT NULL,
   entity                integer DEFAULT 1 NOT NULL,	-- multi company id
   note                  text,
   fk_bank               integer,

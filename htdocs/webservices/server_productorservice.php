@@ -872,7 +872,7 @@ function deleteProductOrService($authentication,$listofidstring)
 	        }
 	        else
 			{
-		        $result=$newobject->delete();
+		        $result=$newobject->delete($user);
 		        if ($result <= 0)
 		        {
 		            $error++;

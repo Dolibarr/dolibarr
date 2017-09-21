@@ -38,7 +38,7 @@ if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 
 /*
@@ -206,13 +206,13 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '</tr>';
 print '<tr class="impair">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
-print '<td><input type="text" name="external_rss_title_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_TITLE_" . ($lastexternalrss+1)).'" size="64"></td>';
+print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.($lastexternalrss+1).'" value=""></td>';
 print '<td>'.$langs->trans('RSSUrlExample').'</td>';
 print '</tr>';
 
 print '<tr class="pair">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
-print '<td><input type="text" name="external_rss_urlrss_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_URLRSS_" . ($lastexternalrss+1)).'" size="64"></td>';
+print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss+1).'" value=""></td>';
 print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
@@ -243,10 +243,12 @@ if ($resql)
 
 	    preg_match('/^([0-9]+)/i',$obj->note,$reg);
 		$idrss = $reg[1];
-		//print "x".$idrss;
+        $keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
+        $keyrsstitle="EXTERNAL_RSS_URLRSS_".$idrss;
+        //print "x".$idrss;
 
         $rssparser=new RssParser($db);
-		$result = $rssparser->parser(@constant("EXTERNAL_RSS_URLRSS_".$idrss), 5, 300, $conf->externalrss->dir_temp);
+		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
 
 		$var=true;
 
@@ -266,20 +268,20 @@ if ($resql)
 		print '</td>';
 		print "</tr>";
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
-		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_title_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_TITLE_" . $idrss) . "\" size=\"64\"></td>";
+		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_" . $idrss . "\" value=\"" . $conf->global->$keyrsstitle . "\"></td>";
 		print "</tr>";
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
-		print "<td><input type=\"text\" class=\"flat\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $idrss) . "\" size=\"64\"></td>";
+		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . $conf->global->$keyrssurl . "\"></td>";
 		print "</tr>";
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 	    if ($result > 0 && empty($rss->error))
@@ -299,11 +301,13 @@ if ($resql)
 		// Logo
 	    if ($result > 0 && empty($rss->error))
 	    {
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
 			$imageurl=$rssparser->getImageUrl();
+			$linkrss=$rssparser->getLink();
+			if (! preg_match('/^http/', $imageurl)) $imageurl=$linkrss.$imageurl;
 			if ($imageurl) print '<img height="32" src="'.$imageurl.'">';
 			else print $langs->trans("None");
 			print '</td>';

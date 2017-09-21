@@ -46,15 +46,12 @@ print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
 print $langs->trans("FileCheckDesc").'<br><br>';
 
 // Version
-$var = true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-$var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
-$var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-$var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
     // Compare version with last install database version (upgrades never occured)
@@ -67,6 +64,7 @@ if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
 }
 print '</td></tr>'."\n";
 print '</table>';
+print '</div>';
 print '<br>';
 
 
@@ -137,7 +135,7 @@ if (GETPOST('target') == 'local')
 if (GETPOST('target') == 'remote')
 {
     $xmlarray = getURLContent($xmlremote);
-    
+
     // Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
     if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
@@ -151,20 +149,21 @@ if (GETPOST('target') == 'remote')
         setEventMessages($errormsg, null, 'errors');
         $error++;
     }
-}       
-        
+}
+
 
 if ($xml)
 {
     $checksumconcat = array();
     $file_list = array();
     $out = '';
-    
+
     // Forced constants
     if (is_object($xml->dolibarr_constants[0]))
     {
         $out.=load_fiche_titre($langs->trans("ForcedConstants"));
-        
+
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -172,7 +171,6 @@ if ($xml)
         $out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
         $out.='<td align="center">' . $langs->trans("Value") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
 
         $i = 0;
         foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
@@ -180,16 +178,15 @@ if ($xml)
             $constname=$constant['name'];
             $constvalue=(string) $constant;
             $constvalue = (empty($constvalue)?'0':$constvalue);
-            // Value found                
+            // Value found
             $value='';
             if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
             $valueforchecksum=(empty($value)?'0':$value);
-            
+
             $checksumconcat[]=$valueforchecksum;
-            
+
             $i++;
-            $var = !$var;
-            $out.='<tr ' . $bc[$var] . '>';
+            $out.='<tr class="oddeven">';
             $out.='<td>'.$i.'</td>' . "\n";
             $out.='<td>'.$constname.'</td>' . "\n";
             $out.='<td align="center">'.$constvalue.'</td>' . "\n";
@@ -199,13 +196,14 @@ if ($xml)
 
         if ($i==0)
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
-        
+        $out.='</div>';
+
         $out.='<br>';
     }
-    
+
     // Scan htdocs
     if (is_object($xml->dolibarr_htdocs_dir[0]))
     {
@@ -229,17 +227,17 @@ if ($xml)
                 $file_list['added'][]=array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
             }
         }
-        
+
         // Files missings
         $out.=load_fiche_titre($langs->trans("FilesMissing"));
-        
+
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
         if (is_array($tmpfilelist) && count($tmpfilelist))
         {
@@ -247,26 +245,27 @@ if ($xml)
 	        foreach ($tmpfilelist as $file)
 	        {
 	            $i++;
-	            $var = !$var;
-	            $out.='<tr ' . $bc[$var] . '>';
+	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
         }
-        else 
+        else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-        }            
+            $out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        }
         $out.='</table>';
+        $out.='</div>';
 
         $out.='<br>';
 
         // Files modified
         $out.=load_fiche_titre($langs->trans("FilesModified"));
-        
+
         $totalsize=0;
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -276,7 +275,6 @@ if ($xml)
         $out.='<td align="right">' . $langs->trans("Size") . '</td>';
         $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
@@ -284,8 +282,7 @@ if ($xml)
 	        foreach ($tmpfilelist2 as $file)
 	        {
 	            $i++;
-	            $var = !$var;
-	            $out.='<tr ' . $bc[$var] . '>';
+	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -305,18 +302,20 @@ if ($xml)
             $out.='<td align="right"></td>' . "\n";
             $out.="</tr>\n";
         }
-        else 
+        else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
-        
+        $out.='</div>';
+
         $out.='<br>';
-        
+
         // Files added
         $out.=load_fiche_titre($langs->trans("FilesAdded"));
-        
+
         $totalsize = 0;
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -326,7 +325,6 @@ if ($xml)
         $out.='<td align="right">' . $langs->trans("Size") . '</td>';
         $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
         if (is_array($tmpfilelist3) && count($tmpfilelist3))
         {
@@ -334,8 +332,7 @@ if ($xml)
             foreach ($tmpfilelist3 as $file)
             {
                 $i++;
-                $var = !$var;
-                $out.='<tr ' . $bc[$var] . '>';
+                $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
                 $out.='<td>'.$file['filename'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -357,11 +354,12 @@ if ($xml)
         }
         else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
-        
-     
+        $out.='</div>';
+
+
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
@@ -370,7 +368,7 @@ if ($xml)
         else
         {
             setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
-        }        
+        }
     }
     else
     {
@@ -386,9 +384,9 @@ if ($xml)
         $file_list = array();
         $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
     }*/
-    
-    
-    asort($checksumconcat); // Sort list of checksum        
+
+
+    asort($checksumconcat); // Sort list of checksum
     //var_dump($checksumconcat);
     $checksumget = md5(join(',',$checksumconcat));
     $checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
@@ -409,10 +407,10 @@ if ($xml)
     {
         print '<span class="error">'.$checksumget.'</span>';
     }
-    
+
     print '<br>';
     print '<br>';
-    
+
     // Output detail
     print $out;
 }
@@ -446,7 +444,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
     {
         $filename = $path.$file['name'];
         $file_list['insignature'][] = $filename;
-        
+
         //if (preg_match('#'.$exclude.'#', $filename)) continue;
 
         if (!file_exists($pathref.'/'.$filename))

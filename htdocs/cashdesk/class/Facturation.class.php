@@ -99,17 +99,25 @@ class Facturation
         $product = new Product($db);
         $product->fetch($this->id);
 
-        
+
         $vatrowid = $this->tva();
-        
+
         $tmp = getTaxesFromId($vatrowid);
-        $vat_rate = $tmp['rate'];
+        $txtva = $tmp['rate'].(empty($tmp['code'])?'':' ('.$tmp['code'].')');
         $vat_npr = $tmp['npr'];
-        
+
         $localtaxarray = getLocalTaxesFromRate($vatrowid, 0, $societe, $mysoc, 1);
-        
+
+        // Clean vat code
+        $vat_src_code='';
+        if (preg_match('/\((.*)\)/', $txtva, $reg))
+        {
+            $vat_src_code = $reg[1];
+            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+        }
+
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $vat_rate, -1, -1, 0, 'HT', $use_npr, $product->type, $mysoc, $localtaxarray);
+        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, -1, -1, 0, 'HT', $use_npr, $product->type, $mysoc, $localtaxarray);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];
@@ -136,7 +144,7 @@ class Facturation
         $newcartarray[$i]['label']=$product->label;
         $newcartarray[$i]['price']=$product->price;
         $newcartarray[$i]['price_ttc']=$product->price_ttc;
-        
+
         if (! empty($conf->global->PRODUIT_MULTIPRICES))
         {
             if (isset($product->multiprices[$societe->price_level]))
@@ -148,7 +156,7 @@ class Facturation
 
         $newcartarray[$i]['fk_article']=$this->id;
         $newcartarray[$i]['qte']=$this->qte();
-        $newcartarray[$i]['fk_tva']=$this->tva();
+        $newcartarray[$i]['fk_tva']=$this->tva();   // Vat rowid
         $newcartarray[$i]['remise_percent']=$remise_percent;
         $newcartarray[$i]['remise']=price2num($montant_remise_ht);
         $newcartarray[$i]['total_ht']=price2num($total_ht,'MT');
@@ -220,7 +228,7 @@ class Facturation
         $this->prix_total_vat = $total_vat;
         $this->prix_total_localtax1 = $total_localtax1;
         $this->prix_total_localtax2 = $total_localtax2;
-        
+
         $this->montant_tva = $total_ttc - $total_ht;
         //print $this->prix_total_ttc.'eeee'; exit;
     }

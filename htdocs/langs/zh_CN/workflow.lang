@@ -2,14 +2,16 @@
 WorkflowSetup=工作流模块的设置
 WorkflowDesc=此模块的设计，以修改自动动作到应用程序的行为。默认情况下，工作流是打开的(你可以按你想要的顺序做事情)。你可以激活你感兴趣的自动动作。
 ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=商业提案签署后自动创建一个客户订单
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=当商业建议签署后自动创建客户发票
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=在合同确认后自动创建客户发票
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=当客户订单关闭后自动创建客户发票
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=分类链接来源建议，创建客户订单时设置支付
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户发票标记为已开票时将账单归类到客户订单(s)资源
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当客户发票标记为已确认时将账单归类到客户订单(s)资源
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=当客户发票生效时分类链接报价源到账单
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated and quantity shipped is the same as in order
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+# Autoclassify
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 AutomaticCreation=Automatic creation
 AutomaticClassification=Automatic classification

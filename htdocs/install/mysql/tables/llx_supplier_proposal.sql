@@ -18,7 +18,7 @@
 CREATE TABLE llx_supplier_proposal (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   ref varchar(30) NOT NULL,
-  entity integer NOT NULL DEFAULT '1',
+  entity integer NOT NULL DEFAULT 1,
   ref_ext varchar(255) DEFAULT NULL,
   ref_int varchar(255) DEFAULT NULL,
   fk_soc integer DEFAULT NULL,
@@ -31,11 +31,11 @@ CREATE TABLE llx_supplier_proposal (
   fk_user_modif integer DEFAULT NULL,
   fk_user_valid integer DEFAULT NULL,
   fk_user_cloture integer DEFAULT NULL,
-  fk_statut smallint NOT NULL DEFAULT '0',		-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=closed
-  price double DEFAULT '0',
-  remise_percent double DEFAULT '0',
-  remise_absolue double DEFAULT '0',
-  remise double DEFAULT '0',
+  fk_statut	smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
+  price double DEFAULT 0,
+  remise_percent double DEFAULT 0,
+  remise_absolue double DEFAULT 0,
+  remise double DEFAULT 0,
   total_ht double(24,8) DEFAULT 0,
   tva double(24,8) DEFAULT 0,
   localtax1 double(24,8) DEFAULT 0,

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direct Printing
-Module64000Desc=Enable Direct Printing System
+Module64000Name=Прямая печать
+Module64000Desc=Включить систему прямой печати
 PrintingSetup=Настройки системы прямой печати
 PrintingDesc=Этот модуль добавляет кнопку Печать для отправки документа напрямую на принтер (без открытия документа в приложении)
 MenuDirectPrinting=Direct Printing jobs
@@ -46,6 +46,6 @@ IPP_Media=Носитель
 IPP_Supported=Тип носителя
 DirectPrintingJobsDesc=This page lists printing jobs found for available printers.
 GoogleAuthNotConfigured=Google OAuth setup not done. Enable module OAuth and set a Google ID/Secret.
-GoogleAuthConfigured=Google OAuth credentials found into setup of module OAuth.
-PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cloud Print.
-PrintTestDescprintgcp=List of Printers for Google Cloud Print.
+GoogleAuthConfigured=Google OAuth credentials were found into setup of module OAuth.
+PrintingDriverDescprintgcp=Настройки для драйвера сервиса Google Cloud Print
+PrintTestDescprintgcp=Список принтеров для сервиса Google Cloud Print

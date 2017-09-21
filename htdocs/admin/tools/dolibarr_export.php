@@ -113,7 +113,10 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 //print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
-print '<div class="center">'.$langs->trans("BackupDesc",DOL_DATA_ROOT).'</div><br><br>';
+print '<div class="center">';
+print $langs->trans("BackupDesc",DOL_DATA_ROOT);
+print '</div>';
+print '<br>';
 
 ?>
 
@@ -462,13 +465,17 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 }
 ?>
 
-</div>
+</div> <!-- end div center button -->
 
 <?php
-print '</td></tr></table>';
+print '</td></tr>';
+print '</table>';
+
+
 ?>
 
-</div>
+</div> 	<!-- end div fichehalfleft -->
+
 <div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">
 <div class="ficheaddleft">
 
@@ -477,6 +484,7 @@ $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sort
 $result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
 print '<br>';
 ?>
+
 
 </div>
 </div>

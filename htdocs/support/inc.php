@@ -149,7 +149,7 @@ if (empty($conf->db->user)) $conf->db->user='';
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
 $bc[false]=' class="bg1"';
@@ -207,7 +207,8 @@ function pHeader($soutitre,$next,$action='none')
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+	header("X-Content-Type-Options: nosniff");
+	
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 	print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	print '<head>'."\n";

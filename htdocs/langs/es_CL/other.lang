@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - other
 Tools=Herramientas
+TMenuTools=Herramientas
 Notify_PROPAL_VALIDATE=Validación cotización cliente
 Notify_PROPAL_SENTBYMAIL=Envío cotización por e-mail
 PredefinedMailContentSendProposal=Buenos días, __CONTACTCIVNAME__ \n\n Nos ponemos en contacto con usted para facilitarle la cotización __PROPREF__\n\n Ante cualquier duda, consúltenos y será atendido a la mayor brevedad posible.\n\n __PERSONALIZED__Cordialmente\n\n__SIGNATURE__

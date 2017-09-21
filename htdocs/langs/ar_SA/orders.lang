@@ -4,6 +4,7 @@ SuppliersOrdersArea=الموردين أوامر المنطقة
 OrderCard=من أجل بطاقة
 OrderId=رقم التعريف الخاص بالطلب
 Order=ترتيب
+PdfOrderTitle=الطلبية
 Orders=أوامر
 OrderLine=من أجل خط
 OrderDate=من أجل التاريخ

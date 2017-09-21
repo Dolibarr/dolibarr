@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("bills");
 
 $chid=GETPOST("rowid");
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $amounts = array();
 
 // Security check
@@ -154,7 +154,7 @@ $form=new Form($db);
 
 
 // Form to create donation payment
-if (GETPOST("action") == 'create')
+if (GETPOST('action','aZ09') == 'create')
 {
 
 	$don = new Don($db);
@@ -257,9 +257,9 @@ if (GETPOST("action") == 'create')
 	{
 		$objp = $don;
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->amount)."</td>";
 

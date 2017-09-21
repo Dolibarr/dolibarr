@@ -47,37 +47,9 @@ $type='user';
  * Action
  */
 
-// Activate a model
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-    {
-    	if (array_key_exists('param'.$i,$_POST))
-    	{
-    		$param=GETPOST("param".$i,'alpha');
-    		$value=GETPOST("value".$i,'alpha');
-    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-	    	if (! $res > 0) $error++;
-    	}
-    }
-	if (! $error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
-elseif ($action == 'set_default')
+if ($action == 'set_default')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
@@ -167,7 +139,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), 0, 'user');
+dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -180,8 +152,8 @@ $var=true;
 $form = new Form($db);
 
 // Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 
@@ -205,7 +177,7 @@ print '</td></tr>';
 
 print '</table>';
 
-
+print '<br>';
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
@@ -284,7 +256,7 @@ foreach ($dirmodels as $reldir)
 	                        if ($modulequalified)
 	                        {
 	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);

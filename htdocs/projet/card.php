@@ -41,6 +41,7 @@ $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
+$confirm=GETPOST('confirm','aZ09');
 $status=GETPOST('status','int');
 $opp_status=GETPOST('opp_status','int');
 $opp_percent=price2num(GETPOST('opp_percent','alpha'));
@@ -50,7 +51,7 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);
@@ -68,7 +69,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Security check
-$socid=GETPOST('socid');
+$socid=GETPOST('socid','int');
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $object->id,'projet&project');
 
@@ -134,7 +135,13 @@ if (empty($reshook))
 	        $error++;
 	        setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
 	    }
-	    
+
+	    // Create with status validated immediatly
+	    if (! empty($conf->global->PROJECT_CREATE_NO_DRAFT))
+	    {
+	        $status=Project::STATUS_VALIDATED;
+	    }
+
 	    if (! $error)
 	    {
 	        $error=0;
@@ -142,16 +149,16 @@ if (empty($reshook))
 	        $db->begin();
 
 	        $object->ref             = GETPOST('ref','alpha');
-	        $object->title           = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->title           = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->socid           = GETPOST('socid','int');
-	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
+	        $object->description     = GETPOST('description','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->public          = GETPOST('public','alpha');
 	        $object->opp_amount      = price2num(GETPOST('opp_amount'));
 	        $object->budget_amount   = price2num(GETPOST('budget_amount'));
-	        $object->datec=dol_now();
-	        $object->date_start=$date_start;
-	        $object->date_end=$date_end;
-	        $object->statuts         = $status;
+	        $object->datec           = dol_now();
+	        $object->date_start      = $date_start;
+	        $object->date_end        = $date_end;
+	        $object->statut          = $status;
 	        $object->opp_status      = $opp_status;
 	        $object->opp_percent     = $opp_percent;
 
@@ -180,7 +187,7 @@ if (empty($reshook))
 	        if (! $error && !empty($object->id) > 0)
 	        {
 	        	// Category association
-	        	$categories = GETPOST('categories');
+	        	$categories = GETPOST('categories', 'array');
 	        	$result=$object->setCategories($categories);
 	        	if ($result<0) {
 		        	$langs->load("errors");
@@ -243,9 +250,9 @@ if (empty($reshook))
 			$old_start_date = $object->date_start;
 
 	        $object->ref          = GETPOST('ref','alpha');
-	        $object->title        = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
+	        $object->title        = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
 	        $object->socid        = GETPOST('socid','int');
-	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
+	        $object->description  = GETPOST('description','none');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
 	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
@@ -275,7 +282,7 @@ if (empty($reshook))
 		        else setEventMessages($object->error, $object->errors, 'errors');
 	    	}else {
 	    		// Category association
-	    		$categories = GETPOST('categories');
+	    		$categories = GETPOST('categories', 'array');
 	    		$result=$object->setCategories($categories);
 	    		if ($result < 0)
 	    		{
@@ -308,8 +315,8 @@ if (empty($reshook))
 			    setEventMessages($langs->trans("FailedToCloseProject").':'.$object->error, $object->errors, 'errors');
 	        }
 	    }
-	    
-	    
+
+
 	    if ($error)
 	    {
 			$db->rollback();
@@ -322,7 +329,7 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 	    }
-	    
+
 	}
 
 	// Build doc
@@ -332,10 +339,10 @@ if (empty($reshook))
 		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	    $outputlangs = $langs;
-	    if (GETPOST('lang_id'))
+	    if (GETPOST('lang_id','aZ09'))
 	    {
 	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang(GETPOST('lang_id'));
+	        $outputlangs->setDefaultLang(GETPOST('lang_id','aZ09'));
 	    }
 	    $result= $object->generateDocument($object->modelpdf, $outputlangs);
 	    if ($result <= 0)
@@ -365,7 +372,7 @@ if (empty($reshook))
 	}
 
 
-	if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_validate' && $confirm == 'yes')
 	{
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
@@ -374,7 +381,7 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_close' && $confirm == 'yes')
 	{
 	    $result = $object->setClose($user);
 	    if ($result <= 0)
@@ -383,7 +390,7 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_reopen' && $confirm == 'yes')
 	{
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
@@ -409,7 +416,7 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confirm') == 'yes')
+	if ($action == 'confirm_clone' && $user->rights->projet->creer && $confirm == 'yes')
 	{
 	    $clone_contacts=GETPOST('clone_contacts')?1:0;
 	    $clone_tasks=GETPOST('clone_tasks')?1:0;
@@ -509,7 +516,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title",'none').'"></td></tr>';
 
     // Thirdparty
     if ($conf->societe->enabled)
@@ -521,7 +528,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         print '</td><td class="maxwidthonsmartphone">';
         $filteronlist='';
         if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-       	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+       	$text=$form->select_company(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
         if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
         {
         	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
@@ -546,7 +553,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     $array=array();
     if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
     if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
-    print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):(isset($conf->global->PROJECT_DEFAULT_PUBLIC)?$conf->global->PROJECT_DEFAULT_PUBLIC:$object->public));
+    print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):$object->public);
     print '</td></tr>';
 
     // Date start
@@ -588,7 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.GETPOST("description").'</textarea>';
+    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
     print '</td></tr>';
 
     if ($conf->categorie->enabled) {
@@ -603,6 +610,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
     	print $object->showOptionals($extrafields,'edit');
@@ -623,7 +631,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
         print ' &nbsp; &nbsp; ';
         print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-    }    
+    }
     print '</div>';
 
     print '</form>';
@@ -645,12 +653,12 @@ if ($action == 'create' && $user->rights->projet->creer)
         });
         </script>';
 }
-elseif ($object->id > 0) 
+elseif ($object->id > 0)
 {
     /*
      * Show or edit
      */
-    
+
     $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
@@ -711,10 +719,11 @@ elseif ($object->id > 0)
     print '<input type="hidden" name="comefromclone" value="'.$comefromclone.'">';
 
     $head=project_prepare_head($object);
-    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
     if ($action == 'edit' && $userWrite > 0)
     {
+        dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+
         print '<table class="border" width="100%">';
 
         // Ref
@@ -738,7 +747,7 @@ elseif ($object->id > 0)
             print '</td><td>';
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-            $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), '', 0, 0, 'minwidth300');
+            $text=$form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 	        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		    {
 	            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
@@ -826,6 +835,7 @@ elseif ($object->id > 0)
         // Other options
         $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
         	print $object->showOptionals($extrafields,'edit');
@@ -835,27 +845,30 @@ elseif ($object->id > 0)
     }
     else
     {
+        dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+
         // Project card
-        
-        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
+        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
         $morehtmlref='<div class="refidno">';
         // Title
         $morehtmlref.=$object->title;
         // Thirdparty
-        if ($object->thirdparty->id > 0) 
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ';
+        if ($object->thirdparty->id > 0)
         {
-            $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+            $morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
         }
         $morehtmlref.='</div>';
-        
+
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
             $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        
+
 	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -881,15 +894,19 @@ elseif ($object->id > 0)
 
 	        // Opportunity percent
 	        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	        if (strcmp($object->opp_percent,'')) print price($object->opp_percent,0,$langs,1,0).' %';
+	        if (strcmp($object->opp_percent,'')) print price($object->opp_percent, 0, $langs, 1, 0).' %';
 	        print '</td></tr>';
 
 	        // Opportunity Amount
 	        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,0,$langs,1,0,0,$conf->currency);
+	        /*if ($object->opp_status)
+	        {
+	           print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
+	        }*/
+	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 	        print '</td></tr>';
 	    }
-    
+
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 		$start = dol_print_date($object->date_start,'dayhour');
@@ -899,7 +916,7 @@ elseif ($object->id > 0)
 		print ($end?$end:'?');
 		if ($object->hasDelay()) print img_warning("Late");
         print '</td></tr>';
-    	     
+
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
         if (strcmp($object->budget_amount, '')) print price($object->budget_amount,0,$langs,1,0,0,$conf->currency);
@@ -908,16 +925,16 @@ elseif ($object->id > 0)
         // Other attributes
         $cols = 2;
         include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright">';
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
-        
+
         print '<table class="border" width="100%">';
-        
+
         // Description
         print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
         print nl2br($object->description);
@@ -929,13 +946,13 @@ elseif ($object->id > 0)
             print $form->showCategories($object->id,'project',1);
             print "</td></tr>";
         }
-        
+
         print '</table>';
-        
+
         print '</div>';
         print '</div>';
         print '</div>';
-        
+
         print '<div class="clearboth"></div>';
     }
 
@@ -954,9 +971,10 @@ elseif ($object->id > 0)
     // Change probability from status
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
+        // Default value to close or not when we set opp to 'WON'.
         $defaultcheckedwhenoppclose=1;
         if (empty($conf->global->PROJECT_HIDE_TASKS)) $defaultcheckedwhenoppclose=0;
-        
+
         print '<!-- Javascript to manage opportunity status change -->';
         print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
@@ -969,13 +987,17 @@ elseif ($object->id > 0)
                     var oldpercent = \''.dol_escape_js($object->opp_percent).'\';
 
                     console.log("We select "+elemcode);
-                    if (elemcode == \'LOST\') defaultcloseproject = 1;
-                    jQuery("#divtocloseproject").show();
-                    if (defaultcloseproject) jQuery("#inputcloseproject").prop("checked", true);
+
+                    /* Define if checkbox to close is checked or not */
+                    var closeproject = 0;
+                    if (elemcode == \'LOST\') closeproject = 1;
+                    if (elemcode == \'WON\') closeproject = defaultcloseproject;
+                    if (closeproject) jQuery("#inputcloseproject").prop("checked", true);
                     else jQuery("#inputcloseproject").prop("checked", false);
-                        
-                    /* Make close project visible or not */
-                    if (elemcode == \'WON\' || elemcode == \'LOST\') 
+
+                    /* Make the close project checkbox visible or not */
+                    console.log("closeproject="+closeproject);
+                    if (elemcode == \'WON\' || elemcode == \'LOST\')
                     {
                         jQuery("#divtocloseproject").show();
                     }
@@ -983,7 +1005,7 @@ elseif ($object->id > 0)
                     {
                         jQuery("#divtocloseproject").hide();
                     }
-                        
+
                     /* Change percent of default percent of new status is higher */
                     if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
                     {
@@ -1010,7 +1032,7 @@ elseif ($object->id > 0)
     {
 	    if ($action != "edit" )
 	    {
-	        
+
         	// Create event
         	if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
             	// "workflow" action so should appears somewhere else on
@@ -1176,6 +1198,10 @@ elseif ($object->id > 0)
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+        $formactions = new FormActions($db);
+        $somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', 10);
 
         print '</div></div></div>';
     }

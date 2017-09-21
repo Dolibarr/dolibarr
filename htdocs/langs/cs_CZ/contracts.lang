@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Tento seznam obsahuje pouze služby smluv pro tře
 StandardContractsTemplate=Šablony standardních smluv
 ContactNameAndSignature=Pro %s,  jméno a podpis:
 OnlyLinesWithTypeServiceAreUsed=Pouze řádky s typem  "Služby" budou zkopírovány.
+CloneContract=Clone contract
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Obchodní zástupce podepsal smlouvu

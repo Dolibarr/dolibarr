@@ -48,12 +48,13 @@ InvoiceDeleteDolibarr=Račun %s obrisan
 InvoicePaidInDolibarr=Invoice %s changed to paid
 InvoiceCanceledInDolibarr=Invoice %s canceled
 MemberValidatedInDolibarr=Member %s validated
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
 ShipmentValidatedInDolibarr=Isporuka %s je ovjerena
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Narudžba %s ovjerena
@@ -74,13 +75,17 @@ InterventionSentByEMail=Intervencija %s poslana putem e-pošte
 ProposalDeleted=Ponuda obrisana
 OrderDeleted=Narudžba obrisana
 InvoiceDeleted=Račun obrisan
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Datum početka
 DateActionEnd=Datum završetka
 AgendaUrlOptions1=Možete isto dodati sljedeće paramete za filtriranje prikazanog: 
-AgendaUrlOptions2=<b>login=%s</b> da se ograniči prikaz na akcije kreirane od ili dodjeljene korisniku  <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> da se ograniči prikaz na akcije u vlasništvu korisnika <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> da se ograniči prikaz na akcije dodijeljene korisniku  <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> da se ograniči prikaz na akcije dodjeljene projektu <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Prikaži rođendane kontakata
 AgendaHideBirthdayEvents=Sakrij rođendane kontakata

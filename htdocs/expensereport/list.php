@@ -2,7 +2,7 @@
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,14 +36,14 @@ $langs->load("companies");
 $langs->load("users");
 $langs->load("trips");
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
 // Security check
-$socid = $_GET["socid"]?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport','','');
 
@@ -51,11 +51,11 @@ $diroutputmassaction=$conf->expensereport->dir_output . '/temp/massgeneration/'.
 
 
 // Load variable for pagination
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -63,7 +63,7 @@ if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
 
 
-$sall         = GETPOST('sall');
+$sall         = GETPOST('sall', 'alphanohtml');
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
@@ -79,10 +79,10 @@ $optioncss = GETPOST('optioncss','alpha');
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$contextpage='expensereportlist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
@@ -127,11 +127,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 
 
 /*
- * Actions 
+ * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -139,25 +139,31 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-// Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
-{
-    $search_ref="";
-    $search_user="";
-    $search_amount_ht="";
-    $search_amount_vat="";
-    $search_amount_ttc="";
-    $search_status="";
-    $month_start="";
-    $year_start="";
-    $month_end="";
-    $year_end="";
-    $toselect='';
-    $search_array_options=array();
-}
-
 if (empty($reshook))
 {
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha'))		// Both test must be present to be compatible with all browsers
+	{
+	    $search_ref="";
+	    $search_user="";
+	    $search_amount_ht="";
+	    $search_amount_vat="";
+	    $search_amount_ttc="";
+	    $search_status="";
+	    $month_start="";
+	    $year_start="";
+	    $month_end="";
+	    $year_end="";
+	    $toselect='';
+	    $search_array_options=array();
+	}
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+		|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+	{
+		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
+
+	// Mass actions
     $objectclass='ExpenseReport';
     $objectlabel='ExpenseReport';
     $permtoread = $user->rights->expensereport->lire;
@@ -165,7 +171,6 @@ if (empty($reshook))
     $uploaddir = $conf->expensereport->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
-
 
 
 /*
@@ -176,7 +181,8 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
-llxHeader('', $langs->trans("ListOfTrips"));
+$title = $langs->trans("ListOfTrips");
+llxHeader('', $title);
 
 $max_year = 5;
 $min_year = 5;
@@ -184,7 +190,7 @@ $min_year = 5;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
-$sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.statut, u.photo";
+$sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut, u.photo";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -194,7 +200,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport', 1).")";
+$sql.= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport').")";
 // Search all
 if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
@@ -253,8 +259,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -266,6 +273,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -275,14 +283,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	$param="";
+	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sall)					$param.="&sall=".$sall;
@@ -302,24 +310,37 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
+	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->expensereport->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+	// Lines of title fields
+	print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 	$title = $langs->trans("ListTripsAndExpenses");
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
-	
+
+	if ($massaction == 'presend')
+	{
+		$topicmail="SendExpenseReport";
+		$modelmail="expensereport";
+		$objecttmp=new ExpenseReport($db);
+		$trackid='int'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
+	}
+
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -332,7 +353,7 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
-	
+
 	if (! empty($moreforfilter))
 	{
 	    print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -343,10 +364,10 @@ if ($resql)
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-	
+
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-	
+
 	// Filters
 	print '<tr class="liste_titre_filter">';
 	if (! empty($arrayfields['d.ref']['checked']))
@@ -361,7 +382,7 @@ if ($resql)
         if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous)
     	{
     		print '<td class="liste_titre maxwidthonspartphone" align="left">';
-    		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+    		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
     		print '</td>';
     	} else {
     		print '<td class="liste_titre">&nbsp;</td>';
@@ -451,7 +472,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre">';
 	    print '</td>';
-	}	
+	}
 	// Status
 	if (! empty($arrayfields['d.fk_statut']['checked']))
 	{
@@ -461,8 +482,8 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterButtons();
-	print $searchpitco;
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";
@@ -485,7 +506,9 @@ if ($resql)
 	        if (! empty($arrayfields["ef.".$key]['checked']))
 	        {
 	            $align=$extrafields->getAlignFlag($key);
-	            print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
 	        }
 	    }
 	}
@@ -497,7 +520,7 @@ if ($resql)
 	if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.fk_statut']['checked'])) print_liste_field_titre($arrayfields['d.fk_statut']['label'],$_SERVER["PHP_SELF"],"d.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";	
+	print "</tr>\n";
 
 	$total_total_ht = 0;
 	$total_total_ttc = 0;
@@ -526,8 +549,8 @@ if ($resql)
 			$expensereportstatic->date_approve=$db->jdate($obj->date_approve);
 			$expensereportstatic->note_private=$obj->note_private;
 			$expensereportstatic->note_public=$obj->note_public;
-				
-			$var=!$var;
+
+
 			print '<tr class="oddeven">';
 			// Ref
 			if (! empty($arrayfields['d.ref']['checked'])) {
@@ -566,6 +589,7 @@ if ($resql)
     			$usertmp->login=$obj->login;
     			$usertmp->statut=$obj->statut;
     			$usertmp->photo=$obj->photo;
+    			$usertmp->email=$obj->email;
     			print $usertmp->getNomUrl(-1);
     			print '</td>';
     			if (! $i) $totalarray['nbfield']++;
@@ -614,7 +638,7 @@ if ($resql)
     		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
     		    $totalarray['totalttc'] += $obj->total_ttc;
             }
-    		
+
             // Extra fields
             if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
             {
@@ -681,7 +705,10 @@ if ($resql)
 	}
 	else
 	{
-		print '<tr '.$bc[false].'>'.'<td colspan="9" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	    $colspan=1;
+        foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+
+        print '<tr>'.'<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 
 	// Show total line
@@ -694,7 +721,7 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
@@ -722,11 +749,11 @@ if ($resql)
 	    // Show list of available documents
 	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	    $urlsource.=str_replace('&amp;','&',$param);
-	
+
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->expensereport->lire;
 	    $delallowed=$user->rights->expensereport->lire;
-	
+
 	    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
 	else

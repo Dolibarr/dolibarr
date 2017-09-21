@@ -79,7 +79,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
         if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') { print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(); }
 
-        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) { print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULE must be empty (if a module set it, disable module).\n"; die(); }
+        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) { print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(); }
 
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 

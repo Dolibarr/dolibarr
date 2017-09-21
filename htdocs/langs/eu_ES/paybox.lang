@@ -11,6 +11,7 @@ YourEMail=Email to receive payment confirmation
 Creditor=Creditor
 PaymentCode=Payment code
 PayBoxDoPayment=Go on payment
+ToPay=Ordainketa egin
 YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
 Continue=Hurrengoa
 ToOfferALinkForOnlinePayment=URL for %s payment

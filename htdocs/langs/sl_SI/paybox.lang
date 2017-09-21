@@ -11,6 +11,7 @@ YourEMail=E-pošta za potrditev plačila
 Creditor=Upnik
 PaymentCode=Koda plačila
 PayBoxDoPayment=Plačila v postopku
+ToPay=Izvrši plačilo
 YouWillBeRedirectedOnPayBox=Preusmerjeni boste na varno Paybox stran za vnos podatkov o vaši kreditni kartici
 Continue=Naslednji
 ToOfferALinkForOnlinePayment=URL za %s plačila

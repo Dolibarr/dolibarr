@@ -147,7 +147,7 @@ if ($object->id > 0)
 
 	$head = facture_prepare_head($object);
 
-	dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'),0,'bill');
+	dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
 	// Invoice content
 
@@ -612,9 +612,9 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
@@ -663,9 +663,9 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 

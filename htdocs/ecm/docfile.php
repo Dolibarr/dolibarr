@@ -19,12 +19,12 @@
  *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 
@@ -54,15 +54,15 @@ if ($user->societe_id > 0)
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$cancel=GETPOST('cancel');
-$action=GETPOST('action');
+$cancel=GETPOST('cancel','alpha');
+$action=GETPOST('action','aZ09');
 $section=GETPOST("section");
 if (! $section)
 {
@@ -78,7 +78,7 @@ if (! $urlfile)
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result=$ecmdir->fetch(GETPOST("section"));
+$result=$ecmdir->fetch(GETPOST("section",'alpha'));
 if (! $result > 0)
 {
     dol_print_error($db,$ecmdir->error);
@@ -103,16 +103,14 @@ if (! empty($_GET["fileid"]))
 
 
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * Actions
+ */
 
-if ($action == 'cancel') 
+if ($action == 'cancel')
 {
     $action ='';
-    if ($backtourl) 
+    if ($backtourl)
     {
         header("Location: ".$backtourl);
         exit;
@@ -144,7 +142,7 @@ if ($action == 'update')
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
     {
-        $result=dol_move($oldfile,$newfile);
+        $result=dol_move($oldfile, $newfile);
         if (! $result)
         {
             $langs->load('errors');
@@ -166,11 +164,9 @@ if ($action == 'update')
 
 
 
-/*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -221,7 +217,7 @@ while ($tmpecmdir && $result > 0)
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print ' -> ';
-if (GETPOST('action') == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
+if (GETPOST('action','aZ09') == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
 else print $urlfile;
 print '</td></tr>';
 /*print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -253,10 +249,42 @@ print dol_print_size($totalsize);
 print '</td></tr>';
 */
 
+$relativetodocument = 'ecm/'.$relativepath;		// $relativepath is relative to ECM dir, we need relative to document
+$filepath=$relativepath.$file->label;
+$filepathtodocument=$relativetodocument.$file->label;
+
+print '<tr><td>'.$langs->trans("HashSaved").'</td><td>';
+$ecmfile = new EcmFiles($db);
+//$filenametosearch=basename($filepath);
+//$filedirtosearch=basedir($filepath);
+$ecmfile->fetch(0, '', $filepathtodocument);
+if (! empty($ecmfile->label))
+{
+	print $ecmfile->label;
+}
+else
+{
+	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
+}
+print '</td></tr>';
+
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+print '<tr><td>'.$langs->trans("DirectDownloadInternalLink").'</td><td>';
+$modulepart='ecm';
+$forcedownload=1;
+$rellink='/document.php?modulepart='.$modulepart;
+if ($forcedownload) $rellink.='&attachment=1';
+if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
+$rellink.='&file='.urlencode($filepath);
+$fulllink=$urlwithroot.$rellink;
+print img_picto('','object_globe.png').' ';
+print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("DirectDownloadLink").'</td><td>';
 $modulepart='ecm';
@@ -264,14 +292,18 @@ $forcedownload=1;
 $rellink='/document.php?modulepart='.$modulepart;
 if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
-$filepath=$relativepath.$file->label;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
-print img_picto('','object_globe.png').' ';
-print '<input type="text" class="quatrevingtpercent" name="downloadlink" value="'.dol_escape_htmltag($fulllink).'">';
-print ' <a data-ajax="false" href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+// TODO
+//print img_picto('','object_globe.png').' ';
+//print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+//print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
 print '</td></tr>';
+
 print '</table>';
+
+print ajax_autoselect('downloadinternallink');
+print ajax_autoselect('downloadlink');
 
 dol_fiche_end();
 

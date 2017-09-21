@@ -57,10 +57,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
-    print '<tr '.$bc[$var].'><td class="nowrap">';
+    print '<tr class="oddeven"><td class="nowrap">';
     print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
     print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print '<tr '.$bc[$var].'><td class="nowrap">';
+    print '<tr class="oddeven"><td class="nowrap">';
     print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
     
     print "</table></form><br>\n";
@@ -110,7 +110,7 @@ if (is_resource($handle))
 
                     foreach ($mailmodule->getSqlArrayForStats() as $sql)
                     {
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
 
                         $result=$db->query($sql);
                         if ($result)
@@ -176,9 +176,9 @@ if ($result)
       while ($i < $num )
 	{
 	  $obj = $db->fetch_object($result);
-	  $var=!$var;
+	  
 
-	  print "<tr ".$bc[$var].">";
+	  print '<tr class="oddeven">';
 	  print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
 	  print '<td>'.dol_trunc($obj->titre,38).'</td>';
 	  print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';

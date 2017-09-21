@@ -34,6 +34,7 @@ ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NO
 ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
 
@@ -393,9 +394,9 @@ CREATE TABLE llx_c_accounting_category (
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
 
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE',"Ventes de marchandises", '707xxx', 0, 0, '', '10', 1, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR',"Coût d'achats marchandises vendues", '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE',"Marge commerciale", '', 0, 1, '1 + 2', '30', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE',  'Ventes de marchandises', '707xxx', 0, 0, '', '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR',  'Coût achats marchandises vendues', '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE','Marge commerciale', '', 0, 1, '1 + 2', '30', 1, 1);
 
 UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
 -- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT '0';
@@ -548,3 +549,5 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, 
 -- VPGSQL8.2 ALTER TABLE llx_establishment ALTER COLUMN fk_user_mod DROP NOT NULL;
 
 ALTER TABLE llx_multicurrency_rate ADD COLUMN entity integer DEFAULT 1;
+
+ALTER TABLE llx_user MODIFY COLUMN login varchar(50);

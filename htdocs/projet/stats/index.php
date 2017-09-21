@@ -322,7 +322,7 @@ foreach ($data_all_year as $val)
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		$var=!$var;
+		
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -334,7 +334,7 @@ foreach ($data_all_year as $val)
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
-	$var=!$var;
+	
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';

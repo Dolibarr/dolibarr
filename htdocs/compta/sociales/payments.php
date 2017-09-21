@@ -49,7 +49,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -85,9 +85,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-if ($mode != 'sconly') 
+if ($mode != 'sconly')
 {
     $center=($year?'<a href="index.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
     print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$center,$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
@@ -115,14 +116,14 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pc.datep","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LabelContrib"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("TypeContrib"),$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="140px"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pc.datep","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre("LabelContrib",$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre("TypeContrib",$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="140px"',$sortfield,$sortorder);
+	print_liste_field_titre("ExpectedToPay",$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT c.id, c.libelle as lib,";
@@ -163,7 +164,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			// Ref payment
 			$payment_sc_static->id=$obj->pid;
 			$payment_sc_static->ref=$obj->pid;
@@ -245,12 +246,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		    $total = 0 ;
 		    print '<table class="noborder" width="100%">';
 		    print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="140px"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="140px"',$sortfield,$sortorder);
+			print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre("ExpectedToPay",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pv.datev","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 		    print "</tr>\n";
 		    $var=1;
 		    while ($i < $num)
@@ -259,8 +260,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        $total = $total + $obj->amount;
 
-		        $var=!$var;
-		        print "<tr ".$bc[$var].">";
+
+		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 		        print "<td>".$obj->label."</td>\n";
@@ -347,12 +348,12 @@ while($j<$numlt)
 			$total = 0 ;
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="120"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="120"',$sortfield,$sortorder);
+			print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre("ExpectedToPay",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
 			$var=1;
 			while ($i < $num)
@@ -361,8 +362,8 @@ while($j<$numlt)
 
 				$total = $total + $obj->amount;
 
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+
+				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 				print "<td>".$obj->label."</td>\n";
@@ -407,12 +408,12 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sal = new PaymentSalary($db);
 
         print "<br>";
-        
+
         print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE s.entity IN (".getEntity('user',1).")";
+        $sql.= " WHERE s.entity IN (".getEntity('user').")";
         $sql.= " AND u.rowid = s.fk_user";
         if ($year > 0)
         {
@@ -429,12 +430,12 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
             $total = 0 ;
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.dateep","",$param,'width="140px"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"s.dateep","",$param,'width="140px"',$sortfield,$sortorder);
+            print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
+            print_liste_field_titre("ExpectedToPay",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
+            print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
             $var=1;
             while ($i < $num)
@@ -443,8 +444,8 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $total = $total + $obj->amount;
 
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+
+                print '<tr class="oddeven">';
 
                 print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
 

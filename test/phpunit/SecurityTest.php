@@ -147,7 +147,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
         $_GET["param4"]='../dir';
-
+        $_GET["param5"]="a_1-b";
+        
+        // Test int
         $result=GETPOST('id','int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
@@ -160,6 +162,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,333);
 
+        // Test alpha
         $result=GETPOST("param2",'alpha');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,$_GET["param2"]);
@@ -171,6 +174,27 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         $result=GETPOST("param4",'alpha');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
+
+        // Test aZ09
+        $result=GETPOST("param1",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,$_GET["param1"]);
+        
+        $result=GETPOST("param2",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'');
+        
+        $result=GETPOST("param3",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'');
+        
+        $result=GETPOST("param4",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'');
+        
+        $result=GETPOST("param5",'aZ09');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,$_GET["param5"]);
 
         return $result;
     }

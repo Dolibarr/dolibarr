@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +35,12 @@ class modAccounting extends DolibarrModules
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
-     */
+	 */
 	function __construct($db)
 	{
 		global $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 		$this->numero = 50400;
 
 		$this->family = "financial";
@@ -56,14 +56,11 @@ class modAccounting extends DolibarrModules
 		$this->special = 0;
 		$this->picto = 'accounting';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		// $this->triggers = 1;
-
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');
 
 		// Config pages
-		$this->config_page_url = array('index.php@accountancy');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
@@ -87,116 +84,57 @@ class modAccounting extends DolibarrModules
 				"1",
 				"With this constants on, bank account number is always required"
 		);
-		$this->const[1] = array(
-				"ACCOUNTING_EXPORT_SEPARATORCSV",
-				"string",
-				","
-		);
-		$this->const[2] = array(
+		$this->const[3] = array(
 				"ACCOUNTING_ACCOUNT_SUSPENSE",
 				"chaine",
 				"471"
 		);
-		$this->const[3] = array(
-				"ACCOUNTING_SELL_JOURNAL",
-				"chaine",
-				"VTE"
-		);
 		$this->const[4] = array(
-				"ACCOUNTING_PURCHASE_JOURNAL",
-				"chaine",
-				"ACH"
-		);
-		$this->const[5] = array(
-				"ACCOUNTING_SOCIAL_JOURNAL",
-				"chaine",
-				"SOC"
-		);
-		$this->const[6] = array(
-				"ACCOUNTING_MISCELLANEOUS_JOURNAL",
-				"chaine",
-				"OD"
-		);
-		$this->const[7] = array(
 				"ACCOUNTING_ACCOUNT_TRANSFER_CASH",
 				"chaine",
 				"58"
 		);
-		$this->const[8] = array(
+		$this->const[5] = array(
 				"CHARTOFACCOUNTS",
 				"chaine",
 				"2"
 		);
-		$this->const[9] = array(
+		$this->const[6] = array(
 				"ACCOUNTING_EXPORT_MODELCSV",
 				"chaine",
 				"1"
 		);
-		$this->const[10] = array(
+		$this->const[7] = array(
 				"ACCOUNTING_LENGTH_GACCOUNT",
 				"chaine",
 				""
 		);
-		$this->const[11] = array(
+		$this->const[8] = array(
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
 				""
 		);
-		$this->const[13] = array(
+		$this->const[9] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
 				"1"
 		);
-		$this->const[14] = array(
+		$this->const[10] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
 				"yesno",
 				"1"
 		);
-		/*
-		$this->const[15] = array (
-				"ACCOUNTING_GROUPBYACCOUNT",
-				"yesno",
-				"1"
-		);
-		*/
-		$this->const[16] = array (
+		$this->const[11] = array (
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
 				"%d%m%Y"
 		);
-		/*
-		$this->const[17] = array (
-				"ACCOUNTING_EXPORT_PIECE",
-				"yesno",
-				"1"
+		$this->const[12] = array(
+				"ACCOUNTING_EXPORT_SEPARATORCSV",
+				"string",
+				","
 		);
-		$this->const[18] = array (
-				"ACCOUNTING_EXPORT_GLOBAL_ACCOUNT",
-				"yesno",
-				"1"
-		);
-		$this->const[19] = array (
-				"ACCOUNTING_EXPORT_LABEL",
-				"yesno",
-				"1"
-		);
-		$this->const[20] = array (
-				"ACCOUNTING_EXPORT_AMOUNT",
-				"yesno",
-				"1"
-		);
-		$this->const[21] = array (
-				"ACCOUNTING_EXPORT_DEVISE",
-				"yesno",
-				"1"
-		);
-		*/
-		$this->const[22] = array(
-				"ACCOUNTING_EXPENSEREPORT_JOURNAL",
-				"chaine",
-				"ER"
-		);
-		$this->const[23] = array(
+		$this->const[13] = array(
 				"ACCOUNTING_EXPORT_FORMAT",
 				"chaine",
 				"csv"
@@ -224,7 +162,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'chartofaccount';
 		$this->rights[$r][5] = '';
 		$r++;
-		
+
 		$this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
@@ -242,9 +180,9 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'dispatch_advanced';
 		$r++;
         */
-		
+
 		$this->rights[$r][0] = 50411;
-		$this->rights[$r][1] = 'Read operations in General Ledger';
+		$this->rights[$r][1] = 'Read operations in Ledger';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -252,7 +190,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50412;
-		$this->rights[$r][1] = 'Write/Edit operations in General Ledger';
+		$this->rights[$r][1] = 'Write/Edit operations in Ledger';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
@@ -260,7 +198,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 50420;
-		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, general ledger)';
+		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, ledger)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
@@ -279,7 +217,7 @@ class modAccounting extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 		// Exports
         //--------
         $r=0;
@@ -295,7 +233,7 @@ class modAccounting extends DolibarrModules
 
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
-        $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting', 1).') ';
+        $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
 
 	}
 }

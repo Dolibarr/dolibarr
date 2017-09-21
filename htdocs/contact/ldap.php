@@ -32,7 +32,7 @@ $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -88,7 +88,7 @@ $form = new Form($db);
 
 $head = contact_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $title, 0, 'contact');
+dol_fiche_head($head, 'ldap', $title, -1, 'contact');
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
     

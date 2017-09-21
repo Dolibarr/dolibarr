@@ -49,7 +49,7 @@ class Expedition extends CommonObject
 	public $table_element_line="expeditiondet";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'sending';
-    
+
 	var $socid;
 	var $ref_customer;
 	var $ref_int;
@@ -195,6 +195,7 @@ class Expedition extends CommonObject
 		// Clean parameters
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
+		if (empty($this->fk_project)) $this->fk_project = 0;
 
 		$this->user = $user;
 
@@ -211,6 +212,7 @@ class Expedition extends CommonObject
 		$sql.= ", date_expedition";
 		$sql.= ", date_delivery";
 		$sql.= ", fk_soc";
+		$sql.= ", fk_projet";
 		$sql.= ", fk_address";
 		$sql.= ", fk_shipping_method";
 		$sql.= ", tracking_number";
@@ -234,6 +236,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
 		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".$this->socid;
+		$sql.= ", ".$this->fk_project;
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
@@ -396,7 +399,7 @@ class Expedition extends CommonObject
 		{
 			$error++;
 		}
-		
+
 		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 		{
 			$expeditionline = new ExpeditionLigne($this->db);
@@ -487,9 +490,9 @@ class Expedition extends CommonObject
         $sql.= ', e.fk_incoterms, e.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+		$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
         if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
@@ -713,6 +716,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -726,6 +730,7 @@ class Expedition extends CommonObject
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					}
@@ -915,7 +920,7 @@ class Expedition extends CommonObject
 		    $this->error='ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
 		    return -4;
 		}
-		
+
 		// extrafields
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 			$line->array_options = $array_options;
@@ -1316,7 +1321,8 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
+		$sql.= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
+		$sql.= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc";
 		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
@@ -1365,8 +1371,13 @@ class Expedition extends CommonObject
                 $line->line_id          = $obj->line_id;
                 $line->rowid            = $obj->line_id;    // TODO deprecated
                 $line->id               = $obj->line_id;
-				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+
+                $line->fk_origin     	= 'orderline';
+                $line->fk_origin_line 	= $obj->fk_origin_line;
+                $line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+
+				$line->fk_expedition    = $this->id;                // id of parent
+
 				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
@@ -1389,8 +1400,10 @@ class Expedition extends CommonObject
 
 				$line->pa_ht 			= $obj->pa_ht;
 
+				$localtax_array=array(0=>$obj->localtax1_type, 1=>$obj->localtax1_tx, 2=>$obj->localtax2_type, 3=>$obj->localtax2_tx);
+
 				// For invoicing
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc);	// We force type to 0
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc, $localtax_array);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $line->qty_shipped;
 				$line->total_ht			= $tabprice[0];
@@ -1398,6 +1411,7 @@ class Expedition extends CommonObject
 				$line->total_localtax2 	= $tabprice[10];
 				$line->total_ttc	 	= $tabprice[2];
 				$line->total_tva	 	= $tabprice[1];
+				$line->vat_src_code	 	= $obj->vat_src_code;
 				$line->tva_tx 		 	= $obj->tva_tx;
 				$line->localtax1_tx 	= $obj->localtax1_tx;
 				$line->localtax2_tx 	= $obj->localtax2_tx;
@@ -1410,6 +1424,14 @@ class Expedition extends CommonObject
 				$this->total_ttc+= $tabprice[2];
 				$this->total_localtax1+= $tabprice[9];
 				$this->total_localtax2+= $tabprice[10];
+
+				// Multicurrency
+				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->multicurrency_code 		= $obj->multicurrency_code;
+				$this->multicurrency_subprice 	= $obj->multicurrency_subprice;
+				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
 				if ($originline != $obj->fk_origin_line)
 				{
@@ -1479,7 +1501,7 @@ class Expedition extends CommonObject
         $label = '<u>' . $langs->trans("ShowSending") . '</u>';
         $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
         $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
-            
+
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
 		if ($short) return $url;
@@ -1495,7 +1517,7 @@ class Expedition extends CommonObject
 		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 		    $linkclose.=' class="classfortooltip"';
 		}
-		
+
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
@@ -1581,7 +1603,7 @@ class Expedition extends CommonObject
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1747,16 +1769,16 @@ class Expedition extends CommonObject
         if ($id=='')
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-            $sql.=" VALUES ('".$this->update['code']."','".$this->update['libelle']."','".$this->update['description']."','".$this->update['tracking']."')";
+            $sql.=" VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
             $resql = $this->db->query($sql);
         }
         else
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-            $sql.= " code='".$this->update['code']."'";
-            $sql.= ",libelle='".$this->update['libelle']."'";
-            $sql.= ",description='".$this->update['description']."'";
-            $sql.= ",tracking='".$this->update['tracking']."'";
+            $sql.= " code='".$this->db->escape($this->update['code'])."'";
+            $sql.= ",libelle='".$this->db->escape($this->update['libelle'])."'";
+            $sql.= ",description='".$this->db->escape($this->update['description'])."'";
+            $sql.= ",tracking='".$this->db->escape($this->update['tracking'])."'";
             $sql.= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }

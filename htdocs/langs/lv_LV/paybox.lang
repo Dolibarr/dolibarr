@@ -11,6 +11,7 @@ YourEMail=Nosūtīt saņemt maksājuma apstiprinājumu
 Creditor=Kreditors
 PaymentCode=Maksājuma kods
 PayBoxDoPayment=Iet uz maksājumu
+ToPay=Apmaksāt
 YouWillBeRedirectedOnPayBox=Jums tiks novirzīts uz drošu Paybox lapā, lai ievadi kredītkartes informāciju
 Continue=Nākamais
 ToOfferALinkForOnlinePayment=URL %s maksājumu

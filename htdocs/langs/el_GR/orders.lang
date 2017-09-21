@@ -4,6 +4,7 @@ SuppliersOrdersArea=Περιοχή παραγγελιών προμηθευτών
 OrderCard=Καρτέλα παραγγελίας
 OrderId=Αρ.Παραγγελίας
 Order=Παραγγελία
+PdfOrderTitle=Παραγγελία
 Orders=Παραγγελίες
 OrderLine=Γραμμή Παραγγελίας
 OrderDate=Ημερομηνία παραγγελίας

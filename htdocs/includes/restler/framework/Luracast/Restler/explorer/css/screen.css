@@ -350,7 +350,7 @@
   font-size: .85em;
   line-height: 1.2em;
   overflow: auto;
-  max-height: 400px;
+  max-height: 200px;
   cursor: pointer;
 }
 .swagger-section .swagger-ui-wrap .model-signature ul.signature-nav {
@@ -743,16 +743,19 @@
   display: inline-block;
   font-size: 0.9em;
 }
-.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header img {
-  display: block;
-  clear: none;
-  float: right;
-}
 .swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header input.submit {
   display: block;
   clear: none;
   float: left;
   padding: 6px 8px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header span.response_throbber {
+  background-image: url('../images/throbber.gif');
+  width: 128px;
+  height: 16px;
+  display: block;
+  clear: none;
+  float: right;
 }
 .swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content form input[type='text'].error {
   outline: 2px solid black;
@@ -1158,7 +1161,7 @@
   cursor: pointer;
 }
 .swagger-section #header {
-  background-color: #646257;
+  background-color: #89bf04;
   padding: 14px;
 }
 .swagger-section #header a#logo {
@@ -1193,7 +1196,7 @@
   padding: 6px 8px;
   font-size: 0.9em;
   color: white;
-  background-color: #000000;
+  background-color: #547f00;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   -o-border-radius: 4px;
@@ -1202,34 +1205,12 @@
   border-radius: 4px;
 }
 .swagger-section #header form#api_selector .input a#explore:hover {
-  background-color: #a41e22;
+  background-color: #547f00;
 }
 .swagger-section #header form#api_selector .input input {
   font-size: 0.9em;
   padding: 3px;
   margin: 0;
-}
-.swagger-section #footer-nav {
-  margin-top: 50px;
-  color: #bbb;
-  float: left;
-  list-style: none;
-  font-size: 0.8em;
-}
-.swagger-section #footer-nav li {
-  display: block;
-  float: left;
-}
-.swagger-section #footer-nav a {
-  margin-right: 4px;
-  text-decoration: none;
-  font-weight: none;
-  padding: 4px 2px;
-  font-size: 0.9em;
-  color: #999;
-}
-.swagger-section #footer-nav a:hover {
-  color: #555;
 }
 .swagger-section #content_message {
   margin: 10px 15px;

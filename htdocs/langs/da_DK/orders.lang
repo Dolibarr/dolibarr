@@ -4,6 +4,7 @@ SuppliersOrdersArea=Leverandører ordrer område
 OrderCard=Bestil kort
 OrderId=Order Id
 Order=Rækkefølge
+PdfOrderTitle=Rækkefølge
 Orders=Ordrer
 OrderLine=Bestil online
 OrderDate=Bestil dato

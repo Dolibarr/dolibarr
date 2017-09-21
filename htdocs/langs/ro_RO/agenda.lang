@@ -2,6 +2,7 @@
 IdAgenda=ID eveniment
 Actions=Evenimente
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agende
 LocalAgenda=Calendar intern
 ActionsOwnedBy=Evenimentul lui
@@ -34,7 +35,7 @@ AgendaSetupOtherDesc= Această pagină permite configurarea unor opțiuni pentru
 AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
 ActionsEvents=Evenimente pentru care Dolibarr va crea o acţiune în agendă în mod automat
 ##### Agenda event labels #####
-NewCompanyToDolibarr=Third party %s created
+NewCompanyToDolibarr=Terța parte %s a fost creată
 ContractValidatedInDolibarr=Contract %s validat
 PropalClosedSignedInDolibarr=Oferta  %s semnată
 PropalClosedRefusedInDolibarr=Oferta  %s refuzată
@@ -47,14 +48,15 @@ InvoiceDeleteDolibarr=Factura %s ştearsă
 InvoicePaidInDolibarr=Factura %s schimbată la plată
 InvoiceCanceledInDolibarr=Factura %s anulată
 MemberValidatedInDolibarr=Membru %s validat
-MemberResiliatedInDolibarr=Member %s terminated
+MemberModifiedInDolibarr=Membrul %s modificat
+MemberResiliatedInDolibarr=Membru %s terminat
 MemberDeletedInDolibarr=Membru %s şters
 MemberSubscriptionAddedInDolibarr=Înscrierea pentru membrul %s adăugat
 ShipmentValidatedInDolibarr=Livrarea %s validata
-ShipmentClassifyClosedInDolibarr=Livrarea %s clasificată facturată
-ShipmentUnClassifyCloseddInDolibarr=Livrarea %s clasificată redeschisa
+ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
+ShipmentUnClassifyCloseddInDolibarr=Expediere %s clasificată redeschisă
 ShipmentDeletedInDolibarr=Livrare %s ştearsă
-OrderCreatedInDolibarr=Order %s created
+OrderCreatedInDolibarr=Comanda %s a fost creată
 OrderValidatedInDolibarr=Comanda %s validată
 OrderDeliveredInDolibarr=Comanda livrată %s  clasificată
 OrderCanceledInDolibarr=Comanda  %s anulată
@@ -73,13 +75,17 @@ InterventionSentByEMail=Intervenţia %s  trimisă prin e-mail
 ProposalDeleted=Ofertă ştearsă
 OrderDeleted=Comandă ştearsă
 InvoiceDeleted=Factură ştearsă
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Șabloane de documente pentru eveniment
 DateActionStart=Data începerii
 DateActionEnd=Data terminării
 AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri pentru  filtrarea rezultatelor:
-AgendaUrlOptions2=<b>login=%s</b> ​​pentru a limita exportul de acțiuni create de, sau atribuite utilizatorului<b>%s</b>.
 AgendaUrlOptions3=<b>logind=%s</b> ​​pentru a limita exportul de acțiuni deţinute de utilizatorul <b>%s</b>
-AgendaUrlOptions4=<b>logint=% s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>% s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pentru a limita exportul de acțiuni asociate la proiectul <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
@@ -102,7 +108,7 @@ MyAvailability=Disponibilitatea mea
 ActionType=Tip Eveniment
 DateActionBegin=Dată începere eveniment
 CloneAction=Clonează eveniment
-ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
+ConfirmCloneEvent=Sigur doriți să clonați evenimentul <b> %s</b>?
 RepeatEvent=Repeta eveniment
 EveryWeek=Fiecare săptămână
 EveryMonth=Fiecare lună

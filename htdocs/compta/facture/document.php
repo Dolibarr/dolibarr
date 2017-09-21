@@ -49,7 +49,6 @@ $confirm=GETPOST('confirm', 'alpha');
 // Security check
 if ($user->societe_id)
 {
-	$action='';
 	$socid = $user->societe_id;
 }
 $result=restrictedArea($user,'facture',$id,'');
@@ -58,7 +57,7 @@ $result=restrictedArea($user,'facture',$id,'');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -72,9 +71,11 @@ if ($object->fetch($id))
 	$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
+
 /*
  * Actions
  */
+
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
@@ -100,20 +101,20 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
     	$totalpaye = $object->getSommePaiement();
-		
+
 		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
 			$totalsize+=$file['size'];
 		}
 
-	
+
 	    // Invoice content
-	
+
 	    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
+
 	    $morehtmlref='<div class="refidno">';
 	    // Ref customer
 	    $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -154,14 +155,14 @@ if ($id > 0 || ! empty($ref))
 	    	}
 	    }
 	    $morehtmlref.='</div>';
-	
+
 	    $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
-	
+
 	    dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-	    
+
 		print '<table class="border" width="100%">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';

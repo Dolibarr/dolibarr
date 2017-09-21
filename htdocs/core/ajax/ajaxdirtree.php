@@ -45,13 +45,14 @@ if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/','',$selecteddir);  
 
 $langs->load("ecm");
 
-// Define selecteddir (fullpath).
+// Define fullpathselecteddir.
+$fullpathselecteddir='<none>';
 if ($modulepart == 'ecm') $fullpathselecteddir=$conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
+if ($modulepart == 'medias') $fullpathselecteddir=$dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./',$fullpathselecteddir) || preg_match('/[<>|]/',$fullpathselecteddir))
 {
     dol_syslog("Refused to deliver file ".$original_file);
@@ -63,9 +64,12 @@ if (preg_match('/\.\./',$fullpathselecteddir) || preg_match('/[<>|]/',$fullpaths
 // Check permissions
 if ($modulepart == 'ecm')
 {
-    if (! $user->rights->ecm->read) accessforbidden();
+	if (! $user->rights->ecm->read) accessforbidden();
 }
-
+if ($modulepart == 'medias')
+{
+	// Always allowed
+}
 
 
 /*
@@ -97,7 +101,8 @@ foreach($sqltree as $keycursor => $val)
 if (file_exists($fullpathselecteddir))
 {
 	$files = @scandir($fullpathselecteddir);
-    if ($files)
+
+	if ($files)
     {
     	natcasesort($files);
     	if ( count($files) > 2 )    /* The 2 accounts for . and .. */

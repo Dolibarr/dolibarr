@@ -42,6 +42,9 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'setcodeclient')
 {
 	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
@@ -101,40 +104,11 @@ if ($action == 'updateoptions')
 	}
 }
 
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-    {
-    	if (array_key_exists('param'.$i,$_POST))
-    	{
-    		$param=GETPOST("param".$i,'alpha');
-    		$value=GETPOST("value".$i,'alpha');
-    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-	    	if (! $res > 0) $error++;
-    	}
-    }
-	if (! $error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
-
 // Activate a document generator module
 if ($action == 'set')
 {
 	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	$scandir = GETPOST('scan_dir','alpha');
 
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -161,7 +135,7 @@ if ($action== 'del')
 if ($action == 'setdoc')
 {
 	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	$scandir = GETPOST('scan_dir','alpha');
 
 	$db->begin();
 
@@ -190,23 +164,6 @@ if ($action == 'setdoc')
 	else
 	{
 	    $db->rollback();
-	}
-}
-
-//Activate ProfId
-if ($action == 'setprofid')
-{
-	$status = GETPOST('status','alpha');
-
-	$idprof="SOCIETE_IDPROF".$value."_UNIQUE";
-	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
 	}
 }
 
@@ -240,16 +197,33 @@ if ($action=="setaskforshippingmet") {
 	}
 }
 
+//Activate ProfId unique
+if ($action == 'setprofid')
+{
+	$status = GETPOST('status','alpha');
+
+	$idprof="SOCIETE_".$value."_UNIQUE";
+	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		//header("Location: ".$_SERVER["PHP_SELF"]);
+		//exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
 //Activate ProfId mandatory
 if ($action == 'setprofidmandatory')
 {
 	$status = GETPOST('status','alpha');
 
-	$idprof="SOCIETE_IDPROF".$value."_MANDATORY";
-	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
+	$idprof="SOCIETE_".$value."_MANDATORY";
+	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+		//header("Location: ".$_SERVER["PHP_SELF"]);
+		//exit;
 	}
 	else
 	{
@@ -262,11 +236,11 @@ if ($action == 'setprofidinvoicemandatory')
 {
 	$status = GETPOST('status','alpha');
 
-	$idprof="SOCIETE_IDPROF".$value."_INVOICE_MANDATORY";
-	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
+	$idprof="SOCIETE_".$value."_INVOICE_MANDATORY";
+	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+		//header("Location: ".$_SERVER["PHP_SELF"]);
+		//exit;
 	}
 	else
 	{
@@ -307,7 +281,7 @@ print load_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
 
 $head = societe_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
+dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), -1, 'company');
 
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
 
@@ -324,7 +298,6 @@ print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-$var = true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot,0);
@@ -353,8 +326,7 @@ foreach ($dirsociete as $dirroot)
     			if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
     			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-    			$var = !$var;
-    			print '<tr '.$bc[$var].'>'."\n";
+    			print '<tr class="oddeven">'."\n";
     			print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
     			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
@@ -406,7 +378,6 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot,0);
@@ -429,9 +400,8 @@ foreach ($dirsociete as $dirroot)
     			}
 
     			$modCodeCompta = new $file;
-    			$var = !$var;
 
-    			print '<tr '.$bc[$var].'>';
+    			print '<tr class="oddeven">';
     			print '<td>'.$modCodeCompta->name."</td><td>\n";
     			print $modCodeCompta->info($langs);
     			print '</td>';
@@ -500,7 +470,6 @@ print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
-$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot.'doc/',0);
@@ -533,8 +502,7 @@ foreach ($dirsociete as $dirroot)
 
 				if ($modulequalified)
 				{
-					$var = !$var;
-					print '<tr '.$bc[$var].'><td width="100">';
+					print '<tr class="oddeven"><td width="100">';
 					print $module->name;
 					print "</td><td>\n";
 					if (method_exists($module,'info')) print $module->info($langs);
@@ -547,7 +515,7 @@ foreach ($dirsociete as $dirroot)
 						print "<td align=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'switch_on');
 							print '</a>';
 						//}
@@ -568,7 +536,7 @@ foreach ($dirsociete as $dirroot)
 						else
 						{
 							print "<td align=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -623,76 +591,74 @@ print '<td align="center">'.$langs->trans("MustBeMandatory").'</td>';
 print '<td align="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
-$profid[0][0]=$langs->trans("ProfId1");
-$profid[0][1]=$langs->transcountry('ProfId1', $mysoc->country_code);
-$profid[1][0]=$langs->trans("ProfId2");
-$profid[1][1]=$langs->transcountry('ProfId2', $mysoc->country_code);
-$profid[2][0]=$langs->trans("ProfId3");
-$profid[2][1]=$langs->transcountry('ProfId3', $mysoc->country_code);
-$profid[3][0]=$langs->trans("ProfId4");
-$profid[3][1]=$langs->transcountry('ProfId4', $mysoc->country_code);
-$profid[4][0]=$langs->trans("ProfId5");
-$profid[4][1]=$langs->transcountry('ProfId5', $mysoc->country_code);
-$profid[5][0]=$langs->trans("ProfId6");
-$profid[5][1]=$langs->transcountry('ProfId6', $mysoc->country_code);
-
-$var = true;
-$i=0;
+$profid['IDPROF1'][0]=$langs->trans("ProfId1");
+$profid['IDPROF1'][1]=$langs->transcountry('ProfId1', $mysoc->country_code);
+$profid['IDPROF2'][0]=$langs->trans("ProfId2");
+$profid['IDPROF2'][1]=$langs->transcountry('ProfId2', $mysoc->country_code);
+$profid['IDPROF3'][0]=$langs->trans("ProfId3");
+$profid['IDPROF3'][1]=$langs->transcountry('ProfId3', $mysoc->country_code);
+$profid['IDPROF4'][0]=$langs->trans("ProfId4");
+$profid['IDPROF4'][1]=$langs->transcountry('ProfId4', $mysoc->country_code);
+$profid['IDPROF5'][0]=$langs->trans("ProfId5");
+$profid['IDPROF5'][1]=$langs->transcountry('ProfId5', $mysoc->country_code);
+$profid['IDPROF6'][0]=$langs->trans("ProfId6");
+$profid['IDPROF6'][1]=$langs->transcountry('ProfId6', $mysoc->country_code);
+$profid['EMAIL'][0]=$langs->trans("EMail");
+$profid['EMAIL'][1]=$langs->trans('Email');
 
 $nbofloop=count($profid);
-while ($i < $nbofloop)
+foreach($profid as $key => $val)
 {
-	if ($profid[$i][1]!='-')
+	if ($profid[$key][1]!='-')
 	{
-		$var = !$var;
-
-		print '<tr '.$bc[$var].'>';
-		print '<td>'.$profid[$i][0]."</td><td>\n";
-		print $profid[$i][1];
+		print '<tr class="oddeven">';
+		print '<td>'.$profid[$key][0]."</td><td>\n";
+		print $profid[$key][1];
 		print '</td>';
 
-		$idprof_unique ='SOCIETE_IDPROF'.($i+1).'_UNIQUE';
-		$idprof_mandatory ='SOCIETE_IDPROF'.($i+1).'_MANDATORY';
-		$idprof_invoice_mandatory ='SOCIETE_IDPROF'.($i+1).'_INVOICE_MANDATORY';
+		$idprof_unique ='SOCIETE_'.$key.'_UNIQUE';
+		$idprof_mandatory ='SOCIETE_'.$key.'_MANDATORY';
+		$idprof_invoice_mandatory ='SOCIETE_'.$key.'_INVOICE_MANDATORY';
+
 		$verif=(empty($conf->global->$idprof_unique)?false:true);
 		$mandatory=(empty($conf->global->$idprof_mandatory)?false:true);
 		$invoice_mandatory=(empty($conf->global->$idprof_invoice_mandatory)?false:true);
 
 		if ($verif)
 		{
-			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=0">';
+			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=0">';
 			print img_picto($langs->trans("Activated"),'switch_on');
 			print '</a></td>';
 		}
 		else
 		{
-			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=1">';
+			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
 
 		if ($mandatory)
 		{
-			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=0">';
+			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=0">';
 			print img_picto($langs->trans("Activated"),'switch_on');
 			print '</a></td>';
 		}
 		else
 		{
-			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=1">';
+			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
 
 		if ($invoice_mandatory)
 		{
-			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.($i+1).'&status=0">';
+			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=0">';
 			print img_picto($langs->trans("Activated"),'switch_on');
 			print '</a></td>';
 		}
 		else
 		{
-			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.($i+1).'&status=1">';
+			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
@@ -709,7 +675,6 @@ print load_fiche_titre($langs->trans("Other"),'','');
 
 // Autres options
 $form=new Form($db);
-$var=true;
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -722,8 +687,8 @@ print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 // Utilisation formulaire Ajax sur choix societe
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
@@ -746,8 +711,8 @@ else
 }
 print '</tr>';
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
@@ -771,8 +736,8 @@ else
 print '</tr>';
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
 print '<td>&nbsp</td>';
 print '<td align="center">';
@@ -791,8 +756,8 @@ print '</a></td>';
 print '</tr>';
 
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
 print '<td>&nbsp</td>';
 print '<td align="center">';
@@ -813,8 +778,8 @@ print '</tr>';
 
 /*
 // COMPANY_USE_SEARCH_TO_SELECT
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("HideClosedThirdpartyComboBox").'</td>';
 if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX))
 {

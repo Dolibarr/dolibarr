@@ -38,7 +38,7 @@ SmsStatusNotSent=送信されません
 SmsSuccessfulySent=正しく送信されたSMS（%sへ%sから）
 ErrorSmsRecipientIsEmpty=ターゲットの数が空である
 WarningNoSmsAdded=ターゲットリストに追加する新しい電話番号なし
-ConfirmValidSms=Do you confirm validation of this campain?
+ConfirmValidSms=このキャンペーンの検証を確認しますか？
 NbOfUniqueSms=Nbの自由度のユニークな電話番号
 NbOfSms=ホン番号のNbre
 ThisIsATestMessage=これはテストメッセージです。
@@ -46,6 +46,6 @@ SendSms=SMSを送信
 SmsInfoCharRemain=残りの文字のNb
 SmsInfoNumero= （フォーマット国際例：33899701761）
 DelayBeforeSending=送信する前に、遅延時間（分）
-SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
+SmsNoPossibleSenderFound=有効な送信者はありません。 SMSプロバイダの設定を確認してください。
 SmsNoPossibleRecipientFound=利用可能なターゲットはありません。 SMSプロバイダの設定を確認してください。
 

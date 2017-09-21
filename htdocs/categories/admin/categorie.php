@@ -32,11 +32,12 @@ accessforbidden();
 
 $langs->load("categories");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 /*
  *	Actions
  */
+
 if (preg_match('/set_(.*)/',$action,$reg))
 {
     $code=$reg[1];
@@ -82,7 +83,7 @@ print load_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'title_setup')
 
 $head=categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Categories"), 0, 'category');
+dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
 print '<table class="noborder" width="100%">';
@@ -96,8 +97,8 @@ $var=true;
 $form = new Form($db);
 
 // Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
 print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
 

@@ -104,7 +104,7 @@ class StockMovements extends DolibarrApi
         
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
-        //$sql.= ' WHERE t.entity IN ('.getEntity('stock', 1).')';
+        //$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
         $sql.= ' WHERE 1 = 1';
         // Add sql filters
         if ($sqlfilters) 
@@ -133,7 +133,8 @@ class StockMovements extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $stockmovement_static = new MouvementStock($db);
@@ -319,6 +320,7 @@ class StockMovements extends DolibarrApi
         unset($object->user);
         unset($object->fk_project);
         unset($object->project);
+        unset($object->canvas);
         
         //unset($object->eatby);        Filled correctly in read mode
         //unset($object->sellby);       Filled correctly in read mode

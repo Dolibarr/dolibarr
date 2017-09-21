@@ -79,7 +79,7 @@ function member_prepare_head(Adherent $object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->adherent->multidir_output[$object->entity].'/'.get_exdir(0,0,0,1,$object,'member');
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
@@ -100,7 +100,7 @@ function member_prepare_head(Adherent $object)
 	    $head[$h][2] = 'agenda';
 	    $h++;
 	}
-	
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
 
 	return $head;
@@ -152,6 +152,11 @@ function member_admin_prepare_head()
     $head[$h][2] = 'general';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_emails.php';
+    $head[$h][1] = $langs->trans("EMails");
+    $head[$h][2] = 'emails';
+    $h++;
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -168,9 +173,9 @@ function member_admin_prepare_head()
     $head[$h][2] = 'attributes_type';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/public.php';
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/website.php';
     $head[$h][1] = $langs->trans("BlankSubscriptionForm");
-    $head[$h][2] = 'public';
+    $head[$h][2] = 'website';
     $h++;
 
     complete_head_from_modules($conf,$langs,'',$head,$h,'member_admin','remove');

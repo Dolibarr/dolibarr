@@ -109,7 +109,7 @@ class Products extends DolibarrApi
         {
             $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
         }
-        $sql.= ' WHERE t.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('product').')';
         // Select products of given category
         if ($category > 0)
         {
@@ -146,7 +146,8 @@ class Products extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);

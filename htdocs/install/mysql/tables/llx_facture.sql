@@ -63,7 +63,8 @@ create table llx_facture
   fk_user_modif         integer,                                -- user making last change
   fk_user_valid			integer,								-- user validating
 
-  fk_facture_source		integer,								-- facture origine si facture avoir
+  fk_fac_rec_source		integer,								-- facture rec source
+  fk_facture_source		integer,								-- facture origin if credit notes or replacement invoice
   fk_projet				integer DEFAULT NULL,					-- projet auquel est associee la facture
 
   fk_account			integer,								-- bank account

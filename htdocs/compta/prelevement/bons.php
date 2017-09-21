@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -41,7 +41,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -51,15 +51,19 @@ if (! $sortfield) $sortfield="p.datec";
 // Get supervariables
 $statut = GETPOST('statut','int');
 $search_ref = GETPOST('search_ref','alpha');
+$search_amount = GETPOST('search_amount','alpha');
+
+$bon=new BonPrelevement($db,"");
 
 
 /*
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $search_ref="";
+    $search_amount="";
 }
 
 
@@ -69,13 +73,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
-$bon=new BonPrelevement($db,"");
-
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
 $sql.= ", p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($search_ref) $sql.=natural_search("p.ref", $search_ref);
+if ($search_amount) $sql.=natural_search("p.amount", $search_amount, 1);
 
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -97,6 +100,8 @@ if ($result)
 
   $urladd= "&amp;statut=".$statut;
 
+  $selectedfields='';
+
   // Lines of title fields
   print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
   if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -105,41 +110,40 @@ if ($result)
   print '<input type="hidden" name="action" value="list">';
   print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+  print '<input type="hidden" name="page" value="'.$page.'">';
   print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-  
+
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
   $moreforfilter='';
-    
+
   print '<div class="div-table-responsive">';
   print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
-  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
-  print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"","","",'align="center"');
-  print "</tr>\n";
-
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. $db->escape($search_ref).'"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. dol_escape_htmltag($search_ref).'"></td>';
+  print '<td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right">';
-  $searchpitco=$form->showFilterAndCheckAddButtons(0);
-  print $searchpitco;
+  $searchpicto=$form->showFilterButtons();
+  print $searchpicto;
   print '</td>';
   print '</tr>';
 
-  $var=True;
+  print '<tr class="liste_titre">';
+  print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"',$sortfield,$sortorder);
+  print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"',$sortfield,$sortorder);
+  print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","","",'align="right"',$sortfield,$sortorder);
+  print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"","","",'align="right"',$sortfield,$sortorder);
+  print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
+  print "</tr>\n";
 
   while ($i < min($num,$limit))
   {
       $obj = $db->fetch_object($result);
-      $var=!$var;
 
-      print "<tr ".$bc[$var]."><td>";
-
-      print $bon->LibStatut($obj->statut,2);
-      print "&nbsp;";
+      print '<tr class="oddeven"><td>';
 
       print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
@@ -147,14 +151,20 @@ if ($result)
 
       print '<td align="right">'.price($obj->amount)."</td>\n";
 
+      print '<td align="right">';
+      print $bon->LibStatut($obj->statut, 3);
+      print '</td>';
+
+      print '<td align="right"></td>'."\n";
+
       print "</tr>\n";
       $i++;
     }
   print "</table>";
   print '</div>';
-  
+
   print '</form>';
-  
+
   $db->free($result);
 }
 else

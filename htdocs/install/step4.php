@@ -69,7 +69,9 @@ if (! is_writable($conffile))
 }
 
 
-print '<br>'.$langs->trans("LastStepDesc").'<br><br>';
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/key.svg" width="20" alt="Database"> '.$langs->trans("DolibarrAdminLogin").'</h3>';
+
+print $langs->trans("LastStepDesc").'<br><br>';
 
 
 print '<table cellspacing="0" cellpadding="2" width="100%">';
@@ -78,7 +80,7 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->ok)
 {
-    print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
+    print '<tr><td>'.$langs->trans("Login").' :</td><td>';
 	print '<input name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
     print '<tr><td>'.$langs->trans("Password").' :</td><td>';
     print '<input type="password" name="pass"></td></tr>';

@@ -38,7 +38,7 @@ $langs->load('companies');
 
 // Security check
 $id=GETPOST("id",'int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
@@ -239,8 +239,8 @@ if ($resql)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$socialcontrib->fetch($objp->scid);
@@ -268,7 +268,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	$db->free($resql);

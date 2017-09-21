@@ -84,16 +84,16 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
 }
 
-$nom=$langs->trans("PurchasesJournal");
-$nomlink='';
+$name=$langs->trans("PurchasesJournal");
 $periodlink='';
 $exportlink='';
-$builddate=time();
+$builddate=dol_now();
 $description=$langs->trans("DescPurchasesJournal").'<br>';
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 else  $description.= $langs->trans("DepositsAreIncluded");
 $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
@@ -184,7 +184,6 @@ print "<td>".$langs->trans("Account")."</td>";
 print "<td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
-$var=false;
 
 $invoicestatic=new FactureFournisseur($db);
 $companystatic=new Fournisseur($db);
@@ -229,7 +228,7 @@ foreach ($tabfac as $key => $val)
 		{
 			if (isset($line['nomtcheck']) || $mt)
 			{
-				print "<tr ".$bc[$var]." >";
+				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
@@ -249,8 +248,6 @@ foreach ($tabfac as $key => $val)
 			}
 		}
 	}
-
-	$var = !$var;
 }
 
 print "</table>";

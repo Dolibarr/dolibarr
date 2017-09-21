@@ -18,6 +18,12 @@
  * or see http://www.gnu.org/
  */
 
+// Following var can be set
+// $permission = permission or not to add a file
+// $permtoedit = permission or not to edit file name, crop file
+// $modulepart = for download
+// $param      = param to add to download links
+
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 if (empty($permtoedit)) $permtoedit=-1;
@@ -74,7 +80,7 @@ $formfile->form_attach_new_file(
 
 $disablemove=1;
 if ($modulepart == 'produit') $disablemove=0;
-    
+
 // List of document
 $formfile->list_of_documents(
     $filearray,

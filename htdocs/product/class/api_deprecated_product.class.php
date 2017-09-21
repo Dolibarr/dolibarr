@@ -115,7 +115,7 @@ class ProductApi extends DolibarrApi
 
         $sql ="SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		
         // Show products
         if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
@@ -149,7 +149,8 @@ class ProductApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
@@ -197,7 +198,7 @@ class ProductApi extends DolibarrApi
         $sql = "SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p, ";
         $sql.= MAIN_DB_PREFIX."categorie_product as c";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 
         // Select products of given category
         $sql.= " AND c.fk_categorie = ".$db->escape($category);
@@ -235,7 +236,8 @@ class ProductApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);

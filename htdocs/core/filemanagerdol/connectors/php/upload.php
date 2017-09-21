@@ -60,7 +60,7 @@ if (! IsAllowedType($sType))
     SendUploadResults(1, '', '', 'Invalid type specified');
 
 
-// DOL_CHANGE
+// @CHANGE
 //FileUpload( $sType, $sCurrentFolder, $sCommand )
 
 // Get the CKEditor Callback

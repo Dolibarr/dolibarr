@@ -51,7 +51,8 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_DEPOSIT = 3;
 
     /**
-     * Proforma invoice
+     * Proforma invoice.
+     * @deprectad Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
      */
     const TYPE_PROFORMA = 4;
 
@@ -88,13 +89,13 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
-	
+
 	/**
-	 * 	Return remain amount to pay.
-	 *  Property ->id and ->total_ttc must be set.
+	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
+	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		int						Remain of amount to pay
+	 *	@return		double						Remain of amount to pay
 	 */
 	function getRemainToPay($multicurrency=0)
 	{
@@ -140,7 +141,7 @@ abstract class CommonInvoice extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    	Return amount (with tax) of all deposits invoices used by invoice.
      *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
@@ -153,11 +154,11 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
 	        // TODO
-	       return 0;     
+	       return 0;
 	    }
-	    
+
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-	
+
 	    $discountstatic=new DiscountAbsolute($this->db);
 	    $result=$discountstatic->getSumDepositsUsed($this, $multicurrency);
 	    if ($result >= 0)
@@ -184,9 +185,9 @@ abstract class CommonInvoice extends CommonObject
 	        // TODO
 	        return 0;
 	    }
-	     
+
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-	
+
 	    $discountstatic=new DiscountAbsolute($this->db);
 	    $result=$discountstatic->getSumCreditNotesUsed($this, $multicurrency);
 	    if ($result >= 0)
@@ -199,7 +200,7 @@ abstract class CommonInvoice extends CommonObject
 	        return -1;
 	    }
 	}
-	
+
 	/**
 	 *	Renvoie tableau des ids de facture avoir issus de la facture
 	 *
@@ -307,8 +308,8 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
-	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, -1 otherwise)
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Libelle du statut
 	 */
@@ -408,15 +409,16 @@ abstract class CommonInvoice extends CommonObject
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('BillStatusPaid');
 			}
 		}
-		if ($mode == 5)
+		if ($mode == 5 || $mode == 6)
 		{
-			$prefix='Short';
+			$prefix='';
+			if ($mode == 5) $prefix='Short';
 			if (! $paye)
 			{
 				if ($status == 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusDraft').' </span>'.img_picto($langs->trans('BillStatusDraft'),'statut0');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusCanceled').' </span>'.img_picto($langs->trans('BillStatusCanceled'),'statut5');
 				if (($status == 3 || $status == 2) && $alreadypaid > 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' </span>'.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
-				if ($alreadypaid <= 0) 
+				if ($alreadypaid <= 0)
 				{
 				    if ($type == self::TYPE_CREDIT_NOTE) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotRefunded').' </span>'.img_picto($langs->trans('StatusNotRefunded'),'statut1');
 				    return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotPaid').' </span>'.img_picto($langs->trans('BillStatusNotPaid'),'statut1');
@@ -495,13 +497,13 @@ abstract class CommonInvoice extends CommonObject
 		}
 		elseif($cdr_type == 2 && !empty($cdr_nbjour)) // Application de la règle, le N du mois courant ou suivant
 		{
-			
+
 			$date_piece = dol_mktime(0,0,0,date('m', $this->date),date('d', $this->date),date('Y', $this->date)); // Sans les heures minutes et secondes
 			$date_lim_current = dol_mktime(0,0,0,date('m', $this->date),$cdr_nbjour,date('Y', $this->date)); // Sans les heures minutes et secondes
 			$date_lim_next = strtotime(date('Y-m-d', $date_lim_current).' +1month');
-			
+
 			$diff = $date_piece - $date_lim_current;
-			
+
 			if($diff < 0) $datelim = $date_lim_current;
 			else $datelim = $date_lim_next;
 
@@ -546,6 +548,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $fk_product;
+
+	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
 
 	/**
 	 * VAT %

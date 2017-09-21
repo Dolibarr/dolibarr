@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Přes URL jsou k dispozici nabízené stránky, které zákazníkovi umožní provést platbu na Dolibarr objektech
+PaymentForm=Formulář platby
+WelcomeOnPaymentPage=Vítáme Vás na naší on-line platební službě
+ThisScreenAllowsYouToPay=Tato obrazovka vám umožní provést on-line platbu %s.
+ThisIsInformationOnPayment=Jsou zde informace o provedené platbě
+ToComplete=Chcete-li dokončit
+YourEMail=E-mail pro potvrzení platby
+STRIPE_PAYONLINE_SENDEMAIL=Upozorňující e-mail po platbě (úspěch nebo zamítnutí)
+Creditor=Věřitel
+PaymentCode=Platební kód
+StripeDoPayment=Jít na platbu
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Další
+ToOfferALinkForOnlinePayment=URL pro %s platby
+ToOfferALinkForOnlinePaymentOnOrder=URL nabízí %s on-line platební uživatelské rozhraní pro objednávky zákazníka
+ToOfferALinkForOnlinePaymentOnInvoice=URL nabízí %s on-line platební uživatelské rozhraní pro zákaznické faktury
+ToOfferALinkForOnlinePaymentOnContractLine=URL nabízí %s on-line platební uživatelské rozhraní pro řádky smluv
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL nabízí %s on-line platební uživatelské rozhraní pro volnou částku
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL nabízí %s on-line platební uživatelské rozhraní pro členské předplatné
+YouCanAddTagOnUrl=Můžete také přidat parametr URL <b>&tag = <i>hodnota</i></b> na některou z těchto URL (nutné pouze pro volné platby) a přidat vlastní komentář platby.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Tato stránka potvrzuje, že platba byla zaznamenána. Děkuju.
+YourPaymentHasNotBeenRecorded=Vaše platba nebyla zaznamenána a transakce byla zrušena. Děkuju.
+AccountParameter=Parametry účtu
+UsageParameter=Použité parametry
+InformationToFindParameters=Pomozte najít %s informace o účtu
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Název dodavatele
+CSSUrlForPaymentForm=CSS styly url platebního formuláře
+MessageOK=Návratová stránka se zprávou o schválení platby
+MessageKO=Návratová stránka se zprávou o zrušení platby
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

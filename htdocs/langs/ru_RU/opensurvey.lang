@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Опрос
 Surveys=Опросы
-OrganizeYourMeetingEasily=Легко организовывайте встречи и опросы. Сначала выберите тип опроса...
+OrganizeYourMeetingEasily=Легко организуйте встречи и опросы. Сначала выберите тип опроса...
 NewSurvey=Новый опрос
 OpenSurveyArea=Раздел опросов
 AddACommentForPoll=Вы можете добавить комментарий в опрос
@@ -55,5 +55,5 @@ ErrorOpenSurveyFillFirstSection=Вы не заполнили первую сек
 ErrorOpenSurveyOneChoice=Введите как минимум один вариант для выбора
 ErrorInsertingComment=При добавлении вашего комментария произошла ошибка
 MoreChoices=Введите больше вариантов выбора для голосующих
-SurveyExpiredInfo=The poll has been closed or voting delay has expired.
+SurveyExpiredInfo=Опрос закрыт или период голосования истёк.
 EmailSomeoneVoted=%s заполнил строку. \nВы можете найти Ваш опрос по следующей ссылке: \n%s

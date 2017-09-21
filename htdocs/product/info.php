@@ -36,7 +36,7 @@ $ref = GETPOST('ref','alpha');
 
 $result=restrictedArea($user,'produit|service',$id,'product&product');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('infoproduct'));
 
 $object = new Product($db);
@@ -87,17 +87,21 @@ if ($id > 0 || $ref)
 
 		exit;
 	}
-	
+
 	$head=product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-    
+
     dol_fiche_head($head, 'info', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter=" fk_product_type = ".$object->type;
-	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-	
+
+    $shownav = 1;
+    if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
 	$object->info($object->id);
 
 	print '<div class="fichecenter">';
@@ -105,11 +109,11 @@ if ($id > 0 || $ref)
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<br>';
-	
+
 	dol_print_object_info($object);
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 }
 

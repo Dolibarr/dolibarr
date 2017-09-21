@@ -39,13 +39,15 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='supplier_payment';
 
 
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -65,32 +67,7 @@ if ($action == 'updateMask')
     }
 }else  if ($action == 'setmod')
 {
-    dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON",$value,'chaine',0,'',$conf->entity);
-}
-
-// define constants for models generator that need parameters
-else if ($action == 'setModuleOptions')
-{
-    $post_size=count($_POST);
-    for($i=0;$i < $post_size;$i++)
-    {
-        if (array_key_exists('param'.$i,$_POST))
-        {
-            $param=GETPOST("param".$i,'alpha');
-            $value=GETPOST("value".$i,'alpha');
-            if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-        }
-    }
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+    dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 // Activate a model
@@ -138,7 +115,7 @@ else if ($action == 'specimen')
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/supplier_payment/pdf/pdf_".$modele.".modules.php",0);
+	    $file=dol_buildpath($reldir."core/modules/supplier_payment/doc/pdf_".$modele.".modules.php",0);
     	if (file_exists($file))
     	{
     		$filefound=1;
@@ -188,21 +165,15 @@ print load_fiche_titre($langs->trans("SupplierPaymentSetup"),$linkback,'title_se
 print "<br>";
 
 $head = supplierorder_admin_prepare_head();
-dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -1, 'company');
 
 /*
  *  Numbering module
  */
 
 if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-    
-print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
-/*
- *  Document templates generators
- */
-print '<br>';
-print load_fiche_titre($langs->trans("BillsPDFModules"),'','');
+print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
 // Load array def with activated templates
 $def = array();
@@ -271,7 +242,7 @@ foreach ($dirmodels as $reldir)
                         require_once $dir.$filebis;
 
                         $module = new $classname($db);
-						
+
                         // Show modules according to features level
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
@@ -279,7 +250,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->isEnabled())
                         {
                             $var = !$var;
-                            print '<tr '.$bc[$var].'><td width="100">';
+                            print '<tr class="oddeven"><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_supplier_payment_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
 
@@ -303,7 +274,7 @@ foreach ($dirmodels as $reldir)
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -349,6 +320,12 @@ foreach ($dirmodels as $reldir)
 print '</table>';
 
 
+/*
+ *  Document templates generators
+ */
+print '<br>';
+print load_fiche_titre($langs->trans("PaymentsPDFModules"),'','');
+
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -363,11 +340,10 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_payment/pdf/");
+	$dir = dol_buildpath($reldir."core/modules/supplier_payment/doc/");
 
     if (is_dir($dir))
     {
-        $var=true;
 
         $handle=opendir($dir);
 
@@ -376,7 +352,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                 {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
@@ -384,8 +360,8 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new PaiementFourn($db));
 
-                    $var=!$var;
-                    print "<tr ".$bc[$var].">\n";
+
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -441,8 +417,6 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
                     $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                     $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-                    $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-                    $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
                     print '<td align="center">';
                     print $form->textwithpicto('',$htmltooltip,1,0);
                     print '</td>';
@@ -459,7 +433,7 @@ foreach ($dirmodels as $reldir)
     }
 }
 
-print '</table><br>';
+print '</table>';
 
 dol_fiche_end();
 

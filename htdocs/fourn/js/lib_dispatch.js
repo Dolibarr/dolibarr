@@ -26,16 +26,20 @@
  * 
  * @param	index	int		index of produt line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
+ * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
  */
-function addDispatchLine(index,type) 
+function addDispatchLine(index, type, mode) 
 {
+	mode = mode || 'qtymissing'
+	
+	console.log("Split line type="+type+" index="+index+" mode="+mode);
 	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true), // clone first batch line to jQuery object
 		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length, // position of line for batch
 		qtyOrdered = parseFloat($("#qty_ordered_"+(nbrTrs - 1)+"_"+index).val()),
 		qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val()),
 		qtyDispatched;
 			
-	if (type === 'batch') 
+	if (mode === 'lessone') 
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_"+(nbrTrs - 1)+"_"+index).val()) + 1;
 	}
@@ -63,15 +67,22 @@ function addDispatchLine(index,type)
 		/*  Suffix of lines are:  _ trs.length _ index  */
 		$("#qty_"+nbrTrs+"_"+index).focus();
 		$("#qty_dispatched_"+(nbrTrs)+"_"+index).val(qtyDispatched);
-		if (type === 'batch')
+		
+		//hide all buttons then show only the last one
+		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
+		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
+		
+		if (mode === 'lessone')
 		{
 			$("#qty_"+(nbrTrs)+"_"+index).val(qty-1);
 			$("#qty_"+(nbrTrs-1)+"_"+index).val(1);
 		}
 		else
 		{
-			
 			$("#qty_"+nbrTrs+"_"+index).val(qtyOrdered - qtyDispatched);	
-		}		
+		}
+		
+		//set focus on lot of new line (if it exists)
+		$("#lot_number_"+(nbrTrs)+"_"+index).focus();
 	}
 }

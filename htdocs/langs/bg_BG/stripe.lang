@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Следните интернет адреси са на разположение, за да предложи на клиента да направи плащане по Dolibarr обекти
+PaymentForm=Формуляра за плащане
+WelcomeOnPaymentPage=Добре дошли на нашия онлайн платежни услуги
+ThisScreenAllowsYouToPay=Този екран ви позволи да направите онлайн плащане на %s.
+ThisIsInformationOnPayment=Това е информация за плащане, за да се направи
+ToComplete=За да завършите
+YourEMail=Имейл за да получите потвърждение на плащането
+STRIPE_PAYONLINE_SENDEMAIL=Имейл за предупреждаване след заплащане (успешно или не)
+Creditor=Кредитор
+PaymentCode=Плащане код
+StripeDoPayment=Отидете на плащане
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Следващ
+ToOfferALinkForOnlinePayment=URL за %s плащане
+ToOfferALinkForOnlinePaymentOnOrder=URL адрес, за да предложи на потребителя %s онлайн интерфейс плащане за поръчка на клиента
+ToOfferALinkForOnlinePaymentOnInvoice=URL да предложи %s онлайн интерфейс ползвател на платежни за клиента фактура
+ToOfferALinkForOnlinePaymentOnContractLine=URL да предложи %s онлайн интерфейс ползвател на платежни за договор линия
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL да предложи %s онлайн интерфейс ползвател на платежни за безплатен сума
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL да предложи %s онлайн интерфейс ползвател на платежни за член абонамент
+YouCanAddTagOnUrl=Можете също да добавите URL параметър <b>и етикет = <i>стойност</i></b> на която и да е от тези URL (задължително само за безплатно плащане), за да добавите свой ​​собствен етикет за коментар на плащане.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Тази страница потвърждава, че плащането е било записано. Благодаря.
+YourPaymentHasNotBeenRecorded=Плащането не е записана и сделката е била анулирана. Благодаря.
+AccountParameter=Отчитат параметри
+UsageParameter=Употреба параметри
+InformationToFindParameters=Помощ &quot;, за да намерите информация за %s сметка
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Име на продавача
+CSSUrlForPaymentForm=CSS URL стил лист за плащане форма
+MessageOK=Съобщение на валидирана страница плащане връщане
+MessageKO=Съобщение за анулиране страница плащане връщане
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

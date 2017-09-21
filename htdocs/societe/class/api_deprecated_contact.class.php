@@ -126,7 +126,7 @@ class ContactApi extends DolibarrApi
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc"; 
 		}
 		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON c.fk_soc = s.rowid";
-		$sql.= ' WHERE  c.entity IN (' . getEntity('socpeople', 1) . ')';
+		$sql.= ' WHERE  c.entity IN (' . getEntity('socpeople') . ')';
 		if ($socid)
 			$sql.= " AND c.fk_soc = " . $socid;
 
@@ -167,7 +167,8 @@ class ContactApi extends DolibarrApi
 		{
 			$i = 0;
 		    $num = $db->num_rows($result);
-			while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+		    $min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);

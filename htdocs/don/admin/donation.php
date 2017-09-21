@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2016  Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
+ * Copyright (C) 2012-2015  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2017  Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
@@ -42,6 +42,8 @@ $typeconst=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 
 $type='donation';
 
@@ -121,7 +123,7 @@ else if ($action == 'del')
 // Options
 if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 {
-	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT');	// No alpha here, we want exact string
+	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT','alpha');
 
     $res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT",$account,'chaine',0,'',$conf->entity);
 
@@ -139,7 +141,7 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 
 if ($action == 'set_DONATION_MESSAGE')
 {
-	$freemessage = GETPOST('DONATION_MESSAGE');	// No alpha here, we want exact string
+	$freemessage = GETPOST('DONATION_MESSAGE','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "DONATION_MESSAGE",$freemessage,'chaine',0,'',$conf->entity);
 
@@ -199,7 +201,7 @@ else if ($action == 'setart885') {
 
 $dir = "../../core/modules/dons/";
 $form=new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -250,14 +252,12 @@ clearstatcache();
 
 $handle=opendir($dir);
 
-$var=True;
 if (is_resource($handle))
 {
 	while (($file = readdir($handle))!==false)
 	{
 		if (preg_match('/\.modules\.php$/i',$file))
 		{
-			$var = !$var;
 			$name = substr($file, 0, dol_strlen($file) -12);
 			$classname = substr($file, 0, dol_strlen($file) -12);
 
@@ -270,7 +270,7 @@ if (is_resource($handle))
 
 			if ($module->isEnabled())
 			{
-				print '<tr '.$bc[$var].'><td width=\"100\">';
+				print '<tr class="oddeven"><td width=\"100\">';
 				echo $module->name;
 				print '</td>';
 				print '<td>';
@@ -289,14 +289,14 @@ if (is_resource($handle))
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 						print '</td>';
 					}
 				}
 				else
 				{
 					print "<td align=\"center\">\n";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 					print "</td>";
 				}
 
@@ -310,7 +310,7 @@ if (is_resource($handle))
 				else
 				{
 					print "<td align=\"center\">";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					print '</td>';
 				}
 
@@ -353,14 +353,12 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print '<td></td>';
 print "</tr>\n";
-$var=true;
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
 
-$var=! $var;
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 
 print '<td>';
 $label = $langs->trans("AccountAccounting");
@@ -368,7 +366,7 @@ print '<label for="DONATION_ACCOUNTINGACCOUNT">' . $label . '</label></td>';
 print '<td>';
 if (! empty($conf->accounting->enabled))
 {
-	print $formaccountancy->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
 }
 else
 {
@@ -383,8 +381,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
-$var=! $var;
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
 print '</td><td align="right">';
@@ -407,8 +404,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
 	print "</tr>\n";
 
-	$var=!$var;
-	print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
 	if (! empty($conf->global->DONATION_ART200)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart200&value=0">';
@@ -421,8 +417,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	}
 	print '</tr>';
 
-	$var=!$var;
-	print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
 	if (! empty($conf->global->DONATION_ART238)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart238&value=0">';
@@ -435,8 +430,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	}
 	print '</tr>';
 
-	$var=!$var;
-	print "<tr " . $bc[$var] . ">";
+	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
 	if (! empty($conf->global->DONATION_ART885)) {
 		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart885&value=0">';

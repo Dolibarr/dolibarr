@@ -79,6 +79,10 @@ MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
 MailingModuleDescContactsByCompanyCategory=Contacts by third party category
 MailingModuleDescContactsByCategory=Contacts by categories
 MailingModuleDescContactsByFunction=Contacts by position
+MailingModuleDescEmailsFromFile=Emails from file
+MailingModuleDescEmailsFromUser=Emails input by user
+MailingModuleDescDolibarrUsers=Users with Emails
+MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Σειρά %s στο αρχείο

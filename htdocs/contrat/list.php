@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -29,8 +29,9 @@
  */
 
 require ("../main.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -52,8 +53,9 @@ $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_contract=GETPOST('search_contract');
+$search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
@@ -65,11 +67,11 @@ $month=GETPOST("month","int");
 
 $optioncss = GETPOST('optioncss','alpha');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -81,15 +83,17 @@ $id=GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $id);
 
+$diroutputmassaction=$conf->contrat->dir_output . '/temp/massgeneration/'.$user->id;
+
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 
 if ($search_status == '') $search_status=1;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='contractlist';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -136,8 +140,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Action
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -146,7 +150,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
 	$day='';
 	$month='';
@@ -158,6 +162,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_type='';
 	$search_country='';
 	$search_contract="";
+	$search_ref_customer="";
 	$search_ref_supplier="";
     $search_user='';
     $search_sale='';
@@ -184,7 +189,8 @@ if (empty($reshook))
  */
 
 $now=dol_now();
-$form=new Form($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
 $contracttmp = new Contrat($db);
@@ -222,7 +228,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= " WHERE c.fk_soc = s.rowid ";
-$sql.= ' AND c.entity IN ('.getEntity('contract', 1).')';
+$sql.= ' AND c.entity IN ('.getEntity('contract').')';
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid) $sql.= " AND s.rowid = ".$db->escape($socid);
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -241,6 +247,7 @@ else if ($year > 0)
 }
 if ($search_name) $sql .= natural_search('s.nom', $search_name);
 if ($search_contract) $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
+if (!empty($search_ref_customer)) $sql .= natural_search(array('c.ref_customer'), $search_ref_customer);
 if (!empty($search_ref_supplier)) $sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
 if ($search_sale > 0)
 {
@@ -255,8 +262,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -270,11 +278,8 @@ $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.re
 $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code,";
 $sql.= " state.code_departement, state.nom";
-// Add where from extra fields
-foreach ($extrafields->attribute_label as $key => $val)
-{
-    $sql .= ', ef.'.$key;
-}
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
@@ -305,7 +310,14 @@ if ($resql)
     $i = 0;
 
     $arrayofselected=is_array($toselect)?$toselect:array();
-    
+
+	if ($socid > 0)
+	{
+		$soc = new Societe($db);
+		$soc->fetch($socid);
+		if (empty($search_name)) $search_name = $soc->name;
+	}
+
     $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -323,16 +335,16 @@ if ($resql)
         $tmpkey=preg_replace('/search_options_/','',$key);
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     }
-    
+
     // List of mass actions available
     $arrayofmassactions =  array(
-        //'presend'=>$langs->trans("SendByMail"),
-        //'builddoc'=>$langs->trans("PDFMerge"),
+        'presend'=>$langs->trans("SendByMail"),
+        'builddoc'=>$langs->trans("PDFMerge"),
     );
     if ($user->rights->contrat->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
     if ($massaction == 'presend') $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-    
+
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -340,24 +352,35 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	
+	print '<input type="hidden" name="page" value="'.$page.'">';
+
     print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
+
+    if ($massaction == 'presend')
+    {
+    	$topicmail="SendContractRef";
+    	$modelmail="contract";
+    	$objecttmp=new Contrat($db);
+    	$trackid='con'.$object->id;
+
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
+    }
 
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
     $moreforfilter='';
-    
+
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
     	$langs->load("commercial");
     	$moreforfilter.='<div class="divsearchfield">';
     	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-    	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user,0,1,'maxwidth300');
+    	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user,0,1,'maxwidth200');
     	$moreforfilter.='</div>';
     }
 	// If the user can view other users
@@ -365,7 +388,7 @@ if ($resql)
 	{
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	    $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 	 	$moreforfilter.='</div>';
 	}
 	// If the user can view categories of products
@@ -375,15 +398,15 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
 	}
-    
+
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
-    
+
     if (! empty($moreforfilter))
     {
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -394,7 +417,7 @@ if ($resql)
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -408,13 +431,13 @@ if ($resql)
     if (! empty($arrayfields['c.ref_customer']['checked']))
     {
         print '<td class="liste_titre">';
-        print '<input type="text" class="flat" size="6" name="search_ref_customer value="'.dol_escape_htmltag($search_ref_customer).'">';
+        print '<input type="text" class="flat" size="6" name="search_ref_customer" value="'.dol_escape_htmltag($search_ref_customer).'">';
         print '</td>';
     }
     if (! empty($arrayfields['c.ref_supplier']['checked']))
     {
         print '<td class="liste_titre">';
-        print '<input type="text" class="flat" size="6" name="search_ref_supplier value="'.dol_escape_htmltag($search_ref_supplier).'">';
+        print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
         print '</td>';
     }
     if (! empty($arrayfields['s.nom']['checked']))
@@ -509,11 +532,11 @@ if ($resql)
         print '<td class="liste_titre" colspan="4" align="right"></td>';
     }
     print '<td class="liste_titre" align="middle">';
-    $searchpitco=$form->showFilterButtons();
-    print $searchpitco;
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
     print '</td>';
     print "</tr>\n";
-    
+
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['c.ref']['checked']))               print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
     if (! empty($arrayfields['c.ref_customer']['checked']))      print_liste_field_titre($arrayfields['c.ref_customer']['label'], $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
@@ -529,12 +552,14 @@ if ($resql)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
+	   foreach($extrafields->attribute_label as $key => $val)
 	   {
-           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           if (! empty($arrayfields["ef.".$key]['checked']))
            {
 				$align=$extrafields->getAlignFlag($key);
-				print_liste_field_titre($langs->trans($extralabels[$key]),$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			$sortonfield = "ef.".$key;
+    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
            }
 	   }
 	}
@@ -557,12 +582,12 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
-        
+
         $contracttmp->ref=$obj->ref;
         $contracttmp->id=$obj->rowid;
         $contracttmp->ref_customer=$obj->ref_customer;
         $contracttmp->ref_supplier=$obj->ref_supplier;
-        
+
         print '<tr class="oddeven">';
         if (! empty($arrayfields['c.ref']['checked']))
         {
@@ -575,17 +600,24 @@ if ($resql)
                 print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
                 print '</span>';
             }
+
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->contrat->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
+            print '</td>';
+
             print '</td>';
         }
-        if (! empty($arrayfields['c.ref_customer']['checked'])) 
+        if (! empty($arrayfields['c.ref_customer']['checked']))
         {
             print '<td>'.$obj->ref_customer.'</td>';
         }
-        if (! empty($arrayfields['c.ref_supplier']['checked'])) 
+        if (! empty($arrayfields['c.ref_supplier']['checked']))
         {
             print '<td>'.$obj->ref_supplier.'</td>';
         }
-        if (! empty($arrayfields['s.nom']['checked'])) 
+        if (! empty($arrayfields['s.nom']['checked']))
         {
             print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
         }
@@ -628,7 +660,7 @@ if ($resql)
             print $typenArray[$obj->typent_code];
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
-        }        
+        }
         if (! empty($arrayfields['sale_representative']['checked']))
         {
             // Sales representatives
@@ -712,7 +744,7 @@ if ($resql)
             if (! $i) $totalarray['nbfield']++;
         }
         // Status
-        if (! empty($arrayfields['status']['checked'])) 
+        if (! empty($arrayfields['status']['checked']))
         {
             print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
             print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
@@ -729,7 +761,7 @@ if ($resql)
         }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
-        
+
         print "</tr>\n";
         $i++;
     }
@@ -737,8 +769,27 @@ if ($resql)
 
     print '</table>';
     print '</div>';
-    
+
     print '</form>';
+
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+    {
+    	/*
+    	 * Show list of available documents
+    	 */
+    	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+    	$urlsource.=str_replace('&amp;','&',$param);
+
+    	$filedir=$diroutputmassaction;
+    	$genallowed=$user->rights->contrat->lire;
+    	$delallowed=$user->rights->contrat->lire;
+
+    	print $formfile->showdocuments('massfilesarea_contract','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+    }
+    else
+    {
+    	print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+    }
 }
 else
 {

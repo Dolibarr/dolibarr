@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
@@ -221,9 +221,7 @@ llxHeader("",$langs->trans("Categories"),$helpurl);
 
 if ($user->rights->categorie->creer)
 {
-	/*
-	 * Fiche en mode creation
-	 */
+	// Create or add
 	if ($action == 'create' || $_POST["addcat"] == 'addcat')
 	{
 		dol_set_focus('#label');
@@ -246,7 +244,7 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="minwidth100" name="label" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
@@ -263,12 +261,14 @@ if ($user->rights->categorie->creer)
 
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-		print $form->select_all_categories($type, $catorigin);
+		print $form->select_all_categories($type, $catorigin, 'parent');
+		print ajax_combobox('parent');
 		print '</td></tr>';
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
+        print $hookmanager->resPrint;
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}

@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * $object must be defined
- * $backtopage 
+ * $backtopage
  */
 ?>
 
@@ -50,7 +50,7 @@
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
         dol_fiche_head();
-        
+
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -93,12 +93,12 @@
 			print '<td>'.$langs->trans('Project').'</td>';
 			print '<td>';
 			$formproject->select_projects();
-			print '</td>';	
+			print '</td>';
 		}
 		print '</tr>';
 
 		// Serial / Eat-by date
-		if (! empty($conf->productbatch->enabled) && 
+		if (! empty($conf->productbatch->enabled) &&
 		    (($object->element == 'product' && $object->hasbatch())
 		    || ($object->element == 'stock'))
 		)
@@ -127,19 +127,19 @@
 		print '<td>';
 		print '<input type="text" name="label" size="60" value="'.$valformovementlabel.'">';
 		print '</td>';
-		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.GETPOST("inventorycode").'"></td>';
+		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S')).'"></td>';
 		print '</tr>';
 
 		print '</table>';
 
         dol_fiche_end();
-        
+
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '</div>';
-		
+
 		print '</form>';
 ?>
 <!-- END PHP STOCKCORRECTION.TPL.PHP -->

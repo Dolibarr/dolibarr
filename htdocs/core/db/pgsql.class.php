@@ -169,7 +169,7 @@ class DoliDBPgsql extends DoliDB
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
 			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
 			//print $line."\n";
-					
+
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
@@ -185,8 +185,8 @@ class DoliDBPgsql extends DoliDB
 
 		        // we are inside create table statement so lets process datatypes
     			if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
-    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i',');',$line);
+    				$line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb).*;/i',');',$line);
     				$line=preg_replace('/,$/','',$line);
     			}
 
@@ -210,6 +210,7 @@ class DoliDBPgsql extends DoliDB
     			// tinytext/mediumtext -> text
     			$line=preg_replace('/tinytext/i','text',$line);
     			$line=preg_replace('/mediumtext/i','text',$line);
+    			$line=preg_replace('/longtext/i','text',$line);
 
     			$line=preg_replace('/text\([0-9]+\)/i','text',$line);
 
@@ -1047,8 +1048,11 @@ class DoliDBPgsql extends DoliDB
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if ($field_desc['type'] != 'int' && preg_match("/^[^\s]/i",$field_desc['value']))
-		$sql .= "(".$field_desc['value'].")";
+		if(preg_match("/^[^\s]/i",$field_desc['value']))
+		    if (! in_array($field_desc['type'],array('int','date','datetime')))
+		    {
+		        $sql.= "(".$field_desc['value'].")";
+		    }
 		if (preg_match("/^[^\s]/i",$field_desc['attribute']))
 		$sql .= " ".$field_desc['attribute'];
 		if (preg_match("/^[^\s]/i",$field_desc['null']))
@@ -1080,12 +1084,30 @@ class DoliDBPgsql extends DoliDB
 	{
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
 
-		// TODO May not work with pgsql. May need to run a second request. If it works, just remove the comment
-		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
+		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')
+		{
+        	// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
+        	if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text')
+        	{
+        		$sqlbis="UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+        		$this->query($sqlbis);
+        	}
+        	elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
+        	{
+        		$sqlbis="UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+        		$this->query($sqlbis);
+        	}
+		}
+
+		if ($field_desc['default'] != '')
+		{
+			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
+        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+		}
 
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))

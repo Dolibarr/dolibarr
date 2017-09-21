@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=登陆信息
 BoxLastRssInfos=RSS 信息
 BoxLastProducts=最近的 %s 个产品/服务
 BoxProductsAlertStock=产品库存预警
@@ -82,3 +83,4 @@ ForCustomersOrders=客户订单
 ForProposals=报价
 LastXMonthRolling=最后 %s 月波动
 ChooseBoxToAdd=点击下拉菜单选择相应视图并添加到你的看板
+BoxAdded=Widget was added in your dashboard

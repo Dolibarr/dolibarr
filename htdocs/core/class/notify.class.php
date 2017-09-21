@@ -147,7 +147,7 @@ class Notify
     		        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
     		        else $sql.= " AND a.code = '".$notifcode."'";			// New usage
     	        }
-    	        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+    	        $sql.= " AND s.entity IN (".getEntity('societe').")";
     	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
     
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
@@ -192,7 +192,7 @@ class Notify
     			    if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
     			    else $sql.= " AND a.code = '".$notifcode."'";			// New usage
     			}
-    			$sql.= " AND c.entity IN (".getEntity('user', 1).")";
+    			$sql.= " AND c.entity IN (".getEntity('user').")";
     			if ($userid > 0) $sql.= " AND c.rowid = ".$userid;
     			
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);

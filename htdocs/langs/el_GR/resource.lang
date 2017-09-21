@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Ο Πόρος διαγράφηκε με επιτυ�
 DictionaryResourceType=Το είδος των πόρων
 
 SelectResource=Επιλέξτε πόρο
+
+IdResource=Id resource
+AssetNumber=Σειριακός αριθμός
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Πόροι

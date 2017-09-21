@@ -34,7 +34,7 @@ $langs->load("companies");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -90,21 +90,25 @@ if ($id > 0 || ! empty($ref))
     $head = product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type==Product::TYPE_SERVICE?'service':'product');
-    
+
     dol_fiche_head($head, 'note', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
-    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+
+    $shownav = 1;
+    if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
     $cssclass='titlefield';
     //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
     //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
-    
+
     //print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
     dol_fiche_end();

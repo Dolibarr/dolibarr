@@ -89,12 +89,10 @@ if ($result)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
+	print_liste_field_titre("Line",$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
+	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+	print_liste_field_titre("Reason",$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
 	print "</tr>\n";
-
-	$var=True;
 
 	$total = 0;
 
@@ -102,7 +100,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		print "<tr ".$bc[$var]."><td>";
+		print '<tr class="oddeven"><td>';
 		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
@@ -112,7 +110,7 @@ if ($result)
 
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 		print "</tr>\n";
-		$var=!$var;
+
 		$i++;
 	}
 

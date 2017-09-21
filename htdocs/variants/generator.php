@@ -162,19 +162,19 @@ if (! empty($id) || ! empty($ref)) {
 
 	print_fiche_titre($langs->trans('ProductCombinationGenerator'));
 
-	$dictionnary_attr = array();
+	$dictionary_attr = array();
 
 	foreach ($prodattr->fetchAll() as $attr) {
-		$dictionnary_attr[$attr->id] = $attr;
+		$dictionary_attr[$attr->id] = $attr;
 		foreach ($prodattrval->fetchAllByProductAttribute($attr->id) as $attrval) {
-			$dictionnary_attr[$attr->id]->values[$attrval->id] = $attrval;
+			$dictionary_attr[$attr->id]->values[$attrval->id] = $attrval;
 		}
 	}
 	?>
 
 	<script>
 
-		dictionnary_attr = <?php echo json_encode($dictionnary_attr) ?>;
+		dictionary_attr = <?php echo json_encode($dictionary_attr) ?>;
 		weight_units = '<?php echo measuring_units_string($object->weight_units, 'weight') ?>';
 		attr_selected = {};
 		percentage_variation = jQuery('input#price_var_percent').prop('checked');
@@ -191,7 +191,7 @@ if (! empty($id) || ! empty($ref)) {
 
 			if (!attr_selected.hasOwnProperty(attr)) {
 
-				var label = dictionnary_attr[attr].label;
+				var label = dictionary_attr[attr].label;
 
 				var table = jQuery(document.createElement('table'))
 					.attr('id', 'combinations_'+attr)
@@ -239,7 +239,7 @@ if (! empty($id) || ! empty($ref)) {
 			}
 
 			html.append(
-				jQuery(document.createElement('td')).text(dictionnary_attr[attr].values[val].value),
+				jQuery(document.createElement('td')).text(dictionary_attr[attr].values[val].value),
 				jQuery(document.createElement('td')).css('text-align', 'center').append(
 					jQuery(document.createElement('input')).attr('type', 'text').css('width', '50px').attr('name', 'combinations[' + attr + '][' + val + '][price]').val(price),
 					percent_symbol_html
@@ -350,7 +350,7 @@ if (! empty($id) || ! empty($ref)) {
 		<div style="float:left; width: 20%">
 
 			<select id="features" multiple style="width: 100%; height: 300px; overflow: auto">
-				<?php foreach ($dictionnary_attr as $attr): ?>
+				<?php foreach ($dictionary_attr as $attr): ?>
 				<optgroup label="<?php echo $attr->label ?>">
 					<?php foreach ($attr->values as $attrval): ?>
 						<option value="<?php echo $attr->id.':'.$attrval->id ?>"<?php

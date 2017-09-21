@@ -327,8 +327,8 @@ if ($resql)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			
+			print '<tr class="oddeven">';
 
             $invoice=new Facture($db);
             $invoice->fetch($objp->facid);
@@ -372,7 +372,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+	
 
 	print "</table>\n";
 	print '</div>';

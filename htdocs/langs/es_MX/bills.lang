@@ -5,6 +5,7 @@ PaymentAmount=Importe de pago
 BillStatusPaid=Pagado
 BillStatusStarted=Iniciado
 BillShortStatusPaid=Pagado
+BillShortStatusConverted=Pagado
 BillShortStatusValidated=Validado
 BillShortStatusStarted=Iniciado
 BillShortStatusClosedUnpaid=Cerrada

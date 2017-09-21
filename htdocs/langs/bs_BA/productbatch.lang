@@ -2,8 +2,8 @@
 ManageLotSerial=Use lot/serial number
 ProductStatusOnBatch=Yes (lot/serial required)
 ProductStatusNotOnBatch=No (lot/serial not used)
-ProductStatusOnBatchShort=Yes
-ProductStatusNotOnBatchShort=No
+ProductStatusOnBatchShort=Da
+ProductStatusNotOnBatchShort=Ne
 Batch=Lot/Serial
 atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
 batch_number=Lot/Serial number

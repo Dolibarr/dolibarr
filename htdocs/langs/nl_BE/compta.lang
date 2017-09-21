@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
 RemainingAmountPayment=Resterend bedrag betaling:
-Accountparent=Hoofdrekening
-Accountsparent=Hoofdrekeningen
 LT1SummaryES=RE Balans
 SocialContribution=Sociale bijdrage/belasting
 SocialContributions=Sociale bijdragen/belastingen
@@ -33,7 +31,6 @@ RulesResultInOut=- Dit omvat alle betalingen van facturen, uitgaven, BTW en lone
 RulesCADue=- Dit omvat de verschuldigde afnemersfacturen, betaald of niet. <br>- Dit is gebaseerd op de validatiedata van deze facturen.<br>
 RulesCAIn=- Dit omvat alle effectieve betalingen van afnemersfacturen.<br>- Het is gebaseerd op de betaaldatum van deze facturen<br>
 VATReport=BTW rapport
-WarningDepositsNotIncluded=Deposito facturen worden niet opgenomen in deze versie met deze boekhoudmodule.
 CloneTax=Kopieer een sociale bijdrage/belasting
 ConfirmCloneTax=Bevestig kopie van betaling sociale bijdrage/belasting
 SimpleReport=Eenvoudig rapport

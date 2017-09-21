@@ -33,7 +33,7 @@ $var=true;
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-	$var=!$var;
+	
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
     <td><?php echo $langs->trans("Subscription"); ?></td>

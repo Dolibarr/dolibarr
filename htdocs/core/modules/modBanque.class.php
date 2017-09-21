@@ -162,7 +162,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."bank_url as bu ON (bu.fk_bank = b.rowid AND bu.type = 'company')";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON bu.url_id = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account';
-		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account',1).')';
+		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
 
 		$r++;
@@ -189,7 +189,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account AND bch.rowid = b.fk_bordereau and bch.fk_bank_account=ba.rowid';
 		$this->export_sql_end[$r] .=" AND b.fk_type = 'CHQ'";
 		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
-		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account',1).')';
+		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
 
 	}

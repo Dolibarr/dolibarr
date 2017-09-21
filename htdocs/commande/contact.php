@@ -107,13 +107,14 @@ else if ($action == 'deletecontact' && $user->rights->commande->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
+
 
 /*
  * View
@@ -141,16 +142,16 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id, $ref) > 0)
 	{
 	    $object->fetch_thirdparty();
-	    
+
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
 
-		
+
 		// Order card
-		
-		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-		
-		
+
+		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -190,7 +191,7 @@ if ($id > 0 || ! empty($ref))
 	            }
 	        }
 	    }
-		$morehtmlref.='</div>';		
+		$morehtmlref.='</div>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 

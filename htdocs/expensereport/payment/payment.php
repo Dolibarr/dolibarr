@@ -29,9 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 $langs->load("banks");
+$langs->load("trips");
 
-$chid=GETPOST("id");
-$action=GETPOST('action');
+$chid=GETPOST("id",'int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','aZ09');
 $amounts = array();
 $accountid=GETPOST('accountid','int');
 
@@ -59,7 +61,7 @@ if ($action == 'add_payment')
 	}
 
 	$expensereport = new ExpenseReport($db);
-	$expensereport->fetch($chid);
+	$expensereport->fetch($chid, $ref);
 
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
@@ -78,7 +80,7 @@ if ($action == 'add_payment')
         setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToDebit")), null, 'errors');
         $error++;
     }
-    
+
 	if (! $error)
 	{
 		$paymentid = 0;
@@ -160,7 +162,7 @@ if ($action == 'add_payment')
         }
 	}
 
-	$_GET["action"]='create';
+	$action='create';
 }
 
 
@@ -174,10 +176,10 @@ $form=new Form($db);
 
 
 // Form to create expense report payment
-if (GETPOST("action") == 'create')
+if ($action == 'create' || empty($action))
 {
 	$expensereport = new ExpenseReport($db);
-	$expensereport->fetch($chid);
+	$expensereport->fetch($chid, $ref);
 
 	$total = $expensereport->total_ttc;
 
@@ -188,21 +190,26 @@ if (GETPOST("action") == 'create')
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
-	
-    dol_fiche_head();
 
-	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
+    dol_fiche_head(null, '0', '', -1);
 
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ExpenseReport").'</td>';
+    $linkback = '';
+    // $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
 
-	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$chid.'">'.$expensereport->ref.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("Period").'</td><td colspan="2">'.get_date_range($expensereport->date_debut,$expensereport->date_fin,"",$langs,0).'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+    dol_banner_tab($expensereport, 'ref', $linkback, 1, 'ref', 'ref', '');
+
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
+
+    print '<table class="border centpercent">'."\n";
+
+	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut,$expensereport->date_fin,"",$langs,0).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
 	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
-    $sql.= ' AND e.entity IN ('.getEntity('expensereport', 1).')';
+    $sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -210,14 +217,18 @@ if (GETPOST("action") == 'create')
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
-	print '<tr class="liste_titre">';
-	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
-	print '</tr>';
+    print '</table>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
+    print '<br>';
+
+    print '<div class="underbanner clearboth"></div>';
+
+    print '<table class="border centpercent">'."\n";
+
+    print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
@@ -237,7 +248,7 @@ if (GETPOST("action") == 'create')
     	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
     	print '</td></tr>';
 	}
-	
+
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -250,6 +261,8 @@ if (GETPOST("action") == 'create')
 	print '</tr>';
 
 	print '</table>';
+
+	print '</div>';
 
     dol_fiche_end();
 
@@ -273,16 +286,11 @@ if (GETPOST("action") == 'create')
 	{
 		$objp = $expensereport;
 
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->total_ttc)."</td>";
-
 		print '<td align="right">'.price($sumpaid)."</td>";
-
 		print '<td align="right">'.price($objp->total_ttc - $sumpaid)."</td>";
-
 		print '<td align="center">';
 		if ($sumpaid < $objp->total_ttc)
 		{
@@ -296,6 +304,7 @@ if (GETPOST("action") == 'create')
 		print "</td>";
 
 		print "</tr>\n";
+
 		$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
 		$totalrecu+=$objp->am;
@@ -304,7 +313,7 @@ if (GETPOST("action") == 'create')
 	if ($i > 1)
 	{
 		// Print total
-		print "<tr ".$bc[!$var].">";
+		print '<tr class="oddeven">';
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";

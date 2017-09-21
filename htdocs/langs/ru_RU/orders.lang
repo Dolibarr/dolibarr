@@ -4,6 +4,7 @@ SuppliersOrdersArea=Раздел заказов поставщиков
 OrderCard=Карточка заказа
 OrderId=Идентификатор заказа
 Order=Заказ
+PdfOrderTitle=Заказ
 Orders=Заказы
 OrderLine=Линия заказа
 OrderDate=Дата заказа

@@ -40,6 +40,8 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
+$conf->global->MAIN_UMASK='0666';
+
 if (empty($conf->service->enabled))
 {
 	print "Error: Module service must be enabled.\n";
@@ -167,7 +169,9 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
                 'ref'=>'NewProductFromWS'.$datestring,
                 'label'=>'New Product From WS '.$datestring,
                 'type'=>1,
-                'description'=>'This is a new product created from WS PHPUnit test case'
+                'description'=>'This is a new product created from WS PHPUnit test case',
+                'barcode'=>'123456789012',
+                'barcode_type'=>2
             )
         );
         print __METHOD__." call method ".$WS_METHOD."\n";

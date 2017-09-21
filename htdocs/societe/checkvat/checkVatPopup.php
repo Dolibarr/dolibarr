@@ -34,8 +34,12 @@ $WS_DOL_URL_WSDL='http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
 $WS_METHOD ='checkVat';
 
 
-top_htmlhead("", $langs->trans("VATIntraCheckableOnEUSite"));
-print '<body style="margin: 10px">';
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
+
 print '<div>';
 print '<div>';
 

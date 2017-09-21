@@ -11,6 +11,7 @@ YourEMail=E-post for betalingsbekreftelsen
 Creditor=Kreditor
 PaymentCode=Betalingskode
 PayBoxDoPayment=Gå til betaling
+ToPay=Utfør betaling
 YouWillBeRedirectedOnPayBox=Du vil bli omdirigert til den sikrede Paybox siden for innlegging av kredittkortinformasjon
 Continue=Neste
 ToOfferALinkForOnlinePayment=URL for %s betaling

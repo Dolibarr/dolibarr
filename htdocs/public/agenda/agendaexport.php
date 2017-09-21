@@ -65,19 +65,18 @@ if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_A
 // Define format, type and filter
 $format='ical';
 $type='event';
-if (! empty($_GET["format"])) $format=$_GET["format"];
-if (! empty($_GET["type"]))   $type=$_GET["type"];
+if (GETPOST("format",'alpha')) $format=GETPOST("format",'apha');
+if (GETPOST("type",'apha'))   $type=GETPOST("type",'alpha');
 
 $filters=array();
-if (! empty($_GET["year"])) 	     $filters['year']=$_GET["year"];
-if (! empty($_GET["id"]))           $filters['id']=$_GET["id"];
-if (! empty($_GET["idfrom"]))       $filters['idfrom']=$_GET["idfrom"];
-if (! empty($_GET["idto"]))         $filters['idto']=$_GET["idto"];
-if (! empty($_GET["project"]))      $filters['project']=$_GET["project"];
-if (! empty($_GET["login"]))        $filters['login']=$_GET["login"];
-if (! empty($_GET["logina"]))       $filters['logina']=$_GET["logina"];
-if (! empty($_GET["logint"]))       $filters['logint']=$_GET["logint"];
-if (GETPOST("notolderthan")) $filters['notolderthan']=GETPOST("notolderthan","int");
+if (GETPOST("year",'int')) 	        $filters['year']=GETPOST("year",'int');
+if (GETPOST("id",'int'))            $filters['id']=GETPOST("id",'int');
+if (GETPOST("idfrom",'int'))        $filters['idfrom']=GETPOST("idfrom",'int');
+if (GETPOST("idto",'int'))          $filters['idto']=GETPOST("idto",'int');
+if (GETPOST("project",'apha'))      $filters['project']=GETPOST("project",'apha');
+if (GETPOST("logina",'apha'))       $filters['logina']=GETPOST("logina",'apha');
+if (GETPOST("logint",'apha'))       $filters['logint']=GETPOST("logint",'apha');
+if (GETPOST("notolderthan",'int'))  $filters['notolderthan']=GETPOST("notolderthan","int");
 else $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
@@ -115,7 +114,6 @@ foreach ($filters as $key => $value)
     if ($key == 'idfrom')          $filename.='-idfrom'.$value;
     if ($key == 'idto')            $filename.='-idto'.$value;
     if ($key == 'project')         $filename.='-project'.$value;
-    if ($key == 'login')	       $filename.='-login'.$value;
 	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
 	if ($key == 'logint')	       $filename.='-logint'.$value;	// Assigned to
 }

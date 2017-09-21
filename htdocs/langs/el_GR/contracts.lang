@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Αυτή η λίστα περιέχει μόνο �
 StandardContractsTemplate=Οι πρότυπες συμβάσεις
 ContactNameAndSignature=Για %s, το όνομα και η υπογραφή:
 OnlyLinesWithTypeServiceAreUsed=Μόνο εγγραφές τύπου "Υπηρεσία" θα αντιγραφούν.
+CloneContract=Clone contract
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

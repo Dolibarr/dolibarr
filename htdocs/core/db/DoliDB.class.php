@@ -220,9 +220,9 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string	$sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
+	 * @param	string	        $sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
 	 * @param	'ASC'|'DESC'	$sortorder  Sort order
-	 * @return	string      		String to provide syntax of a sort sql string
+	 * @return	string      		        String to provide syntax of a sort sql string
 	 */
 	function order($sortfield=null,$sortorder=null)
 	{
@@ -230,18 +230,25 @@ abstract class DoliDB implements Database
 		{
 			$return='';
 			$fields=explode(',',$sortfield);
+			$orders=explode(',',$sortorder);
+			$i=0;
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';
-				else $return.=',';
+				else $return.=', ';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+				
+				$tmpsortorder = trim($orders[$i]);
+				
 				// Only ASC and DESC values are valid SQL
-				if (strtoupper($sortorder) === 'ASC') {
+				if (strtoupper($tmpsortorder) === 'ASC') {
 					$return .= ' ASC';
-				} elseif (strtoupper($sortorder) === 'DESC') {
+				} elseif (strtoupper($tmpsortorder) === 'DESC') {
 					$return .= ' DESC';
 				}
+				
+				$i++;
 			}
 			return $return;
 		}

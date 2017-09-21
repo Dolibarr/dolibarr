@@ -65,7 +65,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		    $sql.= " WHERE s.email <> ''";
-		    $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		    $sql.= " AND s.entity IN (".getEntity('societe').")";
 		    $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		}
 		else
@@ -73,7 +73,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
 		    $sql.= " WHERE s.email <> ''";
-		    $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		    $sql.= " AND s.entity IN (".getEntity('societe').")";
 		    $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
@@ -82,7 +82,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
 		    $sql.= " WHERE s.email <> ''";
-		    $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		    $sql.= " AND s.entity IN (".getEntity('societe').")";
 		    $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
@@ -167,7 +167,7 @@ class mailing_thirdparties extends MailingTargets
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe').")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients

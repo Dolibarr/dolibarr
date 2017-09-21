@@ -56,7 +56,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 
 
 /*
- * View 
+ * View
  */
 
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
@@ -79,13 +79,13 @@ if ($id > 0 || ! empty($ref))
 			$cssclass='titlefield';
 			//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
 			//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
-				
-			
+
+
 			// Proposal card
-			
-			$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-			
-			
+
+			$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 			$morehtmlref='<div class="refidno">';
 			// Ref customer
 			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -126,17 +126,17 @@ if ($id > 0 || ! empty($ref))
 			    }
 			}
 			$morehtmlref.='</div>';
-			
+
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
-			
+
 			$cssclass="titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 			print '</div>';
-			
+
 			dol_fiche_end();
 		}
 	}

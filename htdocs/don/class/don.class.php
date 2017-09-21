@@ -464,11 +464,11 @@ class Don extends CommonObject
         $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
         $sql .= ",date_valid=".($this->date_valid?"'".$this->db->idate($this->date)."'":"null");
-        $sql .= ",email='".$this->email."'";
-        $sql .= ",phone='".$this->phone."'";
-        $sql .= ",phone_mobile='".$this->phone_mobile."'";
+        $sql .= ",email='".$this->db->escape($this->email)."'";
+        $sql .= ",phone='".$this->db->escape($this->phone)."'";
+        $sql .= ",phone_mobile='".$this->db->escape($this->phone_mobile)."'";
         $sql .= ",fk_statut=".$this->statut;
-        $sql .= " WHERE rowid = '".$this->id."'";
+        $sql .= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::Update", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -818,7 +818,7 @@ class Don extends CommonObject
         $sql = "SELECT count(d.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " WHERE d.fk_statut > 0";
-        $sql.= " AND d.entity IN (".getEntity('don', 1).")";
+        $sql.= " AND d.entity IN (".getEntity('don').")";
 
         $resql=$this->db->query($sql);
         if ($resql)

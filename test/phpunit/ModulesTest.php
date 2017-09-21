@@ -143,6 +143,11 @@ class ModulesTest extends PHPUnit_Framework_TestCase
             $result=$mod->init();
         	$this->assertLessThan($result, 0, $modlabel);
         	print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
+        	
+        	if (in_array($modlabel, array('Ldap', 'MailmanSpip')))
+        	{
+        	    $result=$mod->remove();
+        	}
 		}
 
         return 0;

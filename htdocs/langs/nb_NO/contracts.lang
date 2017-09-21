@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Denne listen inneholder kun tjenester av kontrakte
 StandardContractsTemplate=Standard kontraktskjema
 ContactNameAndSignature=For %s, navn og signatur:
 OnlyLinesWithTypeServiceAreUsed=Kun linjer med type "Service" vi bli klonet.
+CloneContract=Klon kontrakt
+ConfirmCloneContract=Er du sikker på at du vil klone kontrakten <b>%s</b>?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten

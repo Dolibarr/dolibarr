@@ -143,10 +143,10 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 4096);
+            $buf = fgets($fp, 32768);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
-            if (preg_match('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i',$buf,$reg))
+            if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
             {
             	$qualified=1;
 
@@ -159,28 +159,41 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             	// restrict on version
             	if ($qualified)
             	{
-
-	                $versionrequest=explode('.',$reg[2]);
-	                //print var_dump($versionrequest);
-	                //print var_dump($versionarray);
-	                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
-	                {
-	                	$qualified=0;
-	                }
+            		if (! empty($reg[2]))
+            		{
+            			if (is_numeric($reg[2]))	// This is a version
+            			{
+			                $versionrequest=explode('.',$reg[2]);
+			                //print var_dump($versionrequest);
+			                //print var_dump($versionarray);
+			                if (! count($versionrequest) || ! count($versionarray) || versioncompare($versionrequest,$versionarray) > 0)
+			                {
+			                	$qualified=0;
+			                }
+            			}
+            			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+            			{
+            				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+            				//var_dump($reg[2]);
+            				//var_dump($dbcollation);
+            				if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified=0;
+            				//var_dump($qualified);
+            			}
+            		}
             	}
 
                 if ($qualified)
                 {
                     // Version qualified, delete SQL comments
-                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL|)([0-9\.]+)/i','',$buf);
+                    $buf=preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i','',$buf);
                     //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
                 }
             }
 
             // Add line buf to buffer if not a comment
-            if (! preg_match('/^--/',$buf))
+            if (! preg_match('/^\s*--/',$buf))
             {
-                $buf=preg_replace('/--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
+                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
@@ -523,6 +536,43 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 
+
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function modules_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=common";
+	$head[$h][1] = $langs->trans("AvailableModules");
+	$head[$h][2] = 'common';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
+	$head[$h][1] = $langs->trans("ModulesMarketPlaces");
+	$head[$h][2] = 'marketplace';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+	$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
+	$head[$h][2] = 'deploy';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=develop";
+	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
+	$head[$h][2] = 'develop';
+	$h++;
+
+	return $head;
+}
+
+
 /**
  * Prepare array with list of tabs
  *
@@ -545,9 +595,16 @@ function security_prepare_head()
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
-    $head[$h][1] = $langs->trans("Files");
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Upload").')';
     $head[$h][2] = 'file';
     $h++;
+
+    /*
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file_download.php";
+    $head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Download").')';
+    $head[$h][2] = 'filedownload';
+    $h++;
+	*/
 
     $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
     $head[$h][1] = $langs->trans("ExternalAccess");
@@ -609,9 +666,24 @@ function defaultvalues_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=overwrite";
-    $head[$h][1] = $langs->trans("DefaultValuesOverwriteKey");
-    $head[$h][2] = 'overwrite';
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=createform";
+    $head[$h][1] = $langs->trans("DefaultCreateForm");
+    $head[$h][2] = 'createform';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=filters";
+    $head[$h][1] = $langs->trans("DefaultSearchFilters");
+    $head[$h][2] = 'filters';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=sortorder";
+    $head[$h][1] = $langs->trans("DefaultSortOrder");
+    $head[$h][2] = 'sortorder';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
+    $head[$h][1] = $langs->trans("DefaultFocus");
+    $head[$h][2] = 'focus';
     $h++;
 
     /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
@@ -741,7 +813,7 @@ function purgeSessions($mysessionid)
  */
 function activateModule($value,$withdeps=1)
 {
-    global $db, $modules, $langs, $conf;
+    global $db, $modules, $langs, $conf, $mysoc;
 
 	// Check parameters
 	if (empty($value)) {
@@ -797,8 +869,8 @@ function activateModule($value,$withdeps=1)
         return $ret;
     }
 
-    $result=$objMod->init();
-    if ($result <= 0) 
+    $result=$objMod->init();    // Enable module
+    if ($result <= 0)
     {
         $ret['errors'][]=$objMod->error;
     }
@@ -810,7 +882,7 @@ function activateModule($value,$withdeps=1)
             {
                 // Activation of modules this module depends on
                 // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
-                foreach ($objMod->depend as $key => $modulestring)
+                foreach ($objMod->depends as $key => $modulestring)
                 {
                     if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
                     {
@@ -833,19 +905,19 @@ function activateModule($value,$withdeps=1)
     						break;
                 		}
                 	}
-    				
+
     				if ($activate)
     				{
     				    $ret['nbmodules']+=$resarray['nbmodules'];
     				    $ret['nbperms']+=$resarray['nbperms'];
     				}
-    				else 
+    				else
     				{
     				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
             }
-    
+
             if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
             {
                 // Desactivation des modules qui entrent en conflit
@@ -864,12 +936,12 @@ function activateModule($value,$withdeps=1)
         }
     }
 
-    if (! count($ret['errors'])) 
+    if (! count($ret['errors']))
     {
         $ret['nbmodules']++;
         $ret['nbperms']+=count($objMod->rights);
     }
-    
+
     return $ret;
 }
 
@@ -916,7 +988,8 @@ function unActivateModule($value, $requiredby=1)
     {
         //print $dir.$modFile;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
-        $genericMod = new DolibarrModules($db);
+        include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+    	$genericMod = new DolibarrModules($db);
         $genericMod->name=preg_replace('/^mod/i','',$modName);
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
@@ -1165,9 +1238,10 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
+ *  @param  string  $helptext       Help
  *	@return	void
  */
-function form_constantes($tableau,$strictw3c=0)
+function form_constantes($tableau, $strictw3c=0, $helptext='')
 {
     global $db,$bc,$langs,$conf,$_Avery_Labels;
 
@@ -1177,8 +1251,11 @@ function form_constantes($tableau,$strictw3c=0)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Description").'</td>';
-    print '<td>'.$langs->trans("Value").'*</td>';
+    print '<td class="titlefield">'.$langs->trans("Description").'</td>';
+    print '<td>';
+    $text = $langs->trans("Value");
+    print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
+    print '</td>';
     if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
     $var=true;
@@ -1202,7 +1279,7 @@ function form_constantes($tableau,$strictw3c=0)
         if ($result)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
-            $var=!$var;
+
 
             // For avoid warning in strict mode
             if (empty($obj)) {
@@ -1211,7 +1288,7 @@ function form_constantes($tableau,$strictw3c=0)
 
             if (empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
 
             // Show constant
             print '<td>';
@@ -1341,7 +1418,7 @@ function showModulesExludedForExternal($modules)
 			//if (empty($conf->global->$moduleconst)) continue;
 			if (! in_array($modulename,$listofmodules)) continue;
 			//var_dump($modulename.'eee'.$langs->trans('Module'.$module->numero.'Name'));
-				
+
 			if ($i > 0) $text.=', ';
 			else $text.=' ';
 			$i++;
@@ -1372,7 +1449,7 @@ function addDocumentModel($name, $type, $label='', $description='')
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
     $sql.= ")";
-	
+
     dol_syslog("admin.lib::addDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)

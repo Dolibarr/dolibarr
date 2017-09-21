@@ -45,6 +45,7 @@ InvoiceHasAvoir=Was source of one or several credit notes
 CardBill=Invoice card
 PredefinedInvoices=Predefined Invoices
 Invoice=Invoice
+PdfInvoiceTitle=Invoice
 Invoices=Invoices
 InvoiceLine=Invoice line
 InvoiceCustomer=Customer invoice

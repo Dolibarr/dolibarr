@@ -43,12 +43,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 $includecustom=0;
 $includeconstants=array();
 
-if (empty($argv[1])) 
+if (empty($argv[1]))
 {
     print "Usage:   ".$script_file." release=x.y.z[-...] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
     print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
+parse_str($argv[1]);
+
 $i=0;
 while ($i < $argc)
 {
@@ -56,7 +58,7 @@ while ($i < $argc)
     if (preg_match('/includeconstant=/',$argv[$i]))
     {
         $tmp=explode(':', $includeconstant, 3);
-        if (count($tmp) != 3) 
+        if (count($tmp) != 3)
         {
             print "Error: Bad parameter includeconstant ".$includeconstant."\n";
             exit -1;
@@ -85,9 +87,9 @@ else
     }
 }
 
-print "Release          : ".$release."\n";
-print "Include custom   : ".$includecustom."\n";
-print "Include constants: ";
+print "Release                        : ".$release."\n";
+print "Include custom in signature    : ".$includecustom."\n";
+print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp)
 {
     foreach($tmp as $constname => $constvalue)
@@ -98,9 +100,9 @@ foreach ($includeconstants as $countrycode => $tmp)
 print "\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
-$outputdir=dirname(__FILE__).'/../htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist-'.$release.'.xml'."\n";
-dol_delete_file($outputdir.'/filelist-'.$release.'.xml',0,1,1);
+$outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
+print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
+dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
 
 $checksumconcat=array();
 
