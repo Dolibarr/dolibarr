@@ -5244,8 +5244,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
     		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_REF__';
 
-	    	$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = 'Date for next expired service';
-    		$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = 'Date and hour for next expired service';
+			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
+			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
+    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
+    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 
     		$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
     		$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -5285,8 +5287,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		    	}
 	    	}
 
-    		$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = 'TODO';
-	    	$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = 'TODO';
+    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'TODO';
+	    	$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'TODO';
+	    	$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'TODO';
+	    	$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'TODO';
 
 	    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
     	}

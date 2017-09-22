@@ -125,17 +125,30 @@ $formmail=new FormMail($db);
 if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
     $tmp=FormMail::getAvailableSubstitKey('formemail');
-    $tmp['__(AnyTranslationKey)__']='__(AnyTranslationKey)__';
-    $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
-    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
+    $tmp['__(AnyTranslationKey)__']='Translation';
+    $helpsubstit = $langs->trans("AvailableVariables").':<br>';
+    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
+    foreach($tmp as $key => $val)
+    {
+    	$helpsubstit.=$key.' -> '.$val.'<br>';
+    	$helpsubstitforlines.=$key.' -> '.$val.'<br>';
+    }
 }
 else
 {
     $tmp=FormMail::getAvailableSubstitKey('formemailwithlines');
-    $tmp['__(AnyTranslationKey)__']='__(AnyTranslationKey)__';
-    $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
+    $tmp['__(AnyTranslationKey)__']='Translation';
+    $helpsubstit = $langs->trans("AvailableVariables").':<br>';
+    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
+    foreach($tmp as $key => $val)
+    {
+    	$helpsubstit.=$key.' -> '.$val.'<br>';
+    }
     $tmp=FormMail::getAvailableSubstitKey('formemailforlines');
-    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
+    foreach($tmp as $key => $val)
+    {
+    	$helpsubstitforlines.=$key.' -> '.$val.'<br>';
+    }
 }
 
 
