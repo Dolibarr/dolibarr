@@ -1414,7 +1414,7 @@ class CommandeFournisseur extends CommonOrder
                             if ($remise_percent == 0 && $prod->remise_percent !=0)
                             	$remise_percent =$prod->remise_percent;
 
-				
+
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -2678,14 +2678,14 @@ class CommandeFournisseur extends CommonOrder
                 if ($db->num_rows($query))
                 {
                     $obj = $db->fetch_object($query);
-    
+
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
                     {
                         $string = $obj->label != '-' ? $obj->label : '';
                     }
                     return $string;
-                }    
+                }
             }
             else dol_print_error($db);
         }
