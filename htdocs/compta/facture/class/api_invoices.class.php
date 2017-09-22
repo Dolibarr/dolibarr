@@ -306,15 +306,15 @@ class Invoices extends DolibarrApi
       return $result;
     }
     
-        /**
+    /**
      * Add a line to given invoice
      *
-     * @param int   $id             Id of invoice to update
-     * @param array $request_data   Orderline data
+     * @param int   $id             Id of invoice
+     * @param array $request_data   Invoiceline data
      *
      * @url     POST {id}/lines
      *
-     * @return string
+     * @return int
      */
     function postLine($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->facture->creer) {
