@@ -66,3 +66,6 @@ NoTrigger=No trigger
 NoWidget=No widget
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is field is visible in list (-1 means not shown by default but can be added into list to be viewed)
+MenusDefDesc=Define here the menus provided by your module (once defined, they are visible into the menu editor %s)
+PermissionsDefDesc=Define here the new permissions provided by your module (once defined, they are visible into the default permissions setup %s)
+ListOfPermissionsDefined=List of defined permissions

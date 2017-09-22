@@ -273,9 +273,21 @@ if ($action == 'create')
     	print '<tr id="field_'.$key.'"><td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull'] > 0) print ' fieldrequired';
-    	print '"';
+		if ($val['type'] == 'text') print ' tdtop';
+		print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '<td>';
+    	if ($val['type'] == 'text')
+    	{
+    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+    		print GETPOST($key,'none');
+    		print '</textarea>';
+    	}
+    	else
+    	{
+    		print '<input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    	}
+    	print '</td>';
     	print '</tr>';
 	}
 	print '</table>'."\n";
@@ -292,7 +304,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("MyModule"));
+	print load_fiche_titre($langs->trans("MyObject"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -308,9 +320,21 @@ if (($id || $ref) && $action == 'edit')
     	print '<tr><td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull'] > 0) print ' fieldrequired';
+		if ($val['type'] == 'text') print ' tdtop';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '<td>';
+	    if ($val['type'] == 'text')
+    	{
+    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+    		print GETPOST($key,'none');
+    		print '</textarea>';
+    	}
+    	else
+    	{
+    		print '<input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    	}
+    	print '</td>';
     	print '</tr>';
 	}
 	print '</table>';
@@ -323,6 +347,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</form>';
 }
+
 
 
 

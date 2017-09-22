@@ -682,16 +682,26 @@ if ($action == 'savefile' && empty($cancel))
         // Save old version
         if (dol_is_file($pathoffile))
         {
-            dol_move($pathoffile, $pathoffilebackup, 0, 1, 0, 0);
+            dol_copy($pathoffile, $pathoffilebackup, 0, 1);
         }
 
-        $content = GETPOST('editfilecontent');
+        $content = GETPOST('editfilecontent','none');
 
         // Save file on disk
-        file_put_contents($pathoffile, $content);
-        @chmod($pathoffile, octdec($newmask));
+        if ($content)
+        {
+        	dol_delete_file($pathoffile);
+	        file_put_contents($pathoffile, $content);
+	        @chmod($pathoffile, octdec($newmask));
 
-        setEventMessages($langs->trans("FileSaved"), null);
+	        setEventMessages($langs->trans("FileSaved"), null);
+        }
+        else
+        {
+			setEventMessages($langs->trans("ContentCantBeEmpty"), null, 'errors');
+        	//$action='editfile';
+        	$error++;
+        }
     }
 }
 
@@ -1141,9 +1151,12 @@ elseif (! empty($module))
             }
         	else
         	{
-        		$fullpathoffile=dol_buildpath($file, 0);	// Description - level 2
+        		$fullpathoffile=dol_buildpath($file, 0, 1);	// Description - level 2
 
-        	    $content = file_get_contents($fullpathoffile);
+        		if ($fullpathoffile)
+        		{
+	        	    $content = file_get_contents($fullpathoffile);
+        		}
 
         	    // New module
         	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1161,7 +1174,7 @@ elseif (! empty($module))
         	    dol_fiche_end();
 
         	    print '<center>';
-        	    print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        	    print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
         	    print ' &nbsp; ';
         	    print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
         	    print '</center>';
@@ -1213,7 +1226,7 @@ elseif (! empty($module))
                 print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
-                print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
                 print ' &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
                 print '</center>';
@@ -1258,7 +1271,7 @@ elseif (! empty($module))
         		print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'text'));
         		print '<br>';
         		print '<center>';
-        		print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        		print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
         		print ' &nbsp; ';
         		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
         		print '</center>';
@@ -1380,19 +1393,30 @@ elseif (! empty($module))
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' &nbsp; <a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.$pathtophpunit.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
+
+                        print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.$pathtosql.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DropTableIfEmpty").'</a>';
+                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.$pathtosqlextra.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.$pathtosqlkey.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+                        print '<br>';
+
+                        print '<br>';
                         print '</div>';
+
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
@@ -1587,7 +1611,7 @@ elseif (! empty($module))
                     print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                     print '<br>';
                     print '<center>';
-                    print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                    print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
                     print ' &nbsp; ';
                     print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
                     print '</center>';
@@ -1601,14 +1625,251 @@ elseif (! empty($module))
 
         if ($tab == 'menus')
         {
-    		print $langs->trans("FeatureNotYetAvailable");
+            $pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
 
+        	//$menus = $moduleobj->;
+
+        	if ($action != 'editfile' || empty($file))
+        	{
+        		print $langs->trans("MenusDefDesc", '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Menus').'</a>').'<br>';
+        		print '<br>';
+
+        		print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+        		print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+        		print '<br>';
+
+        		print '<br>';
+        		//print load_fiche_titre($langs->trans("MenusList"), '', '');
+
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="addproperty">';
+        		print '<input type="hidden" name="tab" value="objects">';
+        		print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+        		print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+        		/*
+        		print '<div class="div-table-responsive">';
+        		print '<table class="noborder">';
+
+        		print '<tr class="liste_titre">';
+        		print_liste_field_titre("Menu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print "</tr>\n";
+
+        		if (count($menus))
+        		{
+	        		foreach ($cronjobs as $cron)
+	        		{
+	        			print '<tr class="oddeven">';
+
+	        			print '<td>';
+	        			print $cron['label'];
+	        			print '</td>';
+
+	        			print '<td>';
+	        			if ($cron['jobtype']=='method')
+	        			{
+	        				$text=$langs->trans("CronClass");
+	        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
+	        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
+	        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
+	        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
+	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+	        			}
+	        			elseif ($cron['jobtype']=='command')
+	        			{
+	        				$text=$langs->trans('CronCommand');
+	        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+	        			}
+	        			print $form->textwithpicto($text, $texttoshow, 1);
+	        			print '</td>';
+
+	        			print '<td>';
+	        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+	        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+	        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+	        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+	        			print '</td>';
+
+	        			print '<td>';
+	        			print $cron['status'];
+	        			print '</td>';
+
+	        			print '<td>';
+	        			if (!empty($cron['comment'])) {print $cron['comment'];}
+	        			print '</td>';
+
+	        			print '</tr>';
+	        		}
+        		}
+        		else
+        		{
+        			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+        		}
+
+        		print '</table>';
+        		print '</div>';
+
+        		print '</form>';
+        		*/
+        	}
+        	else
+        	{
+        		$fullpathoffile=dol_buildpath($file, 0);
+
+        		$content = file_get_contents($fullpathoffile);
+
+        		// New module
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="savefile">';
+        		print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+        		print '<input type="hidden" name="tab" value="'.$tab.'">';
+        		print '<input type="hidden" name="module" value="'.$module.'">';
+
+        		$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+        		print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
+        		print '<br>';
+        		print '<center>';
+        		print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        		print ' &nbsp; ';
+        		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+        		print '</center>';
+
+        		print '</form>';
+        	}
         }
 
         if ($tab == 'permissions')
         {
-    		print $langs->trans("FeatureNotYetAvailable");
+            $pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
 
+        	//$perms = $moduleobj->;
+
+        	if ($action != 'editfile' || empty($file))
+        	{
+        		print $langs->trans("PermissionsDefDesc", '<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultPermissions').'</a>').'<br>';
+        		print '<br>';
+
+        		print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+        		print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+        		print '<br>';
+
+        		print '<br>';
+        		print load_fiche_titre($langs->trans("ListOfPermissionsDefined"), '', '');
+
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="addproperty">';
+        		print '<input type="hidden" name="tab" value="objects">';
+        		print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+        		print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+				print 'TODO...';
+				/*
+        		print '<div class="div-table-responsive">';
+        		print '<table class="noborder">';
+
+        		print '<tr class="liste_titre">';
+        		print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+        		print "</tr>\n";
+
+        		if (count($cronjobs))
+        		{
+	        		foreach ($cronjobs as $cron)
+	        		{
+	        			print '<tr class="oddeven">';
+
+	        			print '<td>';
+	        			print $cron['label'];
+	        			print '</td>';
+
+	        			print '<td>';
+	        			if ($cron['jobtype']=='method')
+	        			{
+	        				$text=$langs->trans("CronClass");
+	        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
+	        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
+	        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
+	        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
+	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+	        			}
+	        			elseif ($cron['jobtype']=='command')
+	        			{
+	        				$text=$langs->trans('CronCommand');
+	        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+	        			}
+	        			print $form->textwithpicto($text, $texttoshow, 1);
+	        			print '</td>';
+
+	        			print '<td>';
+	        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+	        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+	        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+	        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+	        			print '</td>';
+
+	        			print '<td>';
+	        			print $cron['status'];
+	        			print '</td>';
+
+	        			print '<td>';
+	        			if (!empty($cron['comment'])) {print $cron['comment'];}
+	        			print '</td>';
+
+	        			print '</tr>';
+	        		}
+        		}
+        		else
+        		{
+        			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+        		}
+
+        		print '</table>';
+        		print '</div>';
+
+        		print '</form>';
+        		*/
+        	}
+        	else
+        	{
+        		$fullpathoffile=dol_buildpath($file, 0);
+
+        		$content = file_get_contents($fullpathoffile);
+
+        		// New module
+        		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="savefile">';
+        		print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+        		print '<input type="hidden" name="tab" value="'.$tab.'">';
+        		print '<input type="hidden" name="module" value="'.$module.'">';
+
+        		$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+        		print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
+        		print '<br>';
+        		print '<center>';
+        		print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        		print ' &nbsp; ';
+        		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+        		print '</center>';
+
+        		print '</form>';
+        	}
         }
 
         if ($tab == 'hooks')
@@ -1638,7 +1899,7 @@ elseif (! empty($module))
                 print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
-                print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
                 print ' &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
                 print '</center>';
@@ -1690,7 +1951,7 @@ elseif (! empty($module))
                 print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
-                print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
                 print ' &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
                 print '</center>';
@@ -1741,7 +2002,7 @@ elseif (! empty($module))
                 print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
                 print '<br>';
                 print '<center>';
-                print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+                print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
                 print ' &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
                 print '</center>';
@@ -1842,6 +2103,8 @@ elseif (! empty($module))
 
         		print '</table>';
         		print '</div>';
+
+        		print '</form>';
         	}
         	else
         	{
@@ -1861,7 +2124,7 @@ elseif (! empty($module))
         		print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format','aZ09')?GETPOST('format','aZ09'):'html'));
         		print '<br>';
         		print '<center>';
-        		print '<input type="submit" class="button" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+        		print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
         		print ' &nbsp; ';
         		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
         		print '</center>';

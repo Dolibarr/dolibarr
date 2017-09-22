@@ -599,11 +599,12 @@ function dol_include_once($relpath, $classname='')
 /**
  *	Return path of url or filesystem. Return alternate root if exists.
  *
- * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
- *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
- *  @return string				Full filesystem path (if mode=0), Full url path (if mode=1)
+ * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
+ *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
+ *  @param	int		$returnemptyifnotfound		If file was not found, do not return default path but an empty string
+ *  @return string								Full filesystem path (if mode=0), Full url path (if mode=1)
  */
-function dol_buildpath($path, $type=0)
+function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 {
 	global $conf;
 
@@ -611,15 +612,19 @@ function dol_buildpath($path, $type=0)
 
 	if (empty($type))	// For a filesystem path
 	{
-		$res = DOL_DOCUMENT_ROOT.'/'.$path;	// Standard value
+		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
 			if ($key == 'main') continue;
 			if (file_exists($dirroot.'/'.$path))
 			{
 				$res=$dirroot.'/'.$path;
-				break;
+				return $res;
 			}
+		}
+		if ($returnemptyifnotfound)										// Not found, we return empty string
+		{
+			return '';
 		}
 	}
 	else				// For an url path
