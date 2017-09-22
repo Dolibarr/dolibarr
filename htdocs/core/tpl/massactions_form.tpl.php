@@ -117,21 +117,22 @@ $formmail->withcancel = 1;
 $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 $substitutionarray['__EMAIL__'] = $sendto;
 $substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
-$substitutionarray['__PERSONALIZED__'] = '';
+$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 $substitutionarray['__CONTACTCIVNAME__'] = '';
 // Add specific substitution for contracts
 if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
 {
-	$datenextexpiration = '';
-	foreach ($object->lines as $line)
+	$dateplannedstart='';
+	$datenextexpiration='';
+	foreach($object->lines as $line)
 	{
-		if ($line->statut != 4)
-			continue;
-		if ($line->date_fin_prevue > $datenextexpiration)
-			$datenextexpiration = $line->date_fin_prevue;
+		if ($line->date_ouverture_prevue > $dateplannedstart) $dateplannedstart = $line->date_ouverture_prevue;
+		if ($line->statut == 4 && $line->date_fin_prevue && (! $datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) $datenextexpiration = $line->date_fin_prevue;
 	}
-	$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
-	$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+	$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
+	$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
+	$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+	$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
 }
 
 $parameters = array(
