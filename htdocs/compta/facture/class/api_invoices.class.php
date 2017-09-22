@@ -305,6 +305,75 @@ class Invoices extends DolibarrApi
       }
       return $result;
     }
+    
+        /**
+     * Add a line to given invoice
+     *
+     * @param int   $id             Id of invoice to update
+     * @param array $request_data   Orderline data
+     *
+     * @url     POST {id}/lines
+     *
+     * @return string
+     */
+    function postLine($id, $request_data = NULL) {
+      if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                        throw new RestException(401);
+                  }
+
+      $result = $this->invoice->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Invoice not found');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                          throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      
+      $request_data = (object) $request_data;  
+            
+      // Reset fk_parent_line for no child products and special product
+      if (($request_data->product_type != 9 && empty($request_data->fk_parent_line)) || $request_data->product_type == 9) {
+              $request_data->fk_parent_line = 0;
+      }  
+        
+      $updateRes = $this->invoice->addline(
+                              $request_data->desc,
+                              $request_data->subprice,
+                              $request_data->qty,
+                              $request_data->tva_tx,
+                              $request_data->localtax1_tx,
+                              $request_data->localtax2_tx,
+                              $request_data->fk_product,
+                              $request_data->remise_percent,
+                              $request_data->date_start,
+                              $request_data->date_end,
+                              $request_data->fk_code_ventilation,
+                              $request_data->info_bits,
+                              $request_data->fk_remise_except,
+                              'HT',
+                              0,
+                              $request_data->product_type,
+                              $request_data->rang,
+                              $request_data->special_code,
+                              'facture',
+                              $id,
+                              $request_data->fk_parent_line,
+                              $request_data->fk_fournprice,
+                              $request_data->pa_ht,
+                              $request_data->label,
+                              $request_data->array_options,
+                              $request_data->situation_percent,
+                              $request_data->fk_prev_id,
+                              $request_data->fk_unit
+      );
+
+      if ($updateRes > 0) {
+        return $this->get($id)->line->rowid;
+
+      }
+      throw new RestException(400, 'Unable to insert the new line. Check your inputs.');
+    }
 
     /**
      * Validate an order
