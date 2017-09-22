@@ -64,3 +64,5 @@ IsAMeasure=Is a measure
 DirScanned=Directory scanned
 NoTrigger=No trigger
 NoWidget=No widget
+EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
+VisibleDesc=Is field is visible in list (-1 means not shown by default but can be added into list to be viewed)

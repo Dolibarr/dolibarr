@@ -46,10 +46,20 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     // Check parameters
     if (count($addfieldentry) > 0)
     {
+        if (empty($addfieldentry['name']))
+    	{
+    		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Name")), null, 'errors');
+    		return -2;
+    	}
+        if (empty($addfieldentry['label']))
+    	{
+    		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
+    		return -2;
+    	}
     	if (! preg_match('/^(integer|date|timestamp|varchar|double)/', $addfieldentry['type']))
     	{
-    		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null, 'errors');
-    		return -1;
+    		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
+    		return -2;
     	}
     }
 
@@ -59,7 +69,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     {
     	$langs->load("errors");
         setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
-        return -1;
+        return -3;
     }
 
     //$pathoffiletoedittmp=$destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
@@ -69,7 +79,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     {
         include_once $pathoffiletoeditsrc;
         if (class_exists($objectname)) $object=new $objectname($db);
-        else return -1;
+        else return -4;
 
         // Backup old file
         dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
@@ -157,7 +167,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     catch(Exception $e)
     {
         print $e->getMessage();
-        return -1;
+        return -5;
     }
 }
 

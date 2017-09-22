@@ -62,7 +62,7 @@ class MyObject extends CommonObject
 	 *             'type' if the field format.
 	 *             'label' the translation key.
 	 *             'enabled' is a condition when the filed must be managed.
-	 *             'visible' says if field is visible in list (-1 means not shown by default but can be aded into list to be viewed).
+	 *             'visible' says if field is visible in list (-1 means not shown by default but can be added into list to be viewed).
 	 *             'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *             'index' if we want an index in database.
 	 *             'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).

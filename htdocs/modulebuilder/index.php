@@ -362,7 +362,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
     dol_mkdir($destdir);
 
     $addfieldentry = array(
-    	'name'=>GETPOST('propname','aZ09'),'type'=>GETPOST('proptype','aZ09'),'label'=>GETPOST('proplabel','aZ09'),'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
+    	'name'=>GETPOST('propname','aZ09'),'type'=>GETPOST('proptype','alpha'),'label'=>GETPOST('proplabel','alpha'),'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
     	'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
     	'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp'));
 
@@ -370,14 +370,21 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
     if (! $error)
     {
     	$result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
-		if ($result <= 0) $error++;
+		// var_dump($result);exit;
+		if ($result <= 0)
+		{
+			$error++;
+		}
     }
 
     // Edit sql with new properties
     if (! $error)
     {
     	$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
-		if ($result <= 0) $error++;
+		if ($result <= 0)
+		{
+			$error++;
+		}
     }
 
     if (! $error)
@@ -1423,6 +1430,7 @@ elseif (! empty($module))
                         print load_fiche_titre($langs->trans("Properties"), '', '');
 
                         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
                         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                         print '<input type="hidden" name="action" value="addproperty">';
                         print '<input type="hidden" name="tab" value="objects">';
@@ -1443,31 +1451,33 @@ elseif (! empty($module))
                         //print '<td>'.$langs->trans("DefaultValue").'</td>';
                         print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
                         print '<td class="right">'.$langs->trans("Position").'</td>';
-                        print '<td class="right">'.$langs->trans("Enabled").'</td>';
-                        print '<td class="right">'.$langs->trans("Visible").'</td>';
-                        print '<td class="right">'.$langs->trans("IsAMeasure").'</td>';
+                        print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
+                        print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
+                        print '<td class="center">'.$langs->trans("IsAMeasure").'</td>';
                         print '<td class="center">'.$langs->trans("SearchAll").'</td>';
                         print '<td>'.$langs->trans("Comment").'</td>';
                         print '<td></td>';
                         print '</tr>';
+
+                        // Line to add a property
                         print '<tr>';
-                        print '<td><input class="text" name="propname" value=""></td>';
-                        print '<td><input class="text" name="proplabel" value=""></td>';
-                        print '<td><input class="text" name="proptype" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propnotnull" value=""></td>';
+                        print '<td><input class="text" name="propname" value="'.GETPOST('propname','alpha').'"></td>';
+                        print '<td><input class="text" name="proplabel" value="'.GETPOST('proplabel','alpha').'"></td>';
+                        print '<td><input class="text" name="proptype" value="'.GETPOST('proptype','alpha').'"></td>';
+                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.GETPOST('propnotnull','alpha').'"></td>';
                         //print '<td><input class="text" name="propdefault" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propindex" value=""></td>';
-                        print '<td class="right"><input class="text right" size="2" name="propposition" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propenabled" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propvisible" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propisameasure" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propsearchall" value=""></td>';
-                        print '<td><input class="text" name="propcomment" value=""></td>';
+                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.GETPOST('propindex','alpha').'"></td>';
+                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.GETPOST('propposition','alpha').'"></td>';
+                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.GETPOST('propenabled','alpha').'"></td>';
+                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.GETPOST('propvisible','alpha').'"></td>';
+                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.GETPOST('propisameasure','alpha').'"></td>';
+                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.GETPOST('propsearchall','alpha').'"></td>';
+                        print '<td><input class="text" name="propcomment" value="'.GETPOST('propcomment','alpha').'"></td>';
                         print '<td align="center">';
                         print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
                         print '</td></tr>';
 
-                        $properties = $tmpobjet->fields;
+                        $properties = dol_sort_array($tmpobjet->fields, 'position');
 
                         foreach($properties as $propkey => $propval)
                         {
