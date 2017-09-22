@@ -835,6 +835,8 @@ if ($resql)
                         if ($value == 'private')
                         {
                         	$align="center";
+                        	if ($valuetoshow) $valuetoshow=yn($valuetoshow);
+                        	else $valuetoshow='';
                         }
                         if ($value == 'position')
                         {
@@ -1042,12 +1044,12 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			{
 				if (empty($user->admin))
 				{
-					print $form->selectyesno($fieldlist[$field], '1');
+					print $form->selectyesno($fieldlist[$field], '1', 1);
 				}
 				else
 				{
 					//print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="1" name="'.$fieldlist[$field].'">';
-					print $form->selectyesno($fieldlist[$field], (isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+					print $form->selectyesno($fieldlist[$field], (isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1);
 				}
 			}
 			else

@@ -2251,7 +2251,7 @@ else
 			}
 			$formmail->substit['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
 			$formmail->substit['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
-			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__PERSONALIZED__']='';		// deprecated
 			$formmail->substit['__CONTACTCIVNAME__']='';
 
 			$custcontact = '';
@@ -2276,7 +2276,7 @@ else
 
 			// Tableau des parametres complementaires
 			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'contract_send';
+			$formmail->param['models'] = 'contract';
 			$formmail->param['models_id']=GETPOST('modelmailselected','int');
 			$formmail->param['contractid'] = $object->id;
 			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
