@@ -149,27 +149,6 @@ if ($action == 'presend')
 	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 
-	// Choose one contact for the __CONTACTCIVNAME__ TODO Really not reliable.
-	/*
-	$custcontact = '';
-	$contactarr = array();
-	$contactarr = $object->liste_contact(-1, 'external');
-	if (is_array($contactarr) && count($contactarr) > 0)
-	{
-	foreach ($contactarr as $contact)
-	{
-	if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
-	$contactstatic = new Contact($db);
-	$contactstatic->fetch($contact ['id']);
-	$custcontact = $contactstatic->getFullName($langs, 1);
-	}
-	}
-
-	if (! empty($custcontact)) {
-	$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-	}
-	}*/
-
 	$parameters = array(
 		'mode' => 'formemail'
 	);

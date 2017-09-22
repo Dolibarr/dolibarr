@@ -238,6 +238,7 @@ if (empty($reshook))
 		}
 	}
 
+	/*
 	if ($action == 'confirm_sendinfo' && $confirm == 'yes')
 	{
 		if ($object->email)
@@ -250,7 +251,7 @@ if (empty($reshook))
 			$langs->load("mails");
 			setEventMessages($langs->trans("MailSuccessfulySent", $from, $object->email), null, 'mesgs');
 		}
-	}
+	}*/
 
 	if ($action == 'update' && ! $cancel && $user->rights->adherent->creer)
 	{
@@ -1363,10 +1364,10 @@ else
 		}
 
 		// Confirm send card by mail
-		if ($action == 'sendinfo')
+		/*if ($action == 'sendinfo')
 		{
 			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
-		}
+		}*/
 
 		// Confirm terminate
 		if ($action == 'resign')
@@ -1616,6 +1617,7 @@ else
 
 				// Send card by email
 				// TODO Remove this to replace with a template
+				/*
 				if ($user->rights->adherent->creer)
 				{
 					if ($object->statut >= 1)
@@ -1631,7 +1633,7 @@ else
 				else
 				{
 					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
-				}
+				}*/
 
 				// Modify
 				if ($user->rights->adherent->creer)
@@ -1790,11 +1792,10 @@ else
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			// List of actions on element
-	        /* Already in tab Agenda/Events
 	        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'member', $socid, 1);
-			*/
+			$somethingshown = $formactions->showactions($object, 'member', $socid, 1, 'listactions', 10);
+
 			print '</div></div></div>';
 		}
 

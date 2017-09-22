@@ -339,16 +339,25 @@ class FormMail extends Form
 	        	$modelmail_array=array();
 	        	foreach($this->lines_model as $line)
 	        	{
-	        		$modelmail_array[$line->id]=$line->label;
+	        		$langs->trans("members");
+	        		if (preg_match('/\((.*)\)/', $line->label, $reg))
+	        		{
+	        			$modelmail_array[$line->id]=$langs->trans($reg[1]);		// langs->trans when label is __(xxx)__
+	        		}
+	        		else
+	        		{
+	        			$modelmail_array[$line->id]=$line->label;
+	        		}
 	        		if ($line->lang) $modelmail_array[$line->id].=' ('.$line->lang.')';
 	        		if ($line->private) $modelmail_array[$line->id].=' - '.$langs->trans("Private");
 	        		//if ($line->fk_user != $user->id) $modelmail_array[$line->id].=' - '.$langs->trans("By").' ';
 	        	}
         	}
 
-        	// Zone to select its email template
+        	// Zone to select email template
         	if (count($modelmail_array)>0)
         	{
+        		// If list of template is filled
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
@@ -363,6 +372,7 @@ class FormMail extends Form
         	        'invoice_supplier_send','thirdparty','contract','all'
            	    )))
         	{
+        		// If list of template is empty
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
@@ -1020,7 +1030,7 @@ class FormMail extends Form
 		$sql = "SELECT rowid, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates', 1).")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";		// See all public templates or templates I own.
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages

@@ -360,6 +360,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$subject=make_substitutions($subject, $substitutionarray);
 			$message=make_substitutions($message, $substitutionarray);
 
+			if (method_exists($object, 'makeSubstitution'))
+			{
+				$subject = $object->makeSubstitution($subject);
+				$message = $object->makeSubstitution($message);
+			}
+
 			// Send mail (substitutionarray must be done just before this)
 			if (empty($sendcontext)) $sendcontext = 'standard';
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid,'', $sendcontext);
