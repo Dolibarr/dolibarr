@@ -46,6 +46,10 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
+$dfmonth=GETPOST('dfmonth')?GETPOST('dfmonth'):date("n");
+$dfyear=GETPOST('dfyear');
+$filter_op2df=GETPOST('filter_op2df');
+
 $search_name=GETPOST('search_name');
 $search_town=GETPOST('search_town','alpha');
 $search_zip=GETPOST('search_zip','alpha');
@@ -124,6 +128,7 @@ $arrayfields=array(
     'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
     'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'first_date_fin_validite'=>array('label'=>"1er ".$langs->trans("DateEndPlannedShort"), 'checked'=>1, 'position'=>900),
     'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -155,6 +160,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$day='';
 	$month='';
 	$year='';
+	$dfmonth='';
+	$dfyear='';
+        $filter_op2df='';
     $search_name="";
 	$search_town='';
 	$search_zip="";
@@ -202,6 +210,7 @@ $sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= " MIN(CASE WHEN cd.statut=4 THEN cd.date_fin_validite END) as first_date_fin_validite,";
 $sql.= ' SUM('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
@@ -284,6 +293,11 @@ foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->att
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+
+if ($dfyear > 0)
+{
+    $sql.= " HAVING first_date_fin_validite ".$filter_op2df."= '".$db->idate(($filter_op2df == "<" ? dol_get_last_day($dfyear,$dfmonth,false) : dol_get_first_day($dfyear,$dfmonth,false)))."'";
+}
 
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -526,6 +540,18 @@ if ($resql)
         print '<td class="liste_titre">';
         print '</td>';
     }
+    // 1er Date de fin
+    if (! empty($arrayfields['first_date_fin_validite']['checked']))
+    {
+            print '<td class="liste_titre" align="center">';
+            $arrayofoperators=array('<'=>'<','>'=>'>');
+            print $form->selectarray('filter_op2df',$arrayofoperators,$filter_op2df,0);
+            print '</br>';
+            print $formother->select_month($dfmonth,'dfmonth');
+            print ' ';
+            $formother->select_year($dfyear,'dfyear',1, 20, 5);
+            print '</td>';
+    }
     // Status
     if (! empty($arrayfields['status']['checked']))
     {
@@ -569,6 +595,7 @@ if ($resql)
     print $hookmanager->resPrint;
 	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    if (! empty($arrayfields['first_date_fin_validite']['checked']))       print_liste_field_titre($arrayfields['first_date_fin_validite']['label'],$_SERVER["PHP_SELF"],"first_date_fin_validite","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
     if (! empty($arrayfields['status']['checked']))
     {
         print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
@@ -740,6 +767,14 @@ if ($resql)
         {
             print '<td align="center" class="nowrap">';
             print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
+        // Date 1er date fin
+        if (! empty($arrayfields['first_date_fin_validite']['checked']))
+        {
+            print '<td align="center" class="nowrap">';
+            print dol_print_date($db->jdate($obj->first_date_fin_validite), 'day');
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }
