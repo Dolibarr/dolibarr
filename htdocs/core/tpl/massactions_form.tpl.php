@@ -74,7 +74,7 @@ if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAI
 	$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
 }
 $formmail->withfrom = 1;
-$liste = $langs->trans("AllRecipientSelected", count($listofselectedthirdparties));
+$liste = $langs->trans("AllRecipientSelected", count($arrayofselected));
 if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selected, we can suggest contacts
 {
 	$liste = array();
@@ -98,7 +98,7 @@ if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selec
 	$formmail->withtoreadonly = 1;
 }
 
-$formmail->withoptiononeemailperrecipient = (GETPOST('oneemailperrecipient')=='on')?1:-1;
+$formmail->withoptiononeemailperrecipient = empty($liste)?0:((GETPOST('oneemailperrecipient')=='on')?1:-1);
 $formmail->withto = empty($liste)?(GETPOST('sendto','alpha')?GETPOST('sendto','alpha'):array()):$liste;
 $formmail->withtofree = empty($liste)?1:0;
 $formmail->withtocc = 1;

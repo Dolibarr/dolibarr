@@ -515,6 +515,7 @@ class FormMail extends Form
         			}
         			else
         			{
+        				// Note withto may be a text like 'AllRecipientSelected'
         				$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
         			}
         		}
