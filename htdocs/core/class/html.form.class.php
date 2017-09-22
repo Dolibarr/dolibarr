@@ -2987,13 +2987,15 @@ class Form
      *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
      *      See instead to force the default value by the caller.
      *
-     *      @param	int  	$selected        Id of payment term to preselect by default
-     *      @param  string	$htmlname        Nom de la zone select
-     *      @param  int 	$filtertype      Not used
-     *		@param	int		$addempty		 Add an empty entry
+     *      @param	int  	$selected       Id of payment term to preselect by default
+     *      @param  string	$htmlname       Nom de la zone select
+     *      @param  int 	$filtertype     Not used
+     *		@param	int		$addempty		Add an empty entry
+     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+     * 		@param	string	$morecss		Add more CSS on select tag
      *		@return	void
      */
-    function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0)
+    function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0, $noinfoadmin=0, $morecss='')
     {
         global $langs, $user, $conf;
 
@@ -3004,7 +3006,7 @@ class Form
         // Set default value if not already set by caller
         if (empty($selected) && ! empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) $selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
         foreach($this->cache_conditions_paiements as $id => $arrayconditions)
         {
@@ -3020,7 +3022,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin && empty($noinfoadmin)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -3035,7 +3037,7 @@ class Form
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
      *      @param  int     $active         Active or not, -1 = all
-     *      @param  string  $morecss        Add more css
+     *      @param  string  $morecss        Add more CSS on select tag
      * 		@return	void
      */
     function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')

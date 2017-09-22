@@ -570,7 +570,7 @@ while ($i < min($num, $limit))
             if (! $i) $totalarray['nbfield']++;
             if (! empty($val['isameasure']))
             {
-	            if (! $i) $totalarray['pos'][$totalarray['nbfield']-1]='t.'.$key;
+	            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
 	           	$totalarray['val']['t.'.$key] += $obj->$key;
             }
         }
@@ -607,7 +607,7 @@ if (isset($totalarray['pos']))
 	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
-        	print '<td></td>';
+        	else print '<td></td>';
         }
     }
     print '</tr>';

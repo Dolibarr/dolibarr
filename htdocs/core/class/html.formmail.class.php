@@ -770,7 +770,7 @@ class FormMail extends Form
         			}
         		}
         		$this->substit['__PERSONALIZED__']=$paymenturl;
-        		$this->substit['__ONLINE_PAYMENT_URL__']='YY'.$paymenturl;
+        		$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 
                 //Add lines substitution key from each line
                 $lines = '';
@@ -1056,7 +1056,7 @@ class FormMail extends Form
 		$this->substit['__DATE_YMD__'] = isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '';
 		$this->substit['__DATE_DUE_YMD__'] = isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '';
 		$this->substit['__AMOUNT__'] = price($object->total_ttc);
-		$this->substit['__AMOUNT_WO_TAX__'] = price($object->total_ht);
+		$this->substit['__AMOUNT_EXCL_TAX__'] = price($object->total_ht);
 		$this->substit['__AMOUNT_VAT__'] = price($object->total_tva);
 
 		$this->substit['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
@@ -1094,7 +1094,7 @@ class FormMail extends Form
                     '__QUANTITY__' => $line->qty,
                     '__SUBPRICE__' => price($line->subprice),
                     '__AMOUNT__' => price($line->total_ttc),
-                    '__AMOUNT_WO_TAX__' => price($line->total_ht),
+                    '__AMOUNT_EXCL_TAX__' => price($line->total_ht),
                     //'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically just after
                 );
 
@@ -1142,10 +1142,11 @@ class FormMail extends Form
 			    '__PROJECT_NAME__'=>'__PROJECT_NAME__',
 				'__CONTACTCIVNAME__'=>'__CONTACTCIVNAME__',
 				'__AMOUNT__'=>'__AMOUNT__',
-				'__AMOUNT_WO_TAX__'=>'__AMOUNT_WO_TAX__',
+				'__AMOUNT_EXCL_TAX__'=>'__AMOUNT_EXCL_TAX__',
 				'__AMOUNT_VAT__'=>'__AMOUNT_VAT__',
-			    '__PERSONALIZED__'=>'__PERSONALIZED__',				// Paypal link will be added here in form mode
+				'__ONLINE_PAYMENT_URL__'=>'__ONLINE_PAYMENT_URL__',
 				'__SIGNATURE__'=>'__SIGNATURE__',
+			    '__PERSONALIZED__'=>'__PERSONALIZED__',					// deprecated
 			);
 			if ($mode == 'formwithlines')
 			{

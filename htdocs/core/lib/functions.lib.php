@@ -5262,11 +5262,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     }
     if (empty($exclude) || ! in_array('objectamount', $exclude))
     {
-		$substitutionarray['__DATE_YMD__'] = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
-		$substitutionarray['__DATE_DUE_YMD__'] = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
-    	$substitutionarray['__AMOUNT__']       = is_object($object)?$object->total_ttc:'';
-        $substitutionarray['__AMOUNT_WO_TAX__']= is_object($object)?$object->total_ht:'';
-        $substitutionarray['__AMOUNT_VAT__']   = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+		$substitutionarray['__DATE_YMD__']        = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
+		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
+    	$substitutionarray['__AMOUNT__']          = is_object($object)?$object->total_ttc:'';
+		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object)?$object->total_ht:'';
+        $substitutionarray['__AMOUNT_VAT__']      = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
         // For backward compatibility
         if ($onlykey != 2)
         {
