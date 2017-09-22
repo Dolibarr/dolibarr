@@ -78,6 +78,9 @@ $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+if (empty($sortfield)) $sortfield='label, lang, position';
+if (empty($sortorder)) $sortorder='ASC';
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('emailtemplates'));
 
@@ -87,7 +90,7 @@ $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
-$tabsqlsort[25]="label ASC";
+$tabsqlsort[25]="label ASC, lang ASC, position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -217,7 +220,7 @@ if (empty($reshook))
             if ($value == 'content') $value='content-'.$rowid;
             if ($value == 'content_lines') $value='content_lines-'.$rowid;
 
-            if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user')
+            if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
             {
                 $ok=0;
                 $fieldnamekey=$listfield[$f];
@@ -270,10 +273,9 @@ if (empty($reshook))
             $i=0;
             foreach ($listfieldinsert as $f => $value)
             {
+            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
             	$keycode=$listfieldvalue[$i];
             	if ($value == 'lang') $keycode='langcode';
-
-            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
                 if ($value == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
                 if ($value == 'fk_user' && ! ($_POST[$keycode] > 0)) $_POST[$keycode]='';
@@ -1036,9 +1038,17 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $size='size="2" ';
 
 			print '<td'.($classtd?' class="'.$classtd.'"':'').'>';
-			if ($fieldlist[$field]=='private' && empty($user->admin))
+			if ($fieldlist[$field]=='private')
 			{
-				print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="1" name="'.$fieldlist[$field].'">';
+				if (empty($user->admin))
+				{
+					print $form->selectyesno($fieldlist[$field], '1');
+				}
+				else
+				{
+					//print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="1" name="'.$fieldlist[$field].'">';
+					print $form->selectyesno($fieldlist[$field], (isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+				}
 			}
 			else
 			{
