@@ -465,6 +465,19 @@ class FormMail extends Form
         		}
         	}
 
+        	// withoptiononeemailperrecipient
+        	if (! empty($this->withoptiononeemailperrecipient))
+        	{
+        		$out.= '<tr><td class="fieldrequired" width="180">';
+        		$out.= $langs->trans("GroupEmails");
+        		$out.= '</td><td>';
+        		$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
+        		$out.= $langs->trans("OneEmailPerRecipient").' - ';
+        		$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+        		$out.= '</td></tr>';
+
+        	}
+
         	// To
         	if (! empty($this->withto) || is_array($this->withto))
         	{

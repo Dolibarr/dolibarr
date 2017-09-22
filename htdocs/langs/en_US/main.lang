@@ -811,6 +811,9 @@ Websites=Web sites
 Events=Events
 EMailTemplates=Emails templates
 FileNotShared=File not shared to exernal public
+GroupEmails=Group emails
+OneEmailPerRecipient=One email per recipient (by default, one email per record selected)
+WarningIfYouCheckOneRecipientPerEmail=Warning, if you check this box, it means only one email may be sent for several different record selected. If your email text contains substitution variables that refers to data of a record, it becomes not possible to replace them. 
 # Week day
 Monday=Monday
 Tuesday=Tuesday
