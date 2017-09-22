@@ -1210,11 +1210,6 @@ if (empty($reshook))
 		}
 	}
 
-	// Actions to build doc
-	$upload_dir = $conf->commande->dir_output;
-	$permissioncreate = $user->rights->commande->creer;
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from update form
@@ -1253,6 +1248,11 @@ if (empty($reshook))
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+	// Actions to build doc
+	$upload_dir = $conf->commande->dir_output;
+	$permissioncreate = $user->rights->commande->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
 	$trigger_name='ORDER_SENTBYMAIL';

@@ -465,19 +465,6 @@ class FormMail extends Form
         		}
         	}
 
-        	// withoptiononeemailperrecipient
-        	if (! empty($this->withoptiononeemailperrecipient))
-        	{
-        		$out.= '<tr><td class="fieldrequired" width="180">';
-        		$out.= $langs->trans("GroupEmails");
-        		$out.= '</td><td>';
-        		$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
-        		$out.= $langs->trans("OneEmailPerRecipient").' - ';
-        		$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-        		$out.= '</td></tr>';
-
-        	}
-
         	// To
         	if (! empty($this->withto) || is_array($this->withto))
         	{
@@ -545,10 +532,22 @@ class FormMail extends Form
         		$out.= "</td></tr>\n";
         	}
 
+        	// withoptiononeemailperrecipient
+        	if (! empty($this->withoptiononeemailperrecipient))
+        	{
+        		$out.= '<tr><td>';
+        		$out.= $langs->trans("GroupEmails");
+        		$out.= '</td><td>';
+        		$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
+        		$out.= $langs->trans("OneEmailPerRecipient").' - ';
+        		$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+        		$out.= '</td></tr>';
+        	}
+
         	// CC
         	if (! empty($this->withtocc) || is_array($this->withtocc))
         	{
-        		$out.= '<tr><td width="180">';
+        		$out.= '<tr><td>';
         		$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if ($this->withtoccreadonly)
@@ -577,7 +576,7 @@ class FormMail extends Form
         	// CCC
         	if (! empty($this->withtoccc) || is_array($this->withtoccc))
         	{
-        		$out.= '<tr><td width="180">';
+        		$out.= '<tr><td>';
         		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if (! empty($this->withtocccreadonly))
@@ -645,7 +644,7 @@ class FormMail extends Form
         	// Ask delivery receipt
         	if (! empty($this->withdeliveryreceipt))
         	{
-        		$out.= '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
+        		$out.= '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
 
         		if (! empty($this->withdeliveryreceiptreadonly))
         		{
@@ -677,7 +676,7 @@ class FormMail extends Form
         		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
         		$out.= '<tr>';
-        		$out.= '<td class="fieldrequired" width="180">'.$langs->trans("MailTopic").'</td>';
+        		$out.= '<td class="fieldrequired">'.$langs->trans("MailTopic").'</td>';
         		$out.= '<td>';
         		if ($this->withtopicreadonly)
         		{
@@ -695,7 +694,7 @@ class FormMail extends Form
         	if (! empty($this->withfile))
         	{
         		$out.= '<tr>';
-        		$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
+        		$out.= '<td>'.$langs->trans("MailFile").'</td>';
 
         		$out.= '<td>';
         		if (! empty($this->withmaindocfile))
@@ -785,7 +784,8 @@ class FormMail extends Form
 	        			$typeforonlinepayment='free';
 	        			if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
 	        			if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
-	       				$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
+	        			if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
+	        			$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 	       				//$paymenturl=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
 	       				$paymenturl=$url;
         			}
@@ -825,7 +825,7 @@ class FormMail extends Form
 				}
 
         		$out.= '<tr>';
-        		$out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
+        		$out.= '<td valign="top">'.$langs->trans("MailText").'</td>';
         		$out.= '<td>';
         		if ($this->withbodyreadonly)
         		{

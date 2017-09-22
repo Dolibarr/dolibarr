@@ -1192,7 +1192,7 @@ class Adherent extends CommonObject
                 // Load other properties
                 $result=$this->fetch_subscriptions();
 
-                return $result;
+                return $this->id;
             }
             else
             {

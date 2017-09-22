@@ -73,13 +73,16 @@ if ($action == 'presend')
 
 	// Build document if it not exists
 	if (! $file || ! is_readable($file)) {
-		$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0) {
-			dol_print_error($db, $object->error, $object->errors);
-			exit();
+		if ($object->element != 'member')
+		{
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result <= 0) {
+				dol_print_error($db, $object->error, $object->errors);
+				exit();
+			}
+			$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
 		}
-		$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file = $fileparams['fullname'];
 	}
 
 	print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
@@ -119,6 +122,10 @@ if ($action == 'presend')
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
+	}
+	elseif ($object->element == 'member')
+	{
+		$liste['thirdparty'] = $object->getFullName($langs)." &lt;".$object->email."&gt;";
 	}
 	else
 	{

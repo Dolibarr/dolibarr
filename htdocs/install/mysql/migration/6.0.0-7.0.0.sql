@@ -42,6 +42,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 -- For 7.0
 
 
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SENTBYMAIL','Mails sent from member card','Executed when you send email from member card','member',23);
+
 ALTER TABLE llx_ecm_files MODIFY label varchar(128) NOT NULL;
 ALTER TABLE llx_ecm_files ADD COLUMN share varchar(128) NULL after label;
 

@@ -18,8 +18,8 @@
 
 /**
  *	\file			htdocs/core/actions_sendmails.inc.php
-*  \brief			Code for actions on sending mails from object page
-*/
+ *  \brief			Code for actions on sending mails from object page
+ */
 
 // $mysoc must be defined
 // $id must be defined
@@ -113,12 +113,17 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
+		}
+		else if ($object->element == 'member')
+		{
+			$thirdparty=$object;
+			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
 		}
 		else if ($object->element == 'societe')
 		{
@@ -470,7 +475,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	else
 	{
 		$langs->load("other");
-		setEventMessages($langs->trans('ErrorFailedToReadEntity',$object->element), null, 'errors');
+		setEventMessages($langs->trans('ErrorFailedToReadObject',$object->element), null, 'errors');
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}
