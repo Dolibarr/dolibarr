@@ -520,7 +520,7 @@ foreach ($fieldlist as $field => $value)
         $valuetoshow=$langs->trans($valuetoshow);   // try to translate
         $align="left";
         if ($fieldlist[$field]=='fk_user')         { $valuetoshow=$langs->trans("Owner");}
-        if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
+        if ($fieldlist[$field]=='lang')            { $valuetoshow=(empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language")); }
         if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
         if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
         if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label"); }
@@ -573,7 +573,7 @@ $errors = $hookmanager->errors;
 
 if (empty($reshook))
 {
-	if ($tabname[$id] == MAIN_DB_PREFIX . 'c_email_templates' && $action == 'edit') {
+	if ($action == 'edit') {
 		fieldList($fieldlist, $obj, $tabname[$id], 'hide');
 	} else {
 		fieldList($fieldlist, $obj, $tabname[$id], 'add');
@@ -681,6 +681,10 @@ if ($resql)
         	print '</td>';
         }
         elseif ($value == 'topic') print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
+        elseif ($value == 'type_template')
+        {
+        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100onsmartphone').'</td>';
+        }
         elseif (! in_array($value, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
     }
     if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
