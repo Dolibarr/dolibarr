@@ -277,6 +277,36 @@ class Invoices extends DolibarrApi
     }
 
     /**
+     * Get lines of an invoice
+     *
+     * @param int   $id             Id of invoice
+     *
+     * @url     GET {id}/lines
+     *
+     * @return array
+     */
+    function getLines($id) {
+      if(! DolibarrApiAccess::$user->rights->facture->lire) {
+                        throw new RestException(401);
+                  }
+
+      $result = $this->invoice->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Invoice not found');
+      }
+
+                  if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                          throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      $this->invoice->getLinesArray();
+      $result = array();
+      foreach ($this->invoice->lines as $line) {
+        array_push($result,$this->_cleanObjectDatas($line));
+      }
+      return $result;
+    }
+
+    /**
      * Validate an order
      *
      * @param   int $id             Order ID
