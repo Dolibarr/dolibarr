@@ -918,51 +918,17 @@ if (empty($reshook))
 	    }
 	}
 
-	// Generation doc (depuis lien ou depuis cartouche doc)
-	else if ($action == 'builddoc' && $user->rights->contrat->creer) {
-		if (GETPOST('model')) {
-			$object->setDocModel($user, GETPOST('model'));
-		}
 
-		// Define output language
-		$outputlangs = $langs;
-		if (! empty($conf->global->MAIN_MULTILANGS)) {
-			$outputlangs = new Translate("", $conf);
-			$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$ret = $object->fetch($id); // Reload to get new records
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-		}
-	}
-
-	// Remove file in doc form
-	else if ($action == 'remove_file' && $user->rights->contrat->creer) {
-		if ($object->id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-			$langs->load("other");
-			$upload_dir = $conf->contrat->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
-		}
-	}
-
-	/*
-	 * Send mail
-	 */
+	// Actions to build doc
+	$upload_dir = $conf->contrat->dir_output;
+	$permissioncreate = $user->rights->contrat->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
 	$trigger_name='CONTRACT_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromcontract';
-	$trackid='cont'.$object->id;
+	$trackid='con'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -2164,135 +2130,13 @@ else
     		print '</div></div></div>';
     	}
 
-		/*
-		 * Action presend
-		 */
-		if ($action == 'presend')
-		{
-			$object->fetch_projet();
+		// Presend form
+		$modelmail='contract';
+		$defaulttopic='SendContractRef';
+		$diroutput = $conf->contrat->dir_output;
+		$trackid = 'con'.$object->id;
 
-			$ref = dol_sanitizeFileName($object->ref);
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-			$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-
-			if (!empty($newlang))
-			{
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang($newlang);
-				$outputlangs->load('commercial');
-			}
-
-			// Build document if it not exists
-			if (! $file || ! is_readable($file)) {
-				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result <= 0) {
-					dol_print_error($db, $object->error, $object->errors);
-					exit();
-				}
-				$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-				$file = $fileparams['fullname'];
-			}
-
-			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-			print '<div class="clearboth"></div>';
-			print '<br>';
-			print load_fiche_titre($langs->trans('SendByMail'));
-
-			dol_fiche_head('');
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-			$formmail->trackid='cont'.$object->id;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-			{
-				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-			}
-			$formmail->withfrom = 1;
-			$liste = array();
-			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
-				$liste [$key] = $value;
-			$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
-			$formmail->withtocc = $liste;
-			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-			if (empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__');
-			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__ (__REFCLIENT__)');
-			}
-			$formmail->withfile = 2;
-			$formmail->withbody = 1;
-			$formmail->withdeliveryreceipt = 1;
-			$formmail->withcancel = 1;
-			// Array of substitutions
-			$formmail->setSubstitFromObject($object);
-			$datenextexpiration='';
-			foreach($object->lines as $line)
-			{
-				if ($line->statut != 4) continue;
-				if ($line->date_fin_prevue > $datenextexpiration) $datenextexpiration = $line->date_fin_prevue;
-			}
-			$formmail->substit['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
-			$formmail->substit['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
-			$formmail->substit['__PERSONALIZED__']='';
-			$formmail->substit['__CONTACTCIVNAME__']='';
-
-			$custcontact = '';
-			$contactarr = array();
-			$contactarr = $object->liste_contact(- 1, 'external');
-
-			if (is_array($contactarr) && count($contactarr) > 0)
-			{
-				foreach ($contactarr as $contact)
-				{
-					if ($contact['libelle'] == $langs->trans('TypeContact_contract_external_CUSTOMER')) {	// TODO Use code and not label
-						$contactstatic = new Contact($db);
-						$contactstatic->fetch($contact['id']);
-						$custcontact = $contactstatic->getFullName($langs, 1);
-					}
-				}
-
-				if (! empty($custcontact)) {
-					$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-				}
-			}
-
-			// Tableau des parametres complementaires
-			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'contract_send';
-			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['contractid'] = $object->id;
-			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
-
-			// Init list of files
-			if (GETPOST("mode") == 'init') {
-				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-			}
-
-			// Show form
-			print $formmail->get_form();
-
-			dol_fiche_end();
-		}
-
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
     }
 }
 

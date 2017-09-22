@@ -46,7 +46,9 @@ class EcmFiles //extends CommonObject
 
 	/**
 	 */
-	public $label;
+	public $ref;					// hash of file path
+	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
+	public $share;					// hash for file sharing. empty by default
 	public $entity;
 	public $filename;
 	public $filepath;
@@ -94,9 +96,14 @@ class EcmFiles //extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-
+		if (isset($this->ref)) {
+			 $this->ref = trim($this->ref);
+		}
 		if (isset($this->label)) {
 			 $this->label = trim($this->label);
+		}
+		if (isset($this->share)) {
+			 $this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
@@ -136,6 +143,10 @@ class EcmFiles //extends CommonObject
 		}
         if (empty($this->date_c)) $this->date_c = dol_now();
 
+        // If ref not defined
+        if (empty($ref)) $ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+
+
         $maxposition=0;
 		if (empty($this->position))   // Get max used
 		{
@@ -157,7 +168,9 @@ class EcmFiles //extends CommonObject
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+		$sql.= 'ref,';
 		$sql.= 'label,';
+		$sql.= 'share,';
 		$sql.= 'entity,';
 		$sql.= 'filename,';
 		$sql.= 'filepath,';
@@ -174,7 +187,9 @@ class EcmFiles //extends CommonObject
 		$sql.= 'fk_user_m,';
 		$sql.= 'acl';
 		$sql .= ') VALUES (';
+		$sql .= " '".$ref."', ";
 		$sql .= ' '.(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
+		$sql .= ' '.(! isset($this->share)?'NULL':"'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.(! isset($this->entity)?$conf->entity:$this->entity).',';
 		$sql .= ' '.(! isset($this->filename)?'NULL':"'".$this->db->escape($this->filename)."'").',';
 		$sql .= ' '.(! isset($this->filepath)?'NULL':"'".$this->db->escape($this->filepath)."'").',';
@@ -232,11 +247,13 @@ class EcmFiles //extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param  int    $id          	   Id object
-	 * @param  string $ref         	   Not used yet. Will contains a hash id from filename+filepath
+	 * @param  string $ref         	   Hash of file name (filename+filepath). Not always defined on some version.
 	 * @param  string $relativepath    Relative path of file from document directory. Example: path/path2/file
+	 * @param  string $hashoffile      Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
+	 * @param  string $hashforshare    Hash of file sharing.
 	 * @return int                 	   <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $relativepath = '')
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile='', $hashforshare='')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -244,6 +261,7 @@ class EcmFiles //extends CommonObject
 		$sql .= ' t.rowid,';
 		$sql .= " t.ref,";
 		$sql .= " t.label,";
+		$sql .= " t.share,";
 		$sql .= " t.entity,";
 		$sql .= " t.filename,";
 		$sql .= " t.filepath,";
@@ -268,11 +286,20 @@ class EcmFiles //extends CommonObject
 		if ($relativepath) {
 			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
 		}
-		elseif (null !== $ref) {
+		elseif (! empty($ref)) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+		}
+		elseif (! empty($hashoffile)) {
+			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
+		}
+		elseif (! empty($hashforshare)) {
+			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
 		} else {
 			$sql .= ' AND t.rowid = ' . $id;
 		}
+		// When we search on hash of content, we take the first one. Solve also hash conflict.
+		$this->db->plimit(1);
+		$this->db->order('t.rowid', 'ASC');
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -283,6 +310,7 @@ class EcmFiles //extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref;
 				$this->label = $obj->label;
+				$this->share = $obj->share;
 				$this->entity = $obj->entity;
 				$this->filename = $obj->filename;
 				$this->filepath = $obj->filepath;
@@ -344,6 +372,7 @@ class EcmFiles //extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.label,";
+		$sql .= " t.share,";
 		$sql .= " t.entity,";
 		$sql .= " t.filename,";
 		$sql .= " t.filepath,";
@@ -393,8 +422,9 @@ class EcmFiles //extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-
+				$line->ref = $obj->ref;
 				$line->label = $obj->label;
+				$line->share = $obj->share;
 				$line->entity = $obj->entity;
 				$line->filename = $obj->filename;
 				$line->filepath = $obj->filepath;
@@ -438,8 +468,14 @@ class EcmFiles //extends CommonObject
 
 		// Clean parameters
 
+		if (isset($this->ref)) {
+			 $this->ref = trim($this->ref);
+		}
 		if (isset($this->label)) {
 			 $this->label = trim($this->label);
+		}
+		if (isset($this->share)) {
+			 $this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
@@ -484,7 +520,9 @@ class EcmFiles //extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql .= " ref = '".dol_hash($this->filepath.'/'.$this->filename, 3)."',";
 		$sql .= ' label = '.(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").',';
+		$sql .= ' share = '.(! empty($this->share)?"'".$this->db->escape($this->share)."'":"null").',';
 		$sql .= ' entity = '.(isset($this->entity)?$this->entity:$conf->entity).',';
 		$sql .= ' filename = '.(isset($this->filename)?"'".$this->db->escape($this->filename)."'":"null").',';
 		$sql .= ' filepath = '.(isset($this->filepath)?"'".$this->db->escape($this->filepath)."'":"null").',';

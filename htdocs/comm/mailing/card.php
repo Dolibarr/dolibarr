@@ -57,24 +57,17 @@ $hookmanager->initHooks(array('mailingcard','globalcard'));
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 $object->substitutionarray=FormMail::getAvailableSubstitKey('emailing');
-$object->substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 
-$object->substitutionarrayfortest=array(
-    '__ID__' => 'TESTIdRecord',
-    //'__EMAIL__' => 'TESTEMail',			// Done into "send" action
-    '__LASTNAME__' => 'TESTLastname',
-    '__FIRSTNAME__' => 'TESTFirstname',
-    '__MAILTOEMAIL__' => 'TESTMailtoEmail',
-    '__OTHER1__' => 'TESTOther1',
-    '__OTHER2__' => 'TESTOther2',
-    '__OTHER3__' => 'TESTOther3',
-    '__OTHER4__' => 'TESTOther4',
-    '__OTHER5__' => 'TESTOther5',
-	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
-    '__CHECK_READ__' => 'TagCheckMail',
-	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
-		//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
-);
+
+// Set $object->substitutionarrayfortest
+$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
+
+$targetobject = null;		// Not defined with mass emailing
+
+$parameters=array('mode'=>'emailing');
+$substitutionarray=FormMail::getAvailableSubstitKey('emailing', $targetobject);
+
+$object->substitutionarrayfortest = $substitutionarray;
 
 // List of sending methods
 $listofmethods=array();
@@ -205,24 +198,28 @@ if (empty($reshook))
 	                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+
 	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
 
-	                    // Array of possible substitutions (See also fie mailing-send.php that should manage same substitutions)
-						$substitutionarray=array(
-								'__ID__' => $obj->source_id,
-								'__EMAIL__' => $obj->email,
-								'__LASTNAME__' => $obj->lastname,
-								'__FIRSTNAME__' => $obj->firstname,
-								'__MAILTOEMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
-								'__OTHER1__' => $other1,
-								'__OTHER2__' => $other2,
-								'__OTHER3__' => $other3,
-								'__OTHER4__' => $other4,
-								'__OTHER5__' => $other5,
-								'__SIGNATURE__' => $signature,	// Signature is empty when ran from command line or taken from user in parameter)
-								'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-								'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
-						);
+	                    $targetobject = null;		// Not defined with mass emailing
+	                    $parameters=array('mode'=>'emailing');
+	                    $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount'), $targetobject);			// Note: On mass emailing, this is null because be don't know object
+
+	                    // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
+						$substitutionarray['__ID__'] = $obj->source_id;
+						$substitutionarray['__EMAIL__'] = $obj->email;
+						$substitutionarray['__LASTNAME__'] = $obj->lastname;
+						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
+						$substitutionarray['__MAILTOEMAIL__'] = '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
+						$substitutionarray['__OTHER1__'] = $other1;
+						$substitutionarray['__OTHER2__'] = $other2;
+						$substitutionarray['__OTHER3__'] = $other3;
+						$substitutionarray['__OTHER4__'] = $other4;
+						$substitutionarray['__OTHER5__'] = $other5;
+						$substitutionarray['__SIGNATURE__'] = $signature;	// Signature is empty when ran from command line or taken from user in parameter)
+						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
+
 						$onlinepaymentenabled = 0;
 						if (! empty($conf->paypal->enabled)) $onlinepaymentenabled++;
 						if (! empty($conf->paybox->enabled)) $onlinepaymentenabled++;
@@ -230,18 +227,20 @@ if (empty($reshook))
 						if ($onlinepaymentenabled && ! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 						{
 							$substitutionarray['__SECUREKEYPAYMENT__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-
-							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYMENT_MEMBER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYMENT_MEMBER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
-
-							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYMENT_ORDER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYMENT_ORDER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
-
-							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYMENT_INVOICE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYMENT_INVOICE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
-
-							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
+							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+							{
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+							}
+							else
+							{
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
+							}
 						}
 						/* For backward compatibility */
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
@@ -261,6 +260,7 @@ if (empty($reshook))
 							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 						}
 						//$substitutionisok=true;
+
 	                    complete_substitutions_array($substitutionarray, $langs);
 						$newsubject=make_substitutions($subject,$substitutionarray);
 						$newmessage=make_substitutions($message,$substitutionarray);
@@ -431,9 +431,12 @@ if (empty($reshook))
 			$msgishtml=-1;	// Inconnu par defaut
 			if (preg_match('/[\s\t]*<html>/i',$object->body)) $msgishtml=1;
 
-			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;		// other are set at begin of page
+			// other are set at begin of page
+			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;
+			$object->substitutionarrayfortest['__MAILTOEMAIL__'] = '<a href="mailto:'.$object->sendto.'">'.$object->sendto.'</a>';
 
 			// Pratique les substitutions sur le sujet et message
+	        complete_substitutions_array($object->substitutionarrayfortest, $langs);
 			$tmpsujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
 			$tmpbody=make_substitutions($object->body,$object->substitutionarrayfortest);
 
@@ -1073,7 +1076,7 @@ else
 				$formmail->substit=$object->substitutionarrayfortest;
 				// Tableau des parametres complementaires du post
 				$formmail->param["action"]="send";
-				$formmail->param["models"]="body";
+				$formmail->param["models"]='none';
 				$formmail->param["mailid"]=$object->id;
 				$formmail->param["returnurl"]=$_SERVER['PHP_SELF']."?id=".$object->id;
 

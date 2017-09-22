@@ -150,14 +150,14 @@ class FormActions
     /**
      *  Show list of actions for element
      *
-     *  @param	Object	$object			Object
-     *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
-     *	@param	int		$socid			socid of user
-     *  @param	int		$forceshowtitle	Show title even if there is no actions to show
-     *  @param  string  $morecss        More css on table
-     *  @param	int		$max			Max number of record
+     *  @param	Object	$object					Object
+     *  @param  string	$typeelement			'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
+     *	@param	int		$socid					Socid of user
+     *  @param	int		$forceshowtitle			Show title even if there is no actions to show
+     *  @param  string  $morecss        		More css on table
+     *  @param	int		$max					Max number of record
      *  @param	string	$moreparambacktopage	More param for the backtopage
-     *	@return	int						<0 if KO, >=0 if OK
+     *	@return	int								<0 if KO, >=0 if OK
      */
     function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='')
     {
@@ -175,17 +175,18 @@ class FormActions
         $num = count($listofactions);
         if ($num || $forceshowtitle)
         {
-        	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
+        	if ($typeelement == 'invoice')               $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-        	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
-        	elseif ($typeelement == 'supplier_payment')    $title=$langs->trans('ActionsOnSupplierPayment');
-        	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
-        	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'propal')            $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'supplier_payment')  $title=$langs->trans('ActionsOnSupplierPayment');
+        	elseif ($typeelement == 'supplier_proposal') $title=$langs->trans('ActionsOnSupplierProposal');
+        	elseif ($typeelement == 'order')             $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
-            elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
-            elseif ($typeelement == 'project') $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
-            elseif ($typeelement == 'task') $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+        	elseif ($typeelement == 'shipping')          $title=$langs->trans('ActionsOnShipping');
+            elseif ($typeelement == 'fichinter')         $title=$langs->trans('ActionsOnFicheInter');
+            elseif ($typeelement == 'project')           $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            elseif ($typeelement == 'task')              $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            elseif ($typeelement == 'member')            $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
             else $title=$langs->trans("Actions");
 
             $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');

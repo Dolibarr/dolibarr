@@ -66,21 +66,22 @@ $suffix=GETPOST("suffix",'aZ09');
 $amount=price2num(GETPOST("amount",'alpha'));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
-$source = GETPOST("source",'alpha');
+$source = GETPOST("s",'alpha')?GETPOST("s",'alpha'):GETPOST("source",'alpha');
+$download = GETPOST('d','int')?GETPOST('d','int'):GETPOST('download','int');
 
 if (! $action)
 {
-    if (! GETPOST("amount",'alpha') && ! GETPOST("source",'alpha'))
+    if (! GETPOST("amount",'alpha') && ! $source)
     {
     	print $langs->trans('ErrorBadParameters')." - amount or source";
     	exit;
     }
-    if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! GETPOST("source",'alpha'))
+    if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! $source)
     {
     	print $langs->trans('ErrorBadParameters')." - tag or source";
     	exit;
     }
-    if (GETPOST("source",'alpha') && ! GETPOST("ref",'alpha'))
+    if ($source && ! GETPOST("ref",'alpha'))
     {
     	print $langs->trans('ErrorBadParameters')." - ref";
     	exit;
@@ -111,7 +112,6 @@ $urlok=$urlwithroot.'/public/payment/paymentok.php?';
 $urlko=$urlwithroot.'/public/payment/paymentko.php?';
 
 // Complete urls for post treatment
-$SOURCE=GETPOST("source",'alpha');
 $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
@@ -123,10 +123,10 @@ if (! empty($suffix))
 	$urlok.='suffix='.urlencode($suffix).'&';
 	$urlko.='suffix='.urlencode($suffix).'&';
 }
-if (! empty($SOURCE))
+if ($source)
 {
-    $urlok.='source='.urlencode($SOURCE).'&';
-    $urlko.='source='.urlencode($SOURCE).'&';
+    $urlok.='s='.urlencode($source).'&';
+    $urlko.='s='.urlencode($source).'&';
 }
 if (! empty($REF))
 {
@@ -150,8 +150,8 @@ if (! empty($SECUREKEY))
 }
 if (! empty($entity))
 {
-	$urlok.='entity='.urlencode($entity).'&';
-	$urlko.='entity='.urlencode($entity).'&';
+	$urlok.='e='.urlencode($entity).'&';
+	$urlko.='e='.urlencode($entity).'&';
 }
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
@@ -223,7 +223,7 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 {
     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
     {
-        if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+        if ($source && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $source . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
         else $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
     }
     else
@@ -335,18 +335,23 @@ if ($action == 'dopayment')
 
 		$origfulltag=GETPOST("fulltag",'alpha');
 
+		// Securekey into back url useless for back url and we need an url lower than 150.
+		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
+		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
+
 		$mesg='';
 		if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 		elseif (empty($email))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 		elseif (! isValidEMail($email))   $mesg=$langs->trans("ErrorBadEMail",$email);
 		elseif (! $origfulltag)           $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
-		elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok;
-		elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko;
+		elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok.'( Paybox requires 150, found '.strlen($urlok).')';
+		elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko.'( Paybox requires 150, found '.strlen($urlok).')';
 
 		if (empty($mesg))
 		{
 			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
 
+			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 			print_paybox_redirect($PRICE, $conf->currency, $email, $urlok, $urlko, $FULLTAG);
 
 			session_destroy();
@@ -499,10 +504,10 @@ $conf->dol_hide_leftmenu=1;
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 // Check link validity
-if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
+if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
     $langs->load("errors");
-    dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $SOURCE, $ref));
+    dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
     llxFooter();
     $db->close();
     exit;
@@ -528,7 +533,7 @@ print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="e" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.$creditor.' -->'."\n";
@@ -602,7 +607,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found=false;
 $error=0;
@@ -709,8 +714,8 @@ if ($source == 'order')
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
+	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
@@ -808,7 +813,7 @@ if ($source == 'invoice')
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
     print '</td></tr>'."\n";
 
 	// Debitor
@@ -821,8 +826,8 @@ if ($source == 'invoice')
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
+	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
@@ -846,12 +851,20 @@ if ($source == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+
+	// Add download link
+	if ($download > 0)
+	{
+		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">';
+		print $invoice->getDirectExternalLink(1);
+		print '</td></tr>'."\n";
+	}
 
     // Shipping address
     $shipToName=$invoice->thirdparty->name;
@@ -996,8 +1009,8 @@ if ($source == 'contractline')
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Quantity
@@ -1138,8 +1151,8 @@ if ($source == 'membersubscription')
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 
 	if ($member->last_subscription_date || $member->last_subscription_amount)
@@ -1264,7 +1277,7 @@ if ($action != 'dopayment')
         if (! empty($conf->stripe->enabled))
         {
         	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
-        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment__stripe" value="'.$langs->trans("StripeDoPayment").'">';
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
         }
 
     	if (! empty($conf->paypal->enabled))
@@ -1357,12 +1370,12 @@ if (preg_match('/^dopayment/',$action))
 		print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
 		print '<input type="hidden" name="action" value="charge">'."\n";
 		print '<input type="hidden" name="tag" value="'.$TAG.'">'."\n";
-		print '<input type="hidden" name="source" value="'.$SOURCE.'">'."\n";
+		print '<input type="hidden" name="s" value="'.$source.'">'."\n";
 		print '<input type="hidden" name="ref" value="'.$REF.'">'."\n";
 		print '<input type="hidden" name="fulltag" value="'.$FULLTAG.'">'."\n";
 		print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
 		print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
-		print '<input type="hidden" name="entity" value="'.$entity.'" />';
+		print '<input type="hidden" name="e" value="'.$entity.'" />';
 		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
 		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
 

@@ -82,8 +82,8 @@ if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACK
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["main_lang_default"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["main_multilangs"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["MAIN_LANG_DEFAULT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["MAIN_MULTILANGS"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
 
@@ -231,14 +231,14 @@ if ($action == 'edit')	// Edit
 
     // Default language
     print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-    print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'main_lang_default', 1, 0, 0, 0, 0, 'minwidth300');
+    print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300');
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Multilingual GUI
     print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-    print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
+    print $form->selectyesno('MAIN_MULTILANGS',$conf->global->MAIN_MULTILANGS,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
