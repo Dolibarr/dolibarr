@@ -3138,12 +3138,11 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 div.titre {
 	font-family: <?php print $fontlist ?>;
 	font-size: 14px;
-	font-weight: bold;
+	/* font-weight: bold; */
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
-	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
 
 #dolpaymenttable { min-width: 310px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
