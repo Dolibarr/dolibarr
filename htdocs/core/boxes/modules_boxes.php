@@ -286,7 +286,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     if (isset($contents[$i]))
                     {
                         // TR
-                        if (isset($contents[$i][0]['tr'])) $out.= '<tr class="tdtop" '.$contents[$i][0]['tr'].'>';
+                        if (isset($contents[$i][0]['tr'])) $out.= '<tr '.$contents[$i][0]['tr'].'>';
                         else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD
