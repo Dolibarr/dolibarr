@@ -967,11 +967,13 @@ elseif (! empty($module))
         	$linktoenabledisable.=img_picto($langs->trans("Disabled"),'switch_off');
         	$linktoenabledisable.="</a>\n";
         }
-
-        $modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive", $urltomodulesetup);
-        if (! empty($conf->$module->enabled))
+        if (! empty($conf->$modulelowercase->enabled))
         {
         	$modulestatusinfo=img_warning().' '.$langs->trans("ModuleIsLive");
+        }
+        else
+        {
+        	$modulestatusinfo=img_info('').' '.$langs->trans("ModuleIsNotActive", $urltomodulesetup);
         }
 
         $head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module.($forceddirread?'@'.$dirread:'');
@@ -1308,12 +1310,12 @@ elseif (! empty($module))
 		        	//$objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
             		$objectname = $reg[1];
 	                if (empty($firstobjectname)) $firstobjectname = $objectname;
-            	}
 
-            	$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj='.$objectname;
-                $head3[$h][1] = $objectname;
-                $head3[$h][2] = $objectname;
-                $h++;
+	            	$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj='.$objectname;
+    	            $head3[$h][1] = $objectname;
+        	        $head3[$h][2] = $objectname;
+            	    $h++;
+            	}
             }
 
             $head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'').'&tabobj=deleteobject';
@@ -1483,98 +1485,105 @@ elseif (! empty($module))
                         print '<td></td>';
                         print '</tr>';
 
-                        // Line to add a property
-                        print '<tr>';
-                        print '<td><input class="text" name="propname" value="'.GETPOST('propname','alpha').'"></td>';
-                        print '<td><input class="text" name="proplabel" value="'.GETPOST('proplabel','alpha').'"></td>';
-                        print '<td><input class="text" name="proptype" value="'.GETPOST('proptype','alpha').'"></td>';
-                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.GETPOST('propnotnull','alpha').'"></td>';
-                        //print '<td><input class="text" name="propdefault" value=""></td>';
-                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.GETPOST('propindex','alpha').'"></td>';
-                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.GETPOST('propposition','alpha').'"></td>';
-                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.GETPOST('propenabled','alpha').'"></td>';
-                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.GETPOST('propvisible','alpha').'"></td>';
-                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.GETPOST('propisameasure','alpha').'"></td>';
-                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.GETPOST('propsearchall','alpha').'"></td>';
-                        print '<td><input class="text" name="propcomment" value="'.GETPOST('propcomment','alpha').'"></td>';
-                        print '<td align="center">';
-                        print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
-                        print '</td></tr>';
-
                         $properties = dol_sort_array($tmpobjet->fields, 'position');
 
-                        foreach($properties as $propkey => $propval)
+                        if (! empty($properties))
                         {
-                            /* If from Reflection
-                            if ($propval->class == $tabobj)
-                            {
-                                $propname=$propval->getName();
-                                $comment=$propval->getDocComment();
-                                $type=gettype($tmpobjet->$propname);
-                                $default=$propdefault[$propname];
-                                // Discard generic properties
-                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
+	                        // Line to add a property
+	                        print '<tr>';
+	                        print '<td><input class="text" name="propname" value="'.GETPOST('propname','alpha').'"></td>';
+	                        print '<td><input class="text" name="proplabel" value="'.GETPOST('proplabel','alpha').'"></td>';
+	                        print '<td><input class="text" name="proptype" value="'.GETPOST('proptype','alpha').'"></td>';
+	                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.GETPOST('propnotnull','alpha').'"></td>';
+	                        //print '<td><input class="text" name="propdefault" value=""></td>';
+	                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.GETPOST('propindex','alpha').'"></td>';
+	                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.GETPOST('propposition','alpha').'"></td>';
+	                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.GETPOST('propenabled','alpha').'"></td>';
+	                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.GETPOST('propvisible','alpha').'"></td>';
+	                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.GETPOST('propisameasure','alpha').'"></td>';
+	                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.GETPOST('propsearchall','alpha').'"></td>';
+	                        print '<td><input class="text" name="propcomment" value="'.GETPOST('propcomment','alpha').'"></td>';
+	                        print '<td align="center">';
+	                        print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+	                        print '</td></tr>';
 
-                                // Keep or not lines
-                                if (in_array($propname, array('fk_element', 'lines'))) continue;
-                            }*/
+	                        foreach($properties as $propkey => $propval)
+	                        {
+	                            /* If from Reflection
+	                            if ($propval->class == $tabobj)
+	                            {
+	                                $propname=$propval->getName();
+	                                $comment=$propval->getDocComment();
+	                                $type=gettype($tmpobjet->$propname);
+	                                $default=$propdefault[$propname];
+	                                // Discard generic properties
+	                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
 
-                            $propname=$propkey;
-                            $proplabel=$propval['label'];
-                            $proptype=$propval['type'];
-                            $propnotnull=$propval['notnull'];
-                            $propsearchall=$propval['searchall'];
-                            //$propdefault=$propval['default'];
-                            $propindex=$propval['index'];
-                            $propposition=$propval['position'];
-                            $propenabled=$propval['enabled'];
-                            $propvisible=$propval['visible'];
-                            $propisameasure=$propval['isameasure'];
-                            $propcomment=$propval['comment'];
+	                                // Keep or not lines
+	                                if (in_array($propname, array('fk_element', 'lines'))) continue;
+	                            }*/
 
-                            print '<tr class="oddeven">';
+	                            $propname=$propkey;
+	                            $proplabel=$propval['label'];
+	                            $proptype=$propval['type'];
+	                            $propnotnull=$propval['notnull'];
+	                            $propsearchall=$propval['searchall'];
+	                            //$propdefault=$propval['default'];
+	                            $propindex=$propval['index'];
+	                            $propposition=$propval['position'];
+	                            $propenabled=$propval['enabled'];
+	                            $propvisible=$propval['visible'];
+	                            $propisameasure=$propval['isameasure'];
+	                            $propcomment=$propval['comment'];
 
-                            print '<td>';
-                            print $propname;
-                            print '</td>';
-                            print '<td>';
-                            print $proplabel;
-                            print '</td>';
-                            print '<td>';
-                            print $proptype;
-                            print '</td>';
-                            print '<td class="center">';
-                            print $propnotnull;
-                            print '</td>';
-                            /*print '<td>';
-                            print $propdefault;
-                            print '</td>';*/
-                            print '<td class="center">';
-                            print $propindex?'X':'';
-                            print '</td>';
-                            print '<td align="right">';
-                            print $propposition;
-                            print '</td>';
-                            print '<td class="center">';
-                            print $propenabled?$propenabled:'';
-                            print '</td>';
-                            print '<td class="center">';
-                            print $propvisible?$propvisible:'';
-                            print '</td>';
-                            print '<td class="center">';
-                            print $propisameasure?$propisameasure:'';
-                            print '</td>';
-                            print '<td class="center">';
-                            print $propsearchall?'X':'';
-                            print '</td>';
-                            print '<td>';
-                            print $propcomment;
-                            print '</td>';
-                            print '<td class="center">';
-                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
-                            print '</td>';
+	                            print '<tr class="oddeven">';
 
-                            print '</tr>';
+	                            print '<td>';
+	                            print $propname;
+	                            print '</td>';
+	                            print '<td>';
+	                            print $proplabel;
+	                            print '</td>';
+	                            print '<td>';
+	                            print $proptype;
+	                            print '</td>';
+	                            print '<td class="center">';
+	                            print $propnotnull;
+	                            print '</td>';
+	                            /*print '<td>';
+	                            print $propdefault;
+	                            print '</td>';*/
+	                            print '<td class="center">';
+	                            print $propindex?'X':'';
+	                            print '</td>';
+	                            print '<td align="right">';
+	                            print $propposition;
+	                            print '</td>';
+	                            print '<td class="center">';
+	                            print $propenabled?$propenabled:'';
+	                            print '</td>';
+	                            print '<td class="center">';
+	                            print $propvisible?$propvisible:'';
+	                            print '</td>';
+	                            print '<td class="center">';
+	                            print $propisameasure?$propisameasure:'';
+	                            print '</td>';
+	                            print '<td class="center">';
+	                            print $propsearchall?'X':'';
+	                            print '</td>';
+	                            print '<td>';
+	                            print $propcomment;
+	                            print '</td>';
+	                            print '<td class="center">';
+	                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+	                            print '</td>';
+
+	                            print '</tr>';
+	                        }
+                        }
+                        else
+                        {
+                        	print '<tr><td><span class="warning">'.$langs->trans('Property $field not found into the class. The class was probably not generated by modulebuilder.').'</warning></td></tr>';
                         }
                         print '</table>';
 						print '</div>';
