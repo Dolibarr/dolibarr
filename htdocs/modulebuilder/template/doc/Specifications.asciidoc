@@ -1,1 +1,3 @@
 # SPECIFICATIONS OF MODULE MYMODULE FOR DOLIBARR ERP CRM
+
+There is no detailed specification available yet.

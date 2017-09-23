@@ -5551,8 +5551,8 @@ class Form
         {
         	$nbofdifferenttypes = count($object->linkedObjects);
 
-        	print '<br><!-- showLinkedObjectBlock -->';
-            print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
+        	print '<!-- showLinkedObjectBlock -->';
+            print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
 
 
     		print '<div class="div-table-responsive-no-min">';

@@ -1194,6 +1194,9 @@ elseif (! empty($module))
         {
             if ($action != 'editfile' || empty($file))
             {
+            	print $langs->trans("SpecDefDesc").'<br>';
+            	print '<br>';
+
             	$specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$');
 
 	            foreach ($specs as $spec)
@@ -1241,6 +1244,9 @@ elseif (! empty($module))
         {
         	if ($action != 'editfile' || empty($file))
         	{
+        		print $langs->trans("LanguageDefDesc").'<br>';
+        		print '<br>';
+
         		$langfiles=dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
 
         		foreach ($langfiles as $langfile)
@@ -1419,11 +1425,14 @@ elseif (! empty($module))
                         print '<br>';
                         print '</div>';
 
+                        $urloflist = dol_buildpath(strtolower($module).'/'.strtolower($tabobj).'_list.php', 1);
+                        $urlofcard = dol_buildpath(strtolower($module).'/'.strtolower($tabobj).'_card.php', 1);
+
                         print '<div class="fichehalfleft">';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong>'.$pathtolist.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.$pathtolist.'</a></strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong>'.$pathtocard.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong><a href="'.$urlofcard.'?action=create" target="_test">'.$pathtocard.'?action=create</a></strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.$pathtoagenda.'</strong>';
@@ -1479,8 +1488,8 @@ elseif (! empty($module))
                         print '<td class="right">'.$langs->trans("Position").'</td>';
                         print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
                         print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-                        print '<td class="center">'.$langs->trans("IsAMeasure").'</td>';
-                        print '<td class="center">'.$langs->trans("SearchAll").'</td>';
+                        print '<td class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</td>';
+                        print '<td class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</td>';
                         print '<td>'.$langs->trans("Comment").'</td>';
                         print '<td></td>';
                         print '</tr>';
@@ -1885,8 +1894,16 @@ elseif (! empty($module))
         {
         	if ($action != 'editfile' || empty($file))
 			{
-				$pathtohook = strtolower($module).'/class/actions_'.strtolower($module).'.class.php';
-   			    print '<span class="fa fa-file"></span> '.$langs->trans("HooksFile").' : <strong>'.$pathtohook.'</strong>';
+				print $langs->trans("HooksDefDesc").'<br>';
+				print '<br>';
+
+            	$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+        		print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+        		print '<br>';
+
+        		$pathtohook = strtolower($module).'/class/actions_'.strtolower($module).'.class.php';
+				print '<span class="fa fa-file"></span> '.$langs->trans("HooksFile").' : <strong>'.$pathtohook.'</strong>';
    			    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
    			    print '<br>';
 			}
@@ -1926,6 +1943,9 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
+				print $langs->trans("TriggerDefDesc").'<br>';
+				print '<br>';
+
 				if (! empty($triggers))
 				{
 	    			foreach ($triggers as $trigger)
