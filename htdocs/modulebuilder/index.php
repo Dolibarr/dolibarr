@@ -1395,53 +1395,66 @@ elseif (! empty($module))
                         $pathtosql      = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
                         $pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
                         $pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
+
+                        $realpathtoclass    = dol_buildpath($pathtoclass, 0, 1);
+                        $realpathtoapi      = dol_buildpath($pathtoapi, 0, 1);
+                        $realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 1);
+                        $realpathtocard     = dol_buildpath($pathtocard, 0, 1);
+                        $realpathtodocument = dol_buildpath($pathtodocument, 0, 1);
+                        $realpathtolist     = dol_buildpath($pathtolist, 0, 1);
+                        $realpathtonote     = dol_buildpath($pathtonote, 0, 1);
+                        $realpathtophpunit  = dol_buildpath($pathtophpunit, 0, 1);
+                        $realpathtosql      = dol_buildpath($pathtosql, 0, 1);
+                        $realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 1);
+                        $realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 1);
+
                         print '<div class="fichehalfleft">';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.$pathtoclass.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.$pathtoapi.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.($realpathtoapi?'':'<strike>').$pathtoapi.($realpathtoapi?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print ' &nbsp; <a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.$pathtophpunit.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.($realpathtophpunit?'':'<strike>').$pathtophpunit.($realpathtophpunit?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
 
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.$pathtosql.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.($realpathtosql?'':'<strike>').$pathtosql.($realpathtosql?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DropTableIfEmpty").'</a>';
-                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+                        //print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.$pathtosqlextra.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+                        //print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.$pathtosqlkey.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-                        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+                        //print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
 
                         print '<br>';
                         print '</div>';
 
-                        $urloflist = dol_buildpath(strtolower($module).'/'.strtolower($tabobj).'_list.php', 1);
-                        $urlofcard = dol_buildpath(strtolower($module).'/'.strtolower($tabobj).'_card.php', 1);
+                        $urloflist = dol_buildpath($pathtolist, 1);
+                        $urlofcard = dol_buildpath($pathtocard, 1);
 
                         print '<div class="fichehalfleft">';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.$pathtolist.'</a></strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtosql?'':'<strike>').$pathtolist.($realpathtosql?'':'</strike>').'</a></strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong><a href="'.$urlofcard.'?action=create" target="_test">'.$pathtocard.'?action=create</a></strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong><a href="'.$urlofcard.'?action=create" target="_test">'.($realpathtocard?'':'<strike>').$pathtocard.($realpathtocard?'':'</strike>').'?action=create</a></strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.$pathtoagenda.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.($realpathtoagenda?'':'<strike>').$pathtoagenda.($realpathtoagenda?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.$pathtodocument.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.($realpathtodocument?'':'<strike>').$pathtodocument.($realpathtodocument?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
-                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.$pathtonote.'</strong>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.($realpathtonote?'':'<strike>').$pathtonote.($realpathtonote?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '</div>';
 
@@ -1455,149 +1468,165 @@ elseif (! empty($module))
                         {
                         	$result = @include_once($dirread.'/'.$pathtoclass);
                         }
-                        if (class_exists($tabobj)) $tmpobjet = new $tabobj($db);
-
-                        $reflector = new ReflectionClass($tabobj);
-                        $properties = $reflector->getProperties();          // Can also use get_object_vars
-                        $propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
-                        //$propstat = $reflector->getStaticProperties();
-
-                        print load_fiche_titre($langs->trans("Properties"), '', '');
-
-                        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-
-                        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                        print '<input type="hidden" name="action" value="addproperty">';
-                        print '<input type="hidden" name="tab" value="objects">';
-                        print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread?'@'.$dirread:'')).'">';
-                        print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
-
-	            		print '<div class="div-table-responsive">';
-                        print '<table class="noborder">';
-                        print '<tr class="liste_titre">';
-                        print '<td>'.$langs->trans("Property");
-                        print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
-                        print '</td>';
-                        print '<td>';
-                        print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
-                        print '</td>';
-                        print '<td>'.$langs->trans("Type").'</td>';
-                        print '<td class="center">'.$langs->trans("NotNull").'</td>';
-                        //print '<td>'.$langs->trans("DefaultValue").'</td>';
-                        print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
-                        print '<td class="right">'.$langs->trans("Position").'</td>';
-                        print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
-                        print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-                        print '<td class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</td>';
-                        print '<td class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</td>';
-                        print '<td>'.$langs->trans("Comment").'</td>';
-                        print '<td></td>';
-                        print '</tr>';
-
-                        $properties = dol_sort_array($tmpobjet->fields, 'position');
-
-                        if (! empty($properties))
+                        if (class_exists($tabobj))
                         {
-	                        // Line to add a property
-	                        print '<tr>';
-	                        print '<td><input class="text" name="propname" value="'.GETPOST('propname','alpha').'"></td>';
-	                        print '<td><input class="text" name="proplabel" value="'.GETPOST('proplabel','alpha').'"></td>';
-	                        print '<td><input class="text" name="proptype" value="'.GETPOST('proptype','alpha').'"></td>';
-	                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.GETPOST('propnotnull','alpha').'"></td>';
-	                        //print '<td><input class="text" name="propdefault" value=""></td>';
-	                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.GETPOST('propindex','alpha').'"></td>';
-	                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.GETPOST('propposition','alpha').'"></td>';
-	                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.GETPOST('propenabled','alpha').'"></td>';
-	                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.GETPOST('propvisible','alpha').'"></td>';
-	                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.GETPOST('propisameasure','alpha').'"></td>';
-	                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.GETPOST('propsearchall','alpha').'"></td>';
-	                        print '<td><input class="text" name="propcomment" value="'.GETPOST('propcomment','alpha').'"></td>';
-	                        print '<td align="center">';
-	                        print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
-	                        print '</td></tr>';
+                        	try {
+                        		$tmpobjet = @new $tabobj($db);
+                        	}
+                        	catch(Exception $e)
+                        	{
+                        		dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
+                        	}
+                        }
 
-	                        foreach($properties as $propkey => $propval)
+                        if (! empty($tmpobjet))
+                        {
+	                        $reflector = new ReflectionClass($tabobj);
+	                        $properties = $reflector->getProperties();          // Can also use get_object_vars
+	                        $propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+	                        //$propstat = $reflector->getStaticProperties();
+
+	                        print load_fiche_titre($langs->trans("Properties"), '', '');
+
+	                        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
+	                        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                        print '<input type="hidden" name="action" value="addproperty">';
+	                        print '<input type="hidden" name="tab" value="objects">';
+	                        print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread?'@'.$dirread:'')).'">';
+	                        print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+		            		print '<div class="div-table-responsive">';
+	                        print '<table class="noborder">';
+	                        print '<tr class="liste_titre">';
+	                        print '<td>'.$langs->trans("Property");
+	                        print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
+	                        print '</td>';
+	                        print '<td>';
+	                        print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
+	                        print '</td>';
+	                        print '<td>'.$langs->trans("Type").'</td>';
+	                        print '<td class="center">'.$langs->trans("NotNull").'</td>';
+	                        //print '<td>'.$langs->trans("DefaultValue").'</td>';
+	                        print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
+	                        print '<td class="right">'.$langs->trans("Position").'</td>';
+	                        print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
+	                        print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
+	                        print '<td class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</td>';
+	                        print '<td class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</td>';
+	                        print '<td>'.$langs->trans("Comment").'</td>';
+	                        print '<td></td>';
+	                        print '</tr>';
+
+	                        $properties = dol_sort_array($tmpobjet->fields, 'position');
+
+	                        if (! empty($properties))
 	                        {
-	                            /* If from Reflection
-	                            if ($propval->class == $tabobj)
-	                            {
-	                                $propname=$propval->getName();
-	                                $comment=$propval->getDocComment();
-	                                $type=gettype($tmpobjet->$propname);
-	                                $default=$propdefault[$propname];
-	                                // Discard generic properties
-	                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
+		                        // Line to add a property
+		                        print '<tr>';
+		                        print '<td><input class="text" name="propname" value="'.GETPOST('propname','alpha').'"></td>';
+		                        print '<td><input class="text" name="proplabel" value="'.GETPOST('proplabel','alpha').'"></td>';
+		                        print '<td><input class="text" name="proptype" value="'.GETPOST('proptype','alpha').'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.GETPOST('propnotnull','alpha').'"></td>';
+		                        //print '<td><input class="text" name="propdefault" value=""></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.GETPOST('propindex','alpha').'"></td>';
+		                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.GETPOST('propposition','alpha').'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.GETPOST('propenabled','alpha').'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.GETPOST('propvisible','alpha').'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.GETPOST('propisameasure','alpha').'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.GETPOST('propsearchall','alpha').'"></td>';
+		                        print '<td><input class="text" name="propcomment" value="'.GETPOST('propcomment','alpha').'"></td>';
+		                        print '<td align="center">';
+		                        print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
+		                        print '</td></tr>';
 
-	                                // Keep or not lines
-	                                if (in_array($propname, array('fk_element', 'lines'))) continue;
-	                            }*/
+		                        foreach($properties as $propkey => $propval)
+		                        {
+		                            /* If from Reflection
+		                            if ($propval->class == $tabobj)
+		                            {
+		                                $propname=$propval->getName();
+		                                $comment=$propval->getDocComment();
+		                                $type=gettype($tmpobjet->$propname);
+		                                $default=$propdefault[$propname];
+		                                // Discard generic properties
+		                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
 
-	                            $propname=$propkey;
-	                            $proplabel=$propval['label'];
-	                            $proptype=$propval['type'];
-	                            $propnotnull=$propval['notnull'];
-	                            $propsearchall=$propval['searchall'];
-	                            //$propdefault=$propval['default'];
-	                            $propindex=$propval['index'];
-	                            $propposition=$propval['position'];
-	                            $propenabled=$propval['enabled'];
-	                            $propvisible=$propval['visible'];
-	                            $propisameasure=$propval['isameasure'];
-	                            $propcomment=$propval['comment'];
+		                                // Keep or not lines
+		                                if (in_array($propname, array('fk_element', 'lines'))) continue;
+		                            }*/
 
-	                            print '<tr class="oddeven">';
+		                            $propname=$propkey;
+		                            $proplabel=$propval['label'];
+		                            $proptype=$propval['type'];
+		                            $propnotnull=$propval['notnull'];
+		                            $propsearchall=$propval['searchall'];
+		                            //$propdefault=$propval['default'];
+		                            $propindex=$propval['index'];
+		                            $propposition=$propval['position'];
+		                            $propenabled=$propval['enabled'];
+		                            $propvisible=$propval['visible'];
+		                            $propisameasure=$propval['isameasure'];
+		                            $propcomment=$propval['comment'];
 
-	                            print '<td>';
-	                            print $propname;
-	                            print '</td>';
-	                            print '<td>';
-	                            print $proplabel;
-	                            print '</td>';
-	                            print '<td>';
-	                            print $proptype;
-	                            print '</td>';
-	                            print '<td class="center">';
-	                            print $propnotnull;
-	                            print '</td>';
-	                            /*print '<td>';
-	                            print $propdefault;
-	                            print '</td>';*/
-	                            print '<td class="center">';
-	                            print $propindex?'X':'';
-	                            print '</td>';
-	                            print '<td align="right">';
-	                            print $propposition;
-	                            print '</td>';
-	                            print '<td class="center">';
-	                            print $propenabled?$propenabled:'';
-	                            print '</td>';
-	                            print '<td class="center">';
-	                            print $propvisible?$propvisible:'';
-	                            print '</td>';
-	                            print '<td class="center">';
-	                            print $propisameasure?$propisameasure:'';
-	                            print '</td>';
-	                            print '<td class="center">';
-	                            print $propsearchall?'X':'';
-	                            print '</td>';
-	                            print '<td>';
-	                            print $propcomment;
-	                            print '</td>';
-	                            print '<td class="center">';
-	                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
-	                            print '</td>';
+		                            print '<tr class="oddeven">';
 
-	                            print '</tr>';
+		                            print '<td>';
+		                            print $propname;
+		                            print '</td>';
+		                            print '<td>';
+		                            print $proplabel;
+		                            print '</td>';
+		                            print '<td>';
+		                            print $proptype;
+		                            print '</td>';
+		                            print '<td class="center">';
+		                            print $propnotnull;
+		                            print '</td>';
+		                            /*print '<td>';
+		                            print $propdefault;
+		                            print '</td>';*/
+		                            print '<td class="center">';
+		                            print $propindex?'X':'';
+		                            print '</td>';
+		                            print '<td align="right">';
+		                            print $propposition;
+		                            print '</td>';
+		                            print '<td class="center">';
+		                            print $propenabled?$propenabled:'';
+		                            print '</td>';
+		                            print '<td class="center">';
+		                            print $propvisible?$propvisible:'';
+		                            print '</td>';
+		                            print '<td class="center">';
+		                            print $propisameasure?$propisameasure:'';
+		                            print '</td>';
+		                            print '<td class="center">';
+		                            print $propsearchall?'X':'';
+		                            print '</td>';
+		                            print '<td>';
+		                            print $propcomment;
+		                            print '</td>';
+		                            print '<td class="center">';
+		                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+		                            print '</td>';
+
+		                            print '</tr>';
+		                        }
 	                        }
+	                        else
+	                        {
+	                        	print '<tr><td><span class="warning">'.$langs->trans('Property $field not found into the class. The class was probably not generated by modulebuilder.').'</warning></td></tr>';
+	                        }
+	                        print '</table>';
+							print '</div>';
+
+	                        print '</form>';
                         }
                         else
-                        {
-                        	print '<tr><td><span class="warning">'.$langs->trans('Property $field not found into the class. The class was probably not generated by modulebuilder.').'</warning></td></tr>';
-                        }
-                        print '</table>';
-						print '</div>';
-
-                        print '</form>';
+	                    {
+	                     	print '<tr><td><span class="warning">'.$langs->trans('Failed to init the object with the new.').'</warning></td></tr>';
+	                    }
                     }
                     catch(Exception $e)
                     {

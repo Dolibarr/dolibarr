@@ -64,6 +64,7 @@ IsAMeasure=Is a measure
 DirScanned=Directory scanned
 NoTrigger=No trigger
 NoWidget=No widget
+GoToApiExplorer=Go to API explorer
 ListOfPermissionsDefined=List of defined permissions
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible into list ? (Examples: 0=not visible, 1=visible by default on list, -1=not shown by default on list but can be added into list to be viewed)
