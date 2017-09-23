@@ -4043,6 +4043,12 @@ div#ecm-layout-center {
 	padding-left: 10px !important;
 	padding-right: 10px !important;
 }
+.jnotify-container .jnotify-notification .jnotify-message {
+	font-weight: normal;
+}
+.jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
+    color: #a28918 !important;
+}
 
 /* use or not ? */
 div.jnotify-background {
