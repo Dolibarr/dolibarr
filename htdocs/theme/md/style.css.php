@@ -730,7 +730,9 @@ div.myavailability {
 	margin-top: 6px;
 	margin-bottom: 12px;
 }
-
+#builddoc_form ~ .showlinkedobjectblock {
+    margin-top: 20px;
+}
 
 /* For the long description of module */
 .moduledesclong p img,.moduledesclong p a img {
