@@ -1398,6 +1398,8 @@ elseif (! empty($module))
                         $pathtosql      = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
                         $pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
                         $pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
+                        $pathtolib      = strtolower($module).'/lib/'.strtolower($tabobj).'.lib.php';
+                        $pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 
                         $realpathtoclass    = dol_buildpath($pathtoclass, 0, 1);
                         $realpathtoapi      = dol_buildpath($pathtoapi, 0, 1);
@@ -1410,6 +1412,8 @@ elseif (! empty($module))
                         $realpathtosql      = dol_buildpath($pathtosql, 0, 1);
                         $realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 1);
                         $realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 1);
+                        $realpathtolib      = dol_buildpath($pathtolib, 0, 1);
+                        $realpathtopicto    = dol_buildpath($pathtopicto, 0, 1);
 
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
@@ -1459,6 +1463,16 @@ elseif (! empty($module))
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.($realpathtonote?'':'<strike>').$pathtonote.($realpathtonote?'':'</strike>').'</strong>';
                         print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+
+                        print '<br>';
+
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtodocument?'':'</strike>').'</strong>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print '<br>';
+                        print '<span class="fa fa-file"></span> '.$langs->trans("PageForPicto").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';
+                        //print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+
                         print '</div>';
 
                         print '<br><br><br>';
