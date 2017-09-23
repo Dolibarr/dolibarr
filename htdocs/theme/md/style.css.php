@@ -2064,8 +2064,12 @@ div.tabs {
     clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 6px; }		/* To avoid overlap of tabs when not browser */
-
+div.tabsElem {
+	margin-top: 6px;
+}		/* To avoid overlap of tabs when not browser */
+div.tabsElem a {
+    font-weight: normal !important;
+}
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;

@@ -179,7 +179,7 @@ $coldisplay=-1; // We remove first td
 		<td align="right" class="margininfos"><?php $coldisplay++; ?>
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat right" data-role="none" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
 			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
@@ -266,21 +266,21 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
 			jQuery("#price_ttc").val('');
 			jQuery("#multicurrency_subprice").val('');
-		} 
+		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#multicurrency_subprice").val('');
-		} 
+		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#price_ttc").val('');
-		} 
+		}
 	});
 
     <?php
