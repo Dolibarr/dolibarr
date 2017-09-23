@@ -337,13 +337,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
     if (! $error)
     {
         // Edit the class file to write properties
-        $result=rebuildObjectClass($destdir, $module, $objectname, $newmask);
-        if ($result < 0) $error++;
+        $object=rebuildObjectClass($destdir, $module, $objectname, $newmask);
+        if (is_numeric($object) && $object < 0) $error++;
     }
     if (! $error)
     {
         // Edit sql with new properties
-        $result=rebuildObjectSql($destdir, $module, $objectname, $newmask);
+        $result=rebuildObjectSql($destdir, $module, $objectname, $newmask, '', $object);
         if ($result < 0) $error++;
     }
 
@@ -362,25 +362,28 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
     dol_mkdir($destdir);
 
     $addfieldentry = array(
-    	'name'=>GETPOST('propname','aZ09'),'type'=>GETPOST('proptype','alpha'),'label'=>GETPOST('proplabel','alpha'),'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
+    	'name'=>GETPOST('propname','aZ09'),'label'=>GETPOST('proplabel','alpha'),'type'=>GETPOST('proptype','alpha'),
+    	'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+    	'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
     	'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
     	'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp'));
+
+    if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
+    {
+    	$addfieldentry['arrayofkeyval'] = dol_json_decode($addfieldentry['arrayofkeyval'], true);
+    }
 
     // Edit the class file to write properties
     if (! $error)
     {
-    	$result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
-		// var_dump($result);exit;
-		if ($result <= 0)
-		{
-			$error++;
-		}
+    	$object=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
+		if (is_numeric($result) && $result <= 0) $error++;
     }
 
     // Edit sql with new properties
     if (! $error)
     {
-    	$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
+    	$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
 		if ($result <= 0)
 		{
 			$error++;
@@ -412,14 +415,14 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 	// Edit the class file to write properties
 	if (! $error)
 	{
-		$result=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
-		if ($result <= 0) $error++;
+		$object=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
+		if (is_numeric($object) && $object <= 0) $error++;
 	}
 
 	// Edit sql with new properties
 	if (! $error)
 	{
-		$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir);
+		$result=rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
 		if ($result <= 0) $error++;
 	}
 
@@ -1410,28 +1413,28 @@ elseif (! empty($module))
 
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.($realpathtoapi?'':'<strike>').$pathtoapi.($realpathtoapi?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print ' &nbsp; <a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.($realpathtophpunit?'':'<strike>').$pathtophpunit.($realpathtophpunit?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
 
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.($realpathtosql?'':'<strike>').$pathtosql.($realpathtosql?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DropTableIfEmpty").'</a>';
                         //print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         //print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         //print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
                         print '<br>';
 
@@ -1443,19 +1446,19 @@ elseif (! empty($module))
 
                         print '<div class="fichehalfleft">';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtosql?'':'<strike>').$pathtolist.($realpathtosql?'':'</strike>').'</a></strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong><a href="'.$urlofcard.'?action=create" target="_test">'.($realpathtocard?'':'<strike>').$pathtocard.($realpathtocard?'':'</strike>').'?action=create</a></strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.($realpathtoagenda?'':'<strike>').$pathtoagenda.($realpathtoagenda?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.($realpathtodocument?'':'<strike>').$pathtodocument.($realpathtodocument?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '<br>';
                         print '<span class="fa fa-file"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.($realpathtonote?'':'<strike>').$pathtonote.($realpathtonote?'':'</strike>').'</strong>';
-                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+                        print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
                         print '</div>';
 
                         print '<br><br><br>';
@@ -1506,6 +1509,7 @@ elseif (! empty($module))
 	                        print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
 	                        print '</td>';
 	                        print '<td>'.$langs->trans("Type").'</td>';
+	                        print '<td>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</td>';
 	                        print '<td class="center">'.$langs->trans("NotNull").'</td>';
 	                        //print '<td>'.$langs->trans("DefaultValue").'</td>';
 	                        print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
@@ -1524,18 +1528,19 @@ elseif (! empty($module))
 	                        {
 		                        // Line to add a property
 		                        print '<tr>';
-		                        print '<td><input class="text" name="propname" value="'.GETPOST('propname','alpha').'"></td>';
-		                        print '<td><input class="text" name="proplabel" value="'.GETPOST('proplabel','alpha').'"></td>';
-		                        print '<td><input class="text" name="proptype" value="'.GETPOST('proptype','alpha').'"></td>';
-		                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.GETPOST('propnotnull','alpha').'"></td>';
+		                        print '<td><input class="text" name="propname" value="'.dol_escape_htmltag(GETPOST('propname','alpha')).'"></td>';
+		                        print '<td><input class="text" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel','alpha')).'"></td>';
+		                        print '<td><input class="text" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype','alpha')).'"></td>';
+		                        print '<td><input class="text" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval','none')).'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull','alpha')).'"></td>';
 		                        //print '<td><input class="text" name="propdefault" value=""></td>';
-		                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.GETPOST('propindex','alpha').'"></td>';
-		                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.GETPOST('propposition','alpha').'"></td>';
-		                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.GETPOST('propenabled','alpha').'"></td>';
-		                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.GETPOST('propvisible','alpha').'"></td>';
-		                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.GETPOST('propisameasure','alpha').'"></td>';
-		                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.GETPOST('propsearchall','alpha').'"></td>';
-		                        print '<td><input class="text" name="propcomment" value="'.GETPOST('propcomment','alpha').'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex','alpha')).'"></td>';
+		                        print '<td class="right"><input class="text right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition','alpha')).'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled','alpha')).'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible','alpha')).'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure','alpha')).'"></td>';
+		                        print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall','alpha')).'"></td>';
+		                        print '<td><input class="text" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment','alpha')).'"></td>';
 		                        print '<td align="center">';
 		                        print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
 		                        print '</td></tr>';
@@ -1559,6 +1564,7 @@ elseif (! empty($module))
 		                            $propname=$propkey;
 		                            $proplabel=$propval['label'];
 		                            $proptype=$propval['type'];
+		                            $proparrayofkeyval=$propval['arrayofkeyval'];
 		                            $propnotnull=$propval['notnull'];
 		                            $propsearchall=$propval['searchall'];
 		                            //$propdefault=$propval['default'];
@@ -1579,6 +1585,12 @@ elseif (! empty($module))
 		                            print '</td>';
 		                            print '<td>';
 		                            print $proptype;
+		                            print '</td>';
+		                            print '<td>';
+		                            if ($proparrayofkeyval)
+		                            {
+		                            	print json_encode($proparrayofkeyval);
+		                            }
 		                            print '</td>';
 		                            print '<td class="center">';
 		                            print $propnotnull;
@@ -1652,6 +1664,7 @@ elseif (! empty($module))
                     print '<input type="hidden" name="action" value="savefile">';
                     print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
                     print '<input type="hidden" name="tab" value="'.$tab.'">';
+            		print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
                     print '<input type="hidden" name="module" value="'.$module.($forceddirread?'@'.$dirread:'').'">';
 
                     $doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');

@@ -270,12 +270,15 @@ if ($action == 'create')
 	foreach($object->fields as $key => $val)
 	{
 	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
-    	print '<tr id="field_'.$key.'"><td';
+    	print '<tr id="field_'.$key.'">';
+    	print '<td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull'] > 0) print ' fieldrequired';
 		if ($val['type'] == 'text') print ' tdtop';
 		print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '>';
+    	print $langs->trans($val['label']);
+    	print '</td>';
     	print '<td>';
     	if ($val['type'] == 'text')
     	{
@@ -283,9 +286,14 @@ if ($action == 'create')
     		print GETPOST($key,'none');
     		print '</textarea>';
     	}
+	    elseif (is_array($val['arrayofkeyval']))
+   		{
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
+    	}
     	else
     	{
-    		print '<input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    		$cssforinput = 'minwidth100';
+    		print '<input class="flat" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
     	}
     	print '</td>';
     	print '</tr>';
@@ -330,9 +338,14 @@ if (($id || $ref) && $action == 'edit')
     		print GETPOST($key,'none');
     		print '</textarea>';
     	}
+	    elseif (is_array($val['arrayofkeyval']))
+   		{
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
+    	}
     	else
     	{
-    		print '<input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    		$cssforinput = 'minwidth100';
+    		print '<input class="flat" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
     	}
     	print '</td>';
     	print '</tr>';

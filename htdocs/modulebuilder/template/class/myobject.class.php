@@ -78,19 +78,19 @@ class MyObject extends CommonObject
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
 	public $fields=array(
-	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=>1, 'index'=>1, 'position'=>20),
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'index'=>1, 'position'=>1,  'comment'=>'Id'),
+		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=>1,  'index'=>1, 'position'=>20),
 	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Amount'),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>1000),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
+	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>500),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>1,    'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 	);
 
 	public $rowid;
