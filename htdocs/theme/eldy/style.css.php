@@ -863,11 +863,11 @@ div.fiche>form>div.div-table-responsive {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-/* Force values for small screen 570 */
+/* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
 	body {
-		font-size: <?php print $fontsize+1; ?>px;
+		font-size: <?php print $fontsize+3; ?>px;
 	}
 }
 
@@ -875,7 +875,7 @@ div.fiche>form>div.div-table-responsive {
 @media only screen and (max-width: 570px)
 {
 	body {
-		font-size: <?php print $fontsize+1; ?>px;
+		font-size: <?php print $fontsize+3; ?>px;
 	}
 
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
@@ -2749,13 +2749,15 @@ input.liste_titre {
 	line-height: 24px;
 }
 
-.noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	/* height: 32px; */
-}
-.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #551188;
     font-weight: normal;
+}
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     white-space: nowrap;
+}
+.noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	white-space: normal;
 }
 form.liste_total div {
     border-top: 1px solid #DDDDDD;

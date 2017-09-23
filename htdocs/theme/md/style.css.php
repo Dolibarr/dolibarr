@@ -865,11 +865,11 @@ div.fiche>form>div.div-table-responsive {
     .minwidth500imp { min-width: 100px !important; }
 }
 
-/* Force values for small screen 570 */
+/* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
 	body {
-		font-size: <?php print $fontsize+1; ?>px;
+		font-size: <?php print $fontsize+3; ?>px;
 	}
 }
 
@@ -877,7 +877,7 @@ div.fiche>form>div.div-table-responsive {
 @media only screen and (max-width: 570px)
 {
 	body {
-		font-size: <?php print $fontsize+1; ?>px;
+		font-size: <?php print $fontsize+3; ?>px;
 	}
 
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
@@ -2865,16 +2865,19 @@ input.liste_titre {
     border: 0px;
 }
 
-.noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	/* height: 32px; */
-}
-.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    /* border-top: 1px solid #f4f4f4; */
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #332266;
     font-weight: normal;
-    white-space: nowrap;
     padding: 4px;
 }
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
+    white-space: nowrap;
+}
+.noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	white-space: normal;
+}
+
+
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
 }
