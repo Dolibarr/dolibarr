@@ -823,7 +823,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         dol_fiche_head();
 
-        //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br /><br />';
+        //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
         print '<table class="border" width="100%">';
         print '<tbody>';
@@ -1281,14 +1281,14 @@ else
             } else {
                 print '<div class="tabBar">';
                 print $langs->trans('ErrorUserViewCP');
-                print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+                print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
                 print '</div>';
             }
 
         } else {
             print '<div class="tabBar">';
             print $langs->trans('ErrorIDFicheCP');
-            print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+            print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
             print '</div>';
         }
 

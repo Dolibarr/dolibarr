@@ -371,6 +371,7 @@ if ($resql)
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
     print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" align="center">';
@@ -382,7 +383,6 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
     if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre center">';
     print $formactions->form_select_status_action('formaction',$status,1,'status',1,2);
     print '</td>';
@@ -395,7 +395,8 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre("ActionsOwnedByShort",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
@@ -403,7 +404,6 @@ if ($resql)
 	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
     if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print_liste_field_titre("LinkedObject",$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre("ActionsOwnedByShort",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("");
 	print "</tr>\n";
@@ -437,13 +437,23 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		// Action (type)
+		// Ref
 		print '<td>';
 		print $actionstatic->getNomUrl(1,-1);
 		print '</td>';
 
-		// Action (type)
-		print '<td>';
+		// User owner
+		print '<td class="tdoverflowmax100">';
+		if ($obj->fk_user_action > 0)
+		{
+			$userstatic->fetch($obj->fk_user_action);
+			print $userstatic->getNomUrl(-1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+		// Label
+		print '<td class="tdoverflowmax300">';
 		print $actionstatic->label;
 		print '</td>';
 
@@ -482,7 +492,7 @@ if ($resql)
 		print '</td>';
 
 		// Third party
-		print '<td>';
+		print '<td class="tdoverflowmax100">';
 		if ($obj->socid)
 		{
 			$societestatic->id=$obj->socid;
@@ -519,16 +529,6 @@ if ($resql)
             }
             print '</td>';
         }
-
-		// User owner
-		print '<td align="left">';
-		if ($obj->fk_user_action > 0)
-		{
-			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(-1);
-		}
-		else print '&nbsp;';
-		print '</td>';
 
 		// Status/Percent
 		$datep=$db->jdate($obj->datep);

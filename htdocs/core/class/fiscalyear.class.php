@@ -86,7 +86,7 @@ class Fiscalyear extends CommonObject
 		$sql.= ", datec";
 		$sql.= ", fk_user_author";
 		$sql.= ") VALUES (";
-		$sql.= " '".$this->label."'";
+		$sql.= " '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->idate($this->date_start)."'";
 		$sql.= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'":"null");
 		$sql.= ", 0";

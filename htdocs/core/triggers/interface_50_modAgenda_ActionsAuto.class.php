@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2015       Bahfir Abbes        <bafbes@gmail.com>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +110,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $object->actionmsg=$langs->transnoentities("ContractValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
 
             $object->sendtoid=0;
+		}
+		elseif ($action == 'CONTRACT_SENTBYMAIL')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("contract");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ContractSentByEMail",$object->ref);
+			if (empty($object->actionmsg))
+			{
+				$object->actionmsg=$langs->transnoentities("ContractSentByEMail",$object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
         {
@@ -334,7 +349,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("interventions");
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+            	$object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            }
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
@@ -403,6 +421,54 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+			$object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_SENTBYMAIL')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+			if (empty($object->actionmsg))
+			{
+				$object->actionmsg=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_SIGNED')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_REFUSED')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+
+			$object->sendtoid=0;
 		}
 		elseif ($action == 'ORDER_SUPPLIER_CREATE')
         {

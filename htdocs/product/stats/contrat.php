@@ -190,7 +190,7 @@ if ($id > 0 || ! empty($ref))
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
-					print dol_print_date($db->jdate($objp->date_contrat))."</td>";
+					print dol_print_date($db->jdate($objp->date_contrat), 'dayhour')."</td>";
 					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					//print '<td align="right">';
 					print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';

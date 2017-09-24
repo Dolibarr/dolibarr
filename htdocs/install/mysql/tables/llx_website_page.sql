@@ -21,14 +21,18 @@ CREATE TABLE llx_website_page
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer NOT NULL,
-	pageurl       varchar(16) NOT NULL,
+	pageurl       varchar(255) NOT NULL,
 	title         varchar(255),						
 	description   varchar(255),						
 	keywords      varchar(255),
+	lang          varchar(6),
+	fk_page       integer,          
 	content		  mediumtext,		-- text is not enough in size
-    status        integer,
+    status        integer DEFAULT 1,
+	grabbed_from   varchar(255),
     fk_user_create integer,
     fk_user_modif  integer,
     date_creation  datetime,
-	tms            timestamp
+	tms            timestamp,
+    import_key     varchar(14)      -- import key
 ) ENGINE=innodb;

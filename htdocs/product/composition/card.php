@@ -552,7 +552,8 @@ if ($id > 0 || ! empty($ref))
 						// check if a product is not already a parent product of this one
 						$prod_arbo=new Product($db);
 						$prod_arbo->id=$objp->rowid;
-						if ($prod_arbo->type==Product::TYPE_ASSEMBLYKIT || $prod_arbo->type== Product::TYPE_STOCKKIT)
+						// This type is not supported (not required to have virtual products working).
+						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT)
 						{
 							$is_pere=0;
 							$prod_arbo->get_sousproduits_arbo();

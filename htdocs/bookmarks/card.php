@@ -63,7 +63,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
-	if (GETPOST("cancel"))
+	if (GETPOST('cancel','alpha'))
 	{
 		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);

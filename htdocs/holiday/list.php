@@ -303,6 +303,7 @@ function showMyBalance($holiday, $user_id)
 	$alltypeleaves=$holiday->getTypes(1,-1);    // To have labels
 
 	$out='';
+	$nb_holiday=0;
 	$typeleaves=$holiday->getTypes(1,1);
 	foreach($typeleaves as $key => $val)
 	{

@@ -81,15 +81,10 @@ $head = mymoduleAdminPrepareHead();
 dol_fiche_head(
 	$head,
 	'about',
-	$langs->trans("MyModuleName"),
+	$langs->trans("ModuleMyModuleName"),
 	0,
 	'mymodule@mymodule'
 );
-
-// About page goes here
-echo $langs->trans("MyModuleAboutPage");
-
-echo '<br>';
 
 dol_include_once('/mymodule/core/modules/modMyModule.class.php');
 $tmpmodule = new modMyModule($db);

@@ -45,7 +45,7 @@ $langs->load("users");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $myparam	= GETPOST('myparam','alpha');
 
 
@@ -132,8 +132,8 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks

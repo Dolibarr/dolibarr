@@ -49,6 +49,9 @@ print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
 if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.$langs->trans("Hidden").'</td>';
+if ($conf->multicompany->enabled)  {
+	print '<td align="center">'.$langs->trans("Entities").'</td>';
+}
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -68,6 +71,9 @@ if (count($extrafields->attribute_type))
         print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
         print '<td align="center">'.yn($extrafields->attribute_alwayseditable[$key])."</td>\n";
     	if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
+    	if ($conf->multicompany->enabled)  {
+    		print '<td align="center">'.($extrafields->attribute_entityid[$key]==0?$langs->trans("All"):$extrafields->attribute_entitylabel[$key]).'</td>';
+    	}
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
         print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
         print "</tr>";

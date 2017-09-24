@@ -53,6 +53,7 @@ jQuery Tiptip          1.3           GPL and MIT License         Yes            
 jsGanttImproved        1.7.5.2       BSD License                 Yes             JS library (to build Gantt reports)
 JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
 SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
+Ace                    1.2.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.    
 
 For licenses compatibility informations:
 http://www.gnu.org/licenses/licenses.en.html

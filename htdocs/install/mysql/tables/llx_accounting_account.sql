@@ -34,5 +34,7 @@ create table llx_accounting_account
   fk_accounting_category 	integer DEFAULT 0,
   fk_user_author  			integer DEFAULT NULL,
   fk_user_modif   			integer DEFAULT NULL,
-  active     	  			tinyint DEFAULT 1  NOT NULL
+  active     	  			tinyint DEFAULT 1  NOT NULL,
+  import_key                varchar(14),
+  extraparams	            varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;

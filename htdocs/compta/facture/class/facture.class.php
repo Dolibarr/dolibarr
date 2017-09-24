@@ -286,6 +286,8 @@ class Facture extends CommonInvoice
 			$result=$_facrec->fetch($this->fac_rec);
 			$result=$_facrec->fetchObjectLinked();       // This load $_facrec->linkedObjectsIds
 
+			$originaldatewhen = $_facrec->date_when;
+
 			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
@@ -314,6 +316,8 @@ class Facture extends CommonInvoice
 			$this->note_public=trim($this->note_public);
 			$this->note_private=trim($this->note_private);
 		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
+
+		    $this->array_options=$_facrec->array_options;
 
 			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
@@ -359,7 +363,12 @@ class Facture extends CommonInvoice
 			    '__INVOICE_PREVIOUS_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y'),
 			    '__INVOICE_YEAR__' => dol_print_date($this->date, '%Y'),
 			    '__INVOICE_NEXT_YEAR__' => dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y'),
+				// Only for tempalte invoice
+				'__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__' => dol_print_date($originaldatewhen, 'dayhour'),
+				'__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__' => dol_print_date(dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency), 'dayhour')
 			);
+
+			//var_dump($substitutionarray);exit;
 
 			$substitutionisok=true;
 			complete_substitutions_array($substitutionarray, $outputlangs);
@@ -653,7 +662,7 @@ class Facture extends CommonInvoice
 						null,
 						0,
 						$_facrec->lines[$i]->label,
-						null,
+						empty($_facrec->lines[$i]->array_options)?null:$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit
@@ -1040,6 +1049,23 @@ class Facture extends CommonInvoice
 			else return -1;
 		}
 		else return -1;
+	}
+
+	/**
+	 * Return link to download file from a direct external access
+	 *
+	 * @param	int				$withpicto			Add download picto into link
+	 * @return	string			HTML link to file
+	 */
+	function getDirectExternalLink($withpicto=0)
+	{
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		$url='eee';
+		return '<a href="'.$urlwithroot.'/document.php?modulepart=invoice&" target="_download" rel="noindex, nofollow">'.$this->ref.'</a>';
 	}
 
 	/**
@@ -2057,7 +2083,12 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
 			return 0;
 		}
-
+		if (count($this->lines) <= 0)
+		{
+        	$langs->load("errors");
+			$this->error=$langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
+			return -1;
+		}
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->invoice_advance->validate)))
 		{
@@ -3874,15 +3905,17 @@ class Facture extends CommonInvoice
 				}
 
 				$this->lines[$xnbp]=$line;
-				$xnbp++;
 
 
 				$this->total_ht       += $line->total_ht;
 				$this->total_tva      += $line->total_tva;
 				$this->total_ttc      += $line->total_ttc;
+
 				$this->multicurrency_total_ht       += $line->multicurrency_total_ht;
 				$this->multicurrency_total_tva      += $line->multicurrency_total_tva;
 				$this->multicurrency_total_ttc      += $line->multicurrency_total_ttc;
+
+				$xnbp++;
 			}
 			$this->revenuestamp = 0;
 
@@ -4435,16 +4468,16 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql.= ')';
 		$sql.= " VALUES (".$this->fk_facture.",";
-		$sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
+		$sql.= " ".($this->fk_parent_line>0 ? $this->fk_parent_line:"null").",";
 		$sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".price2num($this->qty).",";
-        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->vat_src_code."'").",";
+        $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql.= " ".price2num($this->tva_tx).",";
 		$sql.= " ".price2num($this->localtax1_tx).",";
 		$sql.= " ".price2num($this->localtax2_tx).",";
-		$sql.= " '".$this->localtax1_type."',";
-		$sql.= " '".$this->localtax2_type."',";
+		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
+		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
 		$sql.= " ".$this->product_type.",";
 		$sql.= " ".price2num($this->remise_percent).",";
@@ -4457,7 +4490,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' '.$this->special_code.',';
 		$sql.= ' '.(! empty($this->fk_fournprice)?$this->fk_fournprice:"null").',';
 		$sql.= ' '.price2num($this->pa_ht).',';
-		$sql.= " '".$this->info_bits."',";
+		$sql.= " '".$this->db->escape($this->info_bits)."',";
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
 		$sql.= " ".price2num($this->total_ttc).",";

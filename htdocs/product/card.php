@@ -69,7 +69,7 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type','int');
 $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 $duration_value = GETPOST('duration_value');
@@ -110,7 +110,7 @@ if (! empty($canvas))
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
-$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+$fieldtype = (! empty($id) ? 'rowid' : 'ref');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -340,7 +340,7 @@ if (empty($reshook))
             if ($id > 0)
             {
 				// Category association
-				$categories = GETPOST('categories');
+				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -358,7 +358,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-    	if (GETPOST('cancel'))
+    	if (GETPOST('cancel','alpha'))
         {
             $action = '';
         }
@@ -444,7 +444,7 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						$categories = GETPOST('categories');
+						$categories = GETPOST('categories', 'array');
 						$object->setCategories($categories);
 
                         $action = 'view';
@@ -990,11 +990,11 @@ else
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
-            print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
+            print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
             print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td>';
             // Stock desired level
-            print '<td>'.$langs->trans("DesiredStock").'</td><td>';
+            print '<td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
             print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
             print '</td></tr>';
         }

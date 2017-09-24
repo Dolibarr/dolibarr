@@ -68,7 +68,7 @@ class FormFile
      *  @param	integer	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
      *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
      *  @param	integer	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
-     *  @param	string	$htmlname		Name and id of HTML form
+     *  @param	string	$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
      * 	@return	int						<0 if KO, >0 if OK
      */
     function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile')
@@ -212,7 +212,7 @@ class FormFile
 
             if (empty($res))
             {
-        		print '<div class="attacharea">';
+        		print '<div class="attacharea attacharea'.$htmlname.'">';
             	print $out;
             	print '</div>';
             }
@@ -903,6 +903,7 @@ class FormFile
 
     /**
      *  Show list of documents in $filearray (may be they are all in same directory but may not)
+     *  This also sync database if $upload_dir is defined.
      *
      *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this.
      * 	@param	 Object	$object				Object on which document is linked to.
@@ -922,9 +923,10 @@ class FormFile
      *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
      *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
      *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
+     *  @param	 int	$addfilterfields	Add line with filters
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1)
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 		global $bc,$bcdd;
@@ -1006,6 +1008,18 @@ class FormFile
 			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
 
+			if (! empty($addfilterfields))
+			{
+				print '<tr class="liste_titre nodrag nodrop">';
+				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref','alpha')).'"></td>';
+				print '<td></td>';
+				print '<td></td>';
+				if (empty($useinecm)) print '<td></td>';
+				print '<td></td>';
+				if (! $disablemove) print '<td></td>';
+				print "</tr>\n";
+			}
+
 			print '<tr class="liste_titre nodrag nodrop">';
 			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre('Size',$url,"size","",$param,'align="right"',$sortfield,$sortorder);
@@ -1018,78 +1032,10 @@ class FormFile
 			// Get list of files stored into database for same relative directory
 			if ($relativedir)
 			{
-                $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
-                //var_dump($filearray);
-                //var_dump($filearrayindatabase);
-
-                // Complete filearray with properties found into $filearrayindatabase
-    			foreach($filearray as $key => $val)
-    			{
-    			    $found=0;
-    			    // Search if it exists into $filearrayindatabase
-    			    foreach($filearrayindatabase as $key2 => $val2)
-    			    {
-    			        if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
-    			        {
-    			            $filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
-    			            $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
-    			            $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
-    			            $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
-    			            $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
-    			            $filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
-    			            $found=1;
-    			            break;
-    			        }
-    			    }
-
-    			    if (! $found)    // This happen in transition towerd version 6, or if files were added manually into os dir.
-    			    {
-    			        $filearray[$key]['position']='999999';     // File not indexed are at end. So if we add a file, it will not replace an existing position
-    			        $filearray[$key]['cover']=0;
-    			        $filearray[$key]['acl']='';
-
-    			        $rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $filearray[$key]['fullname']);
-    			        if (! preg_match('/(\/temp\/|\/thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
-    			        {
-        			        dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
-        			        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-        			        $ecmfile=new EcmFiles($this->db);
-
-        			        // Add entry into database
-        			        $filename = basename($rel_filename);
-        			        $rel_dir = dirname($rel_filename);
-        			        $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-        			        $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-
-        			        $ecmfile->filepath = $rel_dir;
-        			        $ecmfile->filename = $filename;
-        			        $ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname']));        // $destfile is a full path to file
-        			        $ecmfile->fullpath_orig = $filearray[$key]['fullname'];
-        			        $ecmfile->gen_or_uploaded = 'unknown';
-        			        $ecmfile->description = '';    // indexed content
-        			        $ecmfile->keyword = '';        // keyword content
-        			        $result = $ecmfile->create($user);
-        			        if ($result < 0)
-        			        {
-        			            setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-        			        }
-    			            else
-    			            {
-    			                $filearray[$key]['rowid']=$result;
-    			            }
-    			        }
-    			        else
-    			        {
-    			            $filearray[$key]['rowid']=0;     // Should not happened
-    			        }
-    			    }
-    			}
-
-    			/*var_dump($filearray);
-    			var_dump($sortfield);
-    			var_dump($sortorder);*/
-
+				/*var_dump($sortfield);
+				var_dump($sortorder);*/
     			if ($sortfield && $sortorder)
     			{
         			$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
@@ -1291,21 +1237,47 @@ class FormFile
      *  @param  int		$useinecm           Change output for use in ecm module
      *  @param  int		$textifempty        Text to show if filearray is empty
      *  @param  int		$maxlength          Maximum length of file name shown
-     *  @param	string $url				Full url to use for click links ('' = autodetect)
+     *  @param	string 	$url				Full url to use for click links ('' = autodetect)
+     *  @param	int		$addfilterfields	Add line with filters
      *  @return int                 		<0 if KO, nb of files shown if OK
      */
-    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='')
+    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='',$addfilterfields=0)
     {
-        global $user, $conf, $langs;
+        global $user, $conf, $langs, $form;
         global $bc;
         global $sortfield, $sortorder;
+		global $search_doc_ref;
 
         dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
         // Show list of documents
         if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
         if (empty($url)) $url=$_SERVER["PHP_SELF"];
+
+        if (! empty($addfilterfields))
+        {
+        	print '<form action="'.$_SERVER['PHP_SELF'].'">';
+        	print '<input type="hidden" name="module" value="'.$modulepart.'">';
+        }
+
+		print '<div class="div-table-responsive-no-min">';
         print '<table width="100%" class="noborder">'."\n";
+
+        if (! empty($addfilterfields))
+        {
+        	print '<tr class="liste_titre nodrag nodrop">';
+        	print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+        	print '<td></td>';
+        	print '<td></td>';
+        	print '<td></td>';
+			// Action column
+			print '<td class="liste_titre" align="middle">';
+			$searchpicto=$form->showFilterButtons();
+			print $searchpicto;
+			print '</td>';
+        	print "</tr>\n";
+        }
+
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='level1name';
@@ -1493,12 +1465,15 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[false].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="5">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
         }
         print "</table>";
+        print '</div>';
+
+        if (! empty($addfilterfields)) print '</form>';
         // Fin de zone
     }
 

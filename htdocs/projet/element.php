@@ -51,6 +51,7 @@ if (! empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/d
 if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -439,6 +440,19 @@ $listofreferent=array(
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
 	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))),
+'variouspayment'=>array(
+	'name'=>"VariousPayments",
+	'title'=>"ListVariousPaymentsAssociatedProject",
+	'class'=>'PaymentVarious',
+	'table'=>'payment_various',
+	'datefieldname'=>'datev',
+	'margin'=>'minus',
+	'disableamount'=>0,
+    'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'lang'=>'banks',
+    'buttonnew'=>'AddVariousPayment',
+    'testnew'=>$user->rights->banque->modifier,
+    'test'=>$conf->banque->enabled && $user->rights->banque->lire),
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -629,33 +643,6 @@ foreach ($listofreferent as $key => $value)
 				$total_ttc = -$total_ttc;
 			}
 
-			/*switch ($classname) {
-				case 'FactureFournisseur':
-					$newclassname = 'SupplierInvoice';
-					break;
-				case 'Facture':
-					$newclassname = 'Bill';
-					break;
-				case 'Propal':
-					$newclassname = 'CommercialProposal';
-					break;
-				case 'Commande':
-					$newclassname = 'Order';
-					break;
-				case 'Expedition':
-					$newclassname = 'Sending';
-					break;
-				case 'Contrat':
-					$newclassname = 'Contract';
-					break;
-				case 'MouvementStock':
-					$newclassname = 'StockMovement';
-					break;
-				default:
-					$newclassname = $classname;
-			}*/
-
-			$var = ! $var;
 			print '<tr class="oddeven">';
 			// Module
 			print '<td align="left">'.$name.'</td>';
@@ -677,7 +664,6 @@ print '<td align="right" >'.price($balance_ttc).'</td>';
 print '</tr>';
 
 print "</table>";
-
 
 
 print '<br><br>';
@@ -717,7 +703,7 @@ foreach ($listofreferent as $key => $value)
 		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty)
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, array('payment_various')))
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
@@ -757,7 +743,7 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		// Remove link
+		// Remove link column
 		print '<td style="width: 24px"></td>';
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').'>'.$langs->trans("Ref").'</td>';
@@ -769,6 +755,7 @@ foreach ($listofreferent as $key => $value)
 		// Thirdparty or user
 		print '<td>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') print '';		// if $key == 'project_task', we don't want details per user
+		elseif (in_array($tablename, array('payment_various'))) print '';						// if $key == 'payment_various', we don't have any thirdparty
 		elseif (in_array($tablename, array('expensereport_det','don','projet_task','stock_mouvement'))) print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
@@ -847,11 +834,15 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				print '<tr class="oddeven">';
+
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement')
 				{
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
+					{
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+					}
 				}
 				print "</td>\n";
 
@@ -898,7 +889,8 @@ foreach ($listofreferent as $key => $value)
 				$date=''; $total_time_by_line = null;
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
 				elseif ($tablename == 'stock_mouvement') $date = $element->datem;
-				if ($tablename == 'chargesociales') $date = $element->date_ech;
+				elseif ($tablename == 'payment_various') $date = $element->datev;
+				elseif ($tablename == 'chargesociales') $date = $element->date_ech;
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
 				{
 				    if ($tablename == 'don') $date = $element->datedon;
@@ -909,7 +901,7 @@ foreach ($listofreferent as $key => $value)
     				elseif ($tablename == 'supplier_proposal') $date=$element->date_validation; // There is no other date for this
     				elseif ($tablename == 'fichinter') $date=$element->datev; // There is no other date for this
     				elseif ($tablename == 'projet_task') $date='';	// We show no date. Showing date of beginning of task make user think it is date of time consumed
-    				else
+					else
     				{
     					$date=$element->date;                              // invoice, ...
     					if (empty($date)) $date=$element->date_contrat;
@@ -963,7 +955,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ht_by_line=null;
 				    $othermessage='';
-					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various') $total_ht_by_line=$element->amount;
 					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
@@ -1004,7 +996,7 @@ foreach ($listofreferent as $key => $value)
 				if (empty($value['disableamount']))
 				{
 				    $total_ttc_by_line=null;
-					if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various') $total_ttc_by_line=$element->amount;
 					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
@@ -1141,13 +1133,11 @@ foreach ($listofreferent as $key => $value)
 }
 
 // Enhance with select2
-$nodatarole='';
 if ($conf->use_javascript_ajax)
 {
 	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	$comboenhancement = ajax_combobox('.elementselect');
 	$out.=$comboenhancement;
-	$nodatarole=($comboenhancement?' data-role="none"':'');
 
 	print $comboenhancement;
 }

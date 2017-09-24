@@ -331,7 +331,7 @@ if ($resql)
 	            $accountstatic->label=$objp->blabel;
 	            $accountstatic->number=$objp->number;
 	            $accountstatic->account_number=$objp->account_number;
-            
+
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($objp->accountancy_journal);
 				$accountstatic->accountancy_journal = $accountingjournal->code;

@@ -130,6 +130,7 @@ AnnualByCompaniesDueDebtMode=Bilan des recettes et dépenses, détail par tiers
 AnnualByCompaniesInputOutputMode=Bilan des recettes et dépenses, détail par tiers
 SeeReportInInputOutputMode=Cliquer sur <b>%sRecettes-Dépenses%s</b> dit <b>comptabilité de caisse</b> pour un calcul sur les paiements effectivement réalisés
 SeeReportInDueDebtMode=Cliquer sur <b>%sCréances-Dettes%s</b> dit <b>comptabilité d'engagement</b> pour un calcul sur les factures émises
+SeeReportInBookkeepingMode=Cliquer sur <b>%sGrand Livre%s</b> dit <b>comptabilité avance</b> pour un calcul sur les factures dans le grand livre
 RulesAmountWithTaxIncluded=- Les montants affichés sont les montants taxe incluse
 RulesResultDue=- Il comprend les factures impayées, les dépenses, la TVA, les dons qu'elles soient payées ou non. Il comprend également les salaires versés. <br> - Il est basé sur la date de validation de factures et de la TVA et à la date prévue pour les dépenses. Pour les salaires définis avec le module de salaire, la date de paiement de la valeur est utilisée.
 RulesResultInOut=- Il comprend les paiements réels effectués sur les factures, les dépenses, la TVA et les salaires. <br> - Il est basé sur les dates de paiement des factures, les dépenses, la TVA et les salaires. La date du don pour le don.

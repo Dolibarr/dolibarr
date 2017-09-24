@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
@@ -70,6 +68,7 @@ $in_bookkeeping = GETPOST('in_bookkeeping','aZ09');
 if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 
 $now = dol_now();
+
 $action = GETPOST('action','aZ09');
 
 // Security check
@@ -752,7 +751,7 @@ if (empty($action) || $action == 'view') {
 	llxHeader('', $langs->trans("FinanceJournal"));
 
 	$nom = $langs->trans("FinanceJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
-	$builddate = time();
+	$builddate=dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
@@ -772,7 +771,7 @@ if (empty($action) || $action == 'view') {
 		$obj=$db->fetch_object($resql);
 		if ($obj->nb > 0)
 		{
-			print img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
+			print '<br>'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
 			print ' : '.$langs->trans("AccountancyAreaDescBank", 9, '<strong>'.$langs->transnoentitiesnoconv("MenuBankCash").'</strong>');
 		}
 	}
@@ -783,14 +782,14 @@ if (empty($action) || $action == 'view') {
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 
 
 	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-	print '<input type="button" class="butAction" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
 
 	// TODO Avoid using js. We can use a direct link with $param
@@ -798,15 +797,15 @@ if (empty($action) || $action == 'view') {
 	<script type="text/javascript">
 		function launch_export() {
 			console.log("Set value into form and submit");
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche form input[name=\"action\"]").val("exportcsv");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
 			console.log("Set value into form and submit");
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche form input[name=\"action\"]").val("writebookkeeping");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 	</script>';
 
@@ -816,6 +815,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
+    print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
@@ -977,6 +977,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	llxFooter();
 }

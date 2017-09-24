@@ -340,10 +340,63 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
+input.buttonpayment {
+	min-width: 280px;
+	margin-bottom: 15px;
+	background-image: none;
+	line-height: 24px;
+	padding: 8px;
+	background: none;
+	border: 2px solid #666666;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 26px;
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 24px;
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentpaypal {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentpaybox {
+	background-image: url(<?php echo dol_buildpath($path.'/paybox/img/object_paybox.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentstripe {
+	background-image: url(<?php echo dol_buildpath($path.'/stripe/img/object_stripe.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+/* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.1);
     margin-right: 1px !important;
+}
+td.onholidaymorning, td.onholidayafternoon {
+	background-color: #fdf6f2;
+}
+td.onholidayallday {
+	background-color: #f4eede;
 }
 
 select.flat, form.flat select {
@@ -557,6 +610,9 @@ textarea.centpercent {
 .cursormove {
 	cursor: move;
 }
+.cursornotallowed {
+	cursor: not-allowed;
+}
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -674,7 +730,9 @@ div.myavailability {
 	margin-top: 6px;
 	margin-bottom: 12px;
 }
-
+#builddoc_form ~ .showlinkedobjectblock {
+    margin-top: 20px;
+}
 
 /* For the long description of module */
 .moduledesclong p img,.moduledesclong p a img {
@@ -809,9 +867,21 @@ div.fiche>form>div.div-table-responsive {
     .minwidth500imp { min-width: 100px !important; }
 }
 
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	body {
+		font-size: <?php print $fontsize+3; ?>px;
+	}
+}
+
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	body {
+		font-size: <?php print $fontsize+3; ?>px;
+	}
+
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
 
     .tdoverflowonsmartphone {
@@ -1052,6 +1122,9 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
+body.onlinepaymentbody div.fiche {	/* For online payment page */
+	margin: 20px !important;
+}
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -1174,6 +1247,10 @@ img.hideonsmartphone.pictoactionview {
 div.attacharea {
 	padding-top: 18px;
 	padding-bottom: 10px;
+}
+div.attachareaformuserfileecm {
+	padding-top: 0;
+	padding-bottom: 0;
 }
 div.arearef {
 	padding-top: 2px;
@@ -1434,6 +1511,10 @@ div.mainmenu {
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
 	background-position-x: center;
+}
+
+div.mainmenu.billing {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>);
 }
 
 div.mainmenu.accountancy {
@@ -1954,25 +2035,8 @@ td.ecmroot {
 }
 
 .largebutton {
-    /*background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -ms-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-
-    background: #FFF;
-    background-repeat: repeat-x !important;
-    */
-	border-top: 1px solid #CCC !important;
-
-    /*-moz-border-radius: 2px 2px 2px 2px !important;
-	-webkit-border-radius: 2px 2px 2px 2px !important;
-	border-radius: 2px 2px 2px 2px !important;
-    -moz-box-shadow: 2px 2px 4px #f4f4f4;
-    -webkit-box-shadow: 2px 2px 4px #f4f4f4;
-    box-shadow: 2px 2px 4px #f4f4f4;*/
-
-    padding: 10px 4px 14px 4px !important;
+	/* border-top: 1px solid #CCC !important; */
+    padding: 0px 4px 14px 4px !important;
     min-height: 32px;
 }
 
@@ -2000,8 +2064,12 @@ div.tabs {
     clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 6px; }		/* To avoid overlap of tabs when not browser */
-
+div.tabsElem {
+	margin-top: 6px;
+}		/* To avoid overlap of tabs when not browser */
+div.tabsElem a {
+    font-weight: normal !important;
+}
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
@@ -2803,16 +2871,19 @@ input.liste_titre {
     border: 0px;
 }
 
-.noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	/* height: 32px; */
-}
-.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    /* border-top: 1px solid #f4f4f4; */
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #332266;
     font-weight: normal;
-    white-space: nowrap;
     padding: 4px;
 }
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
+    white-space: nowrap;
+}
+.noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	white-space: normal;
+}
+
+
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
 }
@@ -3062,11 +3133,12 @@ div.warning {
   color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0d0b0;
+  /* border: 1px solid #e0d0b0; */
+  border: 2px solid #805000
   -moz-border-radius:3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  background: #EFDF9A;
+  /* background: #EFDF9A; */
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -3180,8 +3252,8 @@ div.titre {
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
-#dolpaymenttable { width: 600px; font-size: 13px; }
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -3440,6 +3512,9 @@ tr.visible {
 a.websitebuttonsitepreview img {
 	width: 26px;
 	display: inline-block;
+}
+a.websitebuttonsitepreviewdisabled img {
+	opacity: 0.2;
 }
 .websiteiframenoborder {
 	border: 0px;
@@ -3772,6 +3847,33 @@ a.cke_dialog_ui_button_ok span {
 
 
 /* ============================================================================== */
+/*  ACE editor                                                                    */
+/* ============================================================================== */
+.ace_editor {
+    border: 1px solid #ddd;
+	margin: 0;
+}
+.aceeditorstatusbar {
+        margin: 0;
+        padding: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 20px;
+        color: #666;
+}
+.ace_status-indicator {
+        color: gray;
+        position: relative;
+        right: 0;
+        border-left: 1px solid;
+}
+pre#editfilecontentaceeditorid {
+    margin-top: 5px;
+}
+
+
+/* ============================================================================== */
 /*  File upload                                                                   */
 /* ============================================================================== */
 
@@ -3940,6 +4042,12 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+}
+.jnotify-container .jnotify-notification .jnotify-message {
+	font-weight: normal;
+}
+.jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
+    color: #a28918 !important;
 }
 
 /* use or not ? */

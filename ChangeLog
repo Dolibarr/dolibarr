@@ -2,8 +2,22 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 6.0.1 compared to 6.0.* *****
 
+***** ChangeLog for 7.0.0 compared to 6.0.* *****
+
+For developers:
+NEW: Add hook addAdminLdapOptions and doAction in ldap admin page
+NEW: complete_head_from_modules() in ldap_prepare_head()
+
+WARNING: 
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The methode "cloture" on contact were renamed into "closeAll".
+* The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
+  __PROPALREF__, ...)
+
+
+***** ChangeLog for 6.0.1 compared to 6.0.* *****
 FIX: #7000 Dashboard link for late pending payment supplier invoices do not work
 FIX: #7325 Default VAT rate when editing template invoices is 0%
 FIX: #7330
@@ -43,9 +57,8 @@ FIX: View of timespent for another user
 FIX: ODT generation
 FIX: CVE-2017-9840, CVE-2017-14238, CVE-2017-14239, CVE-2017-14240, CVE-2017-14241,
      CVE-2017-14242 
-
+     
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
-
 NEW: Add experimental BlockeLog module (to log business events in a non reversible log file).
 NEW: Add a payment module for Stripe. 
 NEW: Add module "Product variant" (like red, blue for the product shoes)

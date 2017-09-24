@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $error=0;
 $websitekey=GETPOST('website', 'alpha');
 $pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
+$pageref=GETPOST('pageref', 'aZ09')?GETPOST('pageref', 'aZ09'):'';
 
 $accessallowed = 1;
 $type='';
@@ -70,7 +71,8 @@ if (empty($pageid))
 
     $object=new Website($db);
     $object->fetch(0, $websitekey);
-    if (empty($object->id))
+
+	if (empty($object->id))
     {
         if (empty($pageid))
         {
@@ -84,23 +86,34 @@ if (empty($pageid))
 
     $objectpage=new WebsitePage($db);
 
-    if ($object->fk_default_home > 0)
+    if ($pageref)
     {
-        $result=$objectpage->fetch($object->fk_default_home);
+    	$result=$objectpage->fetch(0, $object->id, $pageref);
         if ($result > 0)
-        {
-            $pageid = $objectpage->id;
-        }
+	    {
+	        $pageid = $objectpage->id;
+	    }
     }
-
-    if (empty($pageid))
+    else
     {
-        $array=$objectpage->fetchAll($object->id);
-        if (is_array($array) && count($array) > 0)
-        {
-            $firstrep=reset($array);
-            $pageid=$firstrep->id;
-        }
+	    if ($object->fk_default_home > 0)
+	    {
+	        $result=$objectpage->fetch($object->fk_default_home);
+	        if ($result > 0)
+	        {
+	            $pageid = $objectpage->id;
+	        }
+	    }
+
+	    if (empty($pageid))
+	    {
+	        $array=$objectpage->fetchAll($object->id);
+	        if (is_array($array) && count($array) > 0)
+	        {
+	            $firstrep=reset($array);
+	            $pageid=$firstrep->id;
+	        }
+	    }
     }
 }
 if (empty($pageid))
@@ -177,7 +190,7 @@ if (! file_exists($original_file_osencoded))
 
 // Output page content
 define('USEDOLIBARRSERVER', 1);
-print '<!-- Page content '.$original_file.' : Html with CSS link + Body was saved into tpl -->'."\n";
+print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html with CSS link and html header + Body that was saved into tpl dir -->'."\n";
 include_once $original_file_osencoded;
 
 

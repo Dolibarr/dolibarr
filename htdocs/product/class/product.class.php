@@ -536,12 +536,12 @@ class Product extends CommonObject
 					$sql.= ", ".$this->type;
 					$sql.= ", ".price2num($price_ht);
 					$sql.= ", ".price2num($price_ttc);
-					$sql.= ", '".$this->price_base_type."'";
+					$sql.= ", '".$this->db->escape($this->price_base_type)."'";
 					$sql.= ", ".$this->status;
 					$sql.= ", ".$this->status_buy;
-					$sql.= ", '".$this->accountancy_code_buy."'";
-					$sql.= ", '".$this->accountancy_code_sell."'";
-					$sql.= ", '".$this->canvas."'";
+					$sql.= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+					$sql.= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+					$sql.= ", '".$this->db->escape($this->canvas)."'";
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
@@ -853,8 +853,8 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-			$sql.= ", localtax1_type = " . ($this->localtax1_type!=''?"'".$this->localtax1_type."'":"'0'");
-			$sql.= ", localtax2_type = " . ($this->localtax2_type!=''?"'".$this->localtax2_type."'":"'0'");
+			$sql.= ", localtax1_type = " . ($this->localtax1_type!=''?"'".$this->db->escape($this->localtax1_type)."'":"'0'");
+			$sql.= ", localtax2_type = " . ($this->localtax2_type!=''?"'".$this->db->escape($this->localtax2_type)."'":"'0'");
 
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
@@ -863,19 +863,19 @@ class Product extends CommonObject
 			$sql.= ", tobuy = " . $this->status_buy;
 			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
 			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
-			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
-			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
-			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
-			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
-			$sql.= ", width= " . ($this->width!='' ? "'".$this->width."'" : 'null');
-			$sql.= ", width_units = " . ($this->width_units!='' ? "'".$this->width_units."'" : 'null');
-			$sql.= ", height = " . ($this->height!='' ? "'".$this->height."'" : 'null');
-			$sql.= ", height_units = " . ($this->height_units!='' ? "'".$this->height_units."'" : 'null');
-			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
-			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
-			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
-			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
+			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->db->escape($this->weight)."'" : 'null');
+			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->db->escape($this->weight_units)."'": 'null');
+			$sql.= ", length = " . ($this->length!='' ? "'".$this->db->escape($this->length)."'" : 'null');
+			$sql.= ", length_units = " . ($this->length_units!='' ? "'".$this->db->escape($this->length_units)."'" : 'null');
+			$sql.= ", width= " . ($this->width!='' ? "'".$this->db->escape($this->width)."'" : 'null');
+			$sql.= ", width_units = " . ($this->width_units!='' ? "'".$this->db->escape($this->width_units)."'" : 'null');
+			$sql.= ", height = " . ($this->height!='' ? "'".$this->db->escape($this->height)."'" : 'null');
+			$sql.= ", height_units = " . ($this->height_units!='' ? "'".$this->db->escape($this->height_units)."'" : 'null');
+			$sql.= ", surface = " . ($this->surface!='' ? "'".$this->db->escape($this->surface)."'" : 'null');
+			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
+			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->db->escape($this->volume)."'" : 'null');
+			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
+			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
@@ -1439,8 +1439,8 @@ class Product extends CommonObject
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->default_vat_code."'"):"null").",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->localtax1_type."', '".$this->localtax2_type."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
+		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->db->escape($this->price_base_type)."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->db->escape($this->default_vat_code)."'"):"null").",".$this->tva_npr.",";
+		$sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::_log_price", LOG_DEBUG);
@@ -2125,6 +2125,49 @@ class Product extends CommonObject
 			$this->stats_propale['nb']=$obj->nb;
 			$this->stats_propale['rows']=$obj->nb_rows;
 			$this->stats_propale['qty']=$obj->qty?$obj->qty:0;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *  Charge tableau des stats propale pour le produit/service
+	 *
+	 *  @param    int	$socid      Id thirdparty
+	 *  @return   array       		Tableau des stats
+	 */
+	function load_stats_proposal_supplier($socid=0)
+	{
+		global $conf;
+		global $user;
+
+		$sql = "SELECT COUNT(DISTINCT p.fk_soc) as nb_suppliers, COUNT(DISTINCT p.rowid) as nb,";
+		$sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
+		$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as pd";
+		$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
+		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE p.rowid = pd.fk_supplier_proposal";
+		$sql.= " AND p.fk_soc = s.rowid";
+		$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
+		$sql.= " AND pd.fk_product = ".$this->id;
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		//$sql.= " AND pr.fk_statut != 0";
+		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
+
+		$result = $this->db->query($sql);
+		if ( $result )
+		{
+			$obj=$this->db->fetch_object($result);
+			$this->stats_proposal_supplier['suppliers']=$obj->nb_suppliers;
+			$this->stats_proposal_supplier['nb']=$obj->nb;
+			$this->stats_proposal_supplier['rows']=$obj->nb_rows;
+			$this->stats_proposal_supplier['qty']=$obj->qty?$obj->qty:0;
 			return 1;
 		}
 		else
@@ -4024,31 +4067,7 @@ class Product extends CommonObject
 		    $filearray=array_merge($filearray, $filearrayold);
 		}
 
-        $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
-
-        //var_dump($filearray);
-        //var_dump($filearrayindatabase);
-
-        // Complete filearray with properties found into $filearrayindatabase
-        foreach($filearray as $key => $val)
-        {
-            $found=0;
-            // Search if it exists into $filearrayindatabase
-            foreach($filearrayindatabase as $key2 => $val2)
-            {
-                if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
-                {
-                    $filearray[$key]['position_name']=($filearrayindatabase[$key2]['position']?$filearrayindatabase[$key2]['position']:'0').'_'.$filearrayindatabase[$key2]['name'];
-                    $filearray[$key]['position']=$filearrayindatabase[$key2]['position'];
-                    $filearray[$key]['cover']=$filearrayindatabase[$key2]['cover'];
-                    $filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
-                    $filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
-                    $filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
-                    $found=1;
-                    break;
-                }
-            }
-        }
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
         if (count($filearray))
         {

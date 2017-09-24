@@ -66,6 +66,7 @@
 
 UPDATE llx_user set api_key = null where api_key = '';
 
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -236,7 +237,7 @@ update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
 
--- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_links. Use several times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
@@ -245,7 +246,7 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_product. Use several times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
@@ -254,13 +255,22 @@ update llx_product set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_product_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_societe. Use several times if you still have duplicate.
 drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_societe_double;
 update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
 drop table tmp_societe_double;
+
+
+-- Sequence to removed duplicated values of llx_accounting_account. Use several times if you still have duplicate.
+drop table tmp_accounting_account_double;
+--select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
+create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
+--select * from tmp_accounting_account_double;
+delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
+drop table tmp_accounting_account_double;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;

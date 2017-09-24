@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * For paypal test: https://developer.paypal.com/
- * For paybox test: ???
+ * For Paypal test: https://developer.paypal.com/
+ * For Paybox test: ???
+ * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
  */
 
 /**
@@ -52,7 +53,7 @@ $langs->load("companies");
 $langs->load("errors");
 $langs->load("paybox");     // File with generic data
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action','aZ09');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -61,26 +62,28 @@ $action=GETPOST('action','alpha');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix",'alpha');
-$amount=price2num(GETPOST("amount"));
+$suffix=GETPOST("suffix",'aZ09');
+$amount=price2num(GETPOST("amount",'alpha'));
 if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
+$source = GETPOST("s",'alpha')?GETPOST("s",'alpha'):GETPOST("source",'alpha');
+$download = GETPOST('d','int')?GETPOST('d','int'):GETPOST('download','int');
 
 if (! $action)
 {
-    if (! GETPOST("amount") && ! GETPOST("source"))
+    if (! GETPOST("amount",'alpha') && ! $source)
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - amount or source");
+    	print $langs->trans('ErrorBadParameters')." - amount or source";
     	exit;
     }
-    if (is_numeric($amount) && ! GETPOST("tag") && ! GETPOST("source"))
+    if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! $source)
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - tag or source");
+    	print $langs->trans('ErrorBadParameters')." - tag or source";
     	exit;
     }
-    if (GETPOST("source") && ! GETPOST("ref"))
+    if ($source && ! GETPOST("ref",'alpha'))
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+    	print $langs->trans('ErrorBadParameters')." - ref";
     	exit;
     }
 }
@@ -109,17 +112,21 @@ $urlok=$urlwithroot.'/public/payment/paymentok.php?';
 $urlko=$urlwithroot.'/public/payment/paymentko.php?';
 
 // Complete urls for post treatment
-$SOURCE=GETPOST("source",'alpha');
 $ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
 if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod,'/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
 
-if (! empty($SOURCE))
+if (! empty($suffix))
 {
-    $urlok.='source='.urlencode($SOURCE).'&';
-    $urlko.='source='.urlencode($SOURCE).'&';
+	$urlok.='suffix='.urlencode($suffix).'&';
+	$urlko.='suffix='.urlencode($suffix).'&';
+}
+if ($source)
+{
+    $urlok.='s='.urlencode($source).'&';
+    $urlko.='s='.urlencode($source).'&';
 }
 if (! empty($REF))
 {
@@ -143,8 +150,8 @@ if (! empty($SECUREKEY))
 }
 if (! empty($entity))
 {
-	$urlok.='entity='.urlencode($entity).'&';
-	$urlko.='entity='.urlencode($entity).'&';
+	$urlok.='e='.urlencode($entity).'&';
+	$urlko.='e='.urlencode($entity).'&';
 }
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
@@ -160,6 +167,7 @@ if (! empty($conf->paypal->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 
+	// Check parameters
 	$PAYPAL_API_OK="";
 	if ($urlok) $PAYPAL_API_OK=$urlok;
 	$PAYPAL_API_KO="";
@@ -180,29 +188,6 @@ if (! empty($conf->paypal->enabled))
 	    return -1;
 	}
 
-	// Check security token
-	$valid=true;
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-	{
-	    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
-	    {
-		    if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
-		    else $token = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-	    }
-	    else
-	    {
-	        $token = $conf->global->PAYPAL_SECURITY_TOKEN;
-	    }
-		if ($SECUREKEY != $token) $valid=false;
-
-		if (! $valid)
-		{
-	    	print '<div class="error">Bad value for key.</div>';
-		    //print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
-	    	exit;
-		}
-	}
-
     $validpaymentmethod['paypal']='valid';
 }
 
@@ -212,10 +197,24 @@ if (! empty($conf->paybox->enabled))
 
 	// TODO
 
-    $validpaymentmethod['paybox']='valid';
+	$validpaymentmethod['paybox']='valid';
 }
 
-// TODO Add check of other payment mode
+if (! empty($conf->stripe->enabled))
+{
+	$langs->load("stripe");
+
+	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';
+	/* already included into /stripe/config.php
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+	*/
+
+	$validpaymentmethod['stripe']='valid';
+}
+
 
 
 // Check security token
@@ -224,7 +223,7 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 {
     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
     {
-        if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+        if ($source && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $source . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
         else $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
     }
     else
@@ -242,16 +241,24 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 }
 
 
+if (empty($validpaymentmethod))
+{
+	print 'No active payment module (Paypal, Stripe, Paybox, ...)';
+	exit;
+}
 
-
-if (empty($validpaymentmethod)) accessforbidden('', 0, 0, 1);
+// Common variables
+$creditor=$mysoc->name;
+$paramcreditor='ONLINE_PAYMENT_CREDITOR';
+$paramcreditorlong='ONLINE_PAYMENT_CREDITOR_'.$suffix;
+if (! empty($conf->global->$paramcreditorlong)) $creditor=$conf->global->$paramcreditorlong;
+else if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 
 
 
 /*
  * Actions
  */
-
 
 if ($action == 'dopayment')
 {
@@ -312,7 +319,7 @@ if ($action == 'dopayment')
 	        dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG);	// If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
 		    //$_SESSION["PaymentType"]=$PAYPAL_PAYMENT_TYPE;
 		    //$_SESSION["currencyCodeType"]=$PAYPAL_API_DEVISE;
-		    //$_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
+		    //$_SESSION["FinalPaymentAmt"]=$PAYPAL_API_PRICE;
 
 		    // A redirect is added if API call successfull
 	        print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
@@ -320,6 +327,167 @@ if ($action == 'dopayment')
 			exit;
 		}
 	}
+
+	if ($paymentmethod == 'paybox')
+	{
+		$PRICE=price2num(GETPOST("newamount"),'MT');
+		$email=GETPOST("email");
+
+		$origfulltag=GETPOST("fulltag",'alpha');
+
+		// Securekey into back url useless for back url and we need an url lower than 150.
+		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
+		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
+
+		$mesg='';
+		if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+		elseif (empty($email))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+		elseif (! isValidEMail($email))   $mesg=$langs->trans("ErrorBadEMail",$email);
+		elseif (! $origfulltag)           $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+		elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok.'( Paybox requires 150, found '.strlen($urlok).')';
+		elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko.'( Paybox requires 150, found '.strlen($urlok).')';
+
+		if (empty($mesg))
+		{
+			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
+
+			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
+			print_paybox_redirect($PRICE, $conf->currency, $email, $urlok, $urlko, $FULLTAG);
+
+			session_destroy();
+			exit;
+		}
+	}
+
+	if ($paymentmethod == 'stripe')
+	{
+		if (GETPOST('newamount')) $amount = GETPOST('newamount');
+		else
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+			$action = '';
+		}
+	}
+}
+
+
+if ($action == 'charge')
+{
+	// Correct the amount according to unit of currency
+	// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+	$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+	if (! in_array($currency, $arrayzerounitcurrency)) $amount=$amount * 100;
+
+	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
+
+	$stripeToken = GETPOST("stripeToken",'alpha');
+	$email = GETPOST("stripeEmail",'alpha');
+
+	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("stripeEmail = ".$stripeEmail, LOG_DEBUG, 0, '_stripe');
+
+	$error = 0;
+
+	try {
+		dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
+		$customer = \Stripe\Customer::create(array(
+		'email' => $email,
+		'description' => ($email?'Customer for '.$email:null),
+		'metadata' => array('ipaddress'=>$_SERVER['REMOTE_ADDR']),
+		'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
+		));
+		// TODO Add 'business_vat_id' ?
+
+		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
+		$charge = \Stripe\Charge::create(array(
+		'customer' => $customer->id,
+		'amount'   => price2num($amount, 'MU'),
+		'currency' => $currency,
+		'description' => 'Stripe payment: '.$FULLTAG,
+		'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name),
+		'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
+		));
+	} catch(\Stripe\Error\Card $e) {
+		// Since it's a decline, \Stripe\Error\Card will be caught
+		$body = $e->getJsonBody();
+		$err  = $body['error'];
+
+		print('Status is:' . $e->getHttpStatus() . "\n");
+		print('Type is:' . $err['type'] . "\n");
+		print('Code is:' . $err['code'] . "\n");
+		// param is '' in this case
+		print('Param is:' . $err['param'] . "\n");
+		print('Message is:' . $err['message'] . "\n");
+
+		$error++;
+		setEventMessages($e->getMessage(), null, 'errors');
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$action='';
+	} catch (\Stripe\Error\RateLimit $e) {
+		// Too many requests made to the API too quickly
+		$error++;
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		setEventMessages($e->getMessage(), null, 'errors');
+		$action='';
+	} catch (\Stripe\Error\InvalidRequest $e) {
+		// Invalid parameters were supplied to Stripe's API
+		$error++;
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		setEventMessages($e->getMessage(), null, 'errors');
+		$action='';
+	} catch (\Stripe\Error\Authentication $e) {
+		// Authentication with Stripe's API failed
+		// (maybe you changed API keys recently)
+		$error++;
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		setEventMessages($e->getMessage(), null, 'errors');
+		$action='';
+	} catch (\Stripe\Error\ApiConnection $e) {
+		// Network communication with Stripe failed
+		$error++;
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		setEventMessages($e->getMessage(), null, 'errors');
+		$action='';
+	} catch (\Stripe\Error\Base $e) {
+		// Display a very generic error to the user, and maybe send
+		// yourself an email
+		$error++;
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		setEventMessages($e->getMessage(), null, 'errors');
+		$action='';
+	} catch (Exception $e) {
+		// Something else happened, completely unrelated to Stripe
+		$error++;
+		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		setEventMessages($e->getMessage(), null, 'errors');
+		$action='';
+	}
+
+	$_SESSION["onlinetoken"] = $stripeToken;
+	$_SESSION["FinalPaymentAmt"] = $amount;
+	$_SESSION["currencyCodeType"] = $currency;
+	$_SESSION["paymentType"] = '';
+	$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
+	$_SESSION['payerID'] = is_object($customer)?$customer->id:'';
+	$_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
+
+	dol_syslog("Action charge stripe result=".$error." ip=".$_SESSION['ipaddress'], LOG_DEBUG, 0, '_stripe');
+	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
+	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Now call the redirect to paymentok or paymentko", LOG_DEBUG, 0, '_stripe');
+
+	if ($error)
+	{
+		header("Location: ".$urlko);
+		exit;
+	}
+	else
+	{
+		header("Location: ".$urlok);
+		exit;
+	}
+
 }
 
 
@@ -328,7 +496,7 @@ if ($action == 'dopayment')
  */
 
 $head='';
-if (! empty($conf->global->PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -336,28 +504,26 @@ $conf->dol_hide_leftmenu=1;
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 // Check link validity
-if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
+if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
     $langs->load("errors");
-    dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $SOURCE, $ref));
+    dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
     llxFooter();
     $db->close();
     exit;
 }
 
-if (! empty($conf->paypal->enabled))
-{
-	// Common variables
-	$creditor=$mysoc->name;
-	$paramcreditor='PAYPAL_CREDITOR_'.$suffix;
-	if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
-	else if (! empty($conf->global->PAYPAL_CREDITOR)) $creditor=$conf->global->PAYPAL_CREDITOR;
 
-	if (! empty($PAYPAL_API_SANDBOX))
-	{
-		dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
-	}
+// Show sandbox warning
+if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_API_SANDBOX))
+{
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }
+if (! empty($conf->stripe->enabled) && empty($conf->global->STRIPE_LIVE))
+{
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
+}
+
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -367,46 +533,50 @@ print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="e" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to send a payment -->'."\n";
+print '<!-- creditor = '.$creditor.' -->'."\n";
 // Additionnal information for each payment system
 if (! empty($conf->paypal->enabled))
 {
 	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
 	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
-	print '<!-- creditor = '.$creditor.' -->'."\n";
 }
 if (! empty($conf->paybox->enabled))
 {
 
 }
-// TODO Add others
+if (! empty($conf->stripe->enabled))
+{
+	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
+}
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
+// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
-$paramlogo='PAYMENT_LOGO_'.$suffix;
+$paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->PAYMENT_LOGO)) $logosmall=$conf->global->PAYBOX_LOGO;
+else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
-	$width=96;
+	$width=150;
 }
 // Output html code for logo
 if ($urllogo)
@@ -420,31 +590,34 @@ if ($urllogo)
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->PAYPAL_NEWFORM_TEXT))
+if (! empty($conf->global->PAYMENT_NEWFORM_TEXT))
 {
     $langs->load("members");
-    if (preg_match('/^\((.*)\)$/',$conf->global->PAYPAL_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
-    else $text.=$conf->global->PAYPAL_NEWFORM_TEXT."<br>\n";
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYMENT_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYMENT_NEWFORM_TEXT."<br>\n";
     $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
 {
-    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong><br></td></tr>'."\n";
-    $text.='<tr><td class="textpublicpayment"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found=false;
 $error=0;
 $var=false;
 
+$object = null;
+
+
 // Free payment
-if (! GETPOST("source"))
+if (! $source)
 {
 	$found=true;
 	$tag=GETPOST("tag");
@@ -491,7 +664,7 @@ if (! GETPOST("source"))
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order')
+if ($source == 'order')
 {
 	$found=true;
 	$langs->load("orders");
@@ -508,6 +681,8 @@ if (GETPOST("source") == 'order')
 	else
 	{
 		$result=$order->fetch_thirdparty($order->socid);
+
+		$object = $order;
 	}
 
     if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
@@ -539,8 +714,8 @@ if (GETPOST("source") == 'order')
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
+	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
@@ -601,7 +776,7 @@ if (GETPOST("source") == 'order')
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice')
+if ($source == 'invoice')
 {
 	$found=true;
 	$langs->load("bills");
@@ -618,6 +793,8 @@ if (GETPOST("source") == 'invoice')
 	else
 	{
 		$result=$invoice->fetch_thirdparty($invoice->socid);
+
+		$object = $invoice;
 	}
 
     if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
@@ -636,7 +813,7 @@ if (GETPOST("source") == 'invoice')
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+    print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
     print '</td></tr>'."\n";
 
 	// Debitor
@@ -649,8 +826,8 @@ if (GETPOST("source") == 'invoice')
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
+	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
@@ -674,12 +851,20 @@ if (GETPOST("source") == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+
+	// Add download link
+	if ($download > 0)
+	{
+		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">';
+		print $invoice->getDirectExternalLink(1);
+		print '</td></tr>'."\n";
+	}
 
     // Shipping address
     $shipToName=$invoice->thirdparty->name;
@@ -710,7 +895,7 @@ if (GETPOST("source") == 'invoice')
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline')
+if ($source == 'contractline')
 {
 	$found=true;
 	$langs->load("contracts");
@@ -718,6 +903,7 @@ if (GETPOST("source") == 'contractline')
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 	$contractline=new ContratLigne($db);
+
 	$result=$contractline->fetch('',$ref);
 	if ($result < 0)
 	{
@@ -728,6 +914,8 @@ if (GETPOST("source") == 'contractline')
 	{
 		if ($contractline->fk_contrat > 0)
 		{
+			$object = $contractline;
+
 			$contract=new Contrat($db);
 			$result=$contract->fetch($contractline->fk_contrat);
 			if ($result > 0)
@@ -777,6 +965,7 @@ if (GETPOST("source") == 'contractline')
     			exit;
     		}
     	}
+
         if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
         $amount=price2num($amount);
     }
@@ -820,8 +1009,8 @@ if (GETPOST("source") == 'contractline')
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Quantity
@@ -909,7 +1098,7 @@ if (GETPOST("source") == 'contractline')
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription')
+if ($source == 'membersubscription')
 {
 	$found=true;
 	$langs->load("members");
@@ -926,6 +1115,8 @@ if (GETPOST("source") == 'membersubscription')
 	}
 	else
 	{
+		$object = $member;
+
 		$subscription=new Subscription($db);
 	}
 
@@ -960,8 +1151,8 @@ if (GETPOST("source") == 'membersubscription')
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 
 	if ($member->last_subscription_date || $member->last_subscription_amount)
@@ -986,14 +1177,29 @@ if (GETPOST("source") == 'membersubscription')
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
-		print ' ('.$langs->trans("ToComplete");
+		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ' ('.$langs->trans("ToComplete");
 		if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
-		print ')';
+		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ')';
 	}
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-	    $valtoshow=GETPOST("newamount",'int');
+		$valtoshow=GETPOST("newamount",'int');
+		// force default subscription amount to value defined into constant...
+	    if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+				$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			}
+		}
+		else {
+			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+				$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+		    }
+	    }
+	}
+	if (empty($amount) || ! is_numeric($amount))
+	{
+	    //$valtoshow=GETPOST("newamount",'int');
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
 	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
@@ -1062,31 +1268,35 @@ if ($action != 'dopayment')
     {
         // Buttons for all payments registration methods
 
-        if (! empty($conf->paypal->enabled))
+        if (! empty($conf->paybox->enabled))
+        {
+        	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+        }
+
+        if (! empty($conf->stripe->enabled))
+        {
+        	// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
+        	print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+        }
+
+    	if (! empty($conf->paypal->enabled))
         {
         	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
         	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
         	{
-        		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+        		print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
         	}
         	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
         	{
-        		print '<br><input class="button" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+        		print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
         	}
         }
-
-        if (! empty($conf->paybox->enabled))
-        {
-
-
-        }
-
-        // TODO Other methods
     }
     else
     {
-    	dol_print_error_email('ERRORNEWPAYMENTPAYPAL');
+    	dol_print_error_email('ERRORNEWPAYMENT');
     }
 }
 else
@@ -1097,12 +1307,189 @@ else
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+
+// Add more content on page for some services
+if (preg_match('/^dopayment/',$action))
+{
+
+	// Strip
+	if (GETPOST('dopayment_stripe','alpha'))
+	{
+		// Simple checkout
+		/*
+		print '<script src="https://checkout.stripe.com/checkout.js"
+		class="stripe-button"
+		data-key="'.$stripe['publishable_key'].'"
+		data-amount="'.$ttc.'"
+		data-currency="'.$conf->currency.'"
+		data-description="'.$ref.'">
+		</script>';
+		*/
+
+		// Personalized checkout
+		print '<style>
+	    /**
+	     * The CSS shown here will not be introduced in the Quickstart guide, but shows
+	     * how you can use CSS to style your Element s container.
+	     */
+	    .StripeElement {
+	        background-color: white;
+	        padding: 8px 12px;
+	        border-radius: 4px;
+	        border: 1px solid transparent;
+	        box-shadow: 0 1px 3px 0 #e6ebf1;
+	        -webkit-transition: box-shadow 150ms ease;
+	        transition: box-shadow 150ms ease;
+	    }
+
+	    .StripeElement--focus {
+	        box-shadow: 0 1px 3px 0 #cfd7df;
+	    }
+
+	    .StripeElement--invalid {
+	        border-color: #fa755a;
+	    }
+
+	    .StripeElement--webkit-autofill {
+	        background-color: #fefde5 !important;
+	    }
+	    </style>';
+
+		print '
+
+	    <br>
+	    <form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">';
+
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+		print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
+		print '<input type="hidden" name="action" value="charge">'."\n";
+		print '<input type="hidden" name="tag" value="'.$TAG.'">'."\n";
+		print '<input type="hidden" name="s" value="'.$source.'">'."\n";
+		print '<input type="hidden" name="ref" value="'.$REF.'">'."\n";
+		print '<input type="hidden" name="fulltag" value="'.$FULLTAG.'">'."\n";
+		print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
+		print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
+		print '<input type="hidden" name="e" value="'.$entity.'" />';
+		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
+		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
+
+		print '
+	    <table id="dolpaymenttable" summary="Payment form" class="center">
+	    <tbody><tr><td class="textpublicpayment">
+
+	    <div class="form-row left">
+	    <label for="card-element">
+	    Credit or debit card
+	    </label>
+	    <div id="card-element">
+	    <!-- a Stripe Element will be inserted here. -->
+	    </div>
+
+	    <!-- Used to display form errors -->
+	    <div id="card-errors" role="alert"></div>
+	    </div>
+	    <br>
+	    <button class="button" id="buttontopay">'.$langs->trans("ToPay").'</button>
+	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
+	    </td></tr></tbody></table>
+
+	    </form>
+
+
+	    <script src="https://js.stripe.com/v2/"></script>
+	    <script src="https://js.stripe.com/v3/"></script>
+
+	    <script type="text/javascript" language="javascript">';
+		?>
+
+	    // Create a Stripe client
+	    var stripe = Stripe('<?php echo $stripe['publishable_key']; ?>');
+
+	    // Create an instance of Elements
+	    var elements = stripe.elements();
+
+	    // Custom styling can be passed to options when creating an Element.
+	    // (Note that this demo uses a wider set of styles than the guide below.)
+	    var style = {
+	      base: {
+	        color: '#32325d',
+	        lineHeight: '24px',
+	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+	        fontSmoothing: 'antialiased',
+	        fontSize: '16px',
+	        '::placeholder': {
+	          color: '#aab7c4'
+	        }
+	      },
+	      invalid: {
+	        color: '#fa755a',
+	        iconColor: '#fa755a'
+	      }
+	    };
+
+	    // Create an instance of the card Element
+	    var card = elements.create('card', {style: style});
+
+	    // Add an instance of the card Element into the `card-element` <div>
+	    card.mount('#card-element');
+
+	    // Handle real-time validation errors from the card Element.
+	    card.addEventListener('change', function(event) {
+	      var displayError = document.getElementById('card-errors');
+	      if (event.error) {
+	        displayError.textContent = event.error.message;
+	      } else {
+	        displayError.textContent = '';
+	      }
+	    });
+
+	    // Handle form submission
+	    var form = document.getElementById('payment-form');
+	    console.log(form);
+	    form.addEventListener('submit', function(event) {
+	      event.preventDefault();
+
+	      stripe.createToken(card).then(function(result) {
+	        if (result.error) {
+	          // Inform the user if there was an error
+	          var errorElement = document.getElementById('card-errors');
+	          errorElement.textContent = result.error.message;
+	        } else {
+	          // Send the token to your server
+	          stripeTokenHandler(result.token);
+	        }
+	      });
+	    });
+
+	    function stripeTokenHandler(token) {
+	      // Insert the token ID into the form so it gets submitted to the server
+	      var form = document.getElementById('payment-form');
+	      var hiddenInput = document.createElement('input');
+	      hiddenInput.setAttribute('type', 'hidden');
+	      hiddenInput.setAttribute('name', 'stripeToken');
+	      hiddenInput.setAttribute('value', token.id);
+	      form.appendChild(hiddenInput);
+
+	      // Submit the form
+	      jQuery('#buttontopay').hide();
+	      jQuery('#hourglasstopay').show();
+	      console.log("submit");
+	      form.submit();
+	    }
+
+	    <?php
+	    print '</script>';
+	}
+}
+
+
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
 
 llxFooter('', 'public');
 

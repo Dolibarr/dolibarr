@@ -338,6 +338,24 @@ class Paiement extends CommonObject
                                     }
                                 }
                             }
+
+                            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                            {
+                            	$outputlangs = $langs;
+                            	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            	if (! empty($newlang)) {
+                            		$outputlangs = new Translate("", $conf);
+                            		$outputlangs->setDefaultLang($newlang);
+                            	}
+                            	$ret = $invoice->fetch($id); // Reload to get new records
+
+                            	$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            	if ($result < 0) {
+                            		setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            		$error++;
+                            	}
+
+                            }
 					    }
 					}
 					else

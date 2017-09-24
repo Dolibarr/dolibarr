@@ -636,7 +636,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel'))
+	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
 	    $objectline = new ContratLigne($db);
 	    if ($objectline->fetch(GETPOST('elrowid')))
@@ -752,7 +752,13 @@ if (empty($reshook))
 	// Close all lines
 	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-	    $object->cloture($user);
+	    $object->closeAll($user);
+	}
+
+	// Close all lines
+	else if ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
+	{
+	    $object->activateAll($user);
 	}
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
@@ -816,7 +822,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref_supplier')
 	{
-		$cancelbutton = GETPOST('cancel');
+		$cancelbutton = GETPOST('cancel','alpha');
 		if (!$cancelbutton) {
 
 			$result = $object->fetch($id);
@@ -840,7 +846,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref_customer')
 	{
-		$cancelbutton = GETPOST('cancel');
+		$cancelbutton = GETPOST('cancel','alpha');
 
 		if (!$cancelbutton)
 		{
@@ -865,7 +871,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setref')
 	{
-	    $cancelbutton = GETPOST('cancel');
+	    $cancelbutton = GETPOST('cancel','alpha');
 
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
@@ -889,7 +895,7 @@ if (empty($reshook))
 	}
 	elseif ($action=='setdate_contrat')
 	{
-	    $cancelbutton = GETPOST('cancel');
+	    $cancelbutton = GETPOST('cancel','alpha');
 
 	    if (!$cancelbutton) {
 	        $result = $object->fetch($id);
@@ -912,52 +918,19 @@ if (empty($reshook))
 	    }
 	}
 
-	// Generation doc (depuis lien ou depuis cartouche doc)
-	else if ($action == 'builddoc' && $user->rights->contrat->creer) {
-		if (GETPOST('model')) {
-			$object->setDocModel($user, GETPOST('model'));
-		}
 
-		// Define output language
-		$outputlangs = $langs;
-		if (! empty($conf->global->MAIN_MULTILANGS)) {
-			$outputlangs = new Translate("", $conf);
-			$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$ret = $object->fetch($id); // Reload to get new records
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-		}
-	}
-
-	// Remove file in doc form
-	else if ($action == 'remove_file' && $user->rights->contrat->creer) {
-		if ($object->id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-			$langs->load("other");
-			$upload_dir = $conf->contrat->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
-		}
-	}
-
-	/*
-	 * Send mail
-	 */
+	// Actions to build doc
+	$upload_dir = $conf->contrat->dir_output;
+	$permissioncreate = $user->rights->contrat->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
 	$trigger_name='CONTRACT_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromcontract';
-	$trackid='cont'.$object->id;
+	$trackid='con'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer)
 	{
@@ -1153,6 +1126,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1311,6 +1285,11 @@ else
         if ($action == 'close')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
+
+        }
+        if ($action == 'activate')
+        {
+        	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
 
         }
 
@@ -1616,7 +1595,7 @@ else
                         print $langs->trans("DateStartPlanned").': ';
                         if ($objp->date_debut)
                         {
-                            print dol_print_date($db->jdate($objp->date_debut));
+                            print dol_print_date($db->jdate($objp->date_debut), 'day');
                             // Warning si date prevu passee et pas en service
                             if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) {
                     		    $warning_delay=$conf->contrat->services->inactifs->warning_delay / 3600 / 24;
@@ -1629,7 +1608,7 @@ else
                         print $langs->trans("DateEndPlanned").': ';
                         if ($objp->date_fin)
                         {
-                            print dol_print_date($db->jdate($objp->date_fin));
+                            print dol_print_date($db->jdate($objp->date_fin), 'day');
                             if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) {
                     		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
                                 $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
@@ -1848,21 +1827,21 @@ else
                 // Si pas encore active
                 if (! $objp->date_debut_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle);
+                    if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
                     else print $langs->trans("ContractStatusNotRunning");
                 }
                 // Si active et en cours
                 if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    print dol_print_date($objp->date_debut_reelle);
+                    print dol_print_date($objp->date_debut_reelle, 'day');
                 }
                 // Si desactive
                 if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
                     print $langs->trans("DateStartReal").': ';
-                    print dol_print_date($objp->date_debut_reelle);
+                    print dol_print_date($objp->date_debut_reelle, 'day');
                     print ' &nbsp;-&nbsp; ';
                     print $langs->trans("DateEndReal").': ';
-                    print dol_print_date($objp->date_fin_reelle);
+                    print dol_print_date($objp->date_fin_reelle, 'day');
                 }
                 if (! empty($objp->comment)) print "<br>".$objp->comment;
                 print '</td>';
@@ -2040,58 +2019,73 @@ else
             $parameters=array();
             $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
-            if ($object->statut == 0 && $nbofservices)
+            if (empty($reshook))
             {
-                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
-                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
-            }
-            if ($object->statut == 1)
-            {
-                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
-                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
-            }
+            	// Send
+            	if ($object->statut == 1) {
+            		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
+            			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+            		} else
+            			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+            	}
 
-            if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
-            {
-                $langs->load("bills");
-                if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a></div>';
-                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
-            }
+	            if ($object->statut == 0 && $nbofservices)
+	            {
+	                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
+	                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
+	            }
+	            if ($object->statut == 1)
+	            {
+	                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
+	                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
+	            }
 
-            if (! empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
-            {
-            	$langs->load("orders");
-            	if ($user->rights->commande->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
-            	else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
-            }
+	            if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
+	            {
+	                $langs->load("bills");
+	                if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a></div>';
+	                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
+	            }
 
-            // Clone
-            if ($user->rights->contrat->creer) {
-            	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
-            }
+	            if (! empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
+	            {
+	            	$langs->load("orders");
+	            	if ($user->rights->commande->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
+	            	else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
+	            }
 
-            if ($object->nbofservicesclosed < $nbofservices)
-            {
-                //if (! $numactive)
-                //{
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
-                //}
-                //else
-                //{
-                //	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
-                //}
-            }
+	            // Clone
+	            if ($user->rights->contrat->creer) {
+	            	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
+	            }
 
-            // On peut supprimer entite si
-            // - Droit de creer + mode brouillon (erreur creation)
-            // - Droit de supprimer
-            if (($user->rights->contrat->creer && $object->statut == 0) || $user->rights->contrat->supprimer)
-            {
-                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
-            }
-            else
-            {
-            	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
+	            if ($object->nbofservicesclosed > 0)
+	            {
+	            	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+	            }
+	            if ($object->nbofservicesclosed < $nbofservices)
+	            {
+	                //if (! $numactive)
+	                //{
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
+	                //}
+	                //else
+	                //{
+	                //	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
+	                //}
+	            }
+
+	            // On peut supprimer entite si
+	            // - Droit de creer + mode brouillon (erreur creation)
+	            // - Droit de supprimer
+	            if (($user->rights->contrat->creer && $object->statut == 0) || $user->rights->contrat->supprimer)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+	            }
+	            else
+	            {
+	            	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
+	            }
             }
 
             print "</div>";
@@ -2120,9 +2114,9 @@ else
     		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
-    			// Show links to link elements
-    			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-    			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
     		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -2130,132 +2124,19 @@ else
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'contract', $socid);
+			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1);
 
 
     		print '</div></div></div>';
     	}
 
-		/*
-		 * Action presend
-		 */
-		if ($action == 'presend')
-		{
-			$object->fetch_projet();
+		// Presend form
+		$modelmail='contract';
+		$defaulttopic='SendContractRef';
+		$diroutput = $conf->contrat->dir_output;
+		$trackid = 'con'.$object->id;
 
-			$ref = dol_sanitizeFileName($object->ref);
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-			$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-
-			if (!empty($newlang))
-			{
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang($newlang);
-				$outputlangs->load('commercial');
-			}
-
-			// Build document if it not exists
-			if (! $file || ! is_readable($file)) {
-				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result <= 0) {
-					dol_print_error($db, $object->error, $object->errors);
-					exit();
-				}
-				$fileparams = dol_most_recent_file($conf->contrat->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-				$file = $fileparams['fullname'];
-			}
-
-			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-			print '<div class="clearboth"></div>';
-			print '<br>';
-			print load_fiche_titre($langs->trans('SendContractByMail'));
-
-			dol_fiche_head('');
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-			$formmail->trackid='ord'.$object->id;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-			{
-				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-			}
-			$formmail->withfrom = 1;
-			$liste = array();
-			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
-				$liste [$key] = $value;
-			$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
-			$formmail->withtocc = $liste;
-			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-			if (empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__');
-			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $outputlangs->trans('SendContractRef', '__CONTRACTREF__ (__REFCLIENT__)');
-			}
-			$formmail->withfile = 2;
-			$formmail->withbody = 1;
-			$formmail->withdeliveryreceipt = 1;
-			$formmail->withcancel = 1;
-			// Tableau des substitutions
-			$formmail->setSubstitFromObject($object);
-			$formmail->substit ['__CONTRACTREF__'] = $object->ref;
-
-			$custcontact = '';
-			$contactarr = array();
-			$contactarr = $object->liste_contact(- 1, 'external');
-
-			if (is_array($contactarr) && count($contactarr) > 0)
-			{
-				foreach ($contactarr as $contact)
-				{
-					if ($contact['libelle'] == $langs->trans('TypeContact_contract_external_CUSTOMER')) {	// TODO Use code and not label
-						$contactstatic = new Contact($db);
-						$contactstatic->fetch($contact ['id']);
-						$custcontact = $contactstatic->getFullName($langs, 1);
-					}
-				}
-
-				if (! empty($custcontact)) {
-					$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-				}
-			}
-
-			// Tableau des parametres complementaires
-			$formmail->param['action'] = 'send';
-			$formmail->param['models'] = 'contract_send';
-			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['contractid'] = $object->id;
-			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
-
-			// Init list of files
-			if (GETPOST("mode") == 'init') {
-				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-			}
-
-			// Show form
-			print $formmail->get_form();
-
-			dol_fiche_end();
-		}
-
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
     }
 }
 

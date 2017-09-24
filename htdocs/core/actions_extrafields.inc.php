@@ -159,12 +159,11 @@ if ($action == 'add')
     					$params['options'][$key] = $value;
     				}
     			}
-
                 $result=$extrafields->addExtraField(
                 	GETPOST('attrname', 'alpha'),
                 	GETPOST('label', 'alpha'),
                 	$type,
-                	GETPOST('pos', 'alpha'),
+                	GETPOST('pos', 'int'),
                 	$extrasize,
                 	$elementtype,
                 	(GETPOST('unique', 'alpha')?1:0),
@@ -175,7 +174,9 @@ if ($action == 'add')
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	(GETPOST('list', 'alpha')?1:0),
 					(GETPOST('ishidden', 'alpha')?1:0),
-                    GETPOST('computed_value','alpha')
+                    GETPOST('computed_value','alpha'),
+                	(GETPOST('entitycurrentorall', 'alpha')?0:''),
+                	GETPOST('langfile', 'alpha')
                 );
     			if ($result > 0)
     			{
@@ -336,7 +337,9 @@ if ($action == 'update')
                 	(GETPOST('list', 'alpha')?1:0),
 					(GETPOST('ishidden', 'alpha')?1:0),
     			    GETPOST('default_value','alpha'),
-    			    GETPOST('computed_value','alpha')
+    				GETPOST('computed_value','alpha'),
+    				(GETPOST('entitycurrentorall', 'alpha')?0:''),
+    				GETPOST('langfile')
     			);
     			if ($result > 0)
     			{

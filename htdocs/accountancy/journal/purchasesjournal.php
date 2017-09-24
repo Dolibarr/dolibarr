@@ -85,7 +85,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, ";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.accountancy_code_buy , aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -155,6 +155,7 @@ if ($result) {
 		}
 
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
+		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier . ' (' . $obj->ref . ')';
 		$tabfac[$obj->rowid]["refsologest"] = $obj->ref;
 		$tabfac[$obj->rowid]["refsuppliersologest"] = $obj->ref_supplier;
@@ -222,6 +223,7 @@ if ($action == 'writebookkeeping') {
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_create = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
@@ -269,6 +271,7 @@ if ($action == 'writebookkeeping') {
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->date_lim_reglement = $val["datereg"];
 						$bookkeeping->doc_ref = $val["ref"];
 						$bookkeeping->date_create = $now;
 						$bookkeeping->doc_type = 'supplier_invoice';
@@ -322,6 +325,7 @@ if ($action == 'writebookkeeping') {
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
 					$bookkeeping->doc_ref = $val["ref"];
 					$bookkeeping->date_create = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
@@ -510,7 +514,7 @@ if (empty($action) || $action == 'view') {
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
-	$builddate = time();
+	$builddate=dol_now();
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
@@ -528,29 +532,30 @@ if (empty($action) || $action == 'view') {
 	// Button to write into Ledger
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 	    print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
 	    print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
-	    print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	    print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	}
-	print '<input type="button" class="butAction" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
 
+	// TODO Avoid using js. We can use a direct link with $param
 	print '
 	<script type="text/javascript">
 		function launch_export() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche form input[name=\"action\"]").val("exportcsv");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche form input[name=\"action\"]").val("writebookkeeping");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 	</script>';
 
@@ -560,6 +565,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
+    print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
@@ -688,6 +694,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	// End of page
 	llxFooter();

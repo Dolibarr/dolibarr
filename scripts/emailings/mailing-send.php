@@ -64,7 +64,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1')
 {
-    
+
 }
 
 $user = new User($db);
@@ -98,7 +98,7 @@ if ($resql)
 
 			$emailing = new Mailing($db);
 			$emailing->fetch($obj->rowid);
-			
+
 			$id       = $emailing->id;
 			$subject  = $emailing->sujet;
 			$message  = $emailing->body;
@@ -120,7 +120,7 @@ if ($resql)
 		    {
 		        $sql2.= " LIMIT ".$conf->global->MAILING_LIMIT_SENDBYCLI;
 		    }
-				
+
 			$resql2=$db->query($sql2);
 			if ($resql2)
 			{
@@ -145,6 +145,7 @@ if ($resql)
 					$i = 0;
 					while ($i < $num2)
 					{
+						// Here code is common with same loop ino card.php
 						$res=1;
 						$now=dol_now();
 
@@ -162,27 +163,63 @@ if ($resql)
 	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
 
-						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
-						$substitutionarray=array(
-							'__ID__' => $obj2->source_id,
-							'__EMAIL__' => $obj2->email,
-							'__LASTNAME__' => $obj2->lastname,
-							'__FIRSTNAME__' => $obj2->firstname,
-							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
-							'__OTHER1__' => $other1,
-							'__OTHER2__' => $other2,
-							'__OTHER3__' => $other3,
-							'__OTHER4__' => $other4,
-							'__OTHER5__' => $other5,
-							'__SIGNATURE__' => $signature,	// Signature is empty when ran from command line or taken from user in parameter)
-							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
-						);
+	                    $object = null;		// Not defined with mass emailing
+	                    $parameters=array('mode'=>'emailing');
+	                    $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount'), $object);			// Note: On mass emailing, this is null because we don't know object
+
+	                    // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
+	                    $substitutionarray['__ID__'] = $obj->source_id;
+	                    $substitutionarray['__EMAIL__'] = $obj->email;
+	                    $substitutionarray['__LASTNAME__'] = $obj->lastname;
+	                    $substitutionarray['__FIRSTNAME__'] = $obj->firstname;
+	                    $substitutionarray['__MAILTOEMAIL__'] = '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
+	                    $substitutionarray['__OTHER1__'] = $other1;
+	                    $substitutionarray['__OTHER2__'] = $other2;
+	                    $substitutionarray['__OTHER3__'] = $other3;
+	                    $substitutionarray['__OTHER4__'] = $other4;
+	                    $substitutionarray['__OTHER5__'] = $other5;
+	                    $substitutionarray['__SIGNATURE__'] = $signature;	// Signature is empty when ran from command line or taken from user in parameter)
+	                    $substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+	                    $substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
+
+						$onlinepaymentenabled = 0;
+						if (! empty($conf->paypal->enabled)) $onlinepaymentenabled++;
+						if (! empty($conf->paybox->enabled)) $onlinepaymentenabled++;
+						if (! empty($conf->stripe->enabled)) $onlinepaymentenabled++;
+						if ($onlinepaymentenabled && ! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+						{
+							$substitutionarray['__SECUREKEYPAYMENT__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+							{
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+							}
+							else
+							{
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
+							}
+						}
+						/* For backward compatibility */
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{
 							$substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
+
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_ORDER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_ORDER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
+
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_INVOICE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_INVOICE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
+
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 						}
 
 						complete_substitutions_array($substitutionarray,$langs);
@@ -252,7 +289,7 @@ if ($resql)
                             if ($result < 0) $error++;
                             // End call triggers
 						    */
-							
+
 							$sqlok ="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 							$sqlok.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj2->rowid;
 							$resqlok=$db->query($sqlok);

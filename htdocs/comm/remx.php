@@ -49,7 +49,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if (GETPOST('cancel') && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;

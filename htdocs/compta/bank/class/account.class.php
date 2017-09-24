@@ -573,21 +573,21 @@ class Account extends CommonObject
         $sql.= ", '".$this->db->escape($this->account_number)."'";
 		$sql.= ", ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ", '".$this->db->escape($this->bank)."'";
-        $sql.= ", '".$this->code_banque."'";
-        $sql.= ", '".$this->code_guichet."'";
-        $sql.= ", '".$this->number."'";
-        $sql.= ", '".$this->cle_rib."'";
-        $sql.= ", '".$this->bic."'";
-        $sql.= ", '".$this->iban."'";
+        $sql.= ", '".$this->db->escape($this->code_banque)."'";
+        $sql.= ", '".$this->db->escape($this->code_guichet)."'";
+        $sql.= ", '".$this->db->escape($this->number)."'";
+        $sql.= ", '".$this->db->escape($this->cle_rib)."'";
+        $sql.= ", '".$this->db->escape($this->bic)."'";
+        $sql.= ", '".$this->db->escape($this->iban)."'";
         $sql.= ", '".$this->db->escape($this->domiciliation)."'";
         $sql.= ", '".$this->db->escape($this->proprio)."'";
         $sql.= ", '".$this->db->escape($this->owner_address)."'";
-        $sql.= ", '".$this->currency_code."'";
+        $sql.= ", '".$this->db->escape($this->currency_code)."'";
         $sql.= ", ".$this->rappro;
         $sql.= ", ".price2num($this->min_allowed);
         $sql.= ", ".price2num($this->min_desired);
         $sql.= ", '".$this->db->escape($this->comment)."'";
-        $sql.= ", ".($this->state_id>0?"'".$this->state_id."'":"null");
+        $sql.= ", ".($this->state_id>0?$this->state_id:"null");
         $sql.= ", ".$this->country_id;
         $sql.= ")";
 
@@ -702,7 +702,7 @@ class Account extends CommonObject
         $sql.= ",courant = ".$this->courant;
         $sql.= ",clos = ".$this->clos;
         $sql.= ",rappro = ".$this->rappro;
-        $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
+        $sql.= ",url = ".($this->url?"'".$this->db->escape($this->url)."'":"null");
         $sql.= ",account_number = '".$this->db->escape($this->account_number)."'";
 		$sql.= ",fk_accountancy_journal = ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
@@ -722,7 +722,7 @@ class Account extends CommonObject
         $sql.= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
         $sql.= ",comment     = '".$this->db->escape($this->comment)."'";
 
-        $sql.= ",state_id = ".($this->state_id>0?"'".$this->state_id."'":"null");
+        $sql.= ",state_id = ".($this->state_id>0?$this->state_id:"null");
         $sql.= ",fk_pays = ".$this->country_id;
 
         $sql.= " WHERE rowid = ".$this->id;
@@ -807,7 +807,7 @@ class Account extends CommonObject
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-        $sql.= ",state_id = ".($this->state_id>0?"'".$this->state_id."'":"null");
+        $sql.= ",state_id = ".($this->state_id>0?$this->state_id:"null");
         $sql.= ",fk_pays = ".$this->country_id;
         $sql.= " WHERE rowid = ".$this->id;
         $sql.= " AND entity = ".$conf->entity;
@@ -1255,6 +1255,7 @@ class Account extends CommonObject
         $label = '<u>' . $langs->trans("ShowAccount") . '</u>';
         $label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
         $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        $label .= '<br><b>' . $langs->trans("AccountCurrency") . ':</b> ' . $this->currency_code;
         if (! empty($conf->accounting->enabled))
         {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1694,9 +1695,9 @@ class AccountLine extends CommonObject
 		$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", ".($this->fk_user_author > 0 ? "'".$this->fk_user_author."'":"null");
-		$sql .= ", ".($this->num_chq ? "'".$this->num_chq."'" : "null");
-		$sql .= ", '".$this->fk_account."'";
+		$sql .= ", ".($this->fk_user_author > 0 ? $this->fk_user_author :"null");
+		$sql .= ", ".($this->num_chq ? "'".$this->db->escape($this->num_chq)."'" : "null");
+		$sql .= ", '".$this->db->escape($this->fk_account)."'";
 		$sql .= ", '".$this->db->escape($this->fk_type)."'";
 		$sql .= ", ".($this->emetteur ? "'".$this->db->escape($this->emetteur)."'" : "null");
 		$sql .= ", ".($this->bank_chq ? "'".$this->db->escape($this->bank_chq)."'" : "null");
@@ -1956,6 +1957,67 @@ class AccountLine extends CommonObject
     function datev_previous($id)
     {
         return $this->datev_change($id,-1);
+    }
+
+
+    /**
+     * 	Increase/decrease operation date of a rowid
+     *
+     *	@param	int		$rowid		Id of line
+     *	@param	int		$sign		1 or -1
+     *	@return	int					>0 if OK, 0 if KO
+     */
+    function dateo_change($rowid,$sign=1)
+    {
+        $sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $obj=$this->db->fetch_object($resql);
+            $newdate=$this->db->jdate($obj->dateo)+(3600*24*$sign);
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+            $sql.= " dateo = '".$this->db->idate($newdate)."'";
+            $sql.= " WHERE rowid = ".$rowid;
+
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+                if ($this->db->affected_rows($result))
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                dol_print_error($this->db);
+                return 0;
+            }
+        }
+        else dol_print_error($this->db);
+        return 0;
+    }
+
+    /**
+     * 	Increase operation date of a rowid
+     *
+     *	@param	int		$id		Id of line to change
+     *	@return	int				>0 if OK, 0 if KO
+     */
+    function dateo_next($id)
+    {
+        return $this->dateo_change($id,1);
+    }
+
+    /**
+     * 	Decrease operation date of a rowid
+     *
+     *	@param	int		$id		Id of line to change
+     *	@return	int				>0 if OK, 0 if KO
+     */
+    function dateo_previous($id)
+    {
+        return $this->dateo_change($id,-1);
     }
 
 
