@@ -338,6 +338,7 @@ UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__   WHERE value = __ENCRYPT
 DELETE FROM llx_document_model where nom = 'fsfe.fr.php' and type='donation';
 
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 
 ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
