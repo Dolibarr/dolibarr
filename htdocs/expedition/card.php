@@ -780,9 +780,15 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-            if (empty($reshook) && ! empty($extrafields->attribute_label)) {
-            	print $object->showOptionals($extrafields, 'edit');
-            }
+			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+				// copy from order
+				$orderExtrafields = new Extrafields($db);
+				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
+				if ($object->fetch_optionals($object->id, $orderExtrafieldLabels) > 0) {
+					$expe->array_options = array_merge($expe->array_options, $object->array_options);
+				}
+				print $object->showOptionals($extrafields, 'edit');
+			}
 
 
             // Incoterms
@@ -1304,8 +1310,13 @@ if ($action == 'create')
 				if (is_array($extralabelslines) && count($extralabelslines)>0)
 				{
 					$colspan=5;
+					$orderLineExtrafields = new Extrafields($db);
+					$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
+					$srcLine = new OrderLine($db);
+					$srcLine->fetch_optionals($line->id,$orderLineExtrafieldLabels); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
 					$line->fetch_optionals($object->id,$extralabelslines);
+					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 					print '</tr>';
