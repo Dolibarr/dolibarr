@@ -544,19 +544,7 @@ if (empty($reshook))
 	 */
 	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 	{
-		$tva_tx = GETPOST('tva_tx');
-
-		if (GETPOST('price_ht') != '')
-    	{
-    		$price_base_type = 'HT';
-    		$ht = price2num(GETPOST('price_ht'));
-    	}
-    	else
-    	{
-    		$ttc = price2num(GETPOST('price_ttc'));
-    		$ht = $ttc / (1 + ($tva_tx / 100));
-    		$price_base_type = 'HT';
-    	}
+		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
    		if ($lineid)
 	    {
@@ -568,10 +556,36 @@ if (empty($reshook))
 	    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
-	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
-	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);
+	    // Define info_bits
+	    $info_bits = 0;
+	    if (preg_match('/\*/', $vat_rate))
+	    	$info_bits |= 0x01;
 
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+	    // Define vat_rate
+	    $vat_rate = str_replace('*', '', $vat_rate);
+	    $localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
+	    $localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
+
+	    if (GETPOST('price_ht') != '')
+	    {
+	    	$price_base_type = 'HT';
+	    	$ht = price2num(GETPOST('price_ht'));
+	    }
+	    else
+	    {
+	    	$vatratecleaned = $vat_rate;
+	    	if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
+	    	{
+	    		$vatratecleaned = trim($reg[1]);
+	    		$vatratecode = $reg[2];
+	    	}
+
+	    	$ttc = price2num(GETPOST('price_ttc'));
+	    	$ht = $ttc / (1 + ($vatratecleaned / 100));
+	    	$price_base_type = 'HT';
+	    }
+
+	    $pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
@@ -590,9 +604,9 @@ if (empty($reshook))
 	        $ht,
 	        $_POST['qty'],
 	        $_POST['remise_percent'],
-	        $tva_tx,
-	        $localtax1_tx,
-	        $localtax2_tx,
+	        $vat_rate,
+	        $localtax1_rate,
+	        $localtax2_rate,
 	        $price_base_type,
 	        0,
 	        isset($_POST["type"])?$_POST["type"]:$line->product_type,
