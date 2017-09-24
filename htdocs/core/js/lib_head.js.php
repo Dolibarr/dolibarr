@@ -45,6 +45,35 @@ if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-
 else header('Cache-Control: no-cache');
 ?>
 
+
+
+/**
+ * Set select2 translations (if module was loaded).
+ */
+(function ($) {
+    "use strict";
+
+    if (typeof $.fn.select2 != "undefined") {
+	/* console.log($.fn.select2);
+    console.log("ok"); */
+
+    $.fn.select2.locales['xx'] = {
+        formatMatches: function (matches) { return matches + " <?php echo dol_escape_js($langs->trans("Select2ResultFoundUseArrows")); ?>"; },
+        formatNoMatches: function () { return "<?php echo dol_escape_js($langs->trans("Select2NotFound")); ?>"; },
+        formatInputTooShort: function (input, min) { var n = min - input.length;
+        	if (n > 1) return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacters")); ?>";
+        	else return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacter")); ?>"
+        	},
+        formatLoadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->trans("Select2LoadingMoreResults")); ?>"; },
+        formatSearching: function () { return "<?php echo dol_escape_js($langs->trans("Select2SearchInProgress")); ?>"; }
+    };
+
+    $.extend($.fn.select2.defaults, $.fn.select2.locales['xx']);
+
+    }
+})(jQuery);
+
+
 /*
  * =================================================================
  * Purpose:
