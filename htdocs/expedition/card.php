@@ -219,8 +219,8 @@ if (empty($reshook))
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
 	    $object->tracking_number		= GETPOST('tracking_number','alpha');
 	    $object->ref_int				= GETPOST('ref_int','alpha');
-	    $object->note_private			= GETPOST('note_private');
-	    $object->note_public			= GETPOST('note_public');
+	    $object->note_private			= GETPOST('note_private','none');
+	    $object->note_public			= GETPOST('note_public','none');
 		$object->fk_incoterms 			= GETPOST('incoterm_id', 'int');
 		$object->location_incoterms 	= GETPOST('location_incoterms', 'alpha');
 

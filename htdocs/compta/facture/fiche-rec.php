@@ -209,8 +209,8 @@ if (empty($reshook))
     	if (! $error)
     	{
     		$object->titre = GETPOST('titre', 'alpha');
-    		$object->note_private = GETPOST('note_private');
-    		$object->note_public  = GETPOST('note_public');
+    		$object->note_private = GETPOST('note_private','none');
+    		$object->note_public  = GETPOST('note_public','none');
     		$object->usenewprice = GETPOST('usenewprice');
 
     		$object->frequency = $frequency;
@@ -723,7 +723,7 @@ if (empty($reshook))
     	$date_end = '';
     	//$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
     	//$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-    	$description = dol_htmlcleanlastbr(GETPOST('product_desc') ? GETPOST('product_desc') : GETPOST('desc'));
+    	$description = dol_htmlcleanlastbr(GETPOST('product_desc','none') ? GETPOST('product_desc','none') : GETPOST('desc','none'));
     	$pu_ht = GETPOST('price_ht');
     	$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
     	$qty = GETPOST('qty');
@@ -965,8 +965,8 @@ if ($action == 'create')
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
 		print '</tr>';
 
-		$note_public=GETPOST('note_public')?GETPOST('note_public'):$object->note_public;
-		$note_private=GETPOST('note_private')?GETPOST('note_private'):$object->note_private;
+		$note_public=GETPOST('note_public','none')?GETPOST('note_public','none'):$object->note_public;
+		$note_private=GETPOST('note_private','none')?GETPOST('note_private','none'):$object->note_private;
 
 		// Help of substitution key
 		$substitutionarray=array(
