@@ -3366,8 +3366,8 @@ class Propal extends CommonObject
         $this->lines = array();
 
         $sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
-        $sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-        $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
+        $sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.localtax1_tx, pt.localtax2_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+        $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.total_localtax1, pt.total_localtax2, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
 	    $sql.= ' pt.fk_unit,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.description as product_desc, p.tobatch as product_tobatch,';
@@ -3411,11 +3411,15 @@ class Propal extends CommonObject
 
                 $this->lines[$i]->vat_src_code      = $obj->vat_src_code;
                 $this->lines[$i]->tva_tx			= $obj->tva_tx;
+                $this->lines[$i]->localtax1_tx		= $obj->localtax1_tx;
+                $this->lines[$i]->localtax2_tx		= $obj->localtax2_tx;
                 $this->lines[$i]->info_bits			= $obj->info_bits;
                 $this->lines[$i]->total_ht			= $obj->total_ht;
                 $this->lines[$i]->total_tva			= $obj->total_tva;
                 $this->lines[$i]->total_ttc			= $obj->total_ttc;
-				$this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
+                $this->lines[$i]->total_localtax1	= $obj->total_localtax1;
+                $this->lines[$i]->total_localtax2	= $obj->total_localtax2;
+                $this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
 				$marginInfos						= getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
 				$this->lines[$i]->pa_ht				= $marginInfos[0];
 				$this->lines[$i]->marge_tx			= $marginInfos[1];
