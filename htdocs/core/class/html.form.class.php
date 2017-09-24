@@ -2987,12 +2987,12 @@ class Form
      *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
      *      See instead to force the default value by the caller.
      *
-     *      @param	int  	$selected       Id of payment term to preselect by default
-     *      @param  string	$htmlname       Nom de la zone select
-     *      @param  int 	$filtertype     Not used
+     *      @param	int		$selected		Id of payment term to preselect by default
+     *      @param	string	$htmlname		Nom de la zone select
+     *      @param	int		$filtertype		Not used
      *		@param	int		$addempty		Add an empty entry
-     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
-     * 		@param	string	$morecss		Add more CSS on select tag
+     * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+     * 		@param	string	$morecss			Add more CSS on select tag
      *		@return	void
      */
     function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0, $noinfoadmin=0, $morecss='')
