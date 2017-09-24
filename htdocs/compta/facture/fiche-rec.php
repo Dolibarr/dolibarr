@@ -360,7 +360,7 @@ if (empty($reshook))
     	// For triggers
     	$line->id = $lineid;
 
-    	if ($line->delete() > 0)
+    	if ($line->delete($user) > 0)
     	{
     		$result=$object->update_price(1);
 
