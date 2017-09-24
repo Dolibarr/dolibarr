@@ -44,7 +44,7 @@ top_httphead('text/javascript; charset=UTF-8');
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 ?>
-
+// Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
 
 /**
