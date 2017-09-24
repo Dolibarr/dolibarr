@@ -2991,7 +2991,7 @@ class Form
      *      @param  string	$htmlname       Nom de la zone select
      *      @param  int 	$filtertype     Not used
      *		@param	int		$addempty		Add an empty entry
-     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+     * 		@param	int		$noinfoadmin	0=Add admin info, 1=Disable admin info
      * 		@param	string	$morecss		Add more CSS on select tag
      *		@return	void
      */
