@@ -121,17 +121,6 @@ $hookmanager->initHooks(array('membercard','globalcard'));
  * 	Actions
  */
 
-if ($cancel) {
-
-	$action='';
-
-	if (! empty($backtopage))
-	{
-		header("Location: ".$backtopage);
-		exit;
-	}
-}
-
 $parameters=array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -986,11 +975,18 @@ else
 
         dol_fiche_end();
 
-	    print '<div class="center">';
-	    print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
-	    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-	    print '</div>';
+		print '<div class="center">';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
+		print '&nbsp;&nbsp;';
+		if (! empty($backtopage))
+		{
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+		}
+		else
+		{
+			print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		}
+		print '</div>';
 
 		print "</form>\n";
 	}
