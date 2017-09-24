@@ -1598,6 +1598,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
+			// $menu_array[$i]['url'] can be a relative url, a full external url or a dynamic value like '$conf->global->APARAM)
+			if (preg_match('/^\$conf->global->([^\?]+)/', $menu_array[$i]['url'], $reg))
+			{
+				$keyforsconst=$reg[1];
+				$menu_array[$i]['url'] = $conf->global->$keyforsconst;
+			}
+
 			$url = $shorturl = $menu_array[$i]['url'];
 
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))

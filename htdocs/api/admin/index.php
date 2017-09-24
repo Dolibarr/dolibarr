@@ -77,6 +77,8 @@ if ($action == 'setproductionmode')
 	}
 }
 
+dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
+
 
 /*
  *	View
