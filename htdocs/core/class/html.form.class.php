@@ -2987,12 +2987,12 @@ class Form
      *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
      *      See instead to force the default value by the caller.
      *
-     *      @param	int  	$selected       Id of payment term to preselect by default
-     *      @param  string	$htmlname       Nom de la zone select
-     *      @param  int 	$filtertype     Not used
+     *      @param	int		$selected		Id of payment term to preselect by default
+     *      @param	string	$htmlname		Nom de la zone select
+     *      @param	int		$filtertype		Not used
      *		@param	int		$addempty		Add an empty entry
-     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
-     * 		@param	string	$morecss		Add more CSS on select tag
+     * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+     * 		@param	string	$morecss			Add more CSS on select tag
      *		@return	void
      */
     function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0, $noinfoadmin=0, $morecss='')
@@ -3277,7 +3277,7 @@ class Form
 
         $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-        $sql = 'SELECT rowid, label from '.MAIN_DB_PREFIX.'c_units';
+        $sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
         $sql.= ' WHERE active > 0';
 
         $resql = $this->db->query($sql);
@@ -5215,15 +5215,16 @@ class Form
      */
     static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
-        global $langs;
+        global $conf, $langs;
         global $delayedhtmlcontent;
 
-    	$tmpplugin='select2';
+    	// TODO Use an internal dolibarr component instead of select2
+        if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
 
     	$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
 
-    	// TODO Use an internal dolibarr component instead of select2
-    	$outdelayed='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    	$tmpplugin='select2';
+    	$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
 
@@ -5325,7 +5326,7 @@ class Form
     	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
     		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-   			$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+   			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
     			<script type="text/javascript">
 	    			function formatResult(record) {'."\n";
 						if ($elemtype == 'category')

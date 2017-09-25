@@ -256,8 +256,8 @@ if (empty($reshook))
 			$db->begin();
 
 			$object->date_commande = $datecommande;
-			$object->note_private = GETPOST('note_private');
-			$object->note_public = GETPOST('note_public');
+			$object->note_private = GETPOST('note_private','none');
+			$object->note_public = GETPOST('note_public','none');
 			$object->source = GETPOST('source_id');
 			$object->fk_project = GETPOST('projectid');
 			$object->ref_client = GETPOST('ref_client');
@@ -927,7 +927,7 @@ if (empty($reshook))
 		$date_end='';
 		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
+		$description=dol_htmlcleanlastbr(GETPOST('product_desc','none'));
 		$pu_ht=GETPOST('price_ht');
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 		$pu_ht_devise = GETPOST('multicurrency_subprice');

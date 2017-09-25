@@ -44,6 +44,35 @@ top_httphead('text/javascript; charset=UTF-8');
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 ?>
+// Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
+
+
+/**
+ * Set select2 translations (if module was loaded).
+ */
+(function ($) {
+    "use strict";
+
+    if (typeof $.fn.select2 != "undefined") {
+	/* console.log($.fn.select2);
+    console.log("ok"); */
+
+    $.fn.select2.locales['xx'] = {
+        formatMatches: function (matches) { return matches + " <?php echo dol_escape_js($langs->trans("Select2ResultFoundUseArrows")); ?>"; },
+        formatNoMatches: function () { return "<?php echo dol_escape_js($langs->trans("Select2NotFound")); ?>"; },
+        formatInputTooShort: function (input, min) { var n = min - input.length;
+        	if (n > 1) return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacters")); ?>";
+        	else return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacter")); ?>"
+        	},
+        formatLoadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->trans("Select2LoadingMoreResults")); ?>"; },
+        formatSearching: function () { return "<?php echo dol_escape_js($langs->trans("Select2SearchInProgress")); ?>"; }
+    };
+
+    $.extend($.fn.select2.defaults, $.fn.select2.locales['xx']);
+
+    }
+})(jQuery);
+
 
 /*
  * =================================================================
@@ -53,6 +82,7 @@ else header('Cache-Control: no-cache');
  * SimpleDateFormat a utiliser pour retour
  * ==================================================================
  */
+ /*
 function showDP(base,dateFieldID,format,codelang)
 {
 	// check to see if another box is already showing
@@ -136,7 +166,7 @@ function resetDP(base,dateFieldID,format,codelang)
 
 function loadMonth(base,month,year,ymd,codelang)
 {
-	/* showDP.box.innerHTML="Loading..."; */
+	// showDP.box.innerHTML="Loading...";
 	// alert(codelang);
 	var theURL=base+"datepicker.php?cm=shw&lang="+codelang;
 	theURL+="&m="+encodeURIComponent(month);
@@ -161,37 +191,6 @@ function closeDPBox()
 	displaySelectBoxes();
 	showDP.box=null;
 	showDP.datefieldID=null;
-}
-
-function dpChangeDay(dateFieldID,format)
-{
-	showDP.datefieldID=dateFieldID;
-	console.log("Call dpChangeDay, we save date into detailed fields.");
-
-	var thefield=getObjectFromID(showDP.datefieldID);
-	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
-	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
-	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
-
-	var date=getDateFromFormat(thefield.value,format);
-	if (date)
-	{
-		thefieldday.value=date.getDate();
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value=date.getMonth()+1;
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value=date.getFullYear();
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
-	}
-	else
-	{
-		thefieldday.value='';
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value='';
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value='';
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
-	}
 }
 
 function dpClickDay(year,month,day,format)
@@ -221,16 +220,6 @@ function dpHighlightDay(year,month,day,months){
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
-// Returns an object given an id
-function getObjectFromID(id){
-	var theObject;
-	if(document.getElementById)
-		theObject=document.getElementById(id);
-	else
-		theObject=document.all[id];
-	return theObject;
-}
-
 // This Function returns the top position of an object
 function getTop(theitem){
 	var offsetTrail = theitem;
@@ -256,6 +245,85 @@ function getLeft(theitem){
 		offsetLeft += document.body.leftMargin;
 	return offsetLeft;
 }
+
+// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+// not put popup completely on the front)
+// Used only bu popup calendar
+function hideSelectBoxes() {
+	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
+	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
+	{
+		for(var i = 0; i < document.all.length; i++)
+		{
+			if(document.all[i].tagName)
+				if(document.all[i].tagName == "SELECT")
+			  		document.all[i].style.visibility="hidden";
+		}
+	}
+}
+// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+// not put popup completely on the front)
+// Used only bu popup calendar
+function displaySelectBoxes() {
+	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
+	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
+	{
+	       for(var i = 0; i < document.all.length; i++)
+	       {
+	               if(document.all[i].tagName)
+	                       if(document.all[i].tagName == "SELECT")
+	                               document.all[i].style.visibility="visible";
+	       }
+	}
+}
+
+*/
+
+
+// Returns an object given an id
+function getObjectFromID(id){
+	var theObject;
+	if(document.getElementById)
+		theObject=document.getElementById(id);
+	else
+		theObject=document.all[id];
+	return theObject;
+}
+
+// Called after selection of a date to save details into detailed fields
+function dpChangeDay(dateFieldID,format)
+{
+	//showDP.datefieldID=dateFieldID;
+	console.log("Call dpChangeDay, we save date into detailed fields.");
+
+	var thefield=getObjectFromID(dateFieldID);
+	var thefieldday=getObjectFromID(dateFieldID+"day");
+	var thefieldmonth=getObjectFromID(dateFieldID+"month");
+	var thefieldyear=getObjectFromID(dateFieldID+"year");
+
+	var date=getDateFromFormat(thefield.value,format);
+	if (date)
+	{
+		thefieldday.value=date.getDate();
+		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value=date.getMonth()+1;
+		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value=date.getFullYear();
+		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+	}
+	else
+	{
+		thefieldday.value='';
+		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value='';
+		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value='';
+		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+	}
+}
+
+
+
 
 
 // Create XMLHttpRequest object and load url
@@ -315,40 +383,6 @@ function loadXMLDoc(url,readyStateFunction,async)
 	req.send(null);
 	return req;
 }
-
-/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
- * not put popup completely on the front)
- * Used only bu popup calendar
- */
-function hideSelectBoxes() {
-	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
-	{
-		for(var i = 0; i < document.all.length; i++)
-		{
-			if(document.all[i].tagName)
-				if(document.all[i].tagName == "SELECT")
-			  		document.all[i].style.visibility="hidden";
-		}
-	}
-}
-/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
- * not put popup completely on the front)
- * Used only bu popup calendar
- */
-function displaySelectBoxes() {
-	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
-	{
-	       for(var i = 0; i < document.all.length; i++)
-	       {
-	               if(document.all[i].tagName)
-	                       if(document.all[i].tagName == "SELECT")
-	                               document.all[i].style.visibility="visible";
-	       }
-	}
-}
-
 
 
 /*

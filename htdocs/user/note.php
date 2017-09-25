@@ -65,7 +65,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
 		$db->begin();
 
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private','none'), ENT_QUOTES));
 		if ($res < 0) {
 			$mesg = '<div class="error">'.$adh->error.'</div>';
 			$db->rollback();

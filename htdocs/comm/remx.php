@@ -292,7 +292,7 @@ if ($socid > 0)
     	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
     	print '</td></tr>';
     	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc').'"></td></tr>';
+    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc','none').'"></td></tr>';
 
     	print "</table>";
 	}
