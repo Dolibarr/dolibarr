@@ -68,6 +68,7 @@ if (empty($reshook))
 		if (! dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE',GETPOST("activesynchro"),'chaine',0,'',$conf->entity)) $error++;
 		if (! dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE',GETPOST("activecontact"),'chaine',0,'',$conf->entity)) $error++;
 		if (! dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE',GETPOST("activemembers"),'chaine',0,'',$conf->entity)) $error++;
+		if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_ACTIVE',GETPOST("activememberstypes"),'chaine',0,'',$conf->entity)) $error++;
 
 		if (! $error)
 		{
@@ -135,7 +136,6 @@ print '</td></tr>';
 // Synchro contact active
 if (! empty($conf->societe->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
@@ -147,7 +147,6 @@ if (! empty($conf->societe->enabled))
 // Synchro member active
 if (! empty($conf->adherent->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberActive").'</td><td>';
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
@@ -155,6 +154,18 @@ if (! empty($conf->adherent->enabled))
 	$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr").' ('.$langs->trans("SupportedForLDAPImportScriptOnly").')';
 	print $form->selectarray('activemembers',$arraylist,$conf->global->LDAP_MEMBER_ACTIVE);
 	print '</td><td>'.$langs->trans("LDAPDnMemberActiveExample").'</td></tr>';
+}
+
+// Synchro member type active
+if (! empty($conf->adherent->enabled))
+{
+	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberTypeActive").'</td><td>';
+	$arraylist=array();
+	$arraylist['0']=$langs->trans("No");
+	$arraylist['1']=$langs->trans("DolibarrToLDAP");
+	$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr").' ('.$langs->trans("SupportedForLDAPImportScriptOnly").')';
+	print $form->selectarray('activememberstypes',$arraylist,$conf->global->LDAP_MEMBER_TYPE_ACTIVE);
+	print '</td><td>'.$langs->trans("LDAPDnMemberTypeActiveExample").'</td></tr>';
 }
 
 // Fields from hook

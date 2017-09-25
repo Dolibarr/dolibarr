@@ -104,6 +104,7 @@ ErrorForbidden2=Permission for this login can be defined by your Dolibarr admini
 ErrorForbidden3=It seems that Dolibarr is not used through an authenticated session. Take a look at Dolibarr setup documentation to know how to manage authentications (htaccess, mod_auth or other...).
 ErrorNoImagickReadimage=Class Imagick is not found in this PHP. No preview can be available. Administrators can disable this tab from menu Setup - Display.
 ErrorRecordAlreadyExists=Record already exists
+ErrorLabelAlreadyExists=This label already exists
 ErrorCantReadFile=Failed to read file '%s'
 ErrorCantReadDir=Failed to read directory '%s'
 ErrorBadLoginPassword=Bad value for login or password
