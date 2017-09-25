@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2016 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
@@ -833,6 +833,7 @@ else
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
+		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
         dol_fiche_head('');
 
@@ -974,11 +975,18 @@ else
 
         dol_fiche_end();
 
-	    print '<div class="center">';
-	    print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
-	    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
-	    print '</div>';
+		print '<div class="center">';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
+		print '&nbsp;&nbsp;';
+		if (! empty($backtopage))
+		{
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+		}
+		else
+		{
+			print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		}
+		print '</div>';
 
 		print "</form>\n";
 	}
@@ -1245,7 +1253,7 @@ else
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';

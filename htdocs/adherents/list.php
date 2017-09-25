@@ -315,7 +315,7 @@ if ($search_type > 0)
 {
 	$membertype=new AdherentType($db);
 	$result=$membertype->fetch(GETPOST("type",'int'));
-	$titre.=" (".$membertype->libelle.")";
+	$titre.=" (".$membertype->label.")";
 }
 
 $param='';
@@ -698,7 +698,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['t.libelle']['checked']))
 	{
     	$membertypestatic->id=$obj->type_id;
-		$membertypestatic->libelle=$obj->type;
+		$membertypestatic->label=$obj->type;
 		print '<td class="nowrap">';
 		print $membertypestatic->getNomUrl(1,32);
 		print '</td>';

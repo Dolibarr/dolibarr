@@ -75,6 +75,14 @@ function ldap_prepare_head()
 		$h++;
 	}
 
+	if (! empty($conf->adherent->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
+		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
+		$head[$h][2] = 'memberstypes';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
