@@ -443,8 +443,8 @@ if (empty($reshook))
 				$object->libelle			= GETPOST('label');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
-				$object->note_public		= GETPOST('note_public');
-				$object->note_private		= GETPOST('note_private');
+				$object->note_public		= GETPOST('note_public','none');
+				$object->note_private		= GETPOST('note_private','none');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -507,8 +507,8 @@ if (empty($reshook))
 				$object->libelle			= $_POST['label'];
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
-				$object->note_public		= GETPOST('note_public');
-				$object->note_private		= GETPOST('note_private');
+				$object->note_public		= GETPOST('note_public','none');
+				$object->note_private		= GETPOST('note_private','none');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -616,8 +616,8 @@ if (empty($reshook))
 				$object->libelle       = $_POST['label'];
 				$object->date          = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public   = GETPOST('note_public');
-				$object->note_private  = GETPOST('note_private');
+				$object->note_public   = GETPOST('note_public','none');
+				$object->note_private  = GETPOST('note_private','none');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account        = GETPOST('fk_account', 'int');

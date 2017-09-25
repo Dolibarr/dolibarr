@@ -676,7 +676,7 @@ if (empty($reshook))
 
 		    $fk_unit = GETPOST('unit', 'alpha');
 
-	        $objectline->description=GETPOST('product_desc');
+	        $objectline->description=GETPOST('product_desc','none');
 	        $objectline->price_ht=GETPOST('elprice');
 	        $objectline->subprice=GETPOST('elprice');
 	        $objectline->qty=GETPOST('elqty');
