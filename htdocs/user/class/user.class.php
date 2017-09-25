@@ -2272,14 +2272,12 @@ class User extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// Champs
-		if ($this->fullname && ! empty($conf->global->LDAP_FIELD_FULLNAME))			$info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
-		if ($this->lastname && ! empty($conf->global->LDAP_FIELD_NAME))				$info[$conf->global->LDAP_FIELD_NAME] = $this->lastname;
+		if ($this->fullname && ! empty($conf->global->LDAP_FIELD_FULLNAME))		$info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->lastname && ! empty($conf->global->LDAP_FIELD_NAME))			$info[$conf->global->LDAP_FIELD_NAME] = $this->lastname;
 		if ($this->firstname && ! empty($conf->global->LDAP_FIELD_FIRSTNAME))		$info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
 		if ($this->login && ! empty($conf->global->LDAP_FIELD_LOGIN))				$info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
-		if ($this->login && ! empty($conf->global->LDAP_FIELD_LOGIN_SAMBA))			$info[$conf->global->LDAP_FIELD_LOGIN_SAMBA] = $this->login;
-		if ($this->pass && ! empty($conf->global->LDAP_FIELD_PASSWORD))				$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
-		if ($this->pass && ! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // md5 for OpenLdap TODO add type of encryption
-		if ($this->ldap_sid && ! empty($conf->global->LDAP_FIELD_SID))				$info[$conf->global->LDAP_FIELD_SID] = $this->ldap_sid;
+		if ($this->login && ! empty($conf->global->LDAP_FIELD_LOGIN_SAMBA))		$info[$conf->global->LDAP_FIELD_LOGIN_SAMBA] = $this->login;
+		if ($this->ldap_sid && ! empty($conf->global->LDAP_FIELD_SID))			$info[$conf->global->LDAP_FIELD_SID] = $this->ldap_sid;
 		if ($this->societe_id > 0)
 		{
 			$soc = new Societe($this->db);
@@ -2290,15 +2288,30 @@ class User extends CommonObject
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
-		if ($this->address && ! empty($conf->global->LDAP_FIELD_ADDRESS))     $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
-		if ($this->zip && ! empty($conf->global->LDAP_FIELD_ZIP))             $info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
-		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))           $info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
-		if ($this->office_phone && ! empty($conf->global->LDAP_FIELD_PHONE))  $info[$conf->global->LDAP_FIELD_PHONE] = $this->office_phone;
-		if ($this->user_mobile && ! empty($conf->global->LDAP_FIELD_MOBILE))  $info[$conf->global->LDAP_FIELD_MOBILE] = $this->user_mobile;
-		if ($this->office_fax && ! empty($conf->global->LDAP_FIELD_FAX))	     $info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
-		if ($this->note && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))    $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->email && ! empty($conf->global->LDAP_FIELD_MAIL))          $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
-    	if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))          $info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
+		if ($this->address && ! empty($conf->global->LDAP_FIELD_ADDRESS))		$info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->zip && ! empty($conf->global->LDAP_FIELD_ZIP))				$info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
+		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))			$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
+		if ($this->office_phone && ! empty($conf->global->LDAP_FIELD_PHONE))	$info[$conf->global->LDAP_FIELD_PHONE] = $this->office_phone;
+		if ($this->user_mobile && ! empty($conf->global->LDAP_FIELD_MOBILE))	$info[$conf->global->LDAP_FIELD_MOBILE] = $this->user_mobile;
+		if ($this->office_fax && ! empty($conf->global->LDAP_FIELD_FAX))		$info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
+		if ($this->note && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
+		if ($this->email && ! empty($conf->global->LDAP_FIELD_MAIL))			$info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+		if ($this->skype && ! empty($conf->global->LDAP_FIELD_SKYPE))			$info[$conf->global->LDAP_FIELD_SKYPE] = $this->skype;
+
+		// Password
+		if ($this->pass && ! empty($conf->global->LDAP_FIELD_PASSWORD))		$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
+		if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
+		{
+			if ($this->pass_indatabase_crypted && ! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))	{
+				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // md5 for OpenLdap TODO add type of encryption
+			}
+		}
+		else
+		{
+			if ($this->pass && ! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
+				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // md5 for OpenLdap TODO add type of encryption
+			}
+		}
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
