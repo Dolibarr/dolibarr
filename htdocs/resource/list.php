@@ -135,6 +135,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
 	$search_ref="";
 	$search_label="";
+	$search_type="";
 	$search_array_options=array();
 	$filter=array();
 }
@@ -163,14 +164,7 @@ if ($action == 'delete_resource')
 	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_resource",'','',1);
 }
 
-// Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
-if($ret == -1) {
-        dol_print_error($db,$object->error);
-        exit;
-} else {
-    print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
-}
+
 
 $var=true;
 
@@ -186,6 +180,26 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	if($ret == -1) {
+		dol_print_error($db,$object->error);
+		exit;
+	} else  {
+		$nbtotalofrecords = $ret;
+	}
+}
+
+// Load object list
+$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+if($ret == -1) {
+	dol_print_error($db,$object->error);
+	exit;
+} else {
+	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, '', '', $limit);
+}
 
 $moreforfilter = '';
 
