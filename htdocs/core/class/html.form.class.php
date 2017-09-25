@@ -1256,6 +1256,7 @@ class Form
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	bool	$options_only	Return options only (for ajax treatment)
      *	@return	int						<0 if KO, Nb of contact in list if OK
+     *  @deprected						You can use selectcontacts directly (warning order of param was changed)
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false)
     {
@@ -1264,7 +1265,8 @@ class Form
     }
 
     /**
-     *	Return list of all contacts (for a third party or all)
+     *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
+     *  This also set the number of contacts found into $this->num
      *
      *	@param	int		$socid      	Id ot third party or 0 for all
      *	@param  string	$selected   	Id contact pre-selectionne
