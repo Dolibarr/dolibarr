@@ -350,6 +350,36 @@ if($action == 'edit') {
 	
 	print '</div>';
 	
+	?>
+
+	<script type="text/javascript">
+	
+		$(document).ready(function() {
+	
+			$("#change_mode").click(function() {
+				var use_percent = $("#MAIN_USE_METEO_WITH_PERCENTAGE");
+				var str_mode_std = "<?php print $str_mode_std; ?>";
+				var str_mode_percentage = "<?php print $str_mode_percentage; ?>";
+	
+				if(use_percent.val() == 1) {
+					use_percent.val(0);
+					$("#standard").show();
+					$("#percentage").hide();
+					$(this).html(str_mode_std);
+				} else {
+					use_percent.val(1);
+					$("#standard").hide();
+					$("#percentage").show();
+					$(this).html(str_mode_percentage);
+				}
+			});
+	
+		});
+	
+	</script>
+	
+	<?php
+	
 } else {
 	
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
@@ -416,6 +446,7 @@ if($action == 'edit') {
 		
 	}
 }
+
 print '</div>';
 	
 if($action == 'edit') {
@@ -430,36 +461,6 @@ if($action == 'edit') {
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
 	
 }
-
-?>
-
-<script type="text/javascript">
-
-	$(document).ready(function() {
-
-		$("#change_mode").click(function() {
-			var use_percent = $("#MAIN_USE_METEO_WITH_PERCENTAGE");
-			var str_mode_std = "<?php print $str_mode_std; ?>";
-			var str_mode_percentage = "<?php print $str_mode_percentage; ?>";
-
-			if(use_percent.val() == 1) {
-				use_percent.val(0);
-				$("#standard").show();
-				$("#percentage").hide();
-				$(this).html(str_mode_std);
-			} else {
-				use_percent.val(1);
-				$("#standard").hide();
-				$("#percentage").show();
-				$(this).html(str_mode_percentage);
-			}
-		});
-
-	});
-
-</script>
-
-<?php
 
 llxFooter();
 $db->close();

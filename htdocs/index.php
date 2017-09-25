@@ -384,7 +384,12 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     $board=new Project($db);
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['projects'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of tasks to do (late)
@@ -400,9 +405,17 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
     $board=new Propal($db);
-    $dashboardlines[] = $board->load_board($user,"opened");
+    $wb_res = $board->load_board($user,"opened");
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$nbtotal = (int)$board->nb['proposals'];
+    	$wb_res->nbtotal = $nbtotal;
+    }
+    $dashboardlines[] = $wb_res;
     // Number of commercial proposals CLOSED signed (billed)
-    $dashboardlines[] = $board->load_board($user,"signed");
+    $wb_res = $board->load_board($user,"signed");
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $wb_res->nbtotal = $nbtotal;
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of commercial proposals opened (expired)
@@ -410,9 +423,17 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 {
     include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
     $board=new SupplierProposal($db);
-    $dashboardlines[] = $board->load_board($user,"opened");
+    $wb_res = $board->load_board($user,"opened");
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$nbtotal = (int)$board->nb['askprice'];
+    	$wb_res->nbtotal = $nbtotal;
+    }
+    $dashboardlines[] = $wb_res;
     // Number of commercial proposals CLOSED signed (billed)
-    $dashboardlines[] = $board->load_board($user,"signed");
+    $wb_res = $board->load_board($user,"signed");
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $wb_res->nbtotal = $nbtotal;
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of customer orders a deal
@@ -420,7 +441,12 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
     $board=new Commande($db);
-	$dashboardlines[] = $board->load_board($user);
+	$wb_res = $board->load_board($user);
+	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+		$board->load_state_board();
+		$wb_res->nbtotal = (int)$board->nb['orders'];
+	}
+	$dashboardlines[] = $wb_res;
 }
 
 // Number of suppliers orders a deal
@@ -428,7 +454,12 @@ if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->comma
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
     $board=new CommandeFournisseur($db);
-	$dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['supplier_orders'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of services enabled (delayed)
@@ -436,16 +467,29 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
     $board=new Contrat($db);
-    $dashboardlines[] = $board->load_board($user,"inactives");
-	// Number of active services (expired)
-    $dashboardlines[] = $board->load_board($user,"expired");
+    $wb_res = $board->load_board($user,"inactives");
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$nbtotal = (int)$board->nb['Contracts'];
+    	$wb_res->nbtotal = $nbtotal;
+    }
+    $dashboardlines[] = $wb_res;
+    // Number of active services (expired)
+    $wb_res = $board->load_board($user,"expired");
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $wb_res->nbtotal = $nbtotal;
+    $dashboardlines[] = $wb_res;
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
     $board=new Facture($db);
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['invoices'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of supplier invoices (has paid)
@@ -453,7 +497,12 @@ if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fourniss
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['supplier_invoices'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of transactions to conciliate
@@ -481,7 +530,12 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
 {
     include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
     $board=new Adherent($db);
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['members'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of expense reports to approve
@@ -489,7 +543,12 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->appr
 {
     include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
     $board=new ExpenseReport($db);
-	$dashboardlines[] = $board->load_board($user,'toapprove');
+    $wb_res = $board->load_board($user,'toapprove');
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['expensereports'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of expense reports to pay
@@ -497,11 +556,16 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 {
     include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
     $board=new ExpenseReport($db);
-	$dashboardlines[] = $board->load_board($user,'topay');
+    $wb_res = $board->load_board($user,'topay');
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['expensereports'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Calculate total nb of late
-$totallate=0;
+$totallate=$totalglobal=0;
 $var=true;
 
 //Remove any invalid response
@@ -516,11 +580,13 @@ foreach($dashboardlines as $tmp)
 foreach($valid_dashboardlines as $board)
 {
     if ($board->nbtodolate > 0) {
+    	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totalglobal += $board->nbtotal;
 	    $totallate += $board->nbtodolate;
     }
 }
-
-
+//var_dump($totallate, $totalglobal);
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallate / $totalglobal * 100;
+//var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
 $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
@@ -686,15 +752,17 @@ $db->close();
 function showWeather($totallate,$text,$options)
 {
     global $conf;
-
+    
     $out='';
     $offset=0;
     $factor=10; // By default
 
-    $level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level0=$conf->global->MAIN_METEO_LEVEL0;
-    $level1=$offset+1*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
-    $level2=$offset+2*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
-    $level3=$offset+3*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
+    $used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
+    
+    $level0=$offset;           if (! empty($conf->global->{$used_conf.'0'})) $level0=$conf->global->{$used_conf.'0'};
+    $level1=$offset+1*$factor; if (! empty($conf->global->{$used_conf.'1'})) $level1=$conf->global->{$used_conf.'1'};
+    $level2=$offset+2*$factor; if (! empty($conf->global->{$used_conf.'2'})) $level2=$conf->global->{$used_conf.'2'};
+    $level3=$offset+3*$factor; if (! empty($conf->global->{$used_conf.'3'})) $level3=$conf->global->{$used_conf.'3'};
 
     if ($totallate <= $level0) $out.=img_weather($text,'weather-clear.png',$options);
     if ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text,'weather-few-clouds.png',$options);
