@@ -143,26 +143,24 @@ if ($action == 'confirm_deletefile')
 {
     if (GETPOST('confirm') == 'yes')
     {
+    	// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+		//var_dump(GETPOST('urlfile'));exit;
     	$langs->load("other");
-    	if ($section)
-    	{
-	    	$result=$ecmdir->fetch($section);
-	    	if (! ($result > 0))
-	    	{
-	    		dol_print_error($db,$ecmdir->error);
-	    		exit;
-	    	}
-	    	$relativepath=$ecmdir->getRelativePath();
-    	}
-    	else $relativepath='';
+
     	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
-    	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
+    	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
+		//var_dump($file);exit;
 
-    	$ret=dol_delete_file($file);
-    	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-
-    	$result=$ecmdir->changeNbOfFiles('-');
+    	$ret=dol_delete_file($file);	// This include also the delete from file index in database.
+    	if ($ret)
+    	{
+    		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
+    		$result=$ecmdir->changeNbOfFiles('-');
+    	}
+    	else
+    	{
+    		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
+    	}
 
     	clearstatcache();
     }
@@ -375,7 +373,7 @@ else
     print '</a>';
 }
 $url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 

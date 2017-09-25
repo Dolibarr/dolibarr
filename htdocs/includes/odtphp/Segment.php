@@ -24,7 +24,7 @@ class Segment implements IteratorAggregate, Countable
 	protected $images = array();
 	protected $odf;
 	protected $file;
-	
+
     /**
      * Constructor
      *
@@ -86,15 +86,15 @@ class Segment implements IteratorAggregate, Countable
      */
     public function merge()
     {
-        // To provide debug information on line number processed 
+        // To provide debug information on line number processed
         global $count;
         if (empty($count)) $count=1;
         else $count++;
-        
+
         if (empty($this->savxml)) $this->savxml = $this->xml;       // Sav content of line at first line merged, so we will reuse original for next steps
         $this->xml = $this->savxml;
         $tmpvars = $this->vars;                                     // Store into $tmpvars so we won't modify this->vars when completing data with empty values
-        
+
         // Search all tags fou into condition to complete $tmpvars, so we will proceed all tests even if not defined
         $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
         preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
@@ -106,7 +106,7 @@ class Segment implements IteratorAggregate, Countable
                 $tmpvars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
             }
         }
-        
+
         // Conditionals substitution
         // Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
         foreach($tmpvars as $key => $value)
@@ -133,7 +133,7 @@ class Segment implements IteratorAggregate, Countable
                 $this->xml = preg_replace($reg, '', $this->xml);
             }
         }
-        
+
         $this->xmlParsed .= str_replace(array_keys($tmpvars), array_values($tmpvars), $this->xml);
         if ($this->hasChildren()) {
             foreach ($this->children as $child) {
@@ -143,7 +143,7 @@ class Segment implements IteratorAggregate, Countable
         }
         $reg = "/\[!--\sBEGIN\s$this->name\s--\](.*)\[!--\sEND\s$this->name\s--\]/sm";
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
-	// Miguel Erill 09704/2017 - Add macro replacement to invoice lines
+		// Miguel Erill 09704/2017 - Add macro replacement to invoice lines
         $this->xmlParsed = $this->macroReplace($this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
@@ -155,28 +155,38 @@ class Segment implements IteratorAggregate, Countable
 			}
         }
         $this->file->close();
-        
+
         return $this->xmlParsed;
     }
 
    /**
     * Function to replace macros for invoice short and long month, invoice year
-    * 
+    *
     * Substitution occur when the invoice is generated, not considering the invoice date
     * so do not (re)generate in a diferent date than the one that the invoice belongs to
     * Perhaps it would be better to use the invoice issued date but I still do not know
     * how to get it here
     *
     * Miguel Erill 09/04/2017
-    * 
+    *
     * @param	string	$value	String to convert
     */
     public function macroReplace($text)
     {
         global $langs;
 
-        $patterns=array( '__CURRENTDAY__','__CURRENTDAYTEXT__','__CURRENTMONTHSHORT__','__CURRENTMONTH__','__CURRENTYEAR__' );
-        $values=array( date('j'), $langs->trans(date('l')), $langs->trans(date('M')), $langs->trans(date('F')), date('Y') );
+        $hoy = dol_getdate(dol_now('tzuser'));
+        $dateinonemontharray = dol_get_next_month($hoy['mon'], $hoy['year']);
+        $nextMonth = $dateinonemontharray['month'];
+        
+        $patterns=array( '/__CURRENTDAY__/u','/__CURENTWEEKDAY__/u',
+                         '/__CURRENTMONTH__/u','/__CURRENTMONTHLONG__/u',
+                         '/__NEXTMONTH__/u','/__NEXTMONTHLONG__/u',
+                         '/__CURRENTYEAR__/u','/__NEXTYEAR__/u' );
+        $values=array( $hoy['mday'], $langs->transnoentitiesnoconv($hoy['weekday']), 
+                       $hoy['mon'], $langs->transnoentitiesnoconv($hoy['month']), 
+                       $nextMonth, monthArray($langs)[$nextMonth], 
+                       $hoy['year'], $hoy['year']+1 );
 
         $text=preg_replace($patterns, $values, $text);
 
@@ -203,7 +213,7 @@ class Segment implements IteratorAggregate, Countable
         }
         return $this;
     }
-    
+
     /**
      * Assign a template variable to replace
      *

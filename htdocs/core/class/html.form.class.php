@@ -544,7 +544,7 @@ class Form
 
     	$disabled=0;
     	$ret='<div class="centpercent center">';
-    	$ret.='<select data-role="none" class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+    	$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
 
         // Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
     	$parameters=array();
@@ -561,7 +561,7 @@ class Form
 
     	$ret.='</select>';
     	// Warning: if you set submit button to disabled, post using 'Enter' will no more work.
-    	$ret.='<input type="submit" data-role="none" name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	$ret.='<input type="submit" name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
 
     	if (! empty($conf->use_javascript_ajax))
@@ -2989,13 +2989,15 @@ class Form
      *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
      *      See instead to force the default value by the caller.
      *
-     *      @param	int  	$selected        Id of payment term to preselect by default
-     *      @param  string	$htmlname        Nom de la zone select
-     *      @param  int 	$filtertype      Not used
-     *		@param	int		$addempty		 Add an empty entry
+     *      @param	int		$selected		Id of payment term to preselect by default
+     *      @param	string	$htmlname		Nom de la zone select
+     *      @param	int		$filtertype		Not used
+     *		@param	int		$addempty		Add an empty entry
+     * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+     * 		@param	string	$morecss			Add more CSS on select tag
      *		@return	void
      */
-    function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0)
+    function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0, $noinfoadmin=0, $morecss='')
     {
         global $langs, $user, $conf;
 
@@ -3006,7 +3008,7 @@ class Form
         // Set default value if not already set by caller
         if (empty($selected) && ! empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) $selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
         foreach($this->cache_conditions_paiements as $id => $arrayconditions)
         {
@@ -3022,7 +3024,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin && empty($noinfoadmin)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -3037,7 +3039,7 @@ class Form
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
      *      @param  int     $active         Active or not, -1 = all
-     *      @param  string  $morecss        Add more css
+     *      @param  string  $morecss        Add more CSS on select tag
      * 		@return	void
      */
     function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')
@@ -3277,7 +3279,7 @@ class Form
 
         $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-        $sql = 'SELECT rowid, label from '.MAIN_DB_PREFIX.'c_units';
+        $sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
         $sql.= ' WHERE active > 0';
 
         $resql = $this->db->query($sql);
@@ -5043,16 +5045,16 @@ class Form
         }
         elseif ($typehour=='text' || $typehour=='textselect')
         {
-        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($hourSelected != '')?((int) $hourSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '')?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
-        else $retstring.=':';
+        else $retstring.='<span class="hideonsmartphone">:</span>';
 
         // Minutes
         if ($minunderhours) $retstring.='<br>';
-        else $retstring.="&nbsp;";
+        else $retstring.='<span class="hideonsmartphone">&nbsp;</span>';
 
         if ($typehour=='select' || $typehour=='textselect')
         {
@@ -5067,7 +5069,7 @@ class Form
         }
         elseif ($typehour=='text' )
         {
-        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
+        	$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
         }
 
         if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
@@ -5215,15 +5217,16 @@ class Form
      */
     static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
-        global $langs;
+        global $conf, $langs;
         global $delayedhtmlcontent;
 
-    	$tmpplugin='select2';
+    	// TODO Use an internal dolibarr component instead of select2
+        if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
 
     	$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
 
-    	// TODO Use an internal dolibarr component instead of select2
-    	$outdelayed='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    	$tmpplugin='select2';
+    	$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
 
@@ -5325,7 +5328,7 @@ class Form
     	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
     		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-   			$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+   			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
     			<script type="text/javascript">
 	    			function formatResult(record) {'."\n";
 						if ($elemtype == 'category')
@@ -5551,8 +5554,8 @@ class Form
         {
         	$nbofdifferenttypes = count($object->linkedObjects);
 
-        	print '<br><!-- showLinkedObjectBlock -->';
-            print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
+        	print '<!-- showLinkedObjectBlock -->';
+            print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
 
 
     		print '<div class="div-table-responsive-no-min">';
@@ -5828,7 +5831,7 @@ class Form
      *  @param	int      	$useempty		1=Add empty line
      *	@return	string						See option
      */
-    function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
+    function selectyesno($htmlname, $value='', $option=0, $disabled=false, $useempty='')
     {
         global $langs;
 

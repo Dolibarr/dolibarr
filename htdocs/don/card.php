@@ -766,6 +766,10 @@ if (! empty($id) && $action != 'edit')
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
+	// Show links to link elements
+	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	print '</div></div></div>';

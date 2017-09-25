@@ -80,7 +80,7 @@ if ($action == 'create')
     }
     else
     {
-    	setEventMessages($langs->trans("DirectDebitOrderCreated"), null);
+    	setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
     }
 }
 

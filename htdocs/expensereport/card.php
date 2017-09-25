@@ -213,8 +213,8 @@ if (empty($reshook))
     	$object->fk_statut = 1;
     	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
     	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-    	$object->note_public				= GETPOST('note_public');
-    	$object->note_private				= GETPOST('note_private');
+    	$object->note_public				= GETPOST('note_public','none');
+    	$object->note_private				= GETPOST('note_private','none');
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
@@ -264,8 +264,8 @@ if (empty($reshook))
     	}
 
     	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-    	$object->note_public = GETPOST('note_public');
-    	$object->note_private = GETPOST('note_private');
+    	$object->note_public = GETPOST('note_public','none');
+    	$object->note_private = GETPOST('note_private','none');
     	$object->fk_user_modif = $user->id;
 
     	$result = $object->update($user);

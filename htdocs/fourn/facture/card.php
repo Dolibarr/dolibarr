@@ -443,8 +443,8 @@ if (empty($reshook))
 				$object->libelle			= GETPOST('label');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
-				$object->note_public		= GETPOST('note_public');
-				$object->note_private		= GETPOST('note_private');
+				$object->note_public		= GETPOST('note_public','none');
+				$object->note_private		= GETPOST('note_private','none');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -507,8 +507,8 @@ if (empty($reshook))
 				$object->libelle			= $_POST['label'];
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
-				$object->note_public		= GETPOST('note_public');
-				$object->note_private		= GETPOST('note_private');
+				$object->note_public		= GETPOST('note_public','none');
+				$object->note_private		= GETPOST('note_private','none');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -616,8 +616,8 @@ if (empty($reshook))
 				$object->libelle       = $_POST['label'];
 				$object->date          = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public   = GETPOST('note_public');
-				$object->note_private  = GETPOST('note_private');
+				$object->note_public   = GETPOST('note_public','none');
+				$object->note_private  = GETPOST('note_private','none');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account        = GETPOST('fk_account', 'int');
@@ -1683,8 +1683,8 @@ if ($action == 'create')
     				print $desc;
 
     				print '<div id="credit_note_options" class="clearboth">';
-    				print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-    				print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+    				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+    				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
     				print '</div>';
 
     				print '</div></div>';

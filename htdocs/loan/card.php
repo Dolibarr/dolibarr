@@ -133,8 +133,8 @@ if (empty($reshook))
     			$object->dateend				= $dateend;
     			$object->nbterm					= GETPOST('nbterm');
     			$object->rate					= $rate;
-    			$object->note_private 			= GETPOST('note_private');
-    			$object->note_public 			= GETPOST('note_public');
+    			$object->note_private 			= GETPOST('note_private','none');
+    			$object->note_public 			= GETPOST('note_public','none');
     			$object->fk_project 			= GETPOST('projectid','int');
 
     			$accountancy_account_capital	= GETPOST('accountancy_account_capital');
