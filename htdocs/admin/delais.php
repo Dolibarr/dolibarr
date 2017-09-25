@@ -251,19 +251,25 @@ else
 
 print '<br />';
 
+// Show logo for weather
+print $langs->trans("DescWeather").'<br>';
+
 if($action == 'edit') {
 	
-	$str = $langs->trans('StdMod');
-	$str = $langs->trans('PercentageMod');
-	print '<a href="#" onclick="return false;" id="change_mode">'.$str.'</a>';
+	$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->trans('MeteoPercentageMod'));
+	$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->trans('MeteoStdMod'));
+	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $str_mode_enabled = $str_mode_std;
+	else $str_mode_enabled = $str_mode_percentage;
+	print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
 	print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
 	
 	print '<br /><br />';
-
+	
+} else {
+	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) print $langs->trans('MeteoStdModEnabled');
+	else print $langs->trans('MeteoPercentageModEnabled');
+	print '<br /><br />';
 }
-
-// Show logo for weather
-print $langs->trans("DescWeather").'<br>';
 
 $offset=0;
 $cursor=10; // By default
@@ -432,16 +438,20 @@ if($action == 'edit') {
 	$(document).ready(function() {
 
 		$("#change_mode").click(function() {
-			use_percent = $("#MAIN_USE_METEO_WITH_PERCENTAGE");
-			
+			var use_percent = $("#MAIN_USE_METEO_WITH_PERCENTAGE");
+			var str_mode_std = "<?php print $str_mode_std; ?>";
+			var str_mode_percentage = "<?php print $str_mode_percentage; ?>";
+
 			if(use_percent.val() == 1) {
 				use_percent.val(0);
 				$("#standard").show();
 				$("#percentage").hide();
+				$(this).html(str_mode_std);
 			} else {
 				use_percent.val(1);
 				$("#standard").hide();
 				$("#percentage").show();
+				$(this).html(str_mode_percentage);
 			}
 		});
 
