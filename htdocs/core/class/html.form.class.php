@@ -3306,21 +3306,22 @@ class Form
     /**
      *  Return a HTML select list of bank accounts
      *
-     *  @param	string	$selected          Id account pre-selected
-     *  @param  string	$htmlname          Name of select zone
-     *  @param  int		$statut            Status of searched accounts (0=open, 1=closed, 2=both)
-     *  @param  string	$filtre            To filter list
-     *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-     *  @param  string	$moreattrib        To add more attribute on select
+     *  @param	string	$selected           Id account pre-selected
+     *  @param  string	$htmlname           Name of select zone
+     *  @param  int		$statut             Status of searched accounts (0=open, 1=closed, 2=both)
+     *  @param  string	$filtre             To filter list
+     *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string	$moreattrib         To add more attribute on select
+     *  @param	int		$showcurrency		Show currency in label
      * 	@return	void
      */
-    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='')
+    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='',$showcurrency=0)
     {
         global $langs, $conf;
 
         $langs->load("admin");
 
-        $sql = "SELECT rowid, label, bank, clos as status";
+        $sql = "SELECT rowid, label, bank, clos as status, currency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE entity IN (".getEntity('bank_account').")";
         if ($statut != 2) $sql.= " AND clos = '".$statut."'";
@@ -3353,6 +3354,7 @@ class Form
                         print '<option value="'.$obj->rowid.'">';
                     }
                     print trim($obj->label);
+                    if ($showcurrency) print ' ('.$obj->currency_code.')';
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;

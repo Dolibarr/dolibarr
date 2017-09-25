@@ -30,8 +30,7 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+$langs->loadLangs(array("banks", "categories", "multicurrency"));
 
 if (! $user->rights->banque->transfer)
   accessforbidden();
@@ -123,7 +122,7 @@ if ($action == 'add')
 
 			if (! $error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone","<a href=\"bankentries.php?id=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"bankentries.php?id=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone",'<a href="bankentries.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>",'<a href="bankentries.php?id='.$accountto->id.'">'.$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
@@ -229,16 +228,16 @@ print '<input type="hidden" name="action" value="add">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
-print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountTo").'</td>';
+print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
 $var=false;
 print '<tr class="oddeven"><td>';
-$form->select_comptes($account_from,'account_from',0,'',1);
+$form->select_comptes($account_from, 'account_from', 0, '', 1, '', empty($conf->multicurrency->enabled)?0:1);
 print "</td>";
 
 print "<td>\n";
-$form->select_comptes($account_to,'account_to',0,'',1);
+$form->select_comptes($account_to, 'account_to', 0, '', 1, '', empty($conf->multicurrency->enabled)?0:1);
 print "</td>\n";
 
 print "<td>";
