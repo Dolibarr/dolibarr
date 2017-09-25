@@ -288,15 +288,18 @@ class Conf
 		{
 			foreach($this->modules_parts['dir'] as $module => $dirs)
 			{
-				foreach($dirs as $type => $name)
+				if (! empty($this->$module->enabled))
 				{
-					$subdir=($type=='temp'?'/temp':'');
-					// For multicompany sharings
-					$varname = 'multidir_'.$type;
-					$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
-					// For backward compatibility
-					$varname = 'dir_'.$type;
-					$this->$module->$varname = $rootfordata."/".$name.$subdir;
+					foreach($dirs as $type => $name)
+					{
+						$subdir=($type=='temp'?'/temp':'');
+						// For multicompany sharings
+						$varname = 'multidir_'.$type;
+						$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
+						// For backward compatibility
+						$varname = 'dir_'.$type;
+						$this->$module->$varname = $rootfordata."/".$name.$subdir;
+					}
 				}
 			}
 		}
