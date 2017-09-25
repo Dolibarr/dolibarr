@@ -339,16 +339,25 @@ class FormMail extends Form
 	        	$modelmail_array=array();
 	        	foreach($this->lines_model as $line)
 	        	{
-	        		$modelmail_array[$line->id]=$line->label;
+	        		$langs->trans("members");
+	        		if (preg_match('/\((.*)\)/', $line->label, $reg))
+	        		{
+	        			$modelmail_array[$line->id]=$langs->trans($reg[1]);		// langs->trans when label is __(xxx)__
+	        		}
+	        		else
+	        		{
+	        			$modelmail_array[$line->id]=$line->label;
+	        		}
 	        		if ($line->lang) $modelmail_array[$line->id].=' ('.$line->lang.')';
 	        		if ($line->private) $modelmail_array[$line->id].=' - '.$langs->trans("Private");
 	        		//if ($line->fk_user != $user->id) $modelmail_array[$line->id].=' - '.$langs->trans("By").' ';
 	        	}
         	}
 
-        	// Zone to select its email template
+        	// Zone to select email template
         	if (count($modelmail_array)>0)
         	{
+        		// If list of template is filled
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
@@ -363,6 +372,7 @@ class FormMail extends Form
         	        'invoice_supplier_send','thirdparty','contract','all'
            	    )))
         	{
+        		// If list of template is empty
 	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
         	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
@@ -502,6 +512,7 @@ class FormMail extends Form
         			}
         			else
         			{
+        				// Note withto may be a text like 'AllRecipientSelected'
         				$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
         			}
         		}
@@ -531,10 +542,22 @@ class FormMail extends Form
         		$out.= "</td></tr>\n";
         	}
 
+        	// withoptiononeemailperrecipient
+        	if (! empty($this->withoptiononeemailperrecipient))
+        	{
+        		$out.= '<tr><td>';
+        		$out.= $langs->trans("GroupEmails");
+        		$out.= '</td><td>';
+        		$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
+        		$out.= $langs->trans("OneEmailPerRecipient").' - ';
+        		$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+        		$out.= '</td></tr>';
+        	}
+
         	// CC
         	if (! empty($this->withtocc) || is_array($this->withtocc))
         	{
-        		$out.= '<tr><td width="180">';
+        		$out.= '<tr><td>';
         		$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if ($this->withtoccreadonly)
@@ -563,7 +586,7 @@ class FormMail extends Form
         	// CCC
         	if (! empty($this->withtoccc) || is_array($this->withtoccc))
         	{
-        		$out.= '<tr><td width="180">';
+        		$out.= '<tr><td>';
         		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if (! empty($this->withtocccreadonly))
@@ -631,7 +654,7 @@ class FormMail extends Form
         	// Ask delivery receipt
         	if (! empty($this->withdeliveryreceipt))
         	{
-        		$out.= '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
+        		$out.= '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
 
         		if (! empty($this->withdeliveryreceiptreadonly))
         		{
@@ -663,7 +686,7 @@ class FormMail extends Form
         		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
         		$out.= '<tr>';
-        		$out.= '<td class="fieldrequired" width="180">'.$langs->trans("MailTopic").'</td>';
+        		$out.= '<td class="fieldrequired">'.$langs->trans("MailTopic").'</td>';
         		$out.= '<td>';
         		if ($this->withtopicreadonly)
         		{
@@ -681,7 +704,7 @@ class FormMail extends Form
         	if (! empty($this->withfile))
         	{
         		$out.= '<tr>';
-        		$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
+        		$out.= '<td>'.$langs->trans("MailFile").'</td>';
 
         		$out.= '<td>';
         		if (! empty($this->withmaindocfile))
@@ -771,7 +794,8 @@ class FormMail extends Form
 	        			$typeforonlinepayment='free';
 	        			if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
 	        			if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
-	       				$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
+	        			if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
+	        			$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 	       				//$paymenturl=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
 	       				$paymenturl=$url;
         			}
@@ -811,7 +835,7 @@ class FormMail extends Form
 				}
 
         		$out.= '<tr>';
-        		$out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
+        		$out.= '<td valign="top">'.$langs->trans("MailText").'</td>';
         		$out.= '<td>';
         		if ($this->withbodyreadonly)
         		{
@@ -1006,7 +1030,7 @@ class FormMail extends Form
 		$sql = "SELECT rowid, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates', 1).")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";		// See all public templates or templates I own.
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages

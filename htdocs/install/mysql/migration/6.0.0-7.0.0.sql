@@ -42,6 +42,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 -- For 7.0
 
 
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SENTBYMAIL','Mails sent from member card','Executed when you send email from member card','member',23);
+
 ALTER TABLE llx_ecm_files MODIFY label varchar(128) NOT NULL;
 ALTER TABLE llx_ecm_files ADD COLUMN share varchar(128) NULL after label;
 
@@ -63,6 +65,8 @@ ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(50);
 
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
+
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,active,topic,content,content_lines) VALUES (0,null,'member',null,0,null,null,'(SendAnEMailToMember)',1,1,'__(CardContent)__','__(ThisIsContentOfYourCard)__<br />\n__(ID)__ : __ID__<br />\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br />\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br />\n__(Lastname)__ : __MEMBER_LASTNAME__<br />\n__(Fullname)__ : __MEMBER_FULLNAME__<br />\n__(Company)__ : __MEMBER_COMPANY__<br />\n__(Address)__ : __MEMBER_ADDRESS__<br />\n__(Zip)__ : __MEMBER_ZIP__<br />\n__(Town)__ : __MEMBER_TOWN__<br />\n__(Country)__ : __MEMBER_COUNTRY__<br />\n__(Email)__ : __MEMBER_EMAIL__<br />\n__(Birthday)__ : __MEMBER_BIRTH__<br />\n__(Photo)__ : __MEMBER_PHOTO__<br />\n__(Login)__ : __MEMBER_LOGIN__<br />\n__(Password)__ : __MEMBER_PASSWORD__<br />\n__(Phone)__ : __MEMBER_PHONE__<br />\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br />\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__',null);
 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'DEPENSES',  'Expenses of products/services',             'Exemple: 6xxxxx', 0, 0, '',                '20', 1, 1);

@@ -1694,6 +1694,7 @@ MailToSendSupplierOrder=To send supplier order
 MailToSendSupplierInvoice=To send supplier invoice
 MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
+MailToMember=To send email from member page
 ByDefaultInList=Show by default on list view
 YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)

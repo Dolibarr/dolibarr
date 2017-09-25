@@ -317,7 +317,7 @@ else {
 		<td align="right" class="nobottom margininfos linecolmargin">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" data-role="none" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price",'alpha',2):''); ?>">

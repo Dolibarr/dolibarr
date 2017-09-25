@@ -129,7 +129,7 @@ function getEntity($element, $shared=1)
 	else
 	{
 		$out='';
-		$addzero = array('user', 'usergroup', 'email_template', 'default_values');
+		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out.= '0,';
 		$out.= $conf->entity;
 		return $out;
@@ -599,11 +599,12 @@ function dol_include_once($relpath, $classname='')
 /**
  *	Return path of url or filesystem. Return alternate root if exists.
  *
- * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
- *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
- *  @return string				Full filesystem path (if mode=0), Full url path (if mode=1)
+ * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
+ *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
+ *  @param	int		$returnemptyifnotfound		If path==0 and if file was not found, do not return default path but an empty string
+ *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
  */
-function dol_buildpath($path, $type=0)
+function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 {
 	global $conf;
 
@@ -611,15 +612,19 @@ function dol_buildpath($path, $type=0)
 
 	if (empty($type))	// For a filesystem path
 	{
-		$res = DOL_DOCUMENT_ROOT.'/'.$path;	// Standard value
+		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
 			if ($key == 'main') continue;
 			if (file_exists($dirroot.'/'.$path))
 			{
 				$res=$dirroot.'/'.$path;
-				break;
+				return $res;
 			}
+		}
+		if ($returnemptyifnotfound)										// Not found, we return empty string
+		{
+			return '';
 		}
 	}
 	else				// For an url path
@@ -1011,11 +1016,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
+ *  @param	string	$morehtmlright		Add more html content on right of tabs title
  * 	@return	void
  */
-function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright);
 }
 
 /**
@@ -1027,13 +1033,16 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
+ *  @param	string	$morehtmlright		Add more html content on right of tabs title
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
 {
 	global $conf, $langs, $hookmanager;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+
+	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
 
 	// Show title
 	$showtitle=1;
@@ -1054,6 +1063,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 		$keys=array_keys($links);
 		if (count($keys)) $maxkey=max($keys);
 	}
+
+	//$conf->global->MAIN_MAXTABS_IN_CARD=3;
 
 	// Show tabs
 	$bactive=false;
@@ -1142,7 +1153,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	{
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="#" data-role="button" class="tab moretab inline-block">'.$langs->trans("More").'... ('.$nbintab.')</a>';
+		$out.='<a href="#" data-role="button" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
 		$out.="</div>\n";
 
@@ -5208,9 +5219,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
     if (empty($exclude) || ! in_array('system', $exclude))
     {
-    	$substitutionarray=array_merge($substitutionarray, array(
-    		'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT
-    	));
+    	$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationKey');
+    	$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
     }
     if (empty($exclude) || ! in_array('mycompany', $exclude))
     {
@@ -5240,6 +5250,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
     		$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 
+    		$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
+    		$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
+    		$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+
     		$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
     		$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
     		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_REF__';
@@ -5262,6 +5276,27 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    	$substitutionarray['__REF__'] = $object->ref;
 	    	$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
 	    	$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
+
+	    	// TODO USe this ?
+	    	$msgishtml = 0;
+
+	    	if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
+	    	$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
+	    	$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
+	    	if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($langs)):$object->getFullName($langs);
+	    	$substitutionarray['__MEMBER_COMPANY__']=$msgishtml?dol_htmlentitiesbr($object->societe):$object->societe;
+	    	$substitutionarray['__MEMBER_ADDRESS__']=$msgishtml?dol_htmlentitiesbr($object->address):$object->address;
+	    	$substitutionarray['__MEMBER_ZIP__']=$msgishtml?dol_htmlentitiesbr($object->zip):$object->zip;
+	    	$substitutionarray['__MEMBER_TOWN__']=$msgishtml?dol_htmlentitiesbr($object->town):$object->town;
+	    	$substitutionarray['__MEMBER_COUNTRY__']=$msgishtml?dol_htmlentitiesbr($object->country):$object->country;
+	    	$substitutionarray['__MEMBER_EMAIL__']=$msgishtml?dol_htmlentitiesbr($object->email):$object->email;
+	    	$substitutionarray['__MEMBER_BIRTH__']=$msgishtml?dol_htmlentitiesbr($birthday):$birthday;
+	    	$substitutionarray['__MEMBER_PHOTO__']=$msgishtml?dol_htmlentitiesbr($object->photo):$object->photo;
+	    	$substitutionarray['__MEMBER_LOGIN__']=$msgishtml?dol_htmlentitiesbr($object->login):$object->login;
+	    	$substitutionarray['__MEMBER_PASSWORD__']=$msgishtml?dol_htmlentitiesbr($object->pass):$object->pass;
+	    	$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
+	    	$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
+	    	$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
 
 	    	if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 	    	{
@@ -5287,10 +5322,20 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		    	}
 	    	}
 
-    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'TODO';
-	    	$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'TODO';
-	    	$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'TODO';
-	    	$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'TODO';
+	    	if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
+	    	{
+	    		$dateplannedstart='';
+	    		$datenextexpiration='';
+	    		foreach($object->lines as $line)
+	    		{
+	    			if ($line->date_ouverture_prevue > $dateplannedstart) $dateplannedstart = $line->date_ouverture_prevue;
+	    			if ($line->statut == 4 && $line->date_fin_prevue && (! $datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) $datenextexpiration = $line->date_fin_prevue;
+	    		}
+	    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
+	    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
+	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+	    	}
 
 	    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
     	}

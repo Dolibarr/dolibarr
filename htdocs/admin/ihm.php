@@ -230,14 +230,14 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
     // Default language
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
+    print '<tr><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
     print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300');
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Multilingual GUI
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
+    print '<tr><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('MAIN_MULTILANGS',$conf->global->MAIN_MULTILANGS,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
@@ -349,9 +349,8 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
 	// Message of the day on home page
-    $substitutionarray=getCommonSubstitutionArray($langs, 0, array('object'));
+    $substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount'));
     complete_substitutions_array($substitutionarray, $langs);
-    $substitutionarray['__(AnyTranslationKey)__']=$langs->trans('TranslationKey');
 
     print '<tr><td class="titlefield">';
     $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
@@ -359,7 +358,7 @@ if ($action == 'edit')	// Edit
     {
         $texthelp.=$key.'<br>';
     }
-    print $form->textwithpicto($langs->trans("MessageOfDay"), $texthelp, 1, 'help', '', 0, 2, '');
+    print $form->textwithpicto($langs->trans("MessageOfDay"), $texthelp, 1, 'help', '', 0, 2, 'tooltipmessageofday');
 
     print '</td><td colspan="2">';
 
@@ -379,16 +378,15 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
 	// Message on login page
-	$substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','user'));
+	$substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount','user'));
     complete_substitutions_array($substitutionarray, $langs);
-    $substitutionarray['__(AnyTranslationKey)__']=$langs->trans('TranslationKey');
     print '<tr><td>';
 	$texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 	foreach($substitutionarray as $key => $val)
 	{
 	    $texthelp.=$key.'<br>';
 	}
-	print $form->textwithpicto($langs->trans("MessageLogin"), $texthelp, 1, 'help', '', 0, 2, '');
+	print $form->textwithpicto($langs->trans("MessageLogin"), $texthelp, 1, 'help', '', 0, 2, 'tooltipmessagelogin');
 	print '</td><td colspan="2">';
 	$doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
