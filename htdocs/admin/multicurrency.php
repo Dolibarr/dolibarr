@@ -255,7 +255,7 @@ print '</td></tr>';
 */
 
 print '</table>';
-print '<br />';
+print '<br>';
 
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
@@ -298,7 +298,6 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
@@ -345,8 +344,7 @@ print '</td></form></tr>';
 
 foreach ($TCurrency as &$currency)
 {
-	if($currency->code == $conf->currency) continue;
-
+	if ($currency->code == $conf->currency) continue;
 
 	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
