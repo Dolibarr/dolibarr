@@ -329,6 +329,7 @@ class FormMail extends Form
         		$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
         	}
 
+	        $modelmail_array=array();
         	if ($this->param['models'] != 'none')
         	{
 	        	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
@@ -336,7 +337,6 @@ class FormMail extends Form
 	        	{
 	        		setEventMessages($this->error, $this->errors, 'errors');
 	        	}
-	        	$modelmail_array=array();
 	        	foreach($this->lines_model as $line)
 	        	{
 	        		$langs->trans("members");
@@ -907,8 +907,8 @@ class FormMail extends Form
 
 
 	/**
-	 *      Return templates of email with type = $type_template or type = 'all'
-	 *      This search into table c_email_templates.
+	 *      Return templates of email with type = $type_template or type = 'all'.
+	 *      This search into table c_email_templates. Used by the get_form function.
 	 *
 	 * 		@param	DoliDB		$db				Database handler
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
@@ -918,7 +918,7 @@ class FormMail extends Form
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	private function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
+	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
 	{
 		$ret=array();
 
@@ -1076,11 +1076,11 @@ class FormMail extends Form
 	 * @return	void
 	 * @see getCommonSubstitutionArray
 	 */
-	function setSubstitFromObject($object, $outputlangs=null)
+	function setSubstitFromObject($object, $outputlangs)
 	{
 		global $conf, $user;
 
-		$parameters=array('mode'=>$mode);
+		$parameters=array();
 		$tmparray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
 		complete_substitutions_array($tmparray, $outputlangs, null, $parameters);
 
@@ -1135,6 +1135,7 @@ class FormMail extends Form
 	{
 		global $conf, $langs;
 
+		$tmparray=array();
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$parameters=array('mode'=>$mode);

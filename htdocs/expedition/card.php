@@ -2221,7 +2221,7 @@ else if ($id || $ref)
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
 		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
 		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
