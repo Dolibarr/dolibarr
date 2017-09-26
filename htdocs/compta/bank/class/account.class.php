@@ -925,7 +925,8 @@ class Account extends CommonObject
         }
         else
         {
-            dol_print_error($this->db);
+        	$this->error=$this->db->lasterror;
+        	$this->errors[]=$this->error;
             return -1;
         }
     }

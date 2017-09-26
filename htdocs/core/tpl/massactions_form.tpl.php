@@ -74,7 +74,7 @@ if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAI
 	$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
 }
 $formmail->withfrom = 1;
-$liste = $langs->trans("AllRecipientSelected", count($listofselectedthirdparties));
+$liste = $langs->trans("AllRecipientSelected", count($arrayofselected));
 if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selected, we can suggest contacts
 {
 	$liste = array();
@@ -97,8 +97,10 @@ if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selec
 } else {
 	$formmail->withtoreadonly = 1;
 }
-$formmail->withto = $liste;
-$formmail->withtofree = 0;
+
+$formmail->withoptiononeemailperrecipient = empty($liste)?0:((GETPOST('oneemailperrecipient')=='on')?1:-1);
+$formmail->withto = empty($liste)?(GETPOST('sendto','alpha')?GETPOST('sendto','alpha'):array()):$liste;
+$formmail->withtofree = empty($liste)?1:0;
 $formmail->withtocc = 1;
 $formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 $formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
@@ -117,22 +119,8 @@ $formmail->withcancel = 1;
 $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 $substitutionarray['__EMAIL__'] = $sendto;
 $substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
-$substitutionarray['__PERSONALIZED__'] = '';
+$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 $substitutionarray['__CONTACTCIVNAME__'] = '';
-// Add specific substitution for contracts
-if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
-{
-	$datenextexpiration = '';
-	foreach ($object->lines as $line)
-	{
-		if ($line->statut != 4)
-			continue;
-		if ($line->date_fin_prevue > $datenextexpiration)
-			$datenextexpiration = $line->date_fin_prevue;
-	}
-	$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
-	$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
-}
 
 $parameters = array(
 	'mode' => 'formemail'

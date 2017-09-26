@@ -152,8 +152,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", '".$this->db->escape($user->id)."'";
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
-			$sql.= ", '".$this->db->escape($facsrc->cond_reglement_id)."'";
-			$sql.= ", '".$this->db->escape($facsrc->mode_reglement_id)."'";
+			$sql.= ", ".($facsrc->cond_reglement_id > 0 ? $this->db->escape($facsrc->cond_reglement_id) : "null");
+			$sql.= ", ".($facsrc->mode_reglement_id > 0 ? $this->db->escape($facsrc->mode_reglement_id) : "null");
 			$sql.= ", ".$this->usenewprice;
 			$sql.= ", ".$this->frequency;
 			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
@@ -329,7 +329,6 @@ class FactureRec extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-
 				// Retreive all extrafield for thirdparty
 				// fetch optionals attributes and labels
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -446,7 +445,6 @@ class FactureRec extends CommonInvoice
 				// Ne plus utiliser
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
-
 
 				// Retreive all extrafield for thirdparty
 				// fetch optionals attributes and labels

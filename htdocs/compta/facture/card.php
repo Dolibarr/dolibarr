@@ -1414,6 +1414,7 @@ if (empty($reshook))
 					{
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
+						$line->fetch_optionals($line->id);
 					}
 				}
 
@@ -1435,7 +1436,21 @@ if (empty($reshook))
 
 				$object->situation_counter = $object->situation_counter + 1;
 				$id = $object->createFromCurrent($user);
-				if ($id <= 0) $mesg = $object->error;
+				if ($id <= 0) 
+				{
+					$mesg = $object->error;
+				}
+				else
+				{
+					$nextSituationInvoice = new Facture($db);
+					$nextSituationInvoice->fetch($id);
+					// create extrafields with data from create form
+					$extralabels = $extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
+					$ret = $extrafields->setOptionalsFromPost($extralabels, $nextSituationInvoice);
+					if ($ret > 0) {
+						$nextSituationInvoice->insertExtraFields();
+					}
+				}
 			}
 		}
 
@@ -1801,7 +1816,7 @@ if (empty($reshook))
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc') ? GETPOST('product_desc') : GETPOST('desc'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc','none') ? GETPOST('product_desc','none') : GETPOST('desc','none'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
@@ -2550,8 +2565,8 @@ if ($action == 'create')
     			print $desc;
 
     			print '<div id="credit_note_options" class="clearboth">';
-    	        print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-    	        print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+    	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+    	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
     			print '</div>';
 
     			print '</div></div>';

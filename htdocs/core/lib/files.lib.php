@@ -1369,8 +1369,8 @@ function dol_meta_create($object)
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
 			CLIENT=\"" . $client . "\"
-			AMOUNT_WO_TAX=\"" . $object->total_ht . "\"
-			AMOUNT_INC_TAX=\"" . $object->total_ttc . "\"\n";
+			AMOUNT_EXCL_TAX=\"" . $object->total_ht . "\"
+			AMOUNT=\"" . $object->total_ttc . "\"\n";
 
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
