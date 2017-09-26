@@ -180,16 +180,18 @@ class ProductFournisseur extends Product
      *    @param  	Societe		$fourn				Supplier
      *    @param  	int			$availability		Product availability
      *    @param	string		$ref_fourn			Supplier ref
-     *    @param	float		$tva_tx				VAT rate
+     *    @param	float		$tva_tx				New VAT Rate (For example 8.5. Should not be a string)
      *    @param  	string		$charges			costs affering to product
 	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
 	 *    @param  	float		$remise				Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				Set NPR or not
 	 *    @param	int			$delivery_time_days	Delay in days for delivery (max). May be '' if not defined.
 	 * 	  @param    string      $supplier_reputation Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+     *	  @param    array		$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+     *    @param    string  	$newdefaultvatcode  Default vat code
      *    @return	int								<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='')
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $localtaxes_array=array(), $newdefaultvatcode='')
     {
         global $conf, $langs;
         //global $mysoc;
@@ -217,6 +219,25 @@ class ProductFournisseur extends Product
 
 		$now=dol_now();
 
+		$newvat = $tva_tx;
+
+		if (count($localtaxes_array) > 0)
+		{
+			$localtaxtype1=$localtaxes_array['0'];
+			$localtax1=$localtaxes_array['1'];
+			$localtaxtype2=$localtaxes_array['2'];
+			$localtax2=$localtaxes_array['3'];
+		}
+		else     // old method. deprecated because ot can't retreive type
+		{
+			$localtaxtype1='0';
+			$localtax1=get_localtax($newvat,1);
+			$localtaxtype2='0';
+			$localtax2=get_localtax($newvat,2);
+		}
+		if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
+		if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
+
         $this->db->begin();
 
         if ($this->product_fourn_price_id > 0)
@@ -230,9 +251,15 @@ class ProductFournisseur extends Product
 			$sql.= " remise = ".$remise.",";
 			$sql.= " unitprice = ".$unitBuyPrice.",";
 			$sql.= " unitcharges = ".$unitCharges.",";   // deprecated
-			$sql.= " tva_tx = ".$tva_tx.",";
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
+			$sql.= " tva_tx = ".price2num($tva_tx).",";
+			// TODO Add localtax1 and localtax2
+			//$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
+			//$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
+			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
+			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
+			$sql.= " default_vat_code=".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
 			$sql.= " info_bits = ".$newnpr.",";
 			$sql.= " charges = ".$charges.",";           // deprecated
 			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null').",";
@@ -279,7 +306,7 @@ class ProductFournisseur extends Product
             if ($resql) {
                 // Add price for this quantity to supplier
                 $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
-                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, info_bits, entity, delivery_time_days,supplier_reputation)";
+                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
                 $sql .= " values('" . $this->db->idate($now) . "',";
                 $sql .= " " . $this->id . ",";
                 $sql .= " " . $fourn->id . ",";
@@ -294,6 +321,7 @@ class ProductFournisseur extends Product
                 $sql .= " " . $charges . ",";
                 $sql .= " " . $unitCharges . ",";
                 $sql .= " " . $availability . ",";
+                $sql .= " ".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
                 $sql .= " " . $newnpr . ",";
                 $sql .= $conf->entity . ",";
                 $sql .= $delivery_time_days . ",";
@@ -364,9 +392,9 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         global $conf;
-        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
+        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
-        $sql.=" pfp.supplier_reputation";
+        $sql.= " pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
@@ -392,11 +420,14 @@ class ProductFournisseur extends Product
             	$this->fourn_unitprice          = $obj->unitprice;
             	$this->fourn_unitcharges        = $obj->unitcharges;	// deprecated
             	$this->fourn_tva_tx				= $obj->tva_tx;
-            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
+            	// TODO
+            	// $this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
+            	// Add also localtaxes
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
-  		        $this->supplier_reputation      = $obj->supplier_reputation;
+                $this->supplier_reputation      = $obj->supplier_reputation;
+                $this->default_vat_code         = $obj->default_vat_code;
 
                 if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression))
                 {
