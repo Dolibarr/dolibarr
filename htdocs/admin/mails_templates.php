@@ -465,6 +465,7 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 
 // Form to add a new line
@@ -581,13 +582,13 @@ if ($action != 'edit')
         print '</tr>';
     }
 
-
-
     $colspan=count($fieldlist)+1;
     //print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
 }
 
 print '</table>';
+print '</div>';
+
 print '</form>';
 
 print '<br>';
@@ -596,6 +597,7 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 
 // List of available record in database
@@ -840,6 +842,7 @@ else {
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
- * 
+ *
  * $elementype must be defined.
  */
 
@@ -25,6 +25,7 @@
 
 $maxsizestring=255;
 $maxsizeint=10;
+$mesg=array();
 
 $extrasize=GETPOST('size','int');
 $type=GETPOST('type','alpha');

@@ -8,6 +8,7 @@
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -770,24 +771,24 @@ class ExtraFields
 
 		if (empty($showsize))
 		{
-    		if ($type == 'date')
+		    if ($type == 'date')
     		{
     			//$showsize=10;
     		    $showsize = 'minwidth100imp';
     		}
-    		elseif ($type == 'datetime')
+			elseif ($type == 'datetime')
     		{
     			//$showsize=19;
     			$showsize = 'minwidth200imp';
     		}
-    		elseif (in_array($type,array('int','double')))
+    		elseif (in_array($type,array('int','double','price')))
     		{
     			//$showsize=10;
-    			$showsize = 'minwidth100imp';
+    			$showsize = 'maxwidth75';
     		}
     		elseif ($type == 'url')
     		{
-    		    $showsize='minwidth400imp';
+    		    $showsize='minwidth400';
     		}
     		elseif ($type == 'boolean')
     		{
@@ -797,16 +798,16 @@ class ExtraFields
     		{
     			if (round($size) < 12)
     			{
-    			    $showsize = 'minwidth100imp';
+    			    $showsize = 'minwidth100';
     			}
     			else if (round($size) <= 48)
     			{
-    			    $showsize = 'minwidth200imp';
+    			    $showsize = 'minwidth200';
     			}
     			else
     			{
     			    //$showsize=48;
-    			    $showsize = 'minwidth400imp';
+    			    $showsize = 'minwidth400';
     			}
     		}
 		}
@@ -832,7 +833,7 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" " maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{

@@ -162,6 +162,7 @@ if ($action == 'delete')
  * View
  */
 
+$form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
@@ -233,6 +234,7 @@ if ($mode == 'overwrite')
     print '<input type="hidden" id="action" name="action" value="">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
 
+	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre( $langs->trans("Language").' (en_US, es_MX, ...)',$_SERVER["PHP_SELF"],'lang,transkey','',$param,'',$sortfield,$sortorder);
@@ -319,8 +321,8 @@ if ($mode == 'overwrite')
     	}
     }
 
-
     print '</table>';
+    print '</div>';
 
 }
 
@@ -391,6 +393,7 @@ if ($mode == 'searchkey')
     print '<input type="hidden" id="action" name="action" value="search">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
 
+	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre( $langs->trans("Language").' (en_US, es_MX, ...)',$_SERVER["PHP_SELF"],'lang,transkey','',$param,'',$sortfield,$sortorder).'</td>';
@@ -465,7 +468,7 @@ if ($mode == 'searchkey')
     }
 
     print '</table>';
-    print '</form>';
+    print '</div>';
 }
 
 dol_fiche_end();

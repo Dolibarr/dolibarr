@@ -84,7 +84,7 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
     $usertoprocess=$user;
 	$search_usertoprocessid=$usertoprocess->id;
 }
-elseif (search_usertoprocessid > 0)
+elseif ($search_usertoprocessid > 0)
 {
     $usertoprocess=new User($db);
     $usertoprocess->fetch($search_usertoprocessid);

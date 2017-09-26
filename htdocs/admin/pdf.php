@@ -56,7 +56,7 @@ if ($cancel) {
 if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
-	
+
 	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT",    $_POST["MAIN_PDF_MARGIN_LEFT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT",   $_POST["MAIN_PDF_MARGIN_RIGHT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP",     $_POST["MAIN_PDF_MARGIN_TOP"],'chaine',0,'',$conf->entity);
@@ -77,7 +77,7 @@ if ($action == 'update')
 
 
     dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX",    $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["_MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -134,7 +134,8 @@ if ($action == 'edit')	// Edit
 
     // Misc options
     print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
-	$var=true;
+
+	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
@@ -142,7 +143,7 @@ if ($action == 'edit')	// Edit
     if (empty($selected)) $selected=dol_getDefaultFormat();
 
     // Show pdf format
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("DictionaryPaperFormat").'</td><td>';
     print $formadmin->select_paper_format($selected,'MAIN_PDF_FORMAT');
     print '</td></tr>';
@@ -159,26 +160,28 @@ if ($action == 'edit')	// Edit
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_BOTTOM").'</td><td>';
     print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_BOTTOM" value="'.(empty($conf->global->MAIN_PDF_MARGIN_BOTTOM)?10:$conf->global->MAIN_PDF_MARGIN_BOTTOM).'">';
     print '</td></tr>';
-    
+
     print '</table>';
+	print '</div>';
 
 	print '<br>';
 
 
     // Addresses
     print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
-	$var=true;
+
+	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
     // Hide VAT Intra on address
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
     print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
     print '</td></tr>';
 
     // Show prof id 1 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid1=$langs->transcountry("ProfId1",$mysoc->country_code);
@@ -196,7 +199,7 @@ if ($action == 'edit')	// Edit
     }
 
     // Show prof id 2 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid2=$langs->transcountry("ProfId2",$mysoc->country_code);
@@ -214,7 +217,7 @@ if ($action == 'edit')	// Edit
     }
 
     // Show prof id 3 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid3=$langs->transcountry("ProfId3",$mysoc->country_code);
@@ -232,7 +235,7 @@ if ($action == 'edit')	// Edit
     }
 
     // Show prof id 4 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid4=$langs->transcountry("ProfId4",$mysoc->country_code);
@@ -250,6 +253,7 @@ if ($action == 'edit')	// Edit
     }
 
 	print '</table>';
+	print '</div>';
 
     print '<br>';
 
@@ -277,7 +281,7 @@ if ($action == 'edit')	// Edit
         }
 
         print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
-        $var=true;
+
         print '<table summary="more" class="noborder" width="100%">';
         print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
         print $text;
@@ -289,46 +293,48 @@ if ($action == 'edit')	// Edit
 
     // Other
     print load_fiche_titre($langs->trans("Other"),'','').'<br>';
-	$var=true;
-    print '<table summary="more" class="noborder" width="100%">';
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
     // Hide any PDF informations
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
 
     //Desc
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC:0,1);
     print '</td></tr>';
 
     //Ref
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF:0,1);
     print '</td></tr>';
 
     //Details
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
     print '</td></tr>';
 
  	// Place customer adress to the ISO location
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
 	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION',(! empty($conf->global->MAIN_PDF_USE_ISO_LOCATION))?$conf->global->MAIN_PDF_USE_ISO_LOCATION:0,1);
     print '</td></tr>';
-	
-	
+
+
     print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 	print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS);
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
     print '<br><div class="center">';
     print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
@@ -341,17 +347,16 @@ if ($action == 'edit')	// Edit
 }
 else	// Show
 {
-    $var=true;
-
     // Misc options
     print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','');
-	
-    
+
+
+	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
     // Show pdf format
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("DictionaryPaperFormat").'</td><td>';
 
     $pdfformatlabel='';
@@ -390,24 +395,26 @@ else	// Show
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_BOTTOM").'</td><td>';
     print empty($conf->global->MAIN_PDF_MARGIN_BOTTOM)?10:$conf->global->MAIN_PDF_MARGIN_BOTTOM;
     print '</td></tr>';
-    
-    
+
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 
 	print load_fiche_titre($langs->trans("PDFAddressForging"),'','');
-    print '<table class="noborder" width="100%">';
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	// Hide Intra VAT on address
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS,1);
 	print '</td></tr>';
 
     // Show prof id 1 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid1=$langs->transcountry("ProfId1",$mysoc->country_code);
@@ -425,7 +432,7 @@ else	// Show
     }
 
     // Show prof id 2 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid2=$langs->transcountry("ProfId2",$mysoc->country_code);
@@ -443,7 +450,7 @@ else	// Show
     }
 
     // Show prof id 3 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid3=$langs->transcountry("ProfId3",$mysoc->country_code);
@@ -461,7 +468,7 @@ else	// Show
     }
 
     // Show prof id 4 in address into pdf
-    
+
     if (! $noCountryCode)
     {
     	$pid4=$langs->transcountry("ProfId4",$mysoc->country_code);
@@ -479,6 +486,7 @@ else	// Show
     }
 
     print '</table>'."\n";
+	print '</div>';
 
     print '<br>';
 
@@ -506,11 +514,10 @@ else	// Show
         }
 
         print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
-        $var=true;
+
         print '<table summary="more" class="noborder" width="100%">';
         print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
         print $text;
-
         print '</table>';
         print '<br>';
 
@@ -518,13 +525,13 @@ else	// Show
 
     // Other
     print load_fiche_titre($langs->trans("Other"),'','');
-	$var=true;
+
+	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px" colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-
 	// Encrypt and protect PDF
-	
+
 	print '<tr class="oddeven">';
 	print '<td>';
 	$text = $langs->trans("ProtectAndEncryptPdfFiles");
@@ -552,48 +559,51 @@ else	// Show
 	print '</tr>';
 
     // Hide any PDF informations
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
     print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
     print '</td></tr>';
 
 	//Desc
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
 	print '</td></tr>';
 
 	//Ref
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
 	print '</td></tr>';
 
 	//Details
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
 	print '</td></tr>';
 
-	
+
     print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_PDF_USE_ISO_LOCATION,1);
 	print '</td></tr>';
-	
-	
+
+
     print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
 	print $arraydetailsforpdffoot[$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS];
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 
 	/*
 	 *  Library
 	 */
+
 	print '<br>';
 	print load_fiche_titre($langs->trans("Library"));
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">'."\n";
 
 	print '<tr class="liste_titre">'."\n";
@@ -601,10 +611,9 @@ else	// Show
 	print '<td>'.$langs->trans("Value").'</td>'."\n";
 	print "</tr>\n";
 
-	$var=false;
 	if (! empty($dolibarr_pdf_force_fpdf))
 	{
-		
+
 		print '<tr class="oddeven">'."\n";
 		print '<td>dolibarr_pdf_force_fpdf</td>'."\n";
 		print '<td>';
@@ -613,7 +622,7 @@ else	// Show
 		print '</tr>';
 	}
 
-	
+
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
 	print '<td>';
@@ -652,6 +661,7 @@ else	// Show
 	print '</tr>'."\n";
 
 	print "</table>\n";
+	print '</div>';
 
 	if (! empty($dolibarr_pdf_force_fpdf))
 	{
