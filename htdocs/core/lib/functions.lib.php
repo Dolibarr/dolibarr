@@ -3791,7 +3791,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
 	else
 	{
-		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		// TODO Split on / and output with a price2num to have clean numbers without ton of 000.
 		$ret=$rate.($addpercent?'%':'');
 	}
 	if ($info_bits & 1) $ret.=' *';
