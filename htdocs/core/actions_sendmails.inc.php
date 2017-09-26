@@ -18,8 +18,8 @@
 
 /**
  *	\file			htdocs/core/actions_sendmails.inc.php
-*  \brief			Code for actions on sending mails from object page
-*/
+ *  \brief			Code for actions on sending mails from object page
+ */
 
 // $mysoc must be defined
 // $id must be defined
@@ -113,12 +113,17 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
+		}
+		else if ($object->element == 'member')
+		{
+			$thirdparty=$object;
+			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
 		}
 		else if ($object->element == 'societe')
 		{
@@ -348,24 +353,18 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
 			$substitutionarray['__EMAIL__'] = $sendto;
 			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'';
-			// Add specific substitution for contracts
-			if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
-			{
-				$datenextexpiration='';
-				foreach($object->lines as $line)
-				{
-					if ($line->statut != 4) continue;
-					if ($line->date_fin_prevue > $datenextexpiration) $datenextexpiration = $line->date_fin_prevue;
-				}
-				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
-				$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
-			}
 
 			$parameters=array('mode'=>'formemail');
 			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 			$subject=make_substitutions($subject, $substitutionarray);
 			$message=make_substitutions($message, $substitutionarray);
+
+			if (method_exists($object, 'makeSubstitution'))
+			{
+				$subject = $object->makeSubstitution($subject);
+				$message = $object->makeSubstitution($message);
+			}
 
 			// Send mail (substitutionarray must be done just before this)
 			if (empty($sendcontext)) $sendcontext = 'standard';
@@ -482,7 +481,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	else
 	{
 		$langs->load("other");
-		setEventMessages($langs->trans('ErrorFailedToReadEntity',$object->element), null, 'errors');
+		setEventMessages($langs->trans('ErrorFailedToReadObject',$object->element), null, 'errors');
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}

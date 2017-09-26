@@ -1133,13 +1133,11 @@ foreach ($listofreferent as $key => $value)
 }
 
 // Enhance with select2
-$nodatarole='';
 if ($conf->use_javascript_ajax)
 {
 	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	$comboenhancement = ajax_combobox('.elementselect');
 	$out.=$comboenhancement;
-	$nodatarole=($comboenhancement?' data-role="none"':'');
 
 	print $comboenhancement;
 }

@@ -268,7 +268,7 @@ if (empty($reshook))
 					$object->fk_project = GETPOST('projectid');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note = GETPOST('note');
+					$object->note = GETPOST('note','none');
 					$object->statut = SupplierProposal::STATUS_DRAFT;
 
 					$id = $object->create_from($user);
@@ -286,7 +286,7 @@ if (empty($reshook))
 				$object->fk_project = GETPOST('projectid');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note = GETPOST('note');
+				$object->note = GETPOST('note','none');
 
 				$object->origin = GETPOST('origin');
 				$object->origin_id = GETPOST('originid');
@@ -465,7 +465,7 @@ if (empty($reshook))
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == SupplierProposal::STATUS_VALIDATED) {
-                $object->cloture($user, GETPOST('statut'), GETPOST('note'));
+                $object->cloture($user, GETPOST('statut'), GETPOST('note','none'));
 			}
 		}
 	}
@@ -774,7 +774,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 			// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc','none'));
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
