@@ -907,7 +907,7 @@ class ActionComm extends CommonObject
             return $db->lasterror();
         }
     }
-
+    
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -916,50 +916,92 @@ class ActionComm extends CommonObject
      */
     function load_board($user)
     {
-        global $conf, $langs;
-
-        $sql = "SELECT a.id, a.datep as dp";
-        $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= ")";
-        if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-        $sql.= " WHERE a.percent >= 0 AND a.percent < 100";
-        $sql.= " AND a.entity IN (".getEntity('agenda').")";
-        if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-        if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
-        if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $agenda_static = new ActionComm($this->db);
-
-	        $response = new WorkboardResponse();
-	        $response->warning_delay = $conf->agenda->warning_delay/60/60/24;
-	        $response->label = $langs->trans("ActionsToDo");
-	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
-	        if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
-	        $response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
-
-            // This assignment in condition is not a bug. It allows walking the results.
-            while ($obj=$this->db->fetch_object($resql))
-            {
-	            $response->nbtodo++;
-
-                $agenda_static->datep = $this->db->jdate($obj->dp);
-
-                if ($agenda_static->hasDelay()) {
-	                $response->nbtodolate++;
-                }
-            }
-
-            return $response;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
+    	global $conf, $langs;
+    	
+    	$sql = "SELECT a.id, a.datep as dp";
+    	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
+    	$sql.= ")";
+    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+    	$sql.= " WHERE a.percent >= 0 AND a.percent < 100";
+    	$sql.= " AND a.entity IN (".getEntity('agenda').")";
+    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
+    	if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
+    	if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
+    	
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$agenda_static = new ActionComm($this->db);
+    		
+    		$response = new WorkboardResponse();
+    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
+    		$response->label = $langs->trans("ActionsToDo");
+    		$response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
+    		$response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
+    		
+    		// This assignment in condition is not a bug. It allows walking the results.
+    		while ($obj=$this->db->fetch_object($resql))
+    		{
+    			$response->nbtodo++;
+    			
+    			$agenda_static->datep = $this->db->jdate($obj->dp);
+    			
+    			if ($agenda_static->hasDelay()) {
+    				$response->nbtodolate++;
+    			}
+    		}
+    		
+    		return $response;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		return -1;
+    	}
+    }
+    
+    /**
+     *      Charge indicateurs this->nb de tableau de bord
+     *
+     *      @return     int         <0 if ko, >0 if ok
+     */
+    function load_state_board()
+    {
+    	global $user;
+    	
+    	$this->nb=array();
+    	
+    	$sql = "SELECT count(a.id) as nb";
+    	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
+    	$sql.= ")";
+    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+    	$sql.= " WHERE a.entity IN (".getEntity('agenda').")";
+    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
+    	if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
+    	if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
+    	
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$agenda_static = new ActionComm($this->db);
+    		
+    		while ($obj=$this->db->fetch_object($resql))
+    		{
+    			$this->nb["actionscomm"]=$obj->nb;
+    		}
+    		
+    		$this->db->free($resql);
+    		return 1;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		$this->error=$this->db->error();
+    		return -1;
+    	}
     }
 
 

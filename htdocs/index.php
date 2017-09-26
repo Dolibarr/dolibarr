@@ -375,8 +375,12 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
     include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
     $board=new ActionComm($db);
-
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['actionscomm'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of project opened
@@ -397,7 +401,12 @@ if (! empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) 
 {
     include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
     $board=new Task($db);
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['tasks'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of commercial proposals opened (expired)
@@ -513,7 +522,12 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
     $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
     if ($nb > 0)
     {
-        $dashboardlines[] = $board->load_board($user);
+    	$wb_res = $board->load_board($user);
+    	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    		$board->load_state_board();
+    		$wb_res->nbtotal = (int)$board->nb['banklines'];
+    	}
+    	$dashboardlines[] = $wb_res;
     }
 }
 
@@ -522,7 +536,12 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
     $board=new RemiseCheque($db);
-    $dashboardlines[] = $board->load_board($user);
+    $wb_res = $board->load_board($user);
+    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+    	$board->load_state_board();
+    	$wb_res->nbtotal = (int)$board->nb['cheques'];
+    }
+    $dashboardlines[] = $wb_res;
 }
 
 // Number of foundation members
