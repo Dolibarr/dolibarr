@@ -77,6 +77,8 @@ class pdf_paiement
 			$this->posxinvoiceamount-=10;
 			$this->posxpaymentamount-=20;
 		}
+		// which type of document will be generated: clients (client) or providers (fourn) invoices
+		$this->doc_type = "client";
 
 	}
 
@@ -105,7 +107,7 @@ class pdf_paiement
 
 		$this->month=$month;
 		$this->year=$year;
-
+dol_syslog(get_class($this)."::write_file".$year." ".$month, LOG_DEBUG);
 		$dir=$_dir.'/'.$year;
 
 		if (! is_dir($dir))
@@ -120,7 +122,15 @@ class pdf_paiement
 
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$file = $dir . "/payments-".$year."-".$month.".pdf";
+		switch ($this->doc_type) {
+            case "client":
+                $file = $dir . "/payments-".$year."-".$month.".pdf";
+                break;
+            case "fourn":
+                $file = $dir . "/supplier_payments-".$year."-".$month.".pdf";
+                break;
+        }
+
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
@@ -147,8 +157,19 @@ class pdf_paiement
         $lines=array();
 
 		// count number of lines of payment
+dol_syslog(get_class($this)."::write_file".$year." ".$month." ".dol_get_first_day($year,$month), LOG_DEBUG);
+dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate(dol_get_first_day($year,$month)), LOG_DEBUG);
+dol_syslog(get_class($this)."::write_file".$year." ".$month." ".dol_get_last_day($year,$month), LOG_DEBUG);
+dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate(dol_get_last_day($year,$month)), LOG_DEBUG);
 		$sql = "SELECT p.rowid as prowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+		switch ($this->doc_type) {
+            case "client":
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+                break;
+            case "fourn":
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+                break;
+        }
 		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 		$sql.= " AND p.entity = " . $conf->entity;
 		$result = $this->db->query($sql);
@@ -158,35 +179,70 @@ class pdf_paiement
 		}
 
 		// number of bill
-		$sql = "SELECT p.datep as dp, f.facnumber";
-		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
-		$sql.= ", c.code as paiement_code, p.num_paiement";
-		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
-		$sql.= ", pf.amount as pf_amount";
-		if (! empty($conf->banque->enabled))
-			$sql.= ", ba.ref as bankaccount";
-		$sql.= ", p.rowid as prowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
-		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
-		if (! empty($conf->banque->enabled))
-			$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
-		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		if (! $user->rights->societe->client->voir && ! $socid)
-		{
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
-		$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-		if (! empty($conf->banque->enabled))
-			$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
-		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= " AND p.fk_paiement = c.id ";
-		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
-		if (! $user->rights->societe->client->voir && ! $socid)
-		{
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-		}
-		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+		switch ($this->doc_type) {
+            case "client":
+                $sql = "SELECT p.datep as dp, f.facnumber";
+                //$sql .= ", c.libelle as paiement_type, p.num_paiement";
+                $sql.= ", c.code as paiement_code, p.num_paiement";
+                $sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+                $sql.= ", pf.amount as pf_amount";
+                if (! empty($conf->banque->enabled))
+                    $sql.= ", ba.ref as bankaccount";
+                $sql.= ", p.rowid as prowid";
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
+                $sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
+                if (! empty($conf->banque->enabled))
+                    $sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+                $sql.= " ".MAIN_DB_PREFIX."societe as s";
+                if (! $user->rights->societe->client->voir && ! $socid)
+                {
+                    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+                }
+                $sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+                if (! empty($conf->banque->enabled))
+                    $sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+                $sql.= " AND f.entity = ".$conf->entity;
+                $sql.= " AND p.fk_paiement = c.id ";
+                $sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+                if (! $user->rights->societe->client->voir && ! $socid)
+                {
+                    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+                }
+                if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
+                $sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+                break;
+            case "fourn":
+                $sql = "SELECT p.datep as dp, f.ref as facnumber";
+                 //$sql .= ", c.libelle as paiement_type, p.num_paiement";
+                $sql.= ", c.code as paiement_code, p.num_paiement";
+                $sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+                $sql.= ", pf.amount as pf_amount";
+                if (! empty($conf->banque->enabled))
+                    $sql.= ", ba.ref as bankaccount";
+                $sql.= ", p.rowid as prowid";
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."facture_fourn as f,";
+                $sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
+                if (! empty($conf->banque->enabled))
+                    $sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+                $sql.= " ".MAIN_DB_PREFIX."societe as s";
+                if (! $user->rights->societe->client->voir && ! $socid)
+                {
+                    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+                }
+                $sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
+                if (! empty($conf->banque->enabled))
+                    $sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+                $sql.= " AND f.entity = ".$conf->entity;
+                $sql.= " AND p.fk_paiement = c.id ";
+                $sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+                if (! $user->rights->societe->client->voir && ! $socid)
+                {
+                    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+                }
+                if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
+                $sql.= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
+                break;
+        }
 
 		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -300,7 +356,14 @@ class pdf_paiement
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$title=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		$title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
+		switch($this->doc_type) {
+            case "client":
+                $title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
+                break;
+            case "fourn":
+                $title.=' - '.$outputlangs->transnoentities("ListOfSupplierPayments");
+                break;
+        }
 		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('','B',$default_font_size + 1);
 		$pdf->SetXY($this->marge_gauche,10);
