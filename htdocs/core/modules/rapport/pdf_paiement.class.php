@@ -42,6 +42,7 @@ class pdf_paiement
 		global $langs,$conf;
 		$langs->load("bills");
 		$langs->load("compta");
+		$langs->load("main");
 
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");
@@ -266,6 +267,7 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate
 				$lines[$i][6] = price($objp->pf_amount);
 				$lines[$i][7] = $objp->prowid;
 				$lines[$i][8] = $objp->bankaccount;
+				$lines[$i][9] = $objp->paiement_amount;
 				$i++;
 			}
 		}
@@ -420,10 +422,13 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate
 	 */
 	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
+		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('','', $default_font_size - 1);
 		$oldprowid = 0;
+		$total_page = 0;
+		$total = 0;
 		$pdf->SetFillColor(220,220,220);
 		$yp = 0;
 		$numlines=count($lines);
@@ -440,13 +445,17 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate
 			}
 			if ($oldprowid <> $lines[$j][7])
 			{
-				if ($yp > $this->tab_height -10)
+				if ($yp > $this->tab_height -15)
 				{
+					$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height,  $langs->transnoentities('SubTotal')." : ".price($total_page), 0, 'R', 0);
 					$page++;
 					$pdf->AddPage();
 					$this->_pagehead($pdf, $page, 0, $outputlangs);
 					$pdf->SetFont('','', $default_font_size - 1);
 					$yp = 0;
+					$total += $total_page;
+					$total_page = 0;
 				}
 
 				$pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
@@ -461,6 +470,7 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate
 				$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][4], 0, 'R', 1);
 				$yp = $yp + 5;
+				$total_page += $lines[$j][9];
 			}
 
 			// Invoice number
@@ -485,6 +495,9 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate
 				$oldprowid = $lines[$j][7];
 			}
 		}
+		$total += $total_page;
+		$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('Total')." : ".price($total), 0, 'R', 0);
 	}
 }
 
