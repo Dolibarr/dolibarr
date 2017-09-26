@@ -88,6 +88,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 9
 
 -- CYPRUS (id country=78)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (781, 78,   '19','0','VAT standard rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (782, 78,    '9','0','VAT Rate 9',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (783, 78,    '5','0','VAT Rate 5',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (784, 78,    '0','0','VAT Rate 0',1);
 
 -- DANMERK (id country=80)
