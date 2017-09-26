@@ -223,7 +223,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Product		$product	Object product
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
+	 *  @param  int		  	$type   0 = product , 1 = service
 	 *  @return int					0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired

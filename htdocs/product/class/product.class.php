@@ -348,7 +348,7 @@ class Product extends CommonObject
 	 */
 	function check()
 	{
-		$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+		$this->ref = stripslashes($this->ref);
 
 		$err = 0;
 		if (dol_strlen(trim($this->ref)) == 0)
@@ -381,7 +381,7 @@ class Product extends CommonObject
         	$error=0;
 
 		// Clean parameters
-		$this->ref = dol_string_nospecial(trim($this->ref));
+		$this->ref = trim($this->ref);
 		$this->label = trim($this->label);
 		$this->price_ttc=price2num($this->price_ttc);
 		$this->price=price2num($this->price);
@@ -648,6 +648,27 @@ class Product extends CommonObject
             $this->errors[] = 'ErrorBadRef';
             $result = -2;
         }
+		$rescode = $this->check_product_code($this->ref);
+        if ($rescode <> 0)
+        {
+        	if ($rescode == -1)
+        	{
+        		$this->errors[] = 'ErrorBadCustomerCodeSyntax';
+        	}
+        	if ($rescode == -2)
+        	{
+        		$this->errors[] = 'ErrorCustomerCodeRequired';
+        	}
+        	if ($rescode == -3)
+        	{
+        		$this->errors[] = 'ErrorCustomerCodeAlreadyUsed';
+        	}
+        	if ($rescode == -4)
+        	{
+        		$this->errors[] = 'ErrorPrefixRequired';
+        	}
+        	$result = -2;
+        }
 
         $rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
         if ($rescode <> 0)
@@ -726,7 +747,7 @@ class Product extends CommonObject
 		if (! $this->label) $this->label = 'MISSING LABEL';
 
 		// Clean parameters
-		$this->ref = dol_string_nospecial(trim($this->ref));
+		$this->ref = trim($this->ref);
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note = (isset($this->note) ? trim($this->note) : null);
@@ -4726,6 +4747,42 @@ class Product extends CommonObject
         else
 		{
             dol_print_error($this->db);
+        }
+	}
+
+    /**
+     *  Check product code
+     *
+     *  @param   string $code  The product code to check
+     *  @return     int 0 if OK
+     *                  1 ErrorBadCustomerCodeSyntax
+     *                  2 ErrorCustomerCodeRequired
+     *                  3 ErrorCustomerCodeAlreadyUsed
+     *                  4 ErrorPrefixRequired
+     */
+    function check_product_code($code)
+    {
+        global $conf;
+        if (! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON))
+        {
+            $module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
+            if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
+            {
+                $module = substr($module, 0, dol_strlen($module)-4);
+            }
+            $result=dol_include_once('/core/modules/product/'.$module.'.php');
+            if ($result > 0)
+            {
+                $mod = new $module();
+
+                $result = $mod->verif($this->db, $code, $this, $this->type);
+                return $result;
+            }
+            return 0; // no module found
+        }
+        else
+        {
+            return 0;
         }
     }
 

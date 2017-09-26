@@ -1183,7 +1183,7 @@ function check_value($mask,$value)
 
     $maskraz=-1;
     $maskoffset=0;
-    if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
+    if (dol_strlen($maskcounter) < 3) return -1;
 
     // Extract value for third party mask counter
     if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
@@ -1195,14 +1195,14 @@ function check_value($mask,$value)
         $maskrefclient_clientcode=substr('',0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
         $maskrefclient_clientcode=str_pad($maskrefclient_clientcode,dol_strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
-        if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
+        if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return -1;
     }
     else $maskrefclient='';
 
     // fail if there is neither a global nor a third party counter
     if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
     {
-        return 'ErrorBadMask';
+        return -1;
     }
 
     $maskwithonlyymcode=$mask;
@@ -1229,11 +1229,11 @@ function check_value($mask,$value)
     if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
     if ($maskraz >= 0)
     {
-        if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
+        if ($maskraz > 12) return -1;
 
         // Define reg
-        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return -1;
+        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) return -1;
         //print "x".$maskwithonlyymcode." ".$maskraz;
     }
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
@@ -1243,23 +1243,9 @@ function check_value($mask,$value)
 
     // Check length
     $len=dol_strlen($maskwithnocode);
-    if (dol_strlen($value) != $len) $result=-1;
+    if (dol_strlen($value) != $len) return -1;
 
-    // Define $maskLike
-    $maskLike = dol_string_nospecial($mask);
-    $maskLike = str_replace("%","_",$maskLike);
-    // Replace protected special codes with matching number of _ as wild card caracter
-    $maskLike = str_replace(dol_string_nospecial('{yyyy}'),'____',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{yy}'),'__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{y}'),'_',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{mm}'),'__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
-    if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
-
-
-    dol_syslog("functions2::check_value result=".$result,LOG_DEBUG);
-    return $result;
+    return 0;
 }
 
 /**
