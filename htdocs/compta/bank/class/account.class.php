@@ -1209,7 +1209,7 @@ class Account extends CommonObject
     
     /**
      *      Charge indicateurs this->nb de tableau de bord
-     *		@param 		int			id of bank acount for filter
+     *		@param		int			$filteraccountid	To get info for a particular account id
      *      @return     int         <0 if ko, >0 if ok
      */
     function load_state_board($filteraccountid = 0)
