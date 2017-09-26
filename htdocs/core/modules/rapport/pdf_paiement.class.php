@@ -108,7 +108,6 @@ class pdf_paiement
 
 		$this->month=$month;
 		$this->year=$year;
-dol_syslog(get_class($this)."::write_file".$year." ".$month, LOG_DEBUG);
 		$dir=$_dir.'/'.$year;
 
 		if (! is_dir($dir))
@@ -158,10 +157,6 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month, LOG_DEBUG);
         $lines=array();
 
 		// count number of lines of payment
-dol_syslog(get_class($this)."::write_file".$year." ".$month." ".dol_get_first_day($year,$month), LOG_DEBUG);
-dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate(dol_get_first_day($year,$month)), LOG_DEBUG);
-dol_syslog(get_class($this)."::write_file".$year." ".$month." ".dol_get_last_day($year,$month), LOG_DEBUG);
-dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate(dol_get_last_day($year,$month)), LOG_DEBUG);
 		$sql = "SELECT p.rowid as prowid";
 		switch ($this->doc_type) {
             case "client":
