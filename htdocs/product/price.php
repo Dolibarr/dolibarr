@@ -744,7 +744,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
     	   // TVA
-	       print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
+	       print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
 
 	       $positiverates='';
 	       if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
@@ -758,7 +758,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		else
 		{
         	// TVA
-        	print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+        	print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td>';
 
         	$positiverates='';
         	if (price2num($object->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
@@ -781,14 +781,14 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
     	   // We show only vat for level 1
-	       print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td>';
+	       print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
 	       print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
 	       print '</tr>';
 		}
 		else
 		{
             // TVA
-	        print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
+	        print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
 
 	        $positiverates='';
 	        if (price2num($object->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
@@ -945,7 +945,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 else
 {
 	// TVA
-	print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
+	print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
 
 	$positiverates='';
 	if (price2num($object->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
@@ -1123,7 +1123,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print '<table class="border" width="100%">';
 
 	// VAT
-	print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+	print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td>';
 	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 	print '</td></tr>';
 
@@ -1157,7 +1157,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<table class="border" width="100%">';
 
 		// VAT
-		print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
@@ -1298,7 +1298,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '<td>'.$langs->trans("PriceLevel").'</td>';
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) print '<td style="text-align: center">'.$langs->trans("VATRate").'</td>';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) print '<td style="text-align: center">'.$langs->trans("DefaultTaxRate").'</td>';
 		else print '<td></td>';
 
 		print '<td class="center">'.$langs->trans("SellingPrice").'</td>';
@@ -1439,7 +1439,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
     		print $conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL;
-    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
     		print '<td align="right">' . $langs->trans("HT") . '</td>';
     		print '<td align="right">' . $langs->trans("TTC") . '</td>';
     		if (! empty($conf->dynamicprices->enabled)) {
@@ -1606,7 +1606,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</tr>';
 
 		// VAT
-		print '<tr><td class="fieldrequired">' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("DefaultTaxRate") . '</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
@@ -1695,7 +1695,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</tr>';
 
 		// VAT
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
+		print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
 		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
 		print '</td></tr>';
 
@@ -1799,7 +1799,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<td>' . $langs->trans("ThirdParty") . '</td>';
 			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
 			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-			print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+			print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
 			print '<td align="right">' . $langs->trans("HT") . '</td>';
 			print '<td align="right">' . $langs->trans("TTC") . '</td>';
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
@@ -1920,7 +1920,7 @@ var_dump($prodcustprice);exit;
 		print '<td>' . $langs->trans("ThirdParty") . '</td>';
 		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
 		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-		print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+		print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
 		print '<td align="right">' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("TTC") . '</td>';
 		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
