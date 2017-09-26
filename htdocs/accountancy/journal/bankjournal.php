@@ -432,6 +432,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->date_create = $now;
+					$bookkeeping->date_lim_reglement = $now;
 
 					// No subledger_account value for the bank line
 					if ($tabtype[$key] == 'payment') {
@@ -493,6 +494,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->date_create = $now;
+					$bookkeeping->date_lim_reglement = $now;
 
 					if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
 						$bookkeeping->label_operation = '';

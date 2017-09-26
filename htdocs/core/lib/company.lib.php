@@ -123,6 +123,24 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	// Tab to accountancy
+	if (! empty($conf->accounting->enabled) && $object->client>0)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans("TabAccountingCustomer");
+		$head[$h][2] = 'accounting';
+		$h++;
+	}
+
+	// Tab to accountancy
+	if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans("TabAccountingSupplier");
+		$head[$h][2] = 'accounting_supplier';
+		$h++;
+	}
+
 	// Related items
     if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
     {
