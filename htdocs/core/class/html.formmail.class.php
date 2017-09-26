@@ -907,8 +907,8 @@ class FormMail extends Form
 
 
 	/**
-	 *      Return templates of email with type = $type_template or type = 'all'
-	 *      This search into table c_email_templates.
+	 *      Return templates of email with type = $type_template or type = 'all'.
+	 *      This search into table c_email_templates. Used by the get_form function.
 	 *
 	 * 		@param	DoliDB		$db				Database handler
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
@@ -918,7 +918,7 @@ class FormMail extends Form
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	private function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
+	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
 	{
 		$ret=array();
 
