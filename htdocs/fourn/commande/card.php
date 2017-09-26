@@ -555,18 +555,16 @@ if (empty($reshook))
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
    		if ($lineid)
-	    {
-	        $line = new CommandeFournisseurLigne($db);
-	        $res = $line->fetch($lineid);
-	        if (!$res) dol_print_error($db);
-	    }
+		{
+	        	$line = new CommandeFournisseurLigne($db);
+	        	$res = $line->fetch($lineid);
+	        	if (!$res) dol_print_error($db);
+		}
 		
-		if( $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
-	   {
-		setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
-	   }
-		else
-	   {
+		if ($productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+		{
+			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+		}
 
 	    	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	    	$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
@@ -684,7 +682,7 @@ if (empty($reshook))
 			dol_print_error($db,$object->error);
 			exit;
 		    }
-		}
+	
 	}
 
 	// Remove a product line
