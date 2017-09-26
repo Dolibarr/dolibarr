@@ -465,7 +465,7 @@ dol_syslog(get_class($this)."::write_file".$year." ".$month." ".$this->db->idate
 
 			// Invoice number
 			$pdf->SetXY($this->posxinvoice, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, $this->line_height, $lines[$j][0], 0, 'L', 0);
+			$pdf->MultiCell($this->posxinvoice - $this->posxbankaccount, $this->line_height, $lines[$j][0], 0, 'L', 0);
 
 			// BankAccount
 			$pdf->SetXY($this->posxbankaccount, $this->tab_top + 10 + $yp);
