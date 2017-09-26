@@ -35,7 +35,7 @@ function addDispatchLine(index, type, mode)
 	console.log("Split line type="+type+" index="+index+" mode="+mode);
 	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true), // clone first batch line to jQuery object
 		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length, // position of line for batch
-		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()),
+		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()), // Qty ordered is same for all rows
 		qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val()),
 		qtyDispatched;
 			
@@ -74,19 +74,16 @@ function addDispatchLine(index, type, mode)
 		
 		if (mode === 'lessone')
 		{
-			$("#qty_"+(nbrTrs)+"_"+index).val(qty-1);
-			$("#qty_"+(nbrTrs-1)+"_"+index).val(1);
+			qty = 1; // keep 1 in old line
+			$("#qty_"+(nbrTrs-1)+"_"+index).val(qty);
 		}
-		else
-		{
-			$("#qty_"+nbrTrs+"_"+index).val(qtyOrdered - qtyDispatched);
-			// Store arbitrary data for dispatch qty input field change event
-			$("#qty_"+(nbrTrs-1)+"_"+index).data('qty', qty);
-			$("#qty_"+(nbrTrs-1)+"_"+index).data('type', type);
-			$("#qty_"+(nbrTrs-1)+"_"+index).data('index', index);
-			// Update dispatched qty when value dispatch qty input field changed
-			$("#qty_"+(nbrTrs-1)+"_"+index).change(this.onChangeDispatchLineQty);
-		}
+		$("#qty_"+nbrTrs+"_"+index).val(qtyOrdered - qtyDispatched);
+		// Store arbitrary data for dispatch qty input field change event
+		$("#qty_"+(nbrTrs-1)+"_"+index).data('qty', qty);
+		$("#qty_"+(nbrTrs-1)+"_"+index).data('type', type);
+		$("#qty_"+(nbrTrs-1)+"_"+index).data('index', index);
+		// Update dispatched qty when value dispatch qty input field changed
+		$("#qty_"+(nbrTrs-1)+"_"+index).change(this.onChangeDispatchLineQty);
 		//set focus on lot of new line (if it exists)
 		$("#lot_number_"+(nbrTrs)+"_"+index).focus();
 	}
@@ -95,7 +92,9 @@ function addDispatchLine(index, type, mode)
 /**
  * onChangeDispatchLineQty
  * 
- * event handler for dispatch qty input field
+ * Change event handler for dispatch qty input field, 
+ * recalculate qty dispatched when qty input has changed.
+ * If qty is more then qty ordered reset input qty to max qty to dispatch.
  * 
  * element requires arbitrary data qty (value before change), type (type of dispatch) and index (index of product line)
  */
@@ -113,7 +112,7 @@ function onChangeDispatchLineQty() {
 		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); // qty ordered
 		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()); // qty already dispatched
 
-		// console.log("onChangeDispatchLineQty qtyChanged: " + qtyChanged + " qtyDispatching: " + qtyDispatching + " qtyOrdered: " + qtyOrdered + " qtyDispatched: "+ qtyDispatched);
+		console.log("onChangeDispatchLineQty qtyChanged: " + qtyChanged + " qtyDispatching: " + qtyDispatching + " qtyOrdered: " + qtyOrdered + " qtyDispatched: "+ qtyDispatched);
 
 		if ((qtyChanged) <= (qtyOrdered - (qtyDispatched + qtyDispatching))) {
 			$("#qty_dispatched_0_"+index).val(qtyDispatched + qtyChanged);
