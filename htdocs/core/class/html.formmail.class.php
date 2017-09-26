@@ -329,6 +329,7 @@ class FormMail extends Form
         		$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
         	}
 
+	        $modelmail_array=array();
         	if ($this->param['models'] != 'none')
         	{
 	        	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
@@ -336,7 +337,6 @@ class FormMail extends Form
 	        	{
 	        		setEventMessages($this->error, $this->errors, 'errors');
 	        	}
-	        	$modelmail_array=array();
 	        	foreach($this->lines_model as $line)
 	        	{
 	        		$langs->trans("members");
@@ -1076,11 +1076,11 @@ class FormMail extends Form
 	 * @return	void
 	 * @see getCommonSubstitutionArray
 	 */
-	function setSubstitFromObject($object, $outputlangs=null)
+	function setSubstitFromObject($object, $outputlangs)
 	{
 		global $conf, $user;
 
-		$parameters=array('mode'=>$mode);
+		$parameters=array();
 		$tmparray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
 		complete_substitutions_array($tmparray, $outputlangs, null, $parameters);
 
@@ -1135,6 +1135,7 @@ class FormMail extends Form
 	{
 		global $conf, $langs;
 
+		$tmparray=array();
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
 		{
 			$parameters=array('mode'=>$mode);
