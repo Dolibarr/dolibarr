@@ -259,6 +259,15 @@ class mod_codeproduct_elephant extends ModeleProductCode
 				return '';
 			}
 
+			if(!empty($conf->variants->enabled)) {
+			    // here it would be good to test if this product is actually a variation but we don't store this info
+			    if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+			        $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+			    } else {
+			        $separator = '_';
+			    }
+			    $mask .= $separator . "{*}";
+			}
 			$result=check_value($mask,$code);
 		}
 

@@ -1243,7 +1243,12 @@ function check_value($mask,$value)
 
     // Check length
     $len=dol_strlen($maskwithnocode);
-    if (dol_strlen($value) != $len) return -1;
+	if (preg_match('/\{\*\}/', $maskwithnocode)) {
+	    // a variable content is allowed
+        if (dol_strlen($value) < ($len-3)) return -1;
+	} else {
+        if (dol_strlen($value) != $len) return -1;
+	}
 
     return 0;
 }
