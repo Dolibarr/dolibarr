@@ -1369,8 +1369,8 @@ function dol_meta_create($object)
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
 			CLIENT=\"" . $client . "\"
-			AMOUNT_WO_TAX=\"" . $object->total_ht . "\"
-			AMOUNT_INC_TAX=\"" . $object->total_ttc . "\"\n";
+			AMOUNT_EXCL_TAX=\"" . $object->total_ht . "\"
+			AMOUNT=\"" . $object->total_ttc . "\"\n";
 
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
@@ -1537,7 +1537,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
     					    $ecmfile=new EcmFiles($db);
     					    $ecmfile->filepath = $rel_dir;
     					    $ecmfile->filename = $filename;
-    					    $ecmfile->label = md5_file(dol_osencode($destfull));
+    					    $ecmfile->label = md5_file(dol_osencode($destfull));	// MD5 of file content
     					    $ecmfile->fullpath_orig = $TFile['name'][$i];
     					    $ecmfile->gen_or_uploaded = 'uploaded';
     					    $ecmfile->description = '';    // indexed content

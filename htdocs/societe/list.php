@@ -608,7 +608,7 @@ foreach(array(1,2,3,4,5,6) as $key)
 
 if ($massaction == 'presend')
 {
-	$topicmail="SendEmail";
+	$topicmail="Information";
 	$modelmail="thirdparty";
 	$objecttmp=new Societe($db);
 	$trackid='thi'.$object->id;

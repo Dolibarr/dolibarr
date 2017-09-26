@@ -17,3 +17,4 @@ rate=rate
 MulticurrencyReceived=Received, original currency
 MulticurrencyRemainderToTake=Remaining amout, original currency
 MulticurrencyPaymentAmount=Payment amount, original currency
+AmountToOthercurrency=Amount To (in currency of receiving account)

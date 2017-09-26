@@ -476,7 +476,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 */
 	public function createProductCombination(Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
 	{
-		global $db, $user;
+		global $db, $user, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
@@ -542,7 +542,11 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$price_impact += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 			}
 
-			$newproduct->ref .= '_'.$prodattrval->ref;
+			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+			  $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+			} else {
+			  $newproduct->ref .= '_'.$prodattrval->ref;
+			}
 
 			//The first one should not contain a linebreak
 			if ($newproduct->description) {

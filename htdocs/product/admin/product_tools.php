@@ -38,8 +38,8 @@ $langs->load("products");
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
-$oldvatrate=GETPOST('oldvatrate');
-$newvatrate=GETPOST('newvatrate');
+$oldvatrate=GETPOST('oldvatrate', 'alpha');
+$newvatrate=GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
 
 
@@ -67,13 +67,31 @@ if ($action == 'convert')
 
 		$db->begin();
 
+		// Clean vat code old
+		$vat_src_code_old='';
+		if (preg_match('/\((.*)\)/', $oldvatrate, $reg))
+		{
+			$vat_src_code_old = $reg[1];
+			$oldvatrateclean = preg_replace('/\s*\(.*\)/', '', $oldvatrate);    // Remove code into vatrate.
+		}
+
+		// Clean vat code new
+		$vat_src_code_new='';
+		if (preg_match('/\((.*)\)/', $newvatrate, $reg))
+		{
+			$vat_src_code_new = $reg[1];
+			$newvatrateclean = preg_replace('/\s*\(.*\)/', '', $newvatrate);    // Remove code into vatrate.
+		}
+
 		// If country to edit is my country, so we change customer prices
 		if ($country_id == $mysoc->country_id)
 		{
 			$sql = 'SELECT rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
 			$sql.= ' WHERE entity IN ('.getEntity('product').')';
-			$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
+			$sql.= " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
+			if ($vat_src_code_old) $sql.= " AND default_vat_code = '".$vat_src_code_old."'";
+			else " AND default_vat_code = IS NULL";
 
 			$resql=$db->query($sql);
 			if ($resql)
@@ -109,12 +127,15 @@ if ($action == 'convert')
 								$newminprice=$objectstatic->multiprices_min[$level];
 							}
 							if ($newminprice > $newprice) $newminprice=$newprice;
+
 							$newvat=str_replace('*','',$newvatrate);
+							$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 							$newnpr=$objectstatic->multiprices_recuperableonly[$level];
+							$newdefaultvatcode=$vat_src_code_new;
 							$newlevel=$level;
 
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$retm=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+							$retm=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatratclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 							if ($retm < 0)
 							{
 								$error++;
@@ -138,19 +159,21 @@ if ($action == 'convert')
 						}
 						if ($newminprice > $newprice) $newminprice=$newprice;
 						$newvat=str_replace('*','',$newvatrate);
+						$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 						$newnpr=$objectstatic->recuperableonly;
+						$newdefaultvatcode=$vat_src_code_new;
 						$newlevel=0;
 						if (! empty($price_base_type) && ! $updatelevel1)
 						{
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$ret=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+							$ret=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 						}
 
 						if ($ret < 0 || $retm < 0) $error++;
 						else $nbrecordsmodified++;
 					}
                     unset($objectstatic);
-                    
+
 					$i++;
 				}
 			}
@@ -164,6 +187,8 @@ if ($action == 'convert')
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
 		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
+		if ($vat_src_code_old) $sql.= " AND default_vat_code = '".$vat_src_code_old."'";
+		else " AND default_vat_code = IS NULL";
 		$sql.= " AND s.fk_pays = '".$country_id."'";
 		//print $sql;
 		$resql=$db->query($sql);
@@ -196,25 +221,32 @@ if ($action == 'convert')
 					//}
 					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat=str_replace('*','',$newvatrate);
+					$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 					//$newnpr=$objectstatic2->recuperableonly;
+					$newnpr=0;
+					$newdefaultvatcode=$vat_src_code_new;
+
+					$newpercent = $objectstatic2->fourn_remise_percent;
+					$newdeliverydelay = $objectstatic2->delivery_time_days;
+					$newsupplierreputation = $objectstatic2->supplier_reputation;
+
 					$newlevel=0;
 					if (! empty($price_base_type) && ! $updatelevel1)
 					{
 						//print "$objectstatic2->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
 						$fourn->id=$obj->fk_soc;
-						$ret=$objectstatic2->update_buyprice($obj->qty, $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, $newvat);
+						$ret=$objectstatic2->update_buyprice($obj->qty, $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
 					}
 
 					if ($ret < 0 || $retm < 0) $error++;
 					else $nbrecordsmodified++;
 				}
 				unset($objectstatic2);
-				
+
 				$i++;
 			}
 		}
 		else dol_print_error($db);
-
 
 		if (! $error)
 		{
@@ -274,24 +306,24 @@ else
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '</tr>'."\n";
 
-	
+
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
-	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc);
+	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc, null, 0, 0, '', false, 1);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
-	
+
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
-	print $form->load_tva('newvatrate', $newvatrate, $mysoc);
+	print $form->load_tva('newvatrate', $newvatrate, $mysoc, null, 0, 0, '', false, 1);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
 	/*
-	
+
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
@@ -303,7 +335,7 @@ else
 	print '</table>';
 
 	print '<br>';
-	
+
 	// Boutons actions
 	print '<div class="center">';
 	print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';
