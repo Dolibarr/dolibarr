@@ -220,8 +220,9 @@ if (function_exists("ldap_connect"))
 			$dn=$object->_load_ldap_dn($info);
 
 			// Get a gid number for objectclass PosixGroup
-			if(in_array('posixGroup',$info['objectclass']))
-				$info['gidNumber'] = $ldap->getNextGroupGid();
+			if (in_array('posixGroup',$info['objectclass'])) {
+				$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+			}
 
 			$result1=$ldap->delete($dn);			// To be sure to delete existing records
 			$result2=$ldap->add($dn,$info,$user);	// Now the test

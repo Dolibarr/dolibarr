@@ -608,7 +608,7 @@ foreach(array(1,2,3,4,5,6) as $key)
 
 if ($massaction == 'presend')
 {
-	$topicmail="SendEmail";
+	$topicmail="Information";
 	$modelmail="thirdparty";
 	$objecttmp=new Societe($db);
 	$trackid='thi'.$object->id;
@@ -1024,6 +1024,7 @@ while ($i < min($num, $limit))
 
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
+	$companystatic->name_alias=$obj->name_alias;
 	$companystatic->canvas=$obj->canvas;
 	$companystatic->client=$obj->client;
 	$companystatic->status=$obj->status;
@@ -1053,7 +1054,6 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.name_alias']['checked']))
 	{
-	    $companystatic->name_alias=$obj->name_alias;   // Added after the getNomUrl
 	    print '<td class="tdoverflowmax200">';
 	    print $companystatic->name_alias;
 	    print "</td>\n";

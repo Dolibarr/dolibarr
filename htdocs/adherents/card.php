@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2016 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
@@ -121,14 +121,22 @@ $hookmanager->initHooks(array('membercard','globalcard'));
  * 	Actions
  */
 
-if ($cancel) $action='';
-
 $parameters=array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+	}
+
 	if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 	{
 		$error=0;
@@ -230,6 +238,7 @@ if (empty($reshook))
 		}
 	}
 
+	/*
 	if ($action == 'confirm_sendinfo' && $confirm == 'yes')
 	{
 		if ($object->email)
@@ -242,7 +251,7 @@ if (empty($reshook))
 			$langs->load("mails");
 			setEventMessages($langs->trans("MailSuccessfulySent", $from, $object->email), null, 'mesgs');
 		}
-	}
+	}*/
 
 	if ($action == 'update' && ! $cancel && $user->rights->adherent->creer)
 	{
@@ -715,10 +724,21 @@ if (empty($reshook))
 		}
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 	// Actions to build doc
 	$upload_dir = $conf->adherent->dir_output;
 	$permissioncreate=$user->rights->adherent->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// Actions to send emails
+	$trigger_name='MEMBER_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfrommember';
+	$trackid='mem'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
 }
 
 
@@ -813,6 +833,7 @@ else
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
+		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
         dol_fiche_head('');
 
@@ -954,11 +975,18 @@ else
 
         dol_fiche_end();
 
-	    print '<div class="center">';
-	    print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
-	    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
-	    print '</div>';
+		print '<div class="center">';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
+		print '&nbsp;&nbsp;';
+		if (! empty($backtopage))
+		{
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+		}
+		else
+		{
+			print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		}
+		print '</div>';
 
 		print "</form>\n";
 	}
@@ -1225,7 +1253,7 @@ else
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';
@@ -1344,10 +1372,10 @@ else
 		}
 
 		// Confirm send card by mail
-		if ($action == 'sendinfo')
+		/*if ($action == 'sendinfo')
 		{
 			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
-		}
+		}*/
 
 		// Confirm terminate
 		if ($action == 'resign')
@@ -1590,6 +1618,31 @@ else
 		if (empty($reshook)) {
 			if ($action != 'valid' && $action != 'editlogin' && $action != 'editthirdparty')
 			{
+				// Send
+				if ($object->statut == 1) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+				}
+
+				// Send card by email
+				// TODO Remove this to replace with a template
+				/*
+				if ($user->rights->adherent->creer)
+				{
+					if ($object->statut >= 1)
+					{
+						if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a></div>\n";
+						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a></div>\n";
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</font></div>";
+					}
+				}
+				else
+				{
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
+				}*/
+
 				// Modify
 				if ($user->rights->adherent->creer)
 				{
@@ -1624,24 +1677,6 @@ else
 					{
 						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
 					}
-				}
-
-				// Send card by email
-				if ($user->rights->adherent->creer)
-				{
-					if ($object->statut >= 1)
-					{
-						if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a></div>\n";
-						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a></div>\n";
-					}
-					else
-					{
-						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</font></div>";
-					}
-				}
-				else
-				{
-					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 				}
 
 				// Terminate
@@ -1720,52 +1755,65 @@ else
 		}
 
 
-
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-		print '<a name="builddoc"></a>'; // ancre
-
-		// Documents generes
-		$filename = dol_sanitizeFileName($object->ref);
-		//$filename =  'tmp_cards.php';
-		//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);
-		$filedir = $conf->adherent->dir_output . '/' . get_exdir(0, 0, 0, 0, $object, 'member');
-		$urlsource = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
-		$genallowed = $user->rights->adherent->creer;
-		$delallowed = $user->rights->adherent->supprimer;
-
-		print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
-		$somethingshown = $formfile->numoffiles;
-
-		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
-		//$somethingshown = $form->showLinkedObjectBlock($object, '');
-
-		// Show links to link elements
-		/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-		 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-		 */
-
-		// Shon online payment link
-		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
-
-		if ($useonlinepayment)
-		{
-			print '<br>';
-
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('membersubscription', $object->ref);
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
 		}
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		if ($action != 'presend')
+		{
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+			print '<a name="builddoc"></a>'; // ancre
 
-		// List of actions on element
-        /* Already in tab Agenda/Events
-        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'member', $socid, 1);
-		*/
-		print '</div></div></div>';
+			// Documents generes
+			$filename = dol_sanitizeFileName($object->ref);
+			//$filename =  'tmp_cards.php';
+			//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);
+			$filedir = $conf->adherent->dir_output . '/' . get_exdir(0, 0, 0, 0, $object, 'member');
+			$urlsource = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
+			$genallowed = $user->rights->adherent->creer;
+			$delallowed = $user->rights->adherent->supprimer;
 
+			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
+			$somethingshown = $formfile->numoffiles;
+
+			// Show links to link elements
+			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
+			//$somethingshown = $form->showLinkedObjectBlock($object, '');
+
+			// Show links to link elements
+			/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
+			 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+			 */
+
+			// Shon online payment link
+			$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+
+			if ($useonlinepayment)
+			{
+				print '<br>';
+
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				print showOnlinePaymentUrl('membersubscription', $object->ref);
+			}
+
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// List of actions on element
+	        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'member', $socid, 1, 'listactions', 10);
+
+			print '</div></div></div>';
+		}
+
+		// Presend form
+		$modelmail='member';
+		$defaulttopic='SendMemberRef';
+		$diroutput = $conf->adherent->dir_output;
+		$trackid = 'mem'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
 

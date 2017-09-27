@@ -73,13 +73,16 @@ if ($action == 'presend')
 
 	// Build document if it not exists
 	if (! $file || ! is_readable($file)) {
-		$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0) {
-			dol_print_error($db, $object->error, $object->errors);
-			exit();
+		if ($object->element != 'member')
+		{
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result <= 0) {
+				dol_print_error($db, $object->error, $object->errors);
+				exit();
+			}
+			$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
 		}
-		$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file = $fileparams['fullname'];
 	}
 
 	print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
@@ -120,6 +123,10 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
+	elseif ($object->element == 'member')
+	{
+		$liste['thirdparty'] = $object->getFullName($langs)." &lt;".$object->email."&gt;";
+	}
 	else
 	{
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -139,43 +146,8 @@ if ($action == 'presend')
 	// Make substitution in email content
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
-	$substitutionarray['__PERSONALIZED__'] = '';
+	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
-	// Add specific substitution for contracts
-	if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
-	{
-		$datenextexpiration = '';
-		foreach ($object->lines as $line)
-		{
-			if ($line->statut != 4)
-				continue;
-				if ($line->date_fin_prevue > $datenextexpiration)
-					$datenextexpiration = $line->date_fin_prevue;
-		}
-		$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
-		$substitutionarray['__CONTRACT_NEXT_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
-	}
-
-	// Choose one contact for the __CONTACTCIVNAME__ TODO Really not reliable.
-	/*
-	$custcontact = '';
-	$contactarr = array();
-	$contactarr = $object->liste_contact(-1, 'external');
-	if (is_array($contactarr) && count($contactarr) > 0)
-	{
-	foreach ($contactarr as $contact)
-	{
-	if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
-	$contactstatic = new Contact($db);
-	$contactstatic->fetch($contact ['id']);
-	$custcontact = $contactstatic->getFullName($langs, 1);
-	}
-	}
-
-	if (! empty($custcontact)) {
-	$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-	}
-	}*/
 
 	$parameters = array(
 		'mode' => 'formemail'

@@ -27,8 +27,8 @@
 //if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
 //if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
+//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
+//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 //if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
 //if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
 //if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
@@ -270,12 +270,32 @@ if ($action == 'create')
 	foreach($object->fields as $key => $val)
 	{
 	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
-    	print '<tr id="field_'.$key.'"><td';
+    	print '<tr id="field_'.$key.'">';
+    	print '<td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull'] > 0) print ' fieldrequired';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+		if ($val['type'] == 'text') print ' tdtop';
+		print '"';
+    	print '>';
+    	print $langs->trans($val['label']);
+    	print '</td>';
+    	print '<td>';
+    	if ($val['type'] == 'text')
+    	{
+    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+    		print GETPOST($key,'none');
+    		print '</textarea>';
+    	}
+	    elseif (is_array($val['arrayofkeyval']))
+   		{
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
+    	}
+    	else
+    	{
+    		$cssforinput = 'minwidth100';
+    		print '<input class="flat" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    	}
+    	print '</td>';
     	print '</tr>';
 	}
 	print '</table>'."\n";
@@ -292,7 +312,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("MyModule"));
+	print load_fiche_titre($langs->trans("MyObject"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -308,9 +328,26 @@ if (($id || $ref) && $action == 'edit')
     	print '<tr><td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull'] > 0) print ' fieldrequired';
+		if ($val['type'] == 'text') print ' tdtop';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '<td>';
+	    if ($val['type'] == 'text')
+    	{
+    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+    		print GETPOST($key,'none');
+    		print '</textarea>';
+    	}
+	    elseif (is_array($val['arrayofkeyval']))
+   		{
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
+    	}
+    	else
+    	{
+    		$cssforinput = 'minwidth100';
+    		print '<input class="flat" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    	}
+    	print '</td>';
     	print '</tr>';
 	}
 	print '</table>';
@@ -323,6 +360,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</form>';
 }
+
 
 
 
@@ -509,10 +547,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+	    $MAXEVENT = 10;
+
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1);
+	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1, '', $MAXEVENT);
 
 	    print '</div></div></div>';
 	}

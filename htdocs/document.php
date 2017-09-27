@@ -25,7 +25,7 @@
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
  *  \remarks    Call of this wrapper is made with URL:
- * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
+ * 				document.php?modulepart=repfichierconcerne&file=relativepathoffile
  * 				document.php?modulepart=logs&file=dolibarr.log
  */
 
@@ -59,23 +59,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $encoding = '';
 $action=GETPOST('action','alpha');
-$original_file=GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
+$original_file=GETPOST('file','alpha');		// Do not use urldecode here ($_GET are already decoded by PHP).
+$hashp=GETPOST('hashp','aZ09');
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST('urlsource','alpha');
 $entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
-if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+if (empty($modulepart)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
+if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
 // For some module part, dir may be privates
-if (in_array($modulepart,array('facture_paiement','unpaid')))
+if (in_array($modulepart, array('facture_paiement','unpaid')))
 {
 	if (! $user->rights->societe->client->voir || $socid) $original_file='private/'.$user->id.'/'.$original_file;	// If user has no permission to see all, output dir is specific to user
 }
+
 
 /*
  * Action
@@ -98,6 +101,33 @@ $attachment = true;
 if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
 if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+
+// If we have a hash public (hashp), we guess the original_file.
+if (! empty($hashp))
+{
+	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	$ecmfile=new EcmFiles($db);
+	$result = $ecmfile->fetch(0, '', '', '', $hashp);
+	if ($result > 0)
+	{
+		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepatch is relative to document directory
+		$moduleparttocheck = $tmp[0];
+		if ($moduleparttocheck == $modulepart)
+		{
+			$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
+			//var_dump($original_file); exit;
+		}
+		else
+		{
+			accessforbidden('Bad link. File owns to another module part.',0,0,1);
+		}
+	}
+	else
+	{
+		accessforbidden('Bad link. File was not found or sharing attribute removed recently.',0,0,1);
+	}
+}
+
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);

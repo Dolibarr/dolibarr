@@ -104,7 +104,7 @@ if (! $error && $massaction == 'confirm_presend')
     	if (empty($receiver) || $receiver == '-1') $receiver=array();
     	else $receiver=array($receiver);
     }
-    if (count($receiver) == 0 && count($listofobjectthirdparties) == 1)	// if only one recipient, receiver is mandatory
+    if (! trim($_POST['sendto']) && count($receiver) == 0 && count($listofobjectthirdparties) == 1)	// if only one recipient, receiver is mandatory
     {
      	$error++;
        	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
@@ -147,11 +147,11 @@ if (! $error && $massaction == 'confirm_presend')
             	foreach($receiver as $key=>$val)
             	{
             		// Recipient was provided from combo list
-            		if ($val == 'thirdparty') // Id of third party
+            		if ($val == 'thirdparty') // Id of third party or user
             		{
             			$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
             		}
-            		elseif ($val)	// Id du contact
+            		elseif ($val && method_exists($thirdparty, 'contact_get_property'))		// Id of contact
             		{
             			$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
             			$sendtoid[] = $val;
@@ -322,114 +322,129 @@ if (! $error && $massaction == 'confirm_presend')
                 if ($objectclass == 'CommandeFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO);
                 if ($objectclass == 'FactureFournisseur')	$sendtocc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO);
 
-                $objecttmp=new $objectclass($db);
-                $objecttmp->thirdparty = $thirdparty;
-
-                // Make substitution in email content
-                $substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
-                $substitutionarray['__ID__'] = join(', ',array_keys($listofqualifiedid));
-                $substitutionarray['__EMAIL__'] = $thirdparty->email;
-                $substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
-                $substitutionarray['__REF__'] = join(', ',$listofqualifiedref);
-
-                $parameters=array('mode'=>'formemail');
-                complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
-
-                $subject=make_substitutions($subject, $substitutionarray);
-                $message=make_substitutions($message, $substitutionarray);
-
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
-
-                //var_dump($filepath);
-
-                // Send mail (substitutionarray must be done just before this)
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
-                if ($mailfile->error)
+                // $listofqualifiedid is array with key = object id of qualified objects for the current thirdparty
+                $oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
+                $looparray=array();
+                if (! $oneemailperrecipient)
                 {
-                    $resaction.='<div class="error">'.$mailfile->error.'</div>';
+                	$looparray = $listofqualifiedid;
                 }
                 else
                 {
-                    $result=$mailfile->sendfile();
-                    if ($result)
-                    {
-                        $resaction.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2)).'<br>';		// Must not contain "
-
-                        $error=0;
-
-                        // Insert logs into agenda
-                        foreach($listofqualifiedid as $objid => $object)
-                        {
-                            /*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
-                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
-                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
-                            if ($objectclass == 'Supplier_Proposal') $actiontypecode='AC_SUP_PRO';
-                            if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
-                            if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
-
-                            $actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-                            if ($message)
-                            {
-                                if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-                                $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-                                $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-                                $actionmsg = dol_concatdesc($actionmsg, $message);
-                            }
-                            $actionmsg2='';
-
-                            // Initialisation donnees
-                            $object->sendtoid		= 0;
-                            $object->actionmsg		= $actionmsg;  // Long text
-                            $object->actionmsg2		= $actionmsg2; // Short text
-                            $object->fk_element		= $objid;
-                            $object->elementtype	= $object->element;
-
-                            $triggername = strtoupper(get_class($object)) .'_SENTBYMAIL';
-                            if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
-                            if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
-                            if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
-                            if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYEMAIL';
-                            if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
-                            if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
-                            if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
-                            if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
-
-                            if (! empty($trigger_name))
-                            {
-	                            // Appel des triggers
-	                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-	                            $interface=new Interfaces($db);
-	                            $result=$interface->run_triggers($trigger_name, $object, $user, $langs, $conf);
-	                            if ($result < 0) { $error++; $errors=$interface->errors; }
-	                            // Fin appel triggers
-
-	                            if ($error)
-	                            {
-	                                setEventMessages($db->lasterror(), $errors, 'errors');
-	                                dol_syslog("Error in trigger ".$trigger_name.' '.$db->lasterror(), LOG_ERR);
-	                            }
-                            }
-
-                            $nbsent++;
-                        }
-                    }
-                    else
-                    {
-                        $langs->load("other");
-                        if ($mailfile->error)
-                        {
-                            $resaction.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-                            $resaction.='<br><div class="error">'.$mailfile->error.'</div>';
-                        }
-                        else
-                        {
-                            $resaction.='<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
-                        }
-                    }
+                	$objectforloop=new $objectclass($db);
+                	$objectforloop->thirdparty = $thirdparty;
+                	$looparray[0]=$objectforloop;
                 }
+                //var_dump($looparray);exit;
+
+				foreach ($looparray as $objecttmp)		// $objecttmp is a real object or an empty if we choose to send one email per thirdparty instead of per record
+				{
+	                // Make substitution in email content
+	                $substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
+	                $substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ',array_keys($listofqualifiedid)) : $objecttmp->id);
+	                $substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ',$listofqualifiedref) : $objecttmp->ref);
+	                $substitutionarray['__EMAIL__'] = $thirdparty->email;
+	                $substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+
+	                $parameters=array('mode'=>'formemail');
+	                complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
+
+	                $subject=make_substitutions($subject, $substitutionarray);
+	                $message=make_substitutions($message, $substitutionarray);
+
+	                $filepath = $attachedfiles['paths'];
+	                $filename = $attachedfiles['names'];
+	                $mimetype = $attachedfiles['mimes'];
+
+	                //var_dump($filepath);
+
+	                // Send mail (substitutionarray must be done just before this)
+	                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+	                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
+	                if ($mailfile->error)
+	                {
+	                    $resaction.='<div class="error">'.$mailfile->error.'</div>';
+	                }
+	                else
+	                {
+	                    $result=$mailfile->sendfile();
+	                    if ($result)
+	                    {
+	                        $resaction.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2)).'<br>';		// Must not contain "
+
+	                        $error=0;
+
+	                        // Insert logs into agenda
+	                        foreach($listofqualifiedid as $objid => $object)
+	                        {
+	                            /*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
+	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
+	                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
+	                            if ($objectclass == 'Supplier_Proposal') $actiontypecode='AC_SUP_PRO';
+	                            if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
+	                            if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
+
+	                            $actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+	                            if ($message)
+	                            {
+	                                if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+	                                $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+	                                $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+	                                $actionmsg = dol_concatdesc($actionmsg, $message);
+	                            }
+	                            $actionmsg2='';
+
+	                            // Initialisation donnees
+	                            $object->sendtoid		= 0;
+	                            $object->actionmsg		= $actionmsg;  // Long text
+	                            $object->actionmsg2		= $actionmsg2; // Short text
+	                            $object->fk_element		= $objid;
+	                            $object->elementtype	= $object->element;
+
+	                            $triggername = strtoupper(get_class($object)) .'_SENTBYMAIL';
+	                            if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
+	                            if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
+	                            if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
+	                            if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYEMAIL';
+	                            if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
+	                            if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
+	                            if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
+	                            if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
+
+	                            if (! empty($trigger_name))
+	                            {
+		                            // Appel des triggers
+		                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+		                            $interface=new Interfaces($db);
+		                            $result=$interface->run_triggers($trigger_name, $object, $user, $langs, $conf);
+		                            if ($result < 0) { $error++; $errors=$interface->errors; }
+		                            // Fin appel triggers
+
+		                            if ($error)
+		                            {
+		                                setEventMessages($db->lasterror(), $errors, 'errors');
+		                                dol_syslog("Error in trigger ".$trigger_name.' '.$db->lasterror(), LOG_ERR);
+		                            }
+	                            }
+
+	                            $nbsent++;
+	                        }
+	                    }
+	                    else
+	                    {
+	                        $langs->load("other");
+	                        if ($mailfile->error)
+	                        {
+	                            $resaction.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+	                            $resaction.='<br><div class="error">'.$mailfile->error.'</div>';
+	                        }
+	                        else
+	                        {
+	                            $resaction.='<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
+	                        }
+	                    }
+	                }
+				}
             }
         }
 
@@ -525,7 +540,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		$filename=preg_replace('/\s/','_',$filename);
 
 		// Save merged file
-		if ($filter=='paye:0')
+	    if (in_array($object->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
 		{
 			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
@@ -597,7 +612,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    $filename=preg_replace('/\s/','_',$filename);
 
 	    // Save merged file
-	    if ($filter=='paye:0')
+	    if (in_array($object->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
 	    {
 			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));

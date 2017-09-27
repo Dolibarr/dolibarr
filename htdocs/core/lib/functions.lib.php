@@ -129,7 +129,7 @@ function getEntity($element, $shared=1)
 	else
 	{
 		$out='';
-		$addzero = array('user', 'usergroup', 'email_template', 'default_values');
+		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out.= '0,';
 		$out.= $conf->entity;
 		return $out;
@@ -599,11 +599,12 @@ function dol_include_once($relpath, $classname='')
 /**
  *	Return path of url or filesystem. Return alternate root if exists.
  *
- * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
- *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
- *  @return string				Full filesystem path (if mode=0), Full url path (if mode=1)
+ * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
+ *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
+ *  @param	int		$returnemptyifnotfound		If path==0 and if file was not found, do not return default path but an empty string
+ *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
  */
-function dol_buildpath($path, $type=0)
+function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 {
 	global $conf;
 
@@ -611,15 +612,19 @@ function dol_buildpath($path, $type=0)
 
 	if (empty($type))	// For a filesystem path
 	{
-		$res = DOL_DOCUMENT_ROOT.'/'.$path;	// Standard value
+		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
 			if ($key == 'main') continue;
 			if (file_exists($dirroot.'/'.$path))
 			{
 				$res=$dirroot.'/'.$path;
-				break;
+				return $res;
 			}
+		}
+		if ($returnemptyifnotfound)										// Not found, we return empty string
+		{
+			return '';
 		}
 	}
 	else				// For an url path
@@ -1011,11 +1016,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
+ *  @param	string	$morehtmlright		Add more html content on right of tabs title
  * 	@return	void
  */
-function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright);
 }
 
 /**
@@ -1027,13 +1033,16 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
+ *  @param	string	$morehtmlright		Add more html content on right of tabs title
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0)
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
 {
 	global $conf, $langs, $hookmanager;
 
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+
+	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
 
 	// Show title
 	$showtitle=1;
@@ -1054,6 +1063,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 		$keys=array_keys($links);
 		if (count($keys)) $maxkey=max($keys);
 	}
+
+	//$conf->global->MAIN_MAXTABS_IN_CARD=3;
 
 	// Show tabs
 	$bactive=false;
@@ -1142,7 +1153,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	{
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="#" data-role="button" class="tab moretab inline-block">'.$langs->trans("More").'... ('.$nbintab.')</a>';
+		$out.='<a href="#" data-role="button" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
 		$out.="</div>\n";
 
@@ -3780,7 +3791,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
 	else
 	{
-		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		// TODO Split on / and output with a price2num to have clean numbers without ton of 000.
 		$ret=$rate.($addpercent?'%':'');
 	}
 	if ($info_bits & 1) $ret.=' *';
@@ -5208,9 +5219,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
     if (empty($exclude) || ! in_array('system', $exclude))
     {
-    	$substitutionarray=array_merge($substitutionarray, array(
-    		'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT
-    	));
+    	$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationKey');
+    	$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
     }
     if (empty($exclude) || ! in_array('mycompany', $exclude))
     {
@@ -5227,46 +5237,118 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
         ));
     }
-    if (is_object($object) && (empty($exclude) || ! in_array('object', $exclude)))
+    if (($onlykey || is_object($object)) && (empty($exclude) || ! in_array('object', $exclude)))
     {
-	    $substitutionarray['__ID__'] = $object->id;
-    	$substitutionarray['__REF__'] = $object->ref;
-    	$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
-    	$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
-
-    	if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
+    	if ($onlykey)
     	{
-    		$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
-    		$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+		    $substitutionarray['__ID__'] = '__ID__';
+	    	$substitutionarray['__REF__'] = '__REF__';
+	    	$substitutionarray['__REFCLIENT__'] = '__REFCLIENT__';
+	    	$substitutionarray['__REFSUPPLIER__'] = '__REFSUPPLIER__';
+	    	$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
+
+    		$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
+    		$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+
+    		$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
+    		$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
+    		$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+
+    		$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
+    		$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
+    		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_REF__';
+
+			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
+			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
+    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
+    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
+
+    		$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
+    		$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
+    		$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
+    		$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
+    		$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
+    		$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
     	}
-
-    	if (is_object($object->projet) && $object->projet->id > 0)
+    	else
     	{
-    		$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
-    		$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
-    	}
+		    $substitutionarray['__ID__'] = $object->id;
+	    	$substitutionarray['__REF__'] = $object->ref;
+	    	$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
+	    	$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-    	// Create dynamic tags for __EXTRAFIELD_FIELD__
-    	if ($object->table_element && $object->id > 0)
-    	{
-	    	$extrafieldstmp = new ExtraFields($db);
-	    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-	    	$object->fetch_optionals($object->id, $extralabels);
-	    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
-	    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+	    	// TODO USe this ?
+	    	$msgishtml = 0;
+
+	    	$birthday = dol_print_date($object->birth,'day');
+
+	    	if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
+	    	$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
+	    	$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
+	    	if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($outputlangs)):$object->getFullName($outputlangs);
+	    	$substitutionarray['__MEMBER_COMPANY__']=$msgishtml?dol_htmlentitiesbr($object->societe):$object->societe;
+	    	$substitutionarray['__MEMBER_ADDRESS__']=$msgishtml?dol_htmlentitiesbr($object->address):$object->address;
+	    	$substitutionarray['__MEMBER_ZIP__']=$msgishtml?dol_htmlentitiesbr($object->zip):$object->zip;
+	    	$substitutionarray['__MEMBER_TOWN__']=$msgishtml?dol_htmlentitiesbr($object->town):$object->town;
+	    	$substitutionarray['__MEMBER_COUNTRY__']=$msgishtml?dol_htmlentitiesbr($object->country):$object->country;
+	    	$substitutionarray['__MEMBER_EMAIL__']=$msgishtml?dol_htmlentitiesbr($object->email):$object->email;
+	    	$substitutionarray['__MEMBER_BIRTH__']=$msgishtml?dol_htmlentitiesbr($birthday):$birthday;
+	    	$substitutionarray['__MEMBER_PHOTO__']=$msgishtml?dol_htmlentitiesbr($object->photo):$object->photo;
+	    	$substitutionarray['__MEMBER_LOGIN__']=$msgishtml?dol_htmlentitiesbr($object->login):$object->login;
+	    	$substitutionarray['__MEMBER_PASSWORD__']=$msgishtml?dol_htmlentitiesbr($object->pass):$object->pass;
+	    	$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
+	    	$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
+	    	$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
+
+	    	if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
+	    	{
+	    		$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
+	    		$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
 	    	}
-    	}
 
-    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
+	    	if (is_object($object->projet) && $object->projet->id > 0)
+	    	{
+	    		$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
+	    		$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+	    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+	    	}
+
+	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
+	    	if ($object->table_element && $object->id > 0)
+	    	{
+		    	$extrafieldstmp = new ExtraFields($db);
+		    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+		    	$object->fetch_optionals($object->id, $extralabels);
+		    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
+		    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+		    	}
+	    	}
+
+	    	if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
+	    	{
+	    		$dateplannedstart='';
+	    		$datenextexpiration='';
+	    		foreach($object->lines as $line)
+	    		{
+	    			if ($line->date_ouverture_prevue > $dateplannedstart) $dateplannedstart = $line->date_ouverture_prevue;
+	    			if ($line->statut == 4 && $line->date_fin_prevue && (! $datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) $datenextexpiration = $line->date_fin_prevue;
+	    		}
+	    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
+	    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
+	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
+	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+	    	}
+
+	    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
+    	}
     }
     if (empty($exclude) || ! in_array('objectamount', $exclude))
     {
-		$substitutionarray['__DATE_YMD__'] = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
-		$substitutionarray['__DATE_DUE_YMD__'] = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
-    	$substitutionarray['__AMOUNT__']       = is_object($object)?$object->total_ttc:'';
-        $substitutionarray['__AMOUNT_WO_TAX__']= is_object($object)?$object->total_ht:'';
-        $substitutionarray['__AMOUNT_VAT__']   = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+		$substitutionarray['__DATE_YMD__']        = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
+		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
+    	$substitutionarray['__AMOUNT__']          = is_object($object)?$object->total_ttc:'';
+		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object)?$object->total_ht:'';
+        $substitutionarray['__AMOUNT_VAT__']      = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
         // For backward compatibility
         if ($onlykey != 2)
         {
@@ -5280,41 +5362,35 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        if (! empty($onlykey))
-        {
-            $tmp=$tmp2=$tmp3=$tmp4=$tmp5=array();
-        }
-        else
-        {
-            $tmp=dol_getdate(dol_now(), true);
-            $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-            $tmp3=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']);
-            $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-            $tmp5=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']);
-        }
+        $tmp=dol_getdate(dol_now(), true);
+        $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+        $tmp3=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+        $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+        $tmp5=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+
         $substitutionarray=array_merge($substitutionarray, array(
-            '__DAY__' => $tmp['mday'],
-            '__MONTH__' => $tmp['mon'],
-            '__YEAR__' => $tmp['year'],
-            '__PREVIOUS_DAY__' => $tmp2['day'],
-            '__PREVIOUS_MONTH__' => $tmp3['month'],
-            '__PREVIOUS_YEAR__' => ($tmp['year'] - 1),
-            '__NEXT_DAY__' => $tmp4['day'],
-            '__NEXT_MONTH__' => $tmp5['month'],
-            '__NEXT_YEAR__' => ($tmp['year'] + 1),
+            '__DAY__' => (string) $tmp['mday'],
+            '__MONTH__' => (string) $tmp['mon'],
+            '__YEAR__' => (string) $tmp['year'],
+            '__PREVIOUS_DAY__' => (string) $tmp2['day'],
+            '__PREVIOUS_MONTH__' => (string) $tmp3['month'],
+            '__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
+            '__NEXT_DAY__' => (string) $tmp4['day'],
+            '__NEXT_MONTH__' => (string) $tmp5['month'],
+            '__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
         ));
     }
 
     if (empty($exclude) || ! in_array('user', $exclude))
     {
         $substitutionarray=array_merge($substitutionarray, array(
-            '__USER_ID__' => $user->id,
-            '__USER_LOGIN__' => $user->login,
-            '__USER_LASTNAME__' => $user->lastname,
-            '__USER_FIRSTNAME__' => $user->firstname,
-            '__USER_FULLNAME__' => $user->getFullName($outputlangs),
-            '__USER_SUPERVISOR_ID__' => $user->fk_user,
-        	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
+            '__USER_ID__' => (string) $user->id,
+            '__USER_LOGIN__' => (string) $user->login,
+            '__USER_LASTNAME__' => (string) $user->lastname,
+            '__USER_FIRSTNAME__' => (string) $user->firstname,
+            '__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+            '__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
+        	'__SIGNATURE__' => (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
         ));
     }
     if (! empty($conf->multicompany->enabled))
@@ -5369,8 +5445,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 }
 
 /**
- *  Complete the $substitutionarray with more entries.
- *  Can also add substitution keys coming from external module that had set the "substitutions=1" into module_part array. In this case, method completesubstitutionarray provided by module is called.
+ *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
+ *  In this case, method completesubstitutionarray provided by module is called.
  *
  *  @param  array		$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            Output language
@@ -5386,13 +5462,8 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	// Add a substitution key for each object property
-	if (is_object($object))
-	{
-		// TODO
-	}
-
 	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
+	// TODO Remove this. Already available into the getCommonSubstitutionArray used to build the substitution array.
 	if (is_object($object) && is_array($object->array_options))
 	{
 		foreach($object->array_options as $key => $val)

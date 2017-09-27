@@ -275,11 +275,11 @@ if ($action == 'add')
     }
     else
     {
-	    $objectpage->title = GETPOST('WEBSITE_TITLE');
-	    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-	    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-	    $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
-	    $objectpage->lang = GETPOST('WEBSITE_LANG');
+	    $objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
+	    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
+	    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
+	    $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
+	    $objectpage->lang = GETPOST('WEBSITE_LANG','alpha');
     }
 
     if (! $error)
@@ -392,7 +392,7 @@ if ($action == 'updatecss')
 	    // $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
 	    $htmlheadercontent.= "// END PHP ?>\n";*/
 
-	    $htmlheadercontent.= preg_replace(array('/<html>\n*/ims','/<\/html>\n*/ims'),array('',''),GETPOST('WEBSITE_HTML_HEADER'));
+	    $htmlheadercontent.= preg_replace(array('/<html>\n*/ims','/<\/html>\n*/ims'),array('',''),GETPOST('WEBSITE_HTML_HEADER', 'none'));
 
 	    /*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
 	    $htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
@@ -425,7 +425,7 @@ if ($action == 'updatecss')
 	    $csscontent.= "header('Content-type: text/css');\n";
 	    $csscontent.= "// END PHP ?>\n";
 
-	    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
+	    $csscontent.= GETPOST('WEBSITE_CSS_INLINE', 'none');
 
 	    $csscontent.= "\n".'<?php // BEGIN PHP'."\n";
 	    $csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
@@ -457,7 +457,7 @@ if ($action == 'updatecss')
 	    $robotcontent.= "header('Content-type: text/css');\n";
 	    $robotcontent.= "// END PHP ?>\n";*/
 
-	    $robotcontent.= GETPOST('WEBSITE_ROBOT');
+	    $robotcontent.= GETPOST('WEBSITE_ROBOT', 'none');
 
 	    /*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
 	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
@@ -489,7 +489,7 @@ if ($action == 'updatecss')
     	 $robotcontent.= "header('Content-type: text/css');\n";
     	 $robotcontent.= "// END PHP ?>\n";*/
 
-    	$htaccesscontent.= GETPOST('WEBSITE_HTACCESS');
+    	$htaccesscontent.= GETPOST('WEBSITE_HTACCESS', 'none');
 
     	/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
     	 $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
@@ -587,11 +587,11 @@ if ($action == 'updatemeta')
     {
         $objectpage->old_object = clone $objectpage;
 
-        $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-        $objectpage->title = GETPOST('WEBSITE_TITLE');
-        $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-        $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
-        $objectpage->lang = GETPOST('WEBSITE_LANG');
+        $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
+        $objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
+        $objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
+        $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
+        $objectpage->lang = GETPOST('WEBSITE_LANG', 'alpha');
 
         $res = $objectpage->update($user);
         if (! $res > 0)
