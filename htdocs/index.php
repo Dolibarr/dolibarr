@@ -373,218 +373,135 @@ require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
-    include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-    $board=new ActionComm($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_board($user, 1);
-    	$wb_res->nbtotal = (int)$board->nb['actionscomm'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+	$board=new ActionComm($db);
+	
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of project opened
 if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    $board=new Project($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['projects'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	$board=new Project($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of tasks to do (late)
 if (! empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-    $board=new Task($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['tasks'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+	$board=new Task($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of commercial proposals opened (expired)
 if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-    $board=new Propal($db);
-    $wb_res = $board->load_board($user,"opened");
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$nbtotal = (int)$board->nb['proposals'];
-    	$wb_res->nbtotal = $nbtotal;
-    }
-    $dashboardlines[] = $wb_res;
-    // Number of commercial proposals CLOSED signed (billed)
-    $wb_res = $board->load_board($user,"signed");
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $wb_res->nbtotal = $nbtotal;
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$board=new Propal($db);
+	$dashboardlines[] = $board->load_board($user,"opened");
+	// Number of commercial proposals CLOSED signed (billed)
+	$dashboardlines[] = $board->load_board($user,"signed");
 }
 
 // Number of commercial proposals opened (expired)
 if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-    $board=new SupplierProposal($db);
-    $wb_res = $board->load_board($user,"opened");
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$nbtotal = (int)$board->nb['askprice'];
-    	$wb_res->nbtotal = $nbtotal;
-    }
-    $dashboardlines[] = $wb_res;
-    // Number of commercial proposals CLOSED signed (billed)
-    $wb_res = $board->load_board($user,"signed");
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $wb_res->nbtotal = $nbtotal;
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+	$board=new SupplierProposal($db);
+	$dashboardlines[] = $board->load_board($user,"opened");
+	// Number of commercial proposals CLOSED signed (billed)
+	$dashboardlines[] = $board->load_board($user,"signed");
 }
 
 // Number of customer orders a deal
 if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-    $board=new Commande($db);
-	$wb_res = $board->load_board($user);
-	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-		$board->load_state_board();
-		$wb_res->nbtotal = (int)$board->nb['orders'];
-	}
-	$dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+	$board=new Commande($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of suppliers orders a deal
 if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-    $board=new CommandeFournisseur($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['supplier_orders'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+	$board=new CommandeFournisseur($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of services enabled (delayed)
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-    $board=new Contrat($db);
-    $wb_res = $board->load_board($user,"inactives");
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$nbtotal = (int)$board->nb['Contracts'];
-    	$wb_res->nbtotal = $nbtotal;
-    }
-    $dashboardlines[] = $wb_res;
-    // Number of active services (expired)
-    $wb_res = $board->load_board($user,"expired");
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $wb_res->nbtotal = $nbtotal;
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+	$board=new Contrat($db);
+	$dashboardlines[] = $board->load_board($user,"inactives");
+	// Number of active services (expired)
+	$dashboardlines[] = $board->load_board($user,"expired");
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-    include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-    $board=new Facture($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['invoices'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$board=new Facture($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of supplier invoices (has paid)
 if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fournisseur->facture->lire))
 {
-    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-    $board=new FactureFournisseur($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['supplier_invoices'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	$board=new FactureFournisseur($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of transactions to conciliate
 if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
 {
-    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-    $board=new Account($db);
-    $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
-    if ($nb > 0)
-    {
-    	$wb_res = $board->load_board($user);
-    	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    		$board->load_state_board();
-    		$wb_res->nbtotal = (int)$board->nb['banklines'];
-    	}
-    	$dashboardlines[] = $wb_res;
-    }
+	include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	$board=new Account($db);
+	$nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
+	if ($nb > 0)
+	{
+		$dashboardlines[] = $board->load_board($user);
+	}
 }
 
 // Number of cheque to send
 if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT))
 {
-    include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
-    $board=new RemiseCheque($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['cheques'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+	$board=new RemiseCheque($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of foundation members
 if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $user->societe_id)
 {
-    include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-    $board=new Adherent($db);
-    $wb_res = $board->load_board($user);
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['members'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	$board=new Adherent($db);
+	$dashboardlines[] = $board->load_board($user);
 }
 
 // Number of expense reports to approve
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->approve)
 {
-    include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-    $board=new ExpenseReport($db);
-    $wb_res = $board->load_board($user,'toapprove');
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['expensereports'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+	$board=new ExpenseReport($db);
+	$dashboardlines[] = $board->load_board($user,'toapprove');
 }
 
 // Number of expense reports to pay
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid)
 {
-    include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-    $board=new ExpenseReport($db);
-    $wb_res = $board->load_board($user,'topay');
-    if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
-    	$wb_res->nbtotal = (int)$board->nb['expensereports'];
-    }
-    $dashboardlines[] = $wb_res;
+	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+	$board=new ExpenseReport($db);
+	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
 // Calculate total nb of late
-$totallate=$totalglobal=0;
+$totallate=$totaltodo=0;
 $var=true;
 
 //Remove any invalid response
@@ -599,12 +516,12 @@ foreach($dashboardlines as $tmp)
 foreach($valid_dashboardlines as $board)
 {
     if ($board->nbtodolate > 0) {
-    	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totalglobal += $board->nbtotal;
+    	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totaltodo += $board->nbtodo;
 	    $totallate += $board->nbtodolate;
     }
 }
-//var_dump($totallate, $totalglobal);
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallate / $totalglobal * 100;
+//var_dump($totallate, $totaltodo);
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($totallate / $totaltodo * 100, 2);
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
@@ -618,7 +535,7 @@ if ($showweather)
     $boxwork.='<tr class="nohover">';
     $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
     $text='';
-    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
+    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
     $text.='. '.$langs->trans("LateDesc");
     //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
