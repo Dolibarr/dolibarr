@@ -561,6 +561,7 @@ if (empty($reshook))
 	        	if (!$res) dol_print_error($db);
 		}
 		
+		$productsupplier = new ProductFournisseur($db);
 		if ($productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
 		{
 			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
