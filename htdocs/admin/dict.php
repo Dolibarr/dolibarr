@@ -182,8 +182,8 @@ $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as 
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10]= "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = " . getEntity($tabname[12], 2);
-$tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = " . getEntity($tabname[13], 2);
+$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = " . getEntity($tabname[12]);
+$tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = " . getEntity($tabname[13]);
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
@@ -734,7 +734,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($value == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id], 2);
+            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
             }
             if ($i) $sql.=",";
             if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
@@ -786,7 +786,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($field == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id], 2);
+            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
             }
             if ($i) $sql.=",";
             $sql.= $field."=";
@@ -799,7 +799,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
-        $sql.= " AND entity = '".getEntity($tabname[$id], 2)."'";
+        $sql.= " AND entity = '".getEntity($tabname[$id])."'";
 
         dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
@@ -1031,7 +1031,7 @@ if ($id)
         foreach ($fieldlist as $field => $value)
         {
         	if ($fieldlist[$field] == 'entity') {
-        		$withentity = getEntity($tabname[$id], 2);
+        		$withentity = getEntity($tabname[$id]);
         		continue;
         	}
 
