@@ -279,11 +279,12 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->fetchObjectLinked();
 
+			//$result=$this->fetch_lines();
             $this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
             $sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
-            $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
+            $sql.= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
             $sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
             $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
 	        $sql.= " l.fk_unit,";
@@ -315,6 +316,8 @@ class CommandeFournisseur extends CommonOrder
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
+                    $line->localtax1_type	   = $objp->localtax1_type;
+                    $line->localtax2_type	   = $objp->localtax2_type;
                     $line->subprice            = $objp->subprice;
                     $line->pu_ht	           = $objp->subprice;
                     $line->remise_percent      = $objp->remise_percent;
@@ -2977,7 +2980,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public function fetch($rowid)
     {
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
-        $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.ref,';
+        $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref,';
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
@@ -3003,6 +3006,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->tva_tx           = $objp->tva_tx;
             $this->localtax1_tx		= $objp->localtax1_tx;
             $this->localtax2_tx		= $objp->localtax2_tx;
+            $this->localtax1_type	= $objp->localtax1_type;
+            $this->localtax2_type	= $objp->localtax2_type;
             $this->remise           = $objp->remise;
             $this->remise_percent   = $objp->remise_percent;
             $this->fk_product       = $objp->fk_product;

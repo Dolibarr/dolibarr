@@ -41,6 +41,11 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax1_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0';
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax2_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0';
+
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SENTBYMAIL','Mails sent from member card','Executed when you send email from member card','member',23);
 

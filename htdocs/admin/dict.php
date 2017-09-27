@@ -621,7 +621,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
-        if ((! isset($_POST[$value]) || $_POST[$value]=='')
+		if ($value == 'sortorder') continue;		// For a column name 'sortorder', we use the field name 'position'
+		if ((! isset($_POST[$value]) || $_POST[$value]=='')
         	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy'))  // Fields that are not mandatory
         	&& (! ($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
         	)
@@ -736,7 +737,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id], 2);
             }
             if ($i) $sql.=",";
-            if ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
+            if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
+            {
+            	$sql.="'".(int) $db->escape($_POST['position'])."'";
+            }
+            elseif ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
             $i++;
         }
@@ -785,7 +790,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             }
             if ($i) $sql.=",";
             $sql.= $field."=";
-            if ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
+            if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
+            {
+            	$sql.="'".(int) $db->escape($_POST['position'])."'";
+            }
+            elseif ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
             $i++;
         }
@@ -1938,6 +1947,8 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		}
 		else
 		{
+			if ($fieldlist[$field]=='sortorder') $fieldlist[$field]='position';
+
 			$classtd=''; $class='';
 			if ($fieldlist[$field]=='code') $classtd='width100';
 			if ($fieldlist[$field]=='affect') $class='maxwidth50';

@@ -540,7 +540,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		$filename=preg_replace('/\s/','_',$filename);
 
 		// Save merged file
-		if ($filter=='paye:0')
+	    if (in_array($object->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
 		{
 			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
@@ -612,7 +612,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    $filename=preg_replace('/\s/','_',$filename);
 
 	    // Save merged file
-	    if ($filter=='paye:0')
+	    if (in_array($object->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
 	    {
 			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));

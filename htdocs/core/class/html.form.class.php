@@ -1256,6 +1256,7 @@ class Form
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	bool	$options_only	Return options only (for ajax treatment)
      *	@return	int						<0 if KO, Nb of contact in list if OK
+     *  @deprected						You can use selectcontacts directly (warning order of param was changed)
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false)
     {
@@ -1264,7 +1265,8 @@ class Form
     }
 
     /**
-     *	Return list of all contacts (for a third party or all)
+     *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
+     *  This also set the number of contacts found into $this->num
      *
      *	@param	int		$socid      	Id ot third party or 0 for all
      *	@param  string	$selected   	Id contact pre-selectionne
@@ -3306,21 +3308,22 @@ class Form
     /**
      *  Return a HTML select list of bank accounts
      *
-     *  @param	string	$selected          Id account pre-selected
-     *  @param  string	$htmlname          Name of select zone
-     *  @param  int		$statut            Status of searched accounts (0=open, 1=closed, 2=both)
-     *  @param  string	$filtre            To filter list
-     *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-     *  @param  string	$moreattrib        To add more attribute on select
+     *  @param	string	$selected           Id account pre-selected
+     *  @param  string	$htmlname           Name of select zone
+     *  @param  int		$statut             Status of searched accounts (0=open, 1=closed, 2=both)
+     *  @param  string	$filtre             To filter list
+     *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string	$moreattrib         To add more attribute on select
+     *  @param	int		$showcurrency		Show currency in label
      * 	@return	void
      */
-    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='')
+    function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='',$showcurrency=0)
     {
         global $langs, $conf;
 
         $langs->load("admin");
 
-        $sql = "SELECT rowid, label, bank, clos as status";
+        $sql = "SELECT rowid, label, bank, clos as status, currency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE entity IN (".getEntity('bank_account').")";
         if ($statut != 2) $sql.= " AND clos = '".$statut."'";
@@ -3353,6 +3356,7 @@ class Form
                         print '<option value="'.$obj->rowid.'">';
                     }
                     print trim($obj->label);
+                    if ($showcurrency) print ' ('.$obj->currency_code.')';
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;

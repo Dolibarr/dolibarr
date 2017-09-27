@@ -3794,7 +3794,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
 	else
 	{
-		// TODO Split on / and output with a price2num to have clean numbers with ton of 000.
+		// TODO Split on / and output with a price2num to have clean numbers without ton of 000.
 		$ret=$rate.($addpercent?'%':'');
 	}
 	if ($info_bits & 1) $ret.=' *';
@@ -5283,10 +5283,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    	// TODO USe this ?
 	    	$msgishtml = 0;
 
+	    	$birthday = dol_print_date($object->birth,'day');
+
 	    	if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
 	    	$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
 	    	$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
-	    	if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($langs)):$object->getFullName($langs);
+	    	if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($outputlangs)):$object->getFullName($outputlangs);
 	    	$substitutionarray['__MEMBER_COMPANY__']=$msgishtml?dol_htmlentitiesbr($object->societe):$object->societe;
 	    	$substitutionarray['__MEMBER_ADDRESS__']=$msgishtml?dol_htmlentitiesbr($object->address):$object->address;
 	    	$substitutionarray['__MEMBER_ZIP__']=$msgishtml?dol_htmlentitiesbr($object->zip):$object->zip;
