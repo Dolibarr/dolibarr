@@ -67,7 +67,6 @@ class Dictionary extends DolibarrApi
         $sql = "SELECT id, code, type, libelle as label, module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
         $sql.= " WHERE t.active = ".$active;
-        
         // Add sql filters
         if ($sqlfilters)
         {
@@ -454,5 +453,4 @@ class Dictionary extends DolibarrApi
         
         return $list;
     } 
-    
 }
