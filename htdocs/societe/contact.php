@@ -151,43 +151,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 else
 {
 
-        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
-        //if ($res < 0) { dol_print_error($db); exit; }
+    if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+    //if ($res < 0) { dol_print_error($db); exit; }
 
 
-        $head = societe_prepare_head($object);
+    $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
+    dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
 
-        // Confirm delete third party
-        if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
-        {
-            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
-        }
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	    if ($action == 'merge')
-	    {
-		    $formquestion = array(
-			    array(
-				    'name' => 'soc_origin',
-			    	'label' => $langs->trans('MergeOriginThirdparty'),
-				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
-			    )
-		    );
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
-	    }
+    dol_fiche_end();
 
-	    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
-
-
-        print '<div style="clear:both"></div>';
-
-        dol_fiche_end();
-
+	print '<br>';
 
 	if ($action != 'presend')
 	{
