@@ -52,6 +52,17 @@ function societe_prepare_head(Societe $object)
 	{
 	    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 		$nbContact = 0;	// TODO
+
+		$sql = "SELECT COUNT(p.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+		$sql .= " WHERE p.fk_soc = ".$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbContact = $obj->nb;
+		}
+
 	    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
 	    $head[$h][1] = $langs->trans('ContactsAddresses');
 	    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';

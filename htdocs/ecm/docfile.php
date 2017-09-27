@@ -117,9 +117,9 @@ if (! ($result >= 0))
 if ($cancel)
 {
     $action ='';
-    if ($backtourl)
+    if ($backtopage)
     {
-        header("Location: ".$backtourl);
+        header("Location: ".$backtopage);
         exit;
     }
     else
@@ -387,7 +387,7 @@ if ($action != 'edit')
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 
-        //print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtourl='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
+        //print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtopage='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
     }
 /*
 	if ($user->rights->ecm->setup)

@@ -396,6 +396,15 @@ if (empty($reshook))
                 $action = 'edit';
             }
         }
+
+        if (! $error && empty($errors))
+        {
+       		if (! empty($backtopage))
+       		{
+       			header("Location: ".$backtopage);
+       			exit;
+       		}
+        }
     }
 }
 
