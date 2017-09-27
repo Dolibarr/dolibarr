@@ -377,7 +377,7 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
     $board=new ActionComm($db);
     $wb_res = $board->load_board($user);
     if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-    	$board->load_state_board();
+    	$board->load_board($user, 1);
     	$wb_res->nbtotal = (int)$board->nb['actionscomm'];
     }
     $dashboardlines[] = $wb_res;
