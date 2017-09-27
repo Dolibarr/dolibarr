@@ -208,7 +208,7 @@ if ($id > 0 || ! empty($ref))
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
         if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
         {

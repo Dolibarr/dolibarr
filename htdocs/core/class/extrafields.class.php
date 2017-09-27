@@ -8,6 +8,7 @@
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -832,7 +833,7 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" " maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
