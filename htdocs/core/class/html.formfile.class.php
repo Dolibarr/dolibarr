@@ -57,21 +57,22 @@ class FormFile
     /**
      *  Show form to upload a new file
 	 *
-     *  @param  string	$url			Url
-     *  @param  string	$title			Title zone (Title or '' or 'none')
+     *  @param  string		$url			Url
+     *  @param  string		$title			Title zone (Title or '' or 'none')
      *  @param  int		$addcancel		1=Add 'Cancel' button
      *	@param	int		$sectionid		If upload must be done inside a particular ECM section
      * 	@param	int		$perm			Value of permission to allow upload
-     *  @param  int		$size           Length of input file area. Deprecated.
-     *  @param	Object	$object			Object to use (when attachment is done on an element)
-     *  @param	string	$options		Add an option column
-     *  @param	integer	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
-     *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
-     *  @param	integer	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
-     *  @param	string	$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
+     *  @param  int		$size          		Length of input file area. Deprecated.
+     *  @param	Object		$object			Object to use (when attachment is done on an element)
+     *  @param	string		$options		Add an option column
+     *  @param	integer		$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
+     *  @param	string		$savingdocmask		Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+     *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
+     *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
+     *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
      * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile')
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile', $accept='')
     {
         global $conf,$langs, $hookmanager;
         $hookmanager->initHooks(array('formfile'));
@@ -130,6 +131,7 @@ class FormFile
             $out .= '<input class="flat minwidth400" type="file"';
             $out .= ((! empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic')?' name="userfile"':' name="userfile[]" multiple');
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
+            $out .= (!empty($accept)?' accept="'.$accept.'"':'accept=""');
             $out .= '>';
             $out .= ' ';
             $out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
