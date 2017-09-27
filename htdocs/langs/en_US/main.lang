@@ -262,6 +262,7 @@ DateBuild=Report build date
 DatePayment=Date of payment
 DateApprove=Approving date
 DateApprove2=Approving date (second approval)
+RegistrationDate=Registration date
 UserCreation=Creation user
 UserModification=Modification user
 UserCreationShort=Creat. user
