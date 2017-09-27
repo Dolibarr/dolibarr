@@ -450,7 +450,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$sqltemp = 'SELECT c.type_cdr,c.nbjour,c.decalage';
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
-		$sqltemp.= " WHERE c.entity = " . getEntity('c_payment_term', 2);
+		$sqltemp.= " WHERE c.entity = " . getEntity('c_payment_term');
 		if (is_numeric($cond_reglement)) $sqltemp.= " AND c.rowid=".$cond_reglement;
 		else $sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
 

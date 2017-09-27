@@ -102,7 +102,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= "decalage";
         $sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
-		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term', 2):"'".$this->db->escape($this->entity)."'").",";
+		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term'):"'".$this->db->escape($this->entity)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->db->escape($this->sortorder)."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
@@ -181,7 +181,7 @@ class PaymentTerm // extends CommonObject
 
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.rowid = ".$id;
-        $sql.= " AND t.entity = " . getEntity('c_payment_term', 2);
+        $sql.= " AND t.entity = " . getEntity('c_payment_term');
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -231,7 +231,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.code = 'RECEP'";
-        $sql.= " AND t.entity = " . getEntity('c_payment_term', 2);
+        $sql.= " AND t.entity = " . getEntity('c_payment_term');
 
     	dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -293,7 +293,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
 		$sql.= " WHERE rowid = " . $this->id;
-		$sql.= " AND entity = " . getEntity('c_payment_term', 2);
+		$sql.= " AND entity = " . getEntity('c_payment_term');
 
 		$this->db->begin();
 
@@ -350,7 +350,7 @@ class PaymentTerm // extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_payment_term";
 		$sql.= " WHERE rowid = " . $this->id;
-		$sql.= " AND t.entity = " . getEntity('c_payment_term', 2);
+		$sql.= " AND t.entity = " . getEntity('c_payment_term');
 
 		$this->db->begin();
 

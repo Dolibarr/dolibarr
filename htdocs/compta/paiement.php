@@ -251,7 +251,7 @@ if (empty($reshook))
 	    $paiement->datepaye     = $datepaye;
 	    $paiement->amounts      = $amounts;   // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',getEntity('c_paiement', 2));
+	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',getEntity('c_paiement'));
 	    $paiement->num_paiement = GETPOST('num_paiement');
 	    $paiement->note         = GETPOST('comment');
 
@@ -832,7 +832,7 @@ if (! GETPOST('action','aZ09'))
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
     $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
     $sql.= ' AND f.entity = ' . $conf->entity;
-    $sql.= ' AND c.entity = ' . getEntity('c_paiement', 2);
+    $sql.= ' AND c.entity = ' . getEntity('c_paiement');
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;

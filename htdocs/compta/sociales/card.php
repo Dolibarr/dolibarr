@@ -581,7 +581,7 @@ if ($id > 0)
 		$sql.= " AND p.fk_charge = cs.rowid";
 		$sql.= " AND cs.entity = ".$conf->entity;
 		$sql.= " AND p.fk_typepaiement = c.id";
-		$sql.= " AND c.entity = " . getEntity('c_paiement', 2);
+		$sql.= " AND c.entity = " . getEntity('c_paiement');
 		$sql.= " ORDER BY dp DESC";
 
 		//print $sql;

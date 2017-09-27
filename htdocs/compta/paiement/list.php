@@ -120,7 +120,7 @@ if (GETPOST("orphelins"))
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " WHERE p.fk_paiement = c.id";
     $sql.= " AND p.entity = " . $conf->entity;
-    $sql.= " AND c.entity = " . getEntity('c_paiement', 2);
+    $sql.= " AND c.entity = " . getEntity('c_paiement');
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -152,7 +152,7 @@ else
     }
     $sql.= " WHERE p.fk_paiement = c.id";
     $sql.= " AND p.entity = " . $conf->entity;
-    $sql.= " AND c.entity = " . getEntity('c_paiement', 2);
+    $sql.= " AND c.entity = " . getEntity('c_paiement');
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;

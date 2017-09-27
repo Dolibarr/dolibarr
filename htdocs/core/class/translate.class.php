@@ -559,7 +559,7 @@ class Translate
 		}
         elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',getEntity('c_paiement', 2));
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',getEntity('c_paiement'));
         }
 		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
         {

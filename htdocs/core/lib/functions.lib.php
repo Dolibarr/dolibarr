@@ -111,8 +111,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event',
  * 	@param	int		$shared			0=Return id of current entity only,
- * 									1=Return id of current entity + shared entities (default),
- * 									2=Return id of current entity OR master entity 1 value (eg. dictionnary share)
+ * 									1=Return id of current entity + shared entities (default)
  *  @param	int		$forceentity	Entity id
  * 	@return	mixed				Entity id(s) to use
  */

@@ -721,7 +721,7 @@ if (empty($reshook))
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
 				$sql.= ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-				$sql.= ' AND c.entity = ' . getEntity('c_paiement', 2);
+				$sql.= ' AND c.entity = ' . getEntity('c_paiement');
 				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
@@ -3802,7 +3802,7 @@ else if ($id > 0 || ! empty($ref))
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
     $sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-    $sql .= ' AND c.entity = ' . getEntity('c_paiement', 2);
+    $sql .= ' AND c.entity = ' . getEntity('c_paiement');
     $sql .= ' ORDER BY p.datep, p.tms';
 
     $result = $db->query($sql);

@@ -149,7 +149,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         $condpayment = trim($fields[36]);
         if ($condpayment == 'A la commande') $condpayment = 'A réception de commande';
         if ($condpayment == 'A reception facture') $condpayment = 'Réception de facture';
-        $object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid', getEntity('c_payment_term', 2));
+        $object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid', getEntity('c_payment_term'));
         if (empty($object->cond_reglement_id))
         {
             print " - Error cant find payment mode for ".$condpayment."\n";

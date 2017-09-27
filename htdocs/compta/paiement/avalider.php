@@ -72,7 +72,7 @@ if ($socid)
 }
 $sql.= " WHERE p.fk_paiement = c.id";
 $sql.= " AND p.entity = " . $conf->entity;
-$sql.= " AND c.entity = " . getEntity('c_paiement', 2);
+$sql.= " AND c.entity = " . getEntity('c_paiement');
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;

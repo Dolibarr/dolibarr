@@ -1865,7 +1865,7 @@ else
 				$sql.= " AND p.fk_expensereport = e.rowid";
 				$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 				$sql.= " AND p.fk_typepayment = c.id";
-				$sql.= " AND c.entity = " . getEntity('c_paiement', 2);
+				$sql.= " AND c.entity = " . getEntity('c_paiement');
 				$sql.= " ORDER BY dp";
 
 				$resql = $db->query($sql);
