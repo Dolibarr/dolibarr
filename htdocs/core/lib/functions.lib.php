@@ -5234,7 +5234,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
             '__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
             '__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-            '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+            '__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1),
+            '__MYCOMPANY_ADDRESS__' => $mysoc->address,
+        	'__MYCOMPANY_ZIP__'     => $mysoc->zip,
+            '__MYCOMPANY_TOWN__'    => $mysoc->town,
+            '__MYCOMPANY_COUNTRY__'    => $mysoc->country,
+        	'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
         ));
     }
     if (($onlykey || is_object($object)) && (empty($exclude) || ! in_array('object', $exclude)))

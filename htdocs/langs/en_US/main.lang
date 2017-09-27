@@ -814,6 +814,9 @@ Websites=Web sites
 Events=Events
 EMailTemplates=Emails templates
 FileNotShared=File not shared to exernal public
+Hello=Hello
+Goodbye=Goodbye
+Sincerely=Sincerely
 # Week day
 Monday=Monday
 Tuesday=Tuesday
