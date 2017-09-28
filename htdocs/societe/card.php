@@ -59,7 +59,7 @@ $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel     = GETPOST('cancel','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
-$socid		= GETPOST('socid','int');
+$socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
 
@@ -2372,69 +2372,68 @@ else
         /*
          *  Actions
          */
-        print '<div class="tabsAction">'."\n";
+        if ($action != 'presend')
+        {
+	        print '<div class="tabsAction">'."\n";
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
-		{
-			$at_least_one_email_contact = false;
-			$TContact = $object->contact_array_objects();
-			foreach ($TContact as &$contact)
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
 			{
-				if (!empty($contact->email))
+				$at_least_one_email_contact = false;
+				$TContact = $object->contact_array_objects();
+				foreach ($TContact as &$contact)
 				{
-					$at_least_one_email_contact = true;
-					break;
+					if (!empty($contact->email))
+					{
+						$at_least_one_email_contact = true;
+						break;
+					}
 				}
+
+		        if (! empty($object->email) || $at_least_one_email_contact)
+		        {
+		        	$langs->load("mails");
+		        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+		        }
+		        else
+				{
+		        	$langs->load("mails");
+		       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+		        }
+
+		        if ($user->rights->societe->creer)
+		        {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		        }
+
+		        if ($user->rights->societe->supprimer)
+		        {
+		        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+		        }
+
+		        if ($user->rights->societe->supprimer)
+		        {
+		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
+		            {
+		                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+		            }
+		            else
+					{
+		                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+		            }
+		        }
 			}
 
-	        if (! empty($object->email) || $at_least_one_email_contact)
-	        {
-	        	$langs->load("mails");
-	        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
-	        }
-	        else
-			{
-	        	$langs->load("mails");
-	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
-	        }
-
-	        if ($user->rights->societe->creer)
-	        {
-	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-	        }
-
-	        if ($user->rights->societe->supprimer)
-	        {
-	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
-	        }
-
-	        if ($user->rights->societe->supprimer)
-	        {
-	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-	            }
-	        }
-		}
-
-        print '</div>'."\n";
+	        print '</div>'."\n";
+        }
 
         //Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
 		}
-		if ($action == 'presend')
+		/*if ($action == 'presend')
 		{
-			/*
-			 * Affiche formulaire mail
-			*/
-
 			// By default if $action=='presend'
 			$titreform='SendMail';
 			$topicmail='';
@@ -2491,31 +2490,6 @@ else
 			$formmail->substit['__PERSONALIZED__']='';					// deprecated
 			$formmail->substit['__CONTACTCIVNAME__']='';
 
-			//Find the good contact adress
-			/*
-			$custcontact='';
-			$contactarr=array();
-			$contactarr=$object->liste_contact(-1,'external');
-
-			if (is_array($contactarr) && count($contactarr)>0)
-			{
-			foreach($contactarr as $contact)
-			{
-			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
-
-			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-
-			$contactstatic=new Contact($db);
-			$contactstatic->fetch($contact['id']);
-			$custcontact=$contactstatic->getFullName($langs,1);
-			}
-			}
-
-			if (!empty($custcontact)) {
-			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-			}*/
-
 
 			// Tableau des parametres complementaires du post
 			$formmail->param['action']=$action;
@@ -2533,14 +2507,15 @@ else
 			print $formmail->get_form();
 
 			dol_fiche_end();
-		}
-		else
+		}*/
+
+		if ($action != 'presend')
 		{
+			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
-				print '<div class="fichecenter"><div class="fichehalfleft">';
-	            print '<a name="builddoc"></a>'; // ancre
+				print '<a name="builddoc"></a>'; // ancre
 
 	            /*
 	             * Documents generes
@@ -2553,35 +2528,34 @@ else
 	            $var=true;
 
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
-
-				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-				print '</div></div></div>';
-
-	            print '<br>';
 	        }
-
-	        print '<div class="fichecenter"><br></div>';
 
 	        // Subsidiaries list
 	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
 	        {
-	           $result=show_subsidiaries($conf,$langs,$db,$object);
+	        	$result=show_subsidiaries($conf,$langs,$db,$object);
 	        }
 
-	        // Contacts list
-	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-	        {
-	            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-	        }
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	        // Addresses list
-	        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-	        {
-	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-	        }
+			$MAX = 5;
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAX);		// Show all action for thirdparty
+
+			print '</div></div></div>';
 		}
+
+		// Presend form
+		$modelmail='thirdparty';
+		$defaulttopic='Information';
+		$diroutput = $conf->societe->dir_output;
+		$trackid = 'thi'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
     }
 }
 

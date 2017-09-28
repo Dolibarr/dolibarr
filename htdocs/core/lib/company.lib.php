@@ -48,6 +48,28 @@ function societe_prepare_head(Societe $object)
     $head[$h][2] = 'card';
     $h++;
 
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+	    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$nbContact = 0;	// TODO
+
+		$sql = "SELECT COUNT(p.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+		$sql .= " WHERE p.fk_soc = ".$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbContact = $obj->nb;
+		}
+
+	    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans('ContactsAddresses');
+	    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+	    $head[$h][2] = 'contact';
+	    $h++;
+	}
+
     if ($object->client==1 || $object->client==2 || $object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
@@ -748,7 +770,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="page" value="'.$page.'">';
 
 
-	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-nomin">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
