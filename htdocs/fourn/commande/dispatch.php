@@ -547,6 +547,9 @@ if ($id > 0 || ! empty($ref)) {
 
 						print "\n";
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+						// hidden fields for js function
+						print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
+						print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 						print '<tr class="oddeven">';
 
 						$linktoprod = '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
@@ -607,9 +610,6 @@ if ($id > 0 || ! empty($ref)) {
 							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
 							}
 
-							// hidden fields for js function
-							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 							print '</td>';
 
 							print '<td>';
@@ -649,16 +649,13 @@ if ($id > 0 || ! empty($ref)) {
 							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
 							}
 
-							// hidden fields for js function
-							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 							print '</td>';
 						}
 
 						// Qty to dispatch
 						print '<td align="right">';
 						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" size="8" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
-                        print '</td>';
+						print '</td>';
 
                         print '<td>';
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {

@@ -301,7 +301,7 @@ class FormMail extends Form
         		{
 	        		$model_id=$this->param["models_id"];
         		}
-	        	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+        		$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));		// we set -1 if model_id empty
 			}
         	//var_dump($this->param["models"]);
         	//var_dump($model_id);
@@ -914,7 +914,7 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id template to find
+	 *      @param	int			$id				Id of template to find, or -1 for first found with position = 0, or 0 for all
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
@@ -929,8 +929,10 @@ class FormMail extends Form
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
-		if (!empty($id)) $sql.= " AND rowid=".$id;
+		if ($id > 0)   $sql.= " AND rowid=".$id;
+		if ($id == -1) $sql.= " AND position=0";
 		$sql.= $db->order("position,lang,label","ASC");
+		if ($id == -1) $sql.= $db->plimit(1);
 		//print $sql;
 
 		$resql = $db->query($sql);
