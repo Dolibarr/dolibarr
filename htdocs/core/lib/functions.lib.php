@@ -5234,7 +5234,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
             '__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
             '__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-            '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+            '__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1, ', '),
+            '__MYCOMPANY_ADDRESS__' => $mysoc->address,
+        	'__MYCOMPANY_ZIP__'     => $mysoc->zip,
+            '__MYCOMPANY_TOWN__'    => $mysoc->town,
+            '__MYCOMPANY_COUNTRY__'    => $mysoc->country,
+        	'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
         ));
     }
     if (($onlykey || is_object($object)) && (empty($exclude) || ! in_array('object', $exclude)))
@@ -5390,8 +5395,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__USER_FIRSTNAME__' => (string) $user->firstname,
             '__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
             '__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
-        	'__SIGNATURE__' => (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
-        ));
+        	'__USER_SIGNATURE__' => (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
+	        )
+        );
+        // For backward compatibility
+        if ($onlykey != 2)
+        {
+        	$substitutionarray['__SIGNATURE__'] = (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '');
+        }
     }
     if (! empty($conf->multicompany->enabled))
     {

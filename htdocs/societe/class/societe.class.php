@@ -1898,6 +1898,11 @@ class Societe extends CommonObject
             $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
             $linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
         }
+        else if ($option == 'contact')
+        {
+        	$label.= '<u>' . $langs->trans("ShowContacts") . '</u>';
+        	$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
+        }
 
         // By default
         if (empty($linkstart))
