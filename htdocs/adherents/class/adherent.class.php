@@ -1956,9 +1956,12 @@ class Adherent extends CommonObject
         // Object classes
         $info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
 
-        $this->fullname=$this->getFullName($langs);
-        // For avoid ldap error when firstname and lastname is empty
-        if ($this->morphy == 'mor' && empty($this->fullname)) $this->fullname = $this->societe;
+		$this->fullname=$this->getFullName($langs);
+		// For avoid ldap error when firstname and lastname are empty
+		if ($this->morphy == 'mor' && empty($this->fullname)) {
+			$this->fullname = $this->societe;
+			$this->lastname = $this->societe;
+		}
 
         // Member
         if ($this->fullname && ! empty($conf->global->LDAP_MEMBER_FIELD_FULLNAME))				$info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
