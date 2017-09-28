@@ -131,6 +131,9 @@ class DolibarrApi
         unset($object->table_element_line);
         unset($object->picto);
 
+        unset($object->skip_update_total);
+        unset($object->context);
+
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
         // it: "Error encoding/decoding JSON: Type is not supported"
