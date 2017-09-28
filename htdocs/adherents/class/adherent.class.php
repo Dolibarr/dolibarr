@@ -1957,20 +1957,23 @@ class Adherent extends CommonObject
         $info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
 
         $this->fullname=$this->getFullName($langs);
+        // For avoid ldap error when firstname and lastname is empty
+        if ($this->morphy == 'mor' && empty($this->fullname)) $this->fullname = $this->societe;
 
         // Member
         if ($this->fullname && ! empty($conf->global->LDAP_MEMBER_FIELD_FULLNAME))				$info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
-        if ($this->lastname && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))					$info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->lastname;
+        if ($this->lastname && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))				$info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->lastname;
         if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME))			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
         if ($this->login && ! empty($conf->global->LDAP_MEMBER_FIELD_LOGIN))					$info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
-        if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
+        if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
         if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))			$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // md5 for OpenLdap TODO add type of encryption
         if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))					$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
+        if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
         if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
         if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
-        if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+        if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))					$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
         if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
-        if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))						$info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
+        if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))					$info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
         if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
         if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
         if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
