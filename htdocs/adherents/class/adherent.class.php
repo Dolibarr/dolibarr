@@ -419,7 +419,7 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-        $sql.= " civility = ".($this->civility_id>0?$this->db->escape($this->civility_id):"null");
+        $sql.= " civility = ".($this->civility_id?$this->db->escape($this->civility_id):"null");
         $sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
         $sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
