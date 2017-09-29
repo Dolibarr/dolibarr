@@ -166,8 +166,9 @@ if (empty($reshook))
 	{
 	    foreach ($object->fields as $key => $val)
         {
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
+
             $object->$key=GETPOST($key,'alpha');
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
             if ($val['notnull'] > 0 && $object->$key == '')
             {
                 $error++;
@@ -328,6 +329,7 @@ if (($id || $ref) && $action == 'edit')
 	foreach($object->fields as $key => $val)
 	{
 	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+
     	print '<tr><td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull'] > 0) print ' fieldrequired';
@@ -344,7 +346,7 @@ if (($id || $ref) && $action == 'edit')
     	}
 	    elseif (is_array($val['arrayofkeyval']))
    		{
-   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
     	}
     	else
     	{
@@ -468,9 +470,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+	    if (in_array($key, array('rowid', 'ref', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
+
     	print '<tr><td';
-    	print ' class="titlefieldcreate';
+    	print ' class="titlefield';
     	if ($val['notnull'] > 0) print ' fieldrequired';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
