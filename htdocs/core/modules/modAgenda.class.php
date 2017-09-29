@@ -90,7 +90,10 @@ class modAgenda extends DolibarrModules
 		        //if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE','TASK_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty/product/task creation because there is no validation).
 		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
-		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1");
+
+		        $constname = 'MAIN_AGENDA_ACTIONAUTO_'.$obj->code;
+		        $constvalue = (empty($conf->global->$constname)?"0":$conf->global->$constname);
+		        $this->const[] = array($constname, "chaine", $constvalue);
 		    }
 		}
 		else
