@@ -22,6 +22,9 @@
  * $extrafield
  * $elementtype
  */
+
+$langs->load("modulebuilder");
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
@@ -48,6 +51,7 @@ print '<td align="center">'.$langs->trans("Unique").'</td>';
 print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
+print '<td align="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
 if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.$langs->trans("Hidden").'</td>';
 if ($conf->multicompany->enabled)  {
 	print '<td align="center">'.$langs->trans("Entities").'</td>';
@@ -59,7 +63,7 @@ if (count($extrafields->attribute_type))
 {
     foreach($extrafields->attribute_type as $key => $value)
     {
-        
+
         print '<tr class="oddeven">';
         print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
         print "<td>".$extrafields->attribute_label[$key]."</td>\n";
@@ -70,7 +74,8 @@ if (count($extrafields->attribute_type))
         print '<td>'.dol_trunc($extrafields->attribute_computed[$key], 20)."</td>\n";
         print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
         print '<td align="center">'.yn($extrafields->attribute_alwayseditable[$key])."</td>\n";
-    	if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
+        print '<td align="center">'.$extrafields->attribute_list[$key]."</td>\n";
+        if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
     	if ($conf->multicompany->enabled)  {
     		print '<td align="center">'.($extrafields->attribute_entityid[$key]==0?$langs->trans("All"):$extrafields->attribute_entitylabel[$key]).'</td>';
     	}
@@ -83,7 +88,7 @@ else
 {
     $colspan=9;
     if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) $colspan++;
-    
+
     print '<tr class="oddeven">';
     print '<td class="opacitymedium" colspan="'.$colspan.'">';
     print $langs->trans("None");
