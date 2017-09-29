@@ -280,6 +280,7 @@ if ($action == 'create')
     	print $langs->trans($val['label']);
     	print '</td>';
     	print '<td>';
+    	$defaultcss='minwidth100';
     	if ($val['type'] == 'text')
     	{
     		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
@@ -292,12 +293,16 @@ if ($action == 'create')
     	}
     	else
     	{
-    		$cssforinput = 'minwidth100';
-    		print '<input class="flat" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
+    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
     	}
     	print '</td>';
     	print '</tr>';
 	}
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+
 	print '</table>'."\n";
 
 	dol_fiche_end();
@@ -306,8 +311,6 @@ if ($action == 'create')
 
 	print '</form>';
 }
-
-
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
@@ -332,10 +335,11 @@ if (($id || $ref) && $action == 'edit')
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
     	print '<td>';
+    	$defaultcss='minwidth100';
 	    if ($val['type'] == 'text')
     	{
     		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-    		print GETPOST($key,'none');
+    		print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
     		print '</textarea>';
     	}
 	    elseif (is_array($val['arrayofkeyval']))
@@ -344,12 +348,16 @@ if (($id || $ref) && $action == 'edit')
     	}
     	else
     	{
-    		$cssforinput = 'minwidth100';
-    		print '<input class="flat" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
+    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
     	}
     	print '</td>';
     	print '</tr>';
 	}
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+
 	print '</table>';
 
 	dol_fiche_end();
@@ -360,9 +368,6 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</form>';
 }
-
-
-
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
@@ -469,7 +474,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if ($val['notnull'] > 0) print ' fieldrequired';
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td>';
+    	print '<td>';
+    	print $object->$key;
+		print '</td>';
     	print '</tr>';
 	}
 
@@ -511,6 +518,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
     		}
+
+    		/*
+    		if ($user->rights->sellyoursaas->create)
+    		{
+    			if ($object->status == 1)
+    		 	{
+    		 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=disable">'.$langs->trans("Disable").'</a></div>'."\n";
+    		 	}
+    		 	else
+    		 	{
+    		 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Enable").'</a></div>'."\n";
+    		 	}
+    		}
+    		*/
 
     		if ($user->rights->mymodule->delete)
     		{
