@@ -486,7 +486,7 @@ class Facture extends CommonInvoice
 				        foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
 				        {
 				            $originforcontact = 'commande';
-				            $originidforcontact = $value->id;
+				            $originidforcontact = $value;
 				            break; // We take first one
 				        }
 				    }

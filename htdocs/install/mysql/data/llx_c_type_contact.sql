@@ -43,6 +43,7 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (60, 'facture', 'external', 'BILLING',       'Contact client facturation', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (61, 'facture', 'external', 'SHIPPING',      'Contact client livraison', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (62, 'facture', 'external', 'SERVICE',       'Contact client prestation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (63, 'facture', 'external', 'CUSTOMER',      'Contact client suivi facturation', 1)
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (70, 'invoice_supplier', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (71, 'invoice_supplier', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
