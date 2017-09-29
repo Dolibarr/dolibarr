@@ -63,9 +63,9 @@ class AntiVir
 		if (preg_match('/\.virus$/i', $file))
 		{
 		    $this->errors='File has an extension saying file is a virus';
-		    return -97;		    
+		    return -97;
 		}
-		
+
 		$fullcommand=$this->getCliCommand($file);
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
         $fullcommand.=' 2>&1';      // This is to get error output
@@ -160,7 +160,8 @@ class AntiVir
 		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
 			$param=$param." ".escapeshellarg(trim($file));
 
-		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
+		//if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
+		if (preg_match("/\s/",$command)) $command=escapeshellcmd($command);	// Use quotes on command. Using escapeshellarg fails.
 
 		$ret=$command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';
