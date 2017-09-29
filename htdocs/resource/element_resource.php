@@ -205,14 +205,13 @@ else
 
 			// Link to other agenda views
 			$out='';
-			$out.=img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out.='<br>';
-			$out.=img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out.=img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback.=$out;

@@ -1233,6 +1233,9 @@ div.heightref {
 div.divphotoref {
 	padding-right: 20px;
 }
+div.paginationref {
+	padding-bottom: 10px;
+}
 div.statusref {
 	float: right;
 	padding-left: 12px;
@@ -2933,13 +2936,11 @@ span.dashboardlineko {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -24px;
-    padding: 1px 2px 1px 2px;
+    top: -26px;
+    padding: 0px 5px 0px 5px;
     border-radius: .25em;
 
     background-color: #9f4705;
-    padding: 0px 5px 0px 5px;
-    top: -26px;
 }
 .imglatecoin {
     padding: 1px 3px 1px 1px;
