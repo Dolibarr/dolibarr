@@ -162,7 +162,7 @@ print "</tr>\n";
 
 // Login/Pass required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?$conf->global->ADHERENT_LOGIN_NOT_REQUIRED:0),1);
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
 print "</td></tr>\n";
 
 // Mail required for members
