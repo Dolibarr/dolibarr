@@ -323,9 +323,9 @@ if (empty($reshook))
 
         }
 
-        if ($error)
+        if (! $error)
         {
-	        if ($action == 'update')
+        	if ($action == 'update')
 	        {
 	        	$ret=$object->fetch($socid);
 				$object->oldcopy = clone $object;
