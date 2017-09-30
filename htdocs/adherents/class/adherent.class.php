@@ -1958,6 +1958,7 @@ class Adherent extends CommonObject
 		$info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
+
 		// For avoid ldap error when firstname and lastname are empty
 		if ($this->morphy == 'mor' && empty($this->fullname)) {
 			$this->fullname = $this->societe;
@@ -1983,11 +1984,10 @@ class Adherent extends CommonObject
 				// Check if it is the LDAP key and if its value has been changed
 				if (! empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == $conf->global->$constname)
 				{
-					if (! empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) $keymodified=true;
+					if (! empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) $keymodified=true; // For check if LDAP key has been modified
 				}
 			}
 		}
-
 		if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME))			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
 		if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))					$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
 		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
@@ -2007,13 +2007,13 @@ class Adherent extends CommonObject
 		if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))	$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 
 		// When password is modified
-		if ($this->pass)
+		if (! empty($this->pass))
 		{
 			if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
-			if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // md5 for OpenLdap TODO add type of encryption
+			if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		}
-		// When LDAP key is modified and password no defined
-		else if ($keymodified)
+		// Set LDAP password if possible
+		else
 		{
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
@@ -2021,7 +2021,7 @@ class Adherent extends CommonObject
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO))
 				{
 					if ($this->pass_indatabase_crypted && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))	{
-						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // md5 for OpenLdap TODO add type of encryption
+						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
 			}

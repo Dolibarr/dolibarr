@@ -184,7 +184,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FIRSTNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FIRSTNAME)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Login unix
@@ -208,7 +208,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.$conf->global->LDAP_FIELD_PASSWORD.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PASSWORD"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Password crypted
@@ -216,7 +216,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.$conf->global->LDAP_FIELD_PASSWORD_CRYPTED.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PASSWORD_CRYPTED"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD_CRYPTED)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Mail
@@ -232,7 +232,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PHONE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PHONE)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Mobile
@@ -240,7 +240,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MOBILE)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Skype
@@ -256,7 +256,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Title
@@ -264,7 +264,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldTitle").'</td><td>';
 print '<input size="25" type="text" name="fieldtitle" value="'.$conf->global->LDAP_FIELD_TITLE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldTitleExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_TITLE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_TITLE)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Note
@@ -272,7 +272,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("Note").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_DESCRIPTION)?' checked':'')."></td>";
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Sid
