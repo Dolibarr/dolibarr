@@ -988,7 +988,7 @@ else
 
         dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
-        print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+        print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">';		// Chrome ignor autocomplete
 
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
