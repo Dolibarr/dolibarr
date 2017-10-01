@@ -49,3 +49,4 @@ CreateByFetchingExternalPage=Create page/container by fetching page from externa
 OrEnterPageInfoManually=Or create empty page from scratch...
 FetchAndCreate=Fetch and Create
 ExportSite=Export site
+IDOfPage=Id of page

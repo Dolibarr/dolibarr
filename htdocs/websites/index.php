@@ -275,9 +275,14 @@ if ($action == 'add')
     		$objectpage->content = preg_replace('/^.*<body[^>]*>/ims', '', $objectpage->content);
     		$objectpage->content = preg_replace('/<\/body[^>]*>.*$/ims', '', $objectpage->content);
 
+
+    		// Now loop to fetch all css files. Include them inline into header of page
+			// TODO...
+
+
     		$tmp = $objectpage->content;
 
-    		// Now loop o to fetch all images
+    		// Now loop to fetch all images
     		preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $objectpage->content, $regs);
 			foreach ($regs[0] as $key => $val)
 			{
@@ -399,12 +404,13 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-	   $pageid = $objectpage->id;
+		$pageid = $objectpage->id;
 
-	   // To generate the CSS, robot and htmlheader file.
+		// To generate the CSS, robot and htmlheader file.
 
 		if (! dol_is_file($filehtmlheader))
 		{
+			// TODO use header of page for common header ?
 			$htmlheadercontent = "<!-- HTML header content (common for all pages) -->";
 			$result=dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 		}
@@ -1536,6 +1542,12 @@ if ($action == 'editmeta' || $action == 'create')
 
     if ($action != 'create')
     {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('IDOfPage');
+        print '</td><td>';
+        print $pageid;
+        print '</td></tr>';
+
         print '<tr><td class="titlefield">';
         print $langs->trans('WEBSITE_PAGEURL');
         print '</td><td>';
