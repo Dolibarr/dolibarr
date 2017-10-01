@@ -253,7 +253,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print fieldLabel('Label','label',1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->trans("SalaryPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period
