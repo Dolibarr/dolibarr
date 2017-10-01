@@ -419,7 +419,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Fetch project information if there is a project assigned to this object
-		if ($object->element != "project" && $object->fk_project > 0)
+		if ($object->element != "project" && ! empty($object->fk_project) && $object->fk_project > 0)
 		{
 			if(!isset($object->project))
 			{
