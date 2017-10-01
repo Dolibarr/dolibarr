@@ -94,8 +94,6 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 
-
-
 /*
  * Actions
  */
