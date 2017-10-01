@@ -19,6 +19,7 @@
  use Luracast\Restler\RestException;
 
  require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  
 /**
  * API class for projects
@@ -501,15 +502,17 @@ class Tasks extends DolibarrApi
      */
     function addTimeSpent($id, $date, $duration, $user_id=0, $note='')
     {
-        if(! DolibarrApiAccess::$user->rights->projet->creer) {
+    	
+    	
+        if( ! DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
         }
         $result = $this->task->fetch($id);
         if ($result <= 0) {
             throw new RestException(404, 'Task not found');
         }
-    
-        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+        
+        if( ! DolibarrApi::_checkAccessToResource('project', $this->task->fk_project)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         
