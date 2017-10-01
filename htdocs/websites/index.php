@@ -94,6 +94,7 @@ $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action','alpha');
 
+
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
@@ -246,7 +247,11 @@ if ($action == 'add')
 
     		$urltograbwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograbwithoutdomain);
    			$objectpage->pageurl = basename($urltograbwithoutdomain);
-   			if (empty($objectpage->pageurl)) $objectpage->pageurl='home';
+   			if (empty($objectpage->pageurl))
+   			{
+   				$tmpdomain = getDomainFromURL($urltograb);
+   				$objectpage->pageurl='home'.$tmpdomain;
+   			}
 
     		if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
     		{
@@ -269,6 +274,46 @@ if ($action == 'add')
     		$objectpage->content = $tmp['content'];
     		$objectpage->content = preg_replace('/^.*<body[^>]*>/ims', '', $objectpage->content);
     		$objectpage->content = preg_replace('/<\/body[^>]*>.*$/ims', '', $objectpage->content);
+
+    		$tmp = $objectpage->content;
+
+    		// Now loop o to fetch all images
+    		preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $objectpage->content, $regs);
+			foreach ($regs[0] as $key => $val)
+			{
+				$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+				$linkwithoutdomain = $regs[2][$key];
+				$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+				if (preg_match('/^http/', $regs[2][$key]))
+				{
+					$urltograbbis = $regs[2][$key];
+					$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
+					$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+				}
+
+				$tmpgeturl = getURLContent($urltograbbis);
+				if ($tmpgeturl['curl_error_no'])
+				{
+					$error++;
+					setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+					$action='create';
+				}
+				else
+				{
+					dol_mkdir(dirname($filetosave));
+
+					$fp = fopen($filetosave, "w");
+					fputs($fp, $tmpgeturl['content']);
+					fclose($fp);
+					if (! empty($conf->global->MAIN_UMASK))
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
+
+				$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+				$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '<img'.$regs[1][$key].'src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'"'.$regs[3][$key].'>', $tmp);
+			}
+//print dol_escape_htmltag($tmp);exit;
+			$objectpage->content = $tmp;
 
     		$objectpage->grabbed_from = $urltograb;
     	}
