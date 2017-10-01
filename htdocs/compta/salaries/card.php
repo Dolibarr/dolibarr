@@ -214,6 +214,12 @@ if ($action == 'create')
 		$pastmonthyear--;
 	}
 
+	$datespmonth = GETPOST('datespmonth', 'int');
+	$datespday = GETPOST('datespday', 'int');
+	$datespyear = GETPOST('datespyear', 'int');
+	$dateepmonth = GETPOST('dateepmonth', 'int');
+	$dateepday = GETPOST('dateepday', 'int');
+	$dateepyear = GETPOST('dateepyear', 'int');
 	$datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
 	$dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
