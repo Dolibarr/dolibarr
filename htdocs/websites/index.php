@@ -312,7 +312,8 @@ if ($action == 'add')
 				$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 				$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '<img'.$regs[1][$key].'src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'"'.$regs[3][$key].'>', $tmp);
 			}
-//print dol_escape_htmltag($tmp);exit;
+
+			//print dol_escape_htmltag($tmp);exit;
 			$objectpage->content = $tmp;
 
     		$objectpage->grabbed_from = $urltograb;
@@ -358,6 +359,33 @@ if ($action == 'add')
             setEventMessages($objectpage->error, $objectpage->errors, 'errors');
         }
     }
+    if (! $error)
+    {
+    	if (! empty($objectpage->content))
+    	{
+			$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+			$filetpl=$pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
+
+    		// Save page alias
+    		$result=dolSavePageAlias($filealias, $object, $objectpage);
+    		if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+
+    		// Save page of content
+    		$result=dolSavePageContent($filetpl, $object, $objectpage);
+    		if ($result)
+    		{
+    			setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+    			//exit;
+    		}
+    		else
+    		{
+    			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
+    			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+    			//exit;
+    		}
+    	}
+    }
 	if (! $error)
 	{
 		$db->commit();
@@ -371,8 +399,35 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-	   $action = 'preview';
 	   $pageid = $objectpage->id;
+
+	   // To generate the CSS, robot and htmlheader file.
+
+		if (! dol_is_file($filehtmlheader))
+		{
+			$htmlheadercontent = "<!-- HTML header content (common for all pages) -->";
+			$result=dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+		}
+
+		if (! dol_is_file($filecss))
+		{
+			$csscontent = "/* CSS content (all pages) */\nbody.bodywebsite { margin: 0; }'";
+			$result=dolSaveCssFile($filecss, $csscontent);
+		}
+
+		if (! dol_is_file($filerobot))
+		{
+			$robotcontent = "# Robot file. Generated with Dolibarr\nUser-agent: *\nAllow: /public/\nDisallow: /administrator/";
+			$result=dolSaveRobotFile($filerobot, $robotcontent);
+		}
+
+		if (! dol_is_file($filehtaccess))
+		{
+			$htaccesscontent = "# Order allow,deny\n# Deny from all";
+			$result=dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+		}
+
+		$action = 'preview';
 	}
 }
 
@@ -445,18 +500,8 @@ if ($action == 'updatecss')
 
 	    $htmlheadercontent = trim($htmlheadercontent)."\n";
 
-	    dol_syslog("Save html header into ".$filehtmlheader);
+	    dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 
-	    dol_mkdir($pathofwebsite);
-	    $result = file_put_contents($filehtmlheader, $htmlheadercontent);
-	    if (! empty($conf->global->MAIN_UMASK))
-	        @chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
-
-	    if (! $result)
-	    {
-	        $error++;
-	        setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
-	    }
 
 	    // Css file
 	    $csscontent ='';
@@ -1782,3 +1827,117 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 	return $result;
 }
+
+
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$filetpl			Full path of filename to generate
+ * @param	string		$htmlheadercontent	Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save html header into ".$filehtmlheader);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($filehtmlheader, $htmlheadercontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
+
+	if (! $result)
+	{
+		$error++;
+		setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$filecss			Full path of filename to generate
+ * @param	string		$csscontent			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveCssFile($filecss, $csscontent)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save html header into ".$filecss);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($filecss, $csscontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
+
+		if (! $result)
+		{
+			$error++;
+			setEventMessages('Failed to write file '.$filecss, null, 'errors');
+			return false;
+		}
+
+		return true;
+}
+
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$filerobot			Full path of filename to generate
+ * @param	string		$robotcontent		Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveRobotFile($filerobot, $robotcontent)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save html header into ".$filerobot);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($filerobot, $robotcontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
+
+	if (! $result)
+	{
+		$error++;
+		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$filehtaccess		Full path of filename to generate
+ * @param	string		$htaccess			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveHtaccessFile($filehtaccess, $htaccess)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save html header into ".$filehtaccess);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($filehtaccess, $htaccess);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
+
+	if (! $result)
+	{
+		$error++;
+		setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+		return false;
+	}
+
+	return true;
+}
+
