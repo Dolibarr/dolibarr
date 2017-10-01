@@ -115,7 +115,7 @@ if ($action == 'order' && isset($_POST['valid']))
         $suppliers = array();
         for ($i = 0; $i < $linecount; $i++)
         {
-            if (GETPOST($i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
+            if (GETPOST('choose' . $i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
             {
             	//one line
                 $box = $i;
@@ -616,7 +616,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		// Select field
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
-		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
+		print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
