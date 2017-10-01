@@ -136,10 +136,10 @@ if ($action == 'update')
     		}
     	}
 	}
-	
+
 	dolibarr_set_const($db, "MAIN_DISABLE_METEO",$_POST["MAIN_DISABLE_METEO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE",GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"),'chaine',0,'',$conf->entity);
-    
+
 	// For update value with percentage
 	$plus='';
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
@@ -147,7 +147,7 @@ if ($action == 'update')
 	for($i=0;$i<4;$i++) {
     	if(isset($_POST['MAIN_METEO'.$plus.'_LEVEL'.$i])) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'),'chaine',0,'',$conf->entity);
     }
-    
+
 }
 
 
@@ -249,26 +249,26 @@ else
 
 }
 
-print '<br />';
+print '<br>';
 
 // Show logo for weather
 print $langs->trans("DescWeather").'<br>';
 
 if($action == 'edit') {
-	
+
 	$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->trans('MeteoPercentageMod'));
 	$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->trans('MeteoStdMod'));
 	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $str_mode_enabled = $str_mode_std;
 	else $str_mode_enabled = $str_mode_percentage;
 	print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
 	print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
-	
-	print '<br /><br />';
-	
+
+	print '<br><br>';
+
 } else {
 	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) print $langs->trans('MeteoStdModEnabled');
 	else print $langs->trans('MeteoPercentageModEnabled');
-	print '<br /><br />';
+	print '<br><br>';
 }
 
 $offset=0;
@@ -279,88 +279,63 @@ $level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level
 $level1=$offset+1*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
 $level2=$offset+2*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
 $level3=$offset+3*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
-$text=''; $options='height="60px"';
-	
+$text=''; $options='class="valignmiddle" height="60px"';
 
-if($action == 'edit') {
-	
-	
+
+if ($action == 'edit') {
+
+
 	print '<div id="standard" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '' : 'style="display:none;"').'>';
-	
-	print '<table>';
-	print '<tr>';
-	print '<td>';
-	print img_weather($text,'weather-clear.png',$options);
-	print '</td><td>= <input type="text" size="2" name="MAIN_METEO_LEVEL0" value="'.$level0.'"/></td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td>';
+
+	print '<div>';
+	print '<div class="inline-block" style="padding-right: 20px">';
+	print img_weather($text,'weather-clear.png', $options);
+	print '= <input type="text" size="2" name="MAIN_METEO_LEVEL0" value="'.$level0.'"/></td>';
+	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-few-clouds.png',$options);
-	print '</td><td>&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL1" value="'.$level1.'"/></td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td>';
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL1" value="'.$level1.'"/></td>';
+	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-clouds.png',$options);
-	print '</td><td>&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL2" value="'.$level2.'"/></td>';
-	print '</tr>';
-	
-	print '<tr><td>';
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL2" value="'.$level2.'"/></td>';
+	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-many-clouds.png',$options);
-	print '</td><td>&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL3" value="'.$level3.'"/></td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	/*print '<td>';
-	 print img_weather($text,'weather-storm.png',$options);
-	 print '</td><td>&gt; '.$level3.'</td>';*/
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '</tr>';
-	
-	print '</table>';
-	
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL3" value="'.$level3.'"/></td>';
 	print '</div>';
+	print '</div>';
+
+	print '</div>';
+
 	print '<div id="percentage" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'style="display:none;"' : '').'>';
-	
-	print '<table>';
-	print '<tr>';
-	print '<td>';
+
+	print '<div>';
+	print '<div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-clear.png',$options);
-	print '</td><td>= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td>';
+	print '= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
+	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-few-clouds.png',$options);
-	print '</td><td>&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td>';
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
+	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-clouds.png',$options);
-	print '</td><td>&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'"/>&nbsp;%</td>';
-	print '</tr>';
-	
-	print '<tr><td>';
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'"/>&nbsp;%</td>';
+	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text,'weather-many-clouds.png',$options);
-	print '</td><td>&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	/*print '<td>';
-	 print img_weather($text,'weather-storm.png',$options);
-	 print '</td><td>&gt; '.$level3.'</td>';*/
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-	print '</tr>';
-	
-	print '</table>';
-	
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
 	print '</div>';
-	
+	print '</div>';
+
+	print '</div>';
+
 	?>
 
 	<script type="text/javascript">
-	
+
 		$(document).ready(function() {
-	
+
 			$("#change_mode").click(function() {
 				var use_percent = $("#MAIN_USE_METEO_WITH_PERCENTAGE");
 				var str_mode_std = "<?php print $str_mode_std; ?>";
 				var str_mode_percentage = "<?php print $str_mode_percentage; ?>";
-	
+
 				if(use_percent.val() == 1) {
 					use_percent.val(0);
 					$("#standard").show();
@@ -373,93 +348,73 @@ if($action == 'edit') {
 					$(this).html(str_mode_percentage);
 				}
 			});
-	
+
 		});
-	
+
 	</script>
-	
+
 	<?php
-	
+
 } else {
-	
+
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-	
-		print '<table>';
-		print '<tr>';
-		print '<td>';
+
+		print '<div>';
+		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-clear.png',$options);
-		print '</td><td>= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td>';
+		print '= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-few-clouds.png',$options);
-		print '</td><td>&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'&nbsp;%</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td>';
+		print '&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'&nbsp;%</td>';
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-clouds.png',$options);
-		print '</td><td>&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'&nbsp;%</td>';
-		print '</tr>';
-		
-		print '<tr><td>';
+		print '&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'&nbsp;%</td>';
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-many-clouds.png',$options);
-		print '</td><td>&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td>';
+		print '&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-storm.png',$options);
-		print '</td><td>&gt; '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '</tr>';
-		
-		print '</table>';
-		
+		print '&gt; '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
+		print '</div>';
+		print '</div>';
+
 	} else {
-		
-		print '<table>';
-		print '<tr>';
-		print '<td>';
+
+		print '<div>';
+		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-clear.png',$options);
-		print '</td><td>= '.$level0.'</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td>';
+		print '= '.$level0;
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-few-clouds.png',$options);
-		print '</td><td>&lt;= '.$level1.'</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td>';
+		print '&lt;= '.$level1;
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-clouds.png',$options);
-		print '</td><td>&lt;= '.$level2.'</td>';
-		print '</tr>';
-		
-		print '<tr><td>';
+		print '&lt;= '.$level2;
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-many-clouds.png',$options);
-		print '</td><td>&lt;= '.$level3.'</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td>';
+		print '&lt;= '.$level3;
+		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text,'weather-storm.png',$options);
-		print '</td><td>&gt; '.$level3.'</td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '<td> &nbsp; &nbsp; &nbsp; &nbsp; </td>';
-		print '</tr>';
-		
-		print '</table>';
-		
+		print '&gt; '.$level3;
+		print '</div>';
+		print '</div>';
+
 	}
 }
 
 print '</div>';
-	
+
 if($action == 'edit') {
-	
+
 	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 	print '<br></form>';
-	
+
 } else {
-	
+
 	// Boutons d'action
 	print '<br><div class="tabsAction">';
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
-	
+
 }
 
 llxFooter();
