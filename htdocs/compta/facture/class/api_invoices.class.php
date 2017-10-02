@@ -378,7 +378,7 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Set invoice status as draft
+     * Sets an invoice as draft
      *
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
@@ -483,6 +483,61 @@ class Invoices extends DolibarrApi
 
 
     }
+
+    /**
+     * Sets an invoice as paid
+     *
+     * @param   int 	$id            Order ID
+     * @param   string 	$close_code    Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
+     * @param   string 	$close_note    Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+     *
+     * @url POST    {id}/paid
+     *
+     * @return  array 	An invoice object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     */
+    function set_paid($id, $close_code='', $close_note='')
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->set_paid(DolibarrApiAccess::$user, $close_code, $close_note);
+        if ($result == 0) {
+                throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+                throw new RestException(500, 'Error : '.$this->invoice->error);
+        }
+
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+
+
+    }
+
 
     /**
      * Clean sensible object datas
