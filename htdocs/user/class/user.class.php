@@ -2310,7 +2310,7 @@ class User extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info["o"] = $soc->name;
+			$info[$conf->global->LDAP_FIELD_COMPANY] = $soc->name;
 			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";

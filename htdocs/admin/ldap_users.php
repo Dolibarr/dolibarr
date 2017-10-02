@@ -65,6 +65,11 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
     if (! dolibarr_set_const($db, 'LDAP_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_COMPANY',GETPOST("fieldcompany"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS',GETPOST("fieldaddress"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_ZIP',GETPOST("fieldzip"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_TOWN',GETPOST("fieldtown"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_COUNTRY',GETPOST("fieldcountry"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',GETPOST("fieldsid"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_TITLE',GETPOST("fieldtitle"),'chaine',0,'',$conf->entity)) $error++;
@@ -257,6 +262,46 @@ print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked':'')."></td>";
+print '</tr>';
+
+// Company
+
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
+print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_FIELD_COMPANY.'">';
+print '</td><td>'.$langs->trans("LDAPFieldCompanyExample").'</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// Address
+
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldAddress").'</td><td>';
+print '<input size="25" type="text" name="fieldaddress" value="'.$conf->global->LDAP_FIELD_ADDRESS.'">';
+print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// ZIP
+
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
+print '<input size="25" type="text" name="fieldzip" value="'.$conf->global->LDAP_FIELD_ZIP.'">';
+print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// TOWN
+
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
+print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_FIELD_TOWN.'">';
+print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// COUNTRY
+
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
+print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_FIELD_COUNTRY.'">';
+print '</td><td>&nbsp;</td>';
+print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 // Title
