@@ -52,59 +52,6 @@ class lettering extends BookKeeping
 			$object->code_compta_fournisseur = '';
 		}
 
-		/*$sql = "SELECT DISTINCT bk.rowid, bk.lettering_code";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-		$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4) AND  ( ";
-		if (! empty($object->code_compta))
-			$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
-		if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur))
-			$sql .= "  OR  ";
-		if (! empty($object->code_compta_fournisseur))
-			$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
-
-		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
-		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
-
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-
-			while ( $i < $num ) {
-				$obj = $db->fetch_object($resql);
-				$i ++;
-
-				$sql = "SELECT  bk.rowid  ";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-				$sql .= " WHERE  bk.lettering_code = '" . $obj->lettering_code . "' ";
-				$sql .= " AND ( ";
-				if (! empty($object->code_compta))
-					$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
-				if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur))
-					$sql .= "  OR  ";
-				if (! empty($object->code_compta_fournisseur))
-					$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
-				$sql .= " )  ";
-				// echo $sql;
-				$resql2 = $db->query($sql);
-				if ($resql2) {
-					$num2 = $db->num_rows($resql2);
-					$i2 = 0;
-					$ids = array();
-					while ( $obj2 = $db->fetch_object($resql2) ) {
-						$ids[] = $obj2->rowid;
-					}
-
-					if (count($ids) > 1) {
-						$result = $this->updatelettrage($ids);
-					}
-				}
-			}
-		} else {
-			setEventMessage($this->db->lasterror,'errors');
-			return -1;
-		}*/
-
 		/**
 		 * Prise en charge des lettering complexe avec prelevment , virement
 		 */
@@ -123,7 +70,7 @@ class lettering extends BookKeeping
 
 		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
 		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
-		$sql.= $db->order('bk.doc_date','DESC');
+		$sql .= $db->order('bk.doc_date', 'DESC');
 
 		// echo $sql;
 		//
@@ -131,7 +78,7 @@ class lettering extends BookKeeping
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			while ( $obj = $db->fetch_object($resql)) {
+			while ( $obj = $db->fetch_object($resql) ) {
 				$ids = array();
 				$ids_fact = array();
 
@@ -141,9 +88,9 @@ class lettering extends BookKeeping
 					$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
-					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = payf.fk_bank AND bk.code_journal='".$obj->code_journal."')";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = payf.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfacf.fk_paiementfourn = '" . $obj->url_id . "' ";
-					$sql .= " AND code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4) ";
+					$sql .= " AND code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4) ";
 					$sql .= " AND ( ";
 					if (! empty($object->code_compta)) {
 						$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
@@ -156,23 +103,21 @@ class lettering extends BookKeeping
 					}
 					$sql .= " )  ";
 
-
 					$resql2 = $db->query($sql);
 					if ($resql2) {
-						while ($obj2 = $db->fetch_object($resql2)) {
+						while ( $obj2 = $db->fetch_object($resql2) ) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
 						}
-
 					} else {
 						$this->errors[] = $this->db->lasterror;
-						return -1;
+						return - 1;
 					}
 					if (count($ids_fact)) {
 						$sql = 'SELECT bk.rowid, facf.ref, facf.ref_supplier ';
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
-						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (".implode(',',$ids_fact)."))";
-						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3) ";
+						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (" . implode(',', $ids_fact) . "))";
+						$sql .= " WHERE bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=3) ";
 						$sql .= " AND ( ";
 						if (! empty($object->code_compta)) {
 							$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
@@ -187,26 +132,23 @@ class lettering extends BookKeeping
 
 						$resql2 = $db->query($sql);
 						if ($resql2) {
-							while ($obj2 = $db->fetch_object($resql2)) {
+							while ( $obj2 = $db->fetch_object($resql2) ) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
-
 						} else {
 							$this->errors[] = $this->db->lasterror;
-							return -1;
+							return - 1;
 						}
 					}
-
 				} elseif ($obj->type == 'payment') {
-
 
 					$sql = 'SELECT DISTINCT bk.rowid, fac.ref, fac.ref, pay.fk_bank, fac.rowid as fact_id';
 					$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
-					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='".$obj->code_journal."')";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfac.fk_paiement = '" . $obj->url_id . "' ";
-					$sql .= " AND bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4) ";
+					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4) ";
 					$sql .= " AND ( ";
 					if (! empty($object->code_compta)) {
 						$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
@@ -219,23 +161,21 @@ class lettering extends BookKeeping
 					}
 					$sql .= " )  ";
 
-
 					$resql2 = $db->query($sql);
 					if ($resql2) {
-						while ($obj2 = $db->fetch_object($resql2)) {
+						while ( $obj2 = $db->fetch_object($resql2) ) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
 						}
-
 					} else {
 						$this->errors[] = $this->db->lasterror;
-						return -1;
+						return - 1;
 					}
 					if (count($ids_fact)) {
 						$sql = 'SELECT bk.rowid, fac.ref, fac.ref_supplier ';
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
-						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (".implode(',',$ids_fact)."))";
-						$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=2) ";
+						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (" . implode(',', $ids_fact) . "))";
+						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2) ";
 						$sql .= " AND ( ";
 						if (! empty($object->code_compta)) {
 							$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
@@ -250,13 +190,12 @@ class lettering extends BookKeeping
 
 						$resql2 = $db->query($sql);
 						if ($resql2) {
-							while ($obj2 = $db->fetch_object($resql2)) {
+							while ( $obj2 = $db->fetch_object($resql2) ) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
-
 						} else {
 							$this->errors[] = $this->db->lasterror;
-							return -1;
+							return - 1;
 						}
 					}
 				}
@@ -264,12 +203,11 @@ class lettering extends BookKeeping
 				if (count($ids) > 1) {
 					$result = $this->updatelettrage($ids);
 				}
-
 			}
 		}
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::".__METHOD__ . $errmsg, LOG_ERR);
+				dol_syslog(get_class($this) . "::" . __METHOD__ . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			return - 1 * $error;
@@ -281,7 +219,7 @@ class lettering extends BookKeeping
 	/**
 	 *
 	 * @param array $ids
-	 * @param string $notrigger
+	 * @param boolean $notrigger
 	 * @return number
 	 */
 	public function updateLettrage($ids = array(), $notrigger = false) {
@@ -325,7 +263,7 @@ class lettering extends BookKeeping
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 		$sql .= " lettering_code='" . $lettre . "'";
-		$sql .= " , date_lettering = '" . $this->db->idate($now)."'"; // todo correct date it's false
+		$sql .= " , date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
 		$sql .= "  WHERE rowid IN (" . implode(',', $ids) . ") ";
 		$this->db->begin();
 
