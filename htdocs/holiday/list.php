@@ -433,6 +433,8 @@ if (! empty($holiday->holiday))
 	$userstatic = new User($db);
 	$approbatorstatic = new User($db);
 
+	$typeleaves=$holiday->getTypes(1,-1);
+
 	foreach($holiday->holiday as $infos_CP)
 	{
 		// User
@@ -463,8 +465,7 @@ if (! empty($holiday->holiday))
 		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
 		print '<td>';
-		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];
-		print $label?$label:$infos_CP['fk_type'];
+		print empty($typeleaves[$infos_CP['fk_type']]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$infos_CP['fk_type']) : $typeleaves[$infos_CP['fk_type']]['label'];
 		print '</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);

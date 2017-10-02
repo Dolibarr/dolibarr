@@ -292,7 +292,8 @@ class Holiday extends CommonObject
         $sql.= " cp.rowid,";
 
         $sql.= " cp.fk_user,";
-        $sql.= " cp.date_create,";
+		$sql.= " cp.fk_type,";
+		$sql.= " cp.date_create,";
         $sql.= " cp.description,";
         $sql.= " cp.date_debut,";
         $sql.= " cp.date_fin,";
@@ -322,7 +323,7 @@ class Holiday extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
-        $sql.= " AND cp.fk_user = '".$user_id."'";
+        $sql.= " AND cp.fk_user = ".$user_id;
 
         // Filtre de séléction
         if(!empty($filter)) {
@@ -357,6 +358,7 @@ class Holiday extends CommonObject
                 $tab_result[$i]['rowid'] = $obj->rowid;
                 $tab_result[$i]['ref'] = $obj->rowid;
                 $tab_result[$i]['fk_user'] = $obj->fk_user;
+                $tab_result[$i]['fk_type'] = $obj->fk_type;
                 $tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
                 $tab_result[$i]['description'] = $obj->description;
                 $tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
