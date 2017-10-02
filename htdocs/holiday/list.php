@@ -250,13 +250,13 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-if ($id > 0)
+if ($id > 0)		// For user tab
 {
 	$title = $langs->trans("User");
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	$head = user_prepare_head($fuser);
 
-	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
+	dol_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
@@ -277,14 +277,14 @@ else
     //print count($holiday->holiday);
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num, count($holiday->holiday), 'title_hrm.png', 0, '', '', $limit);
 
-	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 	{
-		dol_fiche_head('');
+		dol_fiche_head('', '', '', -1);
 
 		showMyBalance($holiday, $user_id);
 
 		dol_fiche_end();
-	}
+	}*/
 }
 
 

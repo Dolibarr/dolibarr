@@ -55,7 +55,7 @@ if (! $sortorder) $sortorder="ASC";
 if ($user->societe_id > 0) accessforbidden();
 
 // If the user does not have perm to read the page
-if(!$user->rights->holiday->read) accessforbidden();
+if (!$user->rights->holiday->read) accessforbidden();
 
 
 // Initialize technical object to manage context to save list fields
@@ -204,7 +204,16 @@ if ($result < 0)
 	setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
-$filters='';
+$filters = '';
+
+// Filter on array of ids of all childs
+$userchilds=array();
+if (empty($user->rights->holiday->read_all))
+{
+	$userchilds=$user->getAllChildIds(1);
+	$filters.=' AND u.rowid IN ('.join(', ',$userchilds).')';
+}
+
 $filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
 if ($search_supervisor > 0) $filters.=natural_search(array('u.fk_user'), $search_supervisor, 2);
 
@@ -230,13 +239,6 @@ else
 {
     $canedit=0;
     if (! empty($user->rights->holiday->define_holiday)) $canedit=1;
-
-    // Get array of ids of all childs
-    $userchilds=array();
-    if (empty($user->rights->holiday->read_all))
-    {
-        $userchilds=$user->getAllChildIds();
-    }
 
     print '<input type="hidden" name="action" value="update" />';
 
@@ -291,7 +293,7 @@ else
     {
         print_liste_field_titre($langs->trans("NoLeaveWithCounterDefined"), $_SERVER["PHP_SELF"], '', '', '', '');
     }
-    print_liste_field_titre($langs->trans('Note'), $_SERVER["PHP_SELF"]);
+    print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : $langs->trans('Note')), $_SERVER["PHP_SELF"]);
     print_liste_field_titre('');
     print '</tr>';
 
