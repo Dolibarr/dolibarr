@@ -1844,7 +1844,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 /**
  * Save content of a page on disk
  *
- * @param	string		$filetpl			Full path of filename to generate
+ * @param	string		$filehtmlheader		Full path of filename to generate
  * @param	string		$htmlheadercontent	Content of file
  * @return	boolean							True if OK
  */
