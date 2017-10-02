@@ -2276,8 +2276,12 @@ class User extends CommonObject
 		$ldapkey = array(
 			'LDAP_FIELD_FULLNAME'	=> 'fullname',
 			'LDAP_FIELD_NAME'		=> 'lastname',
+			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
 			'LDAP_FIELD_LOGIN_SAMBA'	=> 'login',
+			'LDAP_FIELD_PHONE'		=> 'office_phone',
+			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
+			'LDAP_FIELD_FAX'			=> 'office_fax',
 			'LDAP_FIELD_MAIL'		=> 'email',
 			'LDAP_FIELD_SID'			=> 'ldap_sid',
 			'LDAP_FIELD_SKYPE'		=> 'skype'
@@ -2297,13 +2301,9 @@ class User extends CommonObject
 				}
 			}
 		}
-		if ($this->firstname && ! empty($conf->global->LDAP_FIELD_FIRSTNAME))		$info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
 		if ($this->address && ! empty($conf->global->LDAP_FIELD_ADDRESS))			$info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_FIELD_ZIP))					$info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
 		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))				$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
-		if ($this->office_phone && ! empty($conf->global->LDAP_FIELD_PHONE))		$info[$conf->global->LDAP_FIELD_PHONE] = $this->office_phone;
-		if ($this->user_mobile && ! empty($conf->global->LDAP_FIELD_MOBILE))		$info[$conf->global->LDAP_FIELD_MOBILE] = $this->user_mobile;
-		if ($this->office_fax && ! empty($conf->global->LDAP_FIELD_FAX))			$info[$conf->global->LDAP_FIELD_FAX] = $this->office_fax;
 		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note_public;
 		if ($this->socid > 0)
 		{

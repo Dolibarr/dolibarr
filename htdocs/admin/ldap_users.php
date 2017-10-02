@@ -184,7 +184,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
-print '<td align="right">&nbsp;</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FIRSTNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FIRSTNAME)?' checked':'')."></td>";
 print '</tr>';
 
 // Login unix
@@ -232,7 +232,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
-print '<td align="right">&nbsp;</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_PHONE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PHONE)?' checked':'')."></td>";
 print '</tr>';
 
 // Mobile
@@ -240,7 +240,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
-print '<td align="right">&nbsp;</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MOBILE)?' checked':'')."></td>";
 print '</tr>';
 
 // Skype
@@ -256,7 +256,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td align="right">&nbsp;</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked':'')."></td>";
 print '</tr>';
 
 // Title
