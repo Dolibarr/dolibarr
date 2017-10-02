@@ -92,7 +92,7 @@ class modAgenda extends DolibarrModules
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
 
 		        $constname = 'MAIN_AGENDA_ACTIONAUTO_'.$obj->code;
-		        $constvalue = (empty($conf->global->$constname)?"0":$conf->global->$constname);
+		        $constvalue = (empty($conf->global->$constname)?'':$conf->global->$constname);
 		        $this->const[] = array($constname, "chaine", $constvalue);
 		    }
 		}
