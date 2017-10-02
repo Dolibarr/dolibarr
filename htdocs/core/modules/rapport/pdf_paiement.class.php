@@ -122,6 +122,8 @@ class pdf_paiement
 
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
+
+		$file = $dir . "/payments-".$year."-".$month.".pdf";
 		switch ($this->doc_type) {
             case "client":
                 $file = $dir . "/payments-".$year."-".$month.".pdf";

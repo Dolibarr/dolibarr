@@ -177,7 +177,7 @@ if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send']=$la
 if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans('MailToThirdparty');
 if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
-$elementList['all']=$langs->trans('VisibleEverywhere');
+$elementList['all'] =$langs->trans('VisibleEverywhere');
 $elementList['none']=$langs->trans('VisibleNowhere');
 
 
@@ -295,7 +295,7 @@ if (empty($reshook))
                 if ($value == 'fk_user' && ! ($_POST[$keycode] > 0)) $_POST[$keycode]='';
                 if ($value == 'private' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='0';
                 if ($value == 'position' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='1';
-                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  												// For vat, we want/accept code = ''
+                if ($_POST[$keycode] == '' && $keycode != 'langcode') $sql.="null";		// lang must be '' if not defined so the unique key that include lang will work
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
@@ -485,7 +485,7 @@ if (! $user->admin)
 }
 if (empty($conf->global->MAIN_MULTILANGS))
 {
-	$sql.= " AND (lang = '".$langs->defaultlang."' OR lang IS NULL)";
+	$sql.= " AND (lang = '".$langs->defaultlang."' OR lang IS NULL OR lang = '')";
 }
 if ($search_label) $sql.=natural_search('label', $search_label);
 if ($search_type_template != '' && $search_type_template != '-1') $sql.=natural_search('type_template', $search_type_template);

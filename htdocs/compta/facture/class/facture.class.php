@@ -1737,7 +1737,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user      	    User making the deletion.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						<0 if KO, 0=Refused, >0 if OK
 	 */
 	function delete($user, $notrigger=0, $idwarehouse=-1)
 	{
@@ -1748,9 +1748,13 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
-		// TODO Test if there is at least one payment. If yes, refuse to delete.
+		// Test to avoid invoice deletion (allowed if draft)
+		$test = $this->is_erasable();
+
+		if ($test <= 0) return $test;
 
 		$error=0;
+
 		$this->db->begin();
 
 		if (! $error && ! $notrigger)
@@ -3357,9 +3361,9 @@ class Facture extends CommonInvoice
 	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
-	 *	If hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is on, we can
-	 *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
 	 *  If invoice is draft and ha a temporary ref -> yes
+	 *	If hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is on, we can. If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on, we can't.
+	 *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
 	 *
 	 *  @return    int         <0 if KO, 0=no, 1=yes
 	 */
@@ -3367,29 +3371,35 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
+		// on verifie si la facture est en numerotation provisoire
+		$facref = substr($this->ref, 1, 4);
+
+		if ($this->statut == self::STATUS_DRAFT && $facref == 'PROV') // If draft invoice and ref not yet defined
+		{
+			return 1;
+		}
+
 		if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) return 1;
 		if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED))  return 0;
 
-		// on verifie si la facture est en numerotation provisoire
-		$facref = substr($this->ref, 1, 4);
+		// TODO Test if there is at least one payment. If yes, refuse to delete.
+		// ...
 
 		// If not a draft invoice and not temporary invoice
 		if ($facref != 'PROV')
 		{
 			$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
 			$ventilExportCompta = $this->getVentilExportCompta();
+
 			// If there is no invoice into the reset range and not already dispatched, we can delete
 			if ($maxfacnumber == '' && $ventilExportCompta == 0) return 1;
 			// If invoice to delete is last one and not already dispatched, we can delete
 			if ($maxfacnumber == $this->ref && $ventilExportCompta == 0) return 1;
+
 			if ($this->situation_cycle_ref) {
 				$last = $this->is_last_in_cycle();
 				return $last;
 			}
-		}
-		else if ($this->statut == self::STATUS_DRAFT && $facref == 'PROV') // Si facture brouillon et provisoire
-		{
-			return 1;
 		}
 
 		return 0;

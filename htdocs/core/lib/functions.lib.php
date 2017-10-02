@@ -314,111 +314,126 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 	    {
 	    	if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
-	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
+	            if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
 	            {
-					$qualified=1;
-                	if (isset($user->default_values[$relativepathstring]['createform_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
-                	{
-                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['createform_queries']);
-                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-                		foreach($tmpqueryarraytohave as $tmpquerytohave)
-                		{
-                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
-                		}
-                	}
-					if ($qualified)
+					if (isset($user->default_values[$relativepathstring]['createform']))
 					{
-		            	//var_dump($user->default_values[$relativepathstring]['createform']);
-		                if (isset($user->default_values[$relativepathstring]['createform'][$paramname])) $out = $user->default_values[$relativepathstring]['createform'][$paramname];
+						foreach($user->default_values[$relativepathstring]['createform'] as $defkey => $defval)
+						{
+							$qualified = 0;
+							if ($defkey != '_noquery_')
+							{
+								$tmpqueryarraytohave=explode('&', $defkey);
+								$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+								$foundintru=0;
+								foreach($tmpqueryarraytohave as $tmpquerytohave)
+								{
+									if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+								}
+								if (! $foundintru) $qualified=1;
+								//var_dump($defkey.'-'.$qualified);
+							}
+							else $qualified = 1;
+
+							if ($qualified)
+							{
+				            	//var_dump($user->default_values[$relativepathstring][$defkey]['createform']);
+				                if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname]))
+				                {
+				                	$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
+				                	break;
+				                }
+							}
+						}
 					}
-	            }
+				}
 	        }
 	        // Management of default search_filters and sort order
 	        //elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 	        {
-	            if (! empty($user->default_values))		// $user->default_values defined from menu default values
+	            if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
 	            {
 	                //var_dump($user->default_values[$relativepathstring]);
-	                if ($paramname == 'sortfield')			// Sorted on which fields ?
+	                if ($paramname == 'sortfield' || $paramname == 'sortorder')			// Sorted on which fields ? ASC or DESC ?
 	                {
-	                	$qualified=1;
-	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+	                	if (isset($user->default_values[$relativepathstring]['sortorder']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
 	                	{
-	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
-	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                		foreach($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval)
 	                		{
-	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
-	                		}
-	                	}
-						if ($qualified)
-						{
-		                	if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the key of $user->default_values[path][sortorder]
-		                    {
-		                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-		                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-		                        {
-		                            if ($out) $out.=', ';
-		                            $out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
-		                        }
+	                			$qualified = 0;
+	                			if ($defkey != '_noquery_')
+	                			{
+	                				$tmpqueryarraytohave=explode('&', $defkey);
+	                				$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+	                				$foundintru=0;
+	                				foreach($tmpqueryarraytohave as $tmpquerytohave)
+	                				{
+	                					if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+	                				}
+	                				if (! $foundintru) $qualified=1;
+	                				//var_dump($defkey.'-'.$qualified);
+	                			}
+	                			else $qualified = 1;
+
+	                			if ($qualified)
+	                			{
+		                        	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+		                        	foreach($user->default_values[$relativepathstring]['sortorder'][$defkey] as $key => $val)
+		                        	{
+		                        		if ($out) $out.=', ';
+		                        		if ($paramname == 'sortfield')
+		                        		{
+	                            			$out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
+		                        		}
+	                        			if ($paramname == 'sortorder')
+	                        			{
+		                        			$out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
+		                        		}
+		                        	}
+	                            	//break;	// No break for sortfield and sortorder so we can cumulate fields (is it realy usefull ?)
+	                			}
 		                    }
 						}
 	                }
-	                elseif ($paramname == 'sortorder')		// ASC or DESC ?
+	                elseif (isset($user->default_values[$relativepathstring]['filters']))
 	                {
-	                	$qualified=1;
-	                	if (isset($user->default_values[$relativepathstring]['sortorder_queries']))
+	                	foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
 	                	{
-	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['sortorder_queries']);
-	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
-	                		{
-	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
-	                		}
-	                	}
-						if ($qualified)
-						{
-		                	if (isset($user->default_values[$relativepathstring]['sortorder']))    // We will use the val of $user->default_values[path][sortorder]
-		                    {
-		                        $forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-		                        foreach($user->default_values[$relativepathstring]['sortorder'] as $key => $val)
-		                        {
-		                            if ($out) $out.=', ';
-		                            $out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
-		                        }
-		                    }
-						}
-	                }
-	                elseif (isset($user->default_values[$relativepathstring]['filters'][$paramname]))
-	                {
-	                	$qualified=1;
-	                	if (isset($user->default_values[$relativepathstring]['filters_queries']))
-	                	{
-	                		$tmpqueryarraytohave=explode('&', $user->default_values[$relativepathstring]['filters_queries']);
-	                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-	                		foreach($tmpqueryarraytohave as $tmpquerytohave)
-	                		{
-	                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $qualified=0;
-	                		}
-	                	}
-						if ($qualified)
-						{
-		                	if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+		                	$qualified = 0;
+		                	if ($defkey != '_noquery_')
 		                	{
-		                		// We made a search from quick search menu, do we still use default filter ?
-		                		if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+		                		$tmpqueryarraytohave=explode('&', $defkey);
+		                		$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+		                		$foundintru=0;
+		                		foreach($tmpqueryarraytohave as $tmpquerytohave)
 		                		{
-		                    		$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-		                    		$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
+		                			if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
 		                		}
+		                		if (! $foundintru) $qualified=1;
+		                		//var_dump($defkey.'-'.$qualified);
 		                	}
-		                	else
-		                	{
-		                    	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-		                    	$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$paramname], '', $forbidden_chars_to_replace);
-		                	}
-						}
+		                	else $qualified = 1;
+
+							if ($qualified)
+							{
+			                	if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+			                	{
+			                		// We made a search from quick search menu, do we still use default filter ?
+			                		if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+			                		{
+			                    		$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+			                    		$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
+			                		}
+			                	}
+			                	else
+			                	{
+			                    	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+			                    	$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
+			                	}
+			                	break;
+							}
+	                	}
 	                }
 	            }
 	        }
@@ -426,14 +441,14 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 
 	}
 
-	    // Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
-	    // Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
-	    // We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
-	    if (! is_array($out) && empty($_POST[$paramname]))
+	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
+	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
+	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
+	if (! is_array($out) && empty($_POST[$paramname]))
+	{
+	    $maxloop=20; $loopnb=0;    // Protection against infinite loop
+	    while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
 	    {
-	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
-	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
-	        {
 	            $loopnb++; $newout = '';
 
     	        if ($reg[1] == 'DAY')                { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
@@ -464,57 +479,57 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
     	        else $newout = '';     // Key not found, we replace with empty string
     	        //var_dump('__'.$reg[1].'__ -> '.$newout);
     	        $out = preg_replace('/__'.preg_quote($reg[1],'/').'__/', $newout, $out);
-	        }
 	    }
+	}
 
-	    // Check is done after replacement
-	    switch ($check)
-	    {
-	        case 'none':
-	            break;
-	        case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
-	            if (! is_numeric($out)) { $out=''; }
-	            break;
-	        case 'intcomma':
-	            if (preg_match('/[^0-9,]+/i',$out)) $out='';
-	            break;
-	        case 'alpha':
-	            $out=trim($out);
-	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-	            // '../' is dangerous because it allows dir transversals
-	            if (preg_match('/"/',$out)) $out='';
-	            else if (preg_match('/\.\.\//',$out)) $out='';
-	            break;
-	        case 'san_alpha':
-	            $out=filter_var($out,FILTER_SANITIZE_STRING);
-	            break;
-	        case 'aZ':
-	            $out=trim($out);
-	            if (preg_match('/[^a-z]+/i',$out)) $out='';
-	            break;
-	        case 'aZ09':
-	            $out=trim($out);
-	            if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
-	            break;
-	        case 'array':
-	            if (! is_array($out) || empty($out)) $out=array();
-	            break;
-			case 'nohtml':
-			    $out=dol_string_nohtmltag($out);
-				break;
-			case 'alphanohtml':	// Recommended for search params
-	            $out=trim($out);
-	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-	            // '../' is dangerous because it allows dir transversals
-	            if (preg_match('/"/',$out)) $out='';
-	            else if (preg_match('/\.\.\//',$out)) $out='';
-			    $out=dol_string_nohtmltag($out);
-				break;
-			case 'custom':
-	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
-	            $out=filter_var($out, $filter, $options);
-	            break;
-	    }
+    // Check is done after replacement
+    switch ($check)
+    {
+        case 'none':
+            break;
+        case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
+            if (! is_numeric($out)) { $out=''; }
+            break;
+        case 'intcomma':
+            if (preg_match('/[^0-9,]+/i',$out)) $out='';
+            break;
+        case 'alpha':
+            $out=trim($out);
+            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+            // '../' is dangerous because it allows dir transversals
+            if (preg_match('/"/',$out)) $out='';
+            else if (preg_match('/\.\.\//',$out)) $out='';
+            break;
+        case 'san_alpha':
+            $out=filter_var($out,FILTER_SANITIZE_STRING);
+            break;
+        case 'aZ':
+            $out=trim($out);
+            if (preg_match('/[^a-z]+/i',$out)) $out='';
+            break;
+        case 'aZ09':
+            $out=trim($out);
+            if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+            break;
+        case 'array':
+            if (! is_array($out) || empty($out)) $out=array();
+            break;
+		case 'nohtml':
+		    $out=dol_string_nohtmltag($out);
+			break;
+		case 'alphanohtml':	// Recommended for search params
+            $out=trim($out);
+            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+            // '../' is dangerous because it allows dir transversals
+            if (preg_match('/"/',$out)) $out='';
+            else if (preg_match('/\.\.\//',$out)) $out='';
+		    $out=dol_string_nohtmltag($out);
+			break;
+		case 'custom':
+            if (empty($filter)) return 'BadFourthParameterForGETPOST';
+            $out=filter_var($out, $filter, $options);
+            break;
+    }
 
     // Code for search criteria persistence.
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
@@ -5236,7 +5251,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
             '__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
             '__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-            '__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+            '__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1, ', '),
+            '__MYCOMPANY_ADDRESS__' => $mysoc->address,
+        	'__MYCOMPANY_ZIP__'     => $mysoc->zip,
+            '__MYCOMPANY_TOWN__'    => $mysoc->town,
+            '__MYCOMPANY_COUNTRY__'    => $mysoc->country,
+        	'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
         ));
     }
     if (($onlykey || is_object($object)) && (empty($exclude) || ! in_array('object', $exclude)))
@@ -5392,8 +5412,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
             '__USER_FIRSTNAME__' => (string) $user->firstname,
             '__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
             '__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
-        	'__SIGNATURE__' => (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
-        ));
+        	'__USER_SIGNATURE__' => (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
+	        )
+        );
+        // For backward compatibility
+        if ($onlykey != 2)
+        {
+        	$substitutionarray['__SIGNATURE__'] = (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '');
+        }
     }
     if (! empty($conf->multicompany->enabled))
     {

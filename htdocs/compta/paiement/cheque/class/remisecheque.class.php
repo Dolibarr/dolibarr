@@ -478,20 +478,20 @@ class RemiseCheque extends CommonObject
 			return "";
 		}
 	}
-
-
+	
+	
 	/**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *
-     *      @param      User	$user       Objet user
-     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param      User	$user       Objet user
+	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
 		global $conf, $langs;
-
+		
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-
+		
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -500,29 +500,68 @@ class RemiseCheque extends CommonObject
 		$sql.= " AND b.fk_type = 'CHQ'";
 		$sql.= " AND b.fk_bordereau = 0";
 		$sql.= " AND b.amount > 0";
-
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$langs->load("banks");
 			$now=dol_now();
-
+			
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
 			$response->img=img_object('',"payment");
-
+			
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
-
+				
 				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) {
 					$response->nbtodolate++;
 				}
 			}
-
+			
 			return $response;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
+	
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if ko, >0 if ok
+	 */
+	function load_state_board()
+	{
+		global $user;
+		
+		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		
+		$sql = "SELECT count(b.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql.= " AND b.fk_type = 'CHQ'";
+		$sql.= " AND b.amount > 0";
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["cheques"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
 		}
 		else
 		{

@@ -1273,6 +1273,9 @@ div.heightref {
 div.divphotoref {
 	padding-right: 20px;
 }
+div.paginationref {
+	padding-bottom: 10px;
+}
 div.statusref {
 	float: right;
 	padding-left: 12px;
