@@ -399,12 +399,14 @@ class User extends CommonObject
 			        }
 			    }
 			    // Sort by key, so _noquery_ is last
-			    foreach($this->default_values as $a => $b)
-			    {
-			    	foreach($b as $c => $d)
-			    	{
-			    		krsort($this->default_values[$a][$c]);
-			    	}
+			    if(!empty($this->default_values)) {
+				    foreach($this->default_values as $a => $b)
+				    {
+				    	foreach($b as $c => $d)
+				    	{
+				    		krsort($this->default_values[$a][$c]);
+				    	}
+				    }
 			    }
 			    $this->db->free($resql);
 			}
