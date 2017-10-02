@@ -5954,16 +5954,16 @@ function dol_osencode($str)
  *      Return an id or code from a code or id.
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
- * 		@param	DoliDB	$db			Database handler
- * 		@param	string	$key		Code or Id to get Id or Code
- * 		@param	string	$tablename	Table name without prefix
- * 		@param	string	$fieldkey	Field for code
- * 		@param	string	$fieldid	Field for id
- *      @param  int		$entity		Field for filter by entity
- *      @return int					<0 if KO, Id of code if OK
+ * 		@param	DoliDB	$db				Database handler
+ * 		@param	string	$key				Code or Id to get Id or Code
+ * 		@param	string	$tablename		Table name without prefix
+ * 		@param	string	$fieldkey		Field for code
+ * 		@param	string	$fieldid			Field for id
+ *      @param  int		$entityfilter	Filter by entity
+ *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entity=null)
+function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entityfilter=0)
 {
 	global $cache_codes;
 
@@ -5979,8 +5979,8 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$e
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
-	if (! is_null($entity))
-		$sql.= " AND entity = " . (int) $entity;
+	if (! empty($entityfilter))
+		$sql.= " AND entity IN (" . getEntity($tablename) . ")";
 	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)

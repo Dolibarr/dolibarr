@@ -251,7 +251,7 @@ if (empty($reshook))
 	    $paiement->datepaye     = $datepaye;
 	    $paiement->amounts      = $amounts;   // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',getEntity('c_paiement'));
+	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',1);
 	    $paiement->num_paiement = GETPOST('num_paiement');
 	    $paiement->note         = GETPOST('comment');
 

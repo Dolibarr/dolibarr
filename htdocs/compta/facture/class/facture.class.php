@@ -3660,7 +3660,7 @@ class Facture extends CommonInvoice
         			if (! $error)
         			{
         				// Force payment mode of invoice to withdraw
-        				$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement', 'code', 'id', getEntity('c_paiement'));
+        				$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement', 'code', 'id', 1);
         				if ($payment_mode_id > 0)
         				{
         					$result=$this->setPaymentMethods($payment_mode_id);
