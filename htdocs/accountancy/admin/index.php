@@ -37,10 +37,9 @@ $langs->load("compta");
 $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
-$langs->load("salaries");
 
-// Security check
-if (empty($user->admin))
+// Security access
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -160,17 +159,12 @@ llxHeader();
 
 $form = new Form($db);
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+//$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
-
-$head = admin_accounting_prepare_head($accounting);
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
-
-dol_fiche_head($head, 'general', $langs->trans("Configuration"), -1, 'cron');
-
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
 
@@ -287,17 +281,10 @@ foreach ($list as $key)
 
 print '</table>';
 
-
-
-
-dol_fiche_end();
-
 print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
 print '<br>';
 print '<br>';
-
-print '<div class="opacitymedium">'.$langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy")).'</div>';
 
 print '<br>';
 print '</form>';

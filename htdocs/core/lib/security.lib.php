@@ -252,7 +252,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             {
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
                 if (empty($user->rights->$feature->creer)
-                && empty($user->rights->$feature->write)) { $createok=0; $nbko++; }
+                && empty($user->rights->$feature->write)
+                && empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
             }
         }
 

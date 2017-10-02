@@ -27,8 +27,8 @@
 //if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
 //if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
+//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
+//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 //if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
 //if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
 //if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
@@ -130,7 +130,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -238,6 +238,21 @@ foreach ($search_array_options as $key => $val)
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+
+/* If a group by is required
+$sql.= " GROUP BY "
+foreach($object->fields as $key => $val)
+{
+    $sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+*/
+
 $sql.=$db->order($sortfield,$sortorder);
 
 // Count total nb of records
@@ -476,19 +491,19 @@ $totalarray=array();
 while ($i < min($num, $limit))
 {
     $obj = $db->fetch_object($resql);
-    if ($obj)
-    {
-    	// Store properties in $object
-    	$object->id = $obj->rowid;
-    	foreach($object->fields as $key => $val)
-    	{
-    		if (isset($obj->$key)) $object->$key = $obj->$key;
-    	}
+    if (empty($obj)) break;		// Should not happen
 
-        // Show here line of result
-        print '<tr class="oddeven">';
-        foreach($object->fields as $key => $val)
-        {
+    // Store properties in $object
+   	$object->id = $obj->rowid;
+   	foreach($object->fields as $key => $val)
+   	{
+   		if (isset($obj->$key)) $object->$key = $obj->$key;
+   	}
+
+    // Show here line of result
+    print '<tr class="oddeven">';
+    foreach($object->fields as $key => $val)
+    {
             if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
@@ -509,70 +524,70 @@ while ($i < min($num, $limit))
                 	$totalarray['val']['t.'.$key] += $obj->$key;
                 }
             }
-        }
-    	// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-		   foreach($extrafields->attribute_label as $key => $val)
-		   {
-				if (! empty($arrayfields["ef.".$key]['checked']))
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-		            if (! $i) $totalarray['nbfield']++;
-		            if (! empty($val['isameasure']))
-		            {
-		            	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
-		            	$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
-		            }
-				}
-		   }
-		}
-        // Fields from hook
-	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        // Rest of fields
-        foreach($object->fields as $key => $val)
+    }
+    // Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val)
+	   {
+			if (! empty($arrayfields["ef.".$key]['checked']))
+			{
+				print '<td';
+				$align=$extrafields->getAlignFlag($key);
+				if ($align) print ' align="'.$align.'"';
+				print '>';
+				$tmpkey='options_'.$key;
+				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+				print '</td>';
+	            if (! $i) $totalarray['nbfield']++;
+	            if (! empty($val['isameasure']))
+	            {
+	            	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
+	            	$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
+	            }
+			}
+	   }
+	}
+    // Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    // Rest of fields
+    foreach($object->fields as $key => $val)
+    {
+        if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+        $align='';
+        if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
+        if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
+        if ($key == 'status') $align.=($align?' ':'').'center';
+        if (! empty($arrayfields['t.'.$key]['checked']))
         {
-            if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-            $align='';
-            if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-            if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-            if ($key == 'status') $align.=($align?' ':'').'center';
-            if (! empty($arrayfields['t.'.$key]['checked']))
+            print '<td'.($align?' class="'.$align.'"':'').'>';
+            if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
+            elseif ($key == 'status') print $object->getLibStatut(3);
+            else print $obj->$key;
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+            if (! empty($val['isameasure']))
             {
-                print '<td'.($align?' class="'.$align.'"':'').'>';
-                if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'status') print $object->getLibStatut(3);
-                else print $obj->$key;
-                print '</td>';
-                if (! $i) $totalarray['nbfield']++;
-                if (! empty($val['isameasure']))
-                {
-	                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
-	               	$totalarray['val']['t.'.$key] += $obj->$key;
-                }
+	            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
+	           	$totalarray['val']['t.'.$key] += $obj->$key;
             }
         }
-        // Action column
-        print '<td class="nowrap" align="center">';
-	    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-        {
-	        $selected=0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-        }
-	    print '</td>';
-        if (! $i) $totalarray['nbfield']++;
-
-        print '</tr>';
     }
+    // Action column
+    print '<td class="nowrap" align="center">';
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    {
+	    $selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+    }
+	print '</td>';
+    if (! $i) $totalarray['nbfield']++;
+
+    print '</tr>';
+
     $i++;
 }
 
@@ -592,7 +607,7 @@ if (isset($totalarray['pos']))
 	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
-        	print '<td></td>';
+        	else print '<td></td>';
         }
     }
     print '</tr>';

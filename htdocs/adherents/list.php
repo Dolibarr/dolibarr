@@ -129,7 +129,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -315,7 +315,7 @@ if ($search_type > 0)
 {
 	$membertype=new AdherentType($db);
 	$result=$membertype->fetch(GETPOST("type",'int'));
-	$titre.=" (".$membertype->libelle.")";
+	$titre.=" (".$membertype->label.")";
 }
 
 $param='';
@@ -698,7 +698,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['t.libelle']['checked']))
 	{
     	$membertypestatic->id=$obj->type_id;
-		$membertypestatic->libelle=$obj->type;
+		$membertypestatic->label=$obj->type;
 		print '<td class="nowrap">';
 		print $membertypestatic->getNomUrl(1,32);
 		print '</td>';

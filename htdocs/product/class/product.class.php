@@ -1532,6 +1532,7 @@ class Product extends CommonObject
                     	$obj->price = $price_result;
                     }
                 }
+                $this->product_fourn_price_id = $obj->rowid;
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
@@ -1577,6 +1578,7 @@ class Product extends CommonObject
 		                    	$obj->price = $price_result;
 		                    }
 		                }
+		                $this->product_fourn_price_id = $obj->rowid;
 						$this->buyprice = $obj->price;                      // deprecated
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
@@ -2123,6 +2125,49 @@ class Product extends CommonObject
 			$this->stats_propale['nb']=$obj->nb;
 			$this->stats_propale['rows']=$obj->nb_rows;
 			$this->stats_propale['qty']=$obj->qty?$obj->qty:0;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *  Charge tableau des stats propale pour le produit/service
+	 *
+	 *  @param    int	$socid      Id thirdparty
+	 *  @return   array       		Tableau des stats
+	 */
+	function load_stats_proposal_supplier($socid=0)
+	{
+		global $conf;
+		global $user;
+
+		$sql = "SELECT COUNT(DISTINCT p.fk_soc) as nb_suppliers, COUNT(DISTINCT p.rowid) as nb,";
+		$sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
+		$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as pd";
+		$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
+		$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE p.rowid = pd.fk_supplier_proposal";
+		$sql.= " AND p.fk_soc = s.rowid";
+		$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
+		$sql.= " AND pd.fk_product = ".$this->id;
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		//$sql.= " AND pr.fk_statut != 0";
+		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
+
+		$result = $this->db->query($sql);
+		if ( $result )
+		{
+			$obj=$this->db->fetch_object($result);
+			$this->stats_proposal_supplier['suppliers']=$obj->nb_suppliers;
+			$this->stats_proposal_supplier['nb']=$obj->nb;
+			$this->stats_proposal_supplier['rows']=$obj->nb_rows;
+			$this->stats_proposal_supplier['qty']=$obj->qty?$obj->qty:0;
 			return 1;
 		}
 		else

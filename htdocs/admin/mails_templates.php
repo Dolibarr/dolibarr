@@ -78,6 +78,9 @@ $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+if (empty($sortfield)) $sortfield='label, lang, position';
+if (empty($sortorder)) $sortorder='ASC';
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('emailtemplates'));
 
@@ -87,7 +90,7 @@ $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
-$tabsqlsort[25]="label ASC";
+$tabsqlsort[25]="label ASC, lang ASC, position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -122,17 +125,30 @@ $formmail=new FormMail($db);
 if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 {
     $tmp=FormMail::getAvailableSubstitKey('formemail');
-    $tmp['__(AnyTranslationKey)__']='__(AnyTranslationKey)__';
-    $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
-    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
+    $tmp['__(AnyTranslationKey)__']='Translation';
+    $helpsubstit = $langs->trans("AvailableVariables").':<br>';
+    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
+    foreach($tmp as $key => $val)
+    {
+    	$helpsubstit.=$key.' -> '.$val.'<br>';
+    	$helpsubstitforlines.=$key.' -> '.$val.'<br>';
+    }
 }
 else
 {
     $tmp=FormMail::getAvailableSubstitKey('formemailwithlines');
-    $tmp['__(AnyTranslationKey)__']='__(AnyTranslationKey)__';
-    $helpsubstit = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
+    $tmp['__(AnyTranslationKey)__']='Translation';
+    $helpsubstit = $langs->trans("AvailableVariables").':<br>';
+    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
+    foreach($tmp as $key => $val)
+    {
+    	$helpsubstit.=$key.' -> '.$val.'<br>';
+    }
     $tmp=FormMail::getAvailableSubstitKey('formemailforlines');
-    $helpsubstitforlines = $langs->trans("AvailableVariables").':<br>'.implode('<br>', $tmp);
+    foreach($tmp as $key => $val)
+    {
+    	$helpsubstitforlines.=$key.' -> '.$val.'<br>';
+    }
 }
 
 
@@ -159,8 +175,9 @@ if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send']=$l
 if ($conf->fournisseur->enabled)       $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
 if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
 if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans('MailToThirdparty');
+if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
-$elementList['all']=$langs->trans('VisibleEverywhere');
+$elementList['all'] =$langs->trans('VisibleEverywhere');
 $elementList['none']=$langs->trans('VisibleNowhere');
 
 
@@ -217,7 +234,7 @@ if (empty($reshook))
             if ($value == 'content') $value='content-'.$rowid;
             if ($value == 'content_lines') $value='content_lines-'.$rowid;
 
-            if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user')
+            if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
             {
                 $ok=0;
                 $fieldnamekey=$listfield[$f];
@@ -270,16 +287,15 @@ if (empty($reshook))
             $i=0;
             foreach ($listfieldinsert as $f => $value)
             {
+            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
             	$keycode=$listfieldvalue[$i];
             	if ($value == 'lang') $keycode='langcode';
-
-            	//var_dump($i.' - '.$listfieldvalue[$i].' - '.$_POST[$listfieldvalue[$i]].' - '.$value);
                 if ($value == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
                 if ($value == 'fk_user' && ! ($_POST[$keycode] > 0)) $_POST[$keycode]='';
                 if ($value == 'private' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='0';
                 if ($value == 'position' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='1';
-                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  												// For vat, we want/accept code = ''
+                if ($_POST[$keycode] == '' && $keycode != 'langcode') $sql.="null";		// lang must be '' if not defined so the unique key that include lang will work
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
@@ -469,7 +485,7 @@ if (! $user->admin)
 }
 if (empty($conf->global->MAIN_MULTILANGS))
 {
-	$sql.= " AND (lang = '".$langs->defaultlang."' OR lang IS NULL)";
+	$sql.= " AND (lang = '".$langs->defaultlang."' OR lang IS NULL OR lang = '')";
 }
 if ($search_label) $sql.=natural_search('label', $search_label);
 if ($search_type_template != '' && $search_type_template != '-1') $sql.=natural_search('type_template', $search_type_template);
@@ -520,7 +536,7 @@ foreach ($fieldlist as $field => $value)
         $valuetoshow=$langs->trans($valuetoshow);   // try to translate
         $align="left";
         if ($fieldlist[$field]=='fk_user')         { $valuetoshow=$langs->trans("Owner");}
-        if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
+        if ($fieldlist[$field]=='lang')            { $valuetoshow=(empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language")); }
         if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
         if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
         if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label"); }
@@ -573,7 +589,7 @@ $errors = $hookmanager->errors;
 
 if (empty($reshook))
 {
-	if ($tabname[$id] == MAIN_DB_PREFIX . 'c_email_templates' && $action == 'edit') {
+	if ($action == 'edit') {
 		fieldList($fieldlist, $obj, $tabname[$id], 'hide');
 	} else {
 		fieldList($fieldlist, $obj, $tabname[$id], 'add');
@@ -681,6 +697,10 @@ if ($resql)
         	print '</td>';
         }
         elseif ($value == 'topic') print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
+        elseif ($value == 'type_template')
+        {
+        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100onsmartphone').'</td>';
+        }
         elseif (! in_array($value, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
     }
     if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
@@ -829,6 +849,8 @@ if ($resql)
                         if ($value == 'private')
                         {
                         	$align="center";
+                        	if ($valuetoshow) $valuetoshow=yn($valuetoshow);
+                        	else $valuetoshow='';
                         }
                         if ($value == 'position')
                         {
@@ -1032,9 +1054,17 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $size='size="2" ';
 
 			print '<td'.($classtd?' class="'.$classtd.'"':'').'>';
-			if ($fieldlist[$field]=='private' && empty($user->admin))
+			if ($fieldlist[$field]=='private')
 			{
-				print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="1" name="'.$fieldlist[$field].'">';
+				if (empty($user->admin))
+				{
+					print $form->selectyesno($fieldlist[$field], '1', 1);
+				}
+				else
+				{
+					//print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="1" name="'.$fieldlist[$field].'">';
+					print $form->selectyesno($fieldlist[$field], (isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1);
+				}
 			}
 			else
 			{

@@ -114,11 +114,11 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 }
 
 // Mass actions
-$objectclass='Skeleton';
-$objectlabel='Skeleton';
-$permtoread = $user->rights->accounting->read;
-$permtodelete = $user->rights->accounting->delete;
-$uploaddir = $conf->accounting->dir_output;
+$objectclass='ExpenseReport';
+$objectlabel='ExpenseReport';
+$permtoread = $user->rights->expensereport->read;
+$permtodelete = $user->rights->expensereport->delete;
+$uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 if ($massaction == 'ventil') {

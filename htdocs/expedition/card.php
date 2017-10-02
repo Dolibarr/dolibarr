@@ -219,8 +219,8 @@ if (empty($reshook))
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
 	    $object->tracking_number		= GETPOST('tracking_number','alpha');
 	    $object->ref_int				= GETPOST('ref_int','alpha');
-	    $object->note_private			= GETPOST('note_private');
-	    $object->note_public			= GETPOST('note_public');
+	    $object->note_private			= GETPOST('note_private','none');
+	    $object->note_public			= GETPOST('note_public','none');
 		$object->fk_incoterms 			= GETPOST('incoterm_id', 'int');
 		$object->location_incoterms 	= GETPOST('location_incoterms', 'alpha');
 
@@ -780,9 +780,15 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-            if (empty($reshook) && ! empty($extrafields->attribute_label)) {
-            	print $object->showOptionals($extrafields, 'edit');
-            }
+			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+				// copy from order
+				$orderExtrafields = new Extrafields($db);
+				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
+				if ($object->fetch_optionals($object->id, $orderExtrafieldLabels) > 0) {
+					$expe->array_options = array_merge($expe->array_options, $object->array_options);
+				}
+				print $object->showOptionals($extrafields, 'edit');
+			}
 
 
             // Incoterms
@@ -1304,8 +1310,13 @@ if ($action == 'create')
 				if (is_array($extralabelslines) && count($extralabelslines)>0)
 				{
 					$colspan=5;
+					$orderLineExtrafields = new Extrafields($db);
+					$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
+					$srcLine = new OrderLine($db);
+					$srcLine->fetch_optionals($line->id,$orderLineExtrafieldLabels); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
 					$line->fetch_optionals($object->id,$extralabelslines);
+					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 					print '</tr>';
@@ -2210,7 +2221,7 @@ else if ($id || $ref)
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
 		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
 		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;

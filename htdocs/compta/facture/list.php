@@ -95,8 +95,10 @@ $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 
 $option = GETPOST('option');
-if ($option == 'late') $filter = 'paye:0';
-$filtre	= GETPOST('filtre');
+if ($option == 'late') {
+	$search_status = '1';
+}
+$filtre	= GETPOST('filtre','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -110,8 +112,8 @@ if (! $sortfield) $sortfield='f.datef';
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='invoicelist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'invoicelist';
 
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
@@ -172,7 +174,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -387,7 +389,7 @@ if ($search_user > 0)
 $sql.= ' WHERE f.fk_soc = s.rowid';
 $sql.= ' AND f.entity IN ('.getEntity('facture').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$db->escape($search_product_category);
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if ($userid)
 {
@@ -400,7 +402,7 @@ if ($filtre)
     foreach ($aFilter as $filter)
     {
         $filt = explode(':', $filter);
-        $sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+        $sql .= ' AND ' . $db->escape(trim($filt[0])) . ' = ' . $db->escape(trim($filt[1]));
     }
 }
 if ($search_ref) $sql .= natural_search('f.facnumber', $search_ref);
@@ -434,7 +436,7 @@ if ($search_status != '' && $search_status >= 0)
     if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
     if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
 }
-if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode;
+if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -462,7 +464,6 @@ else if ($year_lim > 0)
 	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($year_lim,12,false))."'";
 }
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
-if ($filter == 'paye:0') $sql.= " AND f.fk_statut = 1";
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
@@ -494,7 +495,7 @@ if (! $sall)
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';
-    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
+    $sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
     $sql.= ' state.code_departement, state.nom';
 
     foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
@@ -606,6 +607,7 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 

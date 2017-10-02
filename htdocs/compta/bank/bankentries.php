@@ -104,9 +104,9 @@ if (! $sortfield) $sortfield='b.datev, b.dateo, b.rowid';
 
 $mode_balance_ok=false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
 {
-    $sortfield = 'b.datev, b.dateo, b.rowid';
+    $sortfield = 'b.datev,b.dateo,b.rowid';
     if ($id > 0 || ! empty($ref) || $account > 0) $mode_balance_ok = true;
 }
 if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
@@ -151,7 +151,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -743,7 +743,7 @@ if ($resql)
 
 	// Title
 	$bankcateg=new BankCateg($db);
-	$morehtml='<div data-role="fieldcontain">';
+	$morehtml='<div>';
 	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
 	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" size="1" class="flat" value="'.($page+1).'">';
 	$morehtml.='/'.$nbtotalofpages.' ';
@@ -887,7 +887,7 @@ if ($resql)
 	if (! empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'],$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'],$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'],$_SERVER['PHP_SELF'],'b.datev, b.dateo, b.rowid','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'],$_SERVER['PHP_SELF'],'b.datev,b.dateo,b.rowid','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'],$_SERVER['PHP_SELF'],'b.num_chq','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'],$_SERVER['PHP_SELF'],'bu.label','',$param,'',$sortfield,$sortorder);
@@ -1065,7 +1065,7 @@ if ($resql)
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
-    	                print $bankstatic->getNomUrl(1,'transactions');
+    	                print $bankstatic->getNomUrl(1);
     	                print ' '.$langs->trans("toward").' ';
     	                $bankstatic->id=$objp->bankid;
     	                $bankstatic->label=$objp->bankref;
@@ -1082,7 +1082,7 @@ if ($resql)
     	                $banklinestatic->fetch($links[$key]['url_id']);
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
-    	                print $bankstatic->getNomUrl(1,'transactions');
+    	                print $bankstatic->getNomUrl(1);
     	                print ')';
     	            }
     	            //var_dump($links);

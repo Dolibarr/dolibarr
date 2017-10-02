@@ -54,6 +54,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	$langs->load("companies");
 
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions=new FormActions($db);
+
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -94,9 +97,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
-
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions=new FormActions($db);
 
 		// Type
 		print '<tr>';
@@ -142,7 +142,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
 		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
+		$formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2, 'minwidth100');
 		print '</td></tr>';
 	}
 

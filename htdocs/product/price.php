@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
@@ -107,8 +107,15 @@ if (empty($reshook))
 	    $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 	    // We must define tva_tx, npr and local taxes
+	    $tva_tx = $tva_tx_txt;
 	    $vatratecode = '';
-	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+	    if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+	    {
+	    	$vat_src_code = $reg[1];
+	    	$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt);    // Remove code into vatrate.
+	    }
+
+	    $tva_tx = price2num(preg_replace('/\*/', '', $tva_tx));     // keep remove all after the numbers and dot
 	    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 	    $localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 	    // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
@@ -217,8 +224,15 @@ if (empty($reshook))
 
 				$tva_tx_txt = $newvattx[$i];
 
+				$tva_tx = $tva_tx_txt;
 				$vatratecode = '';
-        	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+				if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+				{
+					$vat_src_code = $reg[1];
+					$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt);    // Remove code into vatrate.
+				}
+				$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx));     // keep remove all after the numbers and dot
+
         	    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 				$localtax1 = $newlocaltax1_tx[$i];
 				$localtax1_type = $newlocaltax1_type[$i];
@@ -266,9 +280,15 @@ if (empty($reshook))
 		{
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
+			$tva_tx = $tva_tx_txt;
 			$vatratecode = '';
-		    // We must define tva_tx, npr and local taxes
-		    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt);    // Remove code into vatrate.
+			}
+			$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx));     // keep remove all after the numbers and dot
+
 		    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 		    $localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 		    // If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
@@ -280,7 +300,7 @@ if (empty($reshook))
 		        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 		        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		        $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
-		        $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+		        $sql.= " AND t.taux = ".$tva_tx." AND t.active = 1";
 		        $sql.= " AND t.code ='".$vatratecode."'";
 		        $resql=$db->query($sql);
 		        if ($resql)
@@ -469,11 +489,17 @@ if (empty($reshook))
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
 
-		$tva_tx_txt = GETPOST("tva_tx");
+		$tva_tx_txt = GETPOST("tva_tx",'alpha');
 
+		$tva_tx = $tva_tx_txt;
 		$vatratecode = '';
-		// We must define tva_tx, npr and local taxes
-		$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+		{
+			$vat_src_code = $reg[1];
+			$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt);    // Remove code into vatrate.
+		}
+		$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx));     // keep remove all after the numbers and dot
+
 		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
@@ -485,7 +511,7 @@ if (empty($reshook))
 		    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		    $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
-		    $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+		    $sql.= " AND t.taux = ".$tva_tx." AND t.active = 1";
 		    $sql.= " AND t.code ='".$vatratecode."'";
 		    $resql=$db->query($sql);
 		    if ($resql)
@@ -565,9 +591,15 @@ if (empty($reshook))
 
 		$tva_tx_txt = GETPOST("tva_tx");
 
-		$vatratecode='';
-		// We must define tva_tx, npr and local taxes
-		$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
+		$tva_tx = $tva_tx_txt;
+		$vatratecode = '';
+		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+		{
+			$vat_src_code = $reg[1];
+			$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt);    // Remove code into vatrate.
+		}
+		$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx));     // keep remove all after the numbers and dot
+
 		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
@@ -579,7 +611,7 @@ if (empty($reshook))
 		    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		    $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
-		    $sql.= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+		    $sql.= " AND t.taux = ".$tva_tx." AND t.active = 1";
 		    $sql.= " AND t.code ='".$vatratecode."'";
 		    $resql=$db->query($sql);
 		    if ($resql)
@@ -712,17 +744,34 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
     	   // TVA
-	       print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">' . vatrate($object->multiprices_tva_tx[$soc->price_level], true) . '</td></tr>';
+	       print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
+
+	       $positiverates='';
+	       if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
+	       if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
+	       if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
+	       if (empty($positiverates)) $positiverates='0';
+	       echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+	       //print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
+	       print '</td></tr>';
 		}
 		else
 		{
         	// TVA
-        	print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+        	print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td>';
+
+        	$positiverates='';
+        	if (price2num($object->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+        	if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+        	if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+        	if (empty($positiverates)) $positiverates='0';
+        	echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+			/*
 			if ($object->default_vat_code)
 	        {
 	            print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
 	        }
-        	else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);
+        	else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
         	print '</td></tr>';
 		}
 
@@ -732,19 +781,27 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
     	   // We show only vat for level 1
-	       print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td>';
+	       print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
 	       print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
 	       print '</tr>';
 		}
 		else
 		{
             // TVA
-	        print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
+	        print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
+
+	        $positiverates='';
+	        if (price2num($object->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+	        if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+	        if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+	        if (empty($positiverates)) $positiverates='0';
+	        echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+	        /*
 	        if ($object->default_vat_code)
 	        {
 	            print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
 	        }
-	        else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);
+	        else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
 	        print '</td></tr>';
 		}
 	    print '</table>';
@@ -888,12 +945,20 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 else
 {
 	// TVA
-	print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
+	print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
+
+	$positiverates='';
+	if (price2num($object->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+	if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+	if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+	if (empty($positiverates)) $positiverates='0';
+	echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+	/*
 	if ($object->default_vat_code)
 	{
         print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
 	}
-	else print vatrate($object->tva_tx, true, $object->tva_npr, true);
+	else print vatrate($object->tva_tx, true, $object->tva_npr, true);*/
 	print '</td></tr>';
 
 	// Price
@@ -1058,7 +1123,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print '<table class="border" width="100%">';
 
 	// VAT
-	print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+	print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td>';
 	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 	print '</td></tr>';
 
@@ -1092,7 +1157,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<table class="border" width="100%">';
 
 		// VAT
-		print '<tr><td class="titlefield">' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
@@ -1171,7 +1236,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		}
 		print '</td>';
 		print '</tr>';
-		
+
 		$parameters=array('colspan' => 2);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
@@ -1233,7 +1298,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '<td>'.$langs->trans("PriceLevel").'</td>';
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) print '<td style="text-align: center">'.$langs->trans("VATRate").'</td>';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) print '<td style="text-align: center">'.$langs->trans("DefaultTaxRate").'</td>';
 		else print '<td></td>';
 
 		print '<td class="center">'.$langs->trans("SellingPrice").'</td>';
@@ -1317,7 +1382,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_price') && ! in_array($action, array('edit_price','edit_vat')))
 {
-    $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.recuperableonly,";
+    $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.recuperableonly, p.localtax1_tx, p.localtax1_type, p.localtax2_tx, p.localtax2_type,";
     $sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
     $sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
     $sql .= " FROM " . MAIN_DB_PREFIX . "product_price as p,";
@@ -1374,7 +1439,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
     		print $conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL;
-    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
     		print '<td align="right">' . $langs->trans("HT") . '</td>';
     		print '<td align="right">' . $langs->trans("TTC") . '</td>';
     		if (! empty($conf->dynamicprices->enabled)) {
@@ -1413,11 +1478,19 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     			if (empty($conf->global->PRODUIT_MULTIPRICES))
     			{
     			    print '<td align="right">';
+
+    			    $positiverates='';
+    			    if (price2num($objp->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($objp->tva_tx);
+    			    if (price2num($objp->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($objp->localtax1_tx);
+    			    if (price2num($objp->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($objp->localtax2_tx);
+    			    if (empty($positiverates)) $positiverates='0';
+    			    echo vatrate($positiverates.($objp->default_vat_code?' ('.$objp->default_vat_code.')':''), '%', $objp->tva_npr);
+					/*
     			    if ($objp->default_vat_code)
     			    {
     			        print vatrate($objp->tva_tx, true) . ' ('.$objp->default_vat_code.')';
     			    }
-    			    else print vatrate($objp->tva_tx, true, $objp->recuperableonly);
+    			    else print vatrate($objp->tva_tx, true, $objp->recuperableonly);*/
     			    print "</td>";
     			}
 
@@ -1493,10 +1566,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
-	$page = GETPOST("page", 'int');
-	if ($page == - 1) {
-		$page = 0;
-	}
+	$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $conf->liste_limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
@@ -1535,7 +1606,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</tr>';
 
 		// VAT
-		print '<tr><td class="fieldrequired">' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("DefaultTaxRate") . '</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
@@ -1624,7 +1695,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</tr>';
 
 		// VAT
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
+		print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
 		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
 		print '</td></tr>';
 
@@ -1728,7 +1799,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<td>' . $langs->trans("ThirdParty") . '</td>';
 			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
 			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-			print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+			print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
 			print '<td align="right">' . $langs->trans("HT") . '</td>';
 			print '<td align="right">' . $langs->trans("TTC") . '</td>';
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
@@ -1772,7 +1843,17 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
     		    print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-				print '<td align="right">' . vatrate($tva_tx, true, $line->recuperableonly) . "</td>";
+				print '<td align="right">';
+var_dump($prodcustprice);exit;
+				$positiverates='';
+				if (price2num($objp->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($objp->tva_tx);
+				if (price2num($objp->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($objp->localtax1_tx);
+				if (price2num($objp->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($objp->localtax2_tx);
+				if (empty($positiverates)) $positiverates='0';
+				echo vatrate($positiverates.($objp->default_vat_code?' ('.$objp->default_vat_code.')':''), '%', $objp->tva_npr);
+
+				//. vatrate($tva_tx, true, $line->recuperableonly) .
+				print "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
 
@@ -1839,7 +1920,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<td>' . $langs->trans("ThirdParty") . '</td>';
 		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
 		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-		print '<td align="right">' . $langs->trans("VATRate") . '</td>';
+		print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
 		print '<td align="right">' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("TTC") . '</td>';
 		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
@@ -1876,8 +1957,16 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '<td align="center">' . $langs->trans($object->price_base_type) . "</td>";
 		print '<td align="right">';
-		print vatrate($object->tva_tx, true, $object->recuperableonly);
-		print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
+
+		$positiverates='';
+		if (price2num($object->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+		if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+		if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+		if (empty($positiverates)) $positiverates='0';
+		echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+
+		//print vatrate($object->tva_tx, true, $object->tva_npr);
+		//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
 		print "</td>";
 
 		print '<td align="right">' . price($object->price) . "</td>";
@@ -1942,7 +2031,16 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-				print '<td align="right">' . vatrate($tva_tx, true, $line->recuperableonly) . "</td>";
+				print '<td align="right">';
+
+				$positiverates='';
+				if (price2num($line->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
+				if (price2num($line->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
+				if (price2num($line->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
+				if (empty($positiverates)) $positiverates='0';
+				echo vatrate($positiverates.($line->default_vat_code?' ('.$line->default_vat_code.')':''), '%', $line->tva_npr);
+
+				print "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
 

@@ -117,11 +117,11 @@ function showOnlinePaymentUrl($type,$ref)
  * @param   int		$mode		0=True url, 1=Url formated with colors
  * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
  * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount
+ * @param	int		$amount		Amount (required for $type='free' only)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getOnlinePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
+function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='your_free_tag')
 {
 	global $conf;
 

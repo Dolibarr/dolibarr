@@ -125,9 +125,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel)
-    {
-        $action='';
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+
     	$fk_projet='';
     	$date_start='';
     	$date_end='';
@@ -137,7 +143,7 @@ if (empty($reshook))
     	$value_unit='';
     	$qty=1;
     	$fk_c_type_fees=-1;
-    }
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -207,8 +213,8 @@ if (empty($reshook))
     	$object->fk_statut = 1;
     	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
     	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-    	$object->note_public				= GETPOST('note_public');
-    	$object->note_private				= GETPOST('note_private');
+    	$object->note_public				= GETPOST('note_public','none');
+    	$object->note_private				= GETPOST('note_private','none');
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
@@ -258,8 +264,8 @@ if (empty($reshook))
     	}
 
     	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-    	$object->note_public = GETPOST('note_public');
-    	$object->note_private = GETPOST('note_private');
+    	$object->note_public = GETPOST('note_public','none');
+    	$object->note_private = GETPOST('note_private','none');
     	$object->fk_user_modif = $user->id;
 
     	$result = $object->update($user);
@@ -1260,6 +1266,15 @@ if (empty($reshook))
     	}
     }
 
+	// Actions when printing a doc from card
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+    // Actions to send emails
+    $trigger_name='EXPENSEREPORT_SENTBYMAIL';
+    $autocopy='MAIN_MAIL_AUTOCOPY_EXPENSEREPORT_TO';
+    $trackid='exp'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
     // Actions to build doc
     $upload_dir = $conf->expensereport->dir_output;
     $permissioncreate = $user->rights->expensereport->creer;
@@ -2201,6 +2216,14 @@ if ($action != 'create' && $action != 'edit')
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 
+	// Send
+	if ($object->fk_statut > ExpenseReport::STATUS_DRAFT) {
+		//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+		//} else
+		//	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+	}
+
 
 	/* Si l'état est "Brouillon"
 	 *	ET user à droit "creer/supprimer"
@@ -2354,47 +2377,64 @@ print '</div>';
 //$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
-print '<div class="fichehalfleft">';
-
-/*
- * Generate documents
- */
-
-if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
-{
-	$filename	=	dol_sanitizeFileName($object->ref);
-	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
-	$genallowed	=	1;
-	$delallowed	=	1;
-	$var 		= 	true;
-	print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
-	$somethingshown = $formfile->numoffiles;
+// Select mail models is same action as presend
+if (GETPOST('modelselected')) {
+	$action = 'presend';
 }
 
-print '</div>';
-
-if ($action != 'create' && $action != 'edit' && ($id || $ref))
+if ($action != 'presend')
 {
-    $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+	print '<div class="fichehalfleft">';
 
-    // Link invoice to intervention
-    if (GETPOST('LinkedFichinter')) {
-        $object->fetch($id);
-        $object->fetch_thirdparty();
-        $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
-    }
+	/*
+	 * Generate documents
+	 */
 
-    // Show links to link elements
-    $linktoelements=array();
-    if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION))
-    {
-        $linktoelements[]='fichinter';
-        $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
-        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-    }
+	if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
+	{
+		$filename	=	dol_sanitizeFileName($object->ref);
+		$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed	=	1;
+		$delallowed	=	1;
+		$var 		= 	true;
+		print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+		$somethingshown = $formfile->numoffiles;
+	}
+
+	print '</div>';
+
+	if ($action != 'create' && $action != 'edit' && ($id || $ref))
+	{
+	    $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
+		include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
+	    // Link invoice to intervention
+	    if (GETPOST('LinkedFichinter')) {
+	        $object->fetch($id);
+	        $object->fetch_thirdparty();
+	        $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
+	    }
+
+	    // Show links to link elements
+	    $linktoelements=array();
+	    if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION))
+	    {
+	        $linktoelements[]='fichinter';
+	        $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
+	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	    }
+	}
 }
+
+// Presend form
+$modelmail='expensereport';
+$defaulttopic='SendExpenseReportRef';
+$diroutput = $conf->expensereport->dir_output;
+$trackid = 'exp'.$object->id;
+
+include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
 
 llxFooter();
 

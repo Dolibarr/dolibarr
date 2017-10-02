@@ -219,10 +219,9 @@ class FormProduct
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$comboenhancement = ajax_combobox($htmlname, $events);
 			$out.= $comboenhancement;
-			$nodatarole=($comboenhancement?' data-role="none"':'');
 		}
 
-		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'"'.$nodatarole.'>';
+		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{

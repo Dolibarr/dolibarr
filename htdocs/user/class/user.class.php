@@ -384,7 +384,9 @@ class User extends CommonObject
 			    {
 			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
 			        {
-			        	// $obj->page is relative URL with or without params, $obj->type can be 'filters', 'sortorder', 'createform', ...
+			        	// $obj->page is relative URL with or without params
+			        	// $obj->type can be 'filters', 'sortorder', 'createform', ...
+			        	// $obj->param is key or param
 			        	$pagewithoutquerystring=$obj->page;
 			        	$pagequeries='';
 			        	if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
@@ -392,9 +394,17 @@ class User extends CommonObject
 			        		$pagewithoutquerystring=$reg[1];
 			        		$pagequeries=$reg[2];
 			        	}
-			        	$this->default_values[$pagewithoutquerystring][$obj->type][$obj->param]=$obj->value;
-			            if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
+			        	$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
+			            //if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
 			        }
+			    }
+			    // Sort by key, so _noquery_ is last
+			    foreach($this->default_values as $a => $b)
+			    {
+			    	foreach($b as $c => $d)
+			    	{
+			    		krsort($this->default_values[$a][$c]);
+			    	}
 			    }
 			    $this->db->free($resql);
 			}
@@ -2058,7 +2068,7 @@ class User extends CommonObject
 
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
-		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
+		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'');
 		if (! empty($this->login))
 			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
 		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;

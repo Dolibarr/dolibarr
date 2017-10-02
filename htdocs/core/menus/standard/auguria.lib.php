@@ -73,6 +73,13 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 		$showmode=dol_auguria_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
+			// $menu_array[$i]['url'] can be a relative url, a full external url or a dynamic value like '$conf->global->APARAM)
+			if (preg_match('/^\$conf->global->([^\?]+)/', $newTabMenu[$i]['url'], $reg))
+			{
+				$keyforsconst=$reg[1];
+				$newTabMenu[$i]['url'] = $conf->global->$keyforsconst;
+			}
+
 			$url = $shorturl = $newTabMenu[$i]['url'];
 
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))

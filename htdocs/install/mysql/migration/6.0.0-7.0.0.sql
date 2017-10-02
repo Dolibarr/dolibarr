@@ -41,6 +41,21 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax1_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0';
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax2_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0';
+
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SENTBYMAIL','Mails sent from member card','Executed when you send email from member card','member',23);
+
+ALTER TABLE llx_ecm_files MODIFY label varchar(128) NOT NULL;
+ALTER TABLE llx_ecm_files ADD COLUMN share varchar(128) NULL after label;
+
+
+ALTER TABLE llx_c_paiement        ADD COLUMN position        integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_c_payment_term    ADD COLUMN position        integer NOT NULL DEFAULT 0;
+
 ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte integer DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN seuil_stock_alerte SET DEFAULT NULL;
 
@@ -55,6 +70,12 @@ ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(50);
 
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
+UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
+
+ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
+
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'adherent','member','',0,null,null,'(SendAnEMailToMember)',1,1,1,'__(CardContent)__','__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br />\n__(Lastname)__ : __MEMBER_LASTNAME__<br />\n__(Fullname)__ : __MEMBER_FULLNAME__<br />\n__(Company)__ : __MEMBER_COMPANY__<br />\n__(Address)__ : __MEMBER_ADDRESS__<br />\n__(Zip)__ : __MEMBER_ZIP__<br />\n__(Town)__ : __MEMBER_TOWN__<br />\n__(Country)__ : __MEMBER_COUNTRY__<br />\n__(Email)__ : __MEMBER_EMAIL__<br />\n__(Birthday)__ : __MEMBER_BIRTH__<br />\n__(Photo)__ : __MEMBER_PHOTO__<br />\n__(Login)__ : __MEMBER_LOGIN__<br />\n__(Password)__ : __MEMBER_PASSWORD__<br />\n__(Phone)__ : __MEMBER_PHONE__<br />\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br />\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,1,0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null);
 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'DEPENSES',  'Expenses of products/services',             'Exemple: 6xxxxx', 0, 0, '',                '20', 1, 1);
@@ -82,6 +103,7 @@ ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
 ALTER TABLE llx_website_page ADD COLUMN grabbed_from varchar(255);
+ALTER TABLE llx_website_page ADD COLUMN htmlheader text;
 
 ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
 UPDATE llx_website_page set status = 1 WHERE status IS NULL;
@@ -240,6 +262,12 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
+-- We fix value of 'list' fro m0 to 1 for all extrafields created before this migration
+UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+
+ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
+--VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN list SET DEFAULT 1;
+
 ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
@@ -261,7 +289,15 @@ UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE'
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'COMPRAS_GASTOS';
 
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(24) NOT NULL;
+
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SENTBYMAIL','Contract sent by mail','Executed when a contract is sent by mail','contrat',18);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_VALIDATE','Price request validated','Executed when a commercial proposal is validated','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_SENTBYMAIL','Price request sent by mail','Executed when a commercial proposal is sent by mail','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_SIGNED','Price request closed signed','Executed when a customer proposal is closed signed','proposal_supplier',10);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_REFUSED','Price request closed refused','Executed when a customer proposal is closed refused','proposal_supplier',10);
+
 
 CREATE TABLE llx_projet_task_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -273,6 +309,19 @@ CREATE TABLE llx_projet_task_comment (
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
+
+-- Accountancy - Remove old constants
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_PURCHASE_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SOCIAL_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_MISCELLANEOUS_JOURNAL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_GROUPBYACCOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_GLOBAL_ACCOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_LABEL')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_AMOUNT')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_DEVISE')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_PIECE')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPENSEREPORT_JOURNAL')__;
 
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;

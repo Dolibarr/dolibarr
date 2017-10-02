@@ -118,16 +118,11 @@ if (empty($reshook))
 {
 	if ($cancel)
 	{
-		if ($action != 'addlink' && $action != 'updateline')
+		if (! empty($backtopage))
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/commande/list.php',1);
-			header("Location: ".$urltogo);
+			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($id > 0 || ! empty($ref)) {
-		    $ret = $object->fetch($id,$ref);
-		    $object->fetch_thirdparty();
-        }
 		$action='';
 	}
 
@@ -261,8 +256,8 @@ if (empty($reshook))
 			$db->begin();
 
 			$object->date_commande = $datecommande;
-			$object->note_private = GETPOST('note_private');
-			$object->note_public = GETPOST('note_public');
+			$object->note_private = GETPOST('note_private','none');
+			$object->note_public = GETPOST('note_public','none');
 			$object->source = GETPOST('source_id');
 			$object->fk_project = GETPOST('projectid');
 			$object->ref_client = GETPOST('ref_client');
@@ -932,7 +927,7 @@ if (empty($reshook))
 		$date_end='';
 		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
+		$description=dol_htmlcleanlastbr(GETPOST('product_desc','none'));
 		$pu_ht=GETPOST('price_ht');
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
@@ -1215,11 +1210,6 @@ if (empty($reshook))
 		}
 	}
 
-	// Actions to build doc
-	$upload_dir = $conf->commande->dir_output;
-	$permissioncreate = $user->rights->commande->creer;
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from update form
@@ -1256,13 +1246,18 @@ if (empty($reshook))
 		exit();
 	}
 
-    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+	// Actions to build doc
+	$upload_dir = $conf->commande->dir_output;
+	$permissioncreate = $user->rights->commande->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
 	$trigger_name='ORDER_SENTBYMAIL';
 	$paramname='id';
-	$mode='emailfromorder';
+	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
 	$trackid='ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
@@ -2497,7 +2492,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				if (! empty($conf->expedition->enabled)) {
 					$numshipping = $object->nb_expedition();
 
-					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfProductsLines() > 0) {
+					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)) {
 							if ($user->rights->expedition->creer) {
 								print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . $object->id . '">' . $langs->trans('CreateShipment') . '</a></div>';
@@ -2596,134 +2591,13 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</div></div></div>';
 		}
 
-		/*
-		 * Action presend
-		 */
-		if ($action == 'presend')
-		{
-			$object->fetch_projet();
+		// Presend form
+		$modelmail='order_send';
+		$defaulttopic='SendOrderRef';
+		$diroutput = $conf->commande->dir_output;
+		$trackid = 'ord'.$object->id;
 
-			$ref = dol_sanitizeFileName($object->ref);
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->thirdparty->default_lang;
-
-			if (!empty($newlang))
-			{
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang($newlang);
-				$outputlangs->load('commercial');
-			}
-
-			// Show email form
-
-			// By default if $action=='presend'
-			$titreform='SendOrderByMail';
-			$topicmail='';
-			if (empty($object->ref_client)) {
-			    $topicmail = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
-			} else if (! empty($object->ref_client)) {
-			    $topicmail = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
-			}
-			$action='send';
-			$modelmail='order_send';
-
-			// Build document if it not exists
-			if (! $file || ! is_readable($file)) {
-				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result <= 0) {
-					dol_print_error($db, $object->error, $object->errors);
-					exit();
-				}
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-				$file = $fileparams['fullname'];
-			}
-
-			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-			print '<div class="clearboth"></div>';
-			print '<br>';
-			print load_fiche_titre($langs->trans($titreform));
-
-			dol_fiche_head('');
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-			$formmail->trackid='ord'.$object->id;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-			{
-				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-			}
-			$formmail->withfrom = 1;
-			$liste = array();
-			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
-				$liste [$key] = $value;
-			$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
-			$formmail->withtocc = $liste;
-			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withtopic = $topicmail;
-			$formmail->withfile = 2;
-			$formmail->withbody = 1;
-			$formmail->withdeliveryreceipt = 1;
-			$formmail->withcancel = 1;
-			// Tableau des substitutions
-			$formmail->setSubstitFromObject($object);
-			$formmail->substit ['__ORDERREF__'] = $object->ref;
-
-			$custcontact = '';
-			$contactarr = array();
-			$contactarr = $object->liste_contact(- 1, 'external');
-
-			if (is_array($contactarr) && count($contactarr) > 0)
-			{
-				foreach ($contactarr as $contact)
-				{
-					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
-						$contactstatic = new Contact($db);
-						$contactstatic->fetch($contact ['id']);
-						$custcontact = $contactstatic->getFullName($langs, 1);
-					}
-				}
-
-				if (! empty($custcontact)) {
-					$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-				}
-			}
-
-			// Tableau des parametres complementaires
-			$formmail->param['action'] = $action;
-			$formmail->param['models'] = $modelmail;
-			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['orderid'] = $object->id;
-			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
-
-			// Init list of files
-			if (GETPOST("mode") == 'init') {
-				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-			}
-
-			// Show form
-			print $formmail->get_form();
-
-			dol_fiche_end();
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
 

@@ -66,7 +66,7 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accountancy code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
 MenuAccountancy=Accountancy
 Selectchartofaccounts=Select active chart of accounts
 ChangeAndLoad=Change and load
@@ -170,7 +170,7 @@ DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Account for VAT not defined
 ThirdpartyAccountNotDefined=Account for third party not defined
 ProductAccountNotDefined=Account for product not defined
@@ -256,14 +256,14 @@ ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with accounting account for sales.
 OptionModeProductBuyDesc=Show all products with accounting account for purchases.
-CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
+CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Reset all bindings for selected year
 PredefinedGroups=Predefined groups
 WithoutValidAccount=Without valid dedicated account

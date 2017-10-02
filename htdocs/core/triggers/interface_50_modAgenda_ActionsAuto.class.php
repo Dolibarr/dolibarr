@@ -349,7 +349,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("interventions");
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+            	$object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            }
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
@@ -418,6 +421,54 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+			$object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_SENTBYMAIL')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+			if (empty($object->actionmsg))
+			{
+				$object->actionmsg=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_SIGNED')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_REFUSED')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+
+			$object->sendtoid=0;
 		}
 		elseif ($action == 'ORDER_SUPPLIER_CREATE')
         {

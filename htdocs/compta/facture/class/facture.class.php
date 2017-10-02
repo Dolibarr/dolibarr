@@ -293,8 +293,8 @@ class Facture extends CommonInvoice
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
 			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
-			$this->note_public       = GETPOST('note_public') ? GETPOST('note_public') : $_facrec->note_public;
-			$this->note_private      = GETPOST('note_private') ? GETPOST('note_private') : $_facrec->note_private;
+			$this->note_public       = GETPOST('note_public','none') ? GETPOST('note_public','none') : $_facrec->note_public;
+			$this->note_private      = GETPOST('note_private','none') ? GETPOST('note_private','none') : $_facrec->note_private;
 			$this->modelpdf          = GETPOST('model') ? GETPOST('model') : $_facrec->modelpdf;
 			$this->cond_reglement_id = GETPOST('cond_reglement_id') > 0 ? GETPOST('cond_reglement_id') : $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $_facrec->mode_reglement_id;
@@ -1052,6 +1052,30 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Return link to download file from a direct external access
+	 *
+	 * @param	int				$withpicto			Add download picto into link
+	 * @return	string			HTML link to file
+	 */
+	function getDirectExternalLink($withpicto=0)
+	{
+		global $dolibarr_main_url_root;
+
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		// TODO Read into ecmfile table to get entry and hash exists (PS: If not found, add it)
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($this->db);
+		//$result = $ecmfile->get();
+
+		$hashp='todo';
+		return '<a href="'.$urlwithroot.'/document.php?modulepart=invoice&hashp='.$hashp.'" target="_download" rel="noindex, nofollow">'.$this->ref.'</a>';
+	}
+
+	/**
 	 *      Return clicable link of object (with eventually picto)
 	 *
 	 *      @param	int		$withpicto       Add picto into link
@@ -1577,7 +1601,7 @@ class Facture extends CommonInvoice
 			$facligne->desc=$remise->description;   	// Description ligne
 			$facligne->vat_src_code=$remise->vat_src_code;
 			$facligne->tva_tx=$remise->tva_tx;
-			$facligne->subprice=-$remise->amount_ht;
+			$facligne->subprice = -$remise->amount_ht;
 			$facligne->fk_product=0;					// Id produit predefini
 			$facligne->qty=1;
 			$facligne->remise_percent=0;
@@ -1599,6 +1623,11 @@ class Facture extends CommonInvoice
 			$facligne->total_ht  = -$remise->amount_ht;
 			$facligne->total_tva = -$remise->amount_tva;
 			$facligne->total_ttc = -$remise->amount_ttc;
+
+			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
+			$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
+			$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
+			$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
 
 			$lineid=$facligne->insert();
 			if ($lineid > 0)
@@ -1708,7 +1737,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user      	    User making the deletion.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						<0 if KO, 0=Refused, >0 if OK
 	 */
 	function delete($user, $notrigger=0, $idwarehouse=-1)
 	{
@@ -1719,9 +1748,13 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
-		// TODO Test if there is at least one payment. If yes, refuse to delete.
+		// Test to avoid invoice deletion (allowed if draft)
+		$test = $this->is_erasable();
+
+		if ($test <= 0) return $test;
 
 		$error=0;
+
 		$this->db->begin();
 
 		if (! $error && ! $notrigger)
@@ -3327,9 +3360,9 @@ class Facture extends CommonInvoice
 	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
-	 *	If hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is on, we can
-	 *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
 	 *  If invoice is draft and ha a temporary ref -> yes
+	 *	If hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is on, we can. If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on, we can't.
+	 *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
 	 *
 	 *  @return    int         <0 if KO, 0=no, 1=yes
 	 */
@@ -3337,29 +3370,35 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
+		// on verifie si la facture est en numerotation provisoire
+		$facref = substr($this->ref, 1, 4);
+
+		if ($this->statut == self::STATUS_DRAFT && $facref == 'PROV') // If draft invoice and ref not yet defined
+		{
+			return 1;
+		}
+
 		if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) return 1;
 		if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED))  return 0;
 
-		// on verifie si la facture est en numerotation provisoire
-		$facref = substr($this->ref, 1, 4);
+		// TODO Test if there is at least one payment. If yes, refuse to delete.
+		// ...
 
 		// If not a draft invoice and not temporary invoice
 		if ($facref != 'PROV')
 		{
 			$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
 			$ventilExportCompta = $this->getVentilExportCompta();
+
 			// If there is no invoice into the reset range and not already dispatched, we can delete
 			if ($maxfacnumber == '' && $ventilExportCompta == 0) return 1;
 			// If invoice to delete is last one and not already dispatched, we can delete
 			if ($maxfacnumber == $this->ref && $ventilExportCompta == 0) return 1;
+
 			if ($this->situation_cycle_ref) {
 				$last = $this->is_last_in_cycle();
 				return $last;
 			}
-		}
-		else if ($this->statut == self::STATUS_DRAFT && $facref == 'PROV') // Si facture brouillon et provisoire
-		{
-			return 1;
 		}
 
 		return 0;

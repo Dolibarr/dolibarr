@@ -34,7 +34,7 @@
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
- * 	@return	int							<=0 if KO, >0 if OK
+ * 	@return	int|object					<=0 if KO, Object if OK
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='', $addfieldentry=array() ,$delfieldentry='')
 {
@@ -43,13 +43,29 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     if (empty($objectname)) return -1;
     if (empty($readdir)) $readdir=$destdir;
 
+    if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
+    {
+    	dol_print_error('', 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
+    	return -1;
+    }
+
     // Check parameters
     if (count($addfieldentry) > 0)
     {
+        if (empty($addfieldentry['name']))
+    	{
+    		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Name")), null, 'errors');
+    		return -2;
+    	}
+        if (empty($addfieldentry['label']))
+    	{
+    		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
+    		return -2;
+    	}
     	if (! preg_match('/^(integer|date|timestamp|varchar|double)/', $addfieldentry['type']))
     	{
-    		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null, 'errors');
-    		return -1;
+    		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
+    		return -2;
     	}
     }
 
@@ -59,7 +75,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     {
     	$langs->load("errors");
         setEventMessages($langs->trans("ErrorFileNotFound", $pathoffiletoeditsrc), null, 'errors');
-        return -1;
+        return -3;
     }
 
     //$pathoffiletoedittmp=$destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
@@ -69,7 +85,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     {
         include_once $pathoffiletoeditsrc;
         if (class_exists($objectname)) $object=new $objectname($db);
-        else return -1;
+        else return -4;
 
         // Backup old file
         dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
@@ -82,8 +98,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
         {
         	if (is_array($addfieldentry) && count($addfieldentry))
         	{
-        		$name=$addfieldentry['name'];
+				$name=$addfieldentry['name'];
         		unset($addfieldentry['name']);
+
         		$object->fields[$name]=$addfieldentry;
         	}
         	if (! empty($delfieldentry))
@@ -104,6 +121,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
 
         if (count($object->fields))
         {
+
             foreach($object->fields as $key => $val)
             {
                 $i++;
@@ -117,11 +135,24 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
                 if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
                 if ($val['isameasure']) $texttoinsert.= " 'isameasure'=>'".$val['isameasure']."',";
                 if ($val['help']) $texttoinsert.= " 'help'=>'".$val['help']."',";
+                if ($val['arrayofkeyval'])
+                {
+                	$texttoinsert.= " 'arrayofkeyval'=>array(";
+                	$i=0;
+                	foreach($val['arrayofkeyval'] as $key2 => $val2)
+                	{
+                		if ($i) $texttoinsert.=", ";
+                		$texttoinsert.="'".$key2."'=>'".$val2."'";
+                		$i++;
+                	}
+                	$texttoinsert.= ")";
+                }
                 $texttoinsert.= "),\n";
             }
         }
 
         $texttoinsert.= "\t".');'."\n";
+		//print ($texttoinsert);exit;
 
         if (count($object->fields))
         {
@@ -152,12 +183,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
         file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
         @chmod($pathoffiletoedittarget, octdec($newmask));
 
-        return 1;
+        return $object;
     }
     catch(Exception $e)
     {
         print $e->getMessage();
-        return -1;
+        return -5;
     }
 }
 
@@ -169,11 +200,14 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
+ *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
  * 	@return	int							<=0 if KO, >0 if OK
  */
-function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='', $object=null)
 {
     global $db, $langs;
+
+    $error = 0;
 
     if (empty($objectname)) return -1;
     if (empty($readdir)) $readdir=$destdir;
@@ -190,11 +224,15 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
     	return -1;
     }
 
+    // Load object from myobject.class.php
     try
     {
-    	include_once $pathoffiletoclasssrc;
-        if (class_exists($objectname)) $object=new $objectname($db);
-        else return -1;
+    	if (! is_object($object))
+    	{
+    		include_once $pathoffiletoclasssrc;
+        	if (class_exists($objectname)) $object=new $objectname($db);
+        	else return -1;
+    	}
     }
     catch(Exception $e)
     {
@@ -225,9 +263,15 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
 
     $contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
 
-    file_put_contents($pathoffiletoedittarget, $contentsql);
-    @chmod($pathoffiletoedittarget, octdec($newmask));
-
+    $result = file_put_contents($pathoffiletoedittarget, $contentsql);
+    if ($result)
+    {
+    	@chmod($pathoffiletoedittarget, octdec($newmask));
+    }
+    else
+    {
+    	$error++;
+    }
 
     // Edit .key.sql file
     $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql';
@@ -255,10 +299,17 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='')
 
     dol_mkdir(dirname($pathoffiletoedittarget));
 
-    file_put_contents($pathoffiletoedittarget, $contentsql);
-    @chmod($pathoffiletoedittarget, octdec($newmask));
+    $result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
+    if ($result)
+    {
+    	@chmod($pathoffiletoedittarget, octdec($newmask));
+    }
+    else
+    {
+    	$error++;
+    }
 
-    return 1;
+    return $error ? -1 : 1;
 }
 
 

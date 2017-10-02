@@ -48,7 +48,7 @@ $langs->load('compta');
 $langs->load('bills');
 $langs->load('projects');
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
@@ -86,10 +86,6 @@ $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $search_project_ref=GETPOST('search_project_ref','alpha');
 
-$page  = GETPOST('page','int');
-$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');
-
 $status=GETPOST('statut','alpha');
 $billed=GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
@@ -114,11 +110,11 @@ if (! $sortorder) $sortorder='DESC';
 
 if ($search_status == '') $search_status=-1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='supplierorderlist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierorderlist';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('orderlist'));
+$hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -162,7 +158,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -173,7 +169,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  */
 
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha')) { $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -207,6 +203,7 @@ if (empty($reshook))
         $search_total_ht='';
         $search_total_vat='';
         $search_total_ttc='';
+    	$search_project_ref='';
         $search_status=-1;
         $orderyear='';
         $ordermonth='';
@@ -216,16 +213,12 @@ if (empty($reshook))
         $deliveryyear='';
         $billed='';
         $toselect='';
-    	$search_project_ref='';
         $search_array_options=array();
-
-        // Mass actions
-        $objectclass='Commande';
-        $objectlabel='Orders';
-        $permtoread = $user->rights->commande->lire;
-        $permtodelete = $user->rights->commande->supprimer;
-        $uploaddir = $conf->commande->dir_output;
-    	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    }
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+    	|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    {
+    	$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
 
     // Mass actions
@@ -581,7 +574,6 @@ if ($search_total_ht != '') $sql.= natural_search('cf.total_ht', $search_total_h
 if ($search_total_vat != '') $sql.= natural_search('cf.tva', $search_total_vat, 1);
 if ($search_total_ttc != '') $sql.= natural_search('cf.total_ttc', $search_total_ttc, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
-
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -650,6 +642,7 @@ if ($resql)
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".$search_project_ref;
 	if ($billed != '')          $param.="&billed=".$billed;
     if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
@@ -663,7 +656,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
+	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
@@ -678,7 +671,8 @@ if ($resql)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
