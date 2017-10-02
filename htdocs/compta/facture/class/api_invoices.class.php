@@ -383,7 +383,7 @@ class Invoices extends DolibarrApi
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
      *
-     * @url POST    {id}/draft
+     * @url POST    {id}/settodraft
      *
      * @return  array
      * 
@@ -394,7 +394,7 @@ class Invoices extends DolibarrApi
      * @throws 500
      * 
      */
-    function draft($id, $idwarehouse=-1)
+    function settodraft($id, $idwarehouse=-1)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
@@ -491,7 +491,7 @@ class Invoices extends DolibarrApi
      * @param   string 	$close_code    Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
      * @param   string 	$close_note    Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
      *
-     * @url POST    {id}/paid
+     * @url POST    {id}/settopaid
      *
      * @return  array 	An invoice object
      *
@@ -501,7 +501,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 500
      */
-    function set_paid($id, $close_code='', $close_note='')
+    function settopaid($id, $close_code='', $close_note='')
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
