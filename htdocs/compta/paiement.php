@@ -829,8 +829,8 @@ if (! GETPOST('action','aZ09'))
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
     $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
-    $sql.= ' AND f.entity = ' . $conf->entity;
-    $sql.= ' AND c.entity = ' . getEntity('c_paiement');
+    $sql.= ' AND f.entity IN (' . getEntity('facture').')';
+    $sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;

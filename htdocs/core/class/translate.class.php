@@ -559,7 +559,7 @@ class Translate
 		}
         elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',getEntity('c_paiement'));
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',1);
         }
 		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
         {
@@ -867,11 +867,11 @@ class Translate
 	 * 		@param	string	$fieldkey		Field for key
 	 * 		@param	string	$fieldlabel		Field for label
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
-	 *      @param  int		$entity			Field for filter by entity
+	 *      @param  int		$filteronentity	Use a filter on entity
 	 *      @return string					Label in UTF8 (but without entities)
 	 *      @see dol_getIdFromCode
 	 */
-	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keyforselect='',$entity=null)
+	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keyforselect='',$filteronentity=0)
 	{
 		// If key empty
 		if ($key == '') return '';
@@ -894,8 +894,7 @@ class Translate
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 		$sql.= " WHERE ".$fieldkey." = '".($keyforselect?$keyforselect:$key)."'";
-		if (! is_null($entity))
-			$sql.= " AND entity = " . (int) $entity;
+		if ($filteronentity) $sql.= " AND entity IN (" . getEntity($tablename). ')';
 		dol_syslog(get_class($this).'::getLabelFromKey', LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)

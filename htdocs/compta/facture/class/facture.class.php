@@ -1206,8 +1206,8 @@ class Facture extends CommonInvoice
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity = ' . getEntity('c_payment_term');
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity = ' . getEntity('c_paiement');
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity IN (' . getEntity('c_payment_term').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN (' . getEntity('c_paiement').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 		$sql.= ' WHERE f.entity = '.$conf->entity;
 		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
@@ -3180,7 +3180,7 @@ class Facture extends CommonInvoice
 		//$sql.= ' WHERE pf.'.$field.' = 1';
 		$sql.= ' AND pf.'.$field2.' = p.rowid';
 		$sql.= ' AND p.fk_paiement = t.id';
-		$sql.= ' AND t.entity = ' . getEntity('c_paiement');
+		$sql.= ' AND t.entity IN (' . getEntity('c_paiement').')';
 		if ($filtertype) $sql.=" AND t.code='PRE'";
 
 		dol_syslog(get_class($this)."::getListOfPayments", LOG_DEBUG);

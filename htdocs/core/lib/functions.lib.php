@@ -110,6 +110,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event',
+ *									'c_paiement', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	int		$forceentity	Entity id
