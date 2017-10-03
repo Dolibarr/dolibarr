@@ -900,16 +900,15 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
  *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
  *  @return     string     				 		Escaped string
- *
  *  @see		dol_string_nohtmltag
  */
 function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
+	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html form content
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
 	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
+	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html form content
 }
 
 
@@ -5050,20 +5049,19 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
 }
 
 /**
- * Replace htmlentities functions to manage errors http://php.net/manual/en/function.htmlentities.php
+ * Replace htmlentities functions.
  * Goal of this function is to be sure to have default values of htmlentities that match what we need.
  *
- * @param   string  $string         The input string.
- * @param   int     $flags          Flags(see PHP doc above)
- * @param   string  $encoding       Encoding
- * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
+ * @param   string  $string         The input string to encode
+ * @param   int     $flags          Flags (see PHP doc above)
+ * @param   string  $encoding       Encoding page code
+ * @param   bool    $double_encode  When double_encode is turned off, PHP will not encode existing html entities
  * @return  string  $ret            Encoded string
  */
 function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
 	return htmlentities($string, $flags, $encoding, $double_encode);
 }
-
 
 /**
  *	Check if a string is a correct iso string

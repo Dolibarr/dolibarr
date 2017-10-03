@@ -178,7 +178,7 @@ if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
         dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
     }
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
 print "</td>";
 print '</tr>';
 
@@ -189,7 +189,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
 print "</td>";
 print '</tr>';
 
