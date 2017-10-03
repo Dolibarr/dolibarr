@@ -265,6 +265,10 @@ class Products extends DolibarrApi
      */
 	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'product', $sortfield, $sortorder, $limit, $page);
