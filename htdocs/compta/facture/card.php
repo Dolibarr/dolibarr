@@ -4329,7 +4329,7 @@ else if ($id > 0 || ! empty($ref))
 			// Delete
 			if ($user->rights->facture->supprimer)
 			{
-				if (! $object->is_erasable()) {
+				if ($object->is_erasable() <= 0) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
 				} else if ($objectidnext) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Delete') . '</a></div>';

@@ -3374,7 +3374,7 @@ class Facture extends CommonInvoice
 	 *	If hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is on, we can. If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on, we can't.
 	 *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
 	 *
-	 *  @return    int         <0 if KO, 0=no, 1=yes
+	 *  @return    int         <0 if KO, 0=no, >0=yes
 	 */
 	function is_erasable()
 	{
@@ -3388,7 +3388,7 @@ class Facture extends CommonInvoice
 			return 1;
 		}
 
-		if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) return 1;
+		if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) return 2;
 		if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED))  return 0;
 
 		// TODO Test if there is at least one payment. If yes, refuse to delete.
@@ -3401,9 +3401,9 @@ class Facture extends CommonInvoice
 			$ventilExportCompta = $this->getVentilExportCompta();
 
 			// If there is no invoice into the reset range and not already dispatched, we can delete
-			if ($maxfacnumber == '' && $ventilExportCompta == 0) return 1;
+			if ($maxfacnumber == '' && $ventilExportCompta == 0) return 3;
 			// If invoice to delete is last one and not already dispatched, we can delete
-			if ($maxfacnumber == $this->ref && $ventilExportCompta == 0) return 1;
+			if ($maxfacnumber == $this->ref && $ventilExportCompta == 0) return 4;
 
 			if ($this->situation_cycle_ref) {
 				$last = $this->is_last_in_cycle();
