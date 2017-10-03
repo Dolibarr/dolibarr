@@ -41,6 +41,10 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+-- VMYSQL4.1 ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
+
+ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type, nb_holiday);
+
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax1_tx double(6,3) DEFAULT 0;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0';
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN localtax2_tx double(6,3) DEFAULT 0;
@@ -103,6 +107,7 @@ ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
 ALTER TABLE llx_website_page ADD COLUMN grabbed_from varchar(255);
+ALTER TABLE llx_website_page ADD COLUMN htmlheader text;
 
 ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
 UPDATE llx_website_page set status = 1 WHERE status IS NULL;
@@ -260,6 +265,12 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
+
+-- We fix value of 'list' fro m0 to 1 for all extrafields created before this migration
+UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+
+ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
+--VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN list SET DEFAULT 1;
 
 ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 

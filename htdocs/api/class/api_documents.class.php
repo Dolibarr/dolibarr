@@ -22,6 +22,7 @@ use Luracast\Restler\Format\UploadFormat;
 
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
  * API class for receive files
@@ -54,13 +55,57 @@ class Documents extends DolibarrApi
      *
      * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
      * @param   string  $ref            Reference of object (This will define subdir automatically)
-     * @param   string  $subdir         Subdirectory (Only if ref not provided)
+     * @param   string  $subdir         NOT YET AVAILABLE : Subdirectory (Only if ref not provided)
      * @return  array                   List of documents
      *
-     * @throws RestException
+     * @throws 400
+     * @throws 401
+     * @throws 200 OK
      */
     public function index($module_part, $ref='', $subdir='') {
-        return array('note'=>'FeatureNotYetAvailable');
+	global $conf;
+
+	if (empty($module_part)) {
+            throw new RestException(400, 'bad value for parameter modulepart');
+	}
+        if (empty($ref) && empty($subdir)) {
+            throw new RestException(400, 'bad value for parameter ref or subdir');
+        }
+        if (empty($ref)) {
+            throw new RestException(404, 'FeatureNotYetAvailable');
+        }
+	if (!DolibarrApiAccess::$user->rights->ecm->read) {
+            throw new RestException(401);
+        }
+
+	$original_file = str_replace("../","/", $ref.'/'.$ref.'.pdf');
+	$refname=basename(dirname($original_file)."/");
+	$entity=$conf->entity;
+
+	$check_access = dol_check_secure_access_document($module_part,$original_file,$entity,DolibarrApiAccess::$user);
+	$accessallowed              = $check_access['accessallowed'];
+	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+	$original_file              = $check_access['original_file'];
+
+	if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+	{
+	    throw new RestException(401);
+	}
+        if (!$accessallowed) {
+            throw new RestException(401);
+        }
+
+
+	$filename = basename($original_file);
+	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+
+	if (! file_exists($original_file_osencoded))
+	{
+	    throw new RestException(404, 'File not found');
+	}
+
+	$file_content=file_get_contents($original_file_osencoded);
+        return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
     }
     
     

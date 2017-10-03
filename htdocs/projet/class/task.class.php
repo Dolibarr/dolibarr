@@ -1693,8 +1693,8 @@ class Task extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
-
-
+	
+	
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1703,65 +1703,114 @@ class Task extends CommonObject
 	 */
 	function load_board($user)
 	{
-	    global $conf, $langs;
-
-	    $mine=0; $socid=$user->societe_id;
-
-	    $projectstatic = new Project($this->db);
-	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
-
-	    // List of tasks (does not care about permissions. Filtering will be done later)
-	    $sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
-	    $sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-	    $sql.= " t.dateo as date_start, t.datee as datee";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-        if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-        $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-        $sql.= " WHERE p.entity IN (".getEntity('project', 0).')';
-        $sql.= " AND p.fk_statut = 1";
-        $sql.= " AND t.fk_projet = p.rowid";
-        $sql.= " AND t.progress < 100";         // tasks to do
-        if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
-        // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-        //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-        if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-        if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-        //print $sql;
-	    $resql=$this->db->query($sql);
-	    if ($resql)
-	    {
-	        $task_static = new Task($this->db);
-
-	        $response = new WorkboardResponse();
-	        $response->warning_delay = $conf->projet->task->warning_delay/60/60/24;
-	        $response->label = $langs->trans("OpenedTasks");
-	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
-	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
-	        $response->img = img_object('',"task");
-
-	        // This assignment in condition is not a bug. It allows walking the results.
-	        while ($obj=$this->db->fetch_object($resql))
-	        {
-	            $response->nbtodo++;
-
-	            $task_static->projectstatus = $obj->projectstatus;
-	            $task_static->progress = $obj->progress;
-	            $task_static->fk_statut = $obj->status;
-	            $task_static->date_end = $this->db->jdate($obj->datee);
-
-	            if ($task_static->hasDelay()) {
-	                $response->nbtodolate++;
-	            }
-	        }
-
-	        return $response;
-	    }
-	    else
-	    {
-	        $this->error=$this->db->error();
-	        return -1;
-	    }
+		global $conf, $langs;
+		
+		$mine=0; $socid=$user->societe_id;
+		
+		$projectstatic = new Project($this->db);
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+		
+		// List of tasks (does not care about permissions. Filtering will be done later)
+		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
+		$sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
+		$sql.= " t.dateo as date_start, t.datee as datee";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+		$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+		$sql.= " WHERE p.entity IN (".getEntity('project', 0).')';
+		$sql.= " AND p.fk_statut = 1";
+		$sql.= " AND t.fk_projet = p.rowid";
+		$sql.= " AND t.progress < 100";         // tasks to do
+		if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+		//print $sql;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$task_static = new Task($this->db);
+			
+			$response = new WorkboardResponse();
+			$response->warning_delay = $conf->projet->task->warning_delay/60/60/24;
+			$response->label = $langs->trans("OpenedTasks");
+			if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
+			else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
+			$response->img = img_object('',"task");
+			
+			// This assignment in condition is not a bug. It allows walking the results.
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$response->nbtodo++;
+				
+				$task_static->projectstatus = $obj->projectstatus;
+				$task_static->progress = $obj->progress;
+				$task_static->fk_statut = $obj->status;
+				$task_static->date_end = $this->db->jdate($obj->datee);
+				
+				if ($task_static->hasDelay()) {
+					$response->nbtodolate++;
+				}
+			}
+			
+			return $response;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
+	
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if ko, >0 if ok
+	 */
+	function load_state_board()
+	{
+		global $user;
+		
+		$mine=0; $socid=$user->societe_id;
+		
+		$projectstatic = new Project($this->db);
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+		
+		// List of tasks (does not care about permissions. Filtering will be done later)
+		$sql = "SELECT count(p.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+		$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+		$sql.= " WHERE p.entity IN (".getEntity('project', 0).')';
+		$sql.= " AND t.fk_projet = p.rowid";         // tasks to do
+		if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			
+			// This assignment in condition is not a bug. It allows walking the results.
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["tasks"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
 	}
 
 	/**

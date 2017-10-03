@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2012-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,9 +16,4 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_holiday_users 
-(
-	fk_user     integer NOT NULL,
-	fk_type     integer NOT NULL,
-	nb_holiday  real NOT NULL DEFAULT 0
-) ENGINE=innodb;
+ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type, nb_holiday);
