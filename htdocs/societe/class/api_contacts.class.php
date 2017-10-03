@@ -18,6 +18,7 @@
 use Luracast\Restler\RestException;
 
 //require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for contacts
@@ -335,11 +336,19 @@ class Contacts extends DolibarrApi
      */
 	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
+		$categories = new Categorie($this->db);
 
-        $categories = new Categories();
+		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
 
-        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'contact', $id);
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
     }
 
 	/**

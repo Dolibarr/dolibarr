@@ -20,6 +20,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for members
@@ -362,8 +363,8 @@ class Members extends DolibarrApi
      * Get categories for a member
      *
      * @param int		$id         ID of member
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
+     * @param string		$sortfield	Sort field
+     * @param string		$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      *
@@ -373,11 +374,19 @@ class Members extends DolibarrApi
      */
 	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
+		$categories = new Categorie($this->db);
 
-		$categories = new Categories();
+		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
 
-		return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'member', $id);
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
 	}
 
 }
