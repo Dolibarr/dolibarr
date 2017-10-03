@@ -90,6 +90,8 @@ $head = contact_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $title, -1, 'contact');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 
 print '<div class="fichecenter">';

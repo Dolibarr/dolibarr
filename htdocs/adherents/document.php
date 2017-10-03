@@ -94,7 +94,7 @@ if ($id > 0)
     $result=$membert->fetch($object->typeid);
 	if ($result > 0)
 	{
-			
+
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
@@ -102,7 +102,7 @@ if ($id > 0)
 		{
 			$totalsize+=$file['size'];
 		}
-	    
+
 	    if (! empty($conf->notification->enabled))
 			$langs->load("mails");
 
@@ -110,12 +110,12 @@ if ($id > 0)
 
 		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
-    	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-    	
+    	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
     	dol_banner_tab($object, 'rowid', $linkback);
-        
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
@@ -153,7 +153,7 @@ if ($id > 0)
 		print '</table>';
 
 		print '</div>';
-		
+
 		dol_fiche_end();
 
 		$modulepart = 'member';
