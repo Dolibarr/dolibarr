@@ -333,8 +333,12 @@ class Contacts extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
+
         $categories = new Categories();
+
         return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'contact', $id);
     }
 

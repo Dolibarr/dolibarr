@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
+/* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
+ * Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,5 +357,27 @@ class Members extends DolibarrApi
 
         return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
     }
+
+    /**
+     * Get categories for a member
+     *
+     * @param int		$id         ID of member
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
+
+		$categories = new Categories();
+
+		return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'member', $id);
+	}
 
 }
