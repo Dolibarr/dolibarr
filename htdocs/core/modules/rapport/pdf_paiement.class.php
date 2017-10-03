@@ -178,69 +178,71 @@ class pdf_paiement
 
 		// number of bill
 		switch ($this->doc_type) {
-            case "client":
-                $sql = "SELECT p.datep as dp, f.facnumber";
-                //$sql .= ", c.libelle as paiement_type, p.num_paiement";
-                $sql.= ", c.code as paiement_code, p.num_paiement";
-                $sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
-                $sql.= ", pf.amount as pf_amount";
-                if (! empty($conf->banque->enabled))
-                    $sql.= ", ba.ref as bankaccount";
-                $sql.= ", p.rowid as prowid";
-                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
-                $sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
-                if (! empty($conf->banque->enabled))
-                    $sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
-                $sql.= " ".MAIN_DB_PREFIX."societe as s";
-                if (! $user->rights->societe->client->voir && ! $socid)
-                {
-                    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-                }
-                $sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-                if (! empty($conf->banque->enabled))
-                    $sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
-                $sql.= " AND f.entity = ".$conf->entity;
-                $sql.= " AND p.fk_paiement = c.id ";
-                $sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
-                if (! $user->rights->societe->client->voir && ! $socid)
-                {
-                    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-                }
-                if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-                $sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
-                break;
-            case "fourn":
-                $sql = "SELECT p.datep as dp, f.ref as facnumber";
-                 //$sql .= ", c.libelle as paiement_type, p.num_paiement";
-                $sql.= ", c.code as paiement_code, p.num_paiement";
-                $sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
-                $sql.= ", pf.amount as pf_amount";
-                if (! empty($conf->banque->enabled))
-                    $sql.= ", ba.ref as bankaccount";
-                $sql.= ", p.rowid as prowid";
-                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."facture_fourn as f,";
-                $sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-                if (! empty($conf->banque->enabled))
-                    $sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
-                $sql.= " ".MAIN_DB_PREFIX."societe as s";
-                if (! $user->rights->societe->client->voir && ! $socid)
-                {
-                    $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-                }
-                $sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
-                if (! empty($conf->banque->enabled))
-                    $sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
-                $sql.= " AND f.entity = ".$conf->entity;
-                $sql.= " AND p.fk_paiement = c.id ";
-                $sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
-                if (! $user->rights->societe->client->voir && ! $socid)
-                {
-                    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-                }
-                if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-                $sql.= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
-                break;
-        }
+			case "client":
+				$sql = "SELECT p.datep as dp, f.facnumber";
+				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
+				$sql.= ", c.code as paiement_code, p.num_paiement";
+				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+				$sql.= ", pf.amount as pf_amount";
+				if (! empty($conf->banque->enabled))
+					$sql.= ", ba.ref as bankaccount";
+				$sql.= ", p.rowid as prowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
+				$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
+				if (! empty($conf->banque->enabled))
+					$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+				$sql.= " ".MAIN_DB_PREFIX."societe as s";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
+				$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+				if (! empty($conf->banque->enabled))
+					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+				$sql.= " AND f.entity = ".$conf->entity;
+				$sql.= " AND p.fk_paiement = c.id ";
+				$sql.= " AND c.entity = " . getEntity('c_paiement');
+				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+				}
+				if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
+				$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+				break;
+			case "fourn":
+				$sql = "SELECT p.datep as dp, f.ref as facnumber";
+				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
+				$sql.= ", c.code as paiement_code, p.num_paiement";
+				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+				$sql.= ", pf.amount as pf_amount";
+				if (! empty($conf->banque->enabled))
+					$sql.= ", ba.ref as bankaccount";
+				$sql.= ", p.rowid as prowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."facture_fourn as f,";
+				$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
+				if (! empty($conf->banque->enabled))
+					$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+				$sql.= " ".MAIN_DB_PREFIX."societe as s";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
+				$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
+				if (! empty($conf->banque->enabled))
+					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+				$sql.= " AND f.entity = ".$conf->entity;
+				$sql.= " AND p.fk_paiement = c.id ";
+				$sql.= " AND c.entity = " . getEntity('c_paiement');
+				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+				}
+				if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
+				$sql.= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
+				break;
+		}
 
 		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
 		$result = $this->db->query($sql);

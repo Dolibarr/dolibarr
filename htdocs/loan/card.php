@@ -642,6 +642,7 @@ if ($id > 0)
 		$sql.= " AND p.fk_loan = l.rowid";
 		$sql.= " AND l.entity = ".$conf->entity;
 		$sql.= " AND p.fk_typepayment = c.id";
+		$sql.= " AND c.entity = " . getEntity('c_paiement');
 		$sql.= " ORDER BY dp DESC";
 
 		//print $sql;

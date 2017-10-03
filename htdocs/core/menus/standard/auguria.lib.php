@@ -339,7 +339,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
-			if ($numr > 0) 	$newmenu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+			if ($numr > 0) 	$newmenu->add('/compta/bank/list.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
 
 			while ($i < $numr)
 			{
@@ -347,7 +347,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
 				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
 				{
-					$newmenu->add('/compta/bank/bankentries.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
 				}
 				$i++;
 			}

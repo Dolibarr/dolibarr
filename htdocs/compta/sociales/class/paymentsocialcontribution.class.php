@@ -78,7 +78,7 @@ class PaymentSocialContribution extends CommonObject
         $now=dol_now();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        
+
 		// Validate parametres
 		if (! $this->datepaye)
 		{
@@ -125,7 +125,7 @@ class PaymentSocialContribution extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
-				
+
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
@@ -137,7 +137,7 @@ class PaymentSocialContribution extends CommonObject
 						// If we want to closed payed invoices
 						if ($closepaidcontrib)
 						{
-							
+
 							$contrib=new ChargeSociales($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -205,6 +205,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."paiementcharge as t)";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
+		$sql.= " AND pt.entity = " . getEntity('c_paiement');
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
