@@ -319,7 +319,7 @@ else
 
 
 // List of products or services (type is type of category)
-if ($object->type == Categorie::TYPE_PRODUCT)
+if ($type == Categorie::TYPE_PRODUCT)
 {
 	$prods = $object->getObjectsInCateg("product");
 	if ($prods < 0)
@@ -391,7 +391,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 	}
 }
 
-if ($object->type == Categorie::TYPE_SUPPLIER)
+if ($type == Categorie::TYPE_SUPPLIER)
 {
 	$socs = $object->getObjectsInCateg("supplier");
 	if ($socs < 0)
@@ -440,7 +440,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 	}
 }
 
-if($object->type == Categorie::TYPE_CUSTOMER)
+if($type == Categorie::TYPE_CUSTOMER)
 {
 	$socs = $object->getObjectsInCateg("customer");
 	if ($socs < 0)
@@ -494,7 +494,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 }
 
 // List of members
-if ($object->type == Categorie::TYPE_MEMBER)
+if ($type == Categorie::TYPE_MEMBER)
 {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -547,7 +547,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 }
 
 // Categorie contact
-if($object->type == Categorie::TYPE_CONTACT)
+if ($type == Categorie::TYPE_CONTACT)
 {
 	$contacts = $object->getObjectsInCateg("contact");
 	if ($contacts < 0)
@@ -600,7 +600,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 }
 
 // List of accounts
-if ($object->type == Categorie::TYPE_ACCOUNT)
+if ($type == Categorie::TYPE_ACCOUNT)
 {
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -653,7 +653,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
 }
 
 // List of Project
-if ($object->type == Categorie::TYPE_PROJECT)
+if ($type == Categorie::TYPE_PROJECT)
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
