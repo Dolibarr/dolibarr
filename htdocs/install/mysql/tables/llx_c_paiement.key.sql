@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2012 	   Florian Henry  <florian.henry@open-concept.pro>
+-- Copyright (C) 2012	Florian Henry	<florian.henry@open-concept.pro>
+-- Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,4 +17,4 @@
 --
 -- ========================================================================
 
-ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(code);
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);

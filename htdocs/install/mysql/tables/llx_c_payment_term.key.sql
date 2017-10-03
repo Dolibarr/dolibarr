@@ -1,8 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
--- Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
--- Copyright (C) 2017		Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2012	Florian Henry	<florian.henry@open-concept.pro>
+-- Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,15 +17,4 @@
 --
 -- ========================================================================
 
-create table llx_c_paiement
-(
-  id					integer,
-  entity				integer	DEFAULT 1 NOT NULL,	-- multi company id
-  code       		varchar(6)  NOT NULL,
-  libelle    		varchar(62),
-  type       		smallint,	-- 0: input money, 1: output money, 2: input and output, 3: other
-  active     		tinyint DEFAULT 1  NOT NULL,
-  accountancy_code	varchar(32) NULL,
-  module     		varchar(32) NULL,
-  position			integer NOT NULL DEFAULT 0
-)ENGINE=innodb;
+ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
