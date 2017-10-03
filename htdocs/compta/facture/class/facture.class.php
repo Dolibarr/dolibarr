@@ -1076,18 +1076,19 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *      Return clicable link of object (with eventually picto)
+	 *  Return clicable link of object (with eventually picto)
 	 *
-	 *      @param	int		$withpicto       Add picto into link
-	 *      @param  string	$option          Where point the link
-	 *      @param  int		$max             Maxlength of ref
-	 *      @param  int		$short           1=Return just URL
-	 *      @param  string  $moretitle       Add more text to title tooltip
-     *      @param	int  	$notooltip		 1=Disable tooltip
-     *      @param  int     $addlinktonotes  1=Add link to notes
-	 *      @return string 			         String with URL
+	 *  @param	int		$withpicto       			Add picto into link
+	 *  @param  string	$option          			Where point the link
+	 *  @param  int		$max             			Maxlength of ref
+	 *  @param  int		$short           			1=Return just URL
+	 *  @param  string  $moretitle       			Add more text to title tooltip
+     *  @param	int  	$notooltip		 			1=Disable tooltip
+     *  @param  int     $addlinktonotes  			1=Add link to notes
+     *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return string 			         			String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0,$addlinktonotes=0)
+	function getNomUrl($withpicto=0, $option='', $max=0, $short=0, $moretitle='', $notooltip=0, $addlinktonotes=0, $save_lastsearch_value=-1)
 	{
 		global $langs, $conf, $user, $form;
 
@@ -1099,6 +1100,14 @@ class Facture extends CommonInvoice
 		else $url = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$this->id;
 
 		if ($short) return $url;
+
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
 		$picto='bill';
 		if ($this->type == self::TYPE_REPLACEMENT) $picto.='r';	// Replacement invoice
