@@ -3380,10 +3380,10 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
-		// on verifie si la facture est en numerotation provisoire
-		$facref = substr($this->ref, 1, 4);
+		// we check if invoice is a temporary number (PROVxxxx)
+		$tmppart = substr($this->ref, 1, 4);
 
-		if ($this->statut == self::STATUS_DRAFT && $facref == 'PROV') // If draft invoice and ref not yet defined
+		if ($this->statut == self::STATUS_DRAFT && $tmppart == 'PROV') // If draft invoice and ref not yet defined
 		{
 			return 1;
 		}
@@ -3395,7 +3395,7 @@ class Facture extends CommonInvoice
 		// ...
 
 		// If not a draft invoice and not temporary invoice
-		if ($facref != 'PROV')
+		if ($tmppart !== 'PROV')
 		{
 			$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
 			$ventilExportCompta = $this->getVentilExportCompta();
