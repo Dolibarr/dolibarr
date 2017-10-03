@@ -84,8 +84,8 @@ else if ($action == 'updateform')
 {
 	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',GETPOST('MAIN_UPLOAD_DOC','alpha'),'chaine',0,'',$conf->entity);
 	$res4=dolibarr_set_const($db, "MAIN_UMASK", GETPOST('MAIN_UMASK','alpha'),'chaine',0,'',$conf->entity);
-	$res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", GETPOST('MAIN_ANTIVIRUS_COMMAND','alpha'),'chaine',0,'',$conf->entity);
-	$res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", GETPOST('MAIN_ANTIVIRUS_PARAM','alpha'),'chaine',0,'',$conf->entity);
+	$res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim(GETPOST('MAIN_ANTIVIRUS_COMMAND','none')),'chaine',0,'',$conf->entity);    // Use GETPOST none because we must accept "
+	$res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim(GETPOST('MAIN_ANTIVIRUS_PARAM','none')),'chaine',0,'',$conf->entity);	// Use GETPOST none because we must accept "
 	if ($res3 && $res4 && $res5 && $res6) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
