@@ -3383,7 +3383,7 @@ class Facture extends CommonInvoice
 		// we check if invoice is a temporary number (PROVxxxx)
 		$tmppart = substr($this->ref, 1, 4);
 
-		if ($this->statut == self::STATUS_DRAFT && $tmppart == 'PROV') // If draft invoice and ref not yet defined
+		if ($this->statut == self::STATUS_DRAFT && $tmppart === 'PROV') // If draft invoice and ref not yet defined
 		{
 			return 1;
 		}
