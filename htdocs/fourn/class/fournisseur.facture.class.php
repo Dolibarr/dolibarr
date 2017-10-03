@@ -1839,15 +1839,16 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		string	$option			Where point the link
-     *	@param		int		$max			Max length of shown ref
-     *	@param		int		$short			1=Return just URL
-     *	@param		string	$moretitle		Add more text to title tooltip
-     *  @param	    int   	$notooltip		1=Disable tooltip
-     * 	@return		string					String with URL
+     *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param		string	$option						Where point the link
+     *	@param		int		$max						Max length of shown ref
+     *	@param		int		$short						1=Return just URL
+     *	@param		string	$moretitle					Add more text to title tooltip
+     *  @param	    int   	$notooltip					1=Disable tooltip
+     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     * 	@return		string								String with URL
      */
-    public function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0)
+    public function getNomUrl($withpicto=0, $option='',$max=0, $short=0, $moretitle='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf;
 
@@ -1857,6 +1858,14 @@ class FactureFournisseur extends CommonInvoice
         else $url = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id;
 
         if ($short) return $url;
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
         $picto='bill';
         if ($this->type == self::TYPE_REPLACEMENT) $picto.='r'; // Replacement invoice

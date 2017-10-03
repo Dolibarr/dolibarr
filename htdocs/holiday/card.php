@@ -806,7 +806,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
-        dol_fiche_head();
+        dol_fiche_head('', '', '', -1);
 
         $out='';
         $typeleaves=$object->getTypes(1,1);
@@ -1045,7 +1045,7 @@ else
 
                 dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
-                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
+                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
                 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
 

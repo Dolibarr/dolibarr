@@ -308,7 +308,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+	print '&nbsp; ';
+	print '<input type="button" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onclick="javascript:history.go(-1)">';	// Cancel for create doe not post form
+	print '</div>';
 
 	print '</form>';
 }
@@ -470,7 +474,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'ref', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
+	    if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
 
     	print '<tr><td';
     	print ' class="titlefield';
@@ -478,13 +482,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '"';
     	print '>'.$langs->trans($val['label']).'</td>';
     	print '<td>';
-    	print $object->$key;
+    	print dol_escape_htmltag($object->$key, 1, 1);
 		print '</td>';
     	print '</tr>';
-	}
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    	//if ($key == 'targetsrcfile3') break;						// key used for break on second column
+	}
 
 	print '</table>';
 	print '</div>';
@@ -493,7 +496,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-	// ...
+	$alreadyoutput = 1;
+	foreach($object->fields as $key => $val)
+	{
+		if ($alreadyoutput)
+		{
+			//if ($key == 'targetsrcfile3') $alreadyoutput = 0;		// key used for break on second column
+			continue;
+		}
+
+		if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
+
+		print '<tr><td';
+		print ' class="titlefield';
+		if ($val['notnull'] > 0) print ' fieldrequired';
+		print '"';
+		print '>'.$langs->trans($val['label']).'</td>';
+		print '<td>';
+		print dol_escape_htmltag($object->$key, 1, 1);
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 	print '</div>';

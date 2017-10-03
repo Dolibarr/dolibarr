@@ -91,7 +91,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 	}
 	else
 	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -160,8 +160,8 @@ if ($id > 0 || ! empty($ref))
 
 
 	// Shipment card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer shipment
 	$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
@@ -203,11 +203,11 @@ if ($id > 0 || ! empty($ref))
         }
     }
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
     //print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -237,23 +237,23 @@ if ($id > 0 || ! empty($ref))
 	    print "</td>\n";
 	    print '</tr>';
 	}
-	
+
 	print "</table>";
 
-	
+
 	//print '</div>';
 	//print '<div class="fichehalfright">';
 	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
-	
-	
+
+
 	//print '</div>';
 	//print '</div>';
 	print '</div>';
-		
+
 	print '<div class="clearboth"></div>';
-	
-	
+
+
 	dol_fiche_end();
 
 	// Lignes de contacts

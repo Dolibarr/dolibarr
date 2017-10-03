@@ -526,21 +526,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
          * List of unpaid invoices
          */
 
-        $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type, ';
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
         $sql.= ' f.datef as df, f.fk_soc as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-
-		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON (f.fk_soc = s.rowid)';
-		}
-
-		$sql.= ' WHERE f.entity = '.$conf->entity;
+		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
-
+		// Can pay invoices of all child of parent company
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
 			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->parent.')';
 		}
-
+		// Can pay invoices of all child of myself
+		if(!empty($conf->global->FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES)){
+			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->id.')';
+		}
         $sql.= ') AND f.paye = 0';
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
         if ($facture->type != 2)

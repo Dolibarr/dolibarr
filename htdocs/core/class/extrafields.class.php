@@ -893,7 +893,7 @@ class ExtraFields
 			if (! is_object($form)) $form=new Form($this->db);
 
 			// TODO Must also support $moreparam
-			$out = $form->select_date($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
+			$out = $form->select_date($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, ($keysuffix != 'search_' ? 1 : 0), 1, 0, 1);
 		}
 		elseif (in_array($type,array('int')))
 		{
@@ -1323,7 +1323,8 @@ class ExtraFields
 		}
 		elseif ($type == 'password')
 		{
-			$out='<input type="password" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			// If prefix is 'search_', field is used as a filter, we use a common text field.
+			$out='<input type="'.($keysuffix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="'.$keysuffix.'options_'.$key.$keyprefix.'"/>';

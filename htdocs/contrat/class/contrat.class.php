@@ -1938,19 +1938,29 @@ class Contrat extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	int		$maxlength		Max length of ref
-     *  @param	int     $notooltip		1=Disable tooltip
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	int		$maxlength					Max length of ref
+     *  @param	int     $notooltip					1=Disable tooltip
+     *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlength=0,$notooltip=0)
+	function getNomUrl($withpicto=0, $maxlength=0, $notooltip=0, $save_lastsearch_value=-1)
 	{
 		global $conf, $langs, $user;
 
 		$result='';
 
 		$url = DOL_URL_ROOT.'/contrat/card.php?id='.$this->id;
-        $picto = 'contract';
+
+		//if ($option !== 'nolink')
+		//{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		//}
+
+		$picto = 'contract';
         $label = '';
 
         if ($user->rights->contrat->lire) {

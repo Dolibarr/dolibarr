@@ -5973,7 +5973,7 @@ class Form
 
 		if ($previous_ref || $next_ref || $morehtml)
 		{
-			$ret.='<div class="pagination"><ul>';
+			$ret.='<div class="pagination paginationref"><ul class="right">';
 		}
         if ($morehtml)
         {
