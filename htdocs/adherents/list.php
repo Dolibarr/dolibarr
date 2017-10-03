@@ -83,6 +83,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+    'd.rowid'=>'Ref',
     'd.login'=>'Login',
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
@@ -95,6 +96,7 @@ $fieldstosearchall = array(
     'd.note_public'=>'NotePublic',
     'd.note_private'=>'NotePrivate',
 );
+if($db->type == 'pgsql') unset($fieldstosearchall['d.rowid']);
 $arrayfields=array(
     'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
