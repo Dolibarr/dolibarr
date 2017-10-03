@@ -406,7 +406,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         if (! $err) $err+=$this->insert_module_parts();
 
         // Insert constant defined by modules (into llx_const)
-        if (! $err) $err+=$this->insert_const();
+        if (! $err && ! preg_match('/newboxdefonly/',$options)) $err+=$this->insert_const();	// Test on newboxdefonly to avoid to erase value during upgrade
 
         // Insert boxes def into llx_boxes_def and boxes setup (into llx_boxes)
         if (! $err && ! preg_match('/noboxes/',$options)) $err+=$this->insert_boxes($options);

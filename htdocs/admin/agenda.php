@@ -80,8 +80,7 @@ if ($action == "save" && empty($cancel))
 	{
 		$param='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
-		if (GETPOST($param,'alpha')) $res = dolibarr_set_const($db,$param,GETPOST($param,'alpha'),'chaine',0,'',$conf->entity);
-		else $res = dolibarr_del_const($db,$param,$conf->entity);
+		$res = dolibarr_set_const($db,$param,(GETPOST($param,'alpha')?GETPOST($param,'alpha'):''),'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 	}
 
