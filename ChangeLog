@@ -16,6 +16,8 @@ Following changes may create regressions for some external modules, but were nec
 * The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
   __PROPALREF__, ...)
 * Some REST API to access the dictionary (country, town, ...) were moved into a common API. 
+* Page bank/index.php and bank/bankentries.php were renamed into bank/list.php and bank/bankentries_list.php to
+  follow page naming conventions (so default filter/sort order features can also work).
 
 
 ***** ChangeLog for 6.0.1 compared to 6.0.* *****

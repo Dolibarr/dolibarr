@@ -87,21 +87,21 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
 	dol_banner_tab($object, 'rowid', $linkback);
-    
+
 	print '<div class="fichecenter">';
-	
+
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	$object->info($id);
 	print dol_print_object_info($object, 1);
-	
-	print '</div>';	
+
+	print '</div>';
 
 	dol_fiche_end();
-	
+
 
     /*
      * Barre d'action

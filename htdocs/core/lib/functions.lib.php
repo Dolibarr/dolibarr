@@ -102,18 +102,21 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 /**
  * 	Get list of entity id to use.
  *
- * 	@param	string	$element	Current element
- *                              'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
- *                              'product', 'productprice', 'stock',
- *                              'propal', 'supplier_proposal', 'facture', 'facture_fourn',
- *                              'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
- *                              'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
- *                              'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
- *                              'email_template', 'event',
- * 	@param	int	     $shared	1=Return id of current entity + shared entities (default), 0=Return id of current entity only
+ * 	@param	string	$element		Current element
+ *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
+ *									'product', 'productprice', 'stock',
+ *									'propal', 'supplier_proposal', 'facture', 'facture_fourn',
+ *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
+ *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
+ *									'email_template', 'event',
+ *									'c_paiement', ...
+ * 	@param	int		$shared			0=Return id of current entity only,
+ * 									1=Return id of current entity + shared entities (default)
+ *  @param	int		$forceentity	Entity id
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element, $shared=1)
+function getEntity($element, $shared=1, $forceentity=null)
 {
 	global $conf, $mc;
 
@@ -124,7 +127,7 @@ function getEntity($element, $shared=1)
 
 	if (is_object($mc))
 	{
-		return $mc->getEntity($element, $shared);
+		return $mc->getEntity($element, $shared, $forceentity);
 	}
 	else
 	{
@@ -897,16 +900,15 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
  *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
  *  @return     string     				 		Escaped string
- *
  *  @see		dol_string_nohtmltag
  */
 function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
+	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html form content
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
 	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
+	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html form content
 }
 
 
@@ -5047,20 +5049,19 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
 }
 
 /**
- * Replace htmlentities functions to manage errors http://php.net/manual/en/function.htmlentities.php
+ * Replace htmlentities functions.
  * Goal of this function is to be sure to have default values of htmlentities that match what we need.
  *
- * @param   string  $string         The input string.
- * @param   int     $flags          Flags(see PHP doc above)
- * @param   string  $encoding       Encoding
- * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
+ * @param   string  $string         The input string to encode
+ * @param   int     $flags          Flags (see PHP doc above)
+ * @param   string  $encoding       Encoding page code
+ * @param   bool    $double_encode  When double_encode is turned off, PHP will not encode existing html entities
  * @return  string  $ret            Encoded string
  */
 function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
 	return htmlentities($string, $flags, $encoding, $double_encode);
 }
-
 
 /**
  *	Check if a string is a correct iso string
@@ -5952,15 +5953,16 @@ function dol_osencode($str)
  *      Return an id or code from a code or id.
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
- * 		@param	DoliDB	$db			Database handler
- * 		@param	string	$key		Code or Id to get Id or Code
- * 		@param	string	$tablename	Table name without prefix
- * 		@param	string	$fieldkey	Field for search ('code' or 'id')
- * 		@param	string	$fieldid	Field to get ('id' or 'code')
- *      @return int					<0 if KO, Id of code if OK
+ * 		@param	DoliDB	$db				Database handler
+ * 		@param	string	$key				Code or Id to get Id or Code
+ * 		@param	string	$tablename		Table name without prefix
+ * 		@param	string	$fieldkey		Field for code
+ * 		@param	string	$fieldid			Field for id
+ *      @param  int		$entityfilter	Filter by entity
+ *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
+function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entityfilter=0)
 {
 	global $cache_codes;
 
@@ -5976,6 +5978,8 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
+	if (! empty($entityfilter))
+		$sql.= " AND entity IN (" . getEntity($tablename) . ")";
 	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)

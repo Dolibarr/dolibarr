@@ -819,24 +819,34 @@ class Holiday extends CommonObject
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-     *	@return		string						String with URL
+     *	@param	int			$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+     *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string									String with URL
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto=0, $save_lastsearch_value=-1)
     {
         global $langs;
 
         $result='';
+        $picto='holiday';
         $label=$langs->trans("Show").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
+
+        //if ($option != 'nolink')
+        //{
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        //}
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        $picto='holiday';
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+        if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 

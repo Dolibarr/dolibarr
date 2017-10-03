@@ -262,7 +262,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
     if ($result > 0)
     {
         setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-        header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
+        header("Location: ".DOL_URL_ROOT."/compta/bank/list.php");
         exit;
     }
     else
@@ -576,7 +576,7 @@ else
 		// Print form confirm
 		print $formconfirm;
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref='';
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

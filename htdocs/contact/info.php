@@ -61,7 +61,7 @@ if ($id > 0)
 
 	dol_fiche_head($head, 'info', $title, -1, 'contact');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 
@@ -71,11 +71,11 @@ if ($id > 0)
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<br>';
-	
+
 	dol_print_object_info($object);
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 }
 

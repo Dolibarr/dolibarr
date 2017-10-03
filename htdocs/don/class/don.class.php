@@ -39,7 +39,7 @@ class Don extends CommonObject
 	public $fk_element = 'fk_donation';
 	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     var $picto = 'generic';
-    
+
     var $date;
     var $amount;
     var $societe;
@@ -163,7 +163,7 @@ class Don extends CommonObject
         global $conf, $user,$langs;
 
         $now = dol_now();
-        
+
         // Charge tableau des id de societe socids
         $socids = array();
 
@@ -611,7 +611,7 @@ class Don extends CommonObject
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment AND cp.entity = " . getEntity('c_paiement');
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
 		if (! empty($id))
         {
