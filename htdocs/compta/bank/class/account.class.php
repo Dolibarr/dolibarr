@@ -1151,7 +1151,7 @@ class Account extends CommonObject
             return $solde;
         }
     }
-    
+
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -1162,9 +1162,9 @@ class Account extends CommonObject
     function load_board(User $user, $filteraccountid = 0)
     {
     	global $conf, $langs;
-    	
+
     	if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-    	
+
     	$sql = "SELECT b.rowid, b.datev as datefin";
     	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
     	$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
@@ -1174,21 +1174,21 @@ class Account extends CommonObject
     	$sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
     	$sql.= " AND clos = 0";
     	if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
-    	
+
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
     		$langs->load("banks");
     		$now=dol_now();
-    		
+
     		require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
-    		
+
     		$response = new WorkboardResponse();
     		$response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
     		$response->label=$langs->trans("TransactionsToConciliate");
-    		$response->url=DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank';
+    		$response->url=DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank';
     		$response->img=img_object('',"payment");
-    		
+
     		while ($obj=$this->db->fetch_object($resql))
     		{
     			$response->nbtodo++;
@@ -1196,7 +1196,7 @@ class Account extends CommonObject
     				$response->nbtodolate++;
     			}
     		}
-    		
+
     		return $response;
     	}
     	else
@@ -1206,7 +1206,7 @@ class Account extends CommonObject
     		return -1;
     	}
     }
-    
+
     /**
      *      Charge indicateurs this->nb de tableau de bord
      *		@param		int			$filteraccountid	To get info for a particular account id
@@ -1215,9 +1215,9 @@ class Account extends CommonObject
     function load_state_board($filteraccountid = 0)
     {
     	global $user;
-    	
+
     	if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
-    	
+
     	$sql = "SELECT count(b.rowid) as nb";
     	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
     	$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
@@ -1226,10 +1226,10 @@ class Account extends CommonObject
     	$sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
     	$sql.= " AND clos = 0";
     	if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
-    	
+
     	$resql=$this->db->query($sql);
     	if ($resql)
-    	{    		
+    	{
     		while ($obj=$this->db->fetch_object($resql))
     		{
     			$this->nb["banklines"]=$obj->nb;
@@ -1279,14 +1279,15 @@ class Account extends CommonObject
     }
 
     /**
-     *    	Return clicable name (with picto eventually)
+     *  Return clicable name (with picto eventually)
      *
-     *		@param	int		$withpicto		Include picto into link
-     *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
-     *      @param  string  $option         ''=Show ref, 'reflabel'=Show ref+label
-     *		@return	string					Chaine avec URL
+     *	@param	int		$withpicto					Include picto into link
+     *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
+     *  @param  string  $option         			''=Show ref, 'reflabel'=Show ref+label
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $mode='', $option='')
+    function getNomUrl($withpicto=0, $mode='', $option='', $save_lastsearch_value=-1)
     {
         global $conf, $langs;
 
@@ -1306,19 +1307,27 @@ class Account extends CommonObject
 
         if (empty($mode))
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
         }
         else if ($mode == 'transactions')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
         }
         else if ($mode == 'receipts')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id.$linkclose;
-            $linkend='</a>';
+            $url = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id;
         }
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $link = '<a href="'.$url.$linkclose;
+        $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
         $result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
