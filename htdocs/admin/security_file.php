@@ -82,8 +82,8 @@ else if (preg_match('/del_(.*)/',$action,$reg))
 
 else if ($action == 'updateform')
 {
-	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',GETPOST('MAIN_UPLOAD_DOC','int'),'chaine',0,'',$conf->entity);
-	$res4=dolibarr_set_const($db, "MAIN_UMASK", GETPOST('MAIN_UMASK','int'),'chaine',0,'',$conf->entity);
+	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',GETPOST('MAIN_UPLOAD_DOC','alpha'),'chaine',0,'',$conf->entity);
+	$res4=dolibarr_set_const($db, "MAIN_UMASK", GETPOST('MAIN_UMASK','alpha'),'chaine',0,'',$conf->entity);
 	$res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", GETPOST('MAIN_ANTIVIRUS_COMMAND','alpha'),'chaine',0,'',$conf->entity);
 	$res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", GETPOST('MAIN_ANTIVIRUS_PARAM','alpha'),'chaine',0,'',$conf->entity);
 	if ($res3 && $res4 && $res5 && $res6) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
