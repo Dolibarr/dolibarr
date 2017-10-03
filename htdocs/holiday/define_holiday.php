@@ -291,7 +291,7 @@ else
     }
     else
     {
-        print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
+        print_liste_field_titre("NoLeaveWithCounterDefined", $_SERVER["PHP_SELF"], '', '', '', '');
     }
     print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : $langs->trans('Note')), $_SERVER["PHP_SELF"]);
     print_liste_field_titre('');
