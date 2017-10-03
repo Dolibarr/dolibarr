@@ -475,7 +475,7 @@ if ($resql)
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
         $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
         $moreforfilter.='</div>';
     }
     $parameters=array();
@@ -719,7 +719,7 @@ if ($resql)
         if (! empty($arrayfields['cf.ref']['checked']))
         {
             print '<td class="nowrap">';
-            
+
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
             print '<td class="nobordernopadding nowrap">';
@@ -734,7 +734,7 @@ if ($resql)
 			$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
-			
+
 			print '</td>'."\n";
             if (! $i) $totalarray['nbfield']++;
         }

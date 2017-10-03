@@ -271,7 +271,7 @@ class SMTPs
 	{
 		$this->_moreinheader = $_val;
 	}
-	
+
 	/**
      * get trackid
      *
@@ -291,7 +291,7 @@ class SMTPs
 	{
 	    return $this->_moreinheader;
 	}
-	
+
     /**
      * Set errors to
      *
@@ -411,7 +411,7 @@ class SMTPs
 	function _server_authenticate()
 	{
 		global $conf;
-		
+
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
@@ -441,7 +441,7 @@ class SMTPs
 				{
 					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
 					return $_retVal;
-				}				
+				}
 			}
 			// Send Authentication to Server
 			// Check for errors along the way
@@ -882,7 +882,7 @@ class SMTPs
 	    if ( $_strReplyTo )
 	        $this->_msgReplyTo = $this->_strip_email($_strReplyTo);
 	}
-	
+
 	/**
 	 * Retrieves the Address from which mail will be the reply-to
 	 *
@@ -892,15 +892,15 @@ class SMTPs
 	function getReplyTo($_part = true)
 	{
 	    $_retValue = '';
-	
+
 	    if ( $_part === true )
 	        $_retValue = $this->_msgReplyTo;
 	    else
 	        $_retValue = $this->_msgReplyTo[$_part];
-	
+
 	    return $_retValue;
 	}
-	
+
 	/**
 	 * Inserts given addresses into structured format.
 	 * This method takes a list of given addresses, via an array
@@ -1196,6 +1196,8 @@ class SMTPs
 	 */
 	function getHeader()
 	{
+		global $conf;
+
 		$_header = 'From: '       . $this->getFrom('org') . "\r\n"
 		. 'To: '         . $this->getTO()          . "\r\n";
 
@@ -1212,13 +1214,13 @@ class SMTPs
 		if ( $this->getBCC() )
 		$_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
         */
-		
+
 		$host=$this->getHost();
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
 		$host=dol_getprefix('email');
-		
+
 		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n";
 		$_header .= 'Date: '       . date("r")               . "\r\n";
@@ -1237,7 +1239,7 @@ class SMTPs
 		}
 		if ( $this->getMoreInHeader() )
 		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
-		
+
 		//$_header .=
 		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
 		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
@@ -1258,9 +1260,10 @@ class SMTPs
 		    $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
 
 		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)' . "\r\n";
+		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART?'MAIN_MAIL_USE_MULTI_PART':'No MAIN_MAIL_USE_MULTI_PART') . "\r\n";
 		$_header .= 'Mime-Version: 1.0' . "\r\n";
 
-		
+
 		return $_header;
 	}
 
@@ -1289,17 +1292,17 @@ class SMTPs
 			$strContentAltText = html_entity_decode(strip_tags($strContent));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
-		
+
 		// Make RFC2045 Compliant
 		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
 		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));   // TODO Using this method creates unexpected line break on text/plain content.
-		
+
 		$this->_msgContent[$strType] = array();
 
 		$this->_msgContent[$strType]['mimeType'] = $strMimeType;
 		$this->_msgContent[$strType]['data']     = $strContent;
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
-		
+
 		if ( $this->getMD5flag() )
 		$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
 		//}
@@ -1313,7 +1316,7 @@ class SMTPs
 	function getBodyContent()
 	{
 	    global $conf;
-	    
+
 		// Generate a new Boundary string
 		$this->_setBoundary();
 
@@ -1361,7 +1364,7 @@ class SMTPs
 			$content .= "\r\n";
 
 			$content .= "--" . $this->_getBoundary('mixed') . "\r\n";
-			
+
 			if (key_exists('image', $this->_msgContent))     // If inline image found
 			{
 				$content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
@@ -1369,7 +1372,7 @@ class SMTPs
 				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
 			}
 
-			
+
 			// $this->_msgContent must be sorted with key 'text' or 'html' first then 'image' then 'attachment'
 
 
@@ -1429,18 +1432,18 @@ class SMTPs
 						$content.= "\r\n";
 						$content.= "--" . $this->_getBoundary('related') . "\r\n";
 					}
-					
+
 					if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part before html part
 					{
 					    $content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
     					$content .= "\r\n";
 	       				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
-					
+
 	       				$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
 	       				$content.= "\r\n". $_content['dataText'] . "\r\n";
 	       				$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
-					}	       				
-	       				
+					}
+
 					$content .= 'Content-Type: ' . $_content['mimeType'] . '; '
 					//                             . 'charset="' . $this->getCharSet() . '"';
 					. 'charset=' . $this->getCharSet() . '';
@@ -1462,7 +1465,7 @@ class SMTPs
 					{
 					    $content.= "--" . $this->_getBoundary('alternative') . "--". "\r\n";
 					}
-					
+
 					$content .= "\r\n";
 				}
 			}

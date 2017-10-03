@@ -1629,8 +1629,8 @@ class Contrat extends CommonObject
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
-					$contractline->array_options=$array_option;
-					$contractline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$contractline->table_element);
+					$contractline->array_options=$array_options;
+					$contractline->id= $rowid;
 					$result=$contractline->insertExtraFields();
 					if ($result < 0)
 					{

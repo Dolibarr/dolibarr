@@ -2,6 +2,40 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 5.0.6 compared to 5.0.5 *****
+FIX: Removed a bad symbolic link into custom directory.
+FIX: Renaming a resouce ref rename also the directory of attached files.
+
+***** ChangeLog for 5.0.5 compared to 5.0.4 *****
+FIX: #7075 : bad path for document
+FIX: #7156
+FIX: #7173
+FIX: #7224
+FIX: #7226
+FIX: #7239
+FIX: add supplierproposaldet without price (new product)
+FIX: amount overlap other amount when a pagebreak is done due to an image at the bottom of page.
+FIX: Bad tax calculation with expense report
+FIX: Best buy price calculation
+FIX: Buying prices must always be in positive value.
+FIX: calculate correct remain to pay for planned bank transactions
+FIX: delete linked element on facture rec
+FIX: edit sociale was emptying label
+FIX: Error when updating thirdparty not returned
+FIX: holidays with postgresql like on rowid integer
+FIX: id of user not saved when making a payment of expense report
+FIX: invoice page list
+FIX: invoice situation VAT total rounding into PDF crabe
+FIX: PgSQL compatibility.
+FIX: remove order rights on invoice page
+FIX: status were wrong on product referent list
+FIX: supplier id was not passed to hooks
+FIX: Support of vat code when using price per customer
+FIX: User id correction on holiday request
+FIX: value of user id filled to 0 in llx_bank_url when recording an expense report.
+FIX: we have to check if contact doesn't already exist on add_contact() function
+FIX: We should be able to insert data with value '0' into const
+FIX: install process with DoliWamp
 
 ***** ChangeLog for 5.0.4 compared to 5.0.3 *****
 FIX: #5640 Prices of a predefined product/service were incorrect under certain circumstances
@@ -507,7 +541,7 @@ NEW: Disabled users are striked.
 NEW: Enhance navigation of project module
 NEW: fichinter lines ordered by rang AND DATE
 NEW: hidden conf to use input file multiple from mail form
-NEW: hidden feature: SUPPLIERORDER_WITH_NOPRICEDEFINED allow supplier order even if no supplier price defined
+NEW: hidden feature: SUPPLIER_ORDER_WITH_NOPRICEDEFINED allow supplier order even if no supplier price defined
 NEW: Hidden option MAIN_LANDING_PAGE to choose the first page to show after login works as a "global" option (llx_const) and as a "per user" option (llx_user_param).
 NEW: Holiday is a now a RH module. All RH module provides by default visilibity on users of its hierarchy.
 NEW: If error is reported during migration process, you can ignore it to avoid to be locked.

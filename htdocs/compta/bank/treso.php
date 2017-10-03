@@ -275,6 +275,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$refcomp=$societestatic->getNomUrl(1,'',24);
 
 				$paiement = $facturestatic->getSommePaiement();	// Payment already done
+				$paiement+= $facturestatic->getSumDepositsUsed();
+				$paiement+= $facturestatic->getSumCreditNotesUsed();
 			}
 			if ($obj->family == 'social_contribution')
 			{

@@ -40,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
  * Main
  */
 
-if (empty($argv[1])) 
+if (empty($argv[1]))
 {
     print "Usage: ".$script_file." release=x.y.z\n";
     exit -1;
@@ -54,7 +54,7 @@ if ($release != DOL_VERSION)
 }
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
-$outputdir=dirname(__FILE__).'/../htdocs/install';
+$outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
 print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
 dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
 

@@ -1255,55 +1255,55 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      *
      * @return int  Error count (0 if ok)
      */
-    function insert_tabs()
-    {
-        global $conf;
+	function insert_tabs()
+	{
+		global $conf;
 
-        $err=0;
+		$err=0;
 
-        if (! empty($this->tabs))
-        {
-            $i=0;
-            foreach ($this->tabs as $key => $value)
-            {
-            	if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+		if (! empty($this->tabs))
+		{
+			$i=0;
+			foreach ($this->tabs as $key => $value)
+			{
+				if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
 
-            	$entity=$conf->entity;
-            	$newvalue = $value;
+				$entity=$conf->entity;
+				$newvalue = $value;
 
-            	if (is_array($value))
-            	{
-            		$newvalue = $value['data'];
-            		if (isset($value['entity'])) $entity = $value['entity'];
-            	}
+				if (is_array($value))
+				{
+					$newvalue = $value['data'];
+					if (isset($value['entity'])) $entity = $value['entity'];
+				}
 
-                if ($newvalue)
-                {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-                    $sql.= "name";
-                    $sql.= ", type";
-                    $sql.= ", value";
-                    $sql.= ", note";
-                    $sql.= ", visible";
-                    $sql.= ", entity";
-                    $sql.= ")";
-                    $sql.= " VALUES (";
-                    $sql.= $this->db->encrypt($this->const_name."_TABS_".$i,1);
-                    $sql.= ", 'chaine'";
-                    $sql.= ", ".$this->db->encrypt($value,1);
-                    $sql.= ", null";
-                    $sql.= ", '0'";
-                    $sql.= ", ".$conf->entity;
-                    $sql.= ")";
+				if ($newvalue)
+				{
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+					$sql.= "name";
+					$sql.= ", type";
+					$sql.= ", value";
+					$sql.= ", note";
+					$sql.= ", visible";
+					$sql.= ", entity";
+					$sql.= ")";
+					$sql.= " VALUES (";
+					$sql.= $this->db->encrypt($this->const_name."_TABS_".$i,1);
+					$sql.= ", 'chaine'";
+					$sql.= ", ".$this->db->encrypt($newvalue,1);
+					$sql.= ", null";
+					$sql.= ", '0'";
+					$sql.= ", ".$entity;
+					$sql.= ")";
 
-                    dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
-                    $this->db->query($sql);
-                }
-                $i++;
-            }
-        }
-        return $err;
-    }
+					dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
+					$this->db->query($sql);
+				}
+				$i++;
+			}
+		}
+		return $err;
+	}
 
     /**
      * Adds constants

@@ -120,10 +120,75 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 
 
+    /**
+     * testDolGetFirstLineOfText
+     *
+     * @return void
+     */
+    public function testDolGetFirstLineOfText()
+    {
+    	// Nb of line is same than entry text
+
+    	$input="aaaa";
+    	$result=dolGetFirstLineOfText($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa", $result);
+
+    	$input="aaaa\nbbbbbbbbbbbb\n";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa\nbbbbbbbbbbbb", $result);
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb", $result);
+
+    	// Nb of line is lower
+
+    	$input="aaaa\nbbbbbbbbbbbb\ncccccc\n";
+    	$result=dolGetFirstLineOfText($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa...", $result);
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+    	$result=dolGetFirstLineOfText($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa...", $result);
+
+    	$input="aaaa\nbbbbbbbbbbbb\ncccccc\n";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa\nbbbbbbbbbbbb...", $result);
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+    	$result=dolGetFirstLineOfText($input, 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb...", $result);
+
+    	// Nb of line is higher
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc";
+    	$result=dolGetFirstLineOfText($input, 100);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 a');
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+    	$result=dolGetFirstLineOfText($input, 100);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 b');
+
+    	$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>\n";
+    	$result=dolGetFirstLineOfText($input, 100);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 c');
+    }
+
+
 	/**
 	 * testDolBuildPath
 	 *
-	 * @return boolean
+	 * @return void
 	 */
 	public function testDolBuildPath()
 	{

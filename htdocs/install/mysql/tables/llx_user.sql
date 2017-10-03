@@ -33,7 +33,7 @@ create table llx_user
   tms               timestamp,
   fk_user_creat     integer,
   fk_user_modif     integer,
-  login             varchar(24) NOT NULL,
+  login             varchar(50) NOT NULL,
   pass              varchar(128),
   pass_crypted      varchar(128),
   pass_temp         varchar(128),			    -- temporary password when asked for forget password
