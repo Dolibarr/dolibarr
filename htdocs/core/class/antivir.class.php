@@ -160,8 +160,7 @@ class AntiVir
 		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
 			$param=$param." ".escapeshellarg(trim($file));
 
-		//if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
-		if (preg_match("/\s/",$command)) $command=escapeshellcmd($command);	// Use quotes on command. Using escapeshellarg fails.
+		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
 
 		$ret=$command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';
