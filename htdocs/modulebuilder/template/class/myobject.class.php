@@ -268,7 +268,7 @@ class MyObject extends CommonObject
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to
+	 *	@param	string	$option						On what the link point to ('nolink', ...)
      *  @param	int  	$notooltip					1=Disable tooltip
      *  @param  string  $morecss            		Add more css on link
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -289,11 +289,10 @@ class MyObject extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url='';
+        $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
+
         if ($option != 'nolink')
         {
-        	$url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
-
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
 	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;

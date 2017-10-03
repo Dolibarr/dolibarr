@@ -170,7 +170,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 {
 	$fullpath=$dir."/".$original_file;
 	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
-	
+
 	if ($result == $fullpath)
 	{
 		$object->addThumbs($fullpath);
@@ -178,7 +178,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		// Update/create database for file $fullpath
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
 		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
-		
+
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile=new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
@@ -188,7 +188,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		    $rel_dir = dirname($rel_filename);
 		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-		
+
 		    $ecmfile->label = md5_file(dol_osencode($fullpath));
 		    $result = $ecmfile->update($user);
 		}
@@ -198,7 +198,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		    $rel_dir = dirname($rel_filename);
 		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-		     
+
 		    $ecmfile->filepath = $rel_dir;
 		    $ecmfile->filename = $filename;
 		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
@@ -213,7 +213,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		    }
 		    $result = $ecmfile->create($user);
 		}
-		
+
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -246,7 +246,7 @@ if ($action == 'confirm_crop')
 		// Update/create database for file $fullpath
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
 		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
-		
+
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile=new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
@@ -256,7 +256,7 @@ if ($action == 'confirm_crop')
 		    $rel_dir = dirname($rel_filename);
 		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-		
+
 		    $ecmfile->label = md5_file(dol_osencode($fullpath));
 		    $result = $ecmfile->update($user);
 		}
@@ -266,7 +266,7 @@ if ($action == 'confirm_crop')
 		    $rel_dir = dirname($rel_filename);
 		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-		     
+
 		    $ecmfile->filepath = $rel_dir;
 		    $ecmfile->filename = $filename;
 		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
@@ -281,7 +281,7 @@ if ($action == 'confirm_crop')
 		    }
 		    $result = $ecmfile->create($user);
 		}
-		
+
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -311,7 +311,7 @@ llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/p
 
 print load_fiche_titre($langs->trans("ImageEditor"));
 
-$infoarray=dol_getImageSize($dir."/".GETPOST("file"));
+$infoarray=dol_getImageSize($dir."/".GETPOST("file",'alpha'));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
 print $langs->trans("CurrentInformationOnImage").': ';
@@ -373,7 +373,7 @@ if (! empty($conf->use_javascript_ajax))
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 	print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">

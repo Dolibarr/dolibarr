@@ -308,6 +308,10 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             {
                 if (! $user->rights->ftp->write) $deleteok=0;
             }
+            else if ($feature == 'salaries')
+            {
+                if (! $user->rights->salaries->delete) $deleteok=0;
+            }
             else if (! empty($feature2))	// This should be used for future changes
             {
             	foreach($feature2 as $subfeature)
