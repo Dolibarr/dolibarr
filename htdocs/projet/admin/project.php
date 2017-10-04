@@ -918,6 +918,8 @@ print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '</tr>';
 
+/* Kept as hidden feature because this will be "probaly be supported by standard event feature in a future
+
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowCommentOnProject").'</td>';
 
@@ -935,6 +937,7 @@ echo ajax_constantonoff('PROJECT_ALLOW_COMMENT_ON_TASK');
 print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '</tr>';
+*/
 
 print '</table></form>';
 
