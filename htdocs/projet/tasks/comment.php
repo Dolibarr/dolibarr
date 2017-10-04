@@ -33,7 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -41,7 +40,7 @@ $langs->load("companies");
 $id=GETPOST('id','int');
 $idcomment=GETPOST('idcomment','int');
 $ref=GETPOST("ref",'alpha',1);          // task ref
-$taskref=GETPOST("taskref",'alpha');    // task ref
+$objectref=GETPOST("taskref",'alpha');    // task ref
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
@@ -56,69 +55,25 @@ if (! $user->rights->projet->lire) accessforbidden();
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
-$task = new Task($db);
-$object = new TaskComment($db);
+$object = new Task($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
-$userstatic = new User($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($task->table_element);
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-
-/*
- * Actions
- */
-
-if ($action == 'addcomment')
-{
-	if (!empty($_POST['comment_description']))
-	{
-		$object->description = GETPOST('comment_description');
-		$object->datec = time();
-		$object->fk_task = $id;
-		$object->fk_user = $user->id;
-		$object->entity = $conf->entity;
-		if ($object->create($user) > 0)
-		{
-			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$id.($withproject?'&withproject=1':''));
-			exit;
-		}
-		else
-		{
-			setEventMessages($task->error,$task->errors,'errors');
-			$action='';
-		}
-	}
-}
-if ($action == 'deletecomment')
-{
-	if ($object->fetch($idcomment) >= 0)
-	{
-		if ($object->delete($user) > 0)
-		{
-			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$id.($withproject?'&withproject=1':''));
-			exit;
-		}
-		else
-		{
-			setEventMessages($task->error,$task->errors,'errors');
-			$action='';
-		}
-	}
-}
+// include comment actions
+include DOL_DOCUMENT_ROOT . '/core/actions_comments.inc.php';
 
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
 	if ($projectstatic->fetch('',$project_ref) > 0)
 	{
-		$tasksarray=$task->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0)
+		$objectsarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		if (count($objectsarray) > 0)
 		{
-			$id=$tasksarray[0]->id;
+			$id=$objectsarray[0]->id;
 		}
 		else
 		{
@@ -132,7 +87,7 @@ if (! empty($project_ref) && ! empty($withproject))
 */
 
 
-llxHeader('', $langs->trans("TaskComment"));
+llxHeader('', $langs->trans("CommentPage"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -140,14 +95,14 @@ $formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($task->fetch($id,$ref) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
-		$res=$task->fetch_optionals($task->id,$extralabels);
+		$res=$object->fetch_optionals($object->id,$extralabels);
 
-		$result=$projectstatic->fetch($task->fk_project);
+		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
-		$task->project = clone $projectstatic;
+		$object->project = clone $projectstatic;
 
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
@@ -177,8 +132,8 @@ if ($id > 0 || ! empty($ref))
             // Define a complementary filter for search of next/prev ref.
             if (! $user->rights->projet->all->lire)
             {
-                $tasksListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-                $projectstatic->next_prev_filter=" rowid in (".(count($tasksListId)?join(',',array_keys($tasksListId)):'0').")";
+                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
+                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
             }
 
             dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -245,7 +200,7 @@ if ($id > 0 || ! empty($ref))
 			print '<br>';
 		}
 
-		$head=task_prepare_head($task);
+		$head=task_prepare_head($object);
 
 		/*
 		 * Fiche tache en mode visu
@@ -263,9 +218,9 @@ if ($id > 0 || ! empty($ref))
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
-		    $task->next_prev_filter=" fk_projet in (".$projectsListId.")";
+		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
-		else $task->next_prev_filter=" fk_projet = ".$projectstatic->id;
+		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 
 		$morehtmlref='';
 
@@ -285,7 +240,7 @@ if ($id > 0 || ! empty($ref))
 		    $morehtmlref.='</div>';
 		}
 
-		dol_banner_tab($task, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 		print '<div class="fichecenter">';
 
@@ -293,8 +248,8 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="border" width="100%">';
 
 		// Nb comments
-		print '<td class="titlefield">'.$langs->trans("TaskNbComments").'</td><td>';
-		print $task->getNbComments();
+		print '<td class="titlefield">'.$langs->trans("NbComments").'</td><td>';
+		print $object->getNbComments();
 		print '</td></tr>';
 
 		// Other attributes
@@ -308,102 +263,9 @@ if ($id > 0 || ! empty($ref))
 
 		dol_fiche_end();
 
-
-		print '<br>';
-		print '<div id="comment">';
-
-		// Add comment
-
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="addcomment">';
-		print '<input type="hidden" name="id" value="'.$task->id.'">';
-		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-
-		print '<table class="noborder nohover" width="100%">';
-
-		print '<tr class="liste_titre">';
-		print '<td width="25%">'.$langs->trans("Comments").'</td>';
-		print '<td width="25%"></td>';
-		print '<td width="25%"></td>';
-		print '<td width="25%"></td>';
-		print "</tr>\n";
-
-		print '<tr class="oddeven">';
-		print '<td></td>';
-
-		// Description
-		print '<td colspan="2">';
-
-		$desc = ($_POST['comment_description']?$_POST['comment_description']:'');
-
-		$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '100%');
-		print $doleditor->Create(1);
-
-		print '</td>';
-
-		print '<td align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-		print '</td></tr>';
-		print '</table></form>';
-
-		// List of comments
-		if(!empty($task->comments)) {
-			// Default color for current user
-			$TColors = array($user->id => array('bgcolor'=>'efefef','color'=>'555'));
-			$first = true;
-			foreach($task->comments as $comment) {
-				$fk_user = $comment->fk_user;
-				$userstatic->fetch($fk_user);
-				if(empty($TColors[$fk_user])) {
-					$bgcolor = random_color(180,240);
-					if(!empty($userstatic->color)) {
-						$bgcolor = $userstatic->color;
-					}
-					$color = (colorIsLight($bgcolor))?'555':'fff';
-					$TColors[$fk_user] = array('bgcolor'=>$bgcolor,'color'=>$color);
-				}
-				print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
-				if($comment->fk_user == $user->id) {
-					print '<div class="width25p float">&nbsp;</div>';
-				}
-
-				print '<div class="width75p float comment comment-table" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
-				print '<div class="comment-info comment-cell">';
-				if (! empty($user->photo))
-				{
-					print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br/>';
-				}
-				print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
-				print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
-				print '</div>'; // End comment-info
-
-				print '<div class="comment-cell comment-right">';
-				print '<div class="comment-table width100p">';
-				print '<div class="comment-description comment-cell">';
-				print $comment->description;
-				print '</div>'; // End comment-description
-				if(($first && $fk_user == $user->id) || $user->admin == 1) {
-					print '<a class="comment-delete comment-cell" href="'.DOL_URL_ROOT.'/projet/tasks/comment.php?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
-					print img_picto('', 'delete.png');
-					print '</a>';
-				}
-				print '</div>'; // End comment-table
-				print '</div>'; // End comment-right
-				print '</div>'; // End comment
-
-				if($comment->fk_user != $user->id) {
-					print '<div class="width25p float">&nbsp;</div>';
-				}
-				print '<div class="clearboth"></div>';
-				print '</div>'; // end 100p
-
-				$first = false;
-			}
-		}
-
-		print '<br>';
-		print '</div>';
+	
+		// Include comment tpl view
+		include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
 
 	}
 }
