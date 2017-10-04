@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * 	Class to manage comment
  */
@@ -6,7 +6,7 @@ class Comment extends CommonObject
 {
 	public $element='comment';		//!< Id that identify managed objects
 	public $table_element='comment';	//!< Name of table without prefix where object is stored
-	
+
 	var $fk_element;
 	var $element_type;
 
@@ -34,7 +34,7 @@ class Comment extends CommonObject
 	{
 		$this->db = $db;
 	}
-	
+
 
 	/**
 	 *  Create into database
@@ -280,12 +280,14 @@ class Comment extends CommonObject
 			return 1;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Load comments linked with current task
 	 *
-	 *  @return array	Comment array
+	 * @param	string		$element_type		Element type
+	 * @param	int			$fk_element			Id of element
+	 * @return 	array							Comment array
 	 */
 	public static function fetchAllFor($element_type, $fk_element)
 	{
@@ -299,7 +301,7 @@ class Comment extends CommonObject
 			$sql.= " AND c.element_type = '".$element_type."'";
 			$sql.= " AND c.entity = ".$conf->entity;
 			$sql.= " ORDER BY c.tms DESC";
-			
+
 			dol_syslog("Comment::fetchAllFor", LOG_DEBUG);
 			$resql=$db->query($sql);
 			if ($resql)
