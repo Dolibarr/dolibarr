@@ -339,7 +339,7 @@ script:
 
 - |
   echo "Output dolibarr.log"
-  echo cat documents/dolibarr.log
+  cat documents/dolibarr.log
 
 after_script:
 - |
