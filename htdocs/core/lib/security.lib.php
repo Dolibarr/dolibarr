@@ -253,7 +253,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             {
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
                 if (empty($user->rights->$feature->creer)
-                && empty($user->rights->$feature->write)) { $createok=0; $nbko++; }
+                && empty($user->rights->$feature->write)
+                && empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
             }
         }
 
@@ -307,6 +308,10 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             else if ($feature == 'ftp')
             {
                 if (! $user->rights->ftp->write) $deleteok=0;
+            }
+            else if ($feature == 'salaries')
+            {
+                if (! $user->rights->salaries->delete) $deleteok=0;
             }
             else if (! empty($feature2))	// This should be used for future changes
             {

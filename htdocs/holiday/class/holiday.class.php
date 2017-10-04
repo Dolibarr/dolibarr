@@ -292,7 +292,8 @@ class Holiday extends CommonObject
         $sql.= " cp.rowid,";
 
         $sql.= " cp.fk_user,";
-        $sql.= " cp.date_create,";
+		$sql.= " cp.fk_type,";
+		$sql.= " cp.date_create,";
         $sql.= " cp.description,";
         $sql.= " cp.date_debut,";
         $sql.= " cp.date_fin,";
@@ -322,7 +323,7 @@ class Holiday extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
-        $sql.= " AND cp.fk_user = '".$user_id."'";
+        $sql.= " AND cp.fk_user = ".$user_id;
 
         // Filtre de séléction
         if(!empty($filter)) {
@@ -357,6 +358,7 @@ class Holiday extends CommonObject
                 $tab_result[$i]['rowid'] = $obj->rowid;
                 $tab_result[$i]['ref'] = $obj->rowid;
                 $tab_result[$i]['fk_user'] = $obj->fk_user;
+                $tab_result[$i]['fk_type'] = $obj->fk_type;
                 $tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
                 $tab_result[$i]['description'] = $obj->description;
                 $tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
@@ -817,24 +819,34 @@ class Holiday extends CommonObject
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-     *	@return		string						String with URL
+     *	@param	int			$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+     *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string									String with URL
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto=0, $save_lastsearch_value=-1)
     {
         global $langs;
 
         $result='';
+        $picto='holiday';
         $label=$langs->trans("Show").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
+
+        //if ($option != 'nolink')
+        //{
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        //}
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        $picto='holiday';
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+        if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 
@@ -1286,7 +1298,7 @@ class Holiday extends CommonObject
     /**
      *    Get list of Users or list of vacation balance.
      *
-     *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array
+     *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array with detail.
      *    @param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
      *    @param      string            $filters        Filters
      *    @return     array|string|int      			Return an array
@@ -1297,7 +1309,6 @@ class Holiday extends CommonObject
 
     	dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
-        // Si vrai donc pour user Dolibarr
         if ($stringlist)
         {
             if ($type)
@@ -1356,7 +1367,7 @@ class Holiday extends CommonObject
             }
             else
             {
-           		// We want only list of user id
+           		// We want only list of vacation balance for user ids
                 $sql = "SELECT DISTINCT cpu.fk_user";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE cpu.fk_user = u.user";
@@ -1397,12 +1408,12 @@ class Holiday extends CommonObject
 
         }
         else
-        { // Si faux donc user Congés Payés
+        { // Si faux donc return array
 
             // List for Dolibarr users
             if ($type)
             {
-                $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
+                $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
                 if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -1440,6 +1451,7 @@ class Holiday extends CommonObject
                         $tab_result[$i]['status'] = $obj->statut;
                         $tab_result[$i]['employee'] = $obj->employee;
                         $tab_result[$i]['photo'] = $obj->photo;
+                        $tab_result[$i]['fk_user'] = $obj->fk_user;
                         //$tab_result[$i]['type'] = $obj->type;
                         //$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
@@ -1458,7 +1470,7 @@ class Holiday extends CommonObject
             else
             {
 				// List of vacation balance users
-                $sql = "SELECT cpu.fk_user, cpu.fk_type, cpu.nb_holiday, u.lastname, u.firstname";
+                $sql = "SELECT cpu.fk_user, cpu.fk_type, cpu.nb_holiday, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE cpu.fk_user = u.rowid";
                 if ($filters) $sql.=$filters;
@@ -1478,9 +1490,15 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->fk_user;
-                        $tab_result[$i]['name'] = $obj->lastname;
+                        $tab_result[$i]['name'] = $obj->lastname;			// deprecated
                         $tab_result[$i]['lastname'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
+                        $tab_result[$i]['gender'] = $obj->gender;
+                        $tab_result[$i]['status'] = $obj->statut;
+                        $tab_result[$i]['employee'] = $obj->employee;
+                        $tab_result[$i]['photo'] = $obj->photo;
+                        $tab_result[$i]['fk_user'] = $obj->fk_user;
+
                         $tab_result[$i]['type'] = $obj->type;
                         $tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 

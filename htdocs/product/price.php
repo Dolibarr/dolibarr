@@ -690,7 +690,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
 dol_fiche_head($head, 'price', $titre, -1, $picto);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter=" fk_product_type = ".$object->type;
 
 $shownav = 1;

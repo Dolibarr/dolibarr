@@ -1,6 +1,5 @@
--- ========================================================================
--- Copyright (C) 2012	Florian Henry	<florian.henry@open-concept.pro>
--- Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
+-- ===================================================================
+-- Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,6 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===================================================================
 
-ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
+ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type, nb_holiday);

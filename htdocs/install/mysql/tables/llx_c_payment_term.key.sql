@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2012	Florian Henry	<florian.henry@open-concept.pro>
+-- Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,24 +17,4 @@
 --
 -- ========================================================================
 
-
-CREATE TABLE llx_website_page
-(
-	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	fk_website    integer NOT NULL,
-	pageurl       varchar(255) NOT NULL,
-	title         varchar(255),						
-	description   varchar(255),						
-	keywords      varchar(255),
-	lang          varchar(6),
-	fk_page       integer,          
-	htmlheader	  text,
-	content		  mediumtext,		-- text is not enough in size
-    status        integer DEFAULT 1,
-	grabbed_from   varchar(255),
-    fk_user_create integer,
-    fk_user_modif  integer,
-    date_creation  datetime,
-	tms            timestamp,
-    import_key     varchar(14)      -- import key
-) ENGINE=innodb;
+ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);

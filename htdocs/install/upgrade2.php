@@ -410,15 +410,16 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 		migrate_reload_menu($db,$langs,$conf,$versionto);
 	}
 
-    // Can force activation of some module during migration with paramater 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
+    // Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
+    // In most cases (online install or upgrade) $enablemodules is empty. Can be forced when ran from command line.
     if (! $error && $enablemodules)
     {
-        // Reload modules (this must be always and only into last targeted version)
+        // Reload modules (this must be always done and only into last targeted version)
         $listofmodules=array();
         $tmplistofmodules=explode(',', $enablemodules);
         foreach($tmplistofmodules as $value)
         {
-            $listofmodules[$value]='newboxdefonly';
+            $listofmodules[$value]='forceactivate';
         }
         migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
     }
@@ -4118,31 +4119,11 @@ function migrate_delete_old_dir($db,$langs,$conf)
  */
 function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 {
+	if (count($listofmodule) == 0) return;
+
 	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force);
 
-	// If no info is provided, we reload all modules with mode newboxdefonly.
-	if (count($listofmodule) == 0)
-	{
-		$listofmodule=array(
-			'MAIN_MODULE_AGENDA'=>'newboxdefonly',
-			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-			'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
-			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
-			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
-			'MAIN_MODULE_USER'=>'newboxdefonly',
-			'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
-			'MAIN_MODULE_DON'=>'newboxdefonly',
-			'MAIN_MODULE_ECM'=>'newboxdefonly',
-			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
-			'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
-			'MAIN_MODULE_SALARIES'=>'newboxdefonly'
-		);
-	}
-
-	foreach($listofmodule as $moduletoreload => $reloadmode)
+	foreach($listofmodule as $moduletoreload => $reloadmode)	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
 	{
 		if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && ! $force)) continue; // Discard reload if module not enabled
 

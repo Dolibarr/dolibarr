@@ -638,6 +638,7 @@ if (! empty($id) && $action != 'edit')
 	$sql.= " AND p.fk_donation = d.rowid";
 	$sql.= " AND d.entity = ".$conf->entity;
 	$sql.= " AND p.fk_typepayment = c.id";
+	$sql.= " AND c.entity = " . getEntity('c_paiement');
 	$sql.= " ORDER BY dp";
 
 	//print $sql;

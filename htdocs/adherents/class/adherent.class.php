@@ -1558,16 +1558,17 @@ class Adherent extends CommonObject
     }
 
     /**
-     *    	Return clicable name (with picto eventually)
+     *  Return clicable name (with picto eventually)
      *
-     *		@param	int		$withpictoimg	0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-     *		@param	int		$maxlen			length max label
-     *		@param	string	$option			Page for link
-     *      @param  string  $mode           ''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
-     *      @param  string  $morecss        Add more css on link
-     *		@return	string					Chaine avec URL
+     *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+     *	@param	int		$maxlen						length max label
+     *	@param	string	$option						Page for link
+     *  @param  string  $mode           			''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
+     *  @param  string  $morecss        			Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								Chaine avec URL
      */
-    function getNomUrl($withpictoimg=0,$maxlen=0,$option='card',$mode='',$morecss='')
+    function getNomUrl($withpictoimg=0, $maxlen=0, $option='card', $mode='', $morecss='', $save_lastsearch_value=-1)
     {
         global $conf, $langs;
 
@@ -1591,15 +1592,24 @@ class Adherent extends CommonObject
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
         $label.='</div>';
 
-        if ($option == 'card' || $option == 'category')
+        if (empty($option) || $option == 'card' || $option == 'category')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.'"';
+            $url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
         }
         if ($option == 'subscription')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id.'"';
+            $url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id;
         }
 
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $link = '<a href="'.$url.'"';
         $linkclose="";
         if (empty($notooltip))
         {
