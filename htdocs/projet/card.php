@@ -1192,16 +1192,20 @@ elseif ($object->id > 0)
         $genallowed=($user->rights->projet->lire && $userAccess > 0);
         $delallowed=($user->rights->projet->creer && $userWrite > 0);
 
-        $var=true;
-
         print $formfile->showdocuments('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+        $MAX = 10;
+
+        $morehtmlright = '<a href="'.DOL_URL_ROOT.'/projet/info.php?id='.$object->id.'">';
+        $morehtmlright.= $langs->trans("SeeAll");
+        $morehtmlright.= '</a>';
+
         // List of actions on element
         include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
         $formactions = new FormActions($db);
-        $somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', 10);
+        $somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', $MAX, '', $morehtmlright);
 
         print '</div></div></div>';
     }
