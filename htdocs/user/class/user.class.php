@@ -2262,8 +2262,8 @@ class User extends CommonObject
 	 *
 	 *	@param	array	$info		Info array loaded by _load_ldap_info
 	 *	@param	int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *								1=
-	 *								2=Return key only (uid=qqq)
+	 *								1=Return parent (ou=xxx,dc=aaa,dc=bbb)
+	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
@@ -2344,7 +2344,7 @@ class User extends CommonObject
 			if (! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		}
 		// Set LDAP password if possible
-		else
+		else if ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 		{
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{

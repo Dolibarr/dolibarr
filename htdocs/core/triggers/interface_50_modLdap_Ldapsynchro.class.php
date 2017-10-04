@@ -112,8 +112,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
+					$newrdn=$object->_load_ldap_dn($info,2);
+					$newparent=$object->_load_ldap_dn($info,1);
 
-					$result=$ldap->update($dn,$info,$user,$olddn);
+					$result=$ldap->update($dn,$info,$user,$olddn,$newrdn,$newparent);
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -545,8 +547,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
+					$newrdn=$object->_load_ldap_dn($info,2);
+					$newparent=$object->_load_ldap_dn($info,1);
 
-					$result=$ldap->update($dn,$info,$user,$olddn);
+					$result=$ldap->update($dn,$info,$user,$olddn,$newrdn,$newparent);
 
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')

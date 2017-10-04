@@ -402,10 +402,10 @@ class Ldap
 	 * 	Add a LDAP entry
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
+	 *	@param	string	$dn			DN entry key
+	 *	@param	array	$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function add($dn, $info, $user)
 	{
@@ -458,7 +458,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	string		$user		Objet user that modify
+	 *	@param	User			$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function modify($dn, $info, $user)
@@ -505,16 +505,68 @@ class Ldap
 	}
 
 	/**
+	 * 	Rename a LDAP entry
+	 *	Ldap object connect and bind must have been done
+	 *
+	 *	@param	string		$dn				Old DN entry key (uid=qqq,ou=xxx,dc=aaa,dc=bbb) (before update)
+	 *	@param	string		$newrdn			New RDN entry key (uid=qqq)
+	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
+	 *	@param	bool			$deleteoldrdn	If TRUE the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
+	 *	@param	User			$user			Objet user that modify
+	 *	@return	int							<0 if KO, >0 if OK
+	 */
+	function rename($dn, $newrdn, $newparent, $deleteoldrdn = true, $user)
+	{
+		global $conf;
+
+		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn?1:0));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		// Encode to LDAP page code
+		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
+		$newrdn=$this->convFromOutputCharset($newrdn,$this->ldapcharset);
+		$newparent=$this->convFromOutputCharset($newparent,$this->ldapcharset);
+
+		//print_r($info);
+		$result=@ldap_rename($this->connection, $dn, $newrdn, $newparent, $deleteoldrdn);
+
+		if ($result)
+		{
+			dol_syslog(get_class($this)."::rename successfull", LOG_DEBUG);
+			return 1;
+		}
+		else
+		{
+			$this->error=@ldap_error($this->connection);
+			dol_syslog(get_class($this)."::rename failed: ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
 	 *  Modify a LDAP entry (to use if dn != olddn)
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *  @param	string		$dn			DN entry key
-	 *  @param  array		$info		Attributes array
-	 *  @param  User		$user		Objet user that update
-	 * 	@param	string		$olddn		Old DN entry key (before update)
-	 *	@return	int						<0 if KO, >0 if OK
+	 *  @param	string	$dn			DN entry key
+	 *  @param	array	$info		Attributes array
+	 *  @param	User		$user		Objet user that update
+	 * 	@param	string	$olddn		Old DN entry key (before update)
+	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
+	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function update($dn,$info,$user,$olddn)
+	function update($dn, $info, $user, $olddn, $newrdn=false, $newparent=false)
 	{
 		global $conf;
 
@@ -534,9 +586,17 @@ class Ldap
 
 		if (! $olddn || $olddn != $dn)
 		{
-			// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
-			$result = $this->add($dn, $info, $user);
-			if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
+			if (! empty($olddn) && ! empty($newrdn) && ! empty($newparent) && $conf->global->LDAP_SERVER_PROTOCOLVERSION === '3')
+			{
+				// This function currently only works with LDAPv3
+				$result = $this->rename($olddn, $newrdn, $newparent, true, $user);
+			}
+			else
+			{
+				// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
+				$result = $this->add($dn, $info, $user);
+				if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
+			}
 		}
 		else
 		{
