@@ -35,13 +35,13 @@ $comment = new Comment($db);
 
 if ($action == 'addcomment')
 {
-	$description = GETPOST('comment_description');
+	$description = GETPOST('comment_description', 'none');
 	if (!empty($description))
 	{
 		$comment->description = $description;
 		$comment->datec = time();
-		$comment->fk_element = GETPOST('id');
-		$comment->element_type = GETPOST('comment_element_type');
+		$comment->fk_element = GETPOST('id','int');
+		$comment->element_type = GETPOST('comment_element_type','alpha');
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;
 		if ($comment->create($user) > 0)

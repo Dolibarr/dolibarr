@@ -66,19 +66,8 @@ function project_prepare_head($object)
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project');
-	
-	
-	// Manage discussion
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
-	{
-		$nbComments = $object->getNbComments();
-		$head[$h][0] = DOL_URL_ROOT.'/projet/comment.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("CommentLink");
-		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
-		$head[$h][2] = 'project_comment';
-		$h++;
-	}
-	
+
+
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$nbNote = 0;
@@ -119,6 +108,17 @@ function project_prepare_head($object)
 		$head[$h][1] = $langs->trans("Gantt");
 		if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
 		$head[$h][2] = 'gantt';
+		$h++;
+	}
+
+	// Manage discussion
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
+	{
+		$nbComments = $object->getNbComments();
+		$head[$h][0] = DOL_URL_ROOT.'/projet/comment.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("CommentLink");
+		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
+		$head[$h][2] = 'project_comment';
 		$h++;
 	}
 
@@ -188,17 +188,6 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
-	// Manage discussion
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK))
-	{
-		$nbComments = $object->getNbComments();
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
-		$head[$h][1] = $langs->trans("CommentLink");
-		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
-		$head[$h][2] = 'task_comment';
-		$h++;
-	}
-
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$nbNote = 0;
@@ -221,6 +210,17 @@ function task_prepare_head($object)
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'task_document';
 	$h++;
+
+	// Manage discussion
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK))
+	{
+		$nbComments = $object->getNbComments();
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
+		$head[$h][1] = $langs->trans("CommentLink");
+		if ($nbComments > 0) $head[$h][1].= ' <span class="badge">'.$nbComments.'</span>';
+		$head[$h][2] = 'task_comment';
+		$h++;
+	}
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task','remove');
 

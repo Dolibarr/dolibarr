@@ -29,10 +29,9 @@ print '<td width="25%"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td></td>';
 
 // Description
-print '<td colspan="2">';
+print '<td colspan="3">';
 
 $desc = GETPOST('comment_description');
 
@@ -47,13 +46,16 @@ print '</td></tr>';
 print '</table></form>';
 
 // List of comments
-if(!empty($object->comments)) {
+if (!empty($object->comments))
+{
 	// Default color for current user
 	$TColors = array($user->id => array('bgcolor'=>'efefef','color'=>'555'));
 	$first = true;
-	foreach($object->comments as $comment) {
+	foreach($object->comments as $comment)
+	{
 		$fk_user = $comment->fk_user_author;
 		$userstatic->fetch($fk_user);
+
 		if(empty($TColors[$fk_user])) {
 			$bgcolor = random_color(180,240);
 			if(!empty($userstatic->color)) {
@@ -63,10 +65,10 @@ if(!empty($object->comments)) {
 			$TColors[$fk_user] = array('bgcolor'=>$bgcolor,'color'=>$color);
 		}
 		print '<div class="width100p" style="color:#'.$TColors[$fk_user]['color'].'">';
-		if($fk_user == $user->id) {
+		if ($fk_user != $user->id) {
 			print '<div class="width25p float">&nbsp;</div>';
 		}
-		
+
 		print '<div class="width75p float comment comment-table" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
 		print '<div class="comment-info comment-cell">';
 		if (! empty($user->photo))
@@ -76,7 +78,7 @@ if(!empty($object->comments)) {
 		print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
 		print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
 		print '</div>'; // End comment-info
-		
+
 		print '<div class="comment-cell comment-right">';
 		print '<div class="comment-table width100p">';
 		print '<div class="comment-description comment-cell">';
@@ -90,13 +92,13 @@ if(!empty($object->comments)) {
 		print '</div>'; // End comment-table
 		print '</div>'; // End comment-right
 		print '</div>'; // End comment
-		
-		if($fk_user != $user->id) {
+
+		if($fk_user == $user->id) {
 			print '<div class="width25p float">&nbsp;</div>';
 		}
 		print '<div class="clearboth"></div>';
 		print '</div>'; // end 100p
-		
+
 		$first = false;
 	}
 }
