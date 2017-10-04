@@ -275,7 +275,7 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  #parallel-lint --exclude htdocs/includes --blame .
+  parallel-lint --exclude htdocs/includes --blame .
   set +e
   echo
 
@@ -284,7 +284,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
+  phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
   set +e
   echo
 
@@ -332,14 +332,14 @@ script:
   
 - |
   echo "Unit testing"
-  # Ensure we catch errors. Set this to +e if you want to go to the end to see log file.
-  set +e
+  # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
+  set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
 
 - |
-  echo "Output dolibarr.log"
-  cat documents/dolibarr.log
+  #echo "Output dolibarr.log"
+  #cat documents/dolibarr.log
 
 after_script:
 - |
