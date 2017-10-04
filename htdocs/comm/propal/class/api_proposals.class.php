@@ -278,7 +278,7 @@ class Proposals extends DolibarrApi
                         $request_data->fk_unit,
                         $this->element,
                         $request_data->id,
-                        $request_data->pu_ht_devise,
+                        $request_data->multicurrency_subprice,
                         $request_data->fk_remise_except
       );
 
@@ -316,26 +316,27 @@ class Proposals extends DolibarrApi
 			$request_data = (object) $request_data;
       $updateRes = $this->propal->updateline(
                         $lineid,
-                        $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
                         $request_data->remise_percent,
                         $request_data->tva_tx,
                         $request_data->localtax1_tx,
                         $request_data->localtax2_tx,
-                        'HT',
+                        $request_data->desc,
+      					'HT',
                         $request_data->info_bits,
-                        $request_data->date_start,
-                        $request_data->date_end,
-                        $request_data->product_type,
-                        $request_data->fk_parent_line,
-                        0,
-                        $request_data->fk_fournprice,
-                        $request_data->pa_ht,
-                        $request_data->label,
                         $request_data->special_code,
+                        $request_data->fk_parent_line,
+      					0,
+      					$request_data->fk_fournprice,
+      					$request_data->pa_ht,
+      					$request_data->label,
+				      	$request_data->product_type,
+      					$request_data->date_start,
+                        $request_data->date_end,
                         $request_data->array_options,
-                        $request_data->fk_unit
+                        $request_data->fk_unit,
+      					$request_data->multicurrency_subprice
       );
 
       if ($updateRes > 0) {
@@ -507,5 +508,24 @@ class Proposals extends DolibarrApi
 
         }
         return $propal;
+    }
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->name);
+    	unset($object->lastname);
+    	unset($object->firstname);
+    	unset($object->civility_id);
+    	unset($object->address);
+
+    	return $object;
     }
 }
