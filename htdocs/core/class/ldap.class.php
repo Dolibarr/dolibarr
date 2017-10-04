@@ -511,11 +511,11 @@ class Ldap
 	 *	@param	string		$dn				Old DN entry key (uid=qqq,ou=xxx,dc=aaa,dc=bbb) (before update)
 	 *	@param	string		$newrdn			New RDN entry key (uid=qqq)
 	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
-	 *	@param	bool			$deleteoldrdn	If TRUE the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
 	 *	@param	User			$user			Objet user that modify
+	 *	@param	bool			$deleteoldrdn	If TRUE the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	function rename($dn, $newrdn, $newparent, $deleteoldrdn = true, $user)
+	function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
 		global $conf;
 
@@ -589,7 +589,7 @@ class Ldap
 			if (! empty($olddn) && ! empty($newrdn) && ! empty($newparent) && $conf->global->LDAP_SERVER_PROTOCOLVERSION === '3')
 			{
 				// This function currently only works with LDAPv3
-				$result = $this->rename($olddn, $newrdn, $newparent, true, $user);
+				$result = $this->rename($olddn, $newrdn, $newparent, $user, true);
 			}
 			else
 			{
