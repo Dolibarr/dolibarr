@@ -257,30 +257,33 @@ else
     	}
 
 
-    	print '<div class="tabsAction">';
+    	//print '<div class="tabsAction">';
+        //print '</div>';
 
+
+    	$morehtmlcenter='';
         if (! empty($conf->agenda->enabled))
         {
         	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
         	{
-            	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+            	$morehtmlcenter.= '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
         	}
         	else
         	{
-            	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+            	$morehtmlcenter.= '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
         	}
         }
 
-        print '</div>';
 
         if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
        	{
+       		print '<br>';
+
             $param='&id='.$id;
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
             if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-
-            print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
+            print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
 
             // List of all actions
     		$filters=array();

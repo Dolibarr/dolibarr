@@ -1287,11 +1287,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
-        $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-        $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre">';
         $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
         $out.='</td>';
+        $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+        $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
@@ -1316,9 +1316,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		}
 		$out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Owner"));
+        $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
-        $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList('');
 		$out.=getTitleFieldOfList('');
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
@@ -1351,6 +1351,25 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.=$userstatic->getLoginUrl(1);
             $userstatic->fetch($histo[$key]['userid']);
             $out.=$userstatic->getNomUrl(-1);
+            $out.='</td>';
+
+            // Type
+            $out.='<td>';
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+            {
+            	if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
+            	else {
+            		if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
+            		if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
+            		if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
+            	}
+            	$out.=$actionstatic->type;
+            }
+            else {
+            	$typelabel = $actionstatic->type;
+            	if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
+            	$out.=$typelabel;
+            }
             $out.='</td>';
 
             // Title
@@ -1391,25 +1410,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && ! $histo[$key]['dateend'] && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
             if ($late) $out.=img_warning($langs->trans("Late")).' ';
             $out.="</td>\n";
-
-            // Type
-			$out.='<td>';
-			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
-    			if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
-    			else {
-    			    if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
-    			    if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
-    			    if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
-    			}
-			    $out.=$actionstatic->type;
-			}
-			else {
-			    $typelabel = $actionstatic->type;
-			    if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
-			    $out.=$typelabel;
-			}
-			$out.='</td>';
 
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';

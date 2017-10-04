@@ -597,6 +597,7 @@ Undo=Undo
 Redo=Redo
 ExpandAll=Expand all
 UndoExpandAll=Undo expand
+SeeAll=See all
 Reason=Reason
 FeatureNotYetSupported=Feature not yet supported
 CloseWindow=Close window
