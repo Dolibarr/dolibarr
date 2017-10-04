@@ -2063,7 +2063,7 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 }
 div.tabBar div.titre {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 
 div.tabBarWithBottom {
