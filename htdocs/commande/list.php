@@ -208,7 +208,7 @@ if (empty($reshook))
 	// TODO Move this into mass action include
     if ($massaction == 'confirm_createbills') {
 
-    	$orders = GETPOST('toselect');
+    	$orders = GETPOST('toselect','array');
     	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
     	$validate_invoices = GETPOST('valdate_invoices', 'int');
 
@@ -219,13 +219,13 @@ if (empty($reshook))
 
     	$db->begin();
 
-    	foreach($orders as $id_order) {
-
+    	foreach($orders as $id_order)
+    	{
     		$cmd = new Commande($db);
-    		if($cmd->fetch($id_order) <= 0) continue;
+    		if ($cmd->fetch($id_order) <= 0) continue;
 
     		$object = new Facture($db);
-    		if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+    		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
     		else {
 
     			$object->socid = $cmd->socid;
@@ -247,12 +247,10 @@ if (empty($reshook))
     			$res = $object->create($user);
 
     			if($res > 0) $nb_bills_created++;
-
     		}
 
-    		if($object->id > 0) {
-
-    			$db->begin();
+    		if ($object->id > 0)
+    		{
     			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
     			$sql.= "fk_source";
     			$sql.= ", sourcetype";
@@ -265,115 +263,113 @@ if (empty($reshook))
     			$sql.= ", '".$object->element."'";
     			$sql.= ")";
 
-    			if ($db->query($sql))
+    			if (! $db->query($sql))
     			{
-    				$db->commit();
-    			}
-    			else
-    			{
-    				$db->rollback();
+    				$error++;
     			}
 
-    			$lines = $cmd->lines;
-    			if (empty($lines) && method_exists($cmd, 'fetch_lines'))
+    			if (! $error)
     			{
-    				$cmd->fetch_lines();
-    				$lines = $cmd->lines;
+	    			$lines = $cmd->lines;
+	    			if (empty($lines) && method_exists($cmd, 'fetch_lines'))
+	    			{
+	    				$cmd->fetch_lines();
+	    				$lines = $cmd->lines;
+	    			}
+
+	    			$fk_parent_line=0;
+	    			$num=count($lines);
+
+	    			for ($i=0;$i<$num;$i++)
+	    			{
+	    				$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+	    				if ($lines[$i]->subprice < 0)
+	    				{
+	    					// Negative line, we create a discount line
+	    					$discount = new DiscountAbsolute($db);
+	    					$discount->fk_soc=$object->socid;
+	    					$discount->amount_ht=abs($lines[$i]->total_ht);
+	    					$discount->amount_tva=abs($lines[$i]->total_tva);
+	    					$discount->amount_ttc=abs($lines[$i]->total_ttc);
+	    					$discount->tva_tx=$lines[$i]->tva_tx;
+	    					$discount->fk_user=$user->id;
+	    					$discount->description=$desc;
+	    					$discountid=$discount->create($user);
+	    					if ($discountid > 0)
+	    					{
+	    						$result=$object->insert_discount($discountid);
+	    						//$result=$discount->link_to_invoice($lineid,$id);
+	    					}
+	    					else
+	    					{
+	    						setEventMessages($discount->error, $discount->errors, 'errors');
+	    						$error++;
+	    						break;
+	    					}
+	    				}
+	    				else
+	    				{
+	    					// Positive line
+	    					$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+	    					// Date start
+	    					$date_start=false;
+	    					if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
+	    					if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+	    					if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+	    					//Date end
+	    					$date_end=false;
+	    					if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
+	    					if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+	    					if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+	    					// Reset fk_parent_line for no child products and special product
+	    					if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
+	    					{
+	    						$fk_parent_line = 0;
+	    					}
+	    					$result = $object->addline(
+	    							$desc,
+	    							$lines[$i]->subprice,
+	    							$lines[$i]->qty,
+	    							$lines[$i]->tva_tx,
+	    							$lines[$i]->localtax1_tx,
+	    							$lines[$i]->localtax2_tx,
+	    							$lines[$i]->fk_product,
+	    							$lines[$i]->remise_percent,
+	    							$date_start,
+	    							$date_end,
+	    							0,
+	    							$lines[$i]->info_bits,
+	    							$lines[$i]->fk_remise_except,
+	    							'HT',
+	    							0,
+	    							$product_type,
+	    							$ii,
+	    							$lines[$i]->special_code,
+	    							$object->origin,
+	    							$lines[$i]->rowid,
+	    							$fk_parent_line,
+	    							$lines[$i]->fk_fournprice,
+	    							$lines[$i]->pa_ht,
+	    							$lines[$i]->label
+	    					);
+	    					if ($result > 0)
+	    					{
+	    						$lineid=$result;
+	    					}
+	    					else
+	    					{
+	    						$lineid=0;
+	    						$error++;
+	    						break;
+	    					}
+	    					// Defined the new fk_parent_line
+	    					if ($result > 0 && $lines[$i]->product_type == 9)
+	    					{
+	    						$fk_parent_line = $result;
+	    					}
+	    				}
+	    			}
     			}
-
-    			$fk_parent_line=0;
-    			$num=count($lines);
-
-    			for ($i=0;$i<$num;$i++)
-    			{
-    				$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
-    				if ($lines[$i]->subprice < 0)
-    				{
-    					// Negative line, we create a discount line
-    					$discount = new DiscountAbsolute($db);
-    					$discount->fk_soc=$object->socid;
-    					$discount->amount_ht=abs($lines[$i]->total_ht);
-    					$discount->amount_tva=abs($lines[$i]->total_tva);
-    					$discount->amount_ttc=abs($lines[$i]->total_ttc);
-    					$discount->tva_tx=$lines[$i]->tva_tx;
-    					$discount->fk_user=$user->id;
-    					$discount->description=$desc;
-    					$discountid=$discount->create($user);
-    					if ($discountid > 0)
-    					{
-    						$result=$object->insert_discount($discountid);
-    						//$result=$discount->link_to_invoice($lineid,$id);
-    					}
-    					else
-    					{
-    						setEventMessages($discount->error, $discount->errors, 'errors');
-    						$error++;
-    						break;
-    					}
-    				}
-    				else
-    				{
-    					// Positive line
-    					$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
-    					// Date start
-    					$date_start=false;
-    					if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
-    					if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-    					if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-    					//Date end
-    					$date_end=false;
-    					if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
-    					if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-    					if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-    					// Reset fk_parent_line for no child products and special product
-    					if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
-    					{
-    						$fk_parent_line = 0;
-    					}
-    					$result = $object->addline(
-    							$desc,
-    							$lines[$i]->subprice,
-    							$lines[$i]->qty,
-    							$lines[$i]->tva_tx,
-    							$lines[$i]->localtax1_tx,
-    							$lines[$i]->localtax2_tx,
-    							$lines[$i]->fk_product,
-    							$lines[$i]->remise_percent,
-    							$date_start,
-    							$date_end,
-    							0,
-    							$lines[$i]->info_bits,
-    							$lines[$i]->fk_remise_except,
-    							'HT',
-    							0,
-    							$product_type,
-    							$ii,
-    							$lines[$i]->special_code,
-    							$object->origin,
-    							$lines[$i]->rowid,
-    							$fk_parent_line,
-    							$lines[$i]->fk_fournprice,
-    							$lines[$i]->pa_ht,
-    							$lines[$i]->label
-    					);
-    					if ($result > 0)
-    					{
-    						$lineid=$result;
-    					}
-    					else
-    					{
-    						$lineid=0;
-    						$error++;
-    						break;
-    					}
-    					// Defined the new fk_parent_line
-    					if ($result > 0 && $lines[$i]->product_type == 9)
-    					{
-    						$fk_parent_line = $result;
-    					}
-    				}
-    			}
-
     		}
 
     		//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
@@ -386,27 +382,29 @@ if (empty($reshook))
     	$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
     	$toselect = array();
 
-    	if(!empty($validate_invoices)) {
-
+    	if (! $error && $validate_invoices)
+    	{
     		$massaction = $action = 'builddoc';
+    		foreach($TAllFact as &$object)
+    		{
+    			$result = $object->validate($user);
+    			if ($result <= 0)
+    			{
+    				$error++;
+    				setEventMessages($object->error, $object->errors, 'errors');
+    				break;
+    			}
 
-    		foreach($TAllFact as &$object) {
-    			$object->validate($user);
-    			$toselect[] = $object->id; // For builddoc action
+    			$id = $object->id; // For builddoc action
 
     			// Fac builddoc
+    			$donotredirect = 1;
     			$upload_dir = $conf->facture->dir_output;
     		    $permissioncreate=$user->rights->facture->creer;
     		    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
     		}
 
-    		$objectclass='Facture';
-    	    $objectlabel='Invoice';
-    	    $permtoread = $user->rights->facture->lire;
-    	    $permtodelete = $user->rights->facture->supprimer;
-    	    $uploaddir = $conf->facture->dir_output;
-    		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
+    		$massaction = $action = 'confirm_createbills';
     	}
 
     	if (! $error)
