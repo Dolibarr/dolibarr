@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2016  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,8 @@ function member_prepare_head(Adherent $object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
 
@@ -124,7 +126,8 @@ function member_type_prepare_head(AdherentType $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
 
