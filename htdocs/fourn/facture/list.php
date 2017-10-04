@@ -54,6 +54,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$optioncss = GETPOST('optioncss','alpha');
 
 $socid = GETPOST('socid','int');
 
@@ -67,6 +68,11 @@ if ($user->societe_id > 0)
 
 $mode=GETPOST("mode");
 
+$search_all = GETPOST('sall', 'alphanohtml');
+$search_label = GETPOST("search_label","alpha");
+$search_company = GETPOST("search_company","alpha");
+$search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
+$search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_refsupplier=GETPOST('search_refsupplier','alpha');
@@ -93,20 +99,12 @@ $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 $toselect = GETPOST('toselect', 'array');
-$filter = GETPOST('filtre','alpha');
 
 $option = GETPOST('option');
 if ($option == 'late') {
-	$filter = 'paye:0';
+	$search_status = '1';
 }
-
-$search_all = GETPOST('sall', 'alphanohtml');
-$search_label = GETPOST("search_label","alpha");
-$search_company = GETPOST("search_company","alpha");
-$search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
-$search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
-$search_status=GETPOST('search_status','alpha');
-$optioncss = GETPOST('optioncss','alpha');
+$filter = GETPOST('filtre','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -177,7 +175,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -349,7 +347,6 @@ else if ($year_lim > 0)
 	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($year_lim,12,false))."'";
 }
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
-if ($filter == 'paye:0') $sql.= " AND f.fk_statut = 1";
 if ($search_label) $sql .= natural_search('f.libelle', $search_label);
 if ($search_status != '' && $search_status >= 0)
 {
@@ -361,10 +358,10 @@ if ($filter && $filter != -1)
 	foreach ($aFilter as $fil)
 	{
 		$filt = explode(':', $fil);
-		$sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+		$sql .= ' AND ' . $db->escape(trim($filt[0])) . ' = ' . $db->escape(trim($filt[1]));
 	}
 }
-if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='invoice_supplier' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;

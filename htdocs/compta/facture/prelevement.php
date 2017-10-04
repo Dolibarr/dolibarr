@@ -151,7 +151,7 @@ if ($object->id > 0)
 
 	// Invoice content
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
@@ -425,28 +425,28 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="3">';
 	print $object->thirdparty->display_rib();
 	print '</td></tr>';
-	
+
 	print '</table>';
 
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border centpercent">';
-	
+
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
 	    // Multicurrency Amount HT
 	    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
-	
+
 	    // Multicurrency Amount VAT
 	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
-	
+
 	    // Multicurrency Amount TTC
 	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
@@ -507,16 +507,16 @@ if ($object->id > 0)
 
     // TODO Replace this by an include with same code to show already done payment visible in invoice card
     print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-	
+
 	print '</table>';
-	
+
 	print '</div>';
 	print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-		
-	
+
+
 	dol_fiche_end();
 
 
@@ -612,7 +612,7 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
-			
+
 
 			print '<tr class="oddeven">';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
@@ -640,7 +640,7 @@ if ($object->id > 0)
 	}
 
 	// Closed requests
-	
+
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande,";
 	$sql.= " pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql.= " pb.ref,";
@@ -663,7 +663,7 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
-			
+
 
 			print '<tr class="oddeven">';
 

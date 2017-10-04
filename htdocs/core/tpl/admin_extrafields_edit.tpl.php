@@ -25,6 +25,8 @@
  * $elementtype
  */
 
+$langs->load("modulebuilder");
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
@@ -96,13 +98,13 @@
 
 			if (type == 'separate')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true);
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value').val('').prop('disabled', true);
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled');
+				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
 			}
     	}
     	init_typeoffields(jQuery("#type").val());
@@ -238,11 +240,8 @@ else
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
 <!-- By default visible into list -->
-<?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
-<tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
-<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
-</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo ($list?' checked':''); ?>></td></tr>
-<?php } ?>
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("ByDefaultInList"), $langs->trans("VisibleDesc")); ?>
+</td><td class="valeur"><input id="list" size="1" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
 </table>
 
 <?php dol_fiche_end(); ?>

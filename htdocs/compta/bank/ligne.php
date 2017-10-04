@@ -152,7 +152,7 @@ if ($user->rights->banque->modifier && $action == "update")
 		{
 		    $error++;
 		}
-		
+
 		if (! $error)
 		{
             $arrayofcategs=GETPOST('custcats', 'array');
@@ -175,8 +175,8 @@ if ($user->rights->banque->modifier && $action == "update")
         		}
         		// $arrayselected will be loaded after in page output
     		}
-		}		
-		
+		}
+
 		if (! $error)
 		{
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -296,14 +296,14 @@ if ($result)
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
         dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
-        
-        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
-        
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+
         dol_banner_tab($bankline, 'rowid', $linkback);
-        
 
-        print '<div class="underbanner clearboth"></div>';       
+
+        print '<div class="underbanner clearboth"></div>';
         print '<table class="border" width="100%">';
 
         // Ref
@@ -314,7 +314,7 @@ if ($result)
         print '</td>';
         print '</tr>';
         */
-        
+
         $i++;
 
         // Bank account
@@ -582,7 +582,7 @@ if ($result)
         if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
         {
             $langs->load('categories');
-        
+
             // Bank line
             print '<tr><td class="toptd">' . fieldLabel('RubriquesTransactions', 'custcats') . '</td><td>';
             $cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
@@ -591,28 +591,28 @@ if ($result)
         }
 
         print "</table>";
-        
+
         dol_fiche_end();
-        
-        
+
+
         print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div><br>';
-        
+
         print "</form>";
 
-        
-        
+
+
         // Releve rappro
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
             print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
             print '<hr>'."\n";
-            
+
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setreconcile">';
             print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-            
+
             print '<table class="border" width="100%">';
 
             print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
@@ -652,13 +652,13 @@ if ($result)
             print '</table>';
 
             print '<div class="center">';
-            
+
             print '<input type="submit" class="button" value="'.$langs->trans("Update").'">';
             if ($backtopage)
             {
                 print ' &nbsp; ';
                 print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-            }            
+            }
             print '</div>';
 
 			print '</form>';

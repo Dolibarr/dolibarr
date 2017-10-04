@@ -197,7 +197,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
 }
 
@@ -1024,6 +1024,7 @@ while ($i < min($num, $limit))
 
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
+	$companystatic->name_alias=$obj->name_alias;
 	$companystatic->canvas=$obj->canvas;
 	$companystatic->client=$obj->client;
 	$companystatic->status=$obj->status;
@@ -1053,7 +1054,6 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.name_alias']['checked']))
 	{
-	    $companystatic->name_alias=$obj->name_alias;   // Added after the getNomUrl
 	    print '<td class="tdoverflowmax200">';
 	    print $companystatic->name_alias;
 	    print "</td>\n";

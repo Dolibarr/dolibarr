@@ -115,6 +115,11 @@ $companystatic=new Societe($db);
 $arrayfields=array(
     'c.ref'=>array('label'=>$langs->trans("Contract"), 'checked'=>1, 'position'=>80),
     'p.description'=>array('label'=>$langs->trans("Service"), 'checked'=>1, 'position'=>80),
+	'cd.qty'=>array('label'=>$langs->trans("Qty"), 'checked'=>0, 'position'=>100),
+	'cd.total_ht'=>array('label'=>$langs->trans("TotalHT"), 'checked'=>0, 'position'=>100),
+	'cd.total_tva'=>array('label'=>$langs->trans("TotalVAT"), 'checked'=>0, 'position'=>100),
+	'cd.tva_tx'=>array('label'=>$langs->trans("VAT"), 'checked'=>0, 'position'=>100),
+	'cd.subprice'=>array('label'=>$langs->trans("PriceUHT"), 'checked'=>0, 'position'=>100),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>100),
     'cd.date_ouverture_prevue'=>array('label'=>$langs->trans("DateStartPlannedShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode == "0")),
     'cd.date_ouverture'=>array('label'=>$langs->trans("DateStartRealShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode > 0)),
@@ -129,7 +134,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -199,7 +204,11 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk
 $sql.= " cd.date_ouverture_prevue,";
 $sql.= " cd.date_ouverture,";
 $sql.= " cd.date_fin_validite,";
-$sql.= " cd.date_cloture,";
+$sql.= " cd.qty,";
+$sql.= " cd.total_ht,";
+$sql.= " cd.total_tva,";
+$sql.= " cd.tva_tx,";
+$sql.= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
 $sql.= " cd.tms as date_update";
 // Add fields from extrafields
@@ -377,6 +386,11 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['c.ref']['checked'])) print_liste_field_titre($arrayfields['c.ref']['label'],$_SERVER["PHP_SELF"],"c.ref","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['p.description']['checked'])) print_liste_field_titre($arrayfields['p.description']['label'],$_SERVER["PHP_SELF"],"p.description","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['cd.qty']['checked']))  print_liste_field_titre($arrayfields['cd.qty']['label'],$_SERVER["PHP_SELF"],"cd.qty","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.total_ht']['checked']))  print_liste_field_titre($arrayfields['cd.total_ht']['label'],$_SERVER["PHP_SELF"],"cd.total_ht","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.total_tva']['checked']))  print_liste_field_titre($arrayfields['cd.total_tva']['label'],$_SERVER["PHP_SELF"],"cd.total_tva","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.tva_tx']['checked']))  print_liste_field_titre($arrayfields['cd.tva_tx']['label'],$_SERVER["PHP_SELF"],"cd.tva_tx","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.subprice']['checked']))  print_liste_field_titre($arrayfields['cd.subprice']['label'],$_SERVER["PHP_SELF"],"cd.subprice","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.nom']['checked'])) print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture_prevue']['label'],$_SERVER["PHP_SELF"],"cd.date_ouverture_prevue","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['cd.date_ouverture']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture']['label'],$_SERVER["PHP_SELF"],"cd.date_ouverture","",$param,'align="center"',$sortfield,$sortorder);
@@ -422,6 +436,32 @@ if (! empty($arrayfields['p.description']['checked']))
 	print '<input type="text" class="flat maxwidth100" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
 	print '</td>';
 }
+// detail lines
+if (! empty($arrayfields['cd.qty']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.total_ht']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.total_tva']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.tva_tx']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.subprice']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Third party
 if (! empty($arrayfields['s.nom']['checked']))
 {
@@ -429,6 +469,8 @@ if (! empty($arrayfields['s.nom']['checked']))
 	print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
+
+
 if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 {
 	print '<td class="liste_titre" align="center">';
@@ -576,6 +618,38 @@ while ($i < min($num,$limit))
 		}
 		print '</td>';
     }
+
+    if (! empty($arrayfields['cd.qty']['checked']))
+    {
+    	print '<td>';
+    	print $obj->qty;
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.total_ht']['checked']))
+    {
+    	print '<td>';
+    	print price($obj->total_ht);
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.total_tva']['checked']))
+    {
+    	print '<td>';
+    	print price($obj->total_tva);
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.tva_tx']['checked']))
+    {
+    	print '<td>';
+    	print price2num($obj->tva_tx).'%';
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.subprice']['checked']))
+    {
+    	print '<td>';
+    	print price($obj->subprice);
+    	print '</td>';
+    }
+
 
 	// Third party
     if (! empty($arrayfields['s.nom']['checked']))

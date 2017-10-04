@@ -4594,23 +4594,28 @@ abstract class CommonObject
 				}else {
 					$colspan='3';
 				}
+
 				switch($mode) {
 					case "view":
 						$value=$this->array_options["options_".$key];
 						break;
 					case "edit":
-						if (isset($_POST["options_" . $key])) {
-							if (is_array($_POST["options_" . $key])) {
-								// $_POST["options"] is an array but following code expects a comma separated string
-								$value = implode(",", $_POST["options_" . $key]);
+						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
+						$getposttemp = GETPOST('options_'.$key, 'none');				// GETPOST can get value from GET, POST or setup of default values.
+						if (isset($getposttemp)) {
+							if (is_array($getposttemp)) {
+								// $getposttemp is an array but following code expects a comma separated string
+								$value = implode(",", $getposttemp);
 							} else {
-								$value = $_POST["options_" . $key];
+								$value = $getposttemp;
 							}
 						} else {
-							$value = $this->array_options["options_" . $key];
+							$value = $this->array_options["options_" . $key];			// No GET, no POST, no default value, so we take value of object.
 						}
 						break;
 				}
+				//var_dump($value);
+
 				if ($extrafields->attribute_type[$key] == 'separate')
 				{
 					$out .= $extrafields->showSeparator($key);

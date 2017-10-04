@@ -384,7 +384,9 @@ class User extends CommonObject
 			    {
 			        if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
 			        {
-			        	// $obj->page is relative URL with or without params, $obj->type can be 'filters', 'sortorder', 'createform', ...
+			        	// $obj->page is relative URL with or without params
+			        	// $obj->type can be 'filters', 'sortorder', 'createform', ...
+			        	// $obj->param is key or param
 			        	$pagewithoutquerystring=$obj->page;
 			        	$pagequeries='';
 			        	if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
@@ -392,9 +394,19 @@ class User extends CommonObject
 			        		$pagewithoutquerystring=$reg[1];
 			        		$pagequeries=$reg[2];
 			        	}
-			        	$this->default_values[$pagewithoutquerystring][$obj->type][$obj->param]=$obj->value;
-			            if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
+			        	$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
+			            //if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
 			        }
+			    }
+			    // Sort by key, so _noquery_ is last
+			    if(!empty($this->default_values)) {
+				    foreach($this->default_values as $a => $b)
+				    {
+				    	foreach($b as $c => $d)
+				    	{
+				    		krsort($this->default_values[$a][$c]);
+				    	}
+				    }
 			    }
 			    $this->db->free($resql);
 			}
@@ -2028,17 +2040,18 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpictoimg		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option				On what the link point to
-     *  @param  integer $infologin      	Add complete info tooltip
-     *  @param	integer	$notooltip			1=Disable tooltip on picto and name
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
-     *  @param  string  $mode               ''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
-     *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	string	$option						On what the link point to
+     *  @param  integer $infologin      			Add complete info tooltip
+     *  @param	integer	$notooltip					1=Disable tooltip on picto and name
+     *  @param	int		$maxlen						Max length of visible user name
+     *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
+     *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='')
+	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs, $conf, $db, $hookmanager;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -2058,7 +2071,7 @@ class User extends CommonObject
 
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
-		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
+		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'');
 		if (! empty($this->login))
 			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
 		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
@@ -2096,10 +2109,18 @@ class User extends CommonObject
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
 
+		if ($option == 'leave') $url.= DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
+		else $link.= $url.= DOL_URL_ROOT.'/user/card.php?id='.$this->id;
 
-		if ($option == 'leave') $link.= '<a href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$this->id.'"';
-		else $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
+		$link='<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{

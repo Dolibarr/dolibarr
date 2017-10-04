@@ -96,7 +96,7 @@ $head = member_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'rowid', $linkback);
 

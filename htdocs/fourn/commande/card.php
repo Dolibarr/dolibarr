@@ -555,128 +555,135 @@ if (empty($reshook))
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
    		if ($lineid)
-	    {
-	        $line = new CommandeFournisseurLigne($db);
-	        $res = $line->fetch($lineid);
-	        if (!$res) dol_print_error($db);
-	    }
-
-	    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-	    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-
-	    // Define info_bits
-	    $info_bits = 0;
-	    if (preg_match('/\*/', $vat_rate))
-	    	$info_bits |= 0x01;
-
-	    // Define vat_rate
-	    $vat_rate = str_replace('*', '', $vat_rate);
-	    $localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
-	    $localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
-
-	    if (GETPOST('price_ht') != '')
-	    {
-	    	$price_base_type = 'HT';
-	    	$ht = price2num(GETPOST('price_ht'));
-	    }
-	    else
-	    {
-	    	$vatratecleaned = $vat_rate;
-	    	if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
-	    	{
-	    		$vatratecleaned = trim($reg[1]);
-	    		$vatratecode = $reg[2];
-	    	}
-
-	    	$ttc = price2num(GETPOST('price_ttc'));
-	    	$ht = $ttc / (1 + ($vatratecleaned / 100));
-	    	$price_base_type = 'HT';
-	    }
-
-	    $pu_ht_devise = GETPOST('multicurrency_subprice');
-
-		// Extrafields Lines
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-		// Unset extrafield POST Data
-		if (is_array($extralabelsline)) {
-			foreach ($extralabelsline as $key => $value) {
-				unset($_POST["options_" . $key]);
-			}
+		{
+	        	$line = new CommandeFournisseurLigne($db);
+	        	$res = $line->fetch($lineid);
+	        	if (!$res) dol_print_error($db);
 		}
 
-	    $result	= $object->updateline(
-	        $lineid,
-	        $_POST['product_desc'],
-	        $ht,
-	        $_POST['qty'],
-	        $_POST['remise_percent'],
-	        $vat_rate,
-	        $localtax1_rate,
-	        $localtax2_rate,
-	        $price_base_type,
-	        0,
-	        isset($_POST["type"])?$_POST["type"]:$line->product_type,
-	        false,
-	        $date_start,
-	        $date_end,
-	    	$array_options,
-		    $_POST['units'],
-		    $pu_ht_devise
-	    );
-	    unset($_POST['qty']);
-	    unset($_POST['type']);
-	    unset($_POST['idprodfournprice']);
-	    unset($_POST['remmise_percent']);
-	    unset($_POST['dp_desc']);
-	    unset($_POST['np_desc']);
-	    unset($_POST['pu']);
-	    unset($_POST['tva_tx']);
-	    unset($_POST['date_start']);
-	    unset($_POST['date_end']);
-		unset($_POST['units']);
-	    unset($localtax1_tx);
-	    unset($localtax2_tx);
+		$productsupplier = new ProductFournisseur($db);
+		if ($productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+		{
+			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+		}
 
-		unset($_POST['date_starthour']);
-		unset($_POST['date_startmin']);
-		unset($_POST['date_startsec']);
-		unset($_POST['date_startday']);
-		unset($_POST['date_startmonth']);
-		unset($_POST['date_startyear']);
-		unset($_POST['date_endhour']);
-		unset($_POST['date_endmin']);
-		unset($_POST['date_endsec']);
-		unset($_POST['date_endday']);
-		unset($_POST['date_endmonth']);
-		unset($_POST['date_endyear']);
+	    	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	    	$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
-	    if ($result	>= 0)
-	    {
-	        // Define output language
-	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-	    	{
-	    		$outputlangs = $langs;
-	    		$newlang = '';
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
-	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-	    		if (! empty($newlang)) {
-	    			$outputlangs = new Translate("", $conf);
-	    			$outputlangs->setDefaultLang($newlang);
-	    		}
-	    		$model=$object->modelpdf;
-	    		$ret = $object->fetch($id); // Reload to get new records
+	  	  // Define info_bits
+	  	  $info_bits = 0;
+	  	  if (preg_match('/\*/', $vat_rate))
+	    		$info_bits |= 0x01;
 
-	    		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    		if ($result < 0) dol_print_error($db,$result);
-	    	}
-	    }
-	    else
-	    {
-	        dol_print_error($db,$object->error);
-	        exit;
-	    }
+	   	 // Define vat_rate
+		    $vat_rate = str_replace('*', '', $vat_rate);
+		    $localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
+		    $localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
+
+		    if (GETPOST('price_ht') != '')
+		    {
+			$price_base_type = 'HT';
+			$ht = price2num(GETPOST('price_ht'));
+		    }
+		    else
+		    {
+			$vatratecleaned = $vat_rate;
+			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
+			{
+				$vatratecleaned = trim($reg[1]);
+				$vatratecode = $reg[2];
+			}
+
+			$ttc = price2num(GETPOST('price_ttc'));
+			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$price_base_type = 'HT';
+		    }
+
+		    $pu_ht_devise = GETPOST('multicurrency_subprice');
+
+			// Extrafields Lines
+			$extrafieldsline = new ExtraFields($db);
+			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+			// Unset extrafield POST Data
+			if (is_array($extralabelsline)) {
+				foreach ($extralabelsline as $key => $value) {
+					unset($_POST["options_" . $key]);
+				}
+			}
+
+		    $result	= $object->updateline(
+			$lineid,
+			$_POST['product_desc'],
+			$ht,
+			$_POST['qty'],
+			$_POST['remise_percent'],
+			$vat_rate,
+			$localtax1_rate,
+			$localtax2_rate,
+			$price_base_type,
+			0,
+			isset($_POST["type"])?$_POST["type"]:$line->product_type,
+			false,
+			$date_start,
+			$date_end,
+			$array_options,
+			    $_POST['units'],
+			    $pu_ht_devise
+		    );
+		    unset($_POST['qty']);
+		    unset($_POST['type']);
+		    unset($_POST['idprodfournprice']);
+		    unset($_POST['remmise_percent']);
+		    unset($_POST['dp_desc']);
+		    unset($_POST['np_desc']);
+		    unset($_POST['pu']);
+		    unset($_POST['tva_tx']);
+		    unset($_POST['date_start']);
+		    unset($_POST['date_end']);
+			unset($_POST['units']);
+		    unset($localtax1_tx);
+		    unset($localtax2_tx);
+
+			unset($_POST['date_starthour']);
+			unset($_POST['date_startmin']);
+			unset($_POST['date_startsec']);
+			unset($_POST['date_startday']);
+			unset($_POST['date_startmonth']);
+			unset($_POST['date_startyear']);
+			unset($_POST['date_endhour']);
+			unset($_POST['date_endmin']);
+			unset($_POST['date_endsec']);
+			unset($_POST['date_endday']);
+			unset($_POST['date_endmonth']);
+			unset($_POST['date_endyear']);
+
+		    if ($result	>= 0)
+		    {
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) dol_print_error($db,$result);
+			}
+		    }
+		    else
+		    {
+			dol_print_error($db,$object->error);
+			exit;
+		    }
+
 	}
 
 	// Remove a product line
@@ -1785,7 +1792,7 @@ elseif (! empty($object->id))
 
 	// Supplier order card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier

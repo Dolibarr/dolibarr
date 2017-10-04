@@ -133,7 +133,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -323,16 +323,17 @@ if ($resql)
 	}
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($sall != '')                $param.='&sall='.$sall;
-    if ($search_contract != '')     $param.='&search_contract='.$search_contract;
-    if ($search_name != '')         $param.='&search_name='.$search_name;
-    if ($search_email != '')        $param.='&search_email='.$search_email;
-    if ($search_ref_supplier != '') $param.='&search_ref_supplier='.$search_ref_supplier;
-    if ($search_sale != '')         $param.='&search_sale=' .$search_sale;
-    if ($show_files)                $param.='&show_files=' .$show_files;
-    if ($optioncss != '')           $param.='&optioncss='.$optioncss;
+    if ($sall != '')                $param.='&sall='.urlencode($sall);
+    if ($search_contract != '')     $param.='&search_contract='.urlencode($search_contract);
+    if ($search_name != '')         $param.='&search_name='.urlencode($search_name);
+    if ($search_email != '')        $param.='&search_email='.urlencode($search_email);
+    if ($search_ref_customer != '') $param.='&search_ref_customer='.urlencode($search_ref_customer);
+    if ($search_ref_supplier != '') $param.='&search_ref_supplier='.urlencode($search_ref_supplier);
+    if ($search_sale != '')         $param.='&search_sale=' .urlencode($search_sale);
+    if ($show_files)                $param.='&show_files=' .urlencode($show_files);
+    if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
     foreach ($search_array_options as $key => $val)
     {
@@ -600,6 +601,11 @@ if ($resql)
         $contracttmp->ref_customer=$obj->ref_customer;
         $contracttmp->ref_supplier=$obj->ref_supplier;
 
+        if ($obj->socid > 0)
+        {
+        	$result=$socstatic->fetch($obj->socid);
+        }
+
         print '<tr class="oddeven">';
         if (! empty($arrayfields['c.ref']['checked']))
         {
@@ -631,7 +637,13 @@ if ($resql)
         }
         if (! empty($arrayfields['s.nom']['checked']))
         {
-            print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+            print '<td>';
+            //print '<a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a>';
+            if ($obj->socid > 0)
+            {
+            	print $socstatic->getNomUrl(1, '');
+            }
+            print '</td>';
         }
         if (! empty($arrayfields['s.email']['checked']))
         {
@@ -683,7 +695,6 @@ if ($resql)
             print '<td>';
             if ($obj->socid > 0)
             {
-            	$result=$socstatic->fetch($obj->socid);
             	$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
             	if ($listsalesrepresentatives < 0) dol_print_error($db);
             	$nbofsalesrepresentative=count($listsalesrepresentatives);

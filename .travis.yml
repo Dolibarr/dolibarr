@@ -325,18 +325,21 @@ script:
   set +e
   echo
   #cat $TRAVIS_BUILD_DIR/upgrade400500-2.log
+  #cat $TRAVIS_BUILD_DIR/upgrade500600.log
+  #cat $TRAVIS_BUILD_DIR/upgrade500600-2.log
+  #cat $TRAVIS_BUILD_DIR/upgrade500600-3.log
   #cat /tmp/dolibarr_install.log
   
 - |
   echo "Unit testing"
-  # Ensure we catch errors. Set this to +e if you want to go to the end to see log file.
+  # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
 
 - |
   #echo "Output dolibarr.log"
-  #echo cat documents/dolibarr.log
+  #cat documents/dolibarr.log
 
 after_script:
 - |

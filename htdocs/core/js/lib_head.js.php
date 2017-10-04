@@ -506,26 +506,26 @@ function getDateFromFormat(val,format)
         if (substr == "MM" ||substr == "M")
         {
             month=getIntegerInString(val,d,1,2);
-            d -= 2- month.length;
+            if (month) d -= 2- month.length;
         }
         if (substr == "dd")
         {
             day=getIntegerInString(val,d,1,2);
-            d -= 2- day.length;
+            if (day) d -= 2- day.length;
         }
         if (substr == "HH" ||substr == "hh" )
         {
             hour=getIntegerInString(val,d,1,2);
-            d -= 2- hour.length;
+            if (dhouray) d -= 2- hour.length;
         }
         if (substr == "mm"){
             minute=getIntegerInString(val,d,1,2);
-            d -= 2- minute.length;
+            if (minute) d -= 2- minute.length;
         }
         if (substr == "ss")
         {
             seconde=getIntegerInString(val,d,1,2);
-            d -= 2- seconde.length;
+            if (seconde) d -= 2- seconde.length;
         }
 
 		i+=substr.length;

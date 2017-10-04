@@ -42,9 +42,10 @@ $result = restrictedArea($user, 'expedition',$expeditionid,'');
 
 $diroutputmassaction=$conf->expedition->dir_output . '/temp/massgeneration/'.$user->id;
 
-$search_ref_exp = GETPOST("search_ref_exp");
-$search_ref_liv = GETPOST('search_ref_liv');
-$search_company = GETPOST("search_company");
+$search_ref_exp = GETPOST("search_ref_exp", 'alpha');
+$search_ref_liv = GETPOST('search_ref_liv', 'alpha');
+$search_ref_customer = GETPOST('search_ref_customer', 'alpha');
+$search_company = GETPOST("search_company", 'alpha');
 $search_town=GETPOST('search_town','alpha');
 $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
@@ -110,7 +111,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -133,6 +134,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $search_ref_exp='';
     $search_ref_liv='';
+    $search_ref_customer='';
     $search_company='';
     $search_town='';
 	$search_zip="";
@@ -213,6 +215,7 @@ if ($socid)
 if ($viewstatut <> '' && $viewstatut >= 0) {
 	$sql.= " AND e.fk_statut = ".$viewstatut;
 }
+if ($search_ref_customer != '') $sql.=natural_search('e.ref_customer', $search_ref_customer);
 if ($search_billed != '' && $search_billed >= 0) $sql.=' AND e.billed = '.$search_billed;
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
@@ -262,13 +265,14 @@ if ($resql)
 	$expedition = new Expedition($db);
 
 	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall) $param.= "&amp;sall=".$sall;
-	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
-	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
-	if ($search_company) $param.= "&amp;search_company=".$search_company;
-	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+	if ($sall) $param.= "&amp;sall=".urlencode($sall);
+	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".urlencode($search_ref_exp);
+	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	if ($search_ref_customer) $param.= "&amp;search_ref_customer=".urlencode($search_ref_customer);
+	if ($search_company) $param.= "&amp;search_company=".urlencode($search_company);
+	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{

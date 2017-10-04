@@ -1077,7 +1077,7 @@ class Societe extends CommonObject
         $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
         $sql .= ', s.price_level';
-        $sql .= ', s.tms as date_modification';
+        $sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
         $sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
@@ -1144,8 +1144,10 @@ class Societe extends CommonObject
                 $this->ref_ext      = $obj->ref_ext;
                 $this->ref_int      = $obj->ref_int;
 
-                $this->date_creation = $this->db->jdate($obj->date_creation);
+                $this->date_creation     = $this->db->jdate($obj->date_creation);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
+                $this->user_creation     = $obj->fk_user_creat;
+                $this->user_modification = $obj->fk_user_modif;
 
                 $this->address 		= $obj->address;
                 $this->zip 			= $obj->zip;
@@ -1895,6 +1897,11 @@ class Societe extends CommonObject
         {
             $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
             $linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+        }
+        else if ($option == 'contact')
+        {
+        	$label.= '<u>' . $langs->trans("ShowContacts") . '</u>';
+        	$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
         }
 
         // By default

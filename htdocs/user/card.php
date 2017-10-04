@@ -1760,7 +1760,7 @@ else
                 $formmail->withdeliveryreceipt=1;
                 $formmail->withcancel=1;
                 // Tableau des substitutions
-                $formmail->setSubstitFromObject($object);
+                $formmail->setSubstitFromObject($object, $outputlangs);
                 $formmail->substit['__LASTNAME__']=$object->lastname;
                 $formmail->substit['__FIRSTNAME__']=$object->firstname;
 

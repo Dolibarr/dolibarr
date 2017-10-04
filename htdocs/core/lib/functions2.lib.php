@@ -723,6 +723,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // but we should use local year and month of user
 
     // For debugging
+    //dol_syslog("mask=".$mask, LOG_DEBUG);
     //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
     //$mask='FA{yy}{mm}-{0000@99}';
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
@@ -1147,6 +1148,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
     return $numFinal;
 }
+
 function get_string_between($string, $start, $end){
     $string = " ".$string;
      $ini = strpos($string,$start);
@@ -1155,6 +1157,7 @@ function get_string_between($string, $start, $end){
      $len = strpos($string,$end,$ini) - $ini;
      return substr($string,$ini,$len);
 }
+
 /**
  * Check value
  *

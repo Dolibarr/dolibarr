@@ -308,7 +308,7 @@ if ($id > 0 || $ref)
 
 			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
@@ -472,7 +472,9 @@ if ($id > 0 || $ref)
                         $default_vat=$object->tva_tx;
                     }
 				}
-				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
+				$vattosuggest=(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):''));
+				$vattosuggest=preg_replace('/\s*\(.*\)$/','', $vattosuggest);
+				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
 
 				if (! empty($conf->dynamicprices->enabled)) //Only show price mode and expression selector if module is enabled
