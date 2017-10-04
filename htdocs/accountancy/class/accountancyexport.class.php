@@ -419,7 +419,7 @@ class AccountancyExport
 
 
 	/**
-	 * Export format : Agiris
+	 * Export format : Agiris Isacompta
 	 *
 	 * @param array $objectLines data
 	 *
@@ -433,30 +433,23 @@ class AccountancyExport
 
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
-			print $line->id . $this->separator;
-			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
+			print $line->piece_num . $this->separator;
+			print $line->label_operation . $this->separator;
 			print $date . $this->separator;
-			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$this->separator;
+			print $line->label_operation . $this->separator;
 
 			if (empty($line->subledger_account)) {
 				print length_accountg($line->numero_compte) . $this->separator;
 			} else {
-			    // FIXME Because the subledger_account is already an accounting account, does we really need
-			    // to concat 4011 or 401 to it ?
-				if (substr($line->numero_compte, 0, 1) == 'C' || substr($line->numero_compte, 0, 1) == '9') {
-					print '411' . substr(str_replace(" ", "", $line->subledger_account), 0, 5) . $this->separator;
-				}
-				if (substr($line->numero_compte, 0, 1) == 'F' || substr($line->numero_compte, 0, 1) == '0') {
-					print '401' . substr(str_replace(" ", "", $line->subledger_account), 0, 5) . $this->separator;
-				}
+				print length_accounta($line->subledger_account) . $this->separator;
 			}
 
-			print length_accounta($line->subledger_account) . $this->separator;
+			print $line->doc_ref . $this->separator;
 			print price($line->debit) . $this->separator;
 			print price($line->credit) . $this->separator;
 			print price($line->montant).$this->separator;
 			print $line->sens.$this->separator;
-			print $line->code_journal . $this->separator;
+			print $line->code_journal;
 			print $this->end_line;
 		}
 	}
