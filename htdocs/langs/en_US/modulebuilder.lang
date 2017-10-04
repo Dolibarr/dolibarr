@@ -79,3 +79,5 @@ MenusDefDesc=Define here the menus provided by your module (once defined, they a
 PermissionsDefDesc=Define here the new permissions provided by your module (once defined, they are visible into the default permissions setup %s)
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property in the module descriptor the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
 TriggerDefDesc=Define in the trigger file the code you want to execute for each business event executed
+SeeIDsInUse=See IDs in use in your installation
+SeeReservedIDsRangeHere=See range of reserved IDs

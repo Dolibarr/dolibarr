@@ -308,6 +308,12 @@ abstract class CommonObject
 	 * @var CommonObjectLine[]
 	 */
 	public $lines;
+	
+	/**
+	 * @var mixed		Contains comments
+	 * @see fetchComments()
+	 */
+	public $comments=array();
 
 	/**
 	 * @var int
@@ -5287,6 +5293,29 @@ abstract class CommonObject
 	    $this->id = 0;
 
 	    // TODO...
+	}
+	
+	/**
+	 * Load comments linked with current task
+	 *	@return boolean	1 if ok
+	 */
+	public function fetchComments()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
+		
+		$comment = new Comment($this->db);
+		$this->comments = Comment::fetchAllFor($this->element, $this->id);
+		return 1;
+	}
+	
+	/**
+	 * Return nb comments already posted
+	 *
+	 * @return int
+	 */
+	public function getNbComments()
+	{
+		return count($this->comments);
 	}
 
 }

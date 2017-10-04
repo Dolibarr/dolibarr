@@ -1082,9 +1082,10 @@ elseif (! empty($module))
 
 	            	print '<tr><td>';
 	            	print $langs->trans("Numero");
-	            	print ' (<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeHere").'</a>)';
 	            	print '</td><td>';
 	            	print $moduleobj->numero;
+	            	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank">'.$langs->trans("SeeIDsInUse").'</a>';
+	            	print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
 	            	print '</td></tr>';
 
 	            	print '<tr><td>';
