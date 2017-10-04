@@ -1753,9 +1753,9 @@ class Facture extends CommonInvoice
 		global $langs,$conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		if (empty($rowid)) $rowid=$this->id;
+		$rowid=$this->id;
 
-		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete rowid=".$rowid.", ref=".$this->ref.", thirdparty=".$this->thirdparty->name, LOG_DEBUG);
 
 		// Test to avoid invoice deletion (allowed if draft)
 		$test = $this->is_erasable();
@@ -3227,7 +3227,7 @@ class Facture extends CommonInvoice
 
 		if (! empty($conf->global->FACTURE_ADDON))
 		{
-			dol_syslog("Call getNextNumRef with FACTURE_ADDON = ".$conf->global->FACTURE_ADDON);
+			dol_syslog("Call getNextNumRef with FACTURE_ADDON = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->nom.", type=".$soc->typent_code, LOG_DEBUG);
 
 			$mybool=false;
 
@@ -3399,6 +3399,9 @@ class Facture extends CommonInvoice
 		// If not a draft invoice and not temporary invoice
 		if ($tmppart !== 'PROV')
 		{
+			// We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
+			if (empty($this->thirdparty)) $this->fetch_thirdparty();
+
 			$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
 			$ventilExportCompta = $this->getVentilExportCompta();
 
