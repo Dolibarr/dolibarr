@@ -308,7 +308,7 @@ abstract class CommonObject
 	 * @var CommonObjectLine[]
 	 */
 	public $lines;
-	
+
 	/**
 	 * @var mixed		Contains comments
 	 * @see fetchComments()
@@ -4644,13 +4644,19 @@ abstract class CommonObject
 					{
 						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
 					}
-					// Convert date into timestamp format
+					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
+					// Convert float submited string into real php numeric (value in memory must be a php numeric)
+					if (in_array($extrafields->attribute_type[$key],array('price','double')))
+					{
+						$value = isset($_POST["options_".$key])?price2num($_POST["options_".$key]):$this->array_options['options_'.$key];
+					}
 
 					$labeltoshow = $langs->trans($label);
+
 					if($extrafields->attribute_required[$key])
 					{
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
@@ -5294,7 +5300,7 @@ abstract class CommonObject
 
 	    // TODO...
 	}
-	
+
 	/**
 	 * Load comments linked with current task
 	 *	@return boolean	1 if ok
@@ -5302,12 +5308,12 @@ abstract class CommonObject
 	public function fetchComments()
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
-		
+
 		$comment = new Comment($this->db);
 		$this->comments = Comment::fetchAllFor($this->element, $this->id);
 		return 1;
 	}
-	
+
 	/**
 	 * Return nb comments already posted
 	 *
