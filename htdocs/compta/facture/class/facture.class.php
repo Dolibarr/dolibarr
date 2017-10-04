@@ -2085,7 +2085,7 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-     * @return	int						<0 if KO, >0 if OK
+     * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
 	function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
 	{
@@ -3227,6 +3227,8 @@ class Facture extends CommonInvoice
 
 		if (! empty($conf->global->FACTURE_ADDON))
 		{
+			dol_syslog("Call getNextNumRef with FACTURE_ADDON = ".$conf->global->FACTURE_ADDON);
+
 			$mybool=false;
 
 			$file = $conf->global->FACTURE_ADDON.".php";
