@@ -2097,6 +2097,10 @@ class Facture extends CommonInvoice
 		$error=0;
 		dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
 
+		// Force to have object complete for checks
+		$this->fetch_thirdparty();
+		$this->fetch_lines();
+
 		// Check parameters
 		if (! $this->brouillon)
 		{
@@ -2118,9 +2122,6 @@ class Facture extends CommonInvoice
 		}
 
 		$this->db->begin();
-
-		$this->fetch_thirdparty();
-		$this->fetch_lines();
 
 		// Check parameters
 		if ($this->type == self::TYPE_REPLACEMENT)		// si facture de remplacement

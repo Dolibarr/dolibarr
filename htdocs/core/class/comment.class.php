@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 	Class to manage comment
  */
@@ -286,9 +285,9 @@ class Comment extends CommonObject
 	/**
 	 * Load comments linked with current task
 	 *
-	 *	@param	alpha	$element_type	Type of Element
-	 *	@param	int		$fk_element		Id of Element
-	 *  @return	array					Comment array
+	 * @param	string		$element_type		Element type
+	 * @param	int			$fk_element			Id of element
+	 * @return 	array							Comment array
 	 */
 	public static function fetchAllFor($element_type, $fk_element)
 	{
