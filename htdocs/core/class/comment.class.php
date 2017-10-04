@@ -192,7 +192,7 @@ class Comment extends CommonObject
 		$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
 		$sql.= " datec=".($this->datec!=''?"'".$this->db->idate($this->datec)."'":'null').",";
 		$sql.= " fk_element=".(isset($this->fk_element)?$this->fk_element:"null").",";
-		$sql.= " element_type='".$this->element_type."',";
+		$sql.= " element_type='".$this->db->escape($this->element_type)."',";
 		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
 		$sql.= " entity=".(!empty($this->entity)?$this->entity:'1').",";
 		$sql.= " import_key=".(!empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
@@ -300,7 +300,7 @@ class Comment extends CommonObject
 			$sql.= " c.rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."comment as c";
 			$sql.= " WHERE c.fk_element = ".$fk_element;
-			$sql.= " AND c.element_type = '".$element_type."'";
+			$sql.= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql.= " AND c.entity = ".$conf->entity;
 			$sql.= " ORDER BY c.tms DESC";
 
