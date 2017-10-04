@@ -1,5 +1,4 @@
 <?php
-use phpseclib\File\ASN1\Element;
 
 /**
  * 	Class to manage comment
