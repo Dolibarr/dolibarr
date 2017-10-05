@@ -1408,8 +1408,7 @@ class CommandeFournisseur extends CommonOrder
                         $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
                         if ($result > 0)
                         {
-                            $pu           = 0;       // Unit price supplier price set by get_buyprice
-                            $pu_ht_devise = $prod->fourn_pu;       // With multicurrency, supplier price is related to its currency, $pu will be calculated (= $pu_ht_devise if exchange rate is 1)
+			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
                             $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
