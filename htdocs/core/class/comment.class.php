@@ -190,7 +190,7 @@ class Comment extends CommonObject
 		$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
 		$sql.= " datec=".($this->datec!=''?"'".$this->db->idate($this->datec)."'":'null').",";
 		$sql.= " fk_element=".(isset($this->fk_element)?$this->fk_element:"null").",";
-		$sql.= " element_type='".$this->element_type."',";
+		$sql.= " element_type='".$this->db->escape($this->element_type)."',";
 		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
 		$sql.= " entity=".(!empty($this->entity)?$this->entity:'1').",";
 		$sql.= " import_key=".(!empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
