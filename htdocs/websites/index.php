@@ -1861,7 +1861,6 @@ function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
 
 	if (! $result)
 	{
-		$error++;
 		setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
 		return false;
 	}
@@ -1887,14 +1886,13 @@ function dolSaveCssFile($filecss, $csscontent)
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
 
-		if (! $result)
-		{
-			$error++;
-			setEventMessages('Failed to write file '.$filecss, null, 'errors');
-			return false;
-		}
+	if (! $result)
+	{
+		setEventMessages('Failed to write file '.$filecss, null, 'errors');
+		return false;
+	}
 
-		return true;
+	return true;
 }
 
 /**
@@ -1917,7 +1915,6 @@ function dolSaveRobotFile($filerobot, $robotcontent)
 
 	if (! $result)
 	{
-		$error++;
 		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
 		return false;
 	}
@@ -1945,7 +1942,6 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 	if (! $result)
 	{
-		$error++;
 		setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
 		return false;
 	}

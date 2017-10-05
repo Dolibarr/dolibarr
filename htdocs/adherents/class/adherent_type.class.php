@@ -59,7 +59,7 @@ class AdherentType extends CommonObject
 	public $note;
 	/** @var bool Can vote*/
 	public $vote;
-	/** @var bool Email sent during validation */
+	/** @var string Email sent during validation */
 	public $mail_valid;
 	/** @var array Array of members */
 	public $members=array();
@@ -481,7 +481,7 @@ class AdherentType extends CommonObject
 
 		// Initialise parametres
 		$this->id = 0;
-		$this->ref = 0;
+		$this->ref = 'MTSPEC';
 		$this->specimen=1;
 
 		$this->label='MEMBERS TYPE SPECIMEN';
