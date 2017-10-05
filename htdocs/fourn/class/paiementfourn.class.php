@@ -702,7 +702,7 @@ class PaiementFourn extends Paiement
 		}
 		else
 		{
-            $modelpath = "core/modules/supplier_payment/pdf/";
+            $modelpath = "core/modules/supplier_payment/doc/";
 
             return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
