@@ -19,7 +19,7 @@
 CREATE TABLE llx_holiday 
 (
 rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-ref			   varchar(30) NOT NULL,       -- number
+ref			   varchar(30) NULL,       -- number
 ref_ext		   varchar(255),
 entity         integer DEFAULT 1 NOT NULL,		-- Multi company id
 fk_user        integer NOT NULL,

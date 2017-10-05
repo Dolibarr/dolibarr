@@ -560,7 +560,8 @@ if (empty($reshook))
 	        	$res = $line->fetch($lineid);
 	        	if (!$res) dol_print_error($db);
 		}
-		
+
+		$productsupplier = new ProductFournisseur($db);
 		if ($productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
 		{
 			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
@@ -682,7 +683,7 @@ if (empty($reshook))
 			dol_print_error($db,$object->error);
 			exit;
 		    }
-	
+
 	}
 
 	// Remove a product line
@@ -1791,7 +1792,7 @@ elseif (! empty($object->id))
 
 	// Supplier order card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier

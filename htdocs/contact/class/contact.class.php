@@ -987,38 +987,52 @@ class Contact extends CommonObject
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
-	 *	@param		int			$withpicto		Include picto with link
-	 *	@param		string		$option			Where the link point to
-	 *	@param		int			$maxlen			Max length of
-	 *  @param		string		$moreparam		Add more param into URL
-	 *	@return		string						String with URL
+	 *	@param		int			$withpicto					Include picto with link
+	 *	@param		string		$option						Where the link point to
+	 *	@param		int			$maxlen						Max length of
+	 *  @param		string		$moreparam					Add more param into URL
+     *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
+	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1)
 	{
 		global $conf, $langs, $hookmanager;
 
 		$result='';
-	        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
-	        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
-	        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
-	        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
-	        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
-	        $phonelist=array();
-	        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
-	        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
-	        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-	        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
-	        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
-	        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
-	        $linkclose="";
-	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-	        {
-	            $label=$langs->trans("ShowContact");
-	            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-	        }
-	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-	       	$linkclose.= ' class="classfortooltip">';
+        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
+        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
+        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
+        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+        $phonelist=array();
+        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
+        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
+        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
+
+        $url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $url .= $moreparam;
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkclose="";
+    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        {
+            $label=$langs->trans("ShowContact");
+            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        }
+       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+       	$linkclose.= ' class="classfortooltip">';
 
 		if (! is_object($hookmanager))
 		{
@@ -1030,18 +1044,17 @@ class Contact extends CommonObject
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
-		$link.=$linkclose;
-
+		$linkstart.=$linkclose;
 		$linkend='</a>';
 
 		if ($option == 'xxx')
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 		}
 
-	        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
-			$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
+	        if ($withpicto) $result.=($linkstart.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
+			$result.=$linkstart.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
 		return $result;
 	}
 

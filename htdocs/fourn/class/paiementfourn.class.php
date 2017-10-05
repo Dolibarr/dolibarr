@@ -37,7 +37,7 @@ class PaiementFourn extends Paiement
     public $element='payment_supplier';
     public $table_element='paiementfourn';
     public $picto = 'payment';
-    
+
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -75,13 +75,14 @@ class PaiementFourn extends Paiement
 	function fetch($id, $ref='', $fk_bank='')
 	{
 	    $error=0;
-	    
+
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
@@ -141,9 +142,9 @@ class PaiementFourn extends Paiement
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
-		
+
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		
+
 		if ($way == 'dolibarr')
 		{
 			$amounts = &$this->amounts;
@@ -154,13 +155,13 @@ class PaiementFourn extends Paiement
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
-		
+
 		foreach ($amounts as $key => $value)
 		{
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
-			
+
 			$newvalue = price2num($value,'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
@@ -174,7 +175,7 @@ class PaiementFourn extends Paiement
 		{
 			$ref = $this->getNextNumRef('');
 			$now=dol_now();
-			
+
 			if ($way == 'dolibarr')
 			{
 				$total = $totalamount;
@@ -185,7 +186,7 @@ class PaiementFourn extends Paiement
 				$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 				$mtotal = $totalamount;
 			}
-		
+
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
@@ -289,7 +290,7 @@ class PaiementFourn extends Paiement
 	function delete($notrigger=0)
 	{
 	    global $conf, $user, $langs;
-	    
+
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -358,7 +359,7 @@ class PaiementFourn extends Paiement
     	    		return -4;
     		    }
 			}
-			
+
 			if (! $notrigger)
 			{
 			    // Appel des triggers
@@ -370,7 +371,7 @@ class PaiementFourn extends Paiement
 			    }
 			    // Fin appel triggers
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -556,7 +557,7 @@ class PaiementFourn extends Paiement
 		if ($withpicto != 2) $result.=$link.$text.$linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
@@ -580,7 +581,7 @@ class PaiementFourn extends Paiement
 		$this->facid = 1;
 		$this->datepaye = $nownotime;
 	}
-	
+
 	/**
 	 *      Return next reference of supplier invoice not already used (or last reference)
 	 *      according to numbering module defined into constant SUPPLIER_PAYMENT_ADDON
@@ -712,13 +713,13 @@ class PaiementFourn extends Paiement
 
 	/**
 	 * 	get the right way of payment
-	 * 
+	 *
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{
 		global $conf;
-		
+
 		$way = 'dolibarr';
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -731,7 +732,7 @@ class PaiementFourn extends Paiement
 				}
 			}
 		}
-		
+
 		return $way;
 	}
 }
