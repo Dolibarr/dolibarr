@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013	  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015	  Jean-François Ferry  <jfefe@aternatik.fr>
+/* Copyright (C) 2013       Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,6 +310,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
+
 		print '<td align="left">';
 		if ($row[0] == 'tobind')
 		{
@@ -317,7 +318,7 @@ if ($resql) {
 		}
 		else print $row[1];
 		print '</td>';
-		print '<td align="left">' . $row[1] . '</td>';
+
 		for($i = 2; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
 		}
