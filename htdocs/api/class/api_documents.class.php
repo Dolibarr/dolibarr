@@ -23,6 +23,7 @@ use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
  * API class for receive files
@@ -51,19 +52,22 @@ class Documents extends DolibarrApi
 
     
     /**
-     * Return list of documents.
+     * Returns a document.
      *
      * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
      * @param   string  $ref            Reference of object (This will define subdir automatically)
      * @param   string  $subdir         NOT YET AVAILABLE : Subdirectory (Only if ref not provided)
      * @return  array                   List of documents
      *
+     * @throws 500
+     * @throws 501
      * @throws 400
      * @throws 401
-     * @throws 200 OK
+     * @throws 200
      */
     public function index($module_part, $ref='', $subdir='') {
 	global $conf;
+	$this->invoice = new Facture($this->db);
 
 	if (empty($module_part)) {
             throw new RestException(400, 'bad value for parameter modulepart');
@@ -72,12 +76,28 @@ class Documents extends DolibarrApi
             throw new RestException(400, 'bad value for parameter ref or subdir');
         }
         if (empty($ref)) {
-            throw new RestException(404, 'FeatureNotYetAvailable');
+            throw new RestException(501, 'FeatureNotYetAvailable');
         }
 	if (!DolibarrApiAccess::$user->rights->ecm->read) {
             throw new RestException(401);
         }
+	
+	//--- Generates the document
+	$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 0 : 1;
+	$hidedesc = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 0 : 1;
+	$hideref = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 0 : 1;
+	$result = $this->invoice->fetch(0, $ref);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+	$result = $this->invoice->generateDocument($this->invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        if( $result <= 0 ) {
+            throw new RestException(500, 'Error generating document');
+        }
 
+
+
+	//--- Finds and returns the document
 	$original_file = str_replace("../","/", $ref.'/'.$ref.'.pdf');
 	$refname=basename(dirname($original_file)."/");
 	$entity=$conf->entity;
