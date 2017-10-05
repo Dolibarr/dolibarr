@@ -71,34 +71,34 @@ $searchform = '';
 
 if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 {
-    if (! is_object($form)) $form=new Form($db);
-    $selected=-1;
-    $searchform.='<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
+	if (! is_object($form)) $form=new Form($db);
+	$selected=-1;
+	$searchform.='<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
 }
 else
 {
-    $conf->global->MAIN_HTML5_PLACEHOLDER = 1;
+	$conf->global->MAIN_HTML5_PLACEHOLDER = 1;
 
 
-    $usedbyinclude = 1; // Used into next include
-    include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
+	$usedbyinclude = 1; // Used into next include
+	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
-    $accesskeyalreadyassigned=array();
-    foreach($arrayresult as $key => $val)
-    {
-        $tmp=explode('?', $val['url']);
-        $urlaction=$tmp[0];
-        $keysearch=$tmp[1];
-        $keysearch=preg_replace('/mainmenu=(.*)&/','',$keysearch);
-        $keysearch=preg_replace('/=/','',$keysearch);
-        $accesskey='';
-        if (! $accesskeyalreadyassigned[$val['label'][0]])
-        {
-            $accesskey=$val['label'][0];
-            $accesskeyalreadyassigned[$accesskey]=$accesskey;
-        }
-        $searchform.=printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('',$val['img'],'', 0, 1));
-    }
+	$accesskeyalreadyassigned=array();
+	foreach($arrayresult as $key => $val)
+	{
+		$tmp=explode('?', $val['url']);
+		$urlaction=$tmp[0];
+		$keysearch=$tmp[1];
+		$keysearch=preg_replace('/mainmenu=(.*)&/','',$keysearch);
+		$keysearch=preg_replace('/=/','',$keysearch);
+		$accesskey='';
+		if (! $accesskeyalreadyassigned[$val['label'][0]])
+		{
+			$accesskey=$val['label'][0];
+			$accesskeyalreadyassigned[$accesskey]=$accesskey;
+		}
+		$searchform.=printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('',$val['img'],'', 0, 1));
+	}
 }
 
 // Execute hook printSearchForm

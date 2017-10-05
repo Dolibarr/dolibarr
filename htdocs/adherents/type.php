@@ -74,11 +74,11 @@ $extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_lastname="";
-    $search_login="";
-    $search_email="";
-    $type="";
-    $sall="";
+	$search_lastname="";
+	$search_login="";
+	$search_email="";
+	$type="";
+	$sall="";
 }
 
 
@@ -234,10 +234,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
 		$moreforfilter = '';
 
@@ -294,7 +294,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-    dol_fiche_head('');
+	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
 	print '<tbody>';
@@ -321,7 +321,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -440,7 +440,7 @@ if ($rowid > 0)
 		}
 		if ($status != '')
 		{
-		    $sql.= " AND d.statut IN (".$db->escape($status).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+			$sql.= " AND d.statut IN (".$db->escape($status).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 		}
 		if ($action == 'search')
 		{
@@ -463,19 +463,19 @@ if ($rowid > 0)
 		}
 		if ($filter == 'uptodate')
 		{
-		    $sql.=" AND datefin >= '".$db->idate($now)."'";
+			$sql.=" AND datefin >= '".$db->idate($now)."'";
 		}
 		if ($filter == 'outofdate')
 		{
-		    $sql.=" AND datefin < '".$db->idate($now)."'";
+			$sql.=" AND datefin < '".$db->idate($now)."'";
 		}
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$resql = $db->query($sql);
-		    if ($resql) $nbtotalofrecords = $db->num_rows($result);
-		    else dol_print_error($db);
+			if ($resql) $nbtotalofrecords = $db->num_rows($result);
+			else dol_print_error($db);
 		}
 		// Add order and limit
 		$sql.= " ".$db->order($sortfield,$sortorder);
@@ -484,54 +484,54 @@ if ($rowid > 0)
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-		    $num = $db->num_rows($resql);
-		    $i = 0;
+			$num = $db->num_rows($resql);
+			$i = 0;
 
-		    $titre=$langs->trans("MembersList");
-		    if ($status != '')
-		    {
-		        if ($status == '-1,1')								{ $titre=$langs->trans("MembersListQualified"); }
-		        else if ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
-		        else if ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
-		        else if ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
-		        else if ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
-		        else if ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
-		    }
-		    elseif ($action == 'search')
-		    {
-		        $titre=$langs->trans("MembersListQualified");
-		    }
+			$titre=$langs->trans("MembersList");
+			if ($status != '')
+			{
+				if ($status == '-1,1')								{ $titre=$langs->trans("MembersListQualified"); }
+				else if ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
+				else if ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
+				else if ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
+				else if ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
+				else if ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
+			}
+			elseif ($action == 'search')
+			{
+				$titre=$langs->trans("MembersListQualified");
+			}
 
-		    if ($type > 0)
-		    {
+			if ($type > 0)
+			{
 				$membertype=new AdherentType($db);
-		        $result=$membertype->fetch($type);
+				$result=$membertype->fetch($type);
 				$titre.=" (".$membertype->label.")";
-		    }
+			}
 
-		    $param="&rowid=".$object->id;
-		    if (! empty($status))			$param.="&status=".$status;
-		    if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
-		    if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
-		    if (! empty($search_login))		$param.="&search_login=".$search_login;
-		    if (! empty($search_email))		$param.="&search_email=".$search_email;
-		    if (! empty($filter))			$param.="&filter=".$filter;
+			$param="&rowid=".$object->id;
+			if (! empty($status))			$param.="&status=".$status;
+			if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
+			if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
+			if (! empty($search_login))		$param.="&search_login=".$search_login;
+			if (! empty($search_email))		$param.="&search_email=".$search_email;
+			if (! empty($filter))			$param.="&filter=".$filter;
 
-		    if ($sall)
-		    {
-		        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
-		    }
+			if ($sall)
+			{
+				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+			}
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
-            print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+			print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
-            $moreforfilter = '';
+			$moreforfilter = '';
 
-            print '<div class="div-table-responsive">';
-            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+			print '<div class="div-table-responsive">';
+			print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 			// Lignes des champs de filtre
 			print '<tr class="liste_titre_filter">';
@@ -551,96 +551,96 @@ if ($rowid > 0)
 
 			print '<td align="right" colspan="2" class="liste_titre">';
 			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		    print '&nbsp; ';
-		    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+			print '&nbsp; ';
+			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 			print '</td>';
 
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
-		    print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("Nature",$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-		    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
-		    print "</tr>\n";
+			print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+			print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+			print_liste_field_titre("Nature",$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
+			print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
+			print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+			print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+			print "</tr>\n";
 
-		    while ($i < $num && $i < $conf->liste_limit)
-		    {
-		        $objp = $db->fetch_object($resql);
+			while ($i < $num && $i < $conf->liste_limit)
+			{
+				$objp = $db->fetch_object($resql);
 
-		        $datefin=$db->jdate($objp->datefin);
+				$datefin=$db->jdate($objp->datefin);
 
-		        $adh=new Adherent($db);
-		        $adh->lastname=$objp->lastname;
-		        $adh->firstname=$objp->firstname;
+				$adh=new Adherent($db);
+				$adh->lastname=$objp->lastname;
+				$adh->firstname=$objp->firstname;
 
-		        // Lastname
-		        print '<tr class="oddeven">';
-		        if ($objp->societe != '')
-		        {
-		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
-		        }
-		        else
-		        {
-		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
-		        }
+				// Lastname
+				print '<tr class="oddeven">';
+				if ($objp->societe != '')
+				{
+					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
+				}
+				else
+				{
+					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
+				}
 
-		        // Login
-		        print "<td>".$objp->login."</td>\n";
+				// Login
+				print "<td>".$objp->login."</td>\n";
 
-		        // Type
-		        /*print '<td class="nowrap">';
+				// Type
+				/*print '<td class="nowrap">';
 		        $membertypestatic->id=$objp->type_id;
 		        $membertypestatic->label=$objp->type;
 		        print $membertypestatic->getNomUrl(1,12);
 		        print '</td>';
 				*/
 
-		        // Moral/Physique
-		        print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+				// Moral/Physique
+				print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
 
-		        // EMail
-		        print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
+				// EMail
+				print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
 
-		        // Statut
-		        print '<td class="nowrap">';
-		        print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
-		        print "</td>";
+				// Statut
+				print '<td class="nowrap">';
+				print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
+				print "</td>";
 
-		        // Date end subscription
-		        if ($datefin)
-		        {
-			        print '<td align="center" class="nowrap">';
-		            if ($datefin < dol_now() && $objp->statut > 0)
-		            {
-		                print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
-		            }
-		            else
-		            {
-		                print dol_print_date($datefin,'day');
-		            }
-		            print '</td>';
-		        }
-		        else
-		        {
-			        print '<td align="left" class="nowrap">';
-			        if ($objp->subscription == 'yes')
-			        {
-		                print $langs->trans("SubscriptionNotReceived");
-		                if ($objp->statut > 0) print " ".img_warning();
-			        }
-			        else
-			        {
-			            print '&nbsp;';
-			        }
-		            print '</td>';
-		        }
+				// Date end subscription
+				if ($datefin)
+				{
+					print '<td align="center" class="nowrap">';
+					if ($datefin < dol_now() && $objp->statut > 0)
+					{
+						print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
+					}
+					else
+					{
+						print dol_print_date($datefin,'day');
+					}
+					print '</td>';
+				}
+				else
+				{
+					print '<td align="left" class="nowrap">';
+					if ($objp->subscription == 'yes')
+					{
+						print $langs->trans("SubscriptionNotReceived");
+						if ($objp->statut > 0) print " ".img_warning();
+					}
+					else
+					{
+						print '&nbsp;';
+					}
+					print '</td>';
+				}
 
-		        // Actions
-		        print '<td align="center">';
+				// Actions
+				print '<td align="center">';
 				if ($user->rights->adherent->creer)
 				{
 					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
@@ -649,25 +649,25 @@ if ($rowid > 0)
 				if ($user->rights->adherent->supprimer)
 				{
 					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
-		        }
+				}
 				print "</td>";
 
-		        print "</tr>\n";
-		        $i++;
-		    }
+				print "</tr>\n";
+				$i++;
+			}
 
-		    print "</table>\n";
-            print '</div>';
-            print '</form>';
+			print "</table>\n";
+			print '</div>';
+			print '</form>';
 
 			if ($num > $conf->liste_limit)
 			{
-			    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
+				print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
 			}
 		}
 		else
 		{
-		    dol_print_error($db);
+			dol_print_error($db);
 		}
 
 	}
@@ -719,10 +719,10 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-		    print $object->showOptionals($extrafields,'edit');
+			print $object->showOptionals($extrafields,'edit');
 		}
 
 		print '</table>';

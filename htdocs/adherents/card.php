@@ -383,8 +383,8 @@ if (empty($reshook))
 							}
 							else
 							{
-							    // Create thumbs
-							    $object->addThumbs($newfile);
+								// Create thumbs
+								$object->addThumbs($newfile);
 							}
 						}
 					}
@@ -407,8 +407,8 @@ if (empty($reshook))
 					}
 				}
 
-	            $rowid=$object->id;
-	            $id=$object->id;
+				$rowid=$object->id;
+				$id=$object->id;
 				$action='';
 
 				if (! empty($backtopage))
@@ -768,7 +768,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($result <= 0) dol_print_error('',$object->error);
 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
+	$objcanvas->display_canvas($action);							// Show template
 }
 else
 {
@@ -835,7 +835,7 @@ else
 		print '<input type="hidden" name="action" value="add">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-        dol_fiche_head('');
+		dol_fiche_head('');
 
 		print '<table class="border" width="100%">';
 		print '<tbody>';
@@ -936,11 +936,11 @@ else
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->skype->enabled))
-	    {
+		// Skype
+		if (! empty($conf->skype->enabled))
+		{
 			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
-	    }
+		}
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -964,16 +964,16 @@ else
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
 
-        print '<tbody>';
+		print '<tbody>';
 		print "</table>\n";
 
-        dol_fiche_end();
+		dol_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
@@ -1180,11 +1180,11 @@ else
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->skype->enabled))
-	    {
-			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
-	    }
+		// Skype
+		if (! empty($conf->skype->enabled))
+		{
+				print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
+		}
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1214,7 +1214,7 @@ else
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit',$parameters);
@@ -1435,10 +1435,10 @@ else
 
 		dol_banner_tab($object, 'rowid', $linkback);
 
-        print '<div class="fichecenter">';
-        print '<div class="fichehalfleft">';
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 
-        print '<div class="underbanner clearboth"></div>';
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
 		// Login
@@ -1468,25 +1468,25 @@ else
 			if ($object->pass) print preg_replace('/./i','*',$object->pass);
 			else
 			{
-			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-			    else print $langs->trans("Hidden");
+				if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+				else print $langs->trans("Hidden");
 			}
 			if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
 			{
-			    $langs->load("errors");
-			    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
-			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
+				$langs->load("errors");
+				$htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
+				print ' '.$form->textwithpicto('', $htmltext,1,'warning');
 			}
 			print '</td></tr>';
 		}
 
-        print '</table>';
+		print '</table>';
 
-        print '</div>';
-        print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div>';
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
 
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Birthday
 		print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
@@ -1503,32 +1503,32 @@ else
 			print '</td></tr>';
 		}
 
-    	// Other attributes
-    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		// Other attributes
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-        // Date end subscription
-        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
-        if ($object->datefin)
-        {
-            print dol_print_date($object->datefin,'day');
-            if ($object->hasDelay()) {
-                print " ".img_warning($langs->trans("Late"));
-            }
-        }
-        else
-        {
-	        if (! $adht->subscription)
-	        {
-	        	print $langs->trans("SubscriptionNotRecorded");
-		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-	        }
-	        else
-	        {
-	            print $langs->trans("SubscriptionNotReceived");
-	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-	        }
-        }
-        print '</td></tr>';
+		// Date end subscription
+		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+		if ($object->datefin)
+		{
+			print dol_print_date($object->datefin,'day');
+			if ($object->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		}
+		else
+		{
+			if (! $adht->subscription)
+			{
+				print $langs->trans("SubscriptionNotRecorded");
+				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+			}
+			else
+			{
+				print $langs->trans("SubscriptionNotReceived");
+				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+			}
+		}
+		print '</td></tr>';
 
 		// Third party Dolibarr
 		if (! empty($conf->societe->enabled))
@@ -1603,9 +1603,9 @@ else
 		print "</table>\n";
 
 		print "</div></div></div>\n";
-        print '<div style="clear:both"></div>';
+		print '<div style="clear:both"></div>';
 
-        dol_fiche_end();
+		dol_fiche_end();
 
 
 		/*
@@ -1806,7 +1806,7 @@ else
 			$morehtmlright.= '</a>';
 
 			// List of actions on element
-	        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'member', $socid, 1, 'listactions', $MAX, '', $morehtmlright);
 

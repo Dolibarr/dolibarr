@@ -69,8 +69,8 @@ if ($result > 0)
 {
 	$object->fetch_thirdparty();
 
-    $adht = new AdherentType($db);
-    $result=$adht->fetch($object->typeid);
+	$adht = new AdherentType($db);
+	$result=$adht->fetch($object->typeid);
 }
 
 
@@ -84,19 +84,19 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Cancel
-    if (GETPOST('cancel','alpha') && ! empty($backtopage))
-    {
-        header("Location: ".$backtopage);
-        exit;
-    }
+	// Cancel
+	if (GETPOST('cancel','alpha') && ! empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
-    {
-        $actioncode='';
-        $search_agenda_label='';
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+	{
+		$actioncode='';
+		$search_agenda_label='';
+	}
 }
 
 
@@ -144,33 +144,33 @@ if ($object->id > 0)
 	dol_fiche_end();
 
 
-    //print '<div class="tabsAction">';
-    //print '</div>';
+	//print '<div class="tabsAction">';
+	//print '</div>';
 
 
 	$morehtmlcenter = '';
-    if (! empty($conf->agenda->enabled))
-    {
-        $morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'">'.$langs->trans("AddAction").'</a>';
-    }
+	if (! empty($conf->agenda->enabled))
+	{
+		$morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'">'.$langs->trans("AddAction").'</a>';
+	}
 
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
-    {
-    	print '<br>';
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+		print '<br>';
 
-    	$param='&id='.$id;
-    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+		$param='&id='.$id;
+		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
 
-    	// List of all actions
-    	$filters=array();
-    	$filters['search_agenda_label']=$search_agenda_label;
+		// List of all actions
+		$filters=array();
+		$filters['search_agenda_label']=$search_agenda_label;
 
-    	// TODO Replace this with same code than into listactions.php
-    	show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
-    }
+		// TODO Replace this with same code than into listactions.php
+		show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
+	}
 }
 
 

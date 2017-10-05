@@ -39,7 +39,7 @@ $langs->load("orders");
 
 // Security check
 if ($user->societe_id) {
-    $socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
 $result=restrictedArea($user,'produit|service');
 
@@ -69,11 +69,11 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
-    $sortfield = 'p.ref';
+	$sortfield = 'p.ref';
 }
 
 if (!$sortorder) {
-    $sortorder = 'ASC';
+	$sortorder = 'ASC';
 }
 
 // Define virtualdiffersfromphysical
@@ -82,7 +82,7 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
 {
-    $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+	$virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
 $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
@@ -94,10 +94,10 @@ if ($mode == 'virtual') $usevirtualstock=1;
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
-    $sref = '';
-    $snom = '';
-    $sal = '';
-    $salert = '';
+	$sref = '';
+	$snom = '';
+	$sal = '';
+	$salert = '';
 	$draftorder='';
 }
 if($draftorder == 'on') $draftchecked = "checked";
@@ -105,152 +105,152 @@ if($draftorder == 'on') $draftchecked = "checked";
 // Create orders
 if ($action == 'order' && isset($_POST['valid']))
 {
-    $linecount = GETPOST('linecount', 'int');
-    $box = 0;
-    unset($_POST['linecount']);
-    if ($linecount > 0)
-    {
-    	$db->begin();
+	$linecount = GETPOST('linecount', 'int');
+	$box = 0;
+	unset($_POST['linecount']);
+	if ($linecount > 0)
+	{
+		$db->begin();
 
-        $suppliers = array();
-        for ($i = 0; $i < $linecount; $i++)
-        {
-            if (GETPOST('choose' . $i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
-            {
-            	//one line
-                $box = $i;
-                $supplierpriceid = GETPOST('fourn'.$i, 'int');
-                //get all the parameters needed to create a line
-                $qty = GETPOST('tobuy'.$i, 'int');
-                //$desc = GETPOST('desc'.$i, 'alpha');
-                $sql = 'SELECT fk_product, fk_soc, ref_fourn';
-                $sql .= ', tva_tx, unitprice, remise_percent FROM ';
-                $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
-                $sql .= ' WHERE rowid = ' . $supplierpriceid;
-                $resql = $db->query($sql);
-                if ($resql && $db->num_rows($resql) > 0)
-                {
-                	if ($qty)
-                	{
-	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
-	                    $line = new CommandeFournisseurLigne($db);
-	                    $line->qty = $qty;
-	                    $line->fk_product = $obj->fk_product;
-
-	                    $product = new Product($db);
-	                    $product->fetch($obj->fk_product);
-	                    if (! empty($conf->global->MAIN_MULTILANGS))
-	                    {
-	                        $product->getMultiLangs();
-	                    }
-	                    $line->desc = $product->description;
-                        if (! empty($conf->global->MAIN_MULTILANGS))
-                        {
-                            // TODO Get desc in language of thirdparty
-                        }
-
-	                    $line->tva_tx = $obj->tva_tx;
-	                    $line->subprice = $obj->unitprice;
-	                    $line->total_ht = $obj->unitprice * $qty;
-	                    $tva = $line->tva_tx / 100;
-	                    $line->total_tva = $line->total_ht * $tva;
-	                    $line->total_ttc = $line->total_ht + $line->total_tva;
-						$line->remise_percent = $obj->remise_percent;
-	                    $line->ref_fourn = $obj->ref_fourn;
-	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
-                	}
-                }
-                else
+		$suppliers = array();
+		for ($i = 0; $i < $linecount; $i++)
+		{
+			if (GETPOST('choose' . $i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
+			{
+				//one line
+				$box = $i;
+				$supplierpriceid = GETPOST('fourn'.$i, 'int');
+				//get all the parameters needed to create a line
+				$qty = GETPOST('tobuy'.$i, 'int');
+				//$desc = GETPOST('desc'.$i, 'alpha');
+				$sql = 'SELECT fk_product, fk_soc, ref_fourn';
+				$sql .= ', tva_tx, unitprice, remise_percent FROM ';
+				$sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
+				$sql .= ' WHERE rowid = ' . $supplierpriceid;
+				$resql = $db->query($sql);
+				if ($resql && $db->num_rows($resql) > 0)
 				{
-                    $error=$db->lasterror();
-                    dol_print_error($db);
-                }
-                $db->free($resql);
-                unset($_POST['fourn' . $i]);
-            }
-            unset($_POST[$i]);
-        }
+					if ($qty)
+					{
+						//might need some value checks
+						$obj = $db->fetch_object($resql);
+						$line = new CommandeFournisseurLigne($db);
+						$line->qty = $qty;
+						$line->fk_product = $obj->fk_product;
 
-        //we now know how many orders we need and what lines they have
-        $i = 0;
-        $orders = array();
-        $suppliersid = array_keys($suppliers);
-        foreach ($suppliers as $supplier)
-        {
-            $order = new CommandeFournisseur($db);
-            // Check if an order for the supplier exists
-            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " WHERE fk_soc = ".$suppliersid[$i];
-            $sql.= " AND source = 42 AND fk_statut = 0";
-            $sql.= " ORDER BY date_creation DESC";
-            $resql = $db->query($sql);
-            if($resql && $db->num_rows($resql) > 0) {
-                $obj = $db->fetch_object($resql);
-                $order->fetch($obj->rowid);
-                foreach ($supplier['lines'] as $line) {
-                    $result = $order->addline(
-                        $line->desc,
-                        $line->subprice,
-                        $line->qty,
-                        $line->tva_tx,
-                        $line->localtax1_tx,
-                        $line->localtax2_tx,
-                        $line->fk_product,
-                        0,
-                        $line->ref_fourn,
-                        $line->remise_percent,
-                        'HT',
-                        0,
-                        $line->info_bits
-                    );
-                }
-                if ($result < 0) {
-                    $fail++;
-                    $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
-                    $msg .= $order->error;
-                    setEventMessages($msg, null, 'errors');
-                } else {
-                    $id = $result;
-                }
-            } else {
-                $order->socid = $suppliersid[$i];
-                $order->fetch_thirdparty();
-                //trick to know which orders have been generated this way
-                $order->source = 42;
-                foreach ($supplier['lines'] as $line) {
-                    $order->lines[] = $line;
-                }
-                $order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
-                $order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
-                $id = $order->create($user);
-                if ($id < 0) {
-                    $fail++;
-                    $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
-                    $msg .= $order->error;
-                    setEventMessages($msg, null, 'errors');
-                }
-                $i++;
-            }
-        }
+						$product = new Product($db);
+						$product->fetch($obj->fk_product);
+						if (! empty($conf->global->MAIN_MULTILANGS))
+						{
+							$product->getMultiLangs();
+						}
+						$line->desc = $product->description;
+						if (! empty($conf->global->MAIN_MULTILANGS))
+						{
+							// TODO Get desc in language of thirdparty
+						}
 
-        if (! $fail && $id)
-        {
-        	$db->commit();
+						$line->tva_tx = $obj->tva_tx;
+						$line->subprice = $obj->unitprice;
+						$line->total_ht = $obj->unitprice * $qty;
+						$tva = $line->tva_tx / 100;
+						$line->total_tva = $line->total_ht * $tva;
+						$line->total_ttc = $line->total_ht + $line->total_tva;
+						$line->remise_percent = $obj->remise_percent;
+						$line->ref_fourn = $obj->ref_fourn;
+						$suppliers[$obj->fk_soc]['lines'][] = $line;
+					}
+				}
+				else
+				{
+					$error=$db->lasterror();
+					dol_print_error($db);
+				}
+				$db->free($resql);
+				unset($_POST['fourn' . $i]);
+			}
+			unset($_POST[$i]);
+		}
 
-            setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
-            header('Location: replenishorders.php');
-            exit;
-        }
-        else
-        {
-        	$db->rollback();
-        }
-    }
-    if ($box == 0)
-    {
-        setEventMessages($langs->trans('SelectProductWithNotNullQty'), null, 'warnings');
-    }
+		//we now know how many orders we need and what lines they have
+		$i = 0;
+		$orders = array();
+		$suppliersid = array_keys($suppliers);
+		foreach ($suppliers as $supplier)
+		{
+			$order = new CommandeFournisseur($db);
+			// Check if an order for the supplier exists
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql.= " WHERE fk_soc = ".$suppliersid[$i];
+			$sql.= " AND source = 42 AND fk_statut = 0";
+			$sql.= " ORDER BY date_creation DESC";
+			$resql = $db->query($sql);
+			if($resql && $db->num_rows($resql) > 0) {
+				$obj = $db->fetch_object($resql);
+				$order->fetch($obj->rowid);
+				foreach ($supplier['lines'] as $line) {
+					$result = $order->addline(
+						$line->desc,
+						$line->subprice,
+						$line->qty,
+						$line->tva_tx,
+						$line->localtax1_tx,
+						$line->localtax2_tx,
+						$line->fk_product,
+						0,
+						$line->ref_fourn,
+						$line->remise_percent,
+						'HT',
+						0,
+						$line->info_bits
+					);
+				}
+				if ($result < 0) {
+					$fail++;
+					$msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+					$msg .= $order->error;
+					setEventMessages($msg, null, 'errors');
+				} else {
+					$id = $result;
+				}
+			} else {
+				$order->socid = $suppliersid[$i];
+				$order->fetch_thirdparty();
+				//trick to know which orders have been generated this way
+				$order->source = 42;
+				foreach ($supplier['lines'] as $line) {
+					$order->lines[] = $line;
+				}
+				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+				$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+				$id = $order->create($user);
+				if ($id < 0) {
+					$fail++;
+					$msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+					$msg .= $order->error;
+					setEventMessages($msg, null, 'errors');
+				}
+				$i++;
+			}
+		}
+
+		if (! $fail && $id)
+		{
+			$db->commit();
+
+			setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
+			header('Location: replenishorders.php');
+			exit;
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	if ($box == 0)
+	{
+		setEventMessages($langs->trans('SelectProductWithNotNullQty'), null, 'warnings');
+	}
 }
 
 
@@ -296,11 +296,11 @@ $sql.= ' WHERE p.entity IN (' . getEntity('product') . ')';
 if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type)) {
-    if ($type == 1) {
-        $sql .= ' AND p.fk_product_type = 1';
-    } else {
-        $sql .= ' AND p.fk_product_type <> 1';
-    }
+	if ($type == 1) {
+		$sql .= ' AND p.fk_product_type = 1';
+	} else {
+		$sql .= ' AND p.fk_product_type <> 1';
+	}
 }
 if ($sref) $sql.=natural_search('p.ref', $sref);
 if ($snom) $sql.=natural_search('p.label', $snom);
@@ -379,8 +379,8 @@ $sql.= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 if (empty($resql))
 {
-    dol_print_error($db);
-    exit;
+	dol_print_error($db);
+	exit;
 }
 //print $sql;
 

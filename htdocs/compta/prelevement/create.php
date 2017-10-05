@@ -53,35 +53,35 @@ $action = GETPOST('action','alpha');
 // Change customer bank information to withdraw
 if ($action == 'modify')
 {
-    for ($i = 1 ; $i < 9 ; $i++)
-    {
-        dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
-    }
+	for ($i = 1 ; $i < 9 ; $i++)
+	{
+		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
+	}
 }
 if ($action == 'create')
 {
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-    $bprev = new BonPrelevement($db);
-    $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
-    if ($result < 0)
-    {
-    	setEventMessages($bprev->error, $bprev->errors, 'errors');
-    }
-    elseif ($result == 0)
-    {
-    	$mesg='';
-        $mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
-        setEventMessages($mesg, null, 'errors');
-        $mesg.='<br>'."\n";
-        foreach($bprev->invoice_in_error as $key => $val)
-        {
-        	$mesg.=$val."<br>\n";
-        }
-    }
-    else
-    {
-    	setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
-    }
+	$bprev = new BonPrelevement($db);
+	$result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
+	if ($result < 0)
+	{
+		setEventMessages($bprev->error, $bprev->errors, 'errors');
+	}
+	elseif ($result == 0)
+	{
+		$mesg='';
+		$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
+		setEventMessages($mesg, null, 'errors');
+		$mesg.='<br>'."\n";
+		foreach($bprev->invoice_in_error as $key => $val)
+		{
+			$mesg.=$val."<br>\n";
+		}
+	}
+	else
+	{
+		setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+	}
 }
 
 
@@ -121,7 +121,7 @@ $nb11=$bprev->NbFactureAPrelever(1,1);
 $pricetowithdraw=$bprev->SommeAPrelever();
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
-    dol_print_error($bprev->error);
+	dol_print_error($bprev->error);
 }
 print '<table class="border" width="100%">';
 
@@ -145,12 +145,12 @@ print "<div class=\"tabsAction\">\n";
 
 if ($nb)
 {
-    if ($pricetowithdraw) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("CreateAll")."</a>\n";
-    else print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+	if ($pricetowithdraw) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("CreateAll")."</a>\n";
+	else print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
 print "</div>\n";
@@ -175,66 +175,66 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    print load_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
+	print load_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
 
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Invoice").'</td>';
-    print '<td>'.$langs->trans("ThirdParty").'</td>';
-    print '<td>'.$langs->trans("RIB").'</td>';
-    print '<td>'.$langs->trans("RUM").'</td>';
-    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-    print '<td align="right">'.$langs->trans("DateRequest").'</td>';
-    print '</tr>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Invoice").'</td>';
+	print '<td>'.$langs->trans("ThirdParty").'</td>';
+	print '<td>'.$langs->trans("RIB").'</td>';
+	print '<td>'.$langs->trans("RUM").'</td>';
+	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+	print '</tr>';
 
-    if ($num)
-    {
-        $var = True;
-        while ($i < $num && $i < 20)
-        {
-            $obj = $db->fetch_object($resql);
+	if ($num)
+	{
+		$var = True;
+		while ($i < $num && $i < 20)
+		{
+			$obj = $db->fetch_object($resql);
 
-            print '<tr class="oddeven">';
-            print '<td>';
-            $invoicestatic->id=$obj->rowid;
-            $invoicestatic->ref=$obj->facnumber;
-            print $invoicestatic->getNomUrl(1,'withdraw');
-            print '</td>';
-            // Thirdparty
-            print '<td>';
-            $thirdpartystatic->fetch($obj->socid);
-            print $thirdpartystatic->getNomUrl(1,'card');
-            print '</td>';
-            // RIB
-            print '<td>';
-            print $thirdpartystatic->display_rib();
-            print '</td>';
-            // RUM
-            print '<td>';
-            print $thirdpartystatic->display_rib('rum');
-            print '</td>';
-            // Amount
-            print '<td align="right">';
-            print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
-            print '</td>';
-            // Date
-            print '<td align="right">';
-            print dol_print_date($db->jdate($obj->date_demande),'day');
-            print '</td>';
-            print '</tr>';
-            $i++;
-        }
-    }
-    else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    print "</table>";
-    print "<br>\n";
+			print '<tr class="oddeven">';
+			print '<td>';
+			$invoicestatic->id=$obj->rowid;
+			$invoicestatic->ref=$obj->facnumber;
+			print $invoicestatic->getNomUrl(1,'withdraw');
+			print '</td>';
+			// Thirdparty
+			print '<td>';
+			$thirdpartystatic->fetch($obj->socid);
+			print $thirdpartystatic->getNomUrl(1,'card');
+			print '</td>';
+			// RIB
+			print '<td>';
+			print $thirdpartystatic->display_rib();
+			print '</td>';
+			// RUM
+			print '<td>';
+			print $thirdpartystatic->display_rib('rum');
+			print '</td>';
+			// Amount
+			print '<td align="right">';
+			print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
+			print '</td>';
+			// Date
+			print '<td align="right">';
+			print dol_print_date($db->jdate($obj->date_demande),'day');
+			print '</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	print "</table>";
+	print "<br>\n";
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 

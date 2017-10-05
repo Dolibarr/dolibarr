@@ -114,7 +114,7 @@ class RemiseCheque extends CommonObject
 		}
 		else
 		{
-		    $this->error=$this->db->lasterror();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -260,22 +260,22 @@ class RemiseCheque extends CommonObject
 			$this->errno=$this->db->lasterrno();
 		}
 
-	    if (! $this->errno && ! empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
-        {
-            $res=$this->validate($user);
-            //if ($res < 0) $error++;
-        }
+		if (! $this->errno && ! empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+		{
+			$res=$this->validate($user);
+			//if ($res < 0) $error++;
+		}
 
-        if (! $this->errno)
-        {
-            $this->db->commit();
-            return $this->id;
-        }
-        else
-        {
-            $this->db->rollback();
-            return $this->errno;
-        }
+		if (! $this->errno)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return $this->errno;
+		}
 	}
 
 	/**
@@ -306,15 +306,15 @@ class RemiseCheque extends CommonObject
 			}
 
 			if ( $this->errno === 0) {
-			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-			    $sql.= " SET fk_bordereau = 0";
-			    $sql.= " WHERE fk_bordereau = ".$this->id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+				$sql.= " SET fk_bordereau = 0";
+				$sql.= " WHERE fk_bordereau = ".$this->id;
 
-			    $resql = $this->db->query($sql);
-			    if (!$resql)
-			    {
-			        $this->errno = -1028;
-				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+				$resql = $this->db->query($sql);
+				if (!$resql)
+				{
+					$this->errno = -1028;
+					dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
 				}
 			}
 		}
@@ -364,7 +364,7 @@ class RemiseCheque extends CommonObject
 
 				if ($num == 1)
 				{
-				    $this->ref = $numref;
+					$this->ref = $numref;
 					$this->statut = 1;
 				}
 				else
@@ -390,7 +390,7 @@ class RemiseCheque extends CommonObject
 		{
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
-            return $this->errno;
+			return $this->errno;
 		}
 	}
 
@@ -807,27 +807,27 @@ class RemiseCheque extends CommonObject
 			$result = $rejectedPayment->create($user);
 			if ($result > 0)
 			{
-                // We created a negative payment, we also add the line as bank transaction
-			    $result=$rejectedPayment->addPaymentToBank($user,'payment','(CheckRejected)',$bankaccount,'','');
+				// We created a negative payment, we also add the line as bank transaction
+				$result=$rejectedPayment->addPaymentToBank($user,'payment','(CheckRejected)',$bankaccount,'','');
 				if ($result > 0)
 				{
-				    $result = $payment->reject();
+					$result = $payment->reject();
 					if ($result > 0)
 					{
-    					$this->db->commit();
-    					return $rejectedPayment->id;
+						$this->db->commit();
+						return $rejectedPayment->id;
 					}
 					else
 					{
-                        $this->db->rollback();
-					    return -1;
+						$this->db->rollback();
+						return -1;
 					}
 				}
 				else
 				{
-				    $this->error = $rejectedPayment->error;
-				    $this->errors = $rejectedPayment->errors;
-				    $this->db->rollback();
+					$this->error = $rejectedPayment->error;
+					$this->errors = $rejectedPayment->errors;
+					$this->db->rollback();
 					return -1;
 				}
 			}
@@ -835,7 +835,7 @@ class RemiseCheque extends CommonObject
 			{
 				$this->error = $rejectedPayment->error;
 				$this->errors = $rejectedPayment->errors;
-			    $this->db->rollback();
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -888,39 +888,39 @@ class RemiseCheque extends CommonObject
 	}
 
 
-    /**
-     *      Set the creation date
-     *
-     *      @param	User		$user           Object user
-     *      @param  int   $date           Date creation
-     *      @return int                 		<0 if KO, >0 if OK
-     */
-    function set_date($user, $date)
-    {
-        if ($user->rights->banque->cheque)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-            $sql.= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
-            $sql.= " WHERE rowid = ".$this->id;
+	/**
+	 *      Set the creation date
+	 *
+	 *      @param	User		$user           Object user
+	 *      @param  int   $date           Date creation
+	 *      @return int                 		<0 if KO, >0 if OK
+	 */
+	function set_date($user, $date)
+	{
+		if ($user->rights->banque->cheque)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+			$sql.= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
+			$sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $this->date_bordereau = $date;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                return -1;
-            }
-        }
-        else
-        {
-            return -2;
-        }
-    }
+			dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date_bordereau = $date;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
 
 	/**
 	 *      Set the ref of bordereau
@@ -990,12 +990,12 @@ class RemiseCheque extends CommonObject
 		global $langs;
 
 		$result='';
-        $label = $langs->trans("ShowCheckReceipt").': '.$this->ref;
+		$label = $langs->trans("ShowCheckReceipt").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 

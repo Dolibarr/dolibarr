@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 class pdf_paiement
 {
 	/**
-     *  Constructor
-     *
-     *  @param      DoliDb		$db      Database handler
+	 *  Constructor
+	 *
+	 *  @param      DoliDb		$db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -125,13 +125,13 @@ class pdf_paiement
 
 		$file = $dir . "/payments-".$year."-".$month.".pdf";
 		switch ($this->doc_type) {
-            case "client":
-                $file = $dir . "/payments-".$year."-".$month.".pdf";
-                break;
-            case "fourn":
-                $file = $dir . "/supplier_payments-".$year."-".$month.".pdf";
-                break;
-        }
+			case "client":
+				$file = $dir . "/payments-".$year."-".$month.".pdf";
+				break;
+			case "fourn":
+				$file = $dir . "/supplier_payments-".$year."-".$month.".pdf";
+				break;
+		}
 
 
 		// Add pdfgeneration hook
@@ -145,29 +145,29 @@ class pdf_paiement
 		global $action;
 		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-        $pdf=pdf_getInstance($this->format);
-        $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
+		$pdf=pdf_getInstance($this->format);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 
-        if (class_exists('TCPDF'))
-        {
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-        }
-        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+		if (class_exists('TCPDF'))
+		{
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
+		}
+		$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-        $num=0;
-        $lines=array();
+		$num=0;
+		$lines=array();
 
 		// count number of lines of payment
 		$sql = "SELECT p.rowid as prowid";
 		switch ($this->doc_type) {
-            case "client":
-                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
-                break;
-            case "fourn":
-                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
-                break;
-        }
+			case "client":
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+				break;
+			case "fourn":
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+				break;
+		}
 		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 		$sql.= " AND p.entity = " . $conf->entity;
 		$result = $this->db->query($sql);
@@ -358,13 +358,13 @@ class pdf_paiement
 
 		$title=$conf->global->MAIN_INFO_SOCIETE_NOM;
 		switch($this->doc_type) {
-            case "client":
-                $title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
-                break;
-            case "fourn":
-                $title.=' - '.$outputlangs->transnoentities("ListOfSupplierPayments");
-                break;
-        }
+			case "client":
+				$title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
+				break;
+			case "fourn":
+				$title.=' - '.$outputlangs->transnoentities("ListOfSupplierPayments");
+				break;
+		}
 		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('','B',$default_font_size + 1);
 		$pdf->SetXY($this->marge_gauche,10);
@@ -372,36 +372,36 @@ class pdf_paiement
 
 		$pdf->SetFont('','',$default_font_size);
 
-        $pdf->SetXY($this->posxdate, 16);
+		$pdf->SetXY($this->posxdate, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true), 0, 'L');
 
-        $pdf->SetXY($this->posxdate+100, 16);
+		$pdf->SetXY($this->posxdate+100, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'R');
 
 
 		// Title line
-        $pdf->SetXY($this->posxdate, $this->tab_top+2);
+		$pdf->SetXY($this->posxdate, $this->tab_top+2);
 		$pdf->MultiCell($this->posxpaymenttype - $this->posxdate, 2, 'Date');
 
 		$pdf->line($this->posxpaymenttype - 1, $this->tab_top, $this->posxpaymenttype - 1, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY($this->posxpaymenttype, $this->tab_top+2);
+		$pdf->SetXY($this->posxpaymenttype, $this->tab_top+2);
 		$pdf->MultiCell($this->posxinvoice - $this->posxpaymenttype, 2, $outputlangs->transnoentities("PaymentMode"), 0, 'L');
 
 		$pdf->line($this->posxinvoice - 1, $this->tab_top, $this->posxinvoice - 1, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY($this->posxinvoice, $this->tab_top+2);
+		$pdf->SetXY($this->posxinvoice, $this->tab_top+2);
 		$pdf->MultiCell($this->posxbankaccount - $this->posxinvoice, 2, $outputlangs->transnoentities("Invoice"), 0, 'L');
 
 		$pdf->line($this->posxbankaccount - 1, $this->tab_top, $this->posxbankaccount - 1, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY($this->posxbankaccount, $this->tab_top+2);
+		$pdf->SetXY($this->posxbankaccount, $this->tab_top+2);
 		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("Account"), 0, 'L');
 
 
 		$pdf->line($this->posxinvoiceamount - 1, $this->tab_top, $this->posxinvoiceamount - 1, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY($this->posxinvoiceamount, $this->tab_top+2);
+		$pdf->SetXY($this->posxinvoiceamount, $this->tab_top+2);
 		$pdf->MultiCell($this->posxpaymentamount - $this->posxinvoiceamount - 1, 2, $outputlangs->transnoentities("AmountInvoice"), 0, 'R');
 
 		$pdf->line($this->posxpaymentamount - 1, $this->tab_top, $this->posxpaymentamount - 1, $this->tab_top + $this->tab_height + 10);
-        $pdf->SetXY($this->posxpaymentamount, $this->tab_top+2);
+		$pdf->SetXY($this->posxpaymentamount, $this->tab_top+2);
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount - 1, 2, $outputlangs->transnoentities("AmountPayment"), 0, 'R');
 
 		$pdf->line($this->marge_gauche, $this->tab_top + 10, $this->page_largeur - $this->marge_droite, $this->tab_top + 10);

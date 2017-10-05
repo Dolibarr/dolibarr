@@ -72,15 +72,15 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 if ($prev_id > 0 || $ref)
 {
   	if ($object->fetch($prev_id, $ref) == 0)
-    {
-    	$head = prelevement_prepare_head($object);
+	{
+		$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-      	print '<table class="border" width="100%">';
+	  	print '<table class="border" width="100%">';
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec,'day').'</td></tr>';
@@ -136,11 +136,11 @@ if ($prev_id > 0 || $ref)
 
 		dol_fiche_end();
 
-    }
+	}
   	else
-    {
-      	dol_print_error($db);
-    }
+	{
+	  	dol_print_error($db);
+	}
 }
 
 
@@ -166,8 +166,8 @@ $sql.= $db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -182,13 +182,13 @@ if ($result)
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
@@ -212,75 +212,75 @@ if ($result)
 	$totalamount_requested = 0;
 
   	while ($i < min($num, $limit))
-    {
-     	$obj = $db->fetch_object($result);
+	{
+	 	$obj = $db->fetch_object($result);
 
-     	$invoicetmp->id = $obj->facid;
-     	$invoicetmp->ref = $obj->ref;
+	 	$invoicetmp->id = $obj->facid;
+	 	$invoicetmp->ref = $obj->ref;
 
-     	$thirdpartytmp->id = $obj->socid;
-     	$thirdpartytmp->name = $obj->name;
+	 	$thirdpartytmp->id = $obj->socid;
+	 	$thirdpartytmp->name = $obj->name;
 
-      	print '<tr class="oddeven">';
+	  	print '<tr class="oddeven">';
 
-      	print "<td>";
-      	print $invoicetmp->getNomUrl(1);
-        print "</td>\n";
+	  	print "<td>";
+	  	print $invoicetmp->getNomUrl(1);
+		print "</td>\n";
 
-      	print '<td>';
-      	print $thirdpartytmp->getNomUrl(1);
-      	print "</td>\n";
+	  	print '<td>';
+	  	print $thirdpartytmp->getNomUrl(1);
+	  	print "</td>\n";
 
-      	// Amount of invoice
-      	print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+	  	// Amount of invoice
+	  	print '<td align="right">'.price($obj->total_ttc)."</td>\n";
 
-      	// Amount requested
-      	print '<td align="right">'.price($obj->amount_requested)."</td>\n";
+	  	// Amount requested
+	  	print '<td align="right">'.price($obj->amount_requested)."</td>\n";
 
-      	// Status of requests
-      	print '<td align="center">';
+	  	// Status of requests
+	  	print '<td align="center">';
 
-      	if ($obj->statut == 0)
+	  	if ($obj->statut == 0)
 		{
 	  		print '-';
 		}
-      	elseif ($obj->statut == 2)
+	  	elseif ($obj->statut == 2)
 		{
 	  		print $langs->trans("StatusCredited");
 		}
-      	elseif ($obj->statut == 3)
+	  	elseif ($obj->statut == 3)
 		{
 	  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 		}
 
-      	print "</td>";
+	  	print "</td>";
 
-      	print "<td></td>";
+	  	print "<td></td>";
 
-      	print "</tr>\n";
+	  	print "</tr>\n";
 
-      	$totalinvoices += $obj->total_ttc;
-      	$totalamount_requested += $obj->amount_requested;
+	  	$totalinvoices += $obj->total_ttc;
+	  	$totalamount_requested += $obj->amount_requested;
 
-      	$i++;
-    }
+	  	$i++;
+	}
 
   	if ($num > 0)
-    {
-      	print '<tr class="liste_total">';
-     	print '<td>'.$langs->trans("Total").'</td>';
-      	print '<td>&nbsp;</td>';
-      	print '<td align="right">';
+	{
+	  	print '<tr class="liste_total">';
+	 	print '<td>'.$langs->trans("Total").'</td>';
+	  	print '<td>&nbsp;</td>';
+	  	print '<td align="right">';
 		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.
-      	if ($totalamount_requested != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+	  	if ($totalamount_requested != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
 		print "</td>\n";
-      	print '<td align="right">';
+	  	print '<td align="right">';
 		print price($totalamount_requested);
-      	print "</td>\n";
-      	print '<td>&nbsp;</td>';
-      	print '<td>&nbsp;</td>';
-      	print "</tr>\n";
-    }
+	  	print "</td>\n";
+	  	print '<td>&nbsp;</td>';
+	  	print '<td>&nbsp;</td>';
+	  	print "</tr>\n";
+	}
 
   	print "</table>";
   	print '</div>';

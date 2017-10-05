@@ -33,25 +33,25 @@
  */
 function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
 {
-    //declaring of global variables
-    global $conf, $langs;
-    $USE_PROXY=empty($conf->global->MAIN_PROXY_USE)?0:$conf->global->MAIN_PROXY_USE;
-    $PROXY_HOST=empty($conf->global->MAIN_PROXY_HOST)?0:$conf->global->MAIN_PROXY_HOST;
-    $PROXY_PORT=empty($conf->global->MAIN_PROXY_PORT)?0:$conf->global->MAIN_PROXY_PORT;
-    $PROXY_USER=empty($conf->global->MAIN_PROXY_USER)?0:$conf->global->MAIN_PROXY_USER;
-    $PROXY_PASS=empty($conf->global->MAIN_PROXY_PASS)?0:$conf->global->MAIN_PROXY_PASS;
+	//declaring of global variables
+	global $conf, $langs;
+	$USE_PROXY=empty($conf->global->MAIN_PROXY_USE)?0:$conf->global->MAIN_PROXY_USE;
+	$PROXY_HOST=empty($conf->global->MAIN_PROXY_HOST)?0:$conf->global->MAIN_PROXY_HOST;
+	$PROXY_PORT=empty($conf->global->MAIN_PROXY_PORT)?0:$conf->global->MAIN_PROXY_PORT;
+	$PROXY_USER=empty($conf->global->MAIN_PROXY_USER)?0:$conf->global->MAIN_PROXY_USER;
+	$PROXY_PASS=empty($conf->global->MAIN_PROXY_PASS)?0:$conf->global->MAIN_PROXY_PASS;
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
-    //setting the curl parameters.
-    $ch = curl_init();
+	//setting the curl parameters.
+	$ch = curl_init();
 
-    /*print $API_Endpoint."-".$API_version."-".$PAYPAL_API_USER."-".$PAYPAL_API_PASSWORD."-".$PAYPAL_API_SIGNATURE."<br>";
+	/*print $API_Endpoint."-".$API_version."-".$PAYPAL_API_USER."-".$PAYPAL_API_PASSWORD."-".$PAYPAL_API_SIGNATURE."<br>";
      print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
      print $nvpStr;
      exit;*/
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_VERBOSE, 1);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_VERBOSE, 1);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
 	@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));   // We use @ here because this may return warning if safe mode is on or open_basedir is on
@@ -64,99 +64,99 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 	if (! empty($conf->global->MAIN_CURL_SSLVERSION)) curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
-    //turning off the server and peer verification(TrustManager Concept).
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+	//turning off the server and peer verification(TrustManager Concept).
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
-    curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
+	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
-    //curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);		// We want response
-    if ($postorget == 'POST')
-    {
-    	curl_setopt($ch, CURLOPT_POST, 1);	// POST
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
-    }
-    else if ($postorget == 'PUT')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-    	if (! is_array($param)) parse_str($param, $array_param);
-    	else
-    	{
-    	    dol_syslog("parameter param must be a string", LOG_WARNING);
-    	    $array_param=$param;
-    	}
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
-    }
-    else if ($postorget == 'PUTALREADYFORMATED')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
-    }
-    else if ($postorget == 'HEAD')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
-    	curl_setopt($ch, CURLOPT_NOBODY, true);
-    }
-    else if ($postorget == 'DELETE')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');	// POST
-    }
-    else
-    {
-    	curl_setopt($ch, CURLOPT_POST, 0);			// GET
-    }
+	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);		// We want response
+	if ($postorget == 'POST')
+	{
+		curl_setopt($ch, CURLOPT_POST, 1);	// POST
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
+	}
+	else if ($postorget == 'PUT')
+	{
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
+		if (! is_array($param)) parse_str($param, $array_param);
+		else
+		{
+			dol_syslog("parameter param must be a string", LOG_WARNING);
+			$array_param=$param;
+		}
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
+	}
+	else if ($postorget == 'PUTALREADYFORMATED')
+	{
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
+	}
+	else if ($postorget == 'HEAD')
+	{
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+	}
+	else if ($postorget == 'DELETE')
+	{
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');	// POST
+	}
+	else
+	{
+		curl_setopt($ch, CURLOPT_POST, 0);			// GET
+	}
 
-    //if USE_PROXY constant set at begin of this method.
-    if ($USE_PROXY)
-    {
-        dol_syslog("getURLContent set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);
-        //curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
-        curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
-        if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
-    }
+	//if USE_PROXY constant set at begin of this method.
+	if ($USE_PROXY)
+	{
+		dol_syslog("getURLContent set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);
+		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
+		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
+		if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
+	}
 
-    //getting response from server
-    $response = curl_exec($ch);
+	//getting response from server
+	$response = curl_exec($ch);
 
-    $request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
+	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
 
-    dol_syslog("getURLContent request=".$request);
-    dol_syslog("getURLContent response=".$response);
+	dol_syslog("getURLContent request=".$request);
+	dol_syslog("getURLContent response=".$response);
 
-    $rep=array();
-    if (curl_errno($ch))
-    {
-        // Ad keys to $rep
-        $rep['content']=$response;
+	$rep=array();
+	if (curl_errno($ch))
+	{
+		// Ad keys to $rep
+		$rep['content']=$response;
 
-        // moving to display page to display curl errors
+		// moving to display page to display curl errors
 		$rep['curl_error_no']=curl_errno($ch);
-        $rep['curl_error_msg']=curl_error($ch);
+		$rep['curl_error_msg']=curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".join(',',$rep));
-    }
-    else
-    {
-    	$info = curl_getinfo($ch);
+	}
+	else
+	{
+		$info = curl_getinfo($ch);
 
-    	// Ad keys to $rep
-    	$rep = $info;
-    	//$rep['header_size']=$info['header_size'];
-    	//$rep['http_code']=$info['http_code'];
-    	dol_syslog("getURLContent http_code=".$rep['http_code']);
+		// Ad keys to $rep
+		$rep = $info;
+		//$rep['header_size']=$info['header_size'];
+		//$rep['http_code']=$info['http_code'];
+		dol_syslog("getURLContent http_code=".$rep['http_code']);
 
-        // Add more keys to $rep
-        $rep['content']=$response;
-    	$rep['curl_error_no']='';
-    	$rep['curl_error_msg']='';
+		// Add more keys to $rep
+		$rep['content']=$response;
+		$rep['curl_error_no']='';
+		$rep['curl_error_msg']='';
 
-    	//closing the curl
-        curl_close($ch);
-    }
+		//closing the curl
+		curl_close($ch);
+	}
 
-    return $rep;
+	return $rep;
 }
 
 

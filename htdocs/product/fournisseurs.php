@@ -71,7 +71,7 @@ $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 $object = new ProductFournisseur($db);
 if ($id > 0 || $ref)
 {
-    $object->fetch($id,$ref);
+	$object->fetch($id,$ref);
 }
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -103,7 +103,7 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-		        $action='';
+				$action='';
 			}
 			else
 			{
@@ -229,9 +229,9 @@ if (empty($reshook))
 					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
-                        $priceparser = new PriceParser($db);
-                        $object->fk_supplier_price_expression = $price_expression;
-                        $price_result = $priceparser->parseProductSupplier($object);
+						$priceparser = new PriceParser($db);
+						$object->fk_supplier_price_expression = $price_expression;
+						$price_result = $priceparser->parseProductSupplier($object);
 						if ($price_result < 0) { //Expression is not valid
 							$error++;
 							setEventMessages($priceparser->translatedError(), null, 'errors');
@@ -309,44 +309,44 @@ if ($id > 0 || $ref)
 			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-		    $object->next_prev_filter=" fk_product_type = ".$object->type;
+			$object->next_prev_filter=" fk_product_type = ".$object->type;
 
-            $shownav = 1;
-            if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+			$shownav = 1;
+			if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-            print '<div class="fichecenter">';
+			print '<div class="fichecenter">';
 
-            print '<div class="underbanner clearboth"></div>';
-            print '<table class="border tableforfield" width="100%">';
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border tableforfield" width="100%">';
 
 			// Minimum Price
 			print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
-            print '<td colspan="2">';
+			print '<td colspan="2">';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
 			{
-			    if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur();
-			    else print $langs->trans("NotDefined");
+				if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur();
+				else print $langs->trans("NotDefined");
 			}
-            print '</td></tr>';
+			print '</td></tr>';
 
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
-            // Accountancy sell code
-            print '<tr><td>';
+			// Accountancy sell code
+			print '<tr><td>';
 			$textdesc =$langs->trans("CostPriceDescription");
 			$textdesc.="<br>".$langs->trans("CostPriceUsage");
 			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-            print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
-            print '</td><td colspan="2">';
-            print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
-            print '</td></tr>';
+			print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+			print '</td><td colspan="2">';
+			print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+			print '</td></tr>';
 
 			print '</table>';
 
-            print '</div>';
-            print '<div style="clear:both"></div>';
+			print '</div>';
+			print '<div style="clear:both"></div>';
 
 			dol_fiche_end();
 
@@ -394,7 +394,7 @@ if ($id > 0 || $ref)
 					print $form->select_company(GETPOST("id_fourn"),'id_fourn','fournisseur=1','SelectThirdParty',0,0,$events);
 
 					$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$object->id);
-				    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
+					$reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
 					if (empty($reshook))
 					{
 						if (empty($form->result))
@@ -460,17 +460,17 @@ if ($id > 0 || $ref)
 				//print $form->load_tva('tva_tx',$object->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
 				if (! empty($rowid))	// If we have a supplier, it is an update, we must show the vat of current supplier price
 				{
-				    $tmpproductsupplier=new ProductFournisseur($db);
-				    $tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
+					$tmpproductsupplier=new ProductFournisseur($db);
+					$tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
 					$default_vat=$tmpproductsupplier->fourn_tva_tx;
 					$default_npr=$tmpproductsupplier->fourn_tva_npr;
 				}
 				else
 				{
-                    if (empty($default_vat))
-                    {
-                        $default_vat=$object->tva_tx;
-                    }
+					if (empty($default_vat))
+					{
+						$default_vat=$object->tva_tx;
+					}
 				}
 				$vattosuggest=(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):''));
 				$vattosuggest=preg_replace('/\s*\(.*\)$/','', $vattosuggest);
@@ -543,7 +543,7 @@ if ($id > 0 || $ref)
 						print '<tr>';
 						print '<td>'.$langs->trans("Charges").'</td>';
 						print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($object->fourn_charges)?price($object->fourn_charges):'')).'">';
-		        		print '</td>';
+						print '</td>';
 						print '</tr>';
 					}
 				}
@@ -551,8 +551,8 @@ if ($id > 0 || $ref)
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);
-				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
-                    print $hookmanager->resPrint;
+					$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
+					print $hookmanager->resPrint;
 				}
 
 				print '</table>';
@@ -595,11 +595,11 @@ if ($id > 0 || $ref)
 				$product_fourn = new ProductFournisseur($db);
 				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
 				$nbtotalofrecords = count($product_fourn_list);
-			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
 
 				// Suppliers list title
-			    print '<div class="div-table-responsive">';
-			    print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder" width="100%">';
 				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
@@ -643,7 +643,7 @@ if ($id > 0 || $ref)
 						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 						{
 							$form->load_cache_availability();
-                			$availability= $form->cache_availability[$productfourn->fk_availability]['label'];
+							$availability= $form->cache_availability[$productfourn->fk_availability]['label'];
 							print '<td align="left">'.$availability.'</td>';
 						}
 
@@ -700,7 +700,7 @@ if ($id > 0 || $ref)
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
-						    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+							$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
 						}
 
 						// Modify-Remove
@@ -719,7 +719,7 @@ if ($id > 0 || $ref)
 				}
 				else
 				{
-				    dol_print_error($db);
+					dol_print_error($db);
 				}
 
 				print '</table>';

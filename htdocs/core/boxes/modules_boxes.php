@@ -113,7 +113,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 * Constructor
 	 *
 	 * @param   DoliDB  $db     Database handler
-     * @param   string  $param  More parameters
+	 * @param   string  $param  More parameters
 	 */
 	function __construct($db,$param='')
 	{
@@ -210,169 +210,169 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 		if (! empty($this->hidden)) return '\n<!-- Box ".get_class($this)." hidden -->\n';    // Nothing done if hidden (for example when user has no permission)
 
-        require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
 		$var = false;
 
-        $cachetime = 900;   // 900 : 15mn
-        $cachedir = DOL_DATA_ROOT.'/boxes/temp';
-        $fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'.cache';
-        $filename = '/box-'.$fileid;
-        $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
-        $out = '';
+		$cachetime = 900;   // 900 : 15mn
+		$cachedir = DOL_DATA_ROOT.'/boxes/temp';
+		$fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'.cache';
+		$filename = '/box-'.$fileid;
+		$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
+		$out = '';
 
-        if ($refresh) {
-            dol_syslog(get_class($this).'::showBox');
+		if ($refresh) {
+			dol_syslog(get_class($this).'::showBox');
 
-            // Define nbcol and nblines of the box to show
-            $nbcol=0;
-            if (isset($contents[0])) $nbcol=count($contents[0]);
-            $nblines=count($contents);
+			// Define nbcol and nblines of the box to show
+			$nbcol=0;
+			if (isset($contents[0])) $nbcol=count($contents[0]);
+			$nblines=count($contents);
 
-            $out.= "\n<!-- Box ".get_class($this)." start -->\n";
-            $out.= '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
+			$out.= "\n<!-- Box ".get_class($this)." start -->\n";
+			$out.= '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
 
-            if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
-            {
-                $out.= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
-            }
+			if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
+			{
+				$out.= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
+			}
 
-            // Show box title
-            if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']))
-            {
-                $out.= '<tr class="liste_titre box_titre">';
-                $out.= '<td';
-                if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
-                $out.= '>';
-                if ($conf->use_javascript_ajax)
-                {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
-                }
-                if (! empty($head['text']))
-                {
-                    $s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
-                    $out.= $s;
-                }
-                $out.= '</td>';
+			// Show box title
+			if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']))
+			{
+				$out.= '<tr class="liste_titre box_titre">';
+				$out.= '<td';
+				if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
+				$out.= '>';
+				if ($conf->use_javascript_ajax)
+				{
+					$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
+				}
+				if (! empty($head['text']))
+				{
+					$s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
+					$out.= $s;
+				}
+				$out.= '</td>';
 
-                if (! empty($conf->use_javascript_ajax))
-                {
-                    $sublink='';
-                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                    if (! empty($head['sublink']))  $sublink.= '</a>';
+				if (! empty($conf->use_javascript_ajax))
+				{
+					$sublink='';
+					if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+					if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+					if (! empty($head['sublink']))  $sublink.= '</a>';
 
-                    $out.= '<td class="nocellnopadd boxclose right nowraponall">';
-                    $out.=$sublink;
-                    // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
-                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
-                    $label=$head['text'];
-                    if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
-                    $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
-                    $out.= '</td></tr></table>';
-                }
+					$out.= '<td class="nocellnopadd boxclose right nowraponall">';
+					$out.=$sublink;
+					// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+					$out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
+					$out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
+					$label=$head['text'];
+					if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+					$out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
+					$out.= '</td></tr></table>';
+				}
 
-                $out.= "</tr>\n";
-            }
+				$out.= "</tr>\n";
+			}
 
-            // Show box lines
-            if ($nblines)
-            {
-                // Loop on each record
-                for ($i=0, $n=$nblines; $i < $n; $i++)
-                {
-                    if (isset($contents[$i]))
-                    {
-                        // TR
-                        if (isset($contents[$i][0]['tr'])) $out.= '<tr '.$contents[$i][0]['tr'].'>';
-                        else $out.= '<tr class="oddeven">';
+			// Show box lines
+			if ($nblines)
+			{
+				// Loop on each record
+				for ($i=0, $n=$nblines; $i < $n; $i++)
+				{
+					if (isset($contents[$i]))
+					{
+						// TR
+						if (isset($contents[$i][0]['tr'])) $out.= '<tr '.$contents[$i][0]['tr'].'>';
+						else $out.= '<tr class="oddeven">';
 
-                        // Loop on each TD
-                        $nbcolthisline=count($contents[$i]);
-                        for ($j=0; $j < $nbcolthisline; $j++) {
-                            // Define tdparam
-                            $tdparam='';
-                            if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
+						// Loop on each TD
+						$nbcolthisline=count($contents[$i]);
+						for ($j=0; $j < $nbcolthisline; $j++) {
+							// Define tdparam
+							$tdparam='';
+							if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
-                            $text=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-                            $textwithnotags=preg_replace('/<([^>]+)>/i','',$text);
-                            $text2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-                            $text2withnotags=preg_replace('/<([^>]+)>/i','',$text2);
-                            $textnoformat=isset($contents[$i][$j]['textnoformat'])?$contents[$i][$j]['textnoformat']:'';
-                            //$out.= "xxx $textwithnotags y";
-                            if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip']="";
-                            $tooltip=isset($contents[$i][$j]['tooltip'])?$contents[$i][$j]['tooltip']:'';
+							$text=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
+							$textwithnotags=preg_replace('/<([^>]+)>/i','',$text);
+							$text2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
+							$text2withnotags=preg_replace('/<([^>]+)>/i','',$text2);
+							$textnoformat=isset($contents[$i][$j]['textnoformat'])?$contents[$i][$j]['textnoformat']:'';
+							//$out.= "xxx $textwithnotags y";
+							if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip']="";
+							$tooltip=isset($contents[$i][$j]['tooltip'])?$contents[$i][$j]['tooltip']:'';
 
-                            $out.= '<td'.$tdparam.'>'."\n";
+							$out.= '<td'.$tdparam.'>'."\n";
 
-                            // Url
-                            if (! empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo']))
-                            {
-                                $out.= '<a href="'.$contents[$i][$j]['url'].'"';
-                                if (!empty($tooltip)) {
-                                    $out .= ' title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
-                                }
-                                //$out.= ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
-                                $out.= isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-                                $out.= '>';
-                            }
+							// Url
+							if (! empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo']))
+							{
+								$out.= '<a href="'.$contents[$i][$j]['url'].'"';
+								if (!empty($tooltip)) {
+									$out .= ' title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
+								}
+								//$out.= ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
+								$out.= isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+								$out.= '>';
+							}
 
-                            // Logo
-                            if (! empty($contents[$i][$j]['logo']))
-                            {
-                                $logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
-                                $out.= '<a href="'.$contents[$i][$j]['url'].'">';
-                                $out.= img_object($langs->trans("Show").' '.$tooltip, $logo, 'class="classfortooltip"');
-                            }
+							// Logo
+							if (! empty($contents[$i][$j]['logo']))
+							{
+								$logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
+								$out.= '<a href="'.$contents[$i][$j]['url'].'">';
+								$out.= img_object($langs->trans("Show").' '.$tooltip, $logo, 'class="classfortooltip"');
+							}
 
-                            $maxlength=$MAXLENGTHBOX;
-                            if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
+							$maxlength=$MAXLENGTHBOX;
+							if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-                            if ($maxlength) $textwithnotags=dol_trunc($textwithnotags,$maxlength);
-                            if (preg_match('/^<img/i',$text) || preg_match('/^<div/i',$text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
-                            else $out.= $textwithnotags;                // show text with html cleaning
+							if ($maxlength) $textwithnotags=dol_trunc($textwithnotags,$maxlength);
+							if (preg_match('/^<img/i',$text) || preg_match('/^<div/i',$text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
+							else $out.= $textwithnotags;                // show text with html cleaning
 
-                            // End Url
-                            if (! empty($contents[$i][$j]['url'])) $out.= '</a>';
+							// End Url
+							if (! empty($contents[$i][$j]['url'])) $out.= '</a>';
 
-                            if (preg_match('/^<img/i',$text2) || preg_match('/^<div/i',$text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
-                            else $out.= $text2withnotags;               // show text with html cleaning
+							if (preg_match('/^<img/i',$text2) || preg_match('/^<div/i',$text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
+							else $out.= $text2withnotags;               // show text with html cleaning
 
-                            if (! empty($textnoformat)) $out.= "\n".$textnoformat."\n";
+							if (! empty($textnoformat)) $out.= "\n".$textnoformat."\n";
 
-                            $out.= "</td>\n";
-                        }
+							$out.= "</td>\n";
+						}
 
-                        $out.= "</tr>\n";
-                    }
-                }
-            }
+						$out.= "</tr>\n";
+					}
+				}
+			}
 
-            if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
-            {
-                $out.= "</table>\n";
-            }
+			if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
+			{
+				$out.= "</table>\n";
+			}
 
-            // If invisible box with no contents
-            if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && ! $nblines) $out.= "<br>\n";
+			// If invisible box with no contents
+			if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && ! $nblines) $out.= "<br>\n";
 
-            $out.= "</div>\n";
-            $out.= "<!-- Box ".get_class($this)." end -->\n\n";
-            if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-                dol_filecache($cachedir, $filename, $out);
-            }
-        } else {
-            dol_syslog(get_class($this).'::showBoxCached');
-            $out = "<!-- Box ".get_class($this)." from cache -->";
-            $out.= dol_readcachefile($cachedir, $filename);
-        }
+			$out.= "</div>\n";
+			$out.= "<!-- Box ".get_class($this)." end -->\n\n";
+			if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+				dol_filecache($cachedir, $filename, $out);
+			}
+		} else {
+			dol_syslog(get_class($this).'::showBoxCached');
+			$out = "<!-- Box ".get_class($this)." from cache -->";
+			$out.= dol_readcachefile($cachedir, $filename);
+		}
 
-        if ($nooutput) return $out;
-        else print $out;
+		if ($nooutput) return $out;
+		else print $out;
 
-        return '';
+		return '';
 	}
 
 

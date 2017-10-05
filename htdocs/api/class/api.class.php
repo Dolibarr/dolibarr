@@ -29,52 +29,52 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class DolibarrApi
 {
 
-    /**
-     * @var DoliDb        $db Database object
-     */
-    static protected $db;
+	/**
+	 * @var DoliDb        $db Database object
+	 */
+	static protected $db;
 
-    /**
-     * @var Restler     $r	Restler object
-     */
-    var $r;
+	/**
+	 * @var Restler     $r	Restler object
+	 */
+	var $r;
 
-    /**
-     * Constructor
-     *
-     * @param	DoliDb	$db		        Database handler
-     * @param   string  $cachedir       Cache dir
-     * @param   boolean $refreshCache   Update cache
-     */
-    function __construct($db, $cachedir='', $refreshCache=false)
-    {
-        global $conf, $dolibarr_main_url_root;
+	/**
+	 * Constructor
+	 *
+	 * @param	DoliDb	$db		        Database handler
+	 * @param   string  $cachedir       Cache dir
+	 * @param   boolean $refreshCache   Update cache
+	 */
+	function __construct($db, $cachedir='', $refreshCache=false)
+	{
+		global $conf, $dolibarr_main_url_root;
 
-        if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
-        Defaults::$cacheDirectory = $cachedir;
+		if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
+		Defaults::$cacheDirectory = $cachedir;
 
-        $this->db = $db;
-        $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
-        $this->r = new Restler($production_mode, $refreshCache);
+		$this->db = $db;
+		$production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
+		$this->r = new Restler($production_mode, $refreshCache);
 
-        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
-        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim(DOL_MAIN_URL_ROOT));
-        $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
+		$urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim(DOL_MAIN_URL_ROOT));
+		$urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
 
-        $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
-        $this->r->setAPIVersion(1);
-    }
+		$this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
+		$this->r->setAPIVersion(1);
+	}
 
-    /**
-     * Executed method when API is called without parameter
-     *
-     * Display a short message an return a http code 200
-     *
-     * @return array
-     */
-    /* Disabled, most APIs does not share same signature for method index
+	/**
+	 * Executed method when API is called without parameter
+	 *
+	 * Display a short message an return a http code 200
+	 *
+	 * @return array
+	 */
+	/* Disabled, most APIs does not share same signature for method index
     function index()
     {
         return array(
@@ -86,81 +86,81 @@ class DolibarrApi
     }*/
 
 
-    /**
-     * Clean sensible object datas
-     *
-     * @param   object  $object	Object to clean
-     * @return	array	Array of cleaned object properties
-     */
-    function _cleanObjectDatas($object) {
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object	Object to clean
+	 * @return	array	Array of cleaned object properties
+	 */
+	function _cleanObjectDatas($object) {
 
-        // Remove $db object property for object
-        unset($object->db);
+		// Remove $db object property for object
+		unset($object->db);
 
-        // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
-        unset($object->linkedObjects);
+		// Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+		unset($object->linkedObjects);
 
-        unset($object->lines); // should be ->lines
+		unset($object->lines); // should be ->lines
 
-        unset($object->fields);
+		unset($object->fields);
 
-        unset($object->oldline);
+		unset($object->oldline);
 
-        unset($object->error);
-        unset($object->errors);
+		unset($object->error);
+		unset($object->errors);
 
-        unset($object->ref_previous);
-        unset($object->ref_next);
-        unset($object->ref_int);
+		unset($object->ref_previous);
+		unset($object->ref_next);
+		unset($object->ref_int);
 
-        unset($object->projet);     // Should be fk_project
-        unset($object->project);    // Should be fk_project
-        unset($object->author);     // Should be fk_user_author
-        unset($object->timespent_old_duration);
-        unset($object->timespent_id);
-        unset($object->timespent_duration);
-        unset($object->timespent_date);
-        unset($object->timespent_datehour);
-        unset($object->timespent_withhour);
-        unset($object->timespent_fk_user);
-        unset($object->timespent_note);
+		unset($object->projet);     // Should be fk_project
+		unset($object->project);    // Should be fk_project
+		unset($object->author);     // Should be fk_user_author
+		unset($object->timespent_old_duration);
+		unset($object->timespent_id);
+		unset($object->timespent_duration);
+		unset($object->timespent_date);
+		unset($object->timespent_datehour);
+		unset($object->timespent_withhour);
+		unset($object->timespent_fk_user);
+		unset($object->timespent_note);
 
-        unset($object->statuts);
-        unset($object->statuts_short);
-        unset($object->statuts_logo);
-        unset($object->statuts_long);
+		unset($object->statuts);
+		unset($object->statuts_short);
+		unset($object->statuts_logo);
+		unset($object->statuts_long);
 
-        unset($object->element);
-        unset($object->fk_element);
-        unset($object->table_element);
-        unset($object->table_element_line);
-        unset($object->picto);
+		unset($object->element);
+		unset($object->fk_element);
+		unset($object->table_element);
+		unset($object->table_element_line);
+		unset($object->picto);
 
-        unset($object->skip_update_total);
-        unset($object->context);
+		unset($object->skip_update_total);
+		unset($object->context);
 
-        // Remove the $oldcopy property because it is not supported by the JSON
-        // encoder. The following error is generated when trying to serialize
-        // it: "Error encoding/decoding JSON: Type is not supported"
-        // Note: Event if this property was correctly handled by the JSON
-        // encoder, it should be ignored because keeping it would let the API
-        // have a very strange behavior: calling PUT and then GET on the same
-        // resource would give different results:
-        // PUT /objects/{id} -> returns object with oldcopy = previous version of the object
-        // GET /objects/{id} -> returns object with oldcopy empty
-        unset($object->oldcopy);
+		// Remove the $oldcopy property because it is not supported by the JSON
+		// encoder. The following error is generated when trying to serialize
+		// it: "Error encoding/decoding JSON: Type is not supported"
+		// Note: Event if this property was correctly handled by the JSON
+		// encoder, it should be ignored because keeping it would let the API
+		// have a very strange behavior: calling PUT and then GET on the same
+		// resource would give different results:
+		// PUT /objects/{id} -> returns object with oldcopy = previous version of the object
+		// GET /objects/{id} -> returns object with oldcopy empty
+		unset($object->oldcopy);
 
-        // If object has lines, remove $db property
-        if(isset($object->lines) && count($object->lines) > 0)  {
-            $nboflines = count($object->lines);
-        	for ($i=0; $i < $nboflines; $i++)
-            {
-                $this->_cleanObjectDatas($object->lines[$i]);
-            }
-        }
+		// If object has lines, remove $db property
+		if(isset($object->lines) && count($object->lines) > 0)  {
+			$nboflines = count($object->lines);
+			for ($i=0; $i < $nboflines; $i++)
+			{
+				$this->_cleanObjectDatas($object->lines[$i]);
+			}
+		}
 
-        // If object has linked objects, remove $db property
-        /*
+		// If object has linked objects, remove $db property
+		/*
         if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
             foreach($object->linkedObjects as $type_object => $linked_object) {
                 foreach($linked_object as $object2clean) {
@@ -170,7 +170,7 @@ class DolibarrApi
         }*/
 
 		return $object;
-    }
+	}
 
 	/**
 	 * Check user access to a resource
@@ -212,25 +212,25 @@ class DolibarrApi
 	 */
 	function _checkFilters($sqlfilters)
 	{
-	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-	    $tmp=$sqlfilters;
-	    $ok=0;
-	    $i=0; $nb=count($tmp);
-	    $counter=0;
-	    while ($i < $nb)
-	    {
-	        if ($tmp[$i]=='(') $counter++;
-	        if ($tmp[$i]==')') $counter--;
-            if ($counter < 0)
-            {
-	           $error="Bad sqlfilters=".$sqlfilters;
-	           dol_syslog($error, LOG_WARNING);
-	           return false;
-            }
-            $i++;
-	    }
-	    return true;
+		//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+		//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+		$tmp=$sqlfilters;
+		$ok=0;
+		$i=0; $nb=count($tmp);
+		$counter=0;
+		while ($i < $nb)
+		{
+			if ($tmp[$i]=='(') $counter++;
+			if ($tmp[$i]==')') $counter--;
+			if ($counter < 0)
+			{
+			   $error="Bad sqlfilters=".$sqlfilters;
+			   dol_syslog($error, LOG_WARNING);
+			   return false;
+			}
+			$i++;
+		}
+		return true;
 	}
 
 	/**
@@ -241,22 +241,22 @@ class DolibarrApi
 	 */
 	static function _forge_criteria_callback($matches)
 	{
-	    global $db;
+		global $db;
 
-	    //dol_syslog("Convert matches ".$matches[1]);
-	    if (empty($matches[1])) return '';
-	    $tmp=explode(':',$matches[1]);
-        if (count($tmp) < 3) return '';
+		//dol_syslog("Convert matches ".$matches[1]);
+		if (empty($matches[1])) return '';
+		$tmp=explode(':',$matches[1]);
+		if (count($tmp) < 3) return '';
 
-	    $tmpescaped=$tmp[2];
-	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
-	    {
-	        $tmpescaped = "'".$db->escape($regbis[1])."'";
-	    }
-	    else
-	    {
-	        $tmpescaped = $db->escape($tmpescaped);
-	    }
-	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+		$tmpescaped=$tmp[2];
+		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
+		{
+			$tmpescaped = "'".$db->escape($regbis[1])."'";
+		}
+		else
+		{
+			$tmpescaped = $db->escape($tmpescaped);
+		}
+		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
 	}
 }

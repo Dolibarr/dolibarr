@@ -76,9 +76,9 @@ foreach ($search_array_options as $key => $val)
 		$param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	$mode=0;
-    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
 	{
 		$filter['ef.'.$tmpkey]=natural_search('ef.'.$tmpkey, $crit, $mode);
 	}
@@ -101,7 +101,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if( ! $user->rights->resource->read) {
-        accessforbidden();
+		accessforbidden();
 }
 $arrayfields = array(
 		't.ref' => array(
@@ -255,16 +255,16 @@ if (! empty($arrayfields['ty.label']['checked']))        print_liste_field_titre
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        if (! empty($arrayfields["ef.".$key]['checked']))
-        {
-            $align=$extrafields->getAlignFlag($key);
+	foreach($extrafields->attribute_label as $key => $val)
+	{
+		if (! empty($arrayfields["ef.".$key]['checked']))
+		{
+			$align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
 			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
 			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-        }
-    }
+		}
+	}
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
@@ -272,63 +272,63 @@ print "</tr>\n";
 
 if ($ret)
 {
-    foreach ($object->lines as $resource)
-    {
-        print '<tr class="oddeven">';
+	foreach ($object->lines as $resource)
+	{
+		print '<tr class="oddeven">';
 
-        if (! empty($arrayfields['t.ref']['checked']))
-        {
-        	print '<td>';
-        	print $resource->getNomUrl(5);
-        	print '</td>';
-	        if (! $i) $totalarray['nbfield']++;
-        }
+		if (! empty($arrayfields['t.ref']['checked']))
+		{
+			print '<td>';
+			print $resource->getNomUrl(5);
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
 
-        if (! empty($arrayfields['ty.label']['checked']))
-        {
-        	print '<td>';
-        	print $resource->type_label;
-        	print '</td>';
-	        if (! $i) $totalarray['nbfield']++;
-        }
-        // Extra fields
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-        {
-        	foreach($extrafields->attribute_label as $key => $val)
-        	{
-        		if (! empty($arrayfields["ef.".$key]['checked']))
-        		{
-        			print '<td';
-        			$align=$extrafields->getAlignFlag($key);
-        			if ($align) print ' align="'.$align.'"';
-        			print '>';
-        			$tmpkey='options_'.$key;
-        			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
-        			print '</td>';
-	                if (! $i) $totalarray['nbfield']++;
-        		}
-        	}
-        }
+		if (! empty($arrayfields['ty.label']['checked']))
+		{
+			print '<td>';
+			print $resource->type_label;
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Extra fields
+		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+		{
+			foreach($extrafields->attribute_label as $key => $val)
+			{
+				if (! empty($arrayfields["ef.".$key]['checked']))
+				{
+					print '<td';
+					$align=$extrafields->getAlignFlag($key);
+					if ($align) print ' align="'.$align.'"';
+					print '>';
+					$tmpkey='options_'.$key;
+					print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
+					print '</td>';
+					if (! $i) $totalarray['nbfield']++;
+				}
+			}
+		}
 
-        print '<td align="center">';
-        print '<a href="./card.php?action=edit&id='.$resource->id.'">';
-        print img_edit();
-        print '</a>';
-        print '&nbsp;';
-        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
-        print img_delete();
-        print '</a>';
-        print '</td>';
-        if (! $i) $totalarray['nbfield']++;
+		print '<td align="center">';
+		print '<a href="./card.php?action=edit&id='.$resource->id.'">';
+		print img_edit();
+		print '</a>';
+		print '&nbsp;';
+		print '<a href="./card.php?action=delete&id='.$resource->id.'">';
+		print img_delete();
+		print '</a>';
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 
-        print '</tr>';
-    }
+		print '</tr>';
+	}
 }
 else
 {
-    $colspan=1;
-    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
-    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	$colspan=1;
+	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 print '</table>';

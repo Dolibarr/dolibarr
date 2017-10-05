@@ -88,9 +88,9 @@ $search_type     = GETPOST('search_type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'cp.description'=>'Description',
-    'uu.lastname'=>'EmployeeLastname',
-    'uu.firstname'=>'EmployeeFirstname'
+	'cp.description'=>'Description',
+	'uu.lastname'=>'EmployeeLastname',
+	'uu.firstname'=>'EmployeeFirstname'
 );
 
 
@@ -117,7 +117,7 @@ if (empty($reshook))
 		$search_ref="";
 		$month_create="";
 		$year_create="";
-	    $month_start="";
+		$month_start="";
 		$year_start="";
 		$month_end="";
 		$year_end="";
@@ -174,62 +174,62 @@ $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 // Ref
 if(!empty($search_ref))
 {
-    $filter.= " AND cp.rowid = ".$db->escape($search_ref);
+	$filter.= " AND cp.rowid = ".$db->escape($search_ref);
 }
 
 // Start date
 if($year_start > 0) {
-    if($month_start > 0) {
-    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,1))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,1))."')";
-    	//$filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$year_start-$month_start'";
-    } else {
-    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,1))."' AND '".$db->idate(dol_get_last_day($year_start,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_debut, '%Y') = '$year_start'";
-    }
+	if($month_start > 0) {
+		$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,1))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,1))."')";
+		//$filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$year_start-$month_start'";
+	} else {
+		$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,1))."' AND '".$db->idate(dol_get_last_day($year_start,12,1))."')";
+		//$filter.= " AND date_format(cp.date_debut, '%Y') = '$year_start'";
+	}
 } else {
-    if($month_start > 0) {
-        $filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($month_start)."'";
-    }
+	if($month_start > 0) {
+		$filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($month_start)."'";
+	}
 }
 
 // End date
 if($year_end > 0) {
-    if($month_end > 0) {
-    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,1))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,1))."')";
-    	//$filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$year_end-$month_end'";
-    } else {
-    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,1))."' AND '".$db->idate(dol_get_last_day($year_end,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_fin, '%Y') = '$year_end'";
-    }
+	if($month_end > 0) {
+		$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,1))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,1))."')";
+		//$filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$year_end-$month_end'";
+	} else {
+		$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,1))."' AND '".$db->idate(dol_get_last_day($year_end,12,1))."')";
+		//$filter.= " AND date_format(cp.date_fin, '%Y') = '$year_end'";
+	}
 } else {
-    if($month_end > 0) {
-        $filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($month_end)."'";
-    }
+	if($month_end > 0) {
+		$filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($month_end)."'";
+	}
 }
 
 // Create date
 if($year_create > 0) {
-    if($month_create > 0) {
-    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,$month_create,1))."' AND '".$db->idate(dol_get_last_day($year_create,$month_create,1))."')";
-    	//$filter.= " AND date_format(cp.date_create, '%Y-%m') = '$year_create-$month_create'";
-    } else {
-    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,1,1))."' AND '".$db->idate(dol_get_last_day($year_create,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_create, '%Y') = '$year_create'";
-    }
+	if($month_create > 0) {
+		$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,$month_create,1))."' AND '".$db->idate(dol_get_last_day($year_create,$month_create,1))."')";
+		//$filter.= " AND date_format(cp.date_create, '%Y-%m') = '$year_create-$month_create'";
+	} else {
+		$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,1,1))."' AND '".$db->idate(dol_get_last_day($year_create,12,1))."')";
+		//$filter.= " AND date_format(cp.date_create, '%Y') = '$year_create'";
+	}
 } else {
-    if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
-    }
+	if($month_create > 0) {
+		$filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
+	}
 }
 
 // Employee
 if(!empty($search_employee) && $search_employee != -1) {
-    $filter.= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
+	$filter.= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
 }
 
 // Validator
 if(!empty($search_valideur) && $search_valideur != -1) {
-    $filter.= " AND cp.fk_validator = '".$db->escape($search_valideur)."'\n";
+	$filter.= " AND cp.fk_validator = '".$db->escape($search_valideur)."'\n";
 }
 
 // Type
@@ -239,7 +239,7 @@ if (!empty($search_type) && $search_type != -1) {
 
 // Status
 if(!empty($search_statut) && $search_statut != -1) {
-    $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
+	$filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
 }
 // Search all
 if (!empty($sall))
@@ -268,15 +268,15 @@ if (empty($user->rights->holiday->read_all) || $id > 0)
 }
 else
 {
-    $result = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
+	$result = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
 }
 // Si erreur SQL
 if ($result == '-1')
 {
-    print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
+	print load_fiche_titre($langs->trans('CPTitreMenu'), '', 'title_hrm.png');
 
-    dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
-    exit();
+	dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
+	exit();
 }
 
 
@@ -318,15 +318,15 @@ if ($id > 0)		// For user tab
 
 	dol_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
-    dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 	{
-	    print '<div class="underbanner clearboth"></div>';
+		print '<div class="underbanner clearboth"></div>';
 
-	    print '<br>';
+		print '<br>';
 
-	    showMyBalance($holiday, $user_id);
+		showMyBalance($holiday, $user_id);
 	}
 
 	dol_fiche_end();
@@ -335,7 +335,7 @@ else
 {
 	$nbtotalofrecords = count($holiday->holiday);
    	//print $num;
-    //print count($holiday->holiday);
+	//print count($holiday->holiday);
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, '', '', $limit);
 
 	/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
@@ -352,8 +352,8 @@ if ($id > 0) print '<br>';
 
 if ($sall)
 {
-    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
@@ -378,34 +378,34 @@ print '</td>';
 // User
 if ($user->rights->holiday->write_all)
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employee,"search_employee",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
-    print '</td>';
+	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print $form->select_dolusers($search_employee,"search_employee",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
+	print '</td>';
 }
 else
 {
-    //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($user->id,"search_employee",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
-    print '</td>';
+	//print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print $form->select_dolusers($user->id,"search_employee",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
+	print '</td>';
 }
 
 // Approve
 if($user->rights->holiday->write_all)
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 
-    $validator = new UserGroup($db);
-    $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
-    $valideurobjects = $validator->listUsersForGroup($excludefilter);
-    $valideurarray = array();
-    foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
-    print '</td>';
+	$validator = new UserGroup($db);
+	$excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
+	$valideurobjects = $validator->listUsersForGroup($excludefilter);
+	$valideurarray = array();
+	foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
+	print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
+	print '</td>';
 }
 else
 {
-    print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 }
 
 // Type
@@ -414,9 +414,9 @@ $typeleaves=$holidaystatic->getTypes(1,-1);
 $arraytypeleaves=array();
 foreach($typeleaves as $key => $val)
 {
-    $labeltoshow = $val['label'];
-    //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
-    $arraytypeleaves[$val['rowid']]=$labeltoshow;
+	$labeltoshow = $val['label'];
+	//$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
+	$arraytypeleaves[$val['rowid']]=$labeltoshow;
 }
 print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1);
 print '</td>';
@@ -510,14 +510,14 @@ if (! empty($holiday->holiday))
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
 		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 
-	    // Action column
-	    print '<td class="nowrap" align="center">';
+		// Action column
+		print '<td class="nowrap" align="center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-	    {
-		    $selected=0;
+		{
+			$selected=0;
 			if (in_array($infos_CP['rowid'], $arrayofselected)) $selected=1;
 			print '<input id="cb'.$infos_CP['rowid'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$infos_CP['rowid'].'"'.($selected?' checked="checked"':'').'>';
-	    }
+		}
 		print '</td>';
 
 		print '</tr>'."\n";
@@ -528,9 +528,9 @@ if (! empty($holiday->holiday))
 // Si il n'y a pas d'enregistrement suite à une recherche
 if ($result == '2')
 {
-    print '<tr>';
-    print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
-    print '</tr>';
+	print '<tr>';
+	print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
+	print '</tr>';
 }
 
 print '</table>';

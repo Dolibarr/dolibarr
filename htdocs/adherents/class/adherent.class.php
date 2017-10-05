@@ -41,13 +41,13 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
-    public $element='member';
-    public $table_element='adherent';
-    protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $element='member';
+	public $table_element='adherent';
+	protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $mesgs;
+	var $mesgs;
 
-    var $login;
+	var $login;
 
 	//! Clear password in memory
 	var $pass;
@@ -57,128 +57,128 @@ class Adherent extends CommonObject
 	var $pass_indatabase_crypted;
 
 	var $societe;
-    var $company;
-    var $address;
-    var $zip;
-    var $town;
+	var $company;
+	var $address;
+	var $zip;
+	var $town;
 
-    var $state_id;              // Id of department
-    var $state_code;            // Code of department
-    var $state;                 // Label of department
+	var $state_id;              // Id of department
+	var $state_code;            // Code of department
+	var $state;                 // Label of department
 
-    var $email;
-    var $skype;
-    var $phone;
-    var $phone_perso;
-    var $phone_mobile;
+	var $email;
+	var $skype;
+	var $phone;
+	var $phone_perso;
+	var $phone_mobile;
 
-    var $morphy;
-    var $public;
-    var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-    var $photo;
+	var $morphy;
+	var $public;
+	var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
+	var $photo;
 
-    var $datec;
-    var $datem;
-    var $datefin;
-    var $datevalid;
-    var $birth;
+	var $datec;
+	var $datem;
+	var $datefin;
+	var $datevalid;
+	var $birth;
 
-    var $note_public;
-    var $note_private;
+	var $note_public;
+	var $note_private;
 
-    var $typeid;			// Id type adherent
-    var $type;				// Libelle type adherent
-    var $need_subscription;
+	var $typeid;			// Id type adherent
+	var $type;				// Libelle type adherent
+	var $need_subscription;
 
-    var $user_id;
-    var $user_login;
+	var $user_id;
+	var $user_login;
 
-    var $fk_soc;
+	var $fk_soc;
 
-    // Fields loaded by fetch_subscriptions()
-    var $first_subscription_date;
-    var $first_subscription_amount;
-    var $last_subscription_date;
-    var $last_subscription_date_start;
-    var $last_subscription_date_end;
-    var $last_subscription_amount;
-    var $subscriptions=array();
+	// Fields loaded by fetch_subscriptions()
+	var $first_subscription_date;
+	var $first_subscription_amount;
+	var $last_subscription_date;
+	var $last_subscription_date_start;
+	var $last_subscription_date_end;
+	var $last_subscription_amount;
+	var $subscriptions=array();
 
-    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
-    public $entity;
+	public $entity;
 
-    /**
+	/**
 	 *	Constructor
 	 *
 	 *	@param 		DoliDB		$db		Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-        $this->statut = -1;
-        // l'adherent n'est pas public par defaut
-        $this->public = 0;
-        // les champs optionnels sont vides
-        $this->array_options=array();
-    }
+	 */
+	function __construct($db)
+	{
+		$this->db = $db;
+		$this->statut = -1;
+		// l'adherent n'est pas public par defaut
+		$this->public = 0;
+		// les champs optionnels sont vides
+		$this->array_options=array();
+	}
 
 
-    /**
-     *  Function sending an email has the adherent with the text supplied in parameter.
-     *
-     *  @param	string	$text				Content of message (not html entities encoded)
-     *  @param	string	$subject			Subject of message
-     *  @param 	array	$filename_list      Array of attached files
-     *  @param 	array	$mimetype_list      Array of mime types of attached files
-     *  @param 	array	$mimefilename_list  Array of public names of attached files
-     *  @param 	string	$addr_cc            Email cc
-     *  @param 	string	$addr_bcc           Email bcc
-     *  @param 	int		$deliveryreceipt	Ask a delivery receipt
-     *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-     *  @param	string	$errors_to			erros to
-     *  @return	int							<0 if KO, >0 if OK
-     */
-    function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
-    {
-        global $conf,$langs;
+	/**
+	 *  Function sending an email has the adherent with the text supplied in parameter.
+	 *
+	 *  @param	string	$text				Content of message (not html entities encoded)
+	 *  @param	string	$subject			Subject of message
+	 *  @param 	array	$filename_list      Array of attached files
+	 *  @param 	array	$mimetype_list      Array of mime types of attached files
+	 *  @param 	array	$mimefilename_list  Array of public names of attached files
+	 *  @param 	string	$addr_cc            Email cc
+	 *  @param 	string	$addr_bcc           Email bcc
+	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
+	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+	 *  @param	string	$errors_to			erros to
+	 *  @return	int							<0 if KO, >0 if OK
+	 */
+	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
+	{
+		global $conf,$langs;
 
-        // Detect if message is HTML
-        if ($msgishtml == -1)
-        {
-            $msgishtml = 0;
-            if (dol_textishtml($text,1)) $msgishtml = 1;
-        }
+		// Detect if message is HTML
+		if ($msgishtml == -1)
+		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;
+		}
 
-        $texttosend=$this->makeSubstitution($text);
-        $subjecttosend=$this->makeSubstitution($subject);
-        if ($msgishtml) $texttosend=dol_htmlentitiesbr($texttosend);
+		$texttosend=$this->makeSubstitution($text);
+		$subjecttosend=$this->makeSubstitution($subject);
+		if ($msgishtml) $texttosend=dol_htmlentitiesbr($texttosend);
 
-        // Envoi mail confirmation
-        $from=$conf->email_from;
-        if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
+		// Envoi mail confirmation
+		$from=$conf->email_from;
+		if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
-        // Send email (substitutionarray must be done just before this)
-        include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-        $mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
-        if ($mailfile->sendfile())
-        {
-            return 1;
-        }
-        else
-        {
-            $this->error=$langs->trans("ErrorFailedToSendMail",$from,$this->email).'. '.$mailfile->error;
-            return -1;
-        }
-    }
+		// Send email (substitutionarray must be done just before this)
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
+		if ($mailfile->sendfile())
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$langs->trans("ErrorFailedToSendMail",$from,$this->email).'. '.$mailfile->error;
+			return -1;
+		}
+	}
 
 
-    /**
-     * Make substitution of tags into text with value of current object.
-     *
-     * @param	string	$text       Text to make substitution to
-     * @return  string      		Value of input text string with substitutions done
-     */
+	/**
+	 * Make substitution of tags into text with value of current object.
+	 *
+	 * @param	string	$text       Text to make substitution to
+	 * @return  string      		Value of input text string with substitutions done
+	 */
 	function makeSubstitution($text)
 	{
 		global $conf,$langs;
@@ -199,13 +199,13 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
 		$infos.= $langs->transnoentities("Country").": ".$this->country."\n";
 		$infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
-        $infos.= $langs->transnoentities("PhonePro").": ".$this->phone."\n";
-        $infos.= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
-        $infos.= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
+		$infos.= $langs->transnoentities("PhonePro").": ".$this->phone."\n";
+		$infos.= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
+		$infos.= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-		    $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
-		    $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
+			$infos.= $langs->transnoentities("Login").": ".$this->login."\n";
+			$infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
 		}
 		$infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
 		$infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
@@ -238,164 +238,164 @@ class Adherent extends CommonObject
 	}
 
 
-    /**
-     *	Return translated label by the nature of a adherent (physical or moral)
-     *
-     *	@param	string		$morphy		Nature of the adherent (physical or moral)
-     *	@return	string					Label
-     */
-    function getmorphylib($morphy='')
-    {
-        global $langs;
-        if (! $morphy) { $morphy=$this->morphy; }
-        if ($morphy == 'phy') { return $langs->trans("Physical"); }
-        if ($morphy == 'mor') { return $langs->trans("Moral"); }
-        return $morphy;
-    }
+	/**
+	 *	Return translated label by the nature of a adherent (physical or moral)
+	 *
+	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *	@return	string					Label
+	 */
+	function getmorphylib($morphy='')
+	{
+		global $langs;
+		if (! $morphy) { $morphy=$this->morphy; }
+		if ($morphy == 'phy') { return $langs->trans("Physical"); }
+		if ($morphy == 'mor') { return $langs->trans("Moral"); }
+		return $morphy;
+	}
 
-    /**
-     *	Create a member into database
-     *
-     *	@param	User	$user        	Objet user qui demande la creation
-     *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
-     *	@return	int						<0 if KO, >0 if OK
-     */
-    function create($user,$notrigger=0)
-    {
-        global $conf,$langs;
+	/**
+	 *	Create a member into database
+	 *
+	 *	@param	User	$user        	Objet user qui demande la creation
+	 *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	function create($user,$notrigger=0)
+	{
+		global $conf,$langs;
 
 		$error=0;
 
-        $now=dol_now();
+		$now=dol_now();
 
-        // Clean parameters
-        $this->import_key = trim($this->import_key);
+		// Clean parameters
+		$this->import_key = trim($this->import_key);
 
-        // Check parameters
-        if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
-        {
-            $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEMail",$this->email);
-            return -1;
-        }
-        if (! $this->datec) $this->datec=$now;
-        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-        {
-            if (empty($this->login))
-            {
-                $this->error = $langs->trans("ErrorWrongValueForParameterX","Login");
-                return -1;
-            }
-        }
+		// Check parameters
+		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+		if (! $this->datec) $this->datec=$now;
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			if (empty($this->login))
+			{
+				$this->error = $langs->trans("ErrorWrongValueForParameterX","Login");
+				return -1;
+			}
+		}
 
-        $this->db->begin();
+		$this->db->begin();
 
-        // Insert member
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
-        $sql.= " VALUES (";
-        $sql.= " '".$this->db->idate($this->datec)."'";
-        $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-        $sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be created by a guest or a script
-        $sql.= ", null, null, '".$this->db->escape($this->morphy)."'";
-        $sql.= ", ".$this->typeid;
-        $sql.= ", ".$conf->entity;
-        $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null");
-        $sql.= ")";
+		// Insert member
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
+		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
+		$sql.= " VALUES (";
+		$sql.= " '".$this->db->idate($this->datec)."'";
+		$sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
+		$sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be created by a guest or a script
+		$sql.= ", null, null, '".$this->db->escape($this->morphy)."'";
+		$sql.= ", ".$this->typeid;
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null");
+		$sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            $id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
-            if ($id > 0)
-            {
-                $this->id=$id;
-                $this->ref=(string) $id;
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
+			if ($id > 0)
+			{
+				$this->id=$id;
+				$this->ref=(string) $id;
 
-                // Update minor fields
-                $result=$this->update($user,1,1,0,0,'add'); // nosync is 1 to avoid update data of user
-                if ($result < 0)
-                {
-                    $this->db->rollback();
-                    return -1;
-                }
+				// Update minor fields
+				$result=$this->update($user,1,1,0,0,'add'); // nosync is 1 to avoid update data of user
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -1;
+				}
 
-                // Add link to user
-                if ($this->user_id)
-                {
-                    // Add link to user
-                    $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-                    $sql.= " fk_member = ".$this->id;
-                    $sql.= " WHERE rowid = ".$this->user_id;
-                    dol_syslog(get_class($this)."::create", LOG_DEBUG);
-                    $resql = $this->db->query($sql);
-                    if (! $resql)
-                    {
-                        $this->error='Failed to update user to make link with member';
-                        $this->db->rollback();
-                        return -4;
-                    }
-                }
+				// Add link to user
+				if ($this->user_id)
+				{
+					// Add link to user
+					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
+					$sql.= " fk_member = ".$this->id;
+					$sql.= " WHERE rowid = ".$this->user_id;
+					dol_syslog(get_class($this)."::create", LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$this->error='Failed to update user to make link with member';
+						$this->db->rollback();
+						return -4;
+					}
+				}
 
-                if (! $notrigger)
-                {
-                    // Call trigger
-                    $result=$this->call_trigger('MEMBER_CREATE',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
+				if (! $notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('MEMBER_CREATE',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
+				}
 
-                if (count($this->errors))
-                {
-                    dol_syslog(get_class($this)."::create ".implode(',',$this->errors), LOG_ERR);
-                    $this->db->rollback();
-                    return -3;
-                }
-                else
-                {
-                    $this->db->commit();
-                    return $this->id;
-                }
-            }
-            else
-            {
-                $this->error='Failed to get last insert id';
-                dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
-                $this->db->rollback();
-                return -2;
-            }
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
-        }
-    }
+				if (count($this->errors))
+				{
+					dol_syslog(get_class($this)."::create ".implode(',',$this->errors), LOG_ERR);
+					$this->db->rollback();
+					return -3;
+				}
+				else
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+			}
+			else
+			{
+				$this->error='Failed to get last insert id';
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 
-    /**
-     *	Update a member in database (standard information and password)
-     *
-     *	@param	User	$user				User making update
-     *	@param	int		$notrigger			1=disable trigger UPDATE (when called by create)
-     *	@param	int		$nosyncuser			0=Synchronize linked user (standard info), 1=Do not synchronize linked user
-     *	@param	int		$nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
-     *	@param	int		$nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
-     * 	@param	string	$action				Current action for hookmanager
-     * 	@return	int							<0 if KO, >0 if OK
-     */
-    function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
-    {
-        global $conf, $langs, $hookmanager;
+	/**
+	 *	Update a member in database (standard information and password)
+	 *
+	 *	@param	User	$user				User making update
+	 *	@param	int		$notrigger			1=disable trigger UPDATE (when called by create)
+	 *	@param	int		$nosyncuser			0=Synchronize linked user (standard info), 1=Do not synchronize linked user
+	 *	@param	int		$nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
+	 *	@param	int		$nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
+	 * 	@param	string	$action				Current action for hookmanager
+	 * 	@return	int							<0 if KO, >0 if OK
+	 */
+	function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
+	{
+		global $conf, $langs, $hookmanager;
 
-        $nbrowsaffected=0;
-        $error=0;
+		$nbrowsaffected=0;
+		$error=0;
 
-        dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
+		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
-        // Clean parameters
+		// Clean parameters
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
 		$this->address=($this->address?$this->address:$this->address);
@@ -408,288 +408,288 @@ class Adherent extends CommonObject
 		$this->note_public=($this->note_public?$this->note_public:$this->note_public);
 		$this->note_private=($this->note_private?$this->note_private:$this->note_private);
 
-        // Check parameters
-        if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
-        {
-            $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEMail",$this->email);
-            return -1;
-        }
+		// Check parameters
+		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
 
-        $this->db->begin();
+		$this->db->begin();
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-        $sql.= " civility = ".($this->civility_id>0?$this->db->escape($this->civility_id):"null");
-        $sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
-        $sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
-        $sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-        $sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
-        $sql.= ", fk_soc = ".($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
-        $sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
-        $sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
-        $sql.= ", town = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
-        $sql.= ", country = ".($this->country_id>0?$this->db->escape($this->country_id):"null");
-        $sql.= ", state_id = ".($this->state_id>0?$this->db->escape($this->state_id):"null");
-        $sql.= ", email = '".$this->db->escape($this->email)."'";
-        $sql.= ", skype = '".$this->db->escape($this->skype)."'";
-        $sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
-        $sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
-        $sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
-        $sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
-        $sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
-        $sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
-        $sql.= ", public = '".$this->db->escape($this->public)."'";
-        $sql.= ", statut = ".$this->statut;
-        $sql.= ", fk_adherent_type = ".$this->typeid;
-        $sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
-        $sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
-        if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
-        if ($this->datevalid) $sql.= ", datevalid = '".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
-        $sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
-        $sql.= " WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+		$sql.= " civility = ".($this->civility_id>0?$this->db->escape($this->civility_id):"null");
+		$sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
+		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
+		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
+		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
+		$sql.= ", fk_soc = ".($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
+		$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
+		$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
+		$sql.= ", town = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
+		$sql.= ", country = ".($this->country_id>0?$this->db->escape($this->country_id):"null");
+		$sql.= ", state_id = ".($this->state_id>0?$this->db->escape($this->state_id):"null");
+		$sql.= ", email = '".$this->db->escape($this->email)."'";
+		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
+		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
+		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
+		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
+		$sql.= ", public = '".$this->db->escape($this->public)."'";
+		$sql.= ", statut = ".$this->statut;
+		$sql.= ", fk_adherent_type = ".$this->typeid;
+		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
+		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
+		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
+		if ($this->datevalid) $sql.= ", datevalid = '".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
+		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
+		$sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-		    unset($this->country_code);
-		    unset($this->country);
-		    unset($this->state_code);
-		    unset($this->state);
+		dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			unset($this->country_code);
+			unset($this->country);
+			unset($this->state_code);
+			unset($this->state);
 
-		    $nbrowsaffected+=$this->db->affected_rows($resql);
+			$nbrowsaffected+=$this->db->affected_rows($resql);
 
-		    $action='update';
+			$action='update';
 
-            // Actions on extra fields (by external module)
+			// Actions on extra fields (by external module)
 			// TODO le hook fait double emploi avec le trigger !!
-		    $hookmanager->initHooks(array('memberdao'));
-            $parameters=array('id'=>$this->id);
-            $action='';
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
-            {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
-            }
-            else if ($reshook < 0) $error++;
+			$hookmanager->initHooks(array('memberdao'));
+			$parameters=array('id'=>$this->id);
+			$action='';
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
 
-            // Update password
-            if (! $error && $this->pass)
-            {
-                dol_syslog(get_class($this)."::update update password");
-                if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
-                {
-                    $isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1;
+			// Update password
+			if (! $error && $this->pass)
+			{
+				dol_syslog(get_class($this)."::update update password");
+				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
+				{
+					$isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1;
 
-                    // If password to set differs from the one found into database
-                    $result=$this->setPassword($user,$this->pass,$isencrypted,$notrigger,$nosyncuserpass);
-                    if (! $nbrowsaffected) $nbrowsaffected++;
-                }
-            }
+					// If password to set differs from the one found into database
+					$result=$this->setPassword($user,$this->pass,$isencrypted,$notrigger,$nosyncuserpass);
+					if (! $nbrowsaffected) $nbrowsaffected++;
+				}
+			}
 
-            // Remove links to user and replace with new one
-            if (! $error)
-            {
-                dol_syslog(get_class($this)."::update update link to user");
-                $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
-                dol_syslog(get_class($this)."::update", LOG_DEBUG);
-                $resql = $this->db->query($sql);
-                if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
-                // If there is a user linked to this member
-                if ($this->user_id > 0)
-                {
-                    $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
-                    dol_syslog(get_class($this)."::update", LOG_DEBUG);
-                    $resql = $this->db->query($sql);
-                    if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
-                }
-            }
+			// Remove links to user and replace with new one
+			if (! $error)
+			{
+				dol_syslog(get_class($this)."::update update link to user");
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
+				dol_syslog(get_class($this)."::update", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+				// If there is a user linked to this member
+				if ($this->user_id > 0)
+				{
+					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
+					dol_syslog(get_class($this)."::update", LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
+				}
+			}
 
-            if (! $error && $nbrowsaffected)	// If something has change in main data
-            {
-                // Update information on linked user if it is an update
-                if (! $error && $this->user_id > 0 && ! $nosyncuser)
-                {
-                    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			if (! $error && $nbrowsaffected)	// If something has change in main data
+			{
+				// Update information on linked user if it is an update
+				if (! $error && $this->user_id > 0 && ! $nosyncuser)
+				{
+					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-                    dol_syslog(get_class($this)."::update update linked user");
+					dol_syslog(get_class($this)."::update update linked user");
 
-                    $luser=new User($this->db);
-                    $result=$luser->fetch($this->user_id);
+					$luser=new User($this->db);
+					$result=$luser->fetch($this->user_id);
 
-                    if ($result >= 0)
-                    {
-                        //var_dump($this->user_login);exit;
-                        //var_dump($this->login);exit;
-                        $luser->login=$this->login;
-                        $luser->civility_id=$this->civility_id;
-                        $luser->firstname=$this->firstname;
-                        $luser->lastname=$this->lastname;
-                        $luser->pass=$this->pass;
-                        $luser->societe_id=$this->societe;
+					if ($result >= 0)
+					{
+						//var_dump($this->user_login);exit;
+						//var_dump($this->login);exit;
+						$luser->login=$this->login;
+						$luser->civility_id=$this->civility_id;
+						$luser->firstname=$this->firstname;
+						$luser->lastname=$this->lastname;
+						$luser->pass=$this->pass;
+						$luser->societe_id=$this->societe;
 
-                        $luser->email=$this->email;
-                        $luser->skype=$this->skype;
-                        $luser->office_phone=$this->phone;
-                        $luser->user_mobile=$this->phone_mobile;
+						$luser->email=$this->email;
+						$luser->skype=$this->skype;
+						$luser->office_phone=$this->phone;
+						$luser->user_mobile=$this->phone_mobile;
 
-                        $luser->fk_member=$this->id;
+						$luser->fk_member=$this->id;
 
-                        $result=$luser->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
-                        if ($result < 0)
-                        {
-                            $this->error=$luser->error;
-                            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
-                            $error++;
-                        }
-                    }
-                    else
-                    {
-                        $this->error=$luser->error;
-                        $error++;
-                    }
-                }
+						$result=$luser->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
+						if ($result < 0)
+						{
+							$this->error=$luser->error;
+							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$luser->error;
+						$error++;
+					}
+				}
 
-                // Update information on linked thirdparty if it is an update
-                if (! $error && $this->fk_soc > 0 && ! $nosyncthirdparty)
-                {
-                    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+				// Update information on linked thirdparty if it is an update
+				if (! $error && $this->fk_soc > 0 && ! $nosyncthirdparty)
+				{
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-                    dol_syslog(get_class($this)."::update update linked thirdparty");
+					dol_syslog(get_class($this)."::update update linked thirdparty");
 
-                    // This member is linked with a thirdparty, so we also update thirdparty informations
-                    // if this is an update.
-                    $lthirdparty=new Societe($this->db);
-                    $result=$lthirdparty->fetch($this->fk_soc);
+					// This member is linked with a thirdparty, so we also update thirdparty informations
+					// if this is an update.
+					$lthirdparty=new Societe($this->db);
+					$result=$lthirdparty->fetch($this->fk_soc);
 
-                    if ($result >= 0)
-                    {
-                        $lthirdparty->address=$this->address;
-                        $lthirdparty->zip=$this->zip;
-                        $lthirdparty->town=$this->town;
-                        $lthirdparty->email=$this->email;
-                        $lthirdparty->skype=$this->skype;
-                        $lthirdparty->phone=$this->phone;
-                        $lthirdparty->state_id=$this->state_id;
-                        $lthirdparty->country_id=$this->country_id;
-                        $lthirdparty->country_id=$this->country_id;
-                        //$lthirdparty->phone_mobile=$this->phone_mobile;
+					if ($result >= 0)
+					{
+						$lthirdparty->address=$this->address;
+						$lthirdparty->zip=$this->zip;
+						$lthirdparty->town=$this->town;
+						$lthirdparty->email=$this->email;
+						$lthirdparty->skype=$this->skype;
+						$lthirdparty->phone=$this->phone;
+						$lthirdparty->state_id=$this->state_id;
+						$lthirdparty->country_id=$this->country_id;
+						$lthirdparty->country_id=$this->country_id;
+						//$lthirdparty->phone_mobile=$this->phone_mobile;
 
-                        $result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
-                        if ($result < 0)
-                        {
-                            $this->error=$lthirdparty->error;
-                            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
-                            $error++;
-                        }
-                    }
-                    else
-                    {
-                        $this->error=$lthirdparty->error;
-                        $error++;
-                    }
-                }
+						$result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
+						if ($result < 0)
+						{
+							$this->error=$lthirdparty->error;
+							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$lthirdparty->error;
+						$error++;
+					}
+				}
 
-                if (! $error && ! $notrigger)
-                {
-                    // Call trigger
-                    $result=$this->call_trigger('MEMBER_MODIFY',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
-            }
+				if (! $error && ! $notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('MEMBER_MODIFY',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
+				}
+			}
 
-            if (! $error)
-            {
-                $this->db->commit();
-                return $nbrowsaffected;
-            }
-            else
-            {
-                $this->db->rollback();
-                return -1;
-            }
-        }
-        else
-        {
-            $this->db->rollback();
-            $this->error=$this->db->lasterror();
-            return -2;
-        }
-    }
+			if (! $error)
+			{
+				$this->db->commit();
+				return $nbrowsaffected;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			return -2;
+		}
+	}
 
 
-    /**
-     *	Update denormalized last subscription date.
-     * 	This function is called when we delete a subscription for example.
-     *
-     *	@param	User	$user			User making change
-     *	@return	int						<0 if KO, >0 if OK
-     */
-    function update_end_date($user)
-    {
-        $this->db->begin();
+	/**
+	 *	Update denormalized last subscription date.
+	 * 	This function is called when we delete a subscription for example.
+	 *
+	 *	@param	User	$user			User making change
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	function update_end_date($user)
+	{
+		$this->db->begin();
 
-        // Search for last subscription id and end date
-        $sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
-        $sql.= " FROM ".MAIN_DB_PREFIX."subscription";
-        $sql.= " WHERE fk_adherent=".$this->id;
-        $sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
+		// Search for last subscription id and end date
+		$sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
+		$sql.= " FROM ".MAIN_DB_PREFIX."subscription";
+		$sql.= " WHERE fk_adherent=".$this->id;
+		$sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
 
-        dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $obj=$this->db->fetch_object($resql);
-            $dateop=$this->db->jdate($obj->dateop);
-            $datedeb=$this->db->jdate($obj->datedeb);
-            $datefin=$this->db->jdate($obj->datefin);
+		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj=$this->db->fetch_object($resql);
+			$dateop=$this->db->jdate($obj->dateop);
+			$datedeb=$this->db->jdate($obj->datedeb);
+			$datefin=$this->db->jdate($obj->datefin);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-            $sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
-            $sql.= " WHERE rowid = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+			$sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
+			$sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $this->last_subscription_date=$dateop;
-                $this->last_subscription_date_start=$datedeb;
-                $this->last_subscription_date_end=$datefin;
-                $this->datefin=$datefin;
-                $this->db->commit();
-                return 1;
-            }
-            else
-            {
-                $this->db->rollback();
-                return -1;
-            }
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            $this->db->rollback();
-            return -1;
-        }
+			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->last_subscription_date=$dateop;
+				$this->last_subscription_date_start=$datedeb;
+				$this->last_subscription_date_end=$datefin;
+				$this->datefin=$datefin;
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
 
-    }
+	}
 
-    /**
-     *  Fonction qui supprime l'adherent et les donnees associees
-     *
-     *  @param	int		$rowid		Id of member to delete
-     *	@param	User		$user		User object
-     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-     *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
-     */
+	/**
+	 *  Fonction qui supprime l'adherent et les donnees associees
+	 *
+	 *  @param	int		$rowid		Id of member to delete
+	 *	@param	User		$user		User object
+	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
+	 */
 	function delete($rowid, $user, $notrigger=0)
 	{
 		global $conf, $langs;
@@ -701,15 +701,15 @@ class Adherent extends CommonObject
 		// Check parameters
 		if (empty($rowid)) $rowid=$this->id;
 
-        $this->db->begin();
+		$this->db->begin();
 
-        if (! $error && ! $notrigger)
-        {
-            // Call trigger
-            $result=$this->call_trigger('MEMBER_DELETE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
-        }
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('MEMBER_DELETE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
 
 		// Remove category
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
@@ -2124,17 +2124,17 @@ class Adherent extends CommonObject
 	 *
 	 * @return boolean     True if late, False if not late
 	 */
-    public function hasDelay()
-    {
-        global $conf;
+	public function hasDelay()
+	{
+		global $conf;
 
-        //Only valid members
-        if ($this->statut <= 0) return false;
-        if (! $this->datefin) return false;
+		//Only valid members
+		if ($this->statut <= 0) return false;
+		if (! $this->datefin) return false;
 
-        $now = dol_now();
+		$now = dol_now();
 
-        return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
-    }
+		return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
+	}
 
 }

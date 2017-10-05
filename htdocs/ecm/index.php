@@ -88,7 +88,7 @@ $error=0;
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
-    $relativepath='';
+	$relativepath='';
 	if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
 	else $relativepath=$section_dir;
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
@@ -106,11 +106,11 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (! $error)
 	{
-	    $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '', 0);
-	    if ($res > 0)
-	    {
-	       $result=$ecmdir->changeNbOfFiles('+');
-	    }
+		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '', 0);
+		if ($res > 0)
+		{
+		   $result=$ecmdir->changeNbOfFiles('+');
+		}
 	}
 }
 
@@ -141,29 +141,29 @@ if ($action == 'add' && $user->rights->ecm->setup)
 // Remove file
 if ($action == 'confirm_deletefile')
 {
-    if (GETPOST('confirm') == 'yes')
-    {
-    	// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+	if (GETPOST('confirm') == 'yes')
+	{
+		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
 		//var_dump(GETPOST('urlfile'));exit;
-    	$langs->load("other");
+		$langs->load("other");
 
-    	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
-    	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
+		$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+		$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 		//var_dump($file);exit;
 
-    	$ret=dol_delete_file($file);	// This include also the delete from file index in database.
-    	if ($ret)
-    	{
-    		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
-    		$result=$ecmdir->changeNbOfFiles('-');
-    	}
-    	else
-    	{
-    		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
-    	}
+		$ret=dol_delete_file($file);	// This include also the delete from file index in database.
+		if ($ret)
+		{
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
+			$result=$ecmdir->changeNbOfFiles('-');
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
+		}
 
-    	clearstatcache();
-    }
+		clearstatcache();
+	}
    	$action='file_manager';
 }
 
@@ -173,7 +173,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 	$result=$ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
-    clearstatcache();
+	clearstatcache();
 }
 
 // Refresh directory view
@@ -181,137 +181,137 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 // To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
-    $ecmdirtmp = new EcmDirectory($db);
+	$ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
 	clearstatcache();
 
-    $diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
-    $diroutputslash.='/';
+	$diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
+	$diroutputslash.='/';
 
-    // Scan directory tree on disk
-    $disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'','^temp$','','',0);
+	// Scan directory tree on disk
+	$disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'','^temp$','','',0);
 
-    // Scan directory tree in database
-    $sqltree=$ecmdirstatic->get_full_arbo(0);
+	// Scan directory tree in database
+	$sqltree=$ecmdirstatic->get_full_arbo(0);
 
-    $adirwascreated=0;
+	$adirwascreated=0;
 
-    // Now we compare both trees to complete missing trees into database
-    //var_dump($disktree);
-    //var_dump($sqltree);
-    foreach($disktree as $dirdesc)    // Loop on tree onto disk
-    {
-        $dirisindatabase=0;
-        foreach($sqltree as $dirsqldesc)
-        {
-            if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname'])
-            {
-                $dirisindatabase=1;
-                break;
-            }
-        }
+	// Now we compare both trees to complete missing trees into database
+	//var_dump($disktree);
+	//var_dump($sqltree);
+	foreach($disktree as $dirdesc)    // Loop on tree onto disk
+	{
+		$dirisindatabase=0;
+		foreach($sqltree as $dirsqldesc)
+		{
+			if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname'])
+			{
+				$dirisindatabase=1;
+				break;
+			}
+		}
 
-        if (! $dirisindatabase)
-        {
-            $txt="Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
-            dol_syslog($txt);
-            //print $txt."<br>\n";
+		if (! $dirisindatabase)
+		{
+			$txt="Directory found on disk ".$dirdesc['fullname'].", not found into database so we add it";
+			dol_syslog($txt);
+			//print $txt."<br>\n";
 
-            // We must first find the fk_parent of directory to create $dirdesc['fullname']
-            $fk_parent=-1;
-            $relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
-            $relativepathtosearchparent=$relativepathmissing;
-            //dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
-            if (preg_match('/\//',$relativepathtosearchparent))
-            //while (preg_match('/\//',$relativepathtosearchparent))
-            {
-                $relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
-                $txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
-                dol_syslog($txt);
-                //print $txt." -> ";
-                $parentdirisindatabase=0;
-                foreach($sqltree as $dirsqldesc)
-                {
-                    if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent)
-                    {
-                        $parentdirisindatabase=$dirsqldesc['id'];
-                        break;
-                    }
-                }
-                if ($parentdirisindatabase > 0)
-                {
-                    dol_syslog("Yes with id ".$parentdirisindatabase);
-                    //print "Yes with id ".$parentdirisindatabase."<br>\n";
-                    $fk_parent=$parentdirisindatabase;
-                    //break;  // We found parent, we can stop the while loop
-                }
-                else
+			// We must first find the fk_parent of directory to create $dirdesc['fullname']
+			$fk_parent=-1;
+			$relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
+			$relativepathtosearchparent=$relativepathmissing;
+			//dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
+			if (preg_match('/\//',$relativepathtosearchparent))
+			//while (preg_match('/\//',$relativepathtosearchparent))
+			{
+				$relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
+				$txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
+				dol_syslog($txt);
+				//print $txt." -> ";
+				$parentdirisindatabase=0;
+				foreach($sqltree as $dirsqldesc)
 				{
-                    dol_syslog("No");
-                    //print "No<br>\n";
-                }
-            }
-            else
-           {
-                dol_syslog("Parent is root");
-                $fk_parent=0;   // Parent is root
-            }
+					if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent)
+					{
+						$parentdirisindatabase=$dirsqldesc['id'];
+						break;
+					}
+				}
+				if ($parentdirisindatabase > 0)
+				{
+					dol_syslog("Yes with id ".$parentdirisindatabase);
+					//print "Yes with id ".$parentdirisindatabase."<br>\n";
+					$fk_parent=$parentdirisindatabase;
+					//break;  // We found parent, we can stop the while loop
+				}
+				else
+				{
+					dol_syslog("No");
+					//print "No<br>\n";
+				}
+			}
+			else
+		   {
+				dol_syslog("Parent is root");
+				$fk_parent=0;   // Parent is root
+			}
 
-            if ($fk_parent >= 0)
-            {
-                $ecmdirtmp->ref                = 'NOTUSEDYET';
-                $ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
-                $ecmdirtmp->description        = '';
-                $ecmdirtmp->fk_parent          = $fk_parent;
+			if ($fk_parent >= 0)
+			{
+				$ecmdirtmp->ref                = 'NOTUSEDYET';
+				$ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
+				$ecmdirtmp->description        = '';
+				$ecmdirtmp->fk_parent          = $fk_parent;
 
-                $txt="We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
-                dol_syslog($txt);
-                //print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
-                $id = $ecmdirtmp->create($user);
-                if ($id > 0)
-                {
-                    $newdirsql=array('id'=>$id,
-                                     'id_mere'=>$ecmdirtmp->fk_parent,
-                                     'label'=>$ecmdirtmp->label,
-                                     'description'=>$ecmdirtmp->description,
-                                     'fullrelativename'=>$relativepathmissing);
-                    $sqltree[]=$newdirsql; // We complete fulltree for following loops
-                    //var_dump($sqltree);
-                    $adirwascreated=1;
-                }
-                else
-                {
-                    dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
-                }
-            }
-            else {
-                $txt="Parent of ".$dirdesc['fullname']." not found";
-                dol_syslog($txt);
-                //print $txt."<br>\n";
-            }
-        }
-    }
+				$txt="We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
+				dol_syslog($txt);
+				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
+				$id = $ecmdirtmp->create($user);
+				if ($id > 0)
+				{
+					$newdirsql=array('id'=>$id,
+									 'id_mere'=>$ecmdirtmp->fk_parent,
+									 'label'=>$ecmdirtmp->label,
+									 'description'=>$ecmdirtmp->description,
+									 'fullrelativename'=>$relativepathmissing);
+					$sqltree[]=$newdirsql; // We complete fulltree for following loops
+					//var_dump($sqltree);
+					$adirwascreated=1;
+				}
+				else
+				{
+					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
+				}
+			}
+			else {
+				$txt="Parent of ".$dirdesc['fullname']." not found";
+				dol_syslog($txt);
+				//print $txt."<br>\n";
+			}
+		}
+	}
 
-    // Loop now on each sql tree to check if dir exists
-    foreach($sqltree as $dirdesc)    // Loop on each sqltree to check dir is on disk
-    {
-    	$dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
+	// Loop now on each sql tree to check if dir exists
+	foreach($sqltree as $dirdesc)    // Loop on each sqltree to check dir is on disk
+	{
+		$dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (! dol_is_dir($dirtotest))
 		{
 			$ecmdirtmp->id=$dirdesc['id'];
 			$ecmdirtmp->delete($user,'databaseonly');
 			//exit;
 		}
-    }
+	}
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0";	// If pb into cahce counting, we set to value -1 = "unknown"
-    dol_syslog("sql = ".$sql);
-    $db->query($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0";	// If pb into cahce counting, we set to value -1 = "unknown"
+	dol_syslog("sql = ".$sql);
+	$db->query($sql);
 
-    // If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
-    // it to be sure that fulltree array is not used without reloading it.
-    if ($adirwascreated) $sqltree=null;
+	// If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
+	// it to be sure that fulltree array is not used without reloading it.
+	if ($adirwascreated) $sqltree=null;
 }
 
 
@@ -362,15 +362,15 @@ print '<div class="inline-block toolbarbutton centpercent">';
 // Toolbar
 if ($user->rights->ecm->setup)
 {
-    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
+	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+	print '</a>';
 }
 else
 {
-    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
+	print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
+	print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+	print '</a>';
 }
 $url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
@@ -397,7 +397,7 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 		<?php
 	}
 
-    $formfile=new FormFile($db);
+	$formfile=new FormFile($db);
 	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48, null, '', 0, '', 0, $nameforformuserfile);
 }
 else print '&nbsp;';
@@ -419,7 +419,7 @@ print '</div>';
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_section')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
 }
 // End confirm
 
@@ -430,190 +430,190 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left" colspan="6">';
-    print '&nbsp;'.$langs->trans("ECMSections");
+	print '<th class="liste_titre" align="left" colspan="6">';
+	print '&nbsp;'.$langs->trans("ECMSections");
 	print '</th></tr>';
 
-    $showonrightsize='';
+	$showonrightsize='';
 
 	// Manual section
 	$htmltooltip=$langs->trans("ECMAreaDesc2");
 
-    if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
-    {
-        print '<tr><td colspan="6">';
+	if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
+	{
+		print '<tr><td colspan="6">';
 
-    	// Show filemanager tree
-	    print '<div id="filetree" class="ecmfiletree"></div>';
+		// Show filemanager tree
+		print '<div id="filetree" class="ecmfiletree"></div>';
 
-	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
+		if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
-	    print '</td></tr>';
-    }
-    else
-    {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
-        print '<div id="filetree" class="ecmfiletree">';
-        print '<ul class="ecmjqft">';
+		print '</td></tr>';
+	}
+	else
+	{
+		print '<tr><td colspan="6" style="padding-left: 20px">';
+		print '<div id="filetree" class="ecmfiletree">';
+		print '<ul class="ecmjqft">';
 
-    	// Load full tree
-    	if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);    // Slow
+		// Load full tree
+		if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);    // Slow
 
-    	// ----- This section will show a tree from a fulltree array -----
-    	// $section must also be defined
-    	// ----------------------------------------------------------------
+		// ----- This section will show a tree from a fulltree array -----
+		// $section must also be defined
+		// ----------------------------------------------------------------
 
-    	// Define fullpathselected ( _x_y_z ) of $section parameter
-    	$fullpathselected='';
-    	foreach($sqltree as $key => $val)
-    	{
-    		//print $val['id']."-".$section."<br>";
-    		if ($val['id'] == $section)
-    		{
-    			$fullpathselected=$val['fullpath'];
-    			break;
-    		}
-    	}
-    	//print "fullpathselected=".$fullpathselected."<br>";
+		// Define fullpathselected ( _x_y_z ) of $section parameter
+		$fullpathselected='';
+		foreach($sqltree as $key => $val)
+		{
+			//print $val['id']."-".$section."<br>";
+			if ($val['id'] == $section)
+			{
+				$fullpathselected=$val['fullpath'];
+				break;
+			}
+		}
+		//print "fullpathselected=".$fullpathselected."<br>";
 
-    	// Update expandedsectionarray in session
-    	$expandedsectionarray=array();
-    	if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=explode(',',$_SESSION['dol_ecmexpandedsectionarray']);
+		// Update expandedsectionarray in session
+		$expandedsectionarray=array();
+		if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=explode(',',$_SESSION['dol_ecmexpandedsectionarray']);
 
-    	if ($section && GETPOST('sectionexpand') == 'true')
-    	{
-    		// We add all sections that are parent of opened section
-    		$pathtosection=explode('_',$fullpathselected);
-    		foreach($pathtosection as $idcursor)
-    		{
-    			if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array
-    			{
-    				$expandedsectionarray[]=$idcursor;
-    			}
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	if ($section && GETPOST('sectionexpand') == 'false')
-    	{
-    		// We removed all expanded sections that are child of the closed section
-    		$oldexpandedsectionarray=$expandedsectionarray;
-    		$expandedsectionarray=array();	// Reset
-    		foreach($oldexpandedsectionarray as $sectioncursor)
-    		{
-    			// is_in_subtree(fulltree,sectionparent,sectionchild)
-    			if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
+		if ($section && GETPOST('sectionexpand') == 'true')
+		{
+			// We add all sections that are parent of opened section
+			$pathtosection=explode('_',$fullpathselected);
+			foreach($pathtosection as $idcursor)
+			{
+				if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array
+				{
+					$expandedsectionarray[]=$idcursor;
+				}
+			}
+			$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
+		}
+		if ($section && GETPOST('sectionexpand') == 'false')
+		{
+			// We removed all expanded sections that are child of the closed section
+			$oldexpandedsectionarray=$expandedsectionarray;
+			$expandedsectionarray=array();	// Reset
+			foreach($oldexpandedsectionarray as $sectioncursor)
+			{
+				// is_in_subtree(fulltree,sectionparent,sectionchild)
+				if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
+			}
+			$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
+		}
+		//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 
-    	$nbofentries=0;
-    	$oldvallevel=0;
-    	$var=true;
-    	foreach($sqltree as $key => $val)
-    	{
-    		$var=false;
+		$nbofentries=0;
+		$oldvallevel=0;
+		$var=true;
+		foreach($sqltree as $key => $val)
+		{
+			$var=false;
 
-    		$ecmdirstatic->id=$val['id'];
-    		$ecmdirstatic->ref=$val['label'];
+			$ecmdirstatic->id=$val['id'];
+			$ecmdirstatic->ref=$val['label'];
 
-    		// Refresh cache
-    		if (preg_match('/refresh/i',$action))
-    		{
-    			$result=$ecmdirstatic->fetch($val['id']);
-    			$ecmdirstatic->ref=$ecmdirstatic->label;
+			// Refresh cache
+			if (preg_match('/refresh/i',$action))
+			{
+				$result=$ecmdirstatic->fetch($val['id']);
+				$ecmdirstatic->ref=$ecmdirstatic->label;
 
-    			$result=$ecmdirstatic->refreshcachenboffile(0);
-    			$val['cachenbofdoc']=$result;
-    		}
+				$result=$ecmdirstatic->refreshcachenboffile(0);
+				$val['cachenbofdoc']=$result;
+			}
 
-    		//$fullpathparent=preg_replace('/(_[^_]+)$/i','',$val['fullpath']);
+			//$fullpathparent=preg_replace('/(_[^_]+)$/i','',$val['fullpath']);
 
-    		// Define showline
-    		$showline=0;
+			// Define showline
+			$showline=0;
 
-    		// If directory is son of expanded directory, we show line
-    		if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
-    		// If directory is brother of selected directory, we show line
-    		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
-    		// If directory is parent of selected directory or is selected directory, we show line
-    		elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
-    		// If we are level one we show line
-    		elseif ($val['level'] < 2) $showline=1;
+			// If directory is son of expanded directory, we show line
+			if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
+			// If directory is brother of selected directory, we show line
+			elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
+			// If directory is parent of selected directory or is selected directory, we show line
+			elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
+			// If we are level one we show line
+			elseif ($val['level'] < 2) $showline=1;
 
-    		if ($showline)
-    		{
-    			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
-    			else $option='indexnotexpanded';
-    			//print $option;
+			if ($showline)
+			{
+				if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
+				else $option='indexnotexpanded';
+				//print $option;
 
-    			print '<li class="directory collapsed">';
+				print '<li class="directory collapsed">';
 
-    			// Show tree graph pictos
-                $cpt=1;
-    			while ($cpt < $sqltree[$key]['level'])
-    			{
-    			    print ' &nbsp; &nbsp;';
-    			    $cpt++;
-    			}
-    			$resarray=tree_showpad($sqltree,$key,1);
-    			$a=$resarray[0];
-    			$nbofsubdir=$resarray[1];
-    			$nboffilesinsubdir=$resarray[2];
+				// Show tree graph pictos
+				$cpt=1;
+				while ($cpt < $sqltree[$key]['level'])
+				{
+					print ' &nbsp; &nbsp;';
+					$cpt++;
+				}
+				$resarray=tree_showpad($sqltree,$key,1);
+				$a=$resarray[0];
+				$nbofsubdir=$resarray[1];
+				$nboffilesinsubdir=$resarray[2];
 
-    			// Show link
-    			print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
+				// Show link
+				print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
 
-    			print '<div class="ecmjqft">';
+				print '<div class="ecmjqft">';
 
-    			// Nb of docs
-    			print '<table class="nobordernopadding"><tr><td>';
-    			print $val['cachenbofdoc'];
-    			print '</td>';
-    			print '<td align="left">';
-    			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
-    			print '</td>';
+				// Nb of docs
+				print '<table class="nobordernopadding"><tr><td>';
+				print $val['cachenbofdoc'];
+				print '</td>';
+				print '<td align="left">';
+				if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
+				print '</td>';
 
-    			// Info
-    			print '<td align="center">';
-    			$userstatic->id=$val['fk_user_c'];
-    			$userstatic->lastname=$val['login_c'];
-    			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-    			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
-    			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
-    			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
-    			print "</td>";
+				// Info
+				print '<td align="center">';
+				$userstatic->id=$val['fk_user_c'];
+				$userstatic->lastname=$val['login_c'];
+				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
+				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
+				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
+				$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
+				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
+				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
+				if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
+				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
+				print $form->textwithpicto('', $htmltooltip, 1, 'info');
+				print "</td>";
 
-    			print '</tr></table>';
+				print '</tr></table>';
 
-    			print '</div>';
+				print '</div>';
 
-    			print "</li>\n";
-    		}
+				print "</li>\n";
+			}
 
-    		$oldvallevel=$val['level'];
-    		$nbofentries++;
-    	}
+			$oldvallevel=$val['level'];
+			$nbofentries++;
+		}
 
-    	// If nothing to show
-    	if ($nbofentries == 0)
-    	{
-    		print '<li class="directory collapsed">';
-    		print '<div class="ecmjqft">';
-    		print $langs->trans("ECMNoDirectoryYet");
-    		print '</div>';
+		// If nothing to show
+		if ($nbofentries == 0)
+		{
+			print '<li class="directory collapsed">';
+			print '<div class="ecmjqft">';
+			print $langs->trans("ECMNoDirectoryYet");
+			print '</div>';
    			print "</li>\n";
-    	}
+		}
 
-    	print '</ul>';
-    	print '</div>';
-    	print '</td></tr>';
-    }
+		print '</ul>';
+		print '</div>';
+		print '</td></tr>';
+	}
 
 
 	print "</table>";

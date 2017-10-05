@@ -32,292 +32,292 @@ class MenuManager
 	var $atarget="";                                // To store default target to use onto links
 	var $name="eldy";
 
-    var $menu_array;
-    var $menu_array_after;
+	var $menu_array;
+	var $menu_array_after;
 
-    var $tabMenu;
+	var $tabMenu;
 
 
-    /**
-     *  Constructor
-     *
+	/**
+	 *  Constructor
+	 *
 	 *  @param	DoliDB		$db     	Database handler
-     *  @param	int			$type_user	Type of user
-     */
-    function __construct($db, $type_user)
-    {
-    	$this->type_user=$type_user;
-        $this->db=$db;
-    }
+	 *  @param	int			$type_user	Type of user
+	 */
+	function __construct($db, $type_user)
+	{
+		$this->type_user=$type_user;
+		$this->db=$db;
+	}
 
 
-    /**
-     * Load this->tabMenu
-     *
-   	 * @param	string	$forcemainmenu		To force mainmenu to load
-   	 * @param	string	$forceleftmenu		To force leftmenu to load
-     * @return	void
-     */
-    function loadMenu($forcemainmenu='',$forceleftmenu='')
-    {
+	/**
+	 * Load this->tabMenu
+	 *
+	 * @param	string	$forcemainmenu		To force mainmenu to load
+	 * @param	string	$forceleftmenu		To force leftmenu to load
+	 * @return	void
+	 */
+	function loadMenu($forcemainmenu='',$forceleftmenu='')
+	{
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 
 		// Read mainmenu and leftmenu that define which menu to show
-        if (isset($_GET["mainmenu"]))
-        {
-        	// On sauve en session le menu principal choisi
-        	$mainmenu=$_GET["mainmenu"];
-        	$_SESSION["mainmenu"]=$mainmenu;
-        	$_SESSION["leftmenuopened"]="";
-        }
-        else
-       {
-        	// On va le chercher en session si non defini par le lien
-        	$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
-        }
-        if (! empty($forcemainmenu)) $mainmenu=$forcemainmenu;
+		if (isset($_GET["mainmenu"]))
+		{
+			// On sauve en session le menu principal choisi
+			$mainmenu=$_GET["mainmenu"];
+			$_SESSION["mainmenu"]=$mainmenu;
+			$_SESSION["leftmenuopened"]="";
+		}
+		else
+	   {
+			// On va le chercher en session si non defini par le lien
+			$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
+		}
+		if (! empty($forcemainmenu)) $mainmenu=$forcemainmenu;
 
-        if (isset($_GET["leftmenu"]))
-        {
-        	// On sauve en session le menu principal choisi
-        	$leftmenu=$_GET["leftmenu"];
-        	$_SESSION["leftmenu"]=$leftmenu;
+		if (isset($_GET["leftmenu"]))
+		{
+			// On sauve en session le menu principal choisi
+			$leftmenu=$_GET["leftmenu"];
+			$_SESSION["leftmenu"]=$leftmenu;
 
-        	if ($_SESSION["leftmenuopened"]==$leftmenu)	// To collapse
-        	{
-        		//$leftmenu="";
-        		$_SESSION["leftmenuopened"]="";
-        	}
-        	else
-        	{
-        		$_SESSION["leftmenuopened"]=$leftmenu;
-        	}
-        } else {
-        	// On va le chercher en session si non defini par le lien
-        	$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
-        }
-        if (! empty($forceleftmenu)) $leftmenu=$forceleftmenu;
+			if ($_SESSION["leftmenuopened"]==$leftmenu)	// To collapse
+			{
+				//$leftmenu="";
+				$_SESSION["leftmenuopened"]="";
+			}
+			else
+			{
+				$_SESSION["leftmenuopened"]=$leftmenu;
+			}
+		} else {
+			// On va le chercher en session si non defini par le lien
+			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
+		}
+		if (! empty($forceleftmenu)) $leftmenu=$forceleftmenu;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
-        $tabMenu=array();
-        $menuArbo = new Menubase($this->db,'eldy');
-        $menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
-        $this->tabMenu=$tabMenu;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
+		$tabMenu=array();
+		$menuArbo = new Menubase($this->db,'eldy');
+		$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
+		$this->tabMenu=$tabMenu;
 
-        //if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
-    }
+		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
+	}
 
 
-    /**
-     *  Show menu
-     *
-     *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
-     *  @param	array	$moredata		An array with more data to output
-     *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
-     */
-    function showmenu($mode, $moredata=null)
-    {
-    	global $conf, $langs, $user;
+	/**
+	 *  Show menu
+	 *
+	 *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
+	 *  @param	array	$moredata		An array with more data to output
+	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 */
+	function showmenu($mode, $moredata=null)
+	{
+		global $conf, $langs, $user;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
-        if ($this->type_user == 1)
-        {
-        	$conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED=1;
-        	$conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED=1;
-        }
+		if ($this->type_user == 1)
+		{
+			$conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED=1;
+			$conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED=1;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
-        $this->menu=new Menu();
+		$this->menu=new Menu();
 
-        if (empty($conf->global->MAIN_MENU_INVERT))
-        {
-        	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
-        	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
-        }
-        else
+		if (empty($conf->global->MAIN_MENU_INVERT))
 		{
-        	$conf->global->MAIN_SHOW_LOGO=0;
-        	if ($mode == 'top')  print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
-        	if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
+			if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
+			if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
+		}
+		else
+		{
+			$conf->global->MAIN_SHOW_LOGO=0;
+			if ($mode == 'top')  print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+			if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
 		}
 
 		if ($mode == 'topnb')
 		{
-		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);  // no output
-		    return $this->menu->getNbOfVisibleMenuEntries();
+			print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);  // no output
+			return $this->menu->getNbOfVisibleMenuEntries();
 		}
 
-        if ($mode == 'jmobile')     // Used to get menu in xml ul/li
-        {
-            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);      // Fill this->menu that is empty with top menu
+		if ($mode == 'jmobile')     // Used to get menu in xml ul/li
+		{
+			print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);      // Fill this->menu that is empty with top menu
 
-            // $this->menu->liste is top menu
-            //var_dump($this->menu->liste);exit;
-            $lastlevel = array();
-        	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
-        	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-        	{
-        		print '<ul class="ulmenu" data-inset="true">';
-        		print '<li class="lilevel0">';
+			// $this->menu->liste is top menu
+			//var_dump($this->menu->liste);exit;
+			$lastlevel = array();
+			print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
+			foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+			{
+				print '<ul class="ulmenu" data-inset="true">';
+				print '<li class="lilevel0">';
 
-        		if ($val['enabled'] == 1)
-        		{
+				if ($val['enabled'] == 1)
+				{
 					$relurl=dol_buildpath($val['url'],1);
 					$relurl=preg_replace('/__LOGIN__/',$user->login,$relurl);
 					$relurl=preg_replace('/__USERID__/',$user->id,$relurl);
 					$canonurl=preg_replace('/\?.*$/','',$val['url']);
 
-        			print '<a class="alilevel0" href="#">';
+					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
 					if ($val['level'] == 0 && $val['mainmenu'] == 'home') print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
 
 					print $val['titre'];
-        			print '</a>'."\n";
+					print '</a>'."\n";
 
-        			// Search submenu fot this mainmenu entry
-        			$tmpmainmenu=$val['mainmenu'];
-        			$tmpleftmenu='all';
-        			$submenu=new Menu();
-	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);       // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
-        		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
-                    //if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
-	        		$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
+					// Search submenu fot this mainmenu entry
+					$tmpmainmenu=$val['mainmenu'];
+					$tmpleftmenu='all';
+					$submenu=new Menu();
+					print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);       // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
+					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
+					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
+					$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
-        			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
-        			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
-        			//var_dump($canonrelurl);
-        			//var_dump($canonnexturl);
-        			print '<ul>'."\n";
-        			if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
-        				|| (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/list.php') !== false))
+					$canonrelurl=preg_replace('/\?.*$/','',$relurl);
+					$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
+					//var_dump($canonrelurl);
+					//var_dump($canonnexturl);
+					print '<ul>'."\n";
+					if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
+						|| (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/list.php') !== false))
 					{
-        				// We add sub entry
-        				print str_pad('',1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
-        				print '<a href="'.$relurl.'">';
-        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
-        				{
-        				    if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) print $langs->trans("Access");
-        				    else print $langs->trans("Dashboard");
-        				}
-        				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
-        				print '</a>';
-        				print '</li>'."\n";
-        			}
+						// We add sub entry
+						print str_pad('',1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
+						print '<a href="'.$relurl.'">';
+						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
+						{
+							if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) print $langs->trans("Access");
+							else print $langs->trans("Dashboard");
+						}
+						else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+						print '</a>';
+						print '</li>'."\n";
+					}
 
-        			if ($val['level']==0)
-        			{
-        			    if ($val['enabled'])
-        			    {
-        			        $lastlevel[0]='enabled';
-        			    }
-        			    else if ($showmenu)                 // Not enabled but visible (so greyed)
-        			    {
-        			        $lastlevel[0]='greyed';
-        			    }
-        			    else
-        			    {
-        			        $lastlevel[0]='hidden';
-        			    }
-        			}
+					if ($val['level']==0)
+					{
+						if ($val['enabled'])
+						{
+							$lastlevel[0]='enabled';
+						}
+						else if ($showmenu)                 // Not enabled but visible (so greyed)
+						{
+							$lastlevel[0]='greyed';
+						}
+						else
+						{
+							$lastlevel[0]='hidden';
+						}
+					}
 
-        			$lastlevel2 = array();
-       				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-       				{
+					$lastlevel2 = array();
+	   				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+	   				{
 						$showmenu=true;
 						if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) $showmenu=false;
 
 						// If at least one parent is not enabled, we do not show any menu of all children
 						if ($val2['level'] > 0)
 						{
-						    $levelcursor = $val2['level']-1;
-						    while ($levelcursor >= 0)
-						    {
-                                if ($lastlevel2[$levelcursor] != 'enabled') $showmenu=false;
-                                $levelcursor--;
-						    }
+							$levelcursor = $val2['level']-1;
+							while ($levelcursor >= 0)
+							{
+								if ($lastlevel2[$levelcursor] != 'enabled') $showmenu=false;
+								$levelcursor--;
+							}
 						}
 
-       					if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
-       					{
-	        				$relurl2=dol_buildpath($val2['url'],1);
-		        			$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
-	    	    			$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
-	        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
-	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
-	        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
+	   					if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
+	   					{
+							$relurl2=dol_buildpath($val2['url'],1);
+							$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
+							$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
+							$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
+							//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
+							if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
 
-	        				$disabled='';
-	        				if (! $val2['enabled'])
-	        				{
-	        				    $disabled=" vsmenudisabled";
-	        				}
+							$disabled='';
+							if (! $val2['enabled'])
+							{
+								$disabled=" vsmenudisabled";
+							}
 
-	        				print str_pad('',$val2['level']+1);
-	        				print '<li class="lilevel'.($val2['level']+1);
-	        				if ($val2['level']==0) print ' ui-btn-icon-right ui-btn';  // ui-btn to highlight on clic
-	        				print $disabled.'">';	 // ui-btn to highlight on clic
-	        				if ($relurl2)
-	        				{
-	        					if ($val2['enabled'])	// Allowed
-	        					{
-	        						print '<a href="'.$relurl2.'"';
-		        					//print ' data-ajax="false"';
-		        					print '>';
-		        					$lastlevel2[$val2['level']]='enabled';
-	        					}
-	        					else					// Not allowed but visible (greyed)
-	        					{
-				        			print '<a href="#" class="vsmenudisabled">';
-				        			$lastlevel2[$val2['level']]='greyed';
-	        					}
-	        				}
-	        				else
-	        				{
-	        				    if ($val2['enabled'])	// Allowed
-	        				    {
-	        				        $lastlevel2[$val2['level']]='enabled';
-	        				    }
-	        				    else
-	        				    {
-	        				        $lastlevel2[$val2['level']]='greyed';
-	        				    }
-	        				}
-                            //var_dump($val2['level']);
-	        				//var_dump($lastlevel2);
-                            print $val2['titre'];
-	        				if ($relurl2)
-	        				{
-	        					if ($val2['enabled'])	// Allowed
-	        						print '</a>';
-	        					else
-	        						print '</a>';
-	        				}
-	        				print '</li>'."\n";
-       					}
+							print str_pad('',$val2['level']+1);
+							print '<li class="lilevel'.($val2['level']+1);
+							if ($val2['level']==0) print ' ui-btn-icon-right ui-btn';  // ui-btn to highlight on clic
+							print $disabled.'">';	 // ui-btn to highlight on clic
+							if ($relurl2)
+							{
+								if ($val2['enabled'])	// Allowed
+								{
+									print '<a href="'.$relurl2.'"';
+									//print ' data-ajax="false"';
+									print '>';
+									$lastlevel2[$val2['level']]='enabled';
+								}
+								else					// Not allowed but visible (greyed)
+								{
+									print '<a href="#" class="vsmenudisabled">';
+									$lastlevel2[$val2['level']]='greyed';
+								}
+							}
+							else
+							{
+								if ($val2['enabled'])	// Allowed
+								{
+									$lastlevel2[$val2['level']]='enabled';
+								}
+								else
+								{
+									$lastlevel2[$val2['level']]='greyed';
+								}
+							}
+							//var_dump($val2['level']);
+							//var_dump($lastlevel2);
+							print $val2['titre'];
+							if ($relurl2)
+							{
+								if ($val2['enabled'])	// Allowed
+									print '</a>';
+								else
+									print '</a>';
+							}
+							print '</li>'."\n";
+	   					}
 
 
-       				}
-        			//var_dump($submenu);
-        			print '</ul>';
-        		}
-        		if ($val['enabled'] == 2)
-        		{
-        			print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
-        		}
-        		print '</li>';
-        		print '</ul>'."\n";
-        	}
-        }
+	   				}
+					//var_dump($submenu);
+					print '</ul>';
+				}
+				if ($val['enabled'] == 2)
+				{
+					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+				}
+				print '</li>';
+				print '</ul>'."\n";
+			}
+		}
 
-        unset($this->menu);
+		unset($this->menu);
 
-        //print 'xx'.$mode;
-        return 0;
-    }
+		//print 'xx'.$mode;
+		return 0;
+	}
 
 }
 
