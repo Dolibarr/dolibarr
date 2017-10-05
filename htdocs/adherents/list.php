@@ -96,6 +96,7 @@ $fieldstosearchall = array(
     'd.note_public'=>'NotePublic',
     'd.note_private'=>'NotePrivate',
 );
+if($db->type == 'pgsql') unset($fieldstosearchall['d.rowid']);
 $arrayfields=array(
     'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
