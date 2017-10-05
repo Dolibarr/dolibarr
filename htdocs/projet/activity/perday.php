@@ -107,7 +107,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $action = '';
     $search_categ='';
-    $search_usertoprocessid = '';
+    $search_usertoprocessid = $user->id;
     $search_task_ref = '';
     $search_task_label = '';
     $search_project_ref = '';
@@ -506,7 +506,7 @@ print '</form>';
 
 print '<script type="text/javascript">';
 print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\'});';
 print "});";
 print '</script>';
 
