@@ -882,7 +882,7 @@ class Categorie extends CommonObject
 	/**
 	 * List categories of an element id
 	 *
-	 * @param	int		$item		Id of element
+	 * @param	int		$id			Id of element
 	 * @param	string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param	string	$sortfield	Sort field
 	 * @param	string	$sortorder	Sort order

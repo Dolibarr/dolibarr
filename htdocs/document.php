@@ -27,6 +27,7 @@
  *  \remarks    Call of this wrapper is made with URL:
  * 				document.php?modulepart=repfichierconcerne&file=relativepathoffile
  * 				document.php?modulepart=logs&file=dolibarr.log
+ * 				document.php?modulepart=logs&hashp=sharekey
  */
 
 define('NOTOKENRENEWAL',1); // Disables token renewal

@@ -28,6 +28,7 @@ if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -764,6 +765,7 @@ if ($action == 'reset' && $user->admin)
  */
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 
 // Set dir where external modules are installed
 if (! dol_is_dir($dirins))
@@ -1250,6 +1252,20 @@ elseif (! empty($module))
         	if ($action != 'editfile' || empty($file))
         	{
         		print $langs->trans("LanguageDefDesc").'<br>';
+        		print '<br>';
+
+
+        		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="action" value="addlanguage">';
+        		print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+        		print '<input type="hidden" name="tab" value="'.$tab.'">';
+        		print '<input type="hidden" name="module" value="'.$module.'">';
+        		print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 1);
+        		print '<input type="submit" name="addlanguage" class="button" value="'.dol_escape_htmltag($langs->trans("AddLanguageFile")).'"><br>';
+        		print '</form>';
+
+        		print '<br>';
         		print '<br>';
 
         		$langfiles=dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
