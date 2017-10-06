@@ -241,13 +241,14 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	        $object->timespent_note = GETPOST($key.'note');
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {
-	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
+	        	$object->timespent_datehour = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
 	        	$object->timespent_withhour = 1;
 	        }
 	        else
 			{
-	        	$object->timespent_date = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
+	        	$object->timespent_datehour = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
 			}
+			$object->timespent_date = $object->timespent_datehour;
 
 			if ($object->timespent_date > 0)
 			{
