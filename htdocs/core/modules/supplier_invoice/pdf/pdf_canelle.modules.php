@@ -157,7 +157,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		if ($conf->fournisseur->dir_output.'/facture')
+		if ($conf->fournisseur->facture->dir_output)
 		{
 			$object->fetch_thirdparty();
 
@@ -540,7 +540,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
