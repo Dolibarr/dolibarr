@@ -46,7 +46,8 @@ if (! $user->admin) accessforbidden();
 $error=0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('admincompany','globaladmin'));
+$contextpage=array('admincompany','globaladmin');
+$hookmanager->initHooks($contextpage);
 
 /*
  * Actions
