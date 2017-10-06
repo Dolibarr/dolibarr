@@ -2028,7 +2028,9 @@ class Adherent extends CommonObject
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO))
 				{
 					if ($this->pass_indatabase_crypted && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))	{
-						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+						// Create OpenLDAP MD5 password from Dolibarr MD5 password
+						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
+						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = '{md5}'.base64_encode(hex2bin($this->pass_indatabase_crypted));
 					}
 				}
 			}
