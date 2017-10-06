@@ -33,49 +33,49 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 class Documents extends DolibarrApi
 {
 
-    /**
-     * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
-     */
-    static $DOCUMENT_FIELDS = array(
-        'modulepart'
-    );
+	/**
+	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
+	 */
+	static $DOCUMENT_FIELDS = array(
+		'modulepart'
+	);
 
-    /**
-     * Constructor
-     */
-    function __construct()
-    {
-        global $db;
-        $this->db = $db;
-    }
+	/**
+	 * Constructor
+	 */
+	function __construct()
+	{
+		global $db;
+		$this->db = $db;
+	}
 
 
-    /**
-     * Returns a document. Note that, this API is similar to using the wrapper link "documents.php" to download
-     * a file (used for internal HTML links of documents into application), but with no need to be into a logged session (no need to post the session cookie).
-     *
-     * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
-     * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
-     * @param	int		$regeneratedoc	If requested document is the main document of an object, setting this to 1 ask API to regenerate document before returning it (supported for some module_part only). It is no effect in other cases.
-     * 									Also, note that setting this to 1 nead write access on object.
-     * @return  array                   List of documents
-     *
-     * @throws 500
-     * @throws 501
-     * @throws 400
-     * @throws 401
-     * @throws 200
-     */
-    public function index($module_part, $original_file='', $regeneratedoc=0)
-    {
+	/**
+	 * Returns a document. Note that, this API is similar to using the wrapper link "documents.php" to download
+	 * a file (used for internal HTML links of documents into application), but with no need to be into a logged session (no need to post the session cookie).
+	 *
+	 * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
+	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
+	 * @param	int		$regeneratedoc	If requested document is the main document of an object, setting this to 1 ask API to regenerate document before returning it (supported for some module_part only). It is no effect in other cases.
+	 * 									Also, note that setting this to 1 nead write access on object.
+	 * @return  array                   List of documents
+	 *
+	 * @throws 500
+	 * @throws 501
+	 * @throws 400
+	 * @throws 401
+	 * @throws 200
+	 */
+	public function index($module_part, $original_file='', $regeneratedoc=0)
+	{
 		global $conf;
 
 		if (empty($module_part)) {
-	            throw new RestException(400, 'bad value for parameter modulepart');
+				throw new RestException(400, 'bad value for parameter modulepart');
 		}
-        if (empty($original_file)) {
-            throw new RestException(400, 'bad value for parameter ref or subdir');
-        }
+		if (empty($original_file)) {
+			throw new RestException(400, 'bad value for parameter ref or subdir');
+		}
 
 		//--- Finds and returns the document
 		$entity=$conf->entity;
@@ -183,37 +183,37 @@ class Documents extends DolibarrApi
 		$entity = $user->entity;
 		if ($ref)
 		{
-    		if ($modulepart == 'facture' || $modulepart == 'invoice')
-    		{
-    		    $modulepart='facture';
-    		    $object=new Facture($db);
-    		    $result = $object->fetch('', $ref);
-    		}
+			if ($modulepart == 'facture' || $modulepart == 'invoice')
+			{
+				$modulepart='facture';
+				$object=new Facture($db);
+				$result = $object->fetch('', $ref);
+			}
 
-    		if (! ($object->id > 0))
-    		{
-   		        throw new RestException(500, 'The object '.$modulepart." with ref '".$ref."' was not found.");
-    		}
+			if (! ($object->id > 0))
+			{
+   				throw new RestException(500, 'The object '.$modulepart." with ref '".$ref."' was not found.");
+			}
 
-    		$tmp = dol_check_secure_access_document($modulepart, $tmpreldir.$object->ref, $entity, DolibarrApiAccess::$user, $ref, 'write');
-    		$upload_dir = $tmp['original_file'];
+			$tmp = dol_check_secure_access_document($modulepart, $tmpreldir.$object->ref, $entity, DolibarrApiAccess::$user, $ref, 'write');
+			$upload_dir = $tmp['original_file'];
 
-    		if (empty($upload_dir) || $upload_dir == '/')
-    		{
-    		    throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
-    		}
+			if (empty($upload_dir) || $upload_dir == '/')
+			{
+				throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
+			}
 		}
 		else
 		{
-		    if ($modulepart == 'invoice') $modulepart ='facture';
+			if ($modulepart == 'invoice') $modulepart ='facture';
 
-		    $tmp = dol_check_secure_access_document($modulepart, $subdir, $entity, DolibarrApiAccess::$user, '', 'write');
-    		$upload_dir = $tmp['original_file'];
+			$tmp = dol_check_secure_access_document($modulepart, $subdir, $entity, DolibarrApiAccess::$user, '', 'write');
+			$upload_dir = $tmp['original_file'];
 
-		    if (empty($upload_dir) || $upload_dir == '/')
-    		{
-    		    throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
-    		}
+			if (empty($upload_dir) || $upload_dir == '/')
+			{
+				throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
+			}
 		}
 
 
@@ -223,46 +223,46 @@ class Documents extends DolibarrApi
 		$destfiletmp = DOL_DATA_ROOT.'/admin/temp/' . $original_file;
 		dol_delete_file($destfiletmp);
 
-        if (!dol_is_dir($upload_dir)) {
-            throw new RestException(401,'Directory not exists : '.$upload_dir);
-        }
+		if (!dol_is_dir($upload_dir)) {
+			throw new RestException(401,'Directory not exists : '.$upload_dir);
+		}
 
-        if (! $overwriteifexists && dol_is_file($destfile))
-        {
-            throw new RestException(500, "File with name '".$original_file."' already exists.");
-        }
+		if (! $overwriteifexists && dol_is_file($destfile))
+		{
+			throw new RestException(500, "File with name '".$original_file."' already exists.");
+		}
 
-        $fhandle = @fopen($destfiletmp, 'w');
-        if ($fhandle)
-        {
-            $nbofbyteswrote = fwrite($fhandle, $newfilecontent);
-            fclose($fhandle);
-            @chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
-        }
-        else
-        {
-            throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
-        }
+		$fhandle = @fopen($destfiletmp, 'w');
+		if ($fhandle)
+		{
+			$nbofbyteswrote = fwrite($fhandle, $newfilecontent);
+			fclose($fhandle);
+			@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+		}
+		else
+		{
+			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
+		}
 
-        $result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
+		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
 
-        return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array           $data   Array with data to verify
-     * @return  array
-     * @throws  RestException
-     */
-    function _validate_file($data) {
-        $result = array();
-        foreach (Documents::$DOCUMENT_FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $result[$field] = $data[$field];
-        }
-        return $result;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException
+	 */
+	function _validate_file($data) {
+		$result = array();
+		foreach (Documents::$DOCUMENT_FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$result[$field] = $data[$field];
+		}
+		return $result;
+	}
 }
