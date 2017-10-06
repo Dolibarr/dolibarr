@@ -308,7 +308,7 @@ if ($action == 'create')
     print '<td class="titlefieldcreate fieldrequired">';
     print $langs->trans("Label");
     print '</td>';
-    print '<td><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
+    print '<td><input type="text" size="34" name="label" class="flat" value="'.dol_escape_htmltag(GETPOST('label','alpha')).'" autofocus></td>';
     print '</tr>';
     print '<tr>';
 
@@ -317,7 +317,7 @@ if ($action == 'create')
     print $langs->trans("Type");
     print '</td>';
     print '<td>';
-    $formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode")?GETPOST("actioncode"):'','actioncode',1);
+    $formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode",'alpha')?GETPOST("actioncode",'alpha'):'','actioncode',1);
     print '</td>';
     print '</tr>';
 
@@ -336,7 +336,7 @@ if ($action == 'create')
     print '<td class="fieldrequired">';
     print $langs->trans("Amount");
     print '</td>';
-	print '<td><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
+	print '<td><input type="text" size="6" name="amount" class="flat" value="'.dol_escape_htmltag(GETPOST('amount','alpha')).'"></td>';
     print '</tr>';
 
 	// Project
