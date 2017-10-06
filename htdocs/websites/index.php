@@ -329,7 +329,7 @@ if ($action == 'add')
     			*/
     			$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
     		}
-    		$objectpage->htmlheader = $tmp;
+    		$objectpage->htmlheader = trim($tmp);
 
 
     		// Now loop to fetch CSS
@@ -382,40 +382,7 @@ if ($action == 'add')
     		// Now loop to fetch all images
     		$tmp = $objectpage->content;
 
-    		preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $objectpage->content, $regs);
-			foreach ($regs[0] as $key => $val)
-			{
-				$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
-				$linkwithoutdomain = $regs[2][$key];
-				$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
-				if (preg_match('/^http/', $regs[2][$key]))
-				{
-					$urltograbbis = $regs[2][$key];
-					$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-					$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-				}
-
-				$tmpgeturl = getURLContent($urltograbbis);
-				if ($tmpgeturl['curl_error_no'])
-				{
-					$error++;
-					setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
-					$action='create';
-				}
-				else
-				{
-					dol_mkdir(dirname($filetosave));
-
-					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
-					fclose($fp);
-					if (! empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
-
-				$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-				$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '<img'.$regs[1][$key].'src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'"'.$regs[3][$key].'>', $tmp);
-			}
+    		getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1);
 
 			//print dol_escape_htmltag($tmp);exit;
 			$objectpage->content = $tmp;
