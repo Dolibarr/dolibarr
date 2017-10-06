@@ -298,7 +298,7 @@ class Comment extends CommonObject
 			$sql.= " c.rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."comment as c";
 			$sql.= " WHERE c.fk_element = ".$fk_element;
-			$sql.= " AND c.element_type = '".$element_type."'";
+			$sql.= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql.= " AND c.entity = ".$conf->entity;
 			$sql.= " ORDER BY c.tms DESC";
 
