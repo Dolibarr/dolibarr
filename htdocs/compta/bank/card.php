@@ -324,11 +324,11 @@ if ($action == 'create')
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input size="8" type="text" class="flat" name="ref" value="'.(GETPOST("ref")?GETPOST("ref",'alpha'):$object->ref).'" maxlength="12"></td></tr>';
+	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOST("ref")?GETPOST("ref",'alpha'):$object->ref).'" maxlength="12" autofocus></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label", 'alpha').'"></td></tr>';
+	print '<td><input size="30" type="text" class="flat" name="label" value="'.dol_escape_htmltag(GETPOST("label", 'alpha')).'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
@@ -349,7 +349,7 @@ if ($action == 'create')
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td>';
-    print $form->selectarray("clos", $object->status,(isset($_POST["clos"])?$_POST["clos"]:$object->clos));
+    print $form->selectarray("clos", $object->status,(GETPOST("clos",'int')!=''?GETPOST("clos",'int'):$object->clos));
     print '</td></tr>';
 
     // Country

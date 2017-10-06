@@ -239,21 +239,25 @@ class Proposals extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->propal->creer) {
+    function postLine($id, $request_data = NULL)
+    {
+		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
-		  }
+		}
 
-      $result = $this->propal->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Commercial Proposal not found');
-      }
+	    $result = $this->propal->fetch($id);
+	    if (! $result) {
+	       throw new RestException(404, 'Commercial Proposal not found');
+	    }
 
-		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-			$request_data = (object) $request_data;
-      $updateRes = $this->propal->addline(
+		if (! DolibarrApi::_checkAccessToResource('propal',$this->propal->id))
+		{
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+      	$updateRes = $this->propal->addline(
                         $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
@@ -300,43 +304,52 @@ class Proposals extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->propal->creer) {
-		  	throw new RestException(401);
-		  }
+    function putLine($id, $lineid, $request_data = NULL)
+    {
+    	if(! DolibarrApiAccess::$user->rights->propal->creer) {
+			throw new RestException(401);
+		}
 
-      $result = $this->propal->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Proposal not found');
-      }
+    	$result = $this->propal->fetch($id);
+    	if($result <= 0) {
+        	throw new RestException(404, 'Proposal not found');
+    	}
 
-		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-			$request_data = (object) $request_data;
-      $updateRes = $this->propal->updateline(
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      	}
+
+      	$request_data = (object) $request_data;
+
+      	$propalline = new PropaleLigne($this->db);
+      	$result = $propalline->fetch($lineid);
+      	if ($result <= 0) {
+      		throw new RestException(404, 'Proposal line not found');
+      	}
+
+      	$updateRes = $this->propal->updateline(
                         $lineid,
-                        $request_data->subprice,
-                        $request_data->qty,
-                        $request_data->remise_percent,
-                        $request_data->tva_tx,
-                        $request_data->localtax1_tx,
-                        $request_data->localtax2_tx,
-                        $request_data->desc,
+                        isset($request_data->subprice)?$request_data->subprice:$propalline->subprice,
+                        isset($request_data->qty)?$request_data->qty:$propalline->qty,
+                        isset($request_data->remise_percent)?$request_data->remise_percent:$propalline->remise_percent,
+                        isset($request_data->tva_tx)?$request_data->tva_tx:$propalline->tva_tx,
+                        isset($request_data->localtax1_tx)?$request_data->localtax1_tx:$propalline->localtax1_tx,
+                        isset($request_data->localtax2_tx)?$request_data->localtax2_tx:$propalline->localtax2_tx,
+                        isset($request_data->desc)?$request_data->desc:$propalline->desc,
       					'HT',
-                        $request_data->info_bits,
-                        $request_data->special_code,
-                        $request_data->fk_parent_line,
+                        isset($request_data->info_bits)?$request_data->info_bits:$propalline->info_bits,
+                        isset($request_data->special_code)?$request_data->special_code:$propalline->special_code,
+                        isset($request_data->fk_parent_line)?$request_data->fk_parent_line:$propalline->fk_parent_line,
       					0,
-      					$request_data->fk_fournprice,
-      					$request_data->pa_ht,
-      					$request_data->label,
-				      	$request_data->product_type,
-      					$request_data->date_start,
-                        $request_data->date_end,
-                        $request_data->array_options,
-                        $request_data->fk_unit,
-      					$request_data->multicurrency_subprice
+      					isset($request_data->fk_fournprice)?$request_data->fk_fournprice:$propalline->fk_fournprice,
+      					isset($request_data->pa_ht)?$request_data->pa_ht:$propalline->pa_ht,
+      					isset($request_data->label)?$request_data->label:$propalline->label,
+				      	isset($request_data->product_type)?$request_data->product_type:$propalline->product_type,
+      					isset($request_data->date_start)?$request_data->date_start:$propalline->date_start,
+                        isset($request_data->date_end)?$request_data->date_end:$propalline->date_end,
+                        isset($request_data->array_options)?$request_data->array_options:$propalline->array_options,
+                        isset($request_data->fk_unit)?$request_data->fk_unit:$propalline->fk_unit,
+      					isset($request_data->multicurrency_subprice)?$request_data->multicurrency_subprice:$propalline->subprice
       );
 
       if ($updateRes > 0) {

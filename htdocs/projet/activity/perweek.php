@@ -121,7 +121,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $action = '';
     $search_categ='';
-    $search_usertoprocessid = '';
+    $search_usertoprocessid = $user->id;
     $search_task_ref = '';
     $search_task_label = '';
     $search_project_ref = '';
@@ -247,6 +247,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				        $object->timespent_duration = $newduration;
 				        $object->timespent_fk_user = $usertoprocess->id;
 			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
+			        	$object->timespent_datehour = $object->timespent_date;
 
 						$result=$object->addTimeSpent($user);
 						if ($result < 0)
@@ -514,7 +515,10 @@ if (count($tasksarray) > 0)
 	if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) $colspan++;
 
 	print '<tr class="liste_total">
-                <td class="liste_total" colspan="'.$colspan.'">'.$langs->trans("Total").'</td>
+                <td class="liste_total" colspan="'.$colspan.'">';
+                print $langs->trans("Total");
+                print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+                print '</td>
                 <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
                 <td class="liste_total hide1" align="center"><div id="totalDay[1]">&nbsp;</div></td>
                 <td class="liste_total hide2" align="center"><div id="totalDay[2]">&nbsp;</div></td>
@@ -544,7 +548,7 @@ $modeinput='hours';
 
 print '<script type="text/javascript">';
 print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\'});';
 $i=0;
 while ($i < 7)
 {

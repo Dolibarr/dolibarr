@@ -41,6 +41,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER TABLE llx_user ADD COLUMN birth date;
+
 -- VMYSQL4.1 ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
 
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type, nb_holiday);

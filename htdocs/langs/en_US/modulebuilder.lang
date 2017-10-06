@@ -81,3 +81,4 @@ HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module 
 TriggerDefDesc=Define in the trigger file the code you want to execute for each business event executed.
 SeeIDsInUse=See IDs in use in your installation
 SeeReservedIDsRangeHere=See range of reserved IDs
+ToolkitForDevelopers=Toolkit for Dolibarr developers

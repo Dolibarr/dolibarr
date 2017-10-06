@@ -50,6 +50,7 @@ class Notify
         'BILL_PAYED',
         'ORDER_VALIDATE',
         'PROPAL_VALIDATE',
+        'PROPAL_CLOSE_SIGNED',
         'FICHINTER_VALIDATE',
         'FICHINTER_ADD_CONTACT',
         'ORDER_SUPPLIER_VALIDATE',
@@ -58,7 +59,7 @@ class Notify
         'SHIPPING_VALIDATE'
     );
 
-    
+
     /**
 	 *	Constructor
 	 *
@@ -85,14 +86,14 @@ class Notify
 		$langs->load("mails");
 
 		$listofnotiftodo=$this->getNotificationsArray($action,$socid,$object,0);
-		
+
 		$nb=-1;
 		if (is_array($listofnotiftodo)) $nb=count($listofnotiftodo);
 		if ($nb < 0)  $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
 		if ($nb == 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
    		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
    		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
-		
+
    		if (is_array($listofnotiftodo))
    		{
     		$i=0;
@@ -106,7 +107,7 @@ class Notify
     		}
     		if ($i) $texte.=')';
    		}
-   		
+
 		return $texte;
 	}
 
@@ -149,9 +150,9 @@ class Notify
     	        }
     	        $sql.= " AND s.entity IN (".getEntity('societe').")";
     	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
-    
+
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-    
+
     	        $resql = $this->db->query($sql);
     	        if ($resql)
     	        {
@@ -176,7 +177,7 @@ class Notify
     			}
             }
         }
-        
+
         if (! $error)
         {
             if ($userid >= 0 && in_array('user', $scope))
@@ -194,9 +195,9 @@ class Notify
     			}
     			$sql.= " AND c.entity IN (".getEntity('user').")";
     			if ($userid > 0) $sql.= " AND c.rowid = ".$userid;
-    			
+
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-    			
+
     			$resql = $this->db->query($sql);
     			if ($resql)
     			{
@@ -237,10 +238,10 @@ class Notify
     		    	{
     		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
     		    	}
-    
+
         			$threshold = (float) $reg[1];
         			if ($valueforthreshold < $threshold) continue;
-    
+
     		    	$tmpemail=explode(',',$val);
     		    	foreach($tmpemail as $key2 => $val2)
     		    	{
@@ -295,7 +296,7 @@ class Notify
 	        $hookmanager=new HookManager($this->db);
 	    }
 	    $hookmanager->initHooks(array('notification'));
-	    
+
 	    dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
     	$langs->load("other");
@@ -342,7 +343,7 @@ class Notify
         $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
         if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
         else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-        
+
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -369,7 +370,7 @@ class Notify
 	                	}
 
 	                	$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
-	                	
+
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link='/compta/facture/card.php?facid='.$object->id;
@@ -395,6 +396,12 @@ class Notify
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 								break;
+                            case 'PROPAL_CLOSE_SIGNED':
+                                $link='/comm/propal/card.php?id='.$object->id;
+                                $dir_output = $conf->propal->dir_output;
+                                $object_type = 'propal';
+                                $mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
+                                break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
 								$dir_output = $conf->facture->dir_output;
@@ -409,7 +416,7 @@ class Notify
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
 								$link='/fourn/commande/card.php?id='.$object->id;
-								$dir_output = $conf->fournisseur->dir_output.'/commande/';
+								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$object->ref,$user->getFullName($langs));
@@ -417,7 +424,7 @@ class Notify
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
 								$link='/fourn/commande/card.php?id='.$object->id;
-								$dir_output = $conf->fournisseur->dir_output.'/commande/';
+								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
@@ -425,7 +432,7 @@ class Notify
 								break;
 							case 'ORDER_SUPPLIER_REFUSE':
 								$link='/fourn/commande/card.php?id='.$object->id;
-								$dir_output = $conf->fournisseur->dir_output.'/commande/';
+								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$newref,$user->getFullName($langs));
@@ -462,7 +469,7 @@ class Notify
 	                        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 	                        if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 	                    }
-	                     
+
 	                    $mailfile = new CMailFile(
 	                        $subject,
 	                        $sendto,
@@ -478,16 +485,16 @@ class Notify
 	                    );
 
 	                    if ($mailfile->sendfile())
-	                    {   
+	                    {
 	                        if ($obj->type_target == 'touserid') {
      	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
     	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-                           
+
                             }
                             else {
     	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
     	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-                                
+
                             }
 	                        if (! $this->db->query($sql))
 	                        {
@@ -571,6 +578,12 @@ class Notify
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 						break;
+                    case 'PROPAL_CLOSE_SIGNED':
+                        $link='/comm/propal/card.php?id='.$object->id;
+                        $dir_output = $conf->propal->dir_output;
+                        $object_type = 'propal';
+                        $mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
+                        break;
                     case 'FICHINTER_ADD_CONTACT':
                         $link='/fichinter/card.php?id='.$object->id;
                         $dir_output = $conf->facture->dir_output;
@@ -585,7 +598,7 @@ class Notify
 						break;
 		        	case 'ORDER_SUPPLIER_VALIDATE':
 		        		$link='/fourn/commande/card.php?id='.$object->id;
-		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
+		        		$dir_output = $conf->fournisseur->commande->dir_output;
 		        		$object_type = 'order_supplier';
 		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$newref,$user->getFullName($langs));
@@ -593,7 +606,7 @@ class Notify
 		        		break;
 					case 'ORDER_SUPPLIER_APPROVE':
 						$link='/fourn/commande/card.php?id='.$object->id;
-						$dir_output = $conf->fournisseur->dir_output.'/commande/';
+						$dir_output = $conf->fournisseur->commande->dir_output;
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
@@ -601,7 +614,7 @@ class Notify
 						break;
 					case 'ORDER_SUPPLIER_APPROVE2':
 						$link='/fourn/commande/card.php?id='.$object->id;
-						$dir_output = $conf->fournisseur->dir_output.'/commande/';
+						$dir_output = $conf->fournisseur->commande->dir_output;
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
@@ -664,7 +677,7 @@ class Notify
 		    	        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 		        	    if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 			        }
-		        
+
 		            $mailfile = new CMailFile(
 		        		$subject,
 		        		$sendto,

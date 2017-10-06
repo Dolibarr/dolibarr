@@ -1279,8 +1279,8 @@ function dol_delete_preview($object)
 	// Define parent dir of elements
 	$element = $object->element;
 
-    if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
-    elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
+    if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->commande->dir_output;
+    elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->facture->dir_output;
     elseif ($object->element == 'project')			$dir = $conf->projet->dir_output;
     elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
     elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
@@ -2083,7 +2083,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	elseif ($modulepart == 'billstatssupplier' && !empty($conf->fournisseur->dir_output))
 	{
 		if ($fuser->rights->fournisseur->facture->{$lire}) $accessallowed=1;
-		$original_file=$conf->fournisseur->dir_output.'/facture/temp/'.$original_file;
+		$original_file=$conf->fournisseur->facture->dir_temp.'/'.$original_file;
 	}
 	// Wrapping pour les images des stats expeditions
 	elseif ($modulepart == 'expeditionstats' && !empty($conf->expedition->dir_temp))

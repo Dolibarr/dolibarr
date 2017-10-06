@@ -450,8 +450,8 @@ class CommandeFournisseur extends CommonOrder
                     // in order not to lose the attached files
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
-                    $dirsource = $conf->fournisseur->dir_output.'/commande/'.$oldref;
-                    $dirdest = $conf->fournisseur->dir_output.'/commande/'.$newref;
+                    $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
+                    $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
                     if (file_exists($dirsource))
                     {
                         dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
@@ -460,7 +460,7 @@ class CommandeFournisseur extends CommonOrder
                         {
                             dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->dir_output.'/commande/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
