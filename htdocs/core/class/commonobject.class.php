@@ -12,6 +12,7 @@
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
+ * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2259,200 +2260,224 @@ abstract class CommonObject
     function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
     {
     	global $conf;
+	    
+	//Some external module want no update price after a trigger because they have a other method for calculate the total (ex: with a extrafield)
+        $MODULE = "";
+	if ($this->element == 'propal')
+            $MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
+        elseif ($this->element == 'order')
+            $MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
+        elseif ($this->element == 'facture')
+            $MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
+        elseif ($this->element == 'facture_fourn')
+            $MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
+        elseif ($this->element == 'order_supplier')
+            $MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
+        elseif ($this->element == 'supplier_proposal')
+            $MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_PROPOSAL";
 
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-
-        if ($roundingadjust == '-1') $roundingadjust='auto';	// For backward compatibility
-
-        $forcedroundingmode=$roundingadjust;
-        if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $forcedroundingmode=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
-        elseif ($forcedroundingmode == 'auto') $forcedroundingmode='0';
-
-        $error=0;
-
-        $multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
-
-        // Define constants to find lines to sum
-        $fieldtva='total_tva';
-        $fieldlocaltax1='total_localtax1';
-        $fieldlocaltax2='total_localtax2';
-        $fieldup='subprice';
-        if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
-        {
-        	$fieldtva='tva';
-        	$fieldup='pu_ht';
-        }
-        if ($this->element == 'expensereport')
-        {
-        	$fieldup='value_unit';
-        }
-
-        $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
-        $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
-		if ($this->table_element_line == 'facturedet') $sql.= ', situation_percent';
-		$sql.= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-        $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-        if ($exclspec)
-        {
-            $product_field='product_type';
-            if ($this->table_element_line == 'contratdet') $product_field='';    // contratdet table has no product_type field
-            if ($product_field) $sql.= ' AND '.$product_field.' <> 9';
-        }
-        $sql.= ' ORDER by rowid';	// We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
-
-        dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $this->total_ht  = 0;
-            $this->total_tva = 0;
-            $this->total_localtax1 = 0;
-            $this->total_localtax2 = 0;
-            $this->total_ttc = 0;
-            $total_ht_by_vats  = array();
-            $total_tva_by_vats = array();
-            $total_ttc_by_vats = array();
-			$this->multicurrency_total_ht	= 0;
-            $this->multicurrency_total_tva	= 0;
-           	$this->multicurrency_total_ttc	= 0;
-
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($resql);
-
-                // Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
-                if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
-                {
-                	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
-                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
-                	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
-                	if ($diff)
-                	{
-                		$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
-                		dol_syslog('We found unconsistent data into detailed line (difference of '.$diff.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-						$resqlfix=$this->db->query($sqlfix);
-						if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
-						$obj->total_tva = $tmpcal[1];
-						$obj->total_ttc = $tmpcal[2];
-                		//
-                	}
+        if(!empty($MODULE)){
+            if (!empty($conf->global->$MODULE)) {
+                $modsactivated = explode(',', $conf->global->$MODULE);
+                foreach ($modsactivated as $mod) {
+                    if ($conf->$mod->enabled) return 1;
                 }
-
-                $this->total_ht        += $obj->total_ht;		// The field visible at end of line detail
-                $this->total_tva       += $obj->total_tva;
-                $this->total_localtax1 += $obj->total_localtax1;
-                $this->total_localtax2 += $obj->total_localtax2;
-                $this->total_ttc       += $obj->total_ttc;
-                $this->multicurrency_total_ht        += $obj->multicurrency_total_ht;		// The field visible at end of line detail
-                $this->multicurrency_total_tva       += $obj->multicurrency_total_tva;
-                $this->multicurrency_total_ttc       += $obj->multicurrency_total_ttc;
-
-                if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
-                if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
-                if (! isset($total_ttc_by_vats[$obj->vatrate])) $total_ttc_by_vats[$obj->vatrate]=0;
-                $total_ht_by_vats[$obj->vatrate]  += $obj->total_ht;
-                $total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
-                $total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
-
-                if ($forcedroundingmode == '1')	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on multicurrency
-                {
-                	$tmpvat=price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
-                	$diff=price2num($total_tva_by_vats[$obj->vatrate]-$tmpvat, 'MT', 1);
-                	//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
-                	if ($diff)
-                	{
-                		if (abs($diff) > 0.1) { dol_syslog('A rounding difference was detected into TOTAL but is too high to be corrected', LOG_WARNING); exit; }
-                		$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
-                		dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-						$resqlfix=$this->db->query($sqlfix);
-						if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
-						$this->total_tva -= $diff;
-						$this->total_ttc -= $diff;
-						$total_tva_by_vats[$obj->vatrate] -= $diff;
-						$total_ttc_by_vats[$obj->vatrate] -= $diff;
-
-                	}
-                }
-
-                $i++;
             }
+        } else {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-            // Add revenue stamp to total
-            $this->total_ttc       			+= isset($this->revenuestamp)?$this->revenuestamp:0;
-            $this->multicurrency_total_ttc  += isset($this->revenuestamp)?($this->revenuestamp * $multicurrency_tx):0;
+		if ($roundingadjust == '-1') $roundingadjust='auto';	// For backward compatibility
 
-			// Situations totals
-			if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
-				$prev_sits = $this->get_prev_sits();
+		$forcedroundingmode=$roundingadjust;
+		if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $forcedroundingmode=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
+		elseif ($forcedroundingmode == 'auto') $forcedroundingmode='0';
 
-				foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
-					$this->total_ht -= $sit->total_ht;
-					$this->total_tva -= $sit->total_tva;
-					$this->total_localtax1 -= $sit->total_localtax1;
-					$this->total_localtax2 -= $sit->total_localtax2;
-					$this->total_ttc -= $sit->total_ttc;
-					$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
-					$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
-					$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+		$error=0;
+
+		$multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
+
+		// Define constants to find lines to sum
+		$fieldtva='total_tva';
+		$fieldlocaltax1='total_localtax1';
+		$fieldlocaltax2='total_localtax2';
+		$fieldup='subprice';
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+		{
+			$fieldtva='tva';
+			$fieldup='pu_ht';
+		}
+		if ($this->element == 'expensereport')
+		{
+			$fieldup='value_unit';
+		}
+
+		$sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
+		$sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
+			if ($this->table_element_line == 'facturedet') $sql.= ', situation_percent';
+			$sql.= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+		if ($exclspec)
+		{
+		    $product_field='product_type';
+		    if ($this->table_element_line == 'contratdet') $product_field='';    // contratdet table has no product_type field
+		    if ($product_field) $sql.= ' AND '.$product_field.' <> 9';
+		}
+		$sql.= ' ORDER by rowid';	// We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
+
+		dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+		    $this->total_ht  = 0;
+		    $this->total_tva = 0;
+		    $this->total_localtax1 = 0;
+		    $this->total_localtax2 = 0;
+		    $this->total_ttc = 0;
+		    $total_ht_by_vats  = array();
+		    $total_tva_by_vats = array();
+		    $total_ttc_by_vats = array();
+				$this->multicurrency_total_ht	= 0;
+		    $this->multicurrency_total_tva	= 0;
+			$this->multicurrency_total_ttc	= 0;
+
+		    $num = $this->db->num_rows($resql);
+		    $i = 0;
+		    while ($i < $num)
+		    {
+			$obj = $this->db->fetch_object($resql);
+
+			// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
+			if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
+			{
+				$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
+				$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
+				$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
+				if ($diff)
+				{
+					$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
+					dol_syslog('We found unconsistent data into detailed line (difference of '.$diff.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							$resqlfix=$this->db->query($sqlfix);
+							if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
+							$obj->total_tva = $tmpcal[1];
+							$obj->total_ttc = $tmpcal[2];
+					//
 				}
 			}
 
-            $this->db->free($resql);
+			$this->total_ht        += $obj->total_ht;		// The field visible at end of line detail
+			$this->total_tva       += $obj->total_tva;
+			$this->total_localtax1 += $obj->total_localtax1;
+			$this->total_localtax2 += $obj->total_localtax2;
+			$this->total_ttc       += $obj->total_ttc;
+			$this->multicurrency_total_ht        += $obj->multicurrency_total_ht;		// The field visible at end of line detail
+			$this->multicurrency_total_tva       += $obj->multicurrency_total_tva;
+			$this->multicurrency_total_ttc       += $obj->multicurrency_total_ttc;
 
-            // Now update global field total_ht, total_ttc and tva
-            $fieldht='total_ht';
-            $fieldtva='tva';
-            $fieldlocaltax1='localtax1';
-            $fieldlocaltax2='localtax2';
-            $fieldttc='total_ttc';
-            // Specific code for backward compatibility with old field names
-            if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
-            if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
-            if ($this->element == 'propal')                                                $fieldttc='total';
-            if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
-            if ($this->element == 'supplier_proposal')                                     $fieldttc='total';
+			if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
+			if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
+			if (! isset($total_ttc_by_vats[$obj->vatrate])) $total_ttc_by_vats[$obj->vatrate]=0;
+			$total_ht_by_vats[$obj->vatrate]  += $obj->total_ht;
+			$total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
+			$total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;
 
-            if (empty($nodatabaseupdate))
-            {
-                $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-                $sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
-                $sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
-                $sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
-                $sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
-                $sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
-				$sql .= ", multicurrency_total_ht='".price2num($this->multicurrency_total_ht, 'MT', 1)."'";
-				$sql .= ", multicurrency_total_tva='".price2num($this->multicurrency_total_tva, 'MT', 1)."'";
-				$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
-                $sql .= ' WHERE rowid = '.$this->id;
+			if ($forcedroundingmode == '1')	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on multicurrency
+			{
+				$tmpvat=price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
+				$diff=price2num($total_tva_by_vats[$obj->vatrate]-$tmpvat, 'MT', 1);
+				//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
+				if ($diff)
+				{
+					if (abs($diff) > 0.1) { dol_syslog('A rounding difference was detected into TOTAL but is too high to be corrected', LOG_WARNING); exit; }
+					$sqlfix="UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
+					dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
+							$resqlfix=$this->db->query($sqlfix);
+							if (! $resqlfix) dol_print_error($this->db,'Failed to update line');
+							$this->total_tva -= $diff;
+							$this->total_ttc -= $diff;
+							$total_tva_by_vats[$obj->vatrate] -= $diff;
+							$total_ttc_by_vats[$obj->vatrate] -= $diff;
 
-                //print "xx".$sql;
-                dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
-                $resql=$this->db->query($sql);
-                if (! $resql)
-                {
-                    $error++;
-                    $this->error=$this->db->lasterror();
-                    $this->errors[]=$this->db->lasterror();
-                }
-            }
+				}
+			}
 
-            if (! $error)
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-        else
-        {
-            dol_print_error($this->db,'Bad request in update_price');
-            return -1;
-        }
+			$i++;
+		    }
+
+		    // Add revenue stamp to total
+		    $this->total_ttc       			+= isset($this->revenuestamp)?$this->revenuestamp:0;
+		    $this->multicurrency_total_ttc  += isset($this->revenuestamp)?($this->revenuestamp * $multicurrency_tx):0;
+
+				// Situations totals
+				if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
+					$prev_sits = $this->get_prev_sits();
+
+					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
+						$this->total_ht -= $sit->total_ht;
+						$this->total_tva -= $sit->total_tva;
+						$this->total_localtax1 -= $sit->total_localtax1;
+						$this->total_localtax2 -= $sit->total_localtax2;
+						$this->total_ttc -= $sit->total_ttc;
+						$this->multicurrency_total_ht -= $sit->multicurrency_total_ht;
+						$this->multicurrency_total_tva -= $sit->multicurrency_total_tva;
+						$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
+					}
+				}
+
+		    $this->db->free($resql);
+
+		    // Now update global field total_ht, total_ttc and tva
+		    $fieldht='total_ht';
+		    $fieldtva='tva';
+		    $fieldlocaltax1='localtax1';
+		    $fieldlocaltax2='localtax2';
+		    $fieldttc='total_ttc';
+		    // Specific code for backward compatibility with old field names
+		    if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht='total';
+		    if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
+		    if ($this->element == 'propal')                                                $fieldttc='total';
+		    if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
+		    if ($this->element == 'supplier_proposal')                                     $fieldttc='total';
+
+		    if (empty($nodatabaseupdate))
+		    {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+			$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
+			$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
+			$sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
+			$sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
+			$sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
+					$sql .= ", multicurrency_total_ht='".price2num($this->multicurrency_total_ht, 'MT', 1)."'";
+					$sql .= ", multicurrency_total_tva='".price2num($this->multicurrency_total_tva, 'MT', 1)."'";
+					$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
+			$sql .= ' WHERE rowid = '.$this->id;
+
+			//print "xx".$sql;
+			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+			    $error++;
+			    $this->error=$this->db->lasterror();
+			    $this->errors[]=$this->db->lasterror();
+			}
+		    }
+
+		    if (! $error)
+		    {
+			return 1;
+		    }
+		    else
+		    {
+			return -1;
+		    }
+		}
+		else
+		{
+		    dol_print_error($this->db,'Bad request in update_price');
+		    return -1;
+		}
+	}
     }
 
     /**
