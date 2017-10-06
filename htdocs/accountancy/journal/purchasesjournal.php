@@ -100,9 +100,9 @@ $sql .= " WHERE f.fk_statut > 0"; // TODO Facture annulée ?
 $sql .= " AND fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-    $sql .= " AND f.type IN (" . FactureFournisseur::TYPE_STANDARD . "," . FactureFournisseur::TYPE_REPLACEMENT . "," . FactureFournisseur::TYPE_CREDIT_NOTE . "," . FactureFournisseur::TYPE_SITUATION . ")";
+	$sql .= " AND f.type IN (" . FactureFournisseur::TYPE_STANDARD . "," . FactureFournisseur::TYPE_REPLACEMENT . "," . FactureFournisseur::TYPE_CREDIT_NOTE . "," . FactureFournisseur::TYPE_SITUATION . ")";
 } else {
-    $sql .= " AND f.type IN (" . FactureFournisseur::TYPE_STANDARD . "," . FactureFournisseur::TYPE_REPLACEMENT . "," . FactureFournisseur::TYPE_CREDIT_NOTE . "," . FactureFournisseur::TYPE_DEPOSIT . "," . FactureFournisseur::TYPE_SITUATION . ")";
+	$sql .= " AND f.type IN (" . FactureFournisseur::TYPE_STANDARD . "," . FactureFournisseur::TYPE_REPLACEMENT . "," . FactureFournisseur::TYPE_CREDIT_NOTE . "," . FactureFournisseur::TYPE_DEPOSIT . "," . FactureFournisseur::TYPE_SITUATION . ")";
 }
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
@@ -277,7 +277,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'supplier_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-					    $bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
+						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;

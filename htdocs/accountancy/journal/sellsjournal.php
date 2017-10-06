@@ -295,7 +295,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-					    $bookkeeping->thirdparty_code = $companystatic->code_client;
+						$bookkeeping->thirdparty_code = $companystatic->code_client;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
@@ -550,12 +550,12 @@ if (empty($action) || $action == 'view') {
 
 	// Button to write into Ledger
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
-	    print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
-	    print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+		print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
 	   print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
