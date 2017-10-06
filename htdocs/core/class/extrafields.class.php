@@ -1687,7 +1687,7 @@ class ExtraFields
 	 */
 	function showSeparator($key)
 	{
-		$out = '<tr class="liste_titre"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+		$out = '<tr class="trextrafieldseparator"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
 		return $out;
 	}
 

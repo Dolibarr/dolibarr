@@ -95,9 +95,13 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', $val,'chaine',0,'',$conf->entity);
 
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val,'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val,'chaine',0,'',$conf->entity);
+
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_VERMENU_BACK1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_VERMENU_BACK1', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_VERMENU_BACK1', $val,'chaine',0,'',$conf->entity);
 
     $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
