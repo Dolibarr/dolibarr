@@ -72,12 +72,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						}
 					});
 
-					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code
-						$("input#search_'.$htmlname.'").change(function() {
-					    console.log("Call the change trigger on input '.$htmlname.' because of a change on search_'.$htmlname.' was triggered");
-						$("#'.$htmlname.'").trigger("change");
-					});*/
-
 					// Check options for secondary actions when keyup
 					$("input#search_'.$htmlname.'").keyup(function() {
 						    if ($(this).val().length == 0)
