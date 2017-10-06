@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -422,7 +422,6 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_operation = $val["label"];
 					$bookkeeping->label_compte = $langs->trans("Bank");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
@@ -433,21 +432,28 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->date_create = $now;
 
-					// No subledger_account value for the bank line
+					// No subledger_account value for the bank line but add a specific label_operation
 					if ($tabtype[$key] == 'payment') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $tabcompany[$key]['name'] . ' - ' . $ref;
 					} else if ($tabtype[$key] == 'payment_supplier') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $tabcompany[$key]['name'] . ' - ' . $ref;
 					} else if ($tabtype[$key] == 'payment_expensereport') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $tabuser[$key]['name'] . ' - ' . $ref;
 					} else if ($tabtype[$key] == 'payment_salary') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $tabuser[$key]['name'] . ' - ' . $ref;
 					} else if ($tabtype[$key] == 'payment_vat') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $ref;
 					} else if ($tabtype[$key] == 'payment_donation') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $ref;
 					} else if ($tabtype[$key] == 'payment_various') {
 						$bookkeeping->subledger_account = '';
+						$bookkeeping->label_operation = $ref;
 					} else if ($tabtype[$key] == 'unknown') {
 						// ???
 						$bookkeeping->subledger_account = '';
@@ -484,7 +490,6 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'bank';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
-					$bookkeeping->label_operation = $tabcompany[$key]['name'];
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
@@ -495,55 +500,55 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->date_create = $now;
 
 					if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $tabcompany[$key]['name'] . ' - ' . $ref;
 						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 						$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 						$bookkeeping->label_compte = '';
 					} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $tabcompany[$key]['name'] . ' - ' . $ref;
 						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 						$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 						$bookkeeping->label_compte = '';
 					} else if ($tabtype[$key] == 'payment_expensereport') {
-						$bookkeeping->label_operation = $tabuser[$key]['name'];
+						$bookkeeping->label_operation = $tabuser[$key]['name'] . ' - ' . $ref;
 						$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 						$bookkeeping->subledger_label = $tabuser[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_compte = '';
 					} else if ($tabtype[$key] == 'payment_salary') {
-						$bookkeeping->label_operation = $tabuser[$key]['name'];
+						$bookkeeping->label_operation = $tabuser[$key]['name'] . ' - ' . $ref;
 						$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 						$bookkeeping->subledger_label = $tabuser[$key]['name'];
 						$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 						$bookkeeping->label_compte = '';
 					} else if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $ref;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = $objmid->labelc;
 					} else if ($tabtype[$key] == 'payment_vat') {
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $ref;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = '';
 					} else if ($tabtype[$key] == 'payment_donation') {
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $ref;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = '';
 					} else if ($tabtype[$key] == 'payment_various') {
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $ref;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = '';
 					} else if ($tabtype[$key] == 'banktransfert') {
-						$bookkeeping->label_operation = '';
+						$bookkeeping->label_operation = $ref;
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
@@ -676,9 +681,9 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 			print "  " . $sep;
 			if ($companystatic->name == '') {
-				print '"' . $langs->trans('Bank') . " - " . utf8_decode($reflabel) . '"' . $sep;
+				print '"' . $val['bank_account_ref'] . " - " . utf8_decode($reflabel) . '"' . $sep;
 			} else {
-				print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+				print '"' . $val['bank_account_ref'] . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
 			}
 			print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 			print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
@@ -720,9 +725,9 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
 				print "  " . $sep;
 				if ($companystatic->name == '') {
-					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($reflabel) . '"' . $sep;
+					print '"' . $val['bank_account_ref'] . ' - ' . utf8_decode($reflabel) . '"' . $sep;
 				} else {
-					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+					print '"' . $val['bank_account_ref'] . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
 				}
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"';
@@ -823,7 +828,7 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("ObjectsRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
-	print "<td>" . $langs->trans("Label") . "</td>";
+	print "<td>" . $langs->trans("LabelOperation") . "</td>";
 	print "<td>" . $langs->trans("PaymentMode") . "</td>";
 	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
