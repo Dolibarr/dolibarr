@@ -50,6 +50,7 @@ class Notify
         'BILL_PAYED',
         'ORDER_VALIDATE',
         'PROPAL_VALIDATE',
+        'PROPAL_CLOSE_SIGNED',
         'FICHINTER_VALIDATE',
         'FICHINTER_ADD_CONTACT',
         'ORDER_SUPPLIER_VALIDATE',
@@ -395,6 +396,12 @@ class Notify
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 								break;
+                            case 'PROPAL_CLOSE_SIGNED':
+                                $link='/comm/propal/card.php?id='.$object->id;
+                                $dir_output = $conf->propal->dir_output;
+                                $object_type = 'propal';
+                                $mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
+                                break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
 								$dir_output = $conf->facture->dir_output;
@@ -571,6 +578,12 @@ class Notify
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 						break;
+                    case 'PROPAL_CLOSE_SIGNED':
+                        $link='/comm/propal/card.php?id='.$object->id;
+                        $dir_output = $conf->propal->dir_output;
+                        $object_type = 'propal';
+                        $mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
+                        break;
                     case 'FICHINTER_ADD_CONTACT':
                         $link='/fichinter/card.php?id='.$object->id;
                         $dir_output = $conf->facture->dir_output;
