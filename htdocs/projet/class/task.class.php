@@ -679,7 +679,9 @@ class Task extends CommonObject
         //print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
         // List of tasks (does not care about permissions. Filtering will be done later)
-        $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
+        $sql = "SELECT ";
+        if ($filteronprojuser > 0 || $filterontaskuser > 0) $sql.= " DISTINCT";		// We may get several time the same record if user has several roles on same project/task
+        $sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
         $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
         $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
         $sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name";
@@ -743,7 +745,7 @@ class Task extends CommonObject
         }
         if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
         if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
-        if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
+        if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$this->db->escape($filteronprojref)."%'";
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
         if ($morewherefilter) $sql.=$morewherefilter;
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
