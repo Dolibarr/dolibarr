@@ -1487,14 +1487,14 @@ class Expedition extends CommonObject
      *	Return clicable link of object (with eventually picto)
      *
      *	@param      int			$withpicto      			Add picto into link
-     *	@param      int			$option         			Where point the link
+     *	@param      string		$option         			Where the link point to
      *	@param      int			$max          				Max length to show
      *	@param      int			$short						Use short labels
      *  @param      int         $notooltip      			1=No tooltip
      *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return     string          						String with URL
      */
-	function getNomUrl($withpicto=0, $option=0, $max=0, $short=0, $notooltip=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $option='', $max=0, $short=0, $notooltip=0, $save_lastsearch_value=-1)
 	{
 		global $langs;
 

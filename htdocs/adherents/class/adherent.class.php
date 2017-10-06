@@ -1562,7 +1562,7 @@ class Adherent extends CommonObject
      *
      *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
      *	@param	int		$maxlen						length max label
-     *	@param	string	$option						Page for link
+     *	@param	string	$option						Page for link ('card', 'category', 'subscription', ...)
      *  @param  string  $mode           			''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
      *  @param  string  $morecss        			Add more css on link
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -1592,10 +1592,7 @@ class Adherent extends CommonObject
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
         $label.='</div>';
 
-        if (empty($option) || $option == 'card' || $option == 'category')
-        {
-            $url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
-        }
+        $url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
         if ($option == 'subscription')
         {
             $url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id;

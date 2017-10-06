@@ -82,10 +82,9 @@ class EcmFiles //extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @return int 				<0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -144,8 +143,8 @@ class EcmFiles //extends CommonObject
         if (empty($this->date_c)) $this->date_c = dol_now();
 
         // If ref not defined
-        if (empty($ref)) $ref = dol_hash($this->filepath.'/'.$this->filename, 3);
-
+        $ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		if (! empty($this->ref)) $ref=$this->ref;
 
         $maxposition=0;
 		if (empty($this->position))   // Get max used
