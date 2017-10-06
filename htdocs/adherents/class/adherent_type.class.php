@@ -381,36 +381,36 @@ class AdherentType extends CommonObject
 		}
 	}
 
-    /**
-     *    	Return clicable name (with picto eventually)
-     *
-     *		@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param		int		$maxlen			length max label
-     *		@return		string					String with URL
-     */
-    function getNomUrl($withpicto=0,$maxlen=0)
-    {
-        global $langs;
+	/**
+	 *    	Return clicable name (with picto eventually)
+	 *
+	 *		@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *		@param		int		$maxlen			length max label
+	 *		@return		string					String with URL
+	 */
+	function getNomUrl($withpicto=0,$maxlen=0)
+	{
+		global $langs;
 
-        $result='';
-        $label=$langs->trans("ShowTypeCard",$this->label);
+		$result='';
+		$label=$langs->trans("ShowTypeCard",$this->label);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $linkend='</a>';
+		$link = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
-        $picto='group';
+		$picto='group';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
-        return $result;
-    }
+		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		$result.=$link.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
+		return $result;
+	}
 
-    /**
-     *     getLibStatut
-     *
-     *     @return string     Return status of a type of member
-     */
+	/**
+	 *     getLibStatut
+	 *
+	 *     @return string     Return status of a type of member
+	 */
 	function getLibStatut()
 	{
 		return '';

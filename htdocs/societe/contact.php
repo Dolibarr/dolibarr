@@ -85,9 +85,9 @@ $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 $objcanvas=null;
 if (! empty($canvas))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-    $objcanvas = new Canvas($db, $action);
-    $objcanvas->getCanvas('thirdparty', 'card', $canvas);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+	$objcanvas = new Canvas($db, $action);
+	$objcanvas->getCanvas('thirdparty', 'card', $canvas);
 }
 
 // Security check
@@ -106,15 +106,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel)
-    {
-        $action='';
-        if (! empty($backtopage))
-        {
-            header("Location: ".$backtopage);
-            exit;
-        }
-    }
+	if ($cancel)
+	{
+		$action='';
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+	}
 }
 
 
@@ -129,7 +129,7 @@ $formcompany = new FormCompany($db);
 
 if ($socid > 0 && empty($object->id))
 {
-    $result=$object->fetch($socid);
+	$result=$object->fetch($socid);
 	if ($result <= 0) dol_print_error('',$object->error);
 }
 
@@ -142,28 +142,28 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
+	// -----------------------------------------
+	// When used with CANVAS
+	// -----------------------------------------
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
+	$objcanvas->display_canvas($action);							// Show template
 }
 else
 {
 
-    if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
-    //if ($res < 0) { dol_print_error($db); exit; }
+	if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+	//if ($res < 0) { dol_print_error($db); exit; }
 
 
-    $head = societe_prepare_head($object);
+	$head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-    dol_fiche_end();
+	dol_fiche_end();
 
 	print '<br>';
 
@@ -171,17 +171,17 @@ else
 	{
 		print '<div class="fichecenter">';
 
-		        // Contacts list
-        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-        {
-            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
+				// Contacts list
+		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+		{
+			$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
 
-        // Addresses list
-        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-        {
-        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
+		// Addresses list
+		if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+		{
+			$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
 
 
 		print '</div>';

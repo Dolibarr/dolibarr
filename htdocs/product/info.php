@@ -89,16 +89,16 @@ if ($id > 0 || $ref)
 	}
 
 	$head=product_prepare_head($object);
-    $titre=$langs->trans("CardProduct".$object->type);
-    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+	$titre=$langs->trans("CardProduct".$object->type);
+	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 
-    dol_fiche_head($head, 'info', $titre, -1, $picto);
+	dol_fiche_head($head, 'info', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter=" fk_product_type = ".$object->type;
 
-    $shownav = 1;
-    if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+	$shownav = 1;
+	if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 

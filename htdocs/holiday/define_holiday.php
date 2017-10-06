@@ -81,20 +81,20 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
-    {
-        $search_name='';
-        $search_supervisor='';
-        $toselect='';
-        $search_array_options=array();
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+	{
+		$search_name='';
+		$search_supervisor='';
+		$toselect='';
+		$search_array_options=array();
+	}
 
-    // Mass actions
-    /*
+	// Mass actions
+	/*
     $objectclass='Skeleton';
     $objectlabel='Skeleton';
     $permtoread = $user->rights->skeleton->read;
@@ -103,52 +103,52 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */
 
-    // Si il y a une action de mise à jour
-    if ($action == 'update' && isset($_POST['update_cp']))
-    {
-    	$error = 0;
+	// Si il y a une action de mise à jour
+	if ($action == 'update' && isset($_POST['update_cp']))
+	{
+		$error = 0;
 
-    	$typeleaves=$holiday->getTypes(1,1);
+		$typeleaves=$holiday->getTypes(1,1);
 
-        $userID = array_keys($_POST['update_cp']);
-        $userID = $userID[0];
+		$userID = array_keys($_POST['update_cp']);
+		$userID = $userID[0];
 
-        foreach($typeleaves as $key => $val)
-        {
-    	    $userValue = $_POST['nb_holiday_'.$val['rowid']];
-    	    $userValue = $userValue[$userID];
+		foreach($typeleaves as $key => $val)
+		{
+			$userValue = $_POST['nb_holiday_'.$val['rowid']];
+			$userValue = $userValue[$userID];
 
-    	    if (!empty($userValue))
-    	    {
-    	        $userValue = price2num($userValue,5);
-    	    } else {
-    	        $userValue = '';
-    	    }
+			if (!empty($userValue))
+			{
+				$userValue = price2num($userValue,5);
+			} else {
+				$userValue = '';
+			}
 
-    	    //If the user set a comment, we add it to the log comment
-    	    $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+			//If the user set a comment, we add it to the log comment
+			$comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
-    	    //print 'eee'.$val['rowid'].'-'.$userValue;
-    		if ($userValue != '')
-    		{
-    			// We add the modification to the log (must be before update of sold because we read current value of sold)
-    		    $result=$holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
-    			if ($result < 0)
-    			{
-    				setEventMessages($holiday->error, $holiday->errors, 'errors');
-    				$error++;
-    			}
+			//print 'eee'.$val['rowid'].'-'.$userValue;
+			if ($userValue != '')
+			{
+				// We add the modification to the log (must be before update of sold because we read current value of sold)
+				$result=$holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
+				if ($result < 0)
+				{
+					setEventMessages($holiday->error, $holiday->errors, 'errors');
+					$error++;
+				}
 
-    			// Update of the days of the employee
-    		    $result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
-    			if ($result < 0)
-    			{
-    				setEventMessages($holiday->error, $holiday->errors, 'errors');
-    				$error++;
-    			}
+				// Update of the days of the employee
+				$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+				if ($result < 0)
+				{
+					setEventMessages($holiday->error, $holiday->errors, 'errors');
+					$error++;
+				}
 
-    		    // If it first update of balance, we set date to avoid to have sold incremented by new month
-    		    /*
+				// If it first update of balance, we set date to avoid to have sold incremented by new month
+				/*
     			$now=dol_now();
     		    $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
     		    $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
@@ -156,11 +156,11 @@ if (empty($reshook))
     		    dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
     		    $result = $db->query($sql);
     		    */
-    		}
-        }
+			}
+		}
 
-        if (! $error) setEventMessages('UpdateConfCPOK', '', 'mesgs');
-    }
+		if (! $error) setEventMessages('UpdateConfCPOK', '', 'mesgs');
+	}
 }
 
 
@@ -190,10 +190,10 @@ print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
 if ($lastUpdate)
 {
-    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
-    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+	$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+	$yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
+	print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+	print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
 else print $langs->trans('None');
 print "</div><br>\n";
@@ -220,7 +220,7 @@ if ($search_supervisor > 0) $filters.=natural_search(array('u.fk_user'), $search
 $listUsers = $holiday->fetchUsers(false, true, $filters);
 if (is_numeric($listUsers) && $listUsers < 0)
 {
-    setEventMessages($holiday->error, $holiday->errors, 'errors');
+	setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
 $var=true;
@@ -230,144 +230,144 @@ $typeleaves=$holiday->getTypes(1,1);
 
 if (count($typeleaves) == 0)
 {
-    //print '<div class="info">';
-    print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
-    print $langs->trans("GoIntoDictionaryHolidayTypes");
-    //print '</div>';
+	//print '<div class="info">';
+	print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
+	print $langs->trans("GoIntoDictionaryHolidayTypes");
+	//print '</div>';
 }
 else
 {
-    $canedit=0;
-    if (! empty($user->rights->holiday->define_holiday)) $canedit=1;
+	$canedit=0;
+	if (! empty($user->rights->holiday->define_holiday)) $canedit=1;
 
-    print '<input type="hidden" name="action" value="update" />';
+	print '<input type="hidden" name="action" value="update" />';
 
-    $moreforfilter='';
+	$moreforfilter='';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
-    print '<tr class="liste_titre_filter">';
+	print '<tr class="liste_titre_filter">';
 
-    // User
-    print '<td class="liste_titre"><input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'"></td>';
+	// User
+	print '<td class="liste_titre"><input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'"></td>';
 
-    // Supervisor
-    print '<td class="liste_titre">';
-    print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth200');
-    print '</td>';
+	// Supervisor
+	print '<td class="liste_titre">';
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+	print '</td>';
 
-    // Type of leave request
-    if (count($typeleaves))
-    {
-        foreach($typeleaves as $key => $val)
-        {
-            print '<td class="liste_titre" style="text-align:center"></td>';
-        }
-    }
-    else
-    {
-        print '<td class="liste_titre"></td>';
-    }
-    print '<td class="liste_titre"></td>';
+	// Type of leave request
+	if (count($typeleaves))
+	{
+		foreach($typeleaves as $key => $val)
+		{
+			print '<td class="liste_titre" style="text-align:center"></td>';
+		}
+	}
+	else
+	{
+		print '<td class="liste_titre"></td>';
+	}
+	print '<td class="liste_titre"></td>';
 
-    // Action column
-    print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterButtons();
-    print $searchpicto;
-    print '</td>';
+	// Action column
+	print '<td class="liste_titre" align="right">';
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
 
-    print '</tr>';
+	print '</tr>';
 
-    print '<tr class="liste_titre">';
-    print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
-    print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
-    if (count($typeleaves))
-    {
-        foreach($typeleaves as $key => $val)
-        {
-        	print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
-        }
-    }
-    else
-    {
-        print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
-    }
-    print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
-    print_liste_field_titre('');
-    print '</tr>';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
+	print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
+	if (count($typeleaves))
+	{
+		foreach($typeleaves as $key => $val)
+		{
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+		}
+	}
+	else
+	{
+		print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
+	}
+	print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+	print_liste_field_titre('');
+	print '</tr>';
 
-    $usersupervisor = new User($db);
+	$usersupervisor = new User($db);
 
-    foreach($listUsers as $users)
-    {
-        // If user has not permission to edit/read all, we must see only subordinates
-        if (empty($user->rights->holiday->read_all))
-        {
-            if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
-        }
+	foreach($listUsers as $users)
+	{
+		// If user has not permission to edit/read all, we must see only subordinates
+		if (empty($user->rights->holiday->read_all))
+		{
+			if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
+		}
 
-        $userstatic->id=$users['rowid'];
-        $userstatic->lastname=$users['lastname'];
-        $userstatic->firstname=$users['firstname'];
-        $userstatic->gender=$users['gender'];
-        $userstatic->photo=$users['photo'];
-        $userstatic->statut=$users['status'];
-        $userstatic->employee=$users['employee'];
-        $userstatic->fk_user=$users['fk_user'];
+		$userstatic->id=$users['rowid'];
+		$userstatic->lastname=$users['lastname'];
+		$userstatic->firstname=$users['firstname'];
+		$userstatic->gender=$users['gender'];
+		$userstatic->photo=$users['photo'];
+		$userstatic->statut=$users['status'];
+		$userstatic->employee=$users['employee'];
+		$userstatic->fk_user=$users['fk_user'];
 
-        if ($userstatic->fk_user > 0) $usersupervisor->fetch($userstatic->fk_user);
+		if ($userstatic->fk_user > 0) $usersupervisor->fetch($userstatic->fk_user);
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
-        // User
-        print '<td>';
-        print $userstatic->getNomUrl(-1);
-        print '</td>';
+		// User
+		print '<td>';
+		print $userstatic->getNomUrl(-1);
+		print '</td>';
 
-        // Supervisor
-        print '<td>';
-        if ($userstatic->fk_user > 0) print $usersupervisor->getNomUrl(-1);
-        print '</td>';
+		// Supervisor
+		print '<td>';
+		if ($userstatic->fk_user > 0) print $usersupervisor->getNomUrl(-1);
+		print '</td>';
 
-        // Amount for each type
-        if (count($typeleaves))
-        {
-        	foreach($typeleaves as $key => $val)
-        	{
-        		$nbtoshow='';
-        		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+		// Amount for each type
+		if (count($typeleaves))
+		{
+			foreach($typeleaves as $key => $val)
+			{
+				$nbtoshow='';
+				if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
 
-        		//var_dump($users['rowid'].' - '.$val['rowid']);
-            	print '<td style="text-align:center">';
-            	if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
-            	else print $nbtoshow;
-        	    //print ' '.$langs->trans('days');
-            	print '</td>'."\n";
-        	}
-        }
-        else
-        {
-            print '<td></td>';
-        }
+				//var_dump($users['rowid'].' - '.$val['rowid']);
+				print '<td style="text-align:center">';
+				if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+				else print $nbtoshow;
+				//print ' '.$langs->trans('days');
+				print '</td>'."\n";
+			}
+		}
+		else
+		{
+			print '<td></td>';
+		}
 
-        // Note
-        print '<td>';
-        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
-        print '</td>';
-        print '<td>';
-        if (! empty($user->rights->holiday->define_holiday))
-        {
-            print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
-        }
-        print '</td>'."\n";
-        print '</tr>';
+		// Note
+		print '<td>';
+		if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+		print '</td>';
+		print '<td>';
+		if (! empty($user->rights->holiday->define_holiday))
+		{
+			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
+		}
+		print '</td>'."\n";
+		print '</tr>';
 
-        $i++;
-    }
+		$i++;
+	}
 
-    print '</table>';
-    print '</div>';
+	print '</table>';
+	print '</div>';
 }
 
 print '</form>';

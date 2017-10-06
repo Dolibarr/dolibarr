@@ -69,9 +69,9 @@ class Product extends CommonObject
 	public $label;
 
 	/**
-     	* Product descripion
-     	* @var string
-     	*/
+	 * Product descripion
+	 * @var string
+	 */
 	public $description;
 
 	/**
@@ -132,7 +132,7 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	//! French VAT NPR (0 or 1)
-    public $tva_npr=0;
+	public $tva_npr=0;
 
 	//! Other local taxes
 	public $localtax1_tx;
@@ -161,10 +161,10 @@ class Product extends CommonObject
 	//! Average price value for product entry into stock (PMP)
 	public $pmp;
 
-    	/**
-	 * Stock alert
-	 * @var int
-	 */
+		/**
+		 * Stock alert
+		 * @var int
+		 */
 	public $seuil_stock_alerte;
 
 	/**
@@ -248,7 +248,7 @@ class Product extends CommonObject
 	public $stats_commande=array();
 	public $stats_contrat=array();
 	public $stats_facture=array();
-    public $stats_commande_fournisseur=array();
+	public $stats_commande_fournisseur=array();
 
 	public $multilangs=array();
 
@@ -272,7 +272,7 @@ class Product extends CommonObject
 
 	public $oldcopy;
 
-    public $fk_price_expression;
+	public $fk_price_expression;
 
 	/**
 	 * @deprecated
@@ -378,7 +378,7 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
-        	$error=0;
+			$error=0;
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
@@ -437,13 +437,13 @@ class Product extends CommonObject
 			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
 		}
 
-    		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+			$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
 		// Barcode value
 		$this->barcode=trim($this->barcode);
 
-	        // Check parameters
+			// Check parameters
 		if (empty($this->label))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
@@ -478,19 +478,19 @@ class Product extends CommonObject
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type, LOG_DEBUG);
 
-        $now=dol_now();
+		$now=dol_now();
 
 		$this->db->begin();
 
-        // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
+		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
 		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 		// Check more parameters
-        // If error, this->errors[] is filled
-        $result = $this->verify();
+		// If error, this->errors[] is filled
+		$result = $this->verify();
 
-        if ($result >= 0)
-        {
+		if ($result >= 0)
+		{
 			$sql = "SELECT count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product";
 			$sql.= " WHERE entity IN (".getEntity('product').")";
@@ -566,25 +566,25 @@ class Product extends CommonObject
 							{
 								if ($this->update($id, $user, true, 'add') <= 0)
 								{
-								    $error++;
+									$error++;
 								}
 							}
 							else
 							{
 								$error++;
-							    $this->error=$this->db->lasterror();
+								$this->error=$this->db->lasterror();
 							}
 						}
 						else
 						{
 							$error++;
-						    $this->error='ErrorFailedToGetInsertedId';
+							$this->error='ErrorFailedToGetInsertedId';
 						}
 					}
 					else
 					{
 						$error++;
-					    $this->error=$this->db->lasterror();
+						$this->error=$this->db->lasterror();
 					}
 				}
 				else
@@ -598,15 +598,15 @@ class Product extends CommonObject
 			else
 			{
 				$error++;
-			    $this->error=$this->db->lasterror();
+				$this->error=$this->db->lasterror();
 			}
 
 			if (! $error && ! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('PRODUCT_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('PRODUCT_CREATE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)
@@ -619,92 +619,92 @@ class Product extends CommonObject
 				$this->db->rollback();
 				return -$error;
 			}
-        }
-        else
-       {
-            $this->db->rollback();
-            dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
-            return -3;
-        }
+		}
+		else
+	   {
+			$this->db->rollback();
+			dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
+			return -3;
+		}
 
 	}
 
 
-    /**
-     *    Check properties of product are ok (like name, barcode, ...).
-     *    All properties must be already loaded on object (this->barcode, this->barcode_type_code, ...).
-     *
-     *    @return     int		0 if OK, <0 if KO
-     */
-    function verify()
-    {
-        $this->errors=array();
+	/**
+	 *    Check properties of product are ok (like name, barcode, ...).
+	 *    All properties must be already loaded on object (this->barcode, this->barcode_type_code, ...).
+	 *
+	 *    @return     int		0 if OK, <0 if KO
+	 */
+	function verify()
+	{
+		$this->errors=array();
 
-        $result = 0;
-        $this->ref = trim($this->ref);
+		$result = 0;
+		$this->ref = trim($this->ref);
 
-        if (! $this->ref)
-        {
-            $this->errors[] = 'ErrorBadRef';
-            $result = -2;
-        }
-
-        $rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
-        if ($rescode <> 0)
-        {
-        	if ($rescode == -1)
-        	{
-        		$this->errors[] = 'ErrorBadBarCodeSyntax';
-        	}
-        	if ($rescode == -2)
-        	{
-        		$this->errors[] = 'ErrorBarCodeRequired';
-        	}
-        	if ($rescode == -3)
-        	{
-        		$this->errors[] = 'ErrorBarCodeAlreadyUsed';
-        	}
-        	$result = -3;
-        }
-
-        return $result;
-    }
-
-    /**
-     *  Check barcode
-     *
-     *	@param	string	$valuetotest	Value to test
-     *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
-     *  @return int						0 if OK
-     * 									-1 ErrorBadBarCodeSyntax
-     * 									-2 ErrorBarCodeRequired
-     * 									-3 ErrorBarCodeAlreadyUsed
-     */
-    function check_barcode($valuetotest,$typefortest)
-    {
-        global $conf;
-        if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
-        {
-        	$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
-
-            $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
-            foreach ($dirsociete as $dirroot)
-            {
-                $res=dol_include_once($dirroot.$module.'.php');
-                if ($res) break;
-            }
-
-            $mod = new $module();
-
-            dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
-            $result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
-            return $result;
-        }
-        else
+		if (! $this->ref)
 		{
-            return 0;
-        }
-    }
+			$this->errors[] = 'ErrorBadRef';
+			$result = -2;
+		}
+
+		$rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
+		if ($rescode <> 0)
+		{
+			if ($rescode == -1)
+			{
+				$this->errors[] = 'ErrorBadBarCodeSyntax';
+			}
+			if ($rescode == -2)
+			{
+				$this->errors[] = 'ErrorBarCodeRequired';
+			}
+			if ($rescode == -3)
+			{
+				$this->errors[] = 'ErrorBarCodeAlreadyUsed';
+			}
+			$result = -3;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *  Check barcode
+	 *
+	 *	@param	string	$valuetotest	Value to test
+	 *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
+	 *  @return int						0 if OK
+	 * 									-1 ErrorBadBarCodeSyntax
+	 * 									-2 ErrorBarCodeRequired
+	 * 									-3 ErrorBarCodeAlreadyUsed
+	 */
+	function check_barcode($valuetotest,$typefortest)
+	{
+		global $conf;
+		if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
+		{
+			$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+
+			$dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+			foreach ($dirsociete as $dirroot)
+			{
+				$res=dol_include_once($dirroot.$module.'.php');
+				if ($res) break;
+			}
+
+			$mod = new $module();
+
+			dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
+			$result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
+			return $result;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
 	/**
 	 *	Update a record into database.
@@ -766,83 +766,83 @@ class Product extends CommonObject
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
 
-        if (empty($this->country_id))           $this->country_id = 0;
+		if (empty($this->country_id))           $this->country_id = 0;
 
-        // Barcode value
-        $this->barcode=trim($this->barcode);
+		// Barcode value
+		$this->barcode=trim($this->barcode);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
 
-        $this->db->begin();
+		$this->db->begin();
 
-        // Check name is required and codes are ok or unique.
-        // If error, this->errors[] is filled
-        if ($action != 'add')
-        {
-        	$result = $this->verify();	// We don't check when update called during a create because verify was already done
-        }
+		// Check name is required and codes are ok or unique.
+		// If error, this->errors[] is filled
+		if ($action != 'add')
+		{
+			$result = $this->verify();	// We don't check when update called during a create because verify was already done
+		}
 
-        if ($result >= 0)
-        {
-            if (empty($this->oldcopy))
-            {
-                $org=new self($this->db);
-                $org->fetch($this->id);
-                $this->oldcopy=$org;
-            }
+		if ($result >= 0)
+		{
+			if (empty($this->oldcopy))
+			{
+				$org=new self($this->db);
+				$org->fetch($this->id);
+				$this->oldcopy=$org;
+			}
 
-            // Test if batch management is activated on existing product
-            // If yes, we create missing entries into product_batch
-            if ($this->hasbatch() && !$this->oldcopy->hasbatch())
-            {
-                //$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
-                $valueforundefinedlot = '000000';
+			// Test if batch management is activated on existing product
+			// If yes, we create missing entries into product_batch
+			if ($this->hasbatch() && !$this->oldcopy->hasbatch())
+			{
+				//$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
+				$valueforundefinedlot = '000000';
 
-                dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
+				dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
 
-                $this->load_stock();
-                foreach ($this->stock_warehouse as $idW => $ObjW)   // For each warehouse where we have stocks defined for this product (for each lines in product_stock)
-                {
-                    $qty_batch = 0;
-                    foreach ($ObjW->detail_batch as $detail)    // Each lines of detail in product_batch of the current $ObjW = product_stock
-                    {
-                        if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined')
-                        {
-                            // We discard this line, we will create it later
-                            $sqlclean="DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$valueforundefinedlot."') AND fk_product_stock = ".$ObjW->id;
-                            $result = $this->db->query($sqlclean);
-                            if (! $result)
-                            {
-                                dol_print_error($this->db);
-                                exit;
-                            }
-                            continue;
-                        }
+				$this->load_stock();
+				foreach ($this->stock_warehouse as $idW => $ObjW)   // For each warehouse where we have stocks defined for this product (for each lines in product_stock)
+				{
+					$qty_batch = 0;
+					foreach ($ObjW->detail_batch as $detail)    // Each lines of detail in product_batch of the current $ObjW = product_stock
+					{
+						if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined')
+						{
+							// We discard this line, we will create it later
+							$sqlclean="DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$valueforundefinedlot."') AND fk_product_stock = ".$ObjW->id;
+							$result = $this->db->query($sqlclean);
+							if (! $result)
+							{
+								dol_print_error($this->db);
+								exit;
+							}
+							continue;
+						}
 
-                        $qty_batch += $detail->qty;
-                    }
-                    // Quantities in batch details are not same as stock quantity,
-                    // so we add a default batch record to complete and get same qty in parent and child table
-                    if ($ObjW->real <> $qty_batch)
-                    {
-                        $ObjBatch = new Productbatch($this->db);
-                        $ObjBatch->batch = $valueforundefinedlot;
-                        $ObjBatch->qty = ($ObjW->real - $qty_batch);
-                        $ObjBatch->fk_product_stock = $ObjW->id;
+						$qty_batch += $detail->qty;
+					}
+					// Quantities in batch details are not same as stock quantity,
+					// so we add a default batch record to complete and get same qty in parent and child table
+					if ($ObjW->real <> $qty_batch)
+					{
+						$ObjBatch = new Productbatch($this->db);
+						$ObjBatch->batch = $valueforundefinedlot;
+						$ObjBatch->qty = ($ObjW->real - $qty_batch);
+						$ObjBatch->fk_product_stock = $ObjW->id;
 
-                        if ($ObjBatch->create($user,1) < 0)
-                        {
-                            $error++;
-                            $this->errors=$ObjBatch->errors;
-                        }
-                    }
-                }
-            }
+						if ($ObjBatch->create($user,1) < 0)
+						{
+							$error++;
+							$this->errors=$ObjBatch->errors;
+						}
+					}
+				}
+			}
 
-	        // For automatic creation
-	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
+			// For automatic creation
+			if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
@@ -879,15 +879,15 @@ class Product extends CommonObject
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
-	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
-	        $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
+			$sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
+			$sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
 			$sql.= ", duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."'";
 			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
 			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= ", cost_price = " . ($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
-	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
-	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
+			$sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
+			$sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
 			// stock field is not here because it is a denormalized value from product_stock.
@@ -931,10 +931,10 @@ class Product extends CommonObject
 
 				if (! $error && ! $notrigger)
 				{
-                    // Call trigger
-                    $result=$this->call_trigger('PRODUCT_MODIFY',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
+					// Call trigger
+					$result=$this->call_trigger('PRODUCT_MODIFY',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
 				}
 
 				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
@@ -952,7 +952,7 @@ class Product extends CommonObject
 							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
-							    $langs->load("errors");
+								$langs->load("errors");
 								$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
 								$error++;
 							}
@@ -1000,13 +1000,13 @@ class Product extends CommonObject
 					return -2;
 				}
 			}
-        }
-        else
-       {
-            $this->db->rollback();
-            dol_syslog(get_class($this)."::Update fails verify ".join(',',$this->errors), LOG_WARNING);
-            return -3;
-        }
+		}
+		else
+	   {
+			$this->db->rollback();
+			dol_syslog(get_class($this)."::Update fails verify ".join(',',$this->errors), LOG_WARNING);
+			return -3;
+		}
 	}
 
 	/**
@@ -1051,10 +1051,10 @@ class Product extends CommonObject
 
 			if (! $error && empty($notrigger))
 			{
-                // Call trigger
-                $result=$this->call_trigger('PRODUCT_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('PRODUCT_DELETE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			// Delete from product_batch on product delete
@@ -1077,21 +1077,21 @@ class Product extends CommonObject
 			if (! $error)
 			{
 				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot');  // product_batch is done before
-    			foreach($elements as $table)
-    			{
-    				if (! $error)
-    				{
-    					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-    					$sql.= " WHERE fk_product = ".$id;
-    					dol_syslog(get_class($this).'::delete', LOG_DEBUG);
-    					$result = $this->db->query($sql);
-    					if (! $result)
-    					{
-    						$error++;
-    						$this->errors[] = $this->db->lasterror();
-    					}
-    				}
-    			}
+				foreach($elements as $table)
+				{
+					if (! $error)
+					{
+						$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+						$sql.= " WHERE fk_product = ".$id;
+						dol_syslog(get_class($this).'::delete', LOG_DEBUG);
+						$result = $this->db->query($sql);
+						if (! $result)
+						{
+							$error++;
+							$this->errors[] = $this->db->lasterror();
+						}
+					}
+				}
 			}
 
 			if (!$error) {
@@ -1263,11 +1263,11 @@ class Product extends CommonObject
 				// We do not save if main fields are empty
 				if ($this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"])
 				{
-    				if (! $this->db->query($sql2))
-    				{
-    					$this->error=$this->db->lasterror();
-    					return -1;
-    				}
+					if (! $this->db->query($sql2))
+					{
+						$this->error=$this->db->lasterror();
+						return -1;
+					}
 				}
 			}
 			else
@@ -1517,22 +1517,22 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0)		// If we found a supplier prices from the id of supplier price
 			{
-                if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
-                {
+				if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
+				{
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-                    $prod_supplier = new ProductFournisseur($this->db);
-                    $prod_supplier->product_fourn_price_id = $obj->rowid;
-                    $prod_supplier->id = $obj->fk_product;
-                    $prod_supplier->fourn_qty = $obj->quantity;
-                    $prod_supplier->fourn_tva_tx = $obj->tva_tx;
-                    $prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
-                    $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($prod_supplier);
-                    if ($price_result >= 0) {
-                    	$obj->price = $price_result;
-                    }
-                }
-                $this->product_fourn_price_id = $obj->rowid;
+					$prod_supplier = new ProductFournisseur($this->db);
+					$prod_supplier->product_fourn_price_id = $obj->rowid;
+					$prod_supplier->id = $obj->fk_product;
+					$prod_supplier->fourn_qty = $obj->quantity;
+					$prod_supplier->fourn_tva_tx = $obj->tva_tx;
+					$prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
+					$priceparser = new PriceParser($this->db);
+					$price_result = $priceparser->parseProductSupplier($prod_supplier);
+					if ($price_result >= 0) {
+						$obj->price = $price_result;
+					}
+				}
+				$this->product_fourn_price_id = $obj->rowid;
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
@@ -1563,22 +1563,22 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-		                if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
-		                {
+						if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression))
+						{
 							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-		                    $prod_supplier = new ProductFournisseur($this->db);
-		                    $prod_supplier->product_fourn_price_id = $obj->rowid;
-		                    $prod_supplier->id = $obj->fk_product;
-		                    $prod_supplier->fourn_qty = $obj->quantity;
-		                    $prod_supplier->fourn_tva_tx = $obj->tva_tx;
-		                    $prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
-		                    $priceparser = new PriceParser($this->db);
-		                    $price_result = $priceparser->parseProductSupplier($prod_supplier);
-		                    if ($result >= 0) {
-		                    	$obj->price = $price_result;
-		                    }
-		                }
-		                $this->product_fourn_price_id = $obj->rowid;
+							$prod_supplier = new ProductFournisseur($this->db);
+							$prod_supplier->product_fourn_price_id = $obj->rowid;
+							$prod_supplier->id = $obj->fk_product;
+							$prod_supplier->fourn_qty = $obj->quantity;
+							$prod_supplier->fourn_tva_tx = $obj->tva_tx;
+							$prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
+							$priceparser = new PriceParser($this->db);
+							$price_result = $priceparser->parseProductSupplier($prod_supplier);
+							if ($result >= 0) {
+								$obj->price = $price_result;
+							}
+						}
+						$this->product_fourn_price_id = $obj->rowid;
 						$this->buyprice = $obj->price;                      // deprecated
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
@@ -1622,8 +1622,8 @@ class Product extends CommonObject
 	 *  @param     	int		$newnpr             0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 *  @param     	int		$newpsq             1 if it has price by quantity
 	 *  @param 		int 	$ignore_autogen     Used to avoid infinite loops
-     *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
-     *  @param      string  $newdefaultvatcode  Default vat code
+	 *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+	 *  @param      string  $newdefaultvatcode  Default vat code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
 	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
@@ -1636,7 +1636,7 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
-        if (empty($newnpr)) $newnpr=0;
+		if (empty($newnpr)) $newnpr=0;
 
 		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
@@ -1697,17 +1697,17 @@ class Product extends CommonObject
 
 			if (count($localtaxes_array) > 0)
 			{
-			    $localtaxtype1=$localtaxes_array['0'];
-			    $localtax1=$localtaxes_array['1'];
-			    $localtaxtype2=$localtaxes_array['2'];
-			    $localtax2=$localtaxes_array['3'];
+				$localtaxtype1=$localtaxes_array['0'];
+				$localtax1=$localtaxes_array['1'];
+				$localtaxtype2=$localtaxes_array['2'];
+				$localtax2=$localtaxes_array['3'];
 			}
 			else     // old method. deprecated because ot can't retreive type
 			{
-	       		$localtaxtype1='0';
-			    $localtax1=get_localtax($newvat,1);
-	       		$localtaxtype2='0';
-			    $localtax2=get_localtax($newvat,2);
+		   		$localtaxtype1='0';
+				$localtax1=get_localtax($newvat,1);
+		   		$localtaxtype2='0';
+				$localtax2=get_localtax($newvat,2);
 			}
 			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
@@ -1726,9 +1726,9 @@ class Product extends CommonObject
 			$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
 			$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
 			$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
-            $sql.= " default_vat_code=".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
+			$sql.= " default_vat_code=".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
 			$sql.= " tva_tx='".price2num($newvat)."',";
-            $sql.= " recuperableonly='".$newnpr."'";
+			$sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -1765,42 +1765,42 @@ class Product extends CommonObject
 
 				$this->level = $level;				// Store level of price edited for trigger
 
-                // Call trigger
-                $result=$this->call_trigger('PRODUCT_PRICE_MODIFY',$user);
-                if ($result < 0)
-                {
-                	$this->db->rollback();
-                	return -1;
-                }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('PRODUCT_PRICE_MODIFY',$user);
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
 
-                $this->db->commit();
+				$this->db->commit();
 			}
 			else
 			{
 				$this->db->rollback();
-			    dol_print_error($this->db);
+				dol_print_error($this->db);
 			}
 		}
 
 		return 1;
 	}
 
-    /**
-     *  Sets the supplier price expression
-     *
-     *  @param  int     $expression_id	Expression
-     *  @return int                 	<0 if KO, >0 if OK
+	/**
+	 *  Sets the supplier price expression
+	 *
+	 *  @param  int     $expression_id	Expression
+	 *  @return int                 	<0 if KO, >0 if OK
 	 * @deprecated Use Product::update instead
-     */
-    function setPriceExpression($expression_id)
-    {
+	 */
+	function setPriceExpression($expression_id)
+	{
 		global $user;
 
 		$this->fk_price_expression = $expression_id;
 
 		return $this->update($this->id, $user);
-    }
+	}
 
 	/**
 	 *  Load a product in memory from database
@@ -1808,12 +1808,12 @@ class Product extends CommonObject
 	 *  @param	int		$id      			Id of product/service to load
 	 *  @param  string	$ref     			Ref of product/service to load
 	 *  @param	string	$ref_ext			Ref ext of product/service to load
-     *  @param	int		$ignore_expression  Ignores the math expression for calculating price and uses the db value instead
+	 *  @param	int		$ignore_expression  Ignores the math expression for calculating price and uses the db value instead
 	 *  @return int     					<0 if KO, 0 if not found, >0 if OK
 	 */
 	function fetch($id='', $ref='', $ref_ext='', $ignore_expression=0)
 	{
-	    include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		global $langs, $conf;
 
@@ -1865,10 +1865,10 @@ class Product extends CommonObject
 				$this->status_buy				= $obj->tobuy;
 				$this->status_batch				= $obj->tobatch;
 
-	            $this->customcode				= $obj->customcode;
-	            $this->country_id				= $obj->fk_country;
-	            $this->country_code				= getCountry($this->country_id,2,$this->db);
-	            $this->price					= $obj->price;
+				$this->customcode				= $obj->customcode;
+				$this->country_id				= $obj->fk_country;
+				$this->country_code				= getCountry($this->country_id,2,$this->db);
+				$this->price					= $obj->price;
 				$this->price_ttc				= $obj->price_ttc;
 				$this->price_min				= $obj->price_min;
 				$this->price_min_ttc			= $obj->price_min_ttc;
@@ -2058,19 +2058,19 @@ class Product extends CommonObject
 					}
 				}
 
-                if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
-                {
+				if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
+				{
 					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-                	$priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProduct($this);
-                    if ($price_result >= 0)
-                    {
-                        $this->price = $price_result;
-                        // Calculate the VAT
+					$priceparser = new PriceParser($this->db);
+					$price_result = $priceparser->parseProduct($this);
+					if ($price_result >= 0)
+					{
+						$this->price = $price_result;
+						// Calculate the VAT
 						$this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
 						$this->price_ttc = price2num($this->price_ttc,'MU');
-                    }
-                }
+					}
+				}
 
 				// We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
 				//$res=$this->load_stock();
@@ -2535,12 +2535,12 @@ class Product extends CommonObject
 
 		if (empty($year))
 		{
-		    $year = strftime('%Y',time());
-		    $month = strftime('%m',time());
+			$year = strftime('%Y',time());
+			$month = strftime('%m',time());
 		}
 		else
 		{
-		    $month=12;    // We imagine we are at end of year, so we get last 12 month before, so all correct year.
+			$month=12;    // We imagine we are at end of year, so we get last 12 month before, so all correct year.
 		}
 		$result = array();
 
@@ -2622,8 +2622,8 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT f.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
-        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
-        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = d.fk_facture_fourn";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
 		else $sql.=" AND d.fk_product > 0";
@@ -2657,7 +2657,7 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT p.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as prod";
+		if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as prod";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.rowid = d.fk_propal";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
@@ -2692,7 +2692,7 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(p.date_valid, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT p.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as d, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."societe as s";
-        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as prod";
+		if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as prod";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.rowid = d.fk_supplier_proposal";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
@@ -2726,8 +2726,8 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
 		else $sql.=" AND d.fk_product > 0";
@@ -2760,7 +2760,7 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as d, ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
-        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
+		if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as p";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
@@ -2949,29 +2949,29 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
-    	dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
+		dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
 
 		if ($ref_fourn)
 		{
-    		$sql = "SELECT rowid, fk_product";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-    		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
-    		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity IN (".getEntity('productprice').")";
+			$sql = "SELECT rowid, fk_product";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql.= " WHERE fk_soc = ".$id_fourn;
+			$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
+			$sql.= " AND fk_product != ".$this->id;
+			$sql.= " AND entity IN (".getEntity('productprice').")";
 
-    		$resql=$this->db->query($sql);
-    		if ($resql)
-    		{
-    			$obj = $this->db->fetch_object($resql);
-                if ($obj)
-                {
-        			// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
-                    $this->product_id_already_linked = $obj->fk_product;
-    				return -3;
-    			}
-                $this->db->free($resql);
-    		}
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj)
+				{
+					// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
+					$this->product_id_already_linked = $obj->fk_product;
+					return -3;
+				}
+				$this->db->free($resql);
+			}
 		}
 
 		$sql = "SELECT rowid";
@@ -2986,9 +2986,9 @@ class Product extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-    		$obj = $this->db->fetch_object($resql);
+			$obj = $this->db->fetch_object($resql);
 
-		    // The reference supplier does not exist, we create it for this product.
+			// The reference supplier does not exist, we create it for this product.
 			if (! $obj)
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
@@ -3165,8 +3165,8 @@ class Product extends CommonObject
 		}
 		else
 		{
-		    $this->db->commit();
-		    return 1;
+			$this->db->commit();
+			return 1;
 		}
 	}
 
@@ -3401,7 +3401,7 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo()
 	{
-	    $parent=array();
+		$parent=array();
 
 		foreach($this->getChildsArbo($this->id) as $keyChild => $valueChild)	// Warning. getChildsArbo can call getChildsArbo recursively. Starting point is $value[0]=id of product
 		{
@@ -3419,7 +3419,7 @@ class Product extends CommonObject
 	 *	@param		int		$withpicto					Add picto into link
 	 *	@param		string	$option						Where point the link ('stock', 'composition', 'category', 'supplier', '')
 	 *	@param		int		$maxlength					Maxlength of ref
-     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
 	function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1)
@@ -3428,81 +3428,81 @@ class Product extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
-        $newref=$this->ref;
-        if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
+		$newref=$this->ref;
+		if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
 
-        if ($this->type == Product::TYPE_PRODUCT) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
-        if ($this->type == Product::TYPE_SERVICE) $label = '<u>' . $langs->trans("ShowService") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
-        if (! empty($this->label))
-            $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
+		if ($this->type == Product::TYPE_PRODUCT) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
+		if ($this->type == Product::TYPE_SERVICE) $label = '<u>' . $langs->trans("ShowService") . '</u>';
+		if (! empty($this->ref))
+			$label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
+		if (! empty($this->label))
+			$label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
 
-        if ($this->type == Product::TYPE_PRODUCT)
-        {
-            if ($this->weight)  $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
-    		if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
-    		if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
-    		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
-            if (! empty($conf->productbatch->enabled))
-            {
-                $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
-            }
-        }
-        if ($this->type == Product::TYPE_SERVICE)
-        {
-            //
-        }
-        if (! empty($this->entity))
-        {
-            $tmpphoto = $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
-            if ($this->nbphoto > 0) $label .= '<br>' . $tmpphoto;
-        }
+		if ($this->type == Product::TYPE_PRODUCT)
+		{
+			if ($this->weight)  $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+			if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
+			if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+			if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+			if (! empty($conf->productbatch->enabled))
+			{
+				$label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
+			}
+		}
+		if ($this->type == Product::TYPE_SERVICE)
+		{
+			//
+		}
+		if (! empty($this->entity))
+		{
+			$tmpphoto = $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
+			if ($this->nbphoto > 0) $label .= '<br>' . $tmpphoto;
+		}
 
 		$linkclose='';
 		if (empty($notooltip))
 		{
-		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-		    {
-		        $label=$langs->trans("ShowOrder");
-		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-		    }
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowOrder");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
 
-		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-		    $linkclose.= ' class="classfortooltip"';
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
+			$linkclose.= ' class="classfortooltip"';
 
-		    if (! is_object($hookmanager))
-	        {
-	            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	            $hookmanager=new HookManager($this->db);
-	        }
-	        $hookmanager->initHooks(array('productdao'));
-	        $parameters=array('id'=>$this->id);
-	        $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	        if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			if (! is_object($hookmanager))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('productdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 		}
 
-        if ($option == 'supplier' || $option == 'category') {
-            $url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
-        } else if ($option == 'stock') {
-            $url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
-        } else if ($option == 'composition') {
-            $url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
-        } else {
-            $url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;
-        }
+		if ($option == 'supplier' || $option == 'category') {
+			$url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
+		} else if ($option == 'stock') {
+			$url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
+		} else if ($option == 'composition') {
+			$url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
+		} else {
+			$url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;
+		}
 
-        if ($option !== 'nolink')
-        {
-        	// Add param to save lastsearch_values or not
-        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
-        }
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
-        $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-        $linkend='</a>';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
 
 		if ($withpicto) {
 			if ($this->type == Product::TYPE_PRODUCT) $result.=($linkstart.img_object(($notooltip?'':$label), 'product', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
@@ -3703,8 +3703,8 @@ class Product extends CommonObject
 			}
 			else
 			{
-			    $this->error=$movementstock->error;
-			    $this->errors=$movementstock->errors;
+				$this->error=$movementstock->error;
+				$this->errors=$movementstock->errors;
 
 				$this->db->rollback();
 				return -1;
@@ -3751,8 +3751,8 @@ class Product extends CommonObject
 			}
 			else
 			{
-			    $this->error=$movementstock->error;
-			    $this->errors=$movementstock->errors;
+				$this->error=$movementstock->error;
+				$this->errors=$movementstock->errors;
 
 				$this->db->rollback();
 				return -1;
@@ -3828,7 +3828,7 @@ class Product extends CommonObject
 
 			if (! preg_match('/novirtual/', $option))
 			{
-			    $this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
+				$this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
 			}
 
 			return 1;
@@ -3847,59 +3847,59 @@ class Product extends CommonObject
 	 *    @return   int             < 0 if KO, > 0 if OK
 	 *    @see		load_stock, getBatchInfo
 	 */
-    function load_virtual_stock()
-    {
-        global $conf;
+	function load_virtual_stock()
+	{
+		global $conf;
 
-        $stock_commande_client=0;
-        $stock_commande_fournisseur=0;
-        $stock_sending_client=0;
-        $stock_reception_fournisseur=0;
+		$stock_commande_client=0;
+		$stock_commande_fournisseur=0;
+		$stock_sending_client=0;
+		$stock_reception_fournisseur=0;
 
-        if (! empty($conf->commande->enabled))
-        {
-            $result=$this->load_stats_commande(0,'1,2', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_commande_client=$this->stats_commande['qty'];
-        }
-        if (! empty($conf->expedition->enabled))
-        {
-            $result=$this->load_stats_sending(0,'1,2', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_sending_client=$this->stats_expedition['qty'];
-        }
-        if (! empty($conf->fournisseur->enabled))
-        {
-            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
+		if (! empty($conf->commande->enabled))
+		{
+			$result=$this->load_stats_commande(0,'1,2', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_commande_client=$this->stats_commande['qty'];
+		}
+		if (! empty($conf->expedition->enabled))
+		{
+			$result=$this->load_stats_sending(0,'1,2', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_sending_client=$this->stats_expedition['qty'];
+		}
+		if (! empty($conf->fournisseur->enabled))
+		{
+			$result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
-            $result=$this->load_stats_reception(0,'4', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_reception_fournisseur=$this->stats_reception['qty'];
-        }
+			$result=$this->load_stats_reception(0,'4', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_reception_fournisseur=$this->stats_reception['qty'];
+		}
 
-        // Stock decrease mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-            $this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-            $this->stock_theorique=$this->stock_reel;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-            $this->stock_theorique=$this->stock_reel-$stock_commande_client;
-        }
-        // Stock Increase mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
-            $this->stock_theorique-=$stock_reception_fournisseur;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
-            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-        }
-    }
+		// Stock decrease mode
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+			$this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
+			$this->stock_theorique=$this->stock_reel;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			$this->stock_theorique=$this->stock_reel-$stock_commande_client;
+		}
+		// Stock Increase mode
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+			$this->stock_theorique-=$stock_reception_fournisseur;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+		}
+	}
 
 
 	/**
@@ -3909,34 +3909,34 @@ class Product extends CommonObject
 	 *  @return     array					Array with record into product_batch
 	 *  @see		load_stock, load_virtual_stock
 	 */
-    function loadBatchInfo($batch)
-    {
-    	$result=array();
+	function loadBatchInfo($batch)
+	{
+		$result=array();
 
-    	$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
-    	$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$this->id." AND pb.batch = '".$this->db->escape($batch)."'";
-    	$sql.= " GROUP BY pb.batch, pb.eatby, pb.sellby";
-    	dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
-    	$resql = $this->db->query($sql);
-    	if ($resql)
-    	{
-    		$num = $this->db->num_rows($resql);
-    		$i=0;
-    		while ($i < $num)
-    		{
-    			$obj = $this->db->fetch_object($resql);
+		$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$this->id." AND pb.batch = '".$this->db->escape($batch)."'";
+		$sql.= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+		dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
 				$result[]=array('batch'=>$batch, 'eatby'=>$this->db->jdate($obj->eatby), 'sellby'=>$this->db->jdate($obj->sellby), 'qty'=>$obj->qty);
 				$i++;
-    		}
-    		return $result;
-    	}
-    	else
-    	{
-    		dol_print_error($this->db);
-    		$this->db->rollback();
-    		return array();
-    	}
-    }
+			}
+			return $result;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->db->rollback();
+			return array();
+		}
+	}
 
 
 	/**
@@ -3988,8 +3988,8 @@ class Product extends CommonObject
 	 */
 	function is_photo_available($sdir)
 	{
-	    include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
-	    include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
 		global $conf;
 
@@ -4005,11 +4005,11 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
 			if (is_resource($handle))
 			{
-			    while (($file = readdir($handle)) !== false)
-    			{
-    				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
-    				if (dol_is_file($dir.$file) && image_format_supported($file) > 0) return true;
-    			}
+				while (($file = readdir($handle)) !== false)
+				{
+					if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
+					if (dol_is_file($dir.$file) && image_format_supported($file) > 0) return true;
+				}
 			}
 		}
 		return false;
@@ -4056,9 +4056,9 @@ class Product extends CommonObject
 		$relativedir = '';
 		if ($dir)
 		{
-		    $relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $dir);
-		    $relativedir = preg_replace('/^[\\/]/','',$relativedir);
-		    $relativedir = preg_replace('/[\\/]$/','',$relativedir);
+			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $dir);
+			$relativedir = preg_replace('/^[\\/]/','',$relativedir);
+			$relativedir = preg_replace('/[\\/]$/','',$relativedir);
 		}
 
 		$dirthumb = $dir.'thumbs/';
@@ -4071,23 +4071,23 @@ class Product extends CommonObject
 
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 		{
-		    $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
-		    $filearray=array_merge($filearray, $filearrayold);
+			$filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+			$filearray=array_merge($filearray, $filearrayold);
 		}
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
-        if (count($filearray))
-        {
-            if ($sortfield && $sortorder)
-            {
-                $filearray=dol_sort_array($filearray, $sortfield, $sortorder);
-            }
+		if (count($filearray))
+		{
+			if ($sortfield && $sortorder)
+			{
+				$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
+			}
 
-            foreach($filearray as $key => $val)
-            {
+			foreach($filearray as $key => $val)
+			{
 				$photo='';
-                $file = $val['name'];
+				$file = $val['name'];
 
 				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
@@ -4121,9 +4121,9 @@ class Product extends CommonObject
 						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
 						if (empty($nolink))
 						{
-						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile, 0, 'entity='.$this->entity);
-						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
-						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+							$urladvanced=getAdvancedPreviewUrl('product', $relativefile, 0, 'entity='.$this->entity);
+							if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
+							else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
 						}
 
 						// Show image (width height=$maxHeight)
@@ -4156,9 +4156,9 @@ class Product extends CommonObject
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
 								// Link to resize
-			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+						   		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
-			               		// Link to delete
+						   		// Link to delete
 								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 								$return.= img_delete().'</a>';
 							}
@@ -4182,10 +4182,10 @@ class Product extends CommonObject
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
 								// Link to resize
-			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+						   		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
-			               		// Link to delete
-			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+						   		// Link to delete
+						   		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 								$return.= img_delete().'</a>';
 							}
 						}
@@ -4194,7 +4194,7 @@ class Product extends CommonObject
 					// On continue ou on arrete de boucler ?
 					if ($nbmax && $nbphoto >= $nbmax) break;
 				}
-            }
+			}
 
 			if ($size==1 || $size=='small')
 			{
@@ -4227,8 +4227,8 @@ class Product extends CommonObject
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
-	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	    include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 		$nbphoto=0;
 		$tabobj=array();
@@ -4281,10 +4281,10 @@ class Product extends CommonObject
 	 */
 	function delete_photo($file)
 	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
+		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
 		$filename = preg_replace('/'.preg_quote($dir,'/').'/i','',$file); // Nom du fichier
 
@@ -4339,11 +4339,11 @@ class Product extends CommonObject
 		// Add where from hooks
 		if (is_object($hookmanager))
 		{
-		    $parameters=array();
-		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
-		    $sql.=$hookmanager->resPrint;
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+			$sql.=$hookmanager->resPrint;
 		}
-        $sql.= ' GROUP BY fk_product_type';
+		$sql.= ' GROUP BY fk_product_type';
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -4353,7 +4353,7 @@ class Product extends CommonObject
 				if ($obj->fk_product_type == 1) $this->nb["services"]=$obj->nb;
 				else $this->nb["products"]=$obj->nb;
 			}
-            $this->db->free($resql);
+			$this->db->free($resql);
 			return 1;
 		}
 		else
@@ -4364,102 +4364,102 @@ class Product extends CommonObject
 		}
 	}
 
-    /**
-     * Return if object is a product
-     *
-     * @return  boolean     True if it's a product
-     */
+	/**
+	 * Return if object is a product
+	 *
+	 * @return  boolean     True if it's a product
+	 */
 	function isProduct()
 	{
 		return ($this->type == Product::TYPE_PRODUCT ? true : false);
 	}
 
-    /**
-     * Return if object is a product
-     *
-     * @return  boolean     True if it's a service
-     */
+	/**
+	 * Return if object is a product
+	 *
+	 * @return  boolean     True if it's a service
+	 */
 	function isService()
 	{
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
 
-    /**
-     *  Get a barcode from the module to generate barcode values.
-     *  Return value is stored into this->barcode
-     *
-     *	@param	Product		$object		Object product or service
-     *	@param	string		$type		Barcode type (ean, isbn, ...)
-     *  @return void
-     */
-    function get_barcode($object,$type='')
-    {
-        global $conf;
+	/**
+	 *  Get a barcode from the module to generate barcode values.
+	 *  Return value is stored into this->barcode
+	 *
+	 *	@param	Product		$object		Object product or service
+	 *	@param	string		$type		Barcode type (ean, isbn, ...)
+	 *  @return void
+	 */
+	function get_barcode($object,$type='')
+	{
+		global $conf;
 
-        $result='';
-        if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
-        {
-            $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
-            foreach ($dirsociete as $dirroot)
-            {
-                $res=dol_include_once($dirroot.$conf->global->BARCODE_PRODUCT_ADDON_NUM.'.php');
-                if ($res) break;
-            }
-            $var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
-            $mod = new $var;
+		$result='';
+		if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
+		{
+			$dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+			foreach ($dirsociete as $dirroot)
+			{
+				$res=dol_include_once($dirroot.$conf->global->BARCODE_PRODUCT_ADDON_NUM.'.php');
+				if ($res) break;
+			}
+			$var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
+			$mod = new $var;
 
-            $result=$mod->getNextValue($object,$type);
+			$result=$mod->getNextValue($object,$type);
 
-            dol_syslog(get_class($this)."::get_barcode barcode=".$result." module=".$var);
-        }
-        return $result;
-    }
+			dol_syslog(get_class($this)."::get_barcode barcode=".$result." module=".$var);
+		}
+		return $result;
+	}
 
-    /**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
-     */
-    function initAsSpecimen()
-    {
-        global $user,$langs,$conf,$mysoc;
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs,$conf,$mysoc;
 
-        $now=dol_now();
+		$now=dol_now();
 
-        // Initialize parameters
-        $this->specimen=1;
-        $this->id=0;
-        $this->ref = 'PRODUCT_SPEC';
-        $this->label = 'PRODUCT SPECIMEN';
-        $this->description = 'This is description of this product specimen that was created the '.dol_print_date($now,'dayhourlog').'.';
-        $this->specimen=1;
-        $this->country_id=1;
-        $this->tosell=1;
-        $this->tobuy=1;
+		// Initialize parameters
+		$this->specimen=1;
+		$this->id=0;
+		$this->ref = 'PRODUCT_SPEC';
+		$this->label = 'PRODUCT SPECIMEN';
+		$this->description = 'This is description of this product specimen that was created the '.dol_print_date($now,'dayhourlog').'.';
+		$this->specimen=1;
+		$this->country_id=1;
+		$this->tosell=1;
+		$this->tobuy=1;
 		$this->tobatch=0;
-        $this->note='This is a comment (private)';
-        $this->date_creation = $now;
-        $this->date_modification = $now;
+		$this->note='This is a comment (private)';
+		$this->date_creation = $now;
+		$this->date_modification = $now;
 
-        $this->weight = 4;
-        $this->weight_unit = 1;
+		$this->weight = 4;
+		$this->weight_unit = 1;
 
-        $this->length = 5;
-        $this->length_unit = 1;
-        $this->width = 6;
-        $this->width_unit = 0;
-        $this->height = null;
-        $this->height_unit = null;
+		$this->length = 5;
+		$this->length_unit = 1;
+		$this->width = 6;
+		$this->width_unit = 0;
+		$this->height = null;
+		$this->height_unit = null;
 
-        $this->surface = 30;
-        $this->surface_unit = 0;
-        $this->volume = 300;
-        $this->volume_unit = 0;
+		$this->surface = 30;
+		$this->surface_unit = 0;
+		$this->volume = 300;
+		$this->volume_unit = 0;
 
-        $this->barcode=-1;	// Create barcode automatically
-    }
+		$this->barcode=-1;	// Create barcode automatically
+	}
 
 	/**
 	 *	Returns the text label from units dictionary
@@ -4503,11 +4503,11 @@ class Product extends CommonObject
 		}
 	}
 
-    /**
-     * Return if object has a sell-by date or eat-by date
-     *
-     * @return  boolean     True if it's has
-     */
+	/**
+	 * Return if object has a sell-by date or eat-by date
+	 *
+	 * @return  boolean     True if it's has
+	 */
 	function hasbatch()
 	{
 		return ($this->status_batch == 1 ? true : false);
@@ -4515,10 +4515,10 @@ class Product extends CommonObject
 
 
 	/**
-     * Return minimum product recommended price
-     *
+	 * Return minimum product recommended price
+	 *
 	 * @return	int			Minimum recommanded price that is higher price among all suppliers * PRODUCT_MINIMUM_RECOMMENDED_PRICE
-     */
+	 */
 	function min_recommended_price()
 	{
 		global $conf;
@@ -4689,52 +4689,52 @@ class Product extends CommonObject
 		}
 	}
 
-    /**
-     *  Load information for tab info
-     *
-     *  @param  int		$id     Id of thirdparty to load
-     *  @return	void
-     */
-    function info($id)
-    {
-        $sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
-        $sql.= " p.fk_user_author, p.fk_user_modif";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-        $sql.= " WHERE p.rowid = ".$id;
+	/**
+	 *  Load information for tab info
+	 *
+	 *  @param  int		$id     Id of thirdparty to load
+	 *  @return	void
+	 */
+	function info($id)
+	{
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
+		$sql.= " p.fk_user_author, p.fk_user_modif";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		$sql.= " WHERE p.rowid = ".$id;
 
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
-
-                $this->id = $obj->rowid;
-
-                if ($obj->fk_user_author) {
-                    $cuser = new User($this->db);
-                    $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
-                }
-
-                if ($obj->fk_user_modif) {
-                    $muser = new User($this->db);
-                    $muser->fetch($obj->fk_user_modif);
-                    $this->user_modification = $muser;
-                }
-
-                $this->ref			     = $obj->ref;
-                $this->date_creation     = $this->db->jdate($obj->date_creation);
-                $this->date_modification = $this->db->jdate($obj->date_modification);
-            }
-
-            $this->db->free($result);
-
-        }
-        else
+		$result=$this->db->query($sql);
+		if ($result)
 		{
-            dol_print_error($this->db);
-        }
-    }
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$this->id = $obj->rowid;
+
+				if ($obj->fk_user_author) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation     = $cuser;
+				}
+
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+
+				$this->ref			     = $obj->ref;
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 
 }

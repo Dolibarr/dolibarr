@@ -37,11 +37,11 @@ if ($_POST) {
 		setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 	}
 
-       if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
-               setEventMessage($langs->trans('RecordSaved'));
-       } else {
-               setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
-       }
+	   if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
+			   setEventMessage($langs->trans('RecordSaved'));
+	   } else {
+			   setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+	   }
 
 }
 
@@ -63,9 +63,9 @@ print '<tr><td>'.$langs->trans('HideProductCombinations').'</td><td>';
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD",$conf->global->PRODUIT_ATTRIBUTES_HIDECHILD,1).'</td></tr>';
 print '<tr><td>'.$langs->trans('CombinationsSeparator').'</td><td>';
 if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-       $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+	   $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
 } else {
-       $separator = "_";
+	   $separator = "_";
 }
 print '<td align="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 print '</table>';

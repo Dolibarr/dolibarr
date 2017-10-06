@@ -35,7 +35,7 @@ class PaymentTerm // extends CommonObject
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
 	var $context =array();
 
-    var $id;
+	var $id;
 
 	var $code;
 	var $sortorder;
@@ -49,28 +49,28 @@ class PaymentTerm // extends CommonObject
 
 
 
-    /**
-     * 	Constructor
-     *
+	/**
+	 * 	Constructor
+	 *
 	 * 	@param	DoliDB		$db			Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-        return 1;
-    }
+	 */
+	function __construct($db)
+	{
+		$this->db = $db;
+		return 1;
+	}
 
 
-    /**
-     *      Create in database
-     *
-     *      @param      User	$user        	User that create
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, Id of created object if OK
-     */
-    function create($user, $notrigger=0)
-    {
-    	global $conf, $langs;
+	/**
+	 *      Create in database
+	 *
+	 *      @param      User	$user        	User that create
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int       			  	<0 if KO, Id of created object if OK
+	 */
+	function create($user, $notrigger=0)
+	{
+		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -88,7 +88,7 @@ class PaymentTerm // extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Insert request
+		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(";
 		$sql.= "rowid,";
 		$sql.= "entity,";
@@ -100,7 +100,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= "type_cdr,";
 		$sql.= "nbjour,";
 		$sql.= "decalage";
-        $sql.= ") VALUES (";
+		$sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
 		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term'):"'".$this->db->escape($this->entity)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
@@ -116,34 +116,34 @@ class PaymentTerm // extends CommonObject
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		$resql=$this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
 		if (! $error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
 
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
 			}
-        }
+		}
 
-        // Commit or rollback
-        if ($error)
+		// Commit or rollback
+		if ($error)
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
@@ -151,21 +151,21 @@ class PaymentTerm // extends CommonObject
 		else
 		{
 			$this->db->commit();
-            return $this->id;
+			return $this->id;
 		}
-    }
+	}
 
 
-    /**
-     *    Load object in memory from database
-     *
-     *    @param      int		$id     Id object
-     *    @return     int         		<0 if KO, >0 if OK
-     */
-    function fetch($id)
-    {
-    	global $langs;
-        $sql = "SELECT";
+	/**
+	 *    Load object in memory from database
+	 *
+	 *    @param      int		$id     Id object
+	 *    @return     int         		<0 if KO, >0 if OK
+	 */
+	function fetch($id)
+	{
+		global $langs;
+		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.entity";
 
@@ -179,19 +179,19 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.decalage";
 
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql.= " WHERE t.rowid = ".$id;
-        $sql.= " AND t.entity = " . getEntity('c_payment_term');
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
+		$sql.= " WHERE t.rowid = ".$id;
+		$sql.= " AND t.entity = " . getEntity('c_payment_term');
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+				$this->id    = $obj->rowid;
 
 				$this->code = $obj->code;
 				$this->sortorder = $obj->sortorder;
@@ -203,63 +203,63 @@ class PaymentTerm // extends CommonObject
 				$this->decalage = $obj->decalage;
 
 
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
-
-
-    /**
-     *    Return id of default payment term
-     *
-     *    @return     int         <0 if KO, >0 if OK
-     */
-    function getDefaultId()
-    {
-    	global $langs;
-
-        $ret=0;
-
-    	$sql = "SELECT";
-		$sql.= " t.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql.= " WHERE t.code = 'RECEP'";
-        $sql.= " AND t.entity = " . getEntity('c_payment_term');
-
-    	dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
-                if ($obj) $ret=$obj->rowid;
-            }
-            $this->db->free($resql);
-            return $ret;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
+			return 1;
+		}
+		else
+		{
+	  		$this->error="Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
 
 
 	/**
-     *      Update database
-     *
-     *      @param      User	$user        	User that modify
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, >0 if OK
-     */
+	 *    Return id of default payment term
+	 *
+	 *    @return     int         <0 if KO, >0 if OK
+	 */
+	function getDefaultId()
+	{
+		global $langs;
+
+		$ret=0;
+
+		$sql = "SELECT";
+		$sql.= " t.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
+		$sql.= " WHERE t.code = 'RECEP'";
+		$sql.= " AND t.entity = " . getEntity('c_payment_term');
+
+		dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) $ret=$obj->rowid;
+			}
+			$this->db->free($resql);
+			return $ret;
+		}
+		else
+		{
+	  		$this->error="Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      Update database
+	 *
+	 *      @param      User	$user        	User that modify
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int       			  	<0 if KO, >0 if OK
+	 */
 	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
@@ -337,12 +337,12 @@ class PaymentTerm // extends CommonObject
 
 
  	/**
-	 *  Delete object in database
-	 *
-     *	@param      User	$user  		User that delete
-     *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
-	 *	@return		int					<0 if KO, >0 if OK
-	 */
+ 	 *  Delete object in database
+ 	 *
+ 	 *	@param      User	$user  		User that delete
+ 	 *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
+ 	 *	@return		int					<0 if KO, >0 if OK
+ 	 */
 	function delete($user, $notrigger=0)
 	{
 		global $conf, $langs;
@@ -356,31 +356,31 @@ class PaymentTerm // extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
+				// want this action call a trigger.
 
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
 			}
 		}
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
@@ -454,11 +454,11 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{

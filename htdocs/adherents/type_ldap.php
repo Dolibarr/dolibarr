@@ -129,7 +129,7 @@ print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1)
 {
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -153,32 +153,32 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-    $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info,1);
-    $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records = $ldap->getAttribute($dn,$search);
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info,1);
+	$search = "(".$object->_load_ldap_dn($info,2).")";
+	$records = $ldap->getAttribute($dn,$search);
 
-    //print_r($records);
+	//print_r($records);
 
-    // Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
-    {
-        if (! is_array($records))
-        {
-            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-        }
-        else
-        {
-            $result=show_ldap_content($records,0,$records['count'],true);
-        }
-    }
-    else
-    {
-        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-    }
+	// Affichage arbre
+	if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	{
+		if (! is_array($records))
+		{
+			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+		}
+		else
+		{
+			$result=show_ldap_content($records,0,$records['count'],true);
+		}
+	}
+	else
+	{
+		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+	}
 
-    $ldap->unbind();
-    $ldap->close();
+	$ldap->unbind();
+	$ldap->close();
 }
 else
 {

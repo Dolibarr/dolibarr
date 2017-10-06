@@ -145,10 +145,10 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 
 // Link to a project
 if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
-    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
+	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
 {
-    $object->fetch($id);
-    $object->setProject(GETPOST('projectid'));
+	$object->fetch($id);
+	$object->setProject(GETPOST('projectid'));
 }
 
 // Action clone object
@@ -179,13 +179,13 @@ if ($action == 'add')
 {
 	$error=0;
 
-    if (empty($backtopage))
-    {
-        if ($socid > 0) $backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
-        else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
-    }
+	if (empty($backtopage))
+	{
+		if ($socid > 0) $backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
+		else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
+	}
 
-    if ($contactid)
+	if ($contactid)
 	{
 		$result=$contact->fetch($contactid);
 	}
@@ -196,9 +196,9 @@ if ($action == 'add')
 		exit;
 	}
 
-    $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
+	$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
-    // Clean parameters
+	// Clean parameters
 	$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
 	$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
 
@@ -378,14 +378,14 @@ if ($action == 'update')
 {
 	if (empty($cancel))
 	{
-        $fulldayevent=GETPOST('fullday');
-        $aphour=GETPOST('aphour');
-        $apmin=GETPOST('apmin');
-        $p2hour=GETPOST('p2hour');
-        $p2min=GETPOST('p2min');
+		$fulldayevent=GETPOST('fullday');
+		$aphour=GETPOST('aphour');
+		$apmin=GETPOST('apmin');
+		$p2hour=GETPOST('p2hour');
+		$p2min=GETPOST('p2min');
 		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
-	    // Clean parameters
+		// Clean parameters
 		if ($aphour == -1) $aphour='0';
 		if ($apmin == -1) $apmin='0';
 		if ($p2hour == -1) $p2hour='0';
@@ -403,7 +403,7 @@ if ($action == 'update')
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority");
-        $object->fulldayevent= GETPOST("fullday")?1:0;
+		$object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$object->contactid   = GETPOST("contactid",'int');
@@ -498,12 +498,12 @@ if ($action == 'update')
 
 	if (! $error)
 	{
-        if (! empty($backtopage))
-        {
-        	unset($_SESSION['assignedtouser']);
-            header("Location: ".$backtopage);
-            exit;
-        }
+		if (! empty($backtopage))
+		{
+			unset($_SESSION['assignedtouser']);
+			header("Location: ".$backtopage);
+			exit;
+		}
 	}
 }
 
@@ -536,42 +536,42 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
  */
 if ($action == 'mupdate')
 {
-    $object->fetch($id);
-    $object->fetch_userassigned();
+	$object->fetch($id);
+	$object->fetch_userassigned();
 
-    $shour = dol_print_date($object->datep,"%H");
-    $smin = dol_print_date($object->datep, "%M");
+	$shour = dol_print_date($object->datep,"%H");
+	$smin = dol_print_date($object->datep, "%M");
 
-    $newdate=GETPOST('newdate','alpha');
-    if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
-    {
-       header("Location: ".$backtopage);
-        exit;
-    }
+	$newdate=GETPOST('newdate','alpha');
+	if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
+	{
+	   header("Location: ".$backtopage);
+		exit;
+	}
 
-    $datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
-    if ($datep!=$object->datep)
-    {
-        if (!empty($object->datef))
-        {
-            $object->datef+=$datep-$object->datep;
-        }
-        $object->datep=$datep;
-        $result=$object->update($user);
-        if ($result < 0)
-        {
-            setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
-    if (! empty($backtopage))
-    {
-        header("Location: ".$backtopage);
-        exit;
-    }
-    else
-    {
-        $action='';
-    }
+	$datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
+	if ($datep!=$object->datep)
+	{
+		if (!empty($object->datef))
+		{
+			$object->datef+=$datep-$object->datep;
+		}
+		$object->datep=$datep;
+		$result=$object->update($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	if (! empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
+	else
+	{
+		$action='';
+	}
 
 }
 
@@ -602,10 +602,10 @@ if ($action == 'create')
 
 	dol_set_focus("#label");
 
-    if (! empty($conf->use_javascript_ajax))
-    {
-        print "\n".'<script type="text/javascript">';
-        print '$(document).ready(function () {
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
         			function setdatefields()
 	            	{
 	            		if ($("#fullday:checked").val() == null) {
@@ -641,8 +641,8 @@ if ($action == 'create')
                         else $("#dateend").removeClass("fieldrequired");
                    });
                })';
-        print '</script>'."\n";
-    }
+		print '</script>'."\n";
+	}
 
 	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -670,8 +670,8 @@ if ($action == 'create')
 	// Title
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
-    // Full day
-    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
+	// Full day
+	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
 
 	// Date start
 	$datep=($datep?$datep:$object->datep);
@@ -684,7 +684,7 @@ if ($action == 'create')
 
 	// Date end
 	$datef=($datef?$datef:$object->datef);
-    if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
+	if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
 	if (empty($datef) && ! empty($datep) && ! empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS))
 	{
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
@@ -709,11 +709,11 @@ if ($action == 'create')
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
-    // Location
-    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-    {
+	// Location
+	if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+	{
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
-    }
+	}
 
 	// Assigned to
 	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
@@ -821,18 +821,18 @@ if ($action == 'create')
 	print '<input type="text" name="priority" value="'.(GETPOST('priority')?GETPOST('priority'):($object->priority?$object->priority:'')).'" size="5">';
 	print '</td></tr>';
 
-    // Description
-    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note',(GETPOST('note','none')?GETPOST('note','none'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
-    $doleditor->Create();
-    print '</td></tr>';
+	// Description
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor('note',(GETPOST('note','none')?GETPOST('note','none'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
+	$doleditor->Create();
+	print '</td></tr>';
 
-    // Other attributes
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+	// Other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -862,7 +862,7 @@ if ($id > 0)
 
 	if ($listUserAssignedUpdated || $donotclearsession)
 	{
-        $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
+		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
@@ -873,7 +873,7 @@ if ($id > 0)
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority");
-        $object->fulldayevent= GETPOST("fullday")?1:0;
+		$object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$object->contactid   = GETPOST("contactid",'int');
@@ -909,10 +909,10 @@ if ($id > 0)
 
 	if ($action == 'edit')
 	{
-	    if (! empty($conf->use_javascript_ajax))
-        {
-            print "\n".'<script type="text/javascript">';
-            print '$(document).ready(function () {
+		if (! empty($conf->use_javascript_ajax))
+		{
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
 	            		function setdatefields()
 	            		{
 	            			if ($("#fullday:checked").val() == null) {
@@ -932,8 +932,8 @@ if ($id > 0)
 	            			setdatefields();
 	            		});
                    })';
-            print '</script>'."\n";
-        }
+			print '</script>'."\n";
+		}
 
 		print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -953,23 +953,23 @@ if ($id > 0)
 		// Type of event
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-		    print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
-		    if ($object->type_code != 'AC_OTH_AUTO')
-		    {
-                $formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
-		    }
-		    else
-		    {
-                print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
-		    }
+			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
+			if ($object->type_code != 'AC_OTH_AUTO')
+			{
+				$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+			}
+			else
+			{
+				print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
+			}
 			print '</td></tr>';
 		}
 
 		// Title
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="minwidth100" value="'.$object->label.'"></td></tr>';
 
-        // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
+		// Full day event
+		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
@@ -1047,11 +1047,11 @@ if ($id > 0)
 		$formactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 
-        // Location
-	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-	    {
+		// Location
+		if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+		{
 			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.$object->location.'"></td></tr>';
-	    }
+		}
 
 		// Assigned to
 		print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
@@ -1107,8 +1107,8 @@ if ($id > 0)
 
 		if ($conf->societe->enabled)
 		{
-		    // Related company
-		    print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
+			// Related company
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$events=array();     // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
@@ -1155,19 +1155,19 @@ if ($id > 0)
 			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
 		}
 
-        // Description
-        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-        // Editeur wysiwyg
-        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
-        $doleditor->Create();
-        print '</td></tr>';
+		// Description
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+		// Editeur wysiwyg
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
+		$doleditor->Create();
+		print '</td></tr>';
 
-        // Other attributes
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+		// Other attributes
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1218,44 +1218,44 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-		    $langs->load("projects");
-		    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		    $morehtmlref.=$langs->trans('Project') . ' ';
-    		if ($user->rights->agenda->allactions->create ||
-	       	    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
-		    {
-		        if ($action != 'classify')
-		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-		            if ($action == 'classify') {
-		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-		                $morehtmlref.='</form>';
-		            } else {
-		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-		            }
-		    } else {
-		        if (! empty($object->fk_project)) {
-		            $proj = new Project($db);
-		            $proj->fetch($object->fk_project);
-		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-		            $morehtmlref.=$proj->ref;
-		            $morehtmlref.='</a>';
-		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
-		        } else {
-		            $morehtmlref.='';
-		        }
-		    }
+			$langs->load("projects");
+			//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			$morehtmlref.=$langs->trans('Project') . ' ';
+			if ($user->rights->agenda->allactions->create ||
+		   		(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+			{
+				if ($action != 'classify')
+					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					if ($action == 'classify') {
+						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+						$morehtmlref.='<input type="hidden" name="action" value="classin">';
+						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+						$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+						$morehtmlref.='</form>';
+					} else {
+						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					}
+			} else {
+				if (! empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+					$morehtmlref.=$proj->ref;
+					$morehtmlref.='</a>';
+					if ($proj->title) $morehtmlref.=' - '.$proj->title;
+				} else {
+					$morehtmlref.='';
+				}
+			}
 		}
 		$morehtmlref.='</div>';
 
 
 		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
 
-	    print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
 
@@ -1268,8 +1268,8 @@ if ($id > 0)
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
 		}
 
-        // Full day event
-        print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
+		// Full day event
+		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan=4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
@@ -1284,19 +1284,19 @@ if ($id > 0)
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-        if (! $object->fulldayevent) print dol_print_date($object->datef,'dayhour');
+		if (! $object->fulldayevent) print dol_print_date($object->datef,'dayhour');
 		else print dol_print_date($object->datef,'day');
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-        // Location
-	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-    	{
+		// Location
+		if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+		{
 			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
-    	}
+		}
 
 		// Assigned to
-    	print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
@@ -1352,8 +1352,8 @@ if ($id > 0)
 
 		if ($conf->societe->enabled)
 		{
-		    // Related company
-		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
+			// Related company
+			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -1406,9 +1406,9 @@ if ($id > 0)
 		print dol_htmlentitiesbr($object->note);
 		print '</td></tr>';
 
-        // Other attributes
-        $cols=3;
-        include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		// Other attributes
+		$cols=3;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
@@ -1469,27 +1469,27 @@ if ($id > 0)
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
 			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
-            print '<a name="builddoc"></a>'; // ancre
+			print '<a name="builddoc"></a>'; // ancre
 
-            /*
+			/*
              * Documents generes
              */
 
-            $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-            $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+			$filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed=$user->rights->agenda->myactions->create;
-	        $delallowed=$user->rights->agenda->myactions->delete;
+			$genallowed=$user->rights->agenda->myactions->create;
+			$delallowed=$user->rights->agenda->myactions->delete;
 
-            $var=true;
+			$var=true;
 
-            print $formfile->showdocuments('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
+			print $formfile->showdocuments('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 			print '</div></div></div>';
-	    }
+		}
 	}
 }
 

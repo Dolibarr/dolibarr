@@ -176,24 +176,24 @@ class FactureRec extends CommonInvoice
 					if (! empty($facsrc->lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$facsrc->lines[$i]->vat_src_code.')';
 
 					$result_insert = $this->addline(
-                        $facsrc->lines[$i]->desc,
-                        $facsrc->lines[$i]->subprice,
-                        $facsrc->lines[$i]->qty,
+						$facsrc->lines[$i]->desc,
+						$facsrc->lines[$i]->subprice,
+						$facsrc->lines[$i]->qty,
 						$tva_tx,
-                        $facsrc->lines[$i]->localtax1_tx,
-                        $facsrc->lines[$i]->localtax2_tx,
-                        $facsrc->lines[$i]->fk_product,
-                        $facsrc->lines[$i]->remise_percent,
-                        'HT',
-                        0,
-                        '',
-                        0,
-                        $facsrc->lines[$i]->product_type,
-                        $facsrc->lines[$i]->rang,
-                        $facsrc->lines[$i]->special_code,
-                    	$facsrc->lines[$i]->label,
-	                    $facsrc->lines[$i]->fk_unit
-                    );
+						$facsrc->lines[$i]->localtax1_tx,
+						$facsrc->lines[$i]->localtax2_tx,
+						$facsrc->lines[$i]->fk_product,
+						$facsrc->lines[$i]->remise_percent,
+						'HT',
+						0,
+						'',
+						0,
+						$facsrc->lines[$i]->product_type,
+						$facsrc->lines[$i]->rang,
+						$facsrc->lines[$i]->special_code,
+						$facsrc->lines[$i]->label,
+						$facsrc->lines[$i]->fk_unit
+					);
 
 					if ($result_insert < 0)
 					{
@@ -201,19 +201,19 @@ class FactureRec extends CommonInvoice
 					}
 				}
 
-			    // Add object linked
-			    if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
-			    {
-			        foreach($this->linked_objects as $origin => $origin_id)
-			        {
-			            $ret = $this->add_object_linked($origin, $origin_id);
-			            if (! $ret)
-			            {
-			                $this->error=$this->db->lasterror();
-			                $error++;
-			            }
-			        }
-			    }
+				// Add object linked
+				if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+				{
+					foreach($this->linked_objects as $origin => $origin_id)
+					{
+						$ret = $this->add_object_linked($origin, $origin_id);
+						if (! $ret)
+						{
+							$this->error=$this->db->lasterror();
+							$error++;
+						}
+					}
+				}
 
 				if ($error)
 				{
@@ -227,7 +227,7 @@ class FactureRec extends CommonInvoice
 			}
 			else
 			{
-			    $this->error=$this->db->lasterror();
+				$this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
@@ -369,7 +369,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function getLinesArray()
 	{
-	    return $this->fetch_lines();
+		return $this->fetch_lines();
 	}
 
 
@@ -377,7 +377,7 @@ class FactureRec extends CommonInvoice
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
- 	 */
+	 */
 	function fetch_lines()
 	{
 		$this->lines=array();
@@ -440,7 +440,7 @@ class FactureRec extends CommonInvoice
 				$line->rang 			= $objp->rang;
 				$line->special_code 	= $objp->special_code;
 				$line->fk_unit          = $objp->fk_unit;
-                $line->fk_contract_line = $objp->fk_contract_line;
+				$line->fk_contract_line = $objp->fk_contract_line;
 
 				// Ne plus utiliser
 				$line->price            = $objp->price;
@@ -480,11 +480,11 @@ class FactureRec extends CommonInvoice
 	 */
 	function delete(User $user, $notrigger=0, $idwarehouse=-1)
 	{
-	    $rowid=$this->id;
+		$rowid=$this->id;
 
-	    dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
-        $error=0;
+		$error=0;
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
@@ -513,13 +513,13 @@ class FactureRec extends CommonInvoice
 
 		if (! $error)
 		{
-		    $this->db->commit();
-		    return 1;
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
-	        $this->db->rollback();
-	        return $error;
+			$this->db->rollback();
+			return $error;
 		}
 	}
 
@@ -527,28 +527,28 @@ class FactureRec extends CommonInvoice
 	/**
 	 * 	Add a line to invoice
 	 *
-     *	@param    	string		$desc            	Description de la ligne
-     *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
-     *	@param    	double		$qty             	Quantite
-     *	@param    	double		$txtva           	Taux de tva force, sinon -1
+	 *	@param    	string		$desc            	Description de la ligne
+	 *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
+	 *	@param    	double		$qty             	Quantite
+	 *	@param    	double		$txtva           	Taux de tva force, sinon -1
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
-     *	@param    	int			$fk_product      	Id du produit/service predefini
-     *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
-     *	@param		string		$price_base_type	HT or TTC
-     *	@param    	int			$info_bits			Bits de type de lignes
-     *	@param    	int			$fk_remise_except	Id remise
-     *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
-     *	@param		int			$type				Type of line (0=product, 1=service)
-     *	@param      int			$rang               Position of line
-     *	@param		int			$special_code		Special code
-     *	@param		string		$label				Label of the line
-     *	@param		string		$fk_unit			Unit
-     *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@param    	int			$fk_product      	Id du produit/service predefini
+	 *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+	 *	@param		string		$price_base_type	HT or TTC
+	 *	@param    	int			$info_bits			Bits de type de lignes
+	 *	@param    	int			$fk_remise_except	Id remise
+	 *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *	@param		int			$type				Type of line (0=product, 1=service)
+	 *	@param      int			$rang               Position of line
+	 *	@param		int			$special_code		Special code
+	 *	@param		string		$label				Label of the line
+	 *	@param		string		$fk_unit			Unit
+	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
-	    global $mysoc;
+		global $mysoc;
 
 		$facid=$this->id;
 
@@ -706,18 +706,18 @@ class FactureRec extends CommonInvoice
 	 */
 	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
-	    global $mysoc;
+		global $mysoc;
 
-	    $facid=$this->id;
+		$facid=$this->id;
 
-	    dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
-	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+		dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-	    // Clean parameters
-	    if (empty($remise_percent)) $remise_percent = 0;
+		// Clean parameters
+		if (empty($remise_percent)) $remise_percent = 0;
 
-	    // Check parameters
-	    if ($type < 0) return -1;
+		// Check parameters
+		if ($type < 0) return -1;
 
 		$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
@@ -729,86 +729,86 @@ class FactureRec extends CommonInvoice
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
 		}
 
-	    if ($this->brouillon)
-	    {
-	        // Clean parameters
-	        $remise_percent=price2num($remise_percent);
-	        $qty=price2num($qty);
-	        if (! $info_bits) $info_bits=0;
-	        $pu_ht=price2num($pu_ht);
-	        $pu_ttc=price2num($pu_ttc);
-	        $txtva=price2num($txtva);
-		    $txlocaltax1	= price2num($txlocaltax1);
-		    $txlocaltax2	= price2num($txlocaltax2);
+		if ($this->brouillon)
+		{
+			// Clean parameters
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $info_bits) $info_bits=0;
+			$pu_ht=price2num($pu_ht);
+			$pu_ttc=price2num($pu_ttc);
+			$txtva=price2num($txtva);
+			$txlocaltax1	= price2num($txlocaltax1);
+			$txlocaltax2	= price2num($txlocaltax2);
 
-	        if ($price_base_type=='HT')
-	        {
-	            $pu=$pu_ht;
-	        }
-	        else
-	        {
-	            $pu=$pu_ttc;
-	        }
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
 
-	        // Calcul du total TTC et de la TVA pour la ligne a partir de
-	        // qty, pu, remise_percent et txtva
-	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-	        // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
 
-	        $total_ht  = $tabprice[0];
-	        $total_tva = $tabprice[1];
-	        $total_ttc = $tabprice[2];
-		    $total_localtax1=$tabprice[9];
-		    $total_localtax2=$tabprice[10];
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+			$total_localtax1=$tabprice[9];
+			$total_localtax2=$tabprice[10];
 
-	        $product_type=$type;
-	        if ($fk_product)
-	        {
-	            $product=new Product($this->db);
-	            $result=$product->fetch($fk_product);
-	            $product_type=$product->type;
-	        }
+			$product_type=$type;
+			if ($fk_product)
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+			}
 
-	        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
-	        $sql.= "fk_facture = '".$facid."'";
-	        $sql.= ", label=".(! empty($label)?"'".$this->db->escape($label)."'":"null");
-	        $sql.= ", description='".$this->db->escape($desc)."'";
-	        $sql.= ", price=".price2num($pu_ht);
-	        $sql.= ", qty=".price2num($qty);
-	        $sql.= ", tva_tx=".price2num($txtva);
-	        $sql.= ", vat_src_code='".$this->db->escape($vat_src_code)."'";
-		    $sql.= ", localtax1_tx=".price2num($txlocaltax1);
-		    $sql.= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
-		    $sql.= ", localtax2_tx=".price2num($txlocaltax2);
-		    $sql.= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
-	        $sql.= ", fk_product=".(! empty($fk_product)?"'".$fk_product."'":"null");
-	        $sql.= ", product_type=".$product_type;
-	        $sql.= ", remise_percent='".price2num($remise_percent)."'";
-	        $sql.= ", subprice='".price2num($pu_ht)."'";
-	        $sql.= ", total_ht='".price2num($total_ht)."'";
-	        $sql.= ", total_tva='".price2num($total_tva)."'";
-	        $sql.= ", total_localtax1='".price2num($total_localtax1)."'";
-	        $sql.= ", total_localtax2='".price2num($total_localtax2)."'";
-	        $sql.= ", total_ttc='".price2num($total_ttc)."'";
-	        $sql.= ", rang=".$rang;
-	        $sql.= ", special_code=".$special_code;
-	        $sql.= ", fk_unit=".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
-	        $sql.= " WHERE rowid = ".$rowid;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
+			$sql.= "fk_facture = '".$facid."'";
+			$sql.= ", label=".(! empty($label)?"'".$this->db->escape($label)."'":"null");
+			$sql.= ", description='".$this->db->escape($desc)."'";
+			$sql.= ", price=".price2num($pu_ht);
+			$sql.= ", qty=".price2num($qty);
+			$sql.= ", tva_tx=".price2num($txtva);
+			$sql.= ", vat_src_code='".$this->db->escape($vat_src_code)."'";
+			$sql.= ", localtax1_tx=".price2num($txlocaltax1);
+			$sql.= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
+			$sql.= ", localtax2_tx=".price2num($txlocaltax2);
+			$sql.= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
+			$sql.= ", fk_product=".(! empty($fk_product)?"'".$fk_product."'":"null");
+			$sql.= ", product_type=".$product_type;
+			$sql.= ", remise_percent='".price2num($remise_percent)."'";
+			$sql.= ", subprice='".price2num($pu_ht)."'";
+			$sql.= ", total_ht='".price2num($total_ht)."'";
+			$sql.= ", total_tva='".price2num($total_tva)."'";
+			$sql.= ", total_localtax1='".price2num($total_localtax1)."'";
+			$sql.= ", total_localtax2='".price2num($total_localtax2)."'";
+			$sql.= ", total_ttc='".price2num($total_ttc)."'";
+			$sql.= ", rang=".$rang;
+			$sql.= ", special_code=".$special_code;
+			$sql.= ", fk_unit=".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
+			$sql.= " WHERE rowid = ".$rowid;
 
-	        dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
-	        if ($this->db->query($sql))
-	        {
-	            $this->id=$facid;
-	            $this->update_price();
-	            return 1;
-	        }
-	        else
-	        {
-	            $this->error=$this->db->lasterror();
-	            return -1;
-	        }
-	    }
+			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
+			if ($this->db->query($sql))
+			{
+				$this->id=$facid;
+				$this->update_price();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+		}
 	}
 
 
@@ -854,19 +854,19 @@ class FactureRec extends CommonInvoice
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-		    $i=0;
-		    $num = $db->num_rows($resql);
+			$i=0;
+			$num = $db->num_rows($resql);
 
-		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
-		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
+			if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
+			else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
 
-		    $saventity = $conf->entity;
+			$saventity = $conf->entity;
 
-		    while ($i < $num)     // Loop on each template invoice
+			while ($i < $num)     // Loop on each template invoice
 			{
-			    $line = $db->fetch_object($resql);
+				$line = $db->fetch_object($resql);
 
-			    $db->begin();
+				$db->begin();
 
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
@@ -876,35 +876,35 @@ class FactureRec extends CommonInvoice
 
 				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
-			    $error=0;
+				$error=0;
 
-			    $facture = new Facture($db);
+				$facture = new Facture($db);
 				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
 				$facture->fk_fac_rec_source = $facturerec->id;    // We will create $facture from this recurring invoice
 
-			    $facture->type = self::TYPE_STANDARD;
-			    $facture->brouillon = 1;
-			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
-			    $facture->socid = $facturerec->socid;
-			    $facture->suspended = 0;
+				$facture->type = self::TYPE_STANDARD;
+				$facture->brouillon = 1;
+				$facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
+				$facture->socid = $facturerec->socid;
+				$facture->suspended = 0;
 
-			    $invoiceidgenerated = $facture->create($user);
-			    if ($invoiceidgenerated <= 0)
-			    {
-			        $this->errors = $facture->errors;
-			        $this->error = $facture->error;
-			        $error++;
-			    }
-			    if (! $error && $facturerec->auto_validate)
-			    {
-			        $result = $facture->validate($user);
-			        if ($result <= 0)
-			        {
-    			        $this->errors = $facture->errors;
-    			        $this->error = $facture->error;
-			            $error++;
-			        }
-			    }
+				$invoiceidgenerated = $facture->create($user);
+				if ($invoiceidgenerated <= 0)
+				{
+					$this->errors = $facture->errors;
+					$this->error = $facture->error;
+					$error++;
+				}
+				if (! $error && $facturerec->auto_validate)
+				{
+					$result = $facture->validate($user);
+					if ($result <= 0)
+					{
+						$this->errors = $facture->errors;
+						$this->error = $facture->error;
+						$error++;
+					}
+				}
 
 				if (! $error && $invoiceidgenerated >= 0)
 				{
@@ -915,7 +915,7 @@ class FactureRec extends CommonInvoice
 				}
 				else
 				{
-				    $db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+					$db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$i++;
@@ -945,11 +945,11 @@ class FactureRec extends CommonInvoice
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowInvoice").': '.$this->ref;
+		$label=$langs->trans("ShowInvoice").': '.$this->ref;
 
-        $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
+		$url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
 
-        if ($short) return $url;
+		if ($short) return $url;
 
 		$picto='bill';
 
@@ -958,7 +958,7 @@ class FactureRec extends CommonInvoice
 
 
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
@@ -1070,7 +1070,7 @@ class FactureRec extends CommonInvoice
 		$arraynow=dol_getdate($now);
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-        // Load array of products prodids
+		// Load array of products prodids
 		$num_prods = 0;
 		$prodids = array();
 
@@ -1208,144 +1208,144 @@ class FactureRec extends CommonInvoice
 	}
 
 	/**
-     *	Update frequency and unit
-     *
-     *	@param     	int		$frequency		value of frequency
+	 *	Update frequency and unit
+	 *
+	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
-     *	@return		int						<0 if KO, >0 if OK
-     */
-    function setFrequencyAndUnit($frequency,$unit)
-    {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined",LOG_ERR);
-            return -1;
-        }
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	function setFrequencyAndUnit($frequency,$unit)
+	{
+		if (! $this->table_element)
+		{
+			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined",LOG_ERR);
+			return -1;
+		}
 
 		if (!empty($frequency) && empty($unit))
-        {
-            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined",LOG_ERR);
-            return -2;
-        }
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
-        if (!empty($unit))
-        {
-        	$sql.= ', unit_frequency = \''.$this->db->escape($unit).'\'';
+		{
+			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined",LOG_ERR);
+			return -2;
 		}
-        $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->frequency = $frequency;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
+		if (!empty($unit))
+		{
+			$sql.= ', unit_frequency = \''.$this->db->escape($unit).'\'';
+		}
+		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->frequency = $frequency;
 			if (!empty($unit)) $this->unit_frequency = $unit;
-            return 1;
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
 	/**
-     *	Update the next date of execution
-     *
-     *	@param     	datetime	$date					date of execution
-     *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-     *	@return		int									<0 if KO, >0 if OK
-     */
-    function setNextDate($date, $increment_nb_gen_done=0)
-    {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
-            return -1;
-        }
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET date_when = ".($date ? "'".$this->db->idate($date)."'" : "null");
-        if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
-        $sql.= ' WHERE rowid = '.$this->id;
+	 *	Update the next date of execution
+	 *
+	 *	@param     	datetime	$date					date of execution
+	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+	 *	@return		int									<0 if KO, >0 if OK
+	 */
+	function setNextDate($date, $increment_nb_gen_done=0)
+	{
+		if (! $this->table_element)
+		{
+			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
+			return -1;
+		}
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET date_when = ".($date ? "'".$this->db->idate($date)."'" : "null");
+		if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
+		$sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->date_when = $date;
-            if ($increment_nb_gen_done>0) $this->nb_gen_done++;
-            return 1;
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
-
-	/**
-     *	Update the maximum period
-     *
-     *	@param     	int		$nb		number of maximum period
-     *	@return		int				<0 if KO, >0 if OK
-     */
-    function setMaxPeriod($nb)
-    {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
-            return -1;
-        }
-
-        if (empty($nb)) $nb=0;
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' SET nb_gen_max = '.$nb;
-        $sql.= ' WHERE rowid = '.$this->id;
-
-        dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->nb_gen_max = $nb;
-            return 1;
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
+		dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->date_when = $date;
+			if ($increment_nb_gen_done>0) $this->nb_gen_done++;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
 	/**
-     *	Update the auto validate invoice
-     *
-     *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
-     *	@return		int						<0 if KO, >0 if OK
-     */
-    function setAutoValidate($validate)
-    {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
-            return -1;
-        }
+	 *	Update the maximum period
+	 *
+	 *	@param     	int		$nb		number of maximum period
+	 *	@return		int				<0 if KO, >0 if OK
+	 */
+	function setMaxPeriod($nb)
+	{
+		if (! $this->table_element)
+		{
+			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
+			return -1;
+		}
 
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' SET auto_validate = '.$validate;
-        $sql.= ' WHERE rowid = '.$this->id;
+		if (empty($nb)) $nb=0;
 
-        dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->auto_validate = $validate;
-            return 1;
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= ' SET nb_gen_max = '.$nb;
+		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->nb_gen_max = $nb;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *	Update the auto validate invoice
+	 *
+	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	function setAutoValidate($validate)
+	{
+		if (! $this->table_element)
+		{
+			dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= ' SET auto_validate = '.$validate;
+		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->auto_validate = $validate;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 }
 
 
@@ -1359,202 +1359,202 @@ class FactureLigneRec extends CommonInvoiceLine
 	public $element='facturedetrec';
 	public $table_element='facturedet_rec';
 
-    /**
-     * 	Delete line in database
-     *
-     *  @param		User	$user		Object user
-     *  @param		int		$notrigger	Disable triggers
-     *	@return		int					<0 if KO, >0 if OK
-     */
-    function delete(User $user, $notrigger = false)
-    {
-    	$error=0;
+	/**
+	 * 	Delete line in database
+	 *
+	 *  @param		User	$user		Object user
+	 *  @param		int		$notrigger	Disable triggers
+	 *	@return		int					<0 if KO, >0 if OK
+	 */
+	function delete(User $user, $notrigger = false)
+	{
+		$error=0;
 
-	    $this->db->begin();
+		$this->db->begin();
 
-	    if (! $error) {
-	        if (! $notrigger) {
-	            // Call triggers
-	            $result=$this->call_trigger('LINEBILLREC_DELETE', $user);
-	            if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
-	            // End call triggers
-	        }
-	    }
-
-	    if (! $error)
-	    {
-    		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
-
-    		$res = $this->db->query($sql);
-    		if($res===false) {
-    		    $error++;
-    		    $this->errors[] = $this->db->lasterror();
-    		}
-	    }
-
-    	// Commit or rollback
-		if ($error) {
-		    $this->db->rollback();
-		    return -1;
-		} else {
-		    $this->db->commit();
-		    return 1;
+		if (! $error) {
+			if (! $notrigger) {
+				// Call triggers
+				$result=$this->call_trigger('LINEBILLREC_DELETE', $user);
+				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
+				// End call triggers
+			}
 		}
-    }
+
+		if (! $error)
+		{
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+
+			$res = $this->db->query($sql);
+			if($res===false) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 
-    /**
-     *	Recupere les lignes de factures predefinies dans this->lines
-     *
-     *	@param		int 	$rowid		Id of invoice
-     *	@return     int         		1 if OK, < 0 if KO
-     */
-    function fetch($rowid)
-    {
-    	$sql = 'SELECT l.rowid, l.fk_facture ,l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
-    	$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
-    	$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
-    	$sql.= ' l.rang, l.special_code,';
-    	$sql.= ' l.fk_unit, l.fk_contract_line,';
-    	$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
-    	$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
-    	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-    	$sql.= ' WHERE l.rowid = '.$rowid;
-    	$sql.= ' ORDER BY l.rang';
+	/**
+	 *	Recupere les lignes de factures predefinies dans this->lines
+	 *
+	 *	@param		int 	$rowid		Id of invoice
+	 *	@return     int         		1 if OK, < 0 if KO
+	 */
+	function fetch($rowid)
+	{
+		$sql = 'SELECT l.rowid, l.fk_facture ,l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
+		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.rang, l.special_code,';
+		$sql.= ' l.fk_unit, l.fk_contract_line,';
+		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+		$sql.= ' WHERE l.rowid = '.$rowid;
+		$sql.= ' ORDER BY l.rang';
 
-    	dol_syslog('FactureRec::fetch', LOG_DEBUG);
-    	$result = $this->db->query($sql);
-    	if ($result)
-    	{
+		dol_syslog('FactureRec::fetch', LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
 
-    		$objp = $this->db->fetch_object($result);
+			$objp = $this->db->fetch_object($result);
 
-    		$this->id	            = $objp->rowid;
-    		$this->label            = $objp->custom_label;		// Label line
-    		$this->desc             = $objp->description;		// Description line
-    		$this->description      = $objp->description;		// Description line
-    		$this->product_type     = $objp->product_type;		// Type of line
-    		$this->ref              = $objp->product_ref;		// Ref product
-    		$this->product_ref      = $objp->product_ref;		// Ref product
-    		$this->libelle          = $objp->product_label;		// deprecated
-    		$this->product_label	= $objp->product_label;		// Label product
-    		$this->product_desc     = $objp->product_desc;		// Description product
-    		$this->fk_product_type  = $objp->fk_product_type;	// Type of product
-    		$this->qty              = $objp->qty;
-    		$this->price			= $objp->price;
-    		$this->subprice         = $objp->subprice;
-    		$this->fk_facture		= $objp->fk_facture;
-    		$this->vat_src_code     = $objp->vat_src_code;
-    		$this->tva_tx           = $objp->tva_tx;
-    		$this->localtax1_tx     = $objp->localtax1_tx;
-    		$this->localtax2_tx     = $objp->localtax2_tx;
-    		$this->localtax1_type   = $objp->localtax1_type;
-    		$this->localtax2_type   = $objp->localtax2_type;
-    		$this->remise_percent   = $objp->remise_percent;
-    		$this->fk_remise_except = $objp->fk_remise_except;
-    		$this->fk_product       = $objp->fk_product;
-    		$this->info_bits        = $objp->info_bits;
-    		$this->total_ht         = $objp->total_ht;
-    		$this->total_tva        = $objp->total_tva;
-    		$this->total_ttc        = $objp->total_ttc;
-    		$this->code_ventilation = $objp->fk_code_ventilation;
-    		$this->rang 			= $objp->rang;
-    		$this->special_code 	= $objp->special_code;
-    		$this->fk_unit          = $objp->fk_unit;
-    		$this->fk_contract_line = $objp->fk_contract_line;
-
-
-    		$this->db->free($result);
-    		return 1;
-    	}
-    	else
-    	{
-    		$this->error=$this->db->lasterror();
-    		return -3;
-    	}
-    }
+			$this->id	            = $objp->rowid;
+			$this->label            = $objp->custom_label;		// Label line
+			$this->desc             = $objp->description;		// Description line
+			$this->description      = $objp->description;		// Description line
+			$this->product_type     = $objp->product_type;		// Type of line
+			$this->ref              = $objp->product_ref;		// Ref product
+			$this->product_ref      = $objp->product_ref;		// Ref product
+			$this->libelle          = $objp->product_label;		// deprecated
+			$this->product_label	= $objp->product_label;		// Label product
+			$this->product_desc     = $objp->product_desc;		// Description product
+			$this->fk_product_type  = $objp->fk_product_type;	// Type of product
+			$this->qty              = $objp->qty;
+			$this->price			= $objp->price;
+			$this->subprice         = $objp->subprice;
+			$this->fk_facture		= $objp->fk_facture;
+			$this->vat_src_code     = $objp->vat_src_code;
+			$this->tva_tx           = $objp->tva_tx;
+			$this->localtax1_tx     = $objp->localtax1_tx;
+			$this->localtax2_tx     = $objp->localtax2_tx;
+			$this->localtax1_type   = $objp->localtax1_type;
+			$this->localtax2_type   = $objp->localtax2_type;
+			$this->remise_percent   = $objp->remise_percent;
+			$this->fk_remise_except = $objp->fk_remise_except;
+			$this->fk_product       = $objp->fk_product;
+			$this->info_bits        = $objp->info_bits;
+			$this->total_ht         = $objp->total_ht;
+			$this->total_tva        = $objp->total_tva;
+			$this->total_ttc        = $objp->total_ttc;
+			$this->code_ventilation = $objp->fk_code_ventilation;
+			$this->rang 			= $objp->rang;
+			$this->special_code 	= $objp->special_code;
+			$this->fk_unit          = $objp->fk_unit;
+			$this->fk_contract_line = $objp->fk_contract_line;
 
 
-    /**
-     * 	Update a line to invoice_rec.
-     *
-     *	@return    	int             				<0 if KO, Id of line if OK
-     */
-    function update()
-    {
-    	global $user;
+			$this->db->free($result);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -3;
+		}
+	}
 
-    	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-    	if ($fk_product)
-    	{
-    		$product=new Product($this->db);
-    		$result=$product->fetch($fk_product);
-    		$product_type=$product->type;
-    	}
+	/**
+	 * 	Update a line to invoice_rec.
+	 *
+	 *	@return    	int             				<0 if KO, Id of line if OK
+	 */
+	function update()
+	{
+		global $user;
 
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
-    	$sql.= " fk_facture = ".$this->fk_facture;
-    	$sql.= ", label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-    	$sql.= ", description='".$this->db->escape($this->desc)."'";
-    	$sql.= ", price=".price2num($this->price);
-    	$sql.= ", qty=".price2num($this->qty);
-    	$sql.= ", tva_tx=".price2num($this->tva_tx);
-    	$sql.= ", vat_src_code='".$this->db->escape($this->vat_src_code)."'";
-    	$sql.= ", localtax1_tx=".price2num($this->localtax1_tx);
-    	$sql.= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
-    	$sql.= ", localtax2_tx=".price2num($this->localtax2_tx);
-    	$sql.= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-    	$sql.= ", fk_product=".($this->fk_product > 0 ? $this->fk_product :"null");
-    	$sql.= ", product_type=".$this->product_type;
-    	$sql.= ", remise_percent='".price2num($this->remise_percent)."'";
-    	$sql.= ", subprice='".price2num($this->subprice)."'";
-    	$sql.= ", total_ht='".price2num($this->total_ht)."'";
-    	$sql.= ", total_tva='".price2num($this->total_tva)."'";
-    	$sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
-    	$sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
-    	$sql.= ", total_ttc='".price2num($this->total_ttc)."'";
-    	$sql.= ", rang=".$this->rang;
-    	$sql.= ", special_code=".$this->special_code;
-    	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");
-    	$sql.= ", fk_contract_line=".($this->fk_contract_line?$this->fk_contract_line:"null");
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-    	$sql.= " WHERE rowid = ".$this->id;
+		if ($fk_product)
+		{
+			$product=new Product($this->db);
+			$result=$product->fetch($fk_product);
+			$product_type=$product->type;
+		}
 
-    	dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
-    	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    		{
-    			$result=$this->insertExtraFields();
-    			if ($result < 0)
-    			{
-    				$error++;
-    			}
-    		}
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
+		$sql.= " fk_facture = ".$this->fk_facture;
+		$sql.= ", label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+		$sql.= ", description='".$this->db->escape($this->desc)."'";
+		$sql.= ", price=".price2num($this->price);
+		$sql.= ", qty=".price2num($this->qty);
+		$sql.= ", tva_tx=".price2num($this->tva_tx);
+		$sql.= ", vat_src_code='".$this->db->escape($this->vat_src_code)."'";
+		$sql.= ", localtax1_tx=".price2num($this->localtax1_tx);
+		$sql.= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql.= ", localtax2_tx=".price2num($this->localtax2_tx);
+		$sql.= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
+		$sql.= ", fk_product=".($this->fk_product > 0 ? $this->fk_product :"null");
+		$sql.= ", product_type=".$this->product_type;
+		$sql.= ", remise_percent='".price2num($this->remise_percent)."'";
+		$sql.= ", subprice='".price2num($this->subprice)."'";
+		$sql.= ", total_ht='".price2num($this->total_ht)."'";
+		$sql.= ", total_tva='".price2num($this->total_tva)."'";
+		$sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
+		$sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
+		$sql.= ", total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= ", rang=".$this->rang;
+		$sql.= ", special_code=".$this->special_code;
+		$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");
+		$sql.= ", fk_contract_line=".($this->fk_contract_line?$this->fk_contract_line:"null");
 
-    		if (! $notrigger)
-    		{
-    			// Call trigger
-    			$result=$this->call_trigger('LINEBILL_REC_UPDATE',$user);
-    			if ($result < 0)
-    			{
-    				$this->db->rollback();
-    				return -2;
-    			}
-    			// End call triggers
-    		}
-    		$this->db->commit();
-    		return 1;
-    	}
-    	else
-    	{
-    		$this->error=$this->db->error();
-    		$this->db->rollback();
-    		return -2;
-    	}
+		$sql.= " WHERE rowid = ".$this->id;
 
-    }
+		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('LINEBILL_REC_UPDATE',$user);
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -2;
+				}
+				// End call triggers
+			}
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -2;
+		}
+
+	}
 
 }

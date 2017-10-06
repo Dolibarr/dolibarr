@@ -99,34 +99,34 @@ if($action)
 	}
 
 	if($action == 'STOCK_USE_VIRTUAL_STOCK') {
-	    $res = dolibarr_set_const($db, "STOCK_USE_VIRTUAL_STOCK", GETPOST('STOCK_USE_VIRTUAL_STOCK','alpha'),'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "STOCK_USE_VIRTUAL_STOCK", GETPOST('STOCK_USE_VIRTUAL_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	}
 
 	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_INVOICE') {
-	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_INVOICE", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_INVOICE','alpha'),'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_INVOICE", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_INVOICE','alpha'),'chaine',0,'',$conf->entity);
 	}
 	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_ORDER') {
-	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_ORDER", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_ORDER','alpha'),'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_ORDER", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_ORDER','alpha'),'chaine',0,'',$conf->entity);
 	}
 	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') {
-	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT','alpha'),'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT','alpha'),'chaine',0,'',$conf->entity);
 	}
 	if($action == 'INDEPENDANT_SUBPRODUCT_STOCK') {
-	    $res = dolibarr_set_const($db, "INDEPENDANT_SUBPRODUCT_STOCK", GETPOST('INDEPENDANT_SUBPRODUCT_STOCK','alpha'),'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "INDEPENDANT_SUBPRODUCT_STOCK", GETPOST('INDEPENDANT_SUBPRODUCT_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	}
 
 	if (! $res > 0) $error++;
 
  	if (! $error)
-    {
-    	$db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-    	$db->rollback();
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -172,7 +172,7 @@ print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td align="right">';
 if (! empty($conf->facture->enabled))
 {
-    print "<form method=\"post\" action=\"stock.php\">";
+	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_BILL\">";
 	print $form->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1,$disabled);
@@ -181,7 +181,7 @@ if (! empty($conf->facture->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -192,7 +192,7 @@ print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td align="right">';
 if (! empty($conf->commande->enabled))
 {
-    print "<form method=\"post\" action=\"stock.php\">";
+	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_VALIDATE_ORDER\">";
 	print $form->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1,$disabled);
@@ -201,7 +201,7 @@ if (! empty($conf->commande->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -223,7 +223,7 @@ if (! empty($conf->expedition->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -243,7 +243,7 @@ if (! empty($conf->expedition->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -276,7 +276,7 @@ print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td align="right">';
 if (! empty($conf->fournisseur->enabled))
 {
-    print "<form method=\"post\" action=\"stock.php\">";
+	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_BILL\">";
 	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1,$disabled);
@@ -285,7 +285,7 @@ if (! empty($conf->fournisseur->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -297,7 +297,7 @@ print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td align="right">';
 if (! empty($conf->fournisseur->enabled))
 {
-    print "<form method=\"post\" action=\"stock.php\">";
+	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER\">";
 	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1,$disabled);
@@ -306,7 +306,7 @@ if (! empty($conf->fournisseur->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -317,7 +317,7 @@ print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 print '<td align="right">';
 if (! empty($conf->fournisseur->enabled))
 {
-    print "<form method=\"post\" action=\"stock.php\">";
+	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER\">";
 	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1,$disabled);
@@ -326,7 +326,7 @@ if (! empty($conf->fournisseur->enabled))
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
 }
 print "</td>\n</tr>\n";
 $found++;
@@ -486,16 +486,16 @@ print "</tr>\n";
 
 if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 
-    print '<tr class="oddeven">';
-    print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
-    print '<td align="right">';
-    print "<form method=\"post\" action=\"stock.php\">";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print "<input type=\"hidden\" name=\"action\" value=\"SUPPLIER_ORDER_USE_DISPATCH_STATUS\">";
-    print $form->selectyesno("SUPPLIER_ORDER_USE_DISPATCH_STATUS",$conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS,1);
-    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    print "</form>\n";
-    print "</td>\n</tr>\n";
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
+	print '<td align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"SUPPLIER_ORDER_USE_DISPATCH_STATUS\">";
+	print $form->selectyesno("SUPPLIER_ORDER_USE_DISPATCH_STATUS",$conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</form>\n";
+	print "</td>\n</tr>\n";
 }
 
 print '</table>';

@@ -57,20 +57,20 @@ $object = new Paiement($db);
 
 if ($action == 'setnote' && $user->rights->facture->paiement)
 {
-    $db->begin();
+	$db->begin();
 
-    $object->fetch($id);
-    $result = $object->update_note(GETPOST('note','none'));
-    if ($result > 0)
-    {
-        $db->commit();
-        $action='';
-    }
-    else
-    {
-	    setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
-    }
+	$object->fetch($id);
+	$result = $object->update_note(GETPOST('note','none'));
+	if ($result > 0)
+	{
+		$db->commit();
+		$action='';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$db->rollback();
+	}
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->paiement)
@@ -81,15 +81,15 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	$result = $object->delete();
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: list.php");
-        exit;
+		$db->commit();
+		header("Location: list.php");
+		exit;
 	}
 	else
 	{
-	    $langs->load("errors");
+		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -97,7 +97,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 {
 	$db->begin();
 
-    $object->fetch($id);
+	$object->fetch($id);
 	if ($object->valide() > 0)
 	{
 		$db->commit();
@@ -125,7 +125,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 	}
 	else
 	{
-	    $langs->load("errors");
+		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -134,7 +134,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
-    $res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
@@ -148,7 +148,7 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
-    $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+	$datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -237,31 +237,31 @@ $disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
-    if ($object->fk_account > 0)
-    {
-    	$bankline=new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
-        if ($bankline->rappro)
-        {
-            $disable_delete = 1;
-            $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-        }
+	if ($object->fk_account > 0)
+	{
+		$bankline=new AccountLine($db);
+		$bankline->fetch($object->bank_line);
+		if ($bankline->rappro)
+		{
+			$disable_delete = 1;
+			$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+		}
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
 		print $bankline->getNomUrl(1,0,'showconciliated');
-    	print '</td>';
-    	print '</tr>';
+		print '</td>';
+		print '</tr>';
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankAccount').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankAccount').'</td>';
 		print '<td colspan="3">';
 		$accountstatic=new Account($db);
 		$accountstatic->fetch($bankline->fk_account);
-        print $accountstatic->getNomUrl(1);
-    	print '</td>';
-    	print '</tr>';
+		print $accountstatic->getNomUrl(1);
+		print '</td>';
+		print '</tr>';
 
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) 
 		{
@@ -270,13 +270,13 @@ if (! empty($conf->banque->enabled))
 			$bordereau->fetch($bankline->fk_bordereau);
 
 			print '<tr>';
-	    	print '<td>'.$langs->trans('CheckReceipt').'</td>';
+			print '<td>'.$langs->trans('CheckReceipt').'</td>';
 			print '<td colspan="3">';
 			print $bordereau->getNomUrl(1);
-	    	print '</td>';
-	    	print '</tr>';
+			print '</td>';
+			print '</tr>';
 		}
-    }
+	}
 }
 
 print '</table>';
@@ -315,9 +315,9 @@ if ($resql)
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
 	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-    print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
-    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-    print '<td align="right">'.$langs->trans('Status').'</td>';
+	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+	print '<td align="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -330,15 +330,15 @@ if ($resql)
 			
 			print '<tr class="oddeven">';
 
-            $invoice=new Facture($db);
-            $invoice->fetch($objp->facid);
-            $paiement = $invoice->getSommePaiement();
-            $creditnotes=$invoice->getSumCreditNotesUsed();
-            $deposits=$invoice->getSumDepositsUsed();
-            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+			$invoice=new Facture($db);
+			$invoice->fetch($objp->facid);
+			$paiement = $invoice->getSommePaiement();
+			$creditnotes=$invoice->getSumCreditNotesUsed();
+			$deposits=$invoice->getSumDepositsUsed();
+			$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+			$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 
-            // Invoice
+			// Invoice
 			print '<td>';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
@@ -353,11 +353,11 @@ if ($resql)
 			// Expected to pay
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 
-            // Amount payed
-            print '<td align="right">'.price($objp->amount).'</td>';
+			// Amount payed
+			print '<td align="right">'.price($objp->amount).'</td>';
 
-            // Remain to pay
-            print '<td align="right">'.price($remaintopay).'</td>';
+			// Remain to pay
+			print '<td align="right">'.price($remaintopay).'</td>';
 
 			// Status
 			print '<td align="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';

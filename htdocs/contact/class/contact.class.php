@@ -66,7 +66,7 @@ class Contact extends CommonObject
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
 
-    	public $poste;                 // Position
+		public $poste;                 // Position
 
 	public $socid;					// fk_soc
 	public $statut;				// 0=inactif, 1=actif
@@ -75,17 +75,17 @@ class Contact extends CommonObject
 	public $email;
 	public $skype;
 	public $photo;
-    	public $jabberid;
+		public $jabberid;
 	public $phone_pro;
 	public $phone_perso;
 	public $phone_mobile;
-    	public $fax;
+		public $fax;
 
-    	public $priv;
+		public $priv;
 
 	public $birthday;
 	public $default_lang;
-    	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
+		public $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	public $ref_facturation;       // Reference number of invoice for which it is contact
 	public $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -125,14 +125,14 @@ class Contact extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
-		    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-		    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+			$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
 		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
 		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
-        if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
+		if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -169,19 +169,19 @@ class Contact extends CommonObject
 
 		// Clean parameters
 		$this->lastname=$this->lastname?trim($this->lastname):trim($this->name);
-        $this->firstname=trim($this->firstname);
-        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
-        if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
-        if (empty($this->socid)) $this->socid = 0;
+		$this->firstname=trim($this->firstname);
+		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
+		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
+		if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
-        $sql.= ", lastname";
-        $sql.= ", firstname";
-        $sql.= ", fk_user_creat";
+		$sql.= ", lastname";
+		$sql.= ", firstname";
+		$sql.= ", fk_user_creat";
 		$sql.= ", priv";
 		$sql.= ", statut";
 		$sql.= ", canvas";
@@ -193,14 +193,14 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->lastname)."',";
-        $sql.= "'".$this->db->escape($this->firstname)."',";
+		$sql.= "'".$this->db->escape($this->firstname)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
-        $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$conf->entity.",";
-        $sql.= "'".$this->db->escape($this->ref_ext)."',";
-        $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
+		$sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
+		$sql.= " ".$conf->entity.",";
+		$sql.= "'".$this->db->escape($this->ref_ext)."',";
+		$sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -211,43 +211,43 @@ class Contact extends CommonObject
 
 			if (! $error)
 			{
-                $result=$this->update($this->id, $user, 1, 'add');
-                if ($result < 0)
-                {
-                    $error++;
-				    $this->error=$this->db->lasterror();
-                }
+				$result=$this->update($this->id, $user, 1, 'add');
+				if ($result < 0)
+				{
+					$error++;
+					$this->error=$this->db->lasterror();
+				}
 			}
 
 			if (! $error)
-            {
-                $result=$this->update_perso($this->id, $user, 1);   // TODO Remove function update_perso, should be same than update
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->error=$this->db->lasterror();
-                }
-            }
+			{
+				$result=$this->update_perso($this->id, $user, 1);   // TODO Remove function update_perso, should be same than update
+				if ($result < 0)
+				{
+					$error++;
+					$this->error=$this->db->lasterror();
+				}
+			}
 
 			if (! $error)
-            {
-                // Call trigger
-                $result=$this->call_trigger('CONTACT_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
+			{
+				// Call trigger
+				$result=$this->call_trigger('CONTACT_CREATE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
 
-            if (! $error)
-            {
-                $this->db->commit();
-                return $this->id;
-            }
-            else
-            {
-                $this->db->rollback();
-                dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
-                return -2;
-            }
+			if (! $error)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				$this->db->rollback();
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				return -2;
+			}
 		}
 		else
 		{
@@ -328,36 +328,36 @@ class Contact extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-		    unset($this->country_code);
-		    unset($this->country);
-		    unset($this->state_code);
-		    unset($this->state);
+			unset($this->country_code);
+			unset($this->country);
+			unset($this->state_code);
+			unset($this->state);
 
-		    $action='update';
+			$action='update';
 
-		    // Actions on extra fields (by external module or standard code)
-		    $hookmanager->initHooks(array('contactdao'));
-		    $parameters=array('socid'=>$this->id);
-		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		    if (empty($reshook))
-		    {
-		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-		    	{
-		    		$result=$this->insertExtraFields();
-		    		if ($result < 0)
-		    		{
-		    			$error++;
-		    		}
-		    	}
-		    }
-		    else if ($reshook < 0) $error++;
+			// Actions on extra fields (by external module or standard code)
+			$hookmanager->initHooks(array('contactdao'));
+			$parameters=array('socid'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('CONTACT_MODIFY',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('CONTACT_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)
@@ -375,7 +375,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror().' sql='.$sql;
-            $this->db->rollback();
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -410,9 +410,9 @@ class Contact extends CommonObject
 	{
 		global $conf,$langs;
 
-        $info = array();
+		$info = array();
 
-        // Object classes
+		// Object classes
 		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
@@ -441,7 +441,7 @@ class Contact extends CommonObject
 		if ($this->phone_perso && ! empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_CONTACT_FIELD_FAX))	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-        if ($this->skype && ! empty($conf->global->LDAP_CONTACT_FIELD_SKYPE))	    $info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
+		if ($this->skype && ! empty($conf->global->LDAP_CONTACT_FIELD_SKYPE))	    $info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note_private;
 		if ($this->email && ! empty($conf->global->LDAP_CONTACT_FIELD_MAIL))     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
@@ -480,14 +480,14 @@ class Contact extends CommonObject
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
 	 *  @param      int		    $notrigger	0=no, 1=yes
-     *  @return     int         			<0 if KO, >=0 if OK
+	 *  @return     int         			<0 if KO, >=0 if OK
 	 */
 	function update_perso($id, $user=null, $notrigger=0)
 	{
-	    $error=0;
-	    $result=false;
+		$error=0;
+		$result=false;
 
-	    $this->db->begin();
+		$this->db->begin();
 
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
@@ -500,8 +500,8 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-            $error++;
-		    $this->error=$this->db->lasterror();
+			$error++;
+			$this->error=$this->db->lasterror();
 		}
 
 		// Mis a jour alerte birthday
@@ -518,8 +518,8 @@ class Contact extends CommonObject
 				$result = $this->db->query($sql);
 				if (! $result)
 				{
-                    $error++;
-                    $this->error=$this->db->lasterror();
+					$error++;
+					$this->error=$this->db->lasterror();
 				}
 			}
 			else
@@ -534,29 +534,29 @@ class Contact extends CommonObject
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
-                $error++;
-                $this->error=$this->db->lasterror();
+				$error++;
+				$this->error=$this->db->lasterror();
 			}
 		}
 
 		if (! $error && ! $notrigger)
 		{
-		    // Call trigger
-		    $result=$this->call_trigger('CONTACT_MODIFY',$user);
-		    if ($result < 0) { $error++; }
-		    // End call triggers
+			// Call trigger
+			$result=$this->call_trigger('CONTACT_MODIFY',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		if (! $error)
 		{
-		    $this->db->commit();
-		    return 1;
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
-		    dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
-		    $this->db->rollback();
-		    return -$error;
+			dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+			$this->db->rollback();
+			return -$error;
 		}
 	}
 
@@ -566,7 +566,7 @@ class Contact extends CommonObject
 	 *
 	 *  @param      int		$id          id du contact
 	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-     *  @param      string  $ref_ext     External reference, not given by Dolibarr
+	 *  @param      string  $ref_ext     External reference, not given by Dolibarr
 	 *  @return     int     		     -1 if KO, 0 if OK but not found, 1 if OK
 	 */
 	function fetch($id, $user=0, $ref_ext='')
@@ -589,7 +589,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype,";
-        $sql.= " c.photo,";
+		$sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " co.label as country, co.code as country_code,";
@@ -645,8 +645,8 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        		$this->skype			= $obj->skype;
-                $this->photo			= $obj->photo;
+				$this->skype			= $obj->skype;
+				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -713,11 +713,11 @@ class Contact extends CommonObject
 				}
 
 				// Retreive all extrafield for contact
-                // fetch optionals attributes and labels
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-               	$this->fetch_optionals($this->id,$extralabels);
+				// fetch optionals attributes and labels
+				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+				$extrafields=new ExtraFields($this->db);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+			   	$this->fetch_optionals($this->id,$extralabels);
 
 				return 1;
 			}
@@ -742,12 +742,12 @@ class Contact extends CommonObject
 	 */
 	function setGenderFromCivility()
 	{
-	    unset($this->gender);
-    	if (in_array($this->civility_id, array('MR'))) {
-    	    $this->gender = 'man';
-    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
-    	    $this->gender = 'woman';
-    	}
+		unset($this->gender);
+		if (in_array($this->civility_id, array('MR'))) {
+			$this->gender = 'man';
+		} else if(in_array($this->civility_id, array('MME','MLE'))) {
+			$this->gender = 'woman';
+		}
 	}
 
 	/**
@@ -757,7 +757,7 @@ class Contact extends CommonObject
 	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
-     *  @return     int             					<0 if KO, >=0 if OK
+	 *  @return     int             					<0 if KO, >=0 if OK
 	 */
 	function load_ref_elements()
 	{
@@ -885,10 +885,10 @@ class Contact extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-            // Call trigger
-            $result=$this->call_trigger('CONTACT_DELETE',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
+			// Call trigger
+			$result=$this->call_trigger('CONTACT_DELETE',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		if (! $error)
@@ -991,7 +991,7 @@ class Contact extends CommonObject
 	 *	@param		string		$option						Where the link point to
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
-     *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string									String with URL
 	 */
 	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1)
@@ -1000,39 +1000,39 @@ class Contact extends CommonObject
 
 		$result='';
 
-        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
-        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
-        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
-        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
-        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
-        $phonelist=array();
-        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
-        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
-        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
-        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
+		$label = '<u>' . $langs->trans("ShowContact") . '</u>';
+		$label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
+		//if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+		if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
+		$label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+		$phonelist=array();
+		if ($this->phone_pro) $phonelist[]=$this->phone_pro;
+		if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
+		if ($this->phone_perso) $phonelist[]=$this->phone_perso;
+		$label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+		$label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
-        $url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
 
-        if ($option !== 'nolink')
-        {
-        	// Add param to save lastsearch_values or not
-        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
-        }
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
-        $url .= $moreparam;
+		$url .= $moreparam;
 
-        $linkstart = '<a href="'.$url.'"';
-        $linkclose="";
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-        {
-            $label=$langs->trans("ShowContact");
-            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-        }
-       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-       	$linkclose.= ' class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkclose="";
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		{
+			$label=$langs->trans("ShowContact");
+			$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		}
+	   	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+	   	$linkclose.= ' class="classfortooltip">';
 
 		if (! is_object($hookmanager))
 		{
@@ -1053,7 +1053,7 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-	        if ($withpicto) $result.=($linkstart.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
+			if ($withpicto) $result.=($linkstart.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
 			$result.=$linkstart.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
 		return $result;
 	}
@@ -1070,7 +1070,7 @@ class Contact extends CommonObject
 
 		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civilite_id)?$this->civilite_id:''));
 		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
 
 	/**
@@ -1144,11 +1144,11 @@ class Contact extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -1174,7 +1174,7 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
-    	$this->skype = 'tom.hanson';
+		$this->skype = 'tom.hanson';
 
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
@@ -1215,10 +1215,10 @@ class Contact extends CommonObject
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
 		if ($result)
 		{
-            // Call trigger
-            $result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
+			// Call trigger
+			$result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		if ($error)

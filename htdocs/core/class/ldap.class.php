@@ -92,8 +92,8 @@ class Ldap
 
 
 	/**
-	* The internal LDAP connection handle
-	*/
+	 * The internal LDAP connection handle
+	 */
 	var $connection;
 	/**
 	 * Result of any connections etc.
@@ -689,7 +689,7 @@ class Ldap
 
 	// Attribute methods -----------------------------------------------------
 
-    /**
+	/**
 	 * 	Add a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
@@ -741,7 +741,7 @@ class Ldap
 		}
 	}
 
-    /**
+	/**
 	 * 	Update a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
@@ -793,7 +793,7 @@ class Ldap
 		}
 	}
 
-    /**
+	/**
 	 * 	Delete a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
@@ -845,7 +845,7 @@ class Ldap
 		}
 	}
 
-    /**
+	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
 	 *	@param	string	$dn			DN entry key
@@ -1202,7 +1202,7 @@ class Ldap
 		$i=0;
 		while ($i <= 2)
 		{
-		    dol_syslog(get_class($this)."::fetch search with searchDN=".$searchDN." filter=".$filter);
+			dol_syslog(get_class($this)."::fetch search with searchDN=".$searchDN." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $searchDN, $filter);
 			if ($this->result)
 			{
@@ -1213,9 +1213,9 @@ class Ldap
 			}
 			else
 			{
-			    $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-                dol_syslog(get_class($this)."::fetch search fails");
-			    return -1;
+				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+				dol_syslog(get_class($this)."::fetch search fails");
+				return -1;
 			}
 
 			if (! $result)
@@ -1241,7 +1241,7 @@ class Ldap
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0],$this->ldapcharset);
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0],$this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0],$this->ldapcharset);
-      $this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0],$this->ldapcharset);
+	  $this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0],$this->ldapcharset);
 			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0],$this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0],$this->ldapcharset);
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0],$this->ldapcharset);
@@ -1264,7 +1264,7 @@ class Ldap
 			$this->domainFQDN = $domain;
 
 			// Set ldapUserDn (each user can have a different dn)
-            //var_dump($result[0]);exit;
+			//var_dump($result[0]);exit;
 			$this->ldapUserDN=$result[0]['dn'];
 
 			ldap_free_result($this->result);
@@ -1290,35 +1290,35 @@ class Ldap
 	}
 
    /**
-	* 	UserAccountControl Flgs to more human understandable form...
-	*
-	*	@param	string		$uacf		UACF
-	*	@return	void
-	*/
+    * 	UserAccountControl Flgs to more human understandable form...
+    *
+    *	@param	string		$uacf		UACF
+    *	@return	void
+    */
 	function parseUACF($uacf)
 	{
 		//All flags array
 		$flags = array( "TRUSTED_TO_AUTH_FOR_DELEGATION"  =>    16777216,
-                    "PASSWORD_EXPIRED"                =>    8388608,
-                    "DONT_REQ_PREAUTH"                =>    4194304,
-                    "USE_DES_KEY_ONLY"                =>    2097152,
-                    "NOT_DELEGATED"                   =>    1048576,
-                    "TRUSTED_FOR_DELEGATION"          =>    524288,
-                    "SMARTCARD_REQUIRED"              =>    262144,
-                    "MNS_LOGON_ACCOUNT"               =>    131072,
-                    "DONT_EXPIRE_PASSWORD"            =>    65536,
-                    "SERVER_TRUST_ACCOUNT"            =>    8192,
-                    "WORKSTATION_TRUST_ACCOUNT"       =>    4096,
-                    "INTERDOMAIN_TRUST_ACCOUNT"       =>    2048,
-                    "NORMAL_ACCOUNT"                  =>    512,
-                    "TEMP_DUPLICATE_ACCOUNT"          =>    256,
-                    "ENCRYPTED_TEXT_PWD_ALLOWED"      =>    128,
-                    "PASSWD_CANT_CHANGE"              =>    64,
-                    "PASSWD_NOTREQD"                  =>    32,
-                    "LOCKOUT"                         =>    16,
-                    "HOMEDIR_REQUIRED"                =>    8,
-                    "ACCOUNTDISABLE"                  =>    2,
-                    "SCRIPT"                          =>    1);
+					"PASSWORD_EXPIRED"                =>    8388608,
+					"DONT_REQ_PREAUTH"                =>    4194304,
+					"USE_DES_KEY_ONLY"                =>    2097152,
+					"NOT_DELEGATED"                   =>    1048576,
+					"TRUSTED_FOR_DELEGATION"          =>    524288,
+					"SMARTCARD_REQUIRED"              =>    262144,
+					"MNS_LOGON_ACCOUNT"               =>    131072,
+					"DONT_EXPIRE_PASSWORD"            =>    65536,
+					"SERVER_TRUST_ACCOUNT"            =>    8192,
+					"WORKSTATION_TRUST_ACCOUNT"       =>    4096,
+					"INTERDOMAIN_TRUST_ACCOUNT"       =>    2048,
+					"NORMAL_ACCOUNT"                  =>    512,
+					"TEMP_DUPLICATE_ACCOUNT"          =>    256,
+					"ENCRYPTED_TEXT_PWD_ALLOWED"      =>    128,
+					"PASSWD_CANT_CHANGE"              =>    64,
+					"PASSWD_NOTREQD"                  =>    32,
+					"LOCKOUT"                         =>    16,
+					"HOMEDIR_REQUIRED"                =>    8,
+					"ACCOUNTDISABLE"                  =>    2,
+					"SCRIPT"                          =>    1);
 
 		//Parse flags to text
 		$retval = array();
@@ -1334,11 +1334,11 @@ class Ldap
 	}
 
    /**
-	* 	SamAccountType value to text
-	*
-	*	@param	string	$samtype	SamType
-	*	@return	string				Sam string
-	*/
+    * 	SamAccountType value to text
+    *
+    *	@param	string	$samtype	SamType
+    *	@return	string				Sam string
+    */
 	function parseSAT($samtype)
 	{
 		$stypes = array(    805306368    =>    "NORMAL_ACCOUNT",
@@ -1379,7 +1379,7 @@ class Ldap
 
 	/**
 	 *  Convert a string into output/memory charset
-     *
+	 *
 	 *  @param	string	$str            String to convert
 	 *  @param	string	$pagecodefrom	Page code of src string
 	 *  @return string         			Converted string
@@ -1394,7 +1394,7 @@ class Ldap
 
 	/**
 	 *  Convert a string from output/memory charset
-     *
+	 *
 	 *  @param	string	$str            String to convert
 	 *  @param	string	$pagecodeto		Page code for result string
 	 *  @return string         			Converted string

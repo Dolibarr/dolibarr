@@ -31,12 +31,12 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage: ".$script_file." now\n";
+	print "Usage: ".$script_file." now\n";
 	exit(-1);
 }
 $now=$argv[1];

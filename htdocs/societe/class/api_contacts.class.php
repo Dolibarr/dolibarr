@@ -94,10 +94,10 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-     * @param string   	$thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
-     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return array                        Array of contact objects
-     *
+	 *
 	 * @throws RestException
 	 */
 	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
@@ -107,10 +107,10 @@ class Contacts extends DolibarrApi
 
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
-		    throw new RestException(401, 'No permission to read contacts');
+			throw new RestException(401, 'No permission to read contacts');
 		}
 
-        // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
+		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
@@ -137,16 +137,16 @@ class Contacts extends DolibarrApi
 		{
 			$sql .= " AND sc.fk_user = " . $search_sale;
 		}
-	    // Add sql filters
-        if ($sqlfilters)
-        {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
-            {
-                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-            }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
-        }
+		// Add sql filters
+		if ($sqlfilters)
+		{
+			if (! DolibarrApi::_checkFilters($sqlfilters))
+			{
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			}
+			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
 
 		$sql.= $db->order($sortfield, $sortorder);
 
@@ -205,7 +205,7 @@ class Contacts extends DolibarrApi
 			$this->contact->$field = $value;
 		}
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
-		    throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
+			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
 		}
 		return $this->contact->id;
 	}
@@ -236,8 +236,8 @@ class Contacts extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-            if ($field == 'id') continue;
-		    $this->contact->$field = $value;
+			if ($field == 'id') continue;
+			$this->contact->$field = $value;
 		}
 
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
@@ -281,59 +281,59 @@ class Contacts extends DolibarrApi
 	 * @url	POST {id}/createUser
 	 */
 	function createUser($id, $request_data = NULL) {
-	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
-	    //throw new RestException(401);
-	    //}
+		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
+		//throw new RestException(401);
+		//}
 
-	    if (!isset($request_data["login"]))
-	    				throw new RestException(400, "login field missing");
-	    if (!isset($request_data["password"]))
-	    				throw new RestException(400, "password field missing");
+		if (!isset($request_data["login"]))
+						throw new RestException(400, "login field missing");
+		if (!isset($request_data["password"]))
+						throw new RestException(400, "password field missing");
 
-	    if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
-	        throw new RestException(401, 'No permission to read contacts');
-	    }
-	    if (!DolibarrApiAccess::$user->rights->user->user->creer) {
-	        throw new RestException(401, 'No permission to create user');
-	    }
+		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+			throw new RestException(401, 'No permission to read contacts');
+		}
+		if (!DolibarrApiAccess::$user->rights->user->user->creer) {
+			throw new RestException(401, 'No permission to create user');
+		}
 
-	    $contact = new Contact($this->db);
-	    $contact->fetch($id);
-	    if ($contact->id <= 0) {
-	        throw new RestException(404, 'Contact not found');
-	    }
+		$contact = new Contact($this->db);
+		$contact->fetch($id);
+		if ($contact->id <= 0) {
+			throw new RestException(404, 'Contact not found');
+		}
 
-	    if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
-	        throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
-	    }
+		if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
+			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
 
-	    // Check mandatory fields
-	    $login = $request_data["login"];
-	    $password = $request_data["password"];
-	    $useraccount = new User($this->db);
-	    $result = $useraccount->create_from_contact($contact,$login,$password);
-	    if ($result <= 0) {
-	        throw new RestException(500, "User not created");
-	    }
-	    // password parameter not used in create_from_contact
-	    $useraccount->setPassword($useraccount,$password);
+		// Check mandatory fields
+		$login = $request_data["login"];
+		$password = $request_data["password"];
+		$useraccount = new User($this->db);
+		$result = $useraccount->create_from_contact($contact,$login,$password);
+		if ($result <= 0) {
+			throw new RestException(500, "User not created");
+		}
+		// password parameter not used in create_from_contact
+		$useraccount->setPassword($useraccount,$password);
 
-	    return $result;
+		return $result;
 	}
 
-    /**
-     * Get categories for a contact
-     *
-     * @param int		$id         ID of contact
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     *
-     * @return mixed
-     *
-     * @url GET {id}/categories
-     */
+	/**
+	 * Get categories for a contact
+	 *
+	 * @param int		$id         ID of contact
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int		$limit		Limit for list
+	 * @param int		$page		Page number
+	 *
+	 * @return mixed
+	 *
+	 * @url GET {id}/categories
+	 */
 	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
@@ -353,11 +353,11 @@ class Contacts extends DolibarrApi
 		}
 
 		return $result;
-    }
+	}
 
 	/**
 	 * Validate fields before create or update object
-     *
+	 *
 	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException

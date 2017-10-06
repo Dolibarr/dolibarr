@@ -46,9 +46,9 @@ $upload_dir=$conf->admin->dir_temp;
 
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    dol_add_file_process($upload_dir, 0, 0, 'userfile');
+	dol_add_file_process($upload_dir, 0, 0, 'userfile');
 }
 
 if (preg_match('/set_(.*)/',$action,$reg))
@@ -169,14 +169,14 @@ print '</td>';
 print '<td>';
 if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 {
-    $langs->load("errors");
-    $basedir=preg_replace('/"/','',dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
-    $listdir=explode(';',ini_get('safe_mode_exec_dir'));
-    if (! in_array($basedir,$listdir))
-    {
-        print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
-        dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
-    }
+	$langs->load("errors");
+	$basedir=preg_replace('/"/','',dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+	$listdir=explode(';',ini_get('safe_mode_exec_dir'));
+	if (! in_array($basedir,$listdir))
+	{
+		print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
+		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
+	}
 }
 print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
 print "</td>";

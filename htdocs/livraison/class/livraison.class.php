@@ -86,7 +86,7 @@ class Livraison extends CommonObject
 
 		$error = 0;
 
-        $now=dol_now();
+		$now=dol_now();
 
 		/* On positionne en mode brouillon le bon de livraison */
 		$this->brouillon = 1;
@@ -120,8 +120,8 @@ class Livraison extends CommonObject
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
-        $sql.= ", ".(int) $this->fk_incoterms;
-        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql.= ", ".(int) $this->fk_incoterms;
+		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql.= ")";
 
 		dol_syslog("Livraison::create", LOG_DEBUG);
@@ -260,8 +260,8 @@ class Livraison extends CommonObject
 		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
-        $sql.= ', l.fk_incoterms, l.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
+		$sql.= ', l.fk_incoterms, l.location_incoterms';
+		$sql.= ", i.libelle as libelle_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
@@ -337,13 +337,13 @@ class Livraison extends CommonObject
 	/**
 	 *        Validate object and update stock if option enabled
 	 *
-     *        @param 	User	$user        Object user that validate
-     *        @return   int
+	 *        @param 	User	$user        Object user that validate
+	 *        @return   int
 	 */
 	function valid($user)
 	{
 		global $conf, $langs;
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid begin");
 
@@ -351,8 +351,8 @@ class Livraison extends CommonObject
 
 		$error = 0;
 
-        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+	   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 		{
 			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
 			{
@@ -371,14 +371,14 @@ class Livraison extends CommonObject
 					$soc->fetch($this->socid);
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
-		            {
-		                $numref = $objMod->livraison_get_num($soc,$this);
-		            }
-		            else
 					{
-		                $numref = $this->ref;
-		            }
-            		$this->newref = $numref;
+						$numref = $objMod->livraison_get_num($soc,$this);
+					}
+					else
+					{
+						$numref = $this->ref;
+					}
+					$this->newref = $numref;
 
 					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
 					// de decrementer 2 fois le stock.
@@ -407,24 +407,24 @@ class Livraison extends CommonObject
 					$sql.= " AND fk_statut = 0";
 
 					$resql=$this->db->query($sql);
-			        if (! $resql)
-			        {
-			            dol_print_error($this->db);
-			            $this->error=$this->db->lasterror();
-			            $error++;
-			        }
+					if (! $resql)
+					{
+						dol_print_error($this->db);
+						$this->error=$this->db->lasterror();
+						$error++;
+					}
 
-			        if (! $error && ! $notrigger)
-			        {
-			            // Call trigger
-			            $result=$this->call_trigger('DELIVERY_VALIDATE',$user);
-			            if ($result < 0) $error++;
-			            // End call triggers
-			        }
+					if (! $error && ! $notrigger)
+					{
+						// Call trigger
+						$result=$this->call_trigger('DELIVERY_VALIDATE',$user);
+						if ($result < 0) $error++;
+						// End call triggers
+					}
 
 					if (! $error)
 					{
-			            $this->oldref = $this->ref;
+						$this->oldref = $this->ref;
 
 						// Rename directory if dir was a temporary ref
 						if (preg_match('/^[\(]?PROV/i', $this->ref))
@@ -441,17 +441,17 @@ class Livraison extends CommonObject
 
 								if (@rename($dirsource, $dirdest))
 								{
-			                        dol_syslog("Rename ok");
-			                        // Rename docs starting with $oldref with $newref
-			                        $listoffiles=dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
-			                        foreach($listoffiles as $fileentry)
-			                        {
-			                        	$dirsource=$fileentry['name'];
-			                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
-			                        	$dirsource=$fileentry['path'].'/'.$dirsource;
-			                        	$dirdest=$fileentry['path'].'/'.$dirdest;
-			                        	@rename($dirsource, $dirdest);
-			                        }
+									dol_syslog("Rename ok");
+									// Rename docs starting with $oldref with $newref
+									$listoffiles=dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+									foreach($listoffiles as $fileentry)
+									{
+										$dirsource=$fileentry['name'];
+										$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+										$dirsource=$fileentry['path'].'/'.$dirsource;
+										$dirdest=$fileentry['path'].'/'.$dirdest;
+										@rename($dirsource, $dirdest);
+									}
 								}
 							}
 						}
@@ -466,16 +466,16 @@ class Livraison extends CommonObject
 						dol_syslog(get_class($this)."::valid ok");
 					}
 
-			        if (! $error)
-			        {
-			            $this->db->commit();
-			            return 1;
-			        }
-			        else
+					if (! $error)
 					{
-			            $this->db->rollback();
-			            return -1;
-			        }
+						$this->db->commit();
+						return 1;
+					}
+					else
+					{
+						$this->db->rollback();
+						return -1;
+					}
 				}
 			}
 		}
@@ -616,7 +616,7 @@ class Livraison extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$this->db->begin();
 
 		$error=0;
@@ -660,14 +660,14 @@ class Livraison extends CommonObject
 						}
 					}
 
-                    // Call trigger
-                    $result=$this->call_trigger('DELIVERY_DELETE',$user);
-                    if ($result < 0)
-                    {
-                        $this->db->rollback();
-                        return -4;
-                    }
-                    // End call triggers
+					// Call trigger
+					$result=$this->call_trigger('DELIVERY_DELETE',$user);
+					if ($result < 0)
+					{
+						$this->db->rollback();
+						return -4;
+					}
+					// End call triggers
 
 					return 1;
 				}
@@ -697,7 +697,7 @@ class Livraison extends CommonObject
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-     *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0, $save_lastsearch_value=-1)
@@ -711,16 +711,16 @@ class Livraison extends CommonObject
 
 		$url=DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
 
-        //if ($option !== 'nolink')
-        //{
-        	// Add param to save lastsearch_values or not
-        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
-        //}
+		//if ($option !== 'nolink')
+		//{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		//}
 
 
-        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
@@ -837,11 +837,11 @@ class Livraison extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -849,7 +849,7 @@ class Livraison extends CommonObject
 
 		$now=dol_now();
 
-        // Load array of products prodids
+		// Load array of products prodids
 		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";

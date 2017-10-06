@@ -87,14 +87,14 @@ $error=0;
 // If password is encoded, we decode it
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
-    require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
-    {
-        $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-        $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-        $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
-    }
-    else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+	require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
+	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+	{
+		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+	}
+	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 
 // $conf is already instancied inside inc.php
@@ -113,44 +113,44 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->connected)
 {
-    print '<tr><td class="nowrap">';
-    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
-    $ok = 1;
+	print '<tr><td class="nowrap">';
+	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+	dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
+	$ok = 1;
 }
 else
 {
-    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
-    dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
-    $ok = 0;
+	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+	dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
+	$ok = 0;
 }
 
 if ($ok)
 {
-    if($db->database_selected)
-    {
-        print '<tr><td class="nowrap">';
-        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-        dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
-        $ok=1;
-    }
-    else
-    {
-        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-        dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
-        $ok=0;
-    }
+	if($db->database_selected)
+	{
+		print '<tr><td class="nowrap">';
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+		dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
+		$ok=1;
+	}
+	else
+	{
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+		dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
+		$ok=0;
+	}
 }
 
 // Show database version
 if ($ok)
 {
-    $version=$db->getVersion();
-    $versionarray=$db->getVersionArray();
-    print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
-    print '<td align="right">'.$version.'</td></tr>';
-    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
-    //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+	$version=$db->getVersion();
+	$versionarray=$db->getVersionArray();
+	print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
+	print '<td align="right">'.$version.'</td></tr>';
+	dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
+	//print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 }
 
 // Show wait message
@@ -164,43 +164,43 @@ flush();
 // run_sql: Run repair SQL file
 if ($ok)
 {
-    $dir = "mysql/migration/";
+	$dir = "mysql/migration/";
 
-    $filelist=array();
-    $i = 0;
-    $ok = 0;
+	$filelist=array();
+	$i = 0;
+	$ok = 0;
 
-    // Recupere list fichier
-    $filesindir=array();
-    $handle=opendir($dir);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
-            if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
-        }
-    }
-    sort($filesindir);
+	// Recupere list fichier
+	$filesindir=array();
+	$handle=opendir($dir);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle))!==false)
+		{
+			if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+		}
+	}
+	sort($filesindir);
 
-    foreach($filesindir as $file)
-    {
-        if (preg_match('/repair/i',$file))
-        {
-            $filelist[]=$file;
-        }
-    }
+	foreach($filesindir as $file)
+	{
+		if (preg_match('/repair/i',$file))
+		{
+			$filelist[]=$file;
+		}
+	}
 
-    // Loop on each file
-    foreach($filelist as $file)
-    {
-        print '<tr><td class="nowrap">*** ';
-        print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
+	// Loop on each file
+	foreach($filelist as $file)
+	{
+		print '<tr><td class="nowrap">*** ';
+		print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
 
-        $name = substr($file, 0, dol_strlen($file) - 4);
+		$name = substr($file, 0, dol_strlen($file) - 4);
 
-        // Run sql script
-        $ok=run_sql($dir.$file, 0, '', 1);
-    }
+		// Run sql script
+		$ok=run_sql($dir.$file, 0, '', 1);
+	}
 }
 
 
@@ -217,97 +217,97 @@ if ($ok)
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach($listofmodulesextra as $tablename => $elementtype)
 	{
-	    // Get list of fields
-	    $tableextra=MAIN_DB_PREFIX.$tablename.'_extrafields';
+		// Get list of fields
+		$tableextra=MAIN_DB_PREFIX.$tablename.'_extrafields';
 
-	    // Define $arrayoffieldsdesc
-	    $arrayoffieldsdesc=$extrafields->fetch_name_optionals_label($elementtype);
+		// Define $arrayoffieldsdesc
+		$arrayoffieldsdesc=$extrafields->fetch_name_optionals_label($elementtype);
 
-	    // Define $arrayoffieldsfound
-	    $arrayoffieldsfound=array();
-	    $resql=$db->DDLDescTable($tableextra);
-	    if ($resql)
-	    {
-	        print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
-	        $i=0;
-	        while($obj=$db->fetch_object($resql))
-	        {
-	            $fieldname=$fieldtype='';
-	            if (preg_match('/mysql/',$db->type))
-	            {
-	                $fieldname=$obj->Field;
-	                $fieldtype=$obj->Type;
-	            }
-	            else
-	            {
-	                $fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
-	                $fieldtype = isset($obj->Type)?$obj->Type:'varchar';
-	            }
+		// Define $arrayoffieldsfound
+		$arrayoffieldsfound=array();
+		$resql=$db->DDLDescTable($tableextra);
+		if ($resql)
+		{
+			print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
+			$i=0;
+			while($obj=$db->fetch_object($resql))
+			{
+				$fieldname=$fieldtype='';
+				if (preg_match('/mysql/',$db->type))
+				{
+					$fieldname=$obj->Field;
+					$fieldtype=$obj->Type;
+				}
+				else
+				{
+					$fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
+					$fieldtype = isset($obj->Type)?$obj->Type:'varchar';
+				}
 
-	            if (empty($fieldname)) continue;
-	            if (in_array($fieldname,array('rowid','tms','fk_object','import_key'))) continue;
-	            $arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
-	        }
+				if (empty($fieldname)) continue;
+				if (in_array($fieldname,array('rowid','tms','fk_object','import_key'))) continue;
+				$arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
+			}
 
-	        // If it does not match, we create fields
-	        foreach($arrayoffieldsdesc as $code => $label)
-	        {
-	            if (! in_array($code,array_keys($arrayoffieldsfound)))
-	            {
-	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-	                $type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+			// If it does not match, we create fields
+			foreach($arrayoffieldsdesc as $code => $label)
+			{
+				if (! in_array($code,array_keys($arrayoffieldsfound)))
+				{
+					print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
+					$type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
 
-           			if ($type=='boolean') {
-        				$typedb='int';
-        				$lengthdb='1';
-        			} elseif($type=='price') {
-        				$typedb='double';
-        				$lengthdb='24,8';
-        			} elseif($type=='phone') {
-        				$typedb='varchar';
-        				$lengthdb='20';
-        			}elseif($type=='mail') {
-        				$typedb='varchar';
-        				$lengthdb='128';
-        			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
-        				$typedb='text';
-        				$lengthdb='';
-        			} elseif ($type=='link') {
-        				$typedb='int';
-        				$lengthdb='11';
-        			} else {
-        				$typedb=$type;
-        				$lengthdb=$length;
-        			}
+		   			if ($type=='boolean') {
+						$typedb='int';
+						$lengthdb='1';
+					} elseif($type=='price') {
+						$typedb='double';
+						$lengthdb='24,8';
+					} elseif($type=='phone') {
+						$typedb='varchar';
+						$lengthdb='20';
+					}elseif($type=='mail') {
+						$typedb='varchar';
+						$lengthdb='128';
+					} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
+						$typedb='text';
+						$lengthdb='';
+					} elseif ($type=='link') {
+						$typedb='int';
+						$lengthdb='11';
+					} else {
+						$typedb=$type;
+						$lengthdb=$length;
+					}
 
-	                $field_desc=array(
-	                	'type'=>$typedb,
-	                	'value'=>$lengthdb,
-	                	'attribute'=>$attribute,
-	                	'default'=>$default,
-	                	'extra'=>$extra,
-	                	'null'=>$null
-	                );
-	                //var_dump($field_desc);exit;
+					$field_desc=array(
+						'type'=>$typedb,
+						'value'=>$lengthdb,
+						'attribute'=>$attribute,
+						'default'=>$default,
+						'extra'=>$extra,
+						'null'=>$null
+					);
+					//var_dump($field_desc);exit;
 
-	                $result=$db->DDLAddField($tableextra,$code,$field_desc,"");
-	                if ($result < 0)
-	                {
-	                    print "KO ".$db->lasterror."<br>\n";
-	                }
-	                else
-	                {
-	                    print "OK<br>\n";
-	                }
-	            }
-	        }
+					$result=$db->DDLAddField($tableextra,$code,$field_desc,"");
+					if ($result < 0)
+					{
+						print "KO ".$db->lasterror."<br>\n";
+					}
+					else
+					{
+						print "OK<br>\n";
+					}
+				}
+			}
 
-	        print "</td><td>&nbsp;</td></tr>\n";
-	    }
-	    else
-	    {
-	    	dol_print_error($db);
-	    }
+			print "</td><td>&nbsp;</td></tr>\n";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
 	}
 }
 
@@ -404,65 +404,65 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 // rebuild_product_thumbs: Rebuild thumbs for product files
 if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
 {
-    $ext='';
-    global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+	$ext='';
+	global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
-    print '<tr><td colspan="2"><br>*** Rebuild product thumbs<br>';
+	print '<tr><td colspan="2"><br>*** Rebuild product thumbs<br>';
 
-    $sql="SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s ORDER BY s.ref";
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num=$db->num_rows($resql);
-        $i=0;
+	$sql="SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s ORDER BY s.ref";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num=$db->num_rows($resql);
+		$i=0;
 
-        while($i < $num)
-        {
-            $obj=$db->fetch_object($resql);
+		while($i < $num)
+		{
+			$obj=$db->fetch_object($resql);
 
-            if (! empty($obj->ref))
-            {
-                $files=dol_dir_list($dolibarr_main_data_root.'/produit/'.$obj->ref, 'files', 0);
-                foreach($files as $file)
-                {
+			if (! empty($obj->ref))
+			{
+				$files=dol_dir_list($dolibarr_main_data_root.'/produit/'.$obj->ref, 'files', 0);
+				foreach($files as $file)
+				{
 					// Generate thumbs.
 					if (image_format_supported($file['fullname']) == 1)
 					{
-					    $imgThumbSmall='notbuild';
-                        if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
-                        {
-                            // Used on logon for example
-                            $imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-                        }
-					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
-					    $imgThumbMini='notbuild';
-                        if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
-                        {
-                            // Create mini thumbs for image (Ratio is near 16/9)
-                            // Used on menu or for setup page for example
-                            $imgThumbMini = vignette($file['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-                        }
-					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbMini." maxwidthmini=".$maxwidthmini." maxheightmini=".$maxheightmini."<br>\n";
+						$imgThumbSmall='notbuild';
+						if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+						{
+							// Used on logon for example
+							$imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+						}
+						print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
+						$imgThumbMini='notbuild';
+						if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+						{
+							// Create mini thumbs for image (Ratio is near 16/9)
+							// Used on menu or for setup page for example
+							$imgThumbMini = vignette($file['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+						}
+						print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbMini." maxwidthmini=".$maxwidthmini." maxheightmini=".$maxheightmini."<br>\n";
 					}
-                }
-            }
+				}
+			}
 
-            $i++;
-        }
-    }
-    else
-    {
-        $ok=0;
-        dol_print_error($db);
-    }
+			$i++;
+		}
+	}
+	else
+	{
+		$ok=0;
+		dol_print_error($db);
+	}
 
-    print '</td></tr>';
+	print '</td></tr>';
 }
 
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_linked_elements','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Check table of linked elements and delete orphelins links</td></tr>';
+	print '<tr><td colspan="2"><br>*** Check table of linked elements and delete orphelins links</td></tr>';
 	// propal => order
 	print '<tr><td colspan="2">'.checkLinkedElements('propal', 'commande')."</td></tr>\n";
 
@@ -486,317 +486,317 @@ if ($ok && GETPOST('clean_linked_elements','alpha'))
 // clean_orphelin_dir: Run purge of directory
 if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 {
-    $conf->setValues($db);
+	$conf->setValues($db);
 
-    $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
-    foreach ($listmodulepart as $modulepart)
-    {
-        $filearray=array();
-        $upload_dir = isset($conf->$modulepart->dir_output)?$conf->$modulepart->dir_output:'';
-        if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
-        if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
-        if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
-        if ($modulepart == 'order') $upload_dir = $conf->commande->dir_output;
-        if ($modulepart == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
-        if ($modulepart == 'contract') $upload_dir = $conf->contrat->dir_output;
+	$listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
+	foreach ($listmodulepart as $modulepart)
+	{
+		$filearray=array();
+		$upload_dir = isset($conf->$modulepart->dir_output)?$conf->$modulepart->dir_output:'';
+		if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
+		if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
+		if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
+		if ($modulepart == 'order') $upload_dir = $conf->commande->dir_output;
+		if ($modulepart == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
+		if ($modulepart == 'contract') $upload_dir = $conf->contrat->dir_output;
 
-        if (empty($upload_dir)) continue;
+		if (empty($upload_dir)) continue;
 
-        print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
+		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
+		$filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
 
-        // To show ref or specific information according to view to show (defined by $module)
-        if ($modulepart == 'company')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-            $object_instance=new Societe($db);
-        }
-        if ($modulepart == 'invoice')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-            $object_instance=new Facture($db);
-        }
-        else if ($modulepart == 'invoice_supplier')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-            $object_instance=new FactureFournisseur($db);
-        }
-        else if ($modulepart == 'propal')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-            $object_instance=new Propal($db);
-        }
-        else if ($modulepart == 'order')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-            $object_instance=new Commande($db);
-        }
-        else if ($modulepart == 'order_supplier')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-            $object_instance=new CommandeFournisseur($db);
-        }
-        else if ($modulepart == 'contract')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-            $object_instance=new Contrat($db);
-        }
-        else if ($modulepart == 'tax')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-            $object_instance=new ChargeSociales($db);
-        }
+		// To show ref or specific information according to view to show (defined by $module)
+		if ($modulepart == 'company')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$object_instance=new Societe($db);
+		}
+		if ($modulepart == 'invoice')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$object_instance=new Facture($db);
+		}
+		else if ($modulepart == 'invoice_supplier')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			$object_instance=new FactureFournisseur($db);
+		}
+		else if ($modulepart == 'propal')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+			$object_instance=new Propal($db);
+		}
+		else if ($modulepart == 'order')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+			$object_instance=new Commande($db);
+		}
+		else if ($modulepart == 'order_supplier')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+			$object_instance=new CommandeFournisseur($db);
+		}
+		else if ($modulepart == 'contract')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+			$object_instance=new Contrat($db);
+		}
+		else if ($modulepart == 'tax')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+			$object_instance=new ChargeSociales($db);
+		}
 
-        $var=true;
-        foreach($filearray as $key => $file)
-        {
-            if (!is_dir($file['name'])
-            && $file['name'] != '.'
-            && $file['name'] != '..'
-            && $file['name'] != 'CVS'
-            )
-            {
-                // Define relative path used to store the file
-                $relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
+		$var=true;
+		foreach($filearray as $key => $file)
+		{
+			if (!is_dir($file['name'])
+			&& $file['name'] != '.'
+			&& $file['name'] != '..'
+			&& $file['name'] != 'CVS'
+			)
+			{
+				// Define relative path used to store the file
+				$relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
 
-                //var_dump($file);
-                $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
+				//var_dump($file);
+				$id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
 
-                // To show ref or specific information according to view to show (defined by $module)
-                if ($modulepart == 'invoice')          {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
-                }
-                if ($modulepart == 'invoice_supplier') {
-                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=empty($reg[1])?'':$reg[1];
-                }
-                if ($modulepart == 'propal')           {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
-                }
-                if ($modulepart == 'order')            {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
-                }
-                if ($modulepart == 'order_supplier')   {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
-                }
-                if ($modulepart == 'contract')         {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
-                }
-                if ($modulepart == 'tax')              {
-                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
-                }
+				// To show ref or specific information according to view to show (defined by $module)
+				if ($modulepart == 'invoice')          {
+					preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+				}
+				if ($modulepart == 'invoice_supplier') {
+					preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=empty($reg[1])?'':$reg[1];
+				}
+				if ($modulepart == 'propal')           {
+					preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+				}
+				if ($modulepart == 'order')            {
+					preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+				}
+				if ($modulepart == 'order_supplier')   {
+					preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+				}
+				if ($modulepart == 'contract')         {
+					preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+				}
+				if ($modulepart == 'tax')              {
+					preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
+				}
 
-                if ($id || $ref)
-                {
-                    //print 'Fetch '.$id.' or '.$ref.'<br>';
-                    $result=$object_instance->fetch($id,$ref);
-                    //print $result.'<br>';
-                    if ($result == 0)    // Not found but no error
-                    {
-                        // Clean of orphelins directories are done into repair.php
-                        print '<tr><td colspan="2">';
-                        print 'Delete orphelins file '.$file['fullname'].'<br>';
-                        if (GETPOST('clean_orphelin_dir','alpha') == 'confirmed')
-                        {
-                            dol_delete_file($file['fullname'],1,1,1);
-                            dol_delete_dir(dirname($file['fullname']),1);
-                        }
-                        print "</td></tr>";
-                    }
-                    else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
-                }
-            }
-        }
-    }
+				if ($id || $ref)
+				{
+					//print 'Fetch '.$id.' or '.$ref.'<br>';
+					$result=$object_instance->fetch($id,$ref);
+					//print $result.'<br>';
+					if ($result == 0)    // Not found but no error
+					{
+						// Clean of orphelins directories are done into repair.php
+						print '<tr><td colspan="2">';
+						print 'Delete orphelins file '.$file['fullname'].'<br>';
+						if (GETPOST('clean_orphelin_dir','alpha') == 'confirmed')
+						{
+							dol_delete_file($file['fullname'],1,1,1);
+							dol_delete_dir(dirname($file['fullname']),1);
+						}
+						print "</td></tr>";
+					}
+					else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+				}
+			}
+		}
+	}
 }
 
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 {
-    $methodtofix=GETPOST('methodtofix','alpha')?GETPOST('methodtofix','alpha'):'updatestock';
+	$methodtofix=GETPOST('methodtofix','alpha')?GETPOST('methodtofix','alpha'):'updatestock';
 
-    print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
-    $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
-    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
-    $sql.=" WHERE p.rowid = ps.fk_product";
-    $sql.=" AND p.tobatch = 1";
-    $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-    $sql.=" HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
-    print $sql;
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
+	$sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
+	$sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
+	$sql.=" WHERE p.rowid = ps.fk_product";
+	$sql.=" AND p.tobatch = 1";
+	$sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
+	$sql.=" HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
+	print $sql;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj=$db->fetch_object($resql);
-                print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch?$obj->reelbatch:'0').' (sum product_batch)';
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch?$obj->reelbatch:'0').' (sum product_batch)';
 
-                // Fix
-                if ($obj->reel != $obj->reelbatch)
-                {
-                    if ($methodtofix == 'updatebatch')
-                    {
-                        // Method 1
-                        print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
-                        if (GETPOST('clean_product_stock_batch') == 'confirmed')
-                        {
-                            $sql2 ="INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
-                            $sql2.="VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-                            $resql2=$db->query($sql2);
-                            if (! $resql2)
-                            {
-                                // TODO If it fails, we must make update
-                                //$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
-                                //$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-                                //$sql2.=" WHERE fk_product_stock = ".$obj->psrowid"
-                            }
-                        }
-                    }
-                    if ($methodtofix == 'updatestock')
-                    {
-                        // Method 2
-                        print ' -> Update qty of product_stock with qty = '.($obj->reelbatch?$obj->reelbatch:'0').' for ps.rowid = '.$obj->psrowid;
-                        if (GETPOST('clean_product_stock_batch') == 'confirmed')
-                        {
-                            $error=0;
+				// Fix
+				if ($obj->reel != $obj->reelbatch)
+				{
+					if ($methodtofix == 'updatebatch')
+					{
+						// Method 1
+						print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
+						if (GETPOST('clean_product_stock_batch') == 'confirmed')
+						{
+							$sql2 ="INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
+							$sql2.="VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+							$resql2=$db->query($sql2);
+							if (! $resql2)
+							{
+								// TODO If it fails, we must make update
+								//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
+								//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+								//$sql2.=" WHERE fk_product_stock = ".$obj->psrowid"
+							}
+						}
+					}
+					if ($methodtofix == 'updatestock')
+					{
+						// Method 2
+						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch?$obj->reelbatch:'0').' for ps.rowid = '.$obj->psrowid;
+						if (GETPOST('clean_product_stock_batch') == 'confirmed')
+						{
+							$error=0;
 
-                            $db->begin();
+							$db->begin();
 
-                            $sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
-                            $sql2.=" SET reel = ".($obj->reelbatch?$obj->reelbatch:'0')." WHERE rowid = ".$obj->psrowid;
-                            $resql2=$db->query($sql2);
-                            if ($resql2)
-                            {
-                                // We update product_stock, so we must field stock into product too.
-                                $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
-                                $resql3=$db->query($sql3);
-                                if (! $resql3)
-                                {
-                                    $error++;
-                                    dol_print_error($db);
-                                }
-                            }
-                            else
-                            {
-                                $error++;
-                                dol_print_error($db);
-                            }
+							$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
+							$sql2.=" SET reel = ".($obj->reelbatch?$obj->reelbatch:'0')." WHERE rowid = ".$obj->psrowid;
+							$resql2=$db->query($sql2);
+							if ($resql2)
+							{
+								// We update product_stock, so we must field stock into product too.
+								$sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
+								$resql3=$db->query($sql3);
+								if (! $resql3)
+								{
+									$error++;
+									dol_print_error($db);
+								}
+							}
+							else
+							{
+								$error++;
+								dol_print_error($db);
+							}
 
-                            if (!$error) $db->commit();
-                            else $db->rollback();
-                        }
-                    }
-                }
+							if (!$error) $db->commit();
+							else $db->rollback();
+						}
+					}
+				}
 
-                print'</td></tr>';
+				print'</td></tr>';
 
-                $i++;
-            }
-        }
-        else
-        {
-            print '<tr><td colspan="2">Nothing to do</td></tr>';
-        }
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr><td colspan="2">Nothing to do</td></tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
 {
-    print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
+	print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
-    $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
-    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
-    $sql.=" WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
-    $sql.=" AND p.tobatch = 1";
-    $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-    $sql.=" HAVING reel != SUM(pb.qty)";
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
+	$sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
+	$sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
+	$sql.=" WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
+	$sql.=" AND p.tobatch = 1";
+	$sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
+	$sql.=" HAVING reel != SUM(pb.qty)";
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj=$db->fetch_object($resql);
-                print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
 
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
+	print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
-    $sql ="SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
-    $sql.=" FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
-    $sql.=" WHERE ptt.fk_user = u.rowid";
-    $sql.=" AND ptt.thm IS NULL and u.thm > 0";
-    $sql.=" GROUP BY u.rowid, u.login, u.thm";
+	$sql ="SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
+	$sql.=" FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
+	$sql.=" WHERE ptt.fk_user = u.rowid";
+	$sql.=" AND ptt.thm IS NULL and u.thm > 0";
+	$sql.=" GROUP BY u.rowid, u.login, u.thm";
 
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
 
-        if ($num)
-        {
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj=$db->fetch_object($resql);
-                print '<tr><td>'.$obj->login.'-'.$obj->user_id.' ('.$obj->nb.' lines to fix) -> '.$obj->user_thm;
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				print '<tr><td>'.$obj->login.'-'.$obj->user_id.' ('.$obj->nb.' lines to fix) -> '.$obj->user_thm;
 
-                $db->begin();
+				$db->begin();
 
-                if (GETPOST('set_empty_time_spent_amount') == 'confirmed')
-                {
-                    $sql2 ="UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-                    $sql2.=" SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
-                    $resql2=$db->query($sql2);
-                    if (! $resql2)
-                    {
-                        $error++;
-                        dol_print_error($db);
-                    }
-                }
+				if (GETPOST('set_empty_time_spent_amount') == 'confirmed')
+				{
+					$sql2 ="UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+					$sql2.=" SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+					$resql2=$db->query($sql2);
+					if (! $resql2)
+					{
+						$error++;
+						dol_print_error($db);
+					}
+				}
 
-                if (!$error) $db->commit();
-                else $db->rollback();
+				if (!$error) $db->commit();
+				else $db->rollback();
 
-                print'</td></tr>';
+				print'</td></tr>';
 
-                if ($error) break;
+				if ($error) break;
 
-                $i++;
-            }
-        }
-        else
-        {
-            print '<tr><td>No time spent with empty line on users with a hourly rate defined</td></tr>';
-        }
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr><td>No time spent with empty line on users with a hourly rate defined</td></tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 
 }
 
@@ -805,110 +805,110 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
 
-    $arraylistofkey=array('hooks','js','css');
+	$arraylistofkey=array('hooks','js','css');
 
-    foreach($arraylistofkey as $key)
-    {
-	    $sql ="SELECT DISTINCT name, value";
-	    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
-	    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
-	    $sql.=" ORDER BY name";
+	foreach($arraylistofkey as $key)
+	{
+		$sql ="SELECT DISTINCT name, value";
+		$sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+		$sql.=" WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+		$sql.=" ORDER BY name";
 
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-	        $num = $db->num_rows($resql);
-	        if ($num)
-	        {
-	            $i = 0;
-	            while ($i < $num)
-	            {
-	                $obj=$db->fetch_object($resql);
-	                $constantname = $obj->name;				// Name of constant for hook or js or css declaration
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj=$db->fetch_object($resql);
+					$constantname = $obj->name;				// Name of constant for hook or js or css declaration
 
-	                print '<tr><td>';
-	                print $constantname;
+					print '<tr><td>';
+					print $constantname;
 
-	                $db->begin();
+					$db->begin();
 
-	                if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
-	                {
-	                    $name=strtolower($reg[1]);
+					if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
+					{
+						$name=strtolower($reg[1]);
 
-	                    if ($name)		// And entry for key $key and module $name was found in database.
-	                    {
-	                    	if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
-	                    	if ($key == 'js')
-	                    	{
-		                    	$value=$obj->value;
-		                    	$valuearray=json_decode($value);
-	                    		$reloffile=$valuearray[0];
-	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
-	                    	}
-	                    	if ($key == 'css')
-	                    	{
-		                    	$value=$obj->value;
-		                    	$valuearray=json_decode($value);
-	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
-	                    	}
+						if ($name)		// And entry for key $key and module $name was found in database.
+						{
+							if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
+							if ($key == 'js')
+							{
+								$value=$obj->value;
+								$valuearray=json_decode($value);
+								$reloffile=$valuearray[0];
+								$reloffile=preg_replace('/^\//','',$valuearray[0]);
+							}
+							if ($key == 'css')
+							{
+								$value=$obj->value;
+								$valuearray=json_decode($value);
+								$reloffile=preg_replace('/^\//','',$valuearray[0]);
+							}
 
-	                        $result = dol_include_once($reloffile);
-	                        if (! $result)
-	                        {
-	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
-	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
-	                            {
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
-	                                {
-	                                    $error++;
-	                                    dol_print_error($db);
-	                                }
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
-	                                {
-	                                    $error++;
-	                                    dol_print_error($db);
-	                                }
-	                                else
-	                                    print " - Cleaned";
-	                            }
-	                            else
-	                            {
-	                                print ' - Canceled (test mode)';
-	                            }
-	                        }
-	                        else
-	                        {
-	                            print ' - File of '.$key.' ('.$reloffile.') found, we do nothing.';
-	                        }
-	                    }
+							$result = dol_include_once($reloffile);
+							if (! $result)
+							{
+								print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
+								if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
+								{
+									$sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+									$resql2=$db->query($sql2);
+									if (! $resql2)
+									{
+										$error++;
+										dol_print_error($db);
+									}
+									$sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+									$resql2=$db->query($sql2);
+									if (! $resql2)
+									{
+										$error++;
+										dol_print_error($db);
+									}
+									else
+										print " - Cleaned";
+								}
+								else
+								{
+									print ' - Canceled (test mode)';
+								}
+							}
+							else
+							{
+								print ' - File of '.$key.' ('.$reloffile.') found, we do nothing.';
+							}
+						}
 
-	                    if (!$error) $db->commit();
-	                    else $db->rollback();
-	                }
+						if (!$error) $db->commit();
+						else $db->rollback();
+					}
 
-	                print'</td></tr>';
+					print'</td></tr>';
 
-	                if ($error) break;
+					if ($error) break;
 
-	                $i++;
-	            }
-	        }
-	        else
-	        {
-	            print '<tr><td>No active module with missing files found by searching on MAIN_MODULE_(.*)_'.strtoupper($key).'</td></tr>';
-	        }
-	    }
-	    else
-	    {
-	        dol_print_error($db);
-	    }
-    }
+					$i++;
+				}
+			}
+			else
+			{
+				print '<tr><td>No active module with missing files found by searching on MAIN_MODULE_(.*)_'.strtoupper($key).'</td></tr>';
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
 }
 
 
@@ -918,28 +918,28 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8 (for mysql/mariadb only)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8 (for mysql/mariadb only)</td></tr>';
 
-    if ($db->type == "mysql")
-    {
-        $listoftables = $db->DDLListTables($db->database_name);
+	if ($db->type == "mysql")
+	{
+		$listoftables = $db->DDLListTables($db->database_name);
 
-        foreach($listoftables as $table)
-        {
-            print '<tr><td colspan="2">';
-            print $table;
-            $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-            if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
-            {
-                $db->query($sql);
-            }
-            print '</td></tr>';
-        }
-    }
-    else
-    {
-        print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
-    }
+		foreach($listoftables as $table)
+		{
+			print '<tr><td colspan="2">';
+			print $table;
+			$sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+			if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
+			{
+				$db->query($sql);
+			}
+			print '</td></tr>';
+		}
+	}
+	else
+	{
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
 }
 
 
@@ -949,7 +949,7 @@ print '</table>';
 
 if (empty($actiondone))
 {
-    print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
+	print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
 

@@ -53,11 +53,11 @@ if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 {
 	$result = $object->fetch($id, $ref);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+	if ($result > 0 && $id > 0)
+	{
+		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+	}
 
 	if ($result >= 0)
 	{
@@ -83,7 +83,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+		$result=$object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -143,11 +143,11 @@ if ($id > 0 || ! empty($ref))
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
-    	// Ref supplier
-    	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-    	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
-    	// Thirdparty
-    	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		// Ref supplier
+		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+		// Thirdparty
+		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -236,25 +236,25 @@ if ($id > 0 || ! empty($ref))
 		print $form->editfieldval("Label",'label',$object->label,$object,0);
 		print '</td></tr>';
 
-        // Amount
-        print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+		// Amount
+		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
-        // Amount Local Taxes
-        //TODO: Place into a function to control showing by country or study better option
-        if ($societe->localtax1_assuj=="1") //Localtax1
-        {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
-            print '</tr>';
-        }
-        if ($societe->localtax2_assuj=="1") //Localtax2
-        {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
-            print '</tr>';
-        }
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+		// Amount Local Taxes
+		//TODO: Place into a function to control showing by country or study better option
+		if ($societe->localtax1_assuj=="1") //Localtax1
+		{
+			print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+			print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+			print '</tr>';
+		}
+		if ($societe->localtax2_assuj=="1") //Localtax2
+		{
+			print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+			print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+			print '</tr>';
+		}
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 		print "</table>";
 
