@@ -2109,8 +2109,8 @@ class User extends CommonObject
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
 
-		if ($option == 'leave') $url.= DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
-		else $link.= $url.= DOL_URL_ROOT.'/user/card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/user/card.php?id='.$this->id;
+		if ($option == 'leave') $url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
 
 		if ($option != 'nolink')
 		{

@@ -104,7 +104,7 @@ class Documents extends DolibarrApi
         	{
         		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         		$this->invoice = new Facture($this->db);
-        		$result = $this->invoice->fetch(0, $ref);
+        		$result = $this->invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
         		if( ! $result ) {
         			throw new RestException(404, 'Invoice not found');
         		}
