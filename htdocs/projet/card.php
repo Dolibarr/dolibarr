@@ -511,12 +511,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Ref
     $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
-    print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
+    print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
     print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
     print '</td></tr>';
 
     // Label
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title",'none').'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title",'none')).'" autofocus></td></tr>';
 
     // Thirdparty
     if ($conf->societe->enabled)
@@ -576,20 +576,20 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	    // Opportunity probability
 	    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOST('opp_percent')!=''?GETPOST('opp_percent'):'').'"><span class="hideonsmartphone"> %</span>';
-	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.(GETPOST('opp_percent')!=''?'0':'1').'">';
+	    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOST('opp_percent')!=''?GETPOST('opp_percent'):'').'"><span class="hideonsmartphone"> %</span>';
+	    print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOST('opp_percent')!=''?'0':'1').'">';
 	    print '</td>';
 	    print '</tr>';
 
 	    // Opportunity amount
 	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-	    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?GETPOST('opp_amount'):'').'"></td>';
+	    print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOST('opp_amount')!=''?GETPOST('opp_amount'):'').'"></td>';
 	    print '</tr>';
     }
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?GETPOST('budget_amount'):'').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOST('budget_amount')!=''?GETPOST('budget_amount'):'').'"></td>';
 	print '</tr>';
 
     // Description

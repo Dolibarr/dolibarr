@@ -514,7 +514,10 @@ if (count($tasksarray) > 0)
 	if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) $colspan++;
 
 	print '<tr class="liste_total">
-                <td class="liste_total" colspan="'.$colspan.'">'.$langs->trans("Total").'</td>
+                <td class="liste_total" colspan="'.$colspan.'">';
+                print $langs->trans("Total");
+                print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+                print '</td>
                 <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
                 <td class="liste_total hide1" align="center"><div id="totalDay[1]">&nbsp;</div></td>
                 <td class="liste_total hide2" align="center"><div id="totalDay[2]">&nbsp;</div></td>

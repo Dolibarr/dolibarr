@@ -3830,7 +3830,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
  *		@param	float		$amount			Amount to format
  *		@param	integer		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
- *		@param	int			$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before inserted into database or after a computation, so this parameter should be useless.
+ *		@param	int			$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)

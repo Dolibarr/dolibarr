@@ -197,6 +197,8 @@ if (empty($reshook)) {
 			$object->login = GETPOST("login", 'alpha');
 			$object->api_key = GETPOST("api_key", 'alpha');
 			$object->gender = GETPOST("gender", 'alpha');
+			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'alpha');
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip = GETPOST('zipcode', 'alpha');
@@ -337,6 +339,8 @@ if (empty($reshook)) {
 				$object->firstname = GETPOST("firstname", 'alpha');
 				$object->login = GETPOST("login", 'alpha');
 				$object->gender = GETPOST("gender", 'alpha');
+				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+				$object->birth = $birth;
 				$object->pass = GETPOST("password");
 				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
 				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
@@ -790,6 +794,13 @@ if ($action == 'create' || $action == 'adduserldap')
     $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
     print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
     print '</td></tr>';
+
+    // Date employment
+    print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+    print '<td>';
+    echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
+    print '</td>';
+    print "</tr>\n";
 
     // Login
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
@@ -1365,6 +1376,13 @@ else
 		    print '<td>';
 		    if ($object->gender) print $langs->trans("Gender".$object->gender);
 		    print '</td></tr>';
+
+		    // Date of birth
+		    print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+		    print '<td>';
+		    print dol_print_date($object->birth, 'day');
+		    print '</td>';
+		    print "</tr>\n";
 
             // API key
             if(! empty($conf->api->enabled) && $user->admin) {
@@ -2003,6 +2021,13 @@ else
     		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
     		print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
     		print '</td></tr>';
+
+    		// Date birth
+    		print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+    		print '<td>';
+    		echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
+    		print '</td>';
+    		print "</tr>\n";
 
             // Login
             print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';

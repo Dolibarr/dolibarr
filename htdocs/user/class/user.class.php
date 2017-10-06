@@ -47,6 +47,7 @@ class User extends CommonObject
 	public $search_sid;
 	public $employee;
 	public $gender;
+	public $birth;
 	public $email;
 	public $skype;
 	public $job;
@@ -179,7 +180,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
@@ -260,6 +261,7 @@ class User extends CommonObject
 
 				$this->login		= $obj->login;
 				$this->gender       = $obj->gender;
+				$this->birth        = $this->db->jdate($obj->birth);
 				$this->pass_indatabase = $obj->pass;
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass			= $obj->pass;
@@ -1341,6 +1343,7 @@ class User extends CommonObject
 		$this->employee    	= $this->employee?$this->employee:0;
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
+		$this->birth        = trim($this->birth);
 		$this->pass         = trim($this->pass);
         $this->api_key      = trim($this->api_key);
 		$this->address		= $this->address?trim($this->address):trim($this->address);
@@ -1389,6 +1392,7 @@ class User extends CommonObject
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
         $sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
+		$sql.= ", birth=".(strval($this->birth)!='' ? "'".$this->db->idate($this->birth)."'" : 'null');
 		if (! empty($user->admin)) $sql.= ", admin = ".$this->admin;	// admin flag can be set/unset only by an admin user
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
@@ -1470,6 +1474,7 @@ class User extends CommonObject
 						$adh->lastname=$this->lastname;
 						$adh->login=$this->login;
 						$adh->gender=$this->gender;
+						$adh->birth=$this->birth;
 
 						$adh->pass=$this->pass;
 
