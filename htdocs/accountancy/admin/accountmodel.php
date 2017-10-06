@@ -87,9 +87,6 @@ $hookmanager->initHooks(array('admin'));
 // This page is a generic page to edit dictionaries
 // Put here declaration of dictionaries properties
 
-// Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,32,0);
-
 // Name of SQL tables of dictionaries
 $tabname=array();
 
@@ -148,75 +145,10 @@ $tabfieldcheck=array();
 $tabfieldcheck[31] = array();
 $tabfieldcheck[32] = array();
 
-// Complete all arrays with entries found into modules
-complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
-
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
 $sourceList=array();
-if ($id == 11)
-{
-	$langs->load("orders");
-	$langs->load("contracts");
-	$langs->load("projects");
-	$langs->load("propal");
-	$langs->load("bills");
-	$langs->load("interventions");
-	$elementList = array(
-			''				    => '',
-            'societe'           => $langs->trans('ThirdParty'),
-//			'proposal'          => $langs->trans('Proposal'),
-//			'order'             => $langs->trans('Order'),
-//			'invoice'           => $langs->trans('Bill'),
-			'invoice_supplier'  => $langs->trans('SupplierBill'),
-			'order_supplier'    => $langs->trans('SupplierOrder'),
-//			'intervention'      => $langs->trans('InterventionCard'),
-//			'contract'          => $langs->trans('Contract'),
-			'project'           => $langs->trans('Project'),
-			'project_task'      => $langs->trans('Task'),
-			'agenda'			=> $langs->trans('Agenda'),
-			// old deprecated
-			'contrat'           => $langs->trans('Contract'),
-			'propal'            => $langs->trans('Proposal'),
-			'commande'          => $langs->trans('Order'),
-			'facture'           => $langs->trans('Bill'),
-			'resource'           => $langs->trans('Resource'),
-//			'facture_fourn'     => $langs->trans('SupplierBill'),
-			'fichinter'         => $langs->trans('InterventionCard')
-	);
-	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
-
-	complete_elementList_with_modules($elementList);
-
-	asort($elementList);
-	$sourceList = array(
-			'internal' => $langs->trans('Internal'),
-			'external' => $langs->trans('External')
-	);
-}
-if ($id == 25)
-{
-	// We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
-	$elementList = array();
-	if ($conf->propal->enabled) $elementList['propal_send']=$langs->trans('MailToSendProposal');
-	if ($conf->commande->enabled) $elementList['order_send']=$langs->trans('MailToSendOrder');
-	if ($conf->facture->enabled) $elementList['facture_send']=$langs->trans('MailToSendInvoice');
-	if ($conf->expedition->enabled) $elementList['shipping_send']=$langs->trans('MailToSendShipment');
-	if ($conf->ficheinter->enabled) $elementList['fichinter_send']=$langs->trans('MailToSendIntervention');
-	if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send']=$langs->trans('MailToSendSupplierRequestForQuotation');
-	if ($conf->fournisseur->enabled) $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
-	if ($conf->fournisseur->enabled) $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
-	if ($conf->societe->enabled) $elementList['thirdparty']=$langs->trans('MailToThirdparty');
-
-	$parameters=array('elementList'=>$elementList);
-	$reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
-	if ($reshook == 0) {
-		foreach ($hookmanager->resArray as $item => $value) {
-			$elementList[$item] = $value;
-		}
-	}
-}
 
 
 
@@ -690,7 +622,6 @@ if ($id)
              if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
         }
 
-        if ($id == 4) print '<td></td>';
         print '<td>';
         print '<input type="hidden" name="id" value="'.$id.'">';
         print '</td>';
@@ -731,7 +662,6 @@ if ($id)
         	}
         }
 
-        if ($id == 4) print '<td></td>';
         print '<td colspan="3" align="right">';
         if ($tabname[$id] != MAIN_DB_PREFIX.'c_email_templates' || $action != 'edit')
         {
@@ -741,9 +671,8 @@ if ($id)
         print "</tr>";
 
         $colspan=count($fieldlist)+3;
-        if ($id == 4) $colspan++;
 
-        if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
+        if (! empty($alabelisused))  // If there is one label among fields, we show legend of *
         {
         	print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
         }
@@ -775,8 +704,37 @@ if ($id)
             print '</td></tr>';
         }
 
-        // Title of lines
+        // Title line with search boxes
         print '<tr class="liste_titre liste_titre_add">';
+        foreach ($fieldlist as $field => $value)
+        {
+        	$showfield=1;							  	// By defaut
+
+        	if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
+
+        	if ($showfield)
+        	{
+        		if ($value == 'country')
+        		{
+        			print '<td class="liste_titre">';
+        			print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
+        			print '</td>';
+        		}
+        		else
+        		{
+        			print '<td class="liste_titre"></td>';
+        		}
+        	}
+        }
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre" colspan="2" align="right">';
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
+        print '</td>';
+        print '</tr>';
+
+        // Title of lines
+        print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
@@ -845,42 +803,9 @@ if ($id)
                 print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
             }
         }
-		// Favorite - Only activated on country dictionary
-        if ($id == 4) print getTitleFieldOfList($langs->trans("Favorite"), 0, $_SERVER["PHP_SELF"], "favorite", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
-
 		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
         print getTitleFieldOfList('');
         print getTitleFieldOfList('');
-        print '</tr>';
-
-        // Title line with search boxes
-        print '<tr class="liste_titre">';
-        foreach ($fieldlist as $field => $value)
-        {
-            $showfield=1;							  	// By defaut
-
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
-
-            if ($showfield)
-            {
-                if ($value == 'country')
-                {
-                    print '<td class="liste_titre">';
-                    print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
-                    print '</td>';
-                }
-                else
-                {
-                    print '<td class="liste_titre"></td>';
-                }
-            }
-        }
-        if ($id == 4) print '<td></td>';
-        print '<td class="liste_titre"></td>';
-    	print '<td class="liste_titre" colspan="2" align="right">';
-    	$searchpicto=$form->showFilterAndCheckAddButtons(0);
-    	print $searchpicto;
-    	print '</td>';
         print '</tr>';
 
         if ($num)
@@ -1090,16 +1015,6 @@ if ($id)
                     if ($param) $url .= '&'.$param;
                     $url.='&';
 
-					// Favorite
-					// Only activated on country dictionary
-                    if ($id == 4)
-					{
-						print '<td align="center" class="nowrap">';
-						if ($iserasable) print '<a href="'.$url.'action='.$acts[$obj->favorite].'_favorite">'.$actl[$obj->favorite].'</a>';
-						else print $langs->trans("AlwaysActive");
-						print '</td>';
-					}
-
                     // Active
                     print '<td align="center" class="nowrap">';
                     if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
@@ -1134,65 +1049,6 @@ if ($id)
 	print '</div>';
 
     print '</form>';
-}
-else
-{
-    /*
-     * Show list of dictionary to show
-     */
-
-    $lastlineisempty=false;
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    //print '<td>'.$langs->trans("Module").'</td>';
-    print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
-    print '<td>'.$langs->trans("Table").'</td>';
-    print '</tr>';
-
-    $showemptyline='';
-    foreach ($taborder as $i)
-    {
-        if (isset($tabname[$i]) && empty($tabcond[$i])) continue;
-
-        if ($i)
-        {
-        	if ($showemptyline)
-        	{
-        		print '<tr class="oddeven"><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-        		$showemptyline=0;
-        	}
-
-
-            $value=$tabname[$i];
-            print '<tr class="oddeven"><td width="50%">';
-            if (! empty($tabcond[$i]))
-            {
-                print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
-            }
-            else
-            {
-                print $langs->trans($tablib[$i]);
-            }
-            print '</td>';
-            print '<td>';
-            /*if (empty($tabcond[$i]))
-             {
-             print info_admin($langs->trans("DictionaryDisabledSinceNoModuleNeedIt"),1);
-             }*/
-            print '</td>';
-            print '<td>'.$tabname[$i].'</td></tr>';
-            $lastlineisempty=false;
-        }
-        else
-        {
-            if (! $lastlineisempty)
-            {
-                $showemptyline=1;
-                $lastlineisempty=true;
-            }
-        }
-    }
-    print '</table>';
 }
 
 print '<br>';

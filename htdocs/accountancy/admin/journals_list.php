@@ -354,6 +354,7 @@ if ($action == $acts[1])
     }
 }
 
+
 /*
  * View
  */
@@ -527,8 +528,25 @@ if ($id)
             print '</td></tr>';
         }
 
+        // Title line with search boxes
+        print '<tr class="liste_titre_filter liste_titre_add">';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre"></td>';
+        print '<td class="liste_titre" align="center">';
+        if ($filterfound)
+        {
+        	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+        	print $searchpicto;
+        }
+        print '</td>';
+        print '</tr>';
+
         // Title of lines
-        print '<tr class="liste_titre liste_titre_add">';
+        print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
@@ -561,23 +579,6 @@ if ($id)
         print getTitleFieldOfList('');
         print getTitleFieldOfList('');
         print '</tr>';
-
-        // Title line with search boxes
-        print '<tr class="liste_titre_filter">';
-        print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre" align="center">';
-    	if ($filterfound)
-    	{
-        	$searchpicto=$form->showFilterAndCheckAddButtons(0);
-        	print $searchpicto;
-    	}
-    	print '</td>';
-    	print '</tr>';
 
         if ($num)
         {

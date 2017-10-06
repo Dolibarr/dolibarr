@@ -6378,7 +6378,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 
 
 /**
- * Set focus onto field with selector
+ * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
  * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
  * @return	string				HTML code to set focus

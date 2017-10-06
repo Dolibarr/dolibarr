@@ -63,17 +63,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					var autoselect = '.$autoselect.';
 					var options = '.json_encode($ajaxoptions).';
 
-					/* Remove product id before select another product use keyup instead of change to avoid loosing the product id. This is needed only for select of predefined product */
-					/* TODO Check if we can remove this */
-					$("input#search_'.$htmlname.'").keydown(function() {
-						$("#'.$htmlname.'").val("");
+					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
+					$("input#search_'.$htmlname.'").keydown(function(e) {
+						if (e.keyCode != 9)		/* If not "Tab" key */
+						{
+							console.log("Clear id previously selected for field '.$htmlname.'");
+							$("#'.$htmlname.'").val("");
+						}
 					});
-
-					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code
-						$("input#search_'.$htmlname.'").change(function() {
-					    console.log("Call the change trigger on input '.$htmlname.' because of a change on search_'.$htmlname.' was triggered");
-						$("#'.$htmlname.'").trigger("change");
-					});*/
 
 					// Check options for secondary actions when keyup
 					$("input#search_'.$htmlname.'").keyup(function() {
