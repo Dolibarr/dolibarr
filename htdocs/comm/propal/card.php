@@ -1690,7 +1690,15 @@ if ($action == 'create')
 				//array('type' => 'other','name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '<textarea cols="30" rows="' . ROWS_3 . '" wrap="soft" name="note_private" id="note_private">'.$object->note_private.'</textarea>'));
 				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => $object->note_private));
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), '', 'setstatut', $formquestion, '', 1, 250);
+        if (! empty($conf->notification->enabled)) {
+            require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+            $notify = new Notify($db);
+            $formquestion = array_merge($formquestion, array(
+                array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
+            ));
+        }
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, '', 1, 250);
 
 	}
 

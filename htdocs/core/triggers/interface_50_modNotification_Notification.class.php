@@ -40,6 +40,7 @@ class InterfaceNotification extends DolibarrTriggers
         'BILL_PAYED',
     	'ORDER_VALIDATE',
     	'PROPAL_VALIDATE',
+        'PROPAL_CLOSE_SIGNED',
         'FICHINTER_VALIDATE',
         'FICHINTER_ADD_CONTACT',
     	'ORDER_SUPPLIER_VALIDATE',
