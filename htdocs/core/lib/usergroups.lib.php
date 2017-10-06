@@ -50,13 +50,14 @@ function user_prepare_head($object)
     $head[$h][2] = 'user';
     $h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
-	    $head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
-	    $head[$h][1] = $langs->trans("LDAPCard");
-	    $head[$h][2] = 'ldap';
-	    $h++;
+		$head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("LDAPCard");
+		$head[$h][2] = 'ldap';
+		$h++;
 	}
 
     $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
@@ -210,13 +211,14 @@ function group_prepare_head($object)
     $head[$h][2] = 'group';
     $h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
-	    $head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id;
-	    $head[$h][1] = $langs->trans("LDAPCard");
-	    $head[$h][2] = 'ldap';
-	    $h++;
+		$head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("LDAPCard");
+		$head[$h][2] = 'ldap';
+		$h++;
 	}
 
 	if ($canreadperms)
