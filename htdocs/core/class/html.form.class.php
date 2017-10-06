@@ -3635,6 +3635,13 @@ class Form
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
                     }
+
+                    else if ($input['type'] == 'onecolumn')
+                    {
+                        $more.='<tr><td colspan="3" align="left">';
+                        $more.=$input['value'];
+                        $more.='</td></tr>'."\n";
+                    }
                 }
             }
             $more.='</table>'."\n";
