@@ -277,12 +277,111 @@ if ($action == 'add')
 
 
     		// Now loop to fetch all css files. Include them inline into header of page
-			// TODO...
+    		$objectpage->htmlheader = $tmp['content'];
+    		$objectpage->htmlheader = preg_replace('/^.*<head[^>]*>/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<\/head[^>]*>.*$/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<base[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<meta name="robot[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<meta name="keywords[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<meta name="title[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<meta name="description[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<meta name="generator[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		//$objectpage->htmlheader = preg_replace('/<meta name="verify-v1[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		//$objectpage->htmlheader = preg_replace('/<meta name="msvalidate.01[^>]*>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<title>[^<]*<\/title>\n*/ims', '', $objectpage->htmlheader);
+    		$objectpage->htmlheader = preg_replace('/<link[^>]*rel="shortcut[^>]*>\n/ims', '', $objectpage->htmlheader);
+
+    		// Now loop to fetch JS
+    		$tmp = $objectpage->htmlheader;
+
+    		preg_match_all('/<script([^\.]+)src="([^>"]+)"([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
+    		foreach ($regs[0] as $key => $val)
+    		{
+    			$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+    			$linkwithoutdomain = $regs[2][$key];
+    			//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+    			if (preg_match('/^http/', $regs[2][$key]))
+    			{
+    				$urltograbbis = $regs[2][$key];
+    				$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
+    				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+    			}
+				/*
+    			$tmpgeturl = getURLContent($urltograbbis);
+    			if ($tmpgeturl['curl_error_no'])
+    			{
+    				$error++;
+    				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+    				$action='create';
+    			}
+    			else
+    			{
+    				dol_mkdir(dirname($filetosave));
+
+    				$fp = fopen($filetosave, "w");
+    				fputs($fp, $tmpgeturl['content']);
+    				fclose($fp);
+    				if (! empty($conf->global->MAIN_UMASK))
+    					@chmod($file, octdec($conf->global->MAIN_UMASK));
+    			}
+
+    			$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+    			*/
+    			$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
+    		}
+    		$objectpage->htmlheader = $tmp;
 
 
-    		$tmp = $objectpage->content;
+    		// Now loop to fetch CSS
+    		$pagecsscontent = "\n".'<style>'."\n";
+
+    		preg_match_all('/<link([^\.]+)href="([^>"]+\.css)"([^>]*)>/i', $objectpage->htmlheader, $regs);
+			foreach ($regs[0] as $key => $val)
+    		{
+    			$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+    			$linkwithoutdomain = $regs[2][$key];
+    			//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+    			if (preg_match('/^http/', $regs[2][$key]))
+    			{
+    				$urltograbbis = $regs[2][$key];
+    				$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
+    				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+    			}
+
+    			$tmpgeturl = getURLContent($urltograbbis);
+    			if ($tmpgeturl['curl_error_no'])
+    			{
+    			 $error++;
+    			 setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+    			 $action='create';
+    			}
+    			else
+    			{
+    			 //dol_mkdir(dirname($filetosave));
+
+    			 //$fp = fopen($filetosave, "w");
+    			 //fputs($fp, $tmpgeturl['content']);
+    			 //fclose($fp);
+    			 //if (! empty($conf->global->MAIN_UMASK))
+    			 //	@chmod($file, octdec($conf->global->MAIN_UMASK));
+    			 }
+
+    			 //	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+    			 $pagecsscontent.='/* Content of file '.$urltograbbis.' */'."\n";
+    			 $pagecsscontent.=$tmpgeturl['content']."\n";
+
+    			 $objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key],'/').'\n*/ims', '', $objectpage->htmlheader);
+    		}
+
+    		$pagecsscontent.='</style>'."\n";
+			//var_dump($pagecsscontent);
+
+    		//print dol_escape_htmltag($tmp);exit;
+    		$objectpage->htmlheader .= $pagecsscontent;
 
     		// Now loop to fetch all images
+    		$tmp = $objectpage->content;
+
     		preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $objectpage->content, $regs);
 			foreach ($regs[0] as $key => $val)
 			{
@@ -1830,8 +1929,10 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.'" />'."\n";
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
-	$tplcontent.= '<!-- Include common HTML header file -->'."\n";
+	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/htmlheader.html"); ?>'."\n";
+	$tplcontent.= '<!-- Include HTML header from page inline block -->'."\n";
+	$tplcontent.= $objectpage->htmlheader."\n";
 	$tplcontent.= '</head>'."\n";
 
 	$tplcontent.= '<!-- File generated by Dolibarr website module editor -->'."\n";
