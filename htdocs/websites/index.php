@@ -330,7 +330,8 @@ if ($action == 'add')
 	    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
 	    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
 	    $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
-	    $objectpage->lang = GETPOST('WEBSITE_LANG','alpha');
+	    $objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
+	    $objectpage->htmlheader = GETPOST('htmlheader','none');
     }
 
     if (! $error)
@@ -687,7 +688,8 @@ if ($action == 'updatemeta')
         $objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
         $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
-        $objectpage->lang = GETPOST('WEBSITE_LANG', 'alpha');
+        $objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
+        $objectpage->htmlheader = GETPOST('htmlheader', 'none');
 
         $res = $objectpage->update($user);
         if (! $res > 0)
@@ -943,11 +945,11 @@ if (GETPOST('exportsite'))
 {
 	$fileofzip = exportWebSite($object);
 
-	$file_name = basename($yourfile);
+	$file_name = basename($fileofzip);
 
 	header("Content-Type: application/zip");
 	header("Content-Disposition: attachment; filename=".$file_name);
-	header("Content-Length: " . filesize($yourfile));
+	header("Content-Length: " . filesize($fileofzip));
 
 	readfile($fileofzip);
 	exit;
@@ -1567,12 +1569,14 @@ if ($action == 'editmeta' || $action == 'create')
         $pagedescription=$objectpage->description;
         $pagekeywords=$objectpage->keywords;
         $pagelang=$objectpage->lang;
+        $pagehtmlheader=$objectpage->htmlheader;
     }
-    if (GETPOST('WEBSITE_PAGENAME'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
-    if (GETPOST('WEBSITE_TITLE'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
-    if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
-    if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
-    if (GETPOST('WEBSITE_LANG'))        $pagelang=GETPOST('WEBSITE_LANG','aZ09');
+    if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
+    if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
+    if (GETPOST('WEBSITE_DESCRIPTION','alpha')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
+    if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
+    if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
+	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
 
     print '<tr><td class="titlefieldcreate fieldrequired">';
     print $langs->trans('WEBSITE_PAGENAME');
@@ -1602,6 +1606,13 @@ if ($action == 'editmeta' || $action == 'create')
     print $langs->trans('Language');
     print '</td><td>';
     print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG');
+    print '</td></tr>';
+
+    print '<tr><td>';
+    print $langs->trans('HtmlHeaderPage');
+    print '</td><td>';
+    $doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+    print $doleditor->Create(1, '', true, 'HTML Header', 'html');
     print '</td></tr>';
 
     print '</table>';
