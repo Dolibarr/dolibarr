@@ -247,6 +247,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				        $object->timespent_duration = $newduration;
 				        $object->timespent_fk_user = $usertoprocess->id;
 			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
+			        	$object->timespent_datehour = $object->timespent_date;
 
 						$result=$object->addTimeSpent($user);
 						if ($result < 0)
