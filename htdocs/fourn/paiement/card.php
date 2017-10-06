@@ -140,30 +140,10 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 }
 
 // Build document
-if ($action == 'builddoc')
-{
-	// Save modele used
-    $object->fetch($id);
-    $object->fetch_thirdparty();
-
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-    $outputlangs = $langs;
-    $newlang=GETPOST('lang_id','aZ09');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-    if ($result	< 0)
-    {
-		setEventMessages($object->error, $object->errors, 'errors');
-	    $action='';
-    }
-}
+$upload_dir = $conf->fournisseur->payment->dir_output;
+// TODO: get the appropriate permisson
+$permissioncreate = true;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 /*

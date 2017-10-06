@@ -330,6 +330,18 @@ if ($id > 0)		// For user tab
 	}
 
 	dol_fiche_end();
+
+	print '<div class="tabsAction">';
+
+	$canedit=(($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
+
+	// Boutons d'actions
+	if ($canedit)
+	{
+		print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
+	}
+
+	print '</div>';
 }
 else
 {
@@ -347,8 +359,6 @@ else
 		dol_fiche_end();
 	}*/
 }
-
-if ($id > 0) print '<br>';
 
 if ($sall)
 {

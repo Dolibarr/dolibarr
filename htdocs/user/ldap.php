@@ -57,30 +57,29 @@ $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
-    if ($_GET["action"] == 'dolibarr2ldap') {
-        $db->begin();
+if (empty($reshook))
+{
+	if ($_GET["action"] == 'dolibarr2ldap')
+	{
+		$ldap = new Ldap();
+		$result = $ldap->connect_bind();
 
-        $ldap = new Ldap();
-        $result = $ldap->connect_bind();
+		if ($result > 0)
+		{
+			$info = $object->_load_ldap_info();
+			$dn = $object->_load_ldap_dn($info);
+			$olddn = $dn;    // We can say that old dn = dn as we force synchro
 
-        $info = $object->_load_ldap_info();
-        $dn = $object->_load_ldap_dn($info);
-        $olddn = $dn;    // We can say that old dn = dn as we force synchro
+			$result = $ldap->update($dn, $info, $user, $olddn);
+		}
 
-        $result = $ldap->update($dn, $info, $user, $olddn);
-
-        if ($result >= 0)
-        {
-            setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
-            $db->commit();
-        }
-        else
-        {
-            setEventMessages($ldap->error, $ldap->errors, 'errors');
-            $db->rollback();
-        }
-    }
+		if ($result >= 0) {
+			setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
+		}
+		else {
+			setEventMessages($ldap->error, $ldap->errors, 'errors');
+		}
+	}
 }
 
 /*

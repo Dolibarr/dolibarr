@@ -108,7 +108,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $action = '';
     $search_categ='';
-    $search_usertoprocessid = '';
+    $search_usertoprocessid = $user->id;
     $search_task_ref = '';
     $search_task_label = '';
     $search_project_ref = '';
@@ -242,13 +242,14 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	        $object->timespent_note = GETPOST($key.'note');
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {
-	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
+	        	$object->timespent_datehour = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
 	        	$object->timespent_withhour = 1;
 	        }
 	        else
 			{
-	        	$object->timespent_date = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
+	        	$object->timespent_datehour = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
 			}
+			$object->timespent_date = $object->timespent_datehour;
 
 			if ($object->timespent_date > 0)
 			{
@@ -501,7 +502,10 @@ if (count($tasksarray) > 0)
 	if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) $colspan++;
 
 	print '<tr class="liste_total">
-                <td class="liste_total" colspan="'.$colspan.'">'.$langs->trans("Total").'</td>
+                <td class="liste_total" colspan="'.$colspan.'">';
+				print $langs->trans("Total");
+				//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+				print '</td>
                 <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
                 <td class="liste_total"></td>
                 <td class="liste_total"></td>
@@ -526,7 +530,7 @@ $modeinput='hours';
 
 print '<script type="text/javascript">';
 print "jQuery(document).ready(function () {\n";
-print '    jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '    jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\'});';
 print '    updateTotal(0,\''.$modeinput.'\');';
 print "});";
 print '</script>';

@@ -168,7 +168,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("orders");
 
 		$nblignes = count($object->lines);
-		
+
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE))
@@ -190,7 +190,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdir = get_exdir(0,2,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				}
-				
+
 				$realpath='';
 				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
 				{
@@ -205,7 +205,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
-		if ($conf->fournisseur->dir_output.'/commande')
+		if ($conf->fournisseur->commande->dir_output)
 		{
 			$object->fetch_thirdparty();
 
@@ -412,11 +412,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
-					if ($posYAfterImage > 0) 
+					if ($posYAfterImage > 0)
 					{
 						$descWidth = $this->posxpicture-$curX;
-					} 
-					else 
+					}
+					else
 					{
 						$descWidth = $this->posxtva-$curX;
 					}
@@ -639,7 +639,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
