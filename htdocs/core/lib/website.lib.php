@@ -303,6 +303,8 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 	foreach ($regs[0] as $key => $val)
 	{
+		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
+
 		$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 		$linkwithoutdomain = $regs[2][$key];
 		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
@@ -357,6 +359,8 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 	foreach ($regs[0] as $key => $val)
 	{
+		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
+
 		$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 
 		$linkwithoutdomain = $regs[2][$key];
