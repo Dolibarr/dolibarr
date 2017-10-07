@@ -210,7 +210,7 @@ $sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
-$sql.= " MIN(CASE WHEN cd.statut=4 THEN cd.date_fin_validite END) as first_date_fin_validite,";
+$sql.= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as first_date_fin_validite,";
 $sql.= ' SUM('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
