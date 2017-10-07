@@ -2,6 +2,41 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 6.0.2 compared to 6.0.1 *****
+
+FIX: #7148
+FIX: #7288
+FIX: #7366 renaming table with pgsql
+FIX: #7435 Can't add payment term
+FIX: #7461
+FIX: #7464
+FIX: #7471
+FIX: #7473 Mass update of vat rates and other bugs on localtax
+FIX: #7475
+FIX: #7486 Empty value for multicurrency rate must be forbidden
+FIX: #7490
+FIX: #7505
+FIX: #7510 Bug: extrafield content disappear when generate pdf within intervention
+FIX: #7514
+FIX: #7531 #7537
+FIX: #7541
+FIX: #7546
+FIX: #7550
+FIX: #7554
+FIX: #7567
+FIX: Accountancy export model for Agiris Isacompta
+FIX: Allow create shipping if STOCK_SUPPORTS_SERVICES option is enabled
+FIX: Bad preview on scroping when special file names
+FIX: Generation of invoice from bulk action "Bill Orders"
+FIX: Implementation of a Luracast recommandation for the REST api server (#7370)
+FIX: Missing space in request
+FIX: Only modified values must be modified
+FIX: replenish if line test GETPOST on line 0
+FIX: Stripe not working on live mode
+FIX: wrong basePath in the swagger view
+FIX: Implementation of a Luracast recommandation for the REST api server
+
 ***** ChangeLog for 6.0.1 compared to 6.0.* *****
 
 FIX: #7000 Dashboard link for late pending payment supplier invoices do not work
