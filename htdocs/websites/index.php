@@ -1246,7 +1246,7 @@ if (count($object->records) > 0)
 
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-        print '<div class="websiteselection hideonsmartphoneimp monwidth100">';
+        print '<div class="websiteselection hideonsmartphoneimp minwidth100">';
         print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
         print '</div>';
 
