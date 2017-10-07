@@ -442,7 +442,7 @@ if (empty($reshook))
 
       $date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
       $date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
-      if (!empty($date_end) && $date_start > $date_end)
+      if (!empty($date_start) && !empty($date_end) && $date_start > $date_end)
       {
           setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
           $error++;
@@ -646,7 +646,7 @@ if (empty($reshook))
 
 	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
-      if (!empty($date_end_update) && $date_start_update > $date_end_update)
+      if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update)
       {
           setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
           $action = 'editline';
