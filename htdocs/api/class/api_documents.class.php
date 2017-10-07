@@ -87,94 +87,94 @@ class Documents extends DolibarrApi
 
 		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 		{
-		    throw new RestException(401);
+			throw new RestException(401);
 		}
-	    if (!$accessallowed) {
-	        throw new RestException(401);
-	    }
+		if (!$accessallowed) {
+			throw new RestException(401);
+		}
 
-        // --- Generates the document
-        if ($regeneratedoc)
-        {
-        	$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 0 : 1;
-        	$hidedesc = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 0 : 1;
-        	$hideref = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 0 : 1;
+		// --- Generates the document
+		if ($regeneratedoc)
+		{
+			$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 0 : 1;
+			$hidedesc = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 0 : 1;
+			$hideref = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 0 : 1;
 
-        	if ($module_part == 'facture' || $module_part == 'invoice')
-        	{
-        		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-        		$this->invoice = new Facture($this->db);
-        		$result = $this->invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
-        		if( ! $result ) {
-        			throw new RestException(404, 'Invoice not found');
-        		}
-        		$result = $this->invoice->generateDocument($this->invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-        		if( $result <= 0 ) {
-        			throw new RestException(500, 'Error generating document');
-        		}
-        	}
-        }
+			if ($module_part == 'facture' || $module_part == 'invoice')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				$this->invoice = new Facture($this->db);
+				$result = $this->invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+				if( ! $result ) {
+					throw new RestException(404, 'Invoice not found');
+				}
+				$result = $this->invoice->generateDocument($this->invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if( $result <= 0 ) {
+					throw new RestException(500, 'Error generating document');
+				}
+			}
+		}
 
 		$filename = basename($original_file);
 		$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
 
 		if (! file_exists($original_file_osencoded))
 		{
-		    throw new RestException(404, 'File not found');
+			throw new RestException(404, 'File not found');
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-        return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
-    }
+		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+	}
 
 
-    /**
-     * Return a document.
-     *
-     * @param   int         $id          ID of document
-     * @return  array                    Array with data of file
-     *
-     * @throws RestException
-     */
-    /*
+	/**
+	 * Return a document.
+	 *
+	 * @param   int         $id          ID of document
+	 * @return  array                    Array with data of file
+	 *
+	 * @throws RestException
+	 */
+	/*
     public function get($id) {
         return array('note'=>'xxx');
     }*/
 
 
-    /**
-     * Push a file.
-     * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
-     * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
-     *
-     * @param   string  $filename           Name of file to create ('FA1705-0123')
-     * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', ...)
-     * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
-     * @param   string  $subdir             Subdirectory (Only if ref not provided)
-     * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
-     * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
-     * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
-     * @return  bool     				    State of copy
-     * @throws RestException
-     */
-    public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
-    {
-        global $db, $conf;
+	/**
+	 * Push a file.
+	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 *
+	 * @param   string  $filename           Name of file to create ('FA1705-0123')
+	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', ...)
+	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
+	 * @param   string  $subdir             Subdirectory (Only if ref not provided)
+	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
+	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
+	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
+	 * @return  bool     				    State of copy
+	 * @throws RestException
+	 */
+	public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
+	{
+		global $db, $conf;
 
-        /*var_dump($modulepart);
+		/*var_dump($modulepart);
         var_dump($filename);
         var_dump($filecontent);
         exit;*/
 
-        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
-        if (!DolibarrApiAccess::$user->rights->ecm->upload) {
-            throw new RestException(401);
-        }
+		if (!DolibarrApiAccess::$user->rights->ecm->upload) {
+			throw new RestException(401);
+		}
 
-        $newfilecontent = '';
-        if (empty($fileencoding)) $newfilecontent = $filecontent;
-        if ($fileencoding == 'base64') $newfilecontent = base64_decode($filecontent);
+		$newfilecontent = '';
+		if (empty($fileencoding)) $newfilecontent = $filecontent;
+		if ($fileencoding == 'base64') $newfilecontent = base64_decode($filecontent);
 
 		$original_file = dol_sanitizeFileName($filename);
 
