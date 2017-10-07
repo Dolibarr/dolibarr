@@ -112,25 +112,25 @@ print '<table class="border" width="100%">';
 print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
 if ($object->ldap_sid)
 {
-    print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
+	print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 }
 else
 {
-    print '<td>'.$object->login.'</td>';
+	print '<td>'.$object->login.'</td>';
 }
 print '</tr>';
 
 if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
 {
-    $ldap = new Ldap();
-    $result = $ldap->connect_bind();
-    if ($result > 0)
-    {
-        $userSID = $ldap->getObjectSid($object->login);
-    }
-    print '<tr><td class="valigntop">'.$langs->trans("SID").'</td>';
-    print '<td>'.$userSID.'</td>';
-    print "</tr>\n";
+	$ldap = new Ldap();
+	$result = $ldap->connect_bind();
+	if ($result > 0)
+	{
+		$userSID = $ldap->getObjectSid($object->login);
+	}
+	print '<tr><td class="valigntop">'.$langs->trans("SID").'</td>';
+	print '<td>'.$userSID.'</td>';
+	print "</tr>\n";
 }
 
 // LDAP DN
@@ -160,7 +160,7 @@ print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -184,32 +184,32 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-    $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info,1);
-    $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records = $ldap->getAttribute($dn,$search);
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info,1);
+	$search = "(".$object->_load_ldap_dn($info,2).")";
+	$records = $ldap->getAttribute($dn,$search);
 
-    //print_r($records);
+	//print_r($records);
 
-    // Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
-    {
-        if (! is_array($records))
-        {
-            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-        }
-        else
-        {
-            $result=show_ldap_content($records,0,$records['count'],true);
-        }
-    }
-    else
-    {
-        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-    }
+	// Affichage arbre
+	if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	{
+		if (! is_array($records))
+		{
+			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+		}
+		else
+		{
+			$result=show_ldap_content($records,0,$records['count'],true);
+		}
+	}
+	else
+	{
+		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+	}
 
-    $ldap->unbind();
-    $ldap->close();
+	$ldap->unbind();
+	$ldap->close();
 }
 else
 {
