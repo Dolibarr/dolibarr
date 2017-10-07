@@ -25,6 +25,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -32,6 +33,9 @@ if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+if (! empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
 $langs->load("compta");
@@ -281,6 +285,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 $form = new Form($db);
 $formsocialcontrib = new FormSocialContrib($db);
+$bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Card");
@@ -292,8 +297,6 @@ llxHeader("",$title,$help_url);
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
-
-	$var=false;
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -569,12 +572,20 @@ if ($id > 0)
 		print '<div class="fichehalfright">';
 		print '<div class="ficheaddleft">';
 
+		$nbcols = 3;
+		if (! empty($conf->banque->enabled)) {
+			$nbcols ++;
+		}
+
 		/*
 		 * Payments
 		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
-		$sql.= "c.code as type_code,c.libelle as paiement_type";
+		$sql.= " c.code as type_code,c.libelle as paiement_type,";
+		$sql.= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+    	$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
+    	$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql.= " WHERE p.fk_charge = ".$id;
@@ -597,21 +608,43 @@ if ($id > 0)
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
+		    if (! empty($conf->banque->enabled)) {
+        		print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
+    		}
 			print '<td align="right">'.$langs->trans("Amount").'</td>';
 			print '</tr>';
 
-			$var=true;
 			if ($num > 0)
 			{
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
 
-					print "<tr ".$bc[$var]."><td>";
+					print '<tr class="oddeven"><td>';
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 					$labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
 					print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+					if (! empty($conf->banque->enabled))
+					{
+						$bankaccountstatic->id = $objp->baid;
+						$bankaccountstatic->ref = $objp->baref;
+						$bankaccountstatic->label = $objp->baref;
+						$bankaccountstatic->number = $objp->banumber;
+
+						if (! empty($conf->accounting->enabled)) {
+							$bankaccountstatic->account_number = $objp->account_number;
+
+							$accountingjournal = new AccountingJournal($db);
+							$accountingjournal->fetch($objp->fk_accountancy_journal);
+							$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+						}
+
+						print '<td align="right">';
+						if ($bankaccountstatic->id)
+							print $bankaccountstatic->getNomUrl(1, 'transactions');
+						print '</td>';
+					}
 					print '<td align="right">'.price($objp->amount)."</td>\n";
 					print "</tr>";
 					$totalpaye += $objp->amount;
@@ -624,17 +657,15 @@ if ($id > 0)
 				print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 			}
 
-			//if ($object->status == ChargeSociales::STATUS_DRAFT)
-			//{
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
 
-				$resteapayer = $object->amount - $totalpaye;
-				$cssforamountpaymentcomplete = 'amountpaymentcomplete';
+			$resteapayer = $object->amount - $totalpaye;
+			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
-				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-				print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
-			//}
+			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("RemainderToPay")." :</td>";
+			print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
+
 			print "</table>";
 			$db->free($resql);
 		}
