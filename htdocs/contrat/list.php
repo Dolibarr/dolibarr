@@ -354,6 +354,8 @@ if ($resql)
     if ($search_dfyear != '')       $param.='&search_dfyear='.urlencode($search_dfyear);
     if ($search_dfmonth != '')      $param.='&search_dfmonth='.urlencode($search_dfmonth);
     if ($search_sale != '')         $param.='&search_sale=' .urlencode($search_sale);
+    if ($search_user != '')			$param.='&search_user=' .urlencode($search_user);
+    if ($search_product_category != '')	$param.='&search_product_category=' .urlencode($search_product_category);
     if ($show_files)                $param.='&show_files=' .urlencode($show_files);
     if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
