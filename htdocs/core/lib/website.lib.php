@@ -294,6 +294,8 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 {
 	global $conf;
 
+	$error=0;
+
 	$alreadygrabbed=array();
 
 	if (preg_match('/\/$/', $urltograb)) $urltograb.='.';
@@ -344,7 +346,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 				fputs($fp, $tmpgeturl['content']);
 				fclose($fp);
 				if (! empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+					@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
 			}
 		}
 
@@ -402,7 +404,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 				fputs($fp, $tmpgeturl['content']);
 				fclose($fp);
 				if (! empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+					@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
 			}
 		}
 
