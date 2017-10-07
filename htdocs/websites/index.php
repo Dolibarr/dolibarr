@@ -231,6 +231,16 @@ if ($action == 'add')
 
     if ($urltograb)
     {
+    	// Clean url to grab, so url can be
+    	// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
+    	$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
+    	$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
+		if (empty($urltograbwithoutdomainandparam) && ! preg_match('/\/$/', $urltograb))
+		{
+			$urltograb.='/';
+		}
+		$urltograbdirwithoutslash = dirname($urltograb.'.');
+
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
     	$tmp = getURLContent($urltograb);
@@ -245,12 +255,11 @@ if ($action == 'add')
     		preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
     		$head = $reg[1];
 
-    		$urltograbwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograbwithoutdomain);
-   			$objectpage->pageurl = basename($urltograbwithoutdomain);
+   			$objectpage->pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-',$urltograbwithoutdomainandparam));
    			if (empty($objectpage->pageurl))
    			{
    				$tmpdomain = getDomainFromURL($urltograb);
-   				$objectpage->pageurl='home'.$tmpdomain;
+   				$objectpage->pageurl=$tmpdomain.'-home';
    			}
 
     		if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
@@ -297,7 +306,8 @@ if ($action == 'add')
     		preg_match_all('/<script([^\.]+)src="([^>"]+)"([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
     		foreach ($regs[0] as $key => $val)
     		{
-    			$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+    			$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+
     			$linkwithoutdomain = $regs[2][$key];
     			//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
     			if (preg_match('/^http/', $regs[2][$key]))
@@ -338,7 +348,7 @@ if ($action == 'add')
     		preg_match_all('/<link([^\.]+)href="([^>"]+\.css)"([^>]*)>/i', $objectpage->htmlheader, $regs);
 			foreach ($regs[0] as $key => $val)
     		{
-    			$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+    			$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
     			$linkwithoutdomain = $regs[2][$key];
     			//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
     			if (preg_match('/^http/', $regs[2][$key]))
@@ -351,9 +361,9 @@ if ($action == 'add')
     			$tmpgeturl = getURLContent($urltograbbis);
     			if ($tmpgeturl['curl_error_no'])
     			{
-    			 $error++;
-    			 setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
-    			 $action='create';
+    				$error++;
+    				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+    				$action='create';
     			}
     			else
     			{
@@ -368,6 +378,9 @@ if ($action == 'add')
 
     			 //	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
     			 $pagecsscontent.='/* Content of file '.$urltograbbis.' */'."\n";
+
+    			 getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1);
+
     			 $pagecsscontent.=$tmpgeturl['content']."\n";
 
     			 $objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key],'/').'\n*/ims', '', $objectpage->htmlheader);
@@ -378,6 +391,7 @@ if ($action == 'add')
 
     		//print dol_escape_htmltag($tmp);exit;
     		$objectpage->htmlheader .= $pagecsscontent;
+
 
     		// Now loop to fetch all images
     		$tmp = $objectpage->content;
@@ -477,7 +491,6 @@ if ($action == 'add')
 
 		if (! dol_is_file($filehtmlheader))
 		{
-			// TODO use header of page for common header ?
 			$htmlheadercontent = "<!-- HTML header content (common for all pages) -->";
 			$result=dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 		}
@@ -504,7 +517,7 @@ if ($action == 'add')
 	}
 }
 
-// Update page
+// Delete page
 if ($action == 'delete')
 {
     $db->begin();
@@ -1154,6 +1167,10 @@ if (count($object->records) > 0)
 
     if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
     {
+        print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
+        print '</a>';
+
         print '<div class="websiteinputurl" id="websiteinputurl">';
         print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
         //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
@@ -1165,10 +1182,6 @@ if (count($object->records) > 0)
         $urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
         print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
         print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
-        print '</a>';
-
-        print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
         print '</a>';
     }
 
@@ -1303,6 +1316,10 @@ if (count($object->records) > 0)
             $realpage=$urlwithroot.'/public/websites/index.php?website='.$website.'&pageref='.$websitepage->pageurl;
             $pagealias = $websitepage->pageurl;
 
+            print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview');
+            print '</a>';       // View page in new Tab
+
             print '<div class="websiteinputurl" id="websiteinputpage">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
             $htmltext=$langs->trans("PageNameAliasHelp", $langs->transnoentitiesnoconv("EditPageMeta"));
@@ -1314,10 +1331,6 @@ if (count($object->records) > 0)
             print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext)).'">';
             print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
             print '</a>';
-
-            print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
-            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview');
-            print '</a>';       // View page in new Tab
             //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
 
             // TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
@@ -1767,14 +1780,18 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
         $objectpage->fetch($pageid);
         $csscontent = @file_get_contents($filecss);
 
-        $out = '<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
+        $out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database) -->'."\n";
 
         $out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
+
 
         // REPLACEMENT OF LINKS When page called by website editor
 
         $out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+        $out.= '<!-- Include website CSS file -->'."\n";
         $out.=dolWebsiteReplacementOfLinks($object, $csscontent);
+        $out.= '<!-- Include HTML header from page inline block -->'."\n";
+        $out.= $objectpage->htmlheader."\n";
         $out.='</style>'."\n";
 
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
