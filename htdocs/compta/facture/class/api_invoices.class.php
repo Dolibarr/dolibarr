@@ -310,9 +310,9 @@ class Invoices extends DolibarrApi
      * Deletes a line of a given invoice
      *
      * @param int   $id             Id of invoice
-     * @param int   $rowid		Id of the line to delete
+     * @param int   $lineid 		Id of the line to delete
      *
-     * @url     DELETE {id}/deleteline
+     * @url     DELETE {id}/deleteline/{lineid}
      *
      * @return array
      * @throws 304
@@ -320,13 +320,17 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function deleteLine($id, $rowid) {
+    function deleteLine($id, $lineid) {
 
       if(! DolibarrApiAccess::$user->rights->facture->creer) {
                         throw new RestException(401);
                   }
-      if(empty($rowid)) {
-         throw new RestException(400, 'RowID is mandatory');
+      if(empty($lineid)) {
+         throw new RestException(400, 'Line ID is mandatory');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
       $result = $this->invoice->fetch($id);
@@ -334,17 +338,13 @@ class Invoices extends DolibarrApi
          throw new RestException(404, 'Invoice not found');
       }
 
-
-      $result = $this->invoice->deleteline($rowid);
+      $result = $this->invoice->deleteline($lineid);
       if( $result < 0) {
          throw new RestException(304);
       }
 
       $result = $this->invoice->fetch($id);
 
-                  if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
-                          throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
       $this->invoice->getLinesArray();
       $result = array();
       foreach ($this->invoice->lines as $line) {
