@@ -141,6 +141,7 @@ global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
 $filehtmlheader=$pathofwebsite.'/htmlheader.html';
 $filecss=$pathofwebsite.'/styles.css.php';
+$filejs=$pathofwebsite.'/javascript.js.php';
 $filerobot=$pathofwebsite.'/robots.txt';
 $filehtaccess=$pathofwebsite.'/.htaccess';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
@@ -497,8 +498,14 @@ if ($action == 'add')
 
 		if (! dol_is_file($filecss))
 		{
-			$csscontent = "/* CSS content (all pages) */\nbody.bodywebsite { margin: 0; }'";
+			$csscontent = "/* CSS content (all pages) */\nbody.bodywebsite { margin: 0; }";
 			$result=dolSaveCssFile($filecss, $csscontent);
+		}
+
+		if (! dol_is_file($filejs))
+		{
+			$jscontent = "/* JS content (all pages) */\n";
+			$result=dolSaveJsFile($filejs, $jscontent);
 		}
 
 		if (! dol_is_file($filerobot))
@@ -621,7 +628,39 @@ if ($action == 'updatecss')
 	    }
 
 
-	    // Css file
+		// Js file
+	    $jscontent ='';
+
+	    $jscontent.= "<?php // BEGIN PHP\n";
+	    $jscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	    $jscontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+	    $jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+	    $jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+	    $jscontent.= "ob_start();\n";
+	    $jscontent.= "header('Content-type: application/javascript');\n";
+	    $jscontent.= "// END PHP ?>\n";
+
+	    $jscontent.= GETPOST('WEBSITE_JS_INLINE', 'none');
+
+	    $jscontent.= "\n".'<?php // BEGIN PHP'."\n";
+	    $jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+	    $jscontent.= "// END PHP ?>"."\n";
+
+	    dol_syslog("Save js content into ".$filejs);
+
+	    dol_mkdir($pathofwebsite);
+	    $result = file_put_contents($filejs, $jscontent);
+	    if (! empty($conf->global->MAIN_UMASK))
+	        @chmod($filejs, octdec($conf->global->MAIN_UMASK));
+
+	    if (! $result)
+	    {
+	        $error++;
+	        setEventMessages('Failed to write file '.$filejs, null, 'errors');
+	    }
+
+
+	    // Robot file
 	    $robotcontent ='';
 
 	    /*$robotcontent.= "<?php // BEGIN PHP\n";
@@ -1424,6 +1463,12 @@ if ($action == 'editcss')
     $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
     if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n".'body.bodywebsite { margin: 0; }';
 
+    $jscontent = @file_get_contents($filejs);
+    // Clean the php js file to remove php code and get only js part
+    $jscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $jscontent);
+    $jscontent.= GETPOST('WEBSITE_JS_INLINE');
+    if (! trim($jscontent)) $jscontent='/* JS content (all pages) */'."\n";
+
     $htmlheader = @file_get_contents($filehtmlheader);
     // Clean the php htmlheader file to remove php code and get only html part
     $htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheader);
@@ -1470,6 +1515,16 @@ if ($action == 'editcss')
 
     $doleditor=new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, 'CSS', 'css');
+
+    print '</td></tr>';
+
+    // JS file
+    print '<tr><td class="tdtop">';
+    print $langs->trans('WEBSITE_JS_INLINE');
+    print '</td><td>';
+
+    $doleditor=new DolEditor('WEBSITE_JS_INLINE', $jscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	print $doleditor->Create(1, '', true, 'JS', 'javascript');
 
     print '</td></tr>';
 
@@ -1731,10 +1786,8 @@ if ($action == 'editmenu')
 if ($action == 'editsource')
 {
 	/*
-	 * Editing global variables not related to a specific theme
+	 * Editing with source editor
 	 */
-
-	//$csscontent = @file_get_contents($filecss);
 
 	$contentforedit = '';
 	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
@@ -1750,10 +1803,8 @@ if ($action == 'editsource')
 if ($action == 'editcontent')
 {
     /*
-     * Editing global variables not related to a specific theme
+     * Editing with default ckeditor
      */
-
-    //$csscontent = @file_get_contents($filecss);
 
     $contentforedit = '';
     /*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
@@ -1779,6 +1830,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
     	// Ouput page under the Dolibarr top menu
         $objectpage->fetch($pageid);
         $csscontent = @file_get_contents($filecss);
+        $jscontent = @file_get_contents($filejs);
 
         $out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database) -->'."\n";
 
@@ -1985,6 +2037,33 @@ function dolSaveCssFile($filecss, $csscontent)
 	if (! $result)
 	{
 		setEventMessages('Failed to write file '.$filecss, null, 'errors');
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$filejs				Full path of filename to generate
+ * @param	string		$jscontent			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveJsFile($filejs, $jscontent)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save html header into ".$filejs);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($filejs, $jscontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filejs, octdec($conf->global->MAIN_UMASK));
+
+	if (! $result)
+	{
+		setEventMessages('Failed to write file '.$filejs, null, 'errors');
 		return false;
 	}
 
