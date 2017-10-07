@@ -1981,10 +1981,16 @@ class CommandeFournisseur extends CommonOrder
 
         if ($user->rights->fournisseur->commande->receptionner)
         {
+        	// Define the new status
             if ($type == 'par') $statut = self::STATUS_RECEIVED_PARTIALLY;
-            if ($type == 'tot')	$statut = self::STATUS_RECEIVED_COMPLETELY;
-            if ($type == 'nev') $statut = self::STATUS_CANCELED_AFTER_ORDER;
-            if ($type == 'can') $statut = self::STATUS_CANCELED_AFTER_ORDER;
+            elseif ($type == 'tot')	$statut = self::STATUS_RECEIVED_COMPLETELY;
+            elseif ($type == 'nev') $statut = self::STATUS_CANCELED_AFTER_ORDER;
+            elseif ($type == 'can') $statut = self::STATUS_CANCELED_AFTER_ORDER;
+			else {
+            	$error++;
+                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
+                return -2;
+			}
 
             // Some checks to accept the record
             if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
@@ -2017,14 +2023,6 @@ class CommandeFournisseur extends CommonOrder
 
             // TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
-
-            // $statut is the new statut after reception
-            if (! $error && ! ($statut == self::STATUS_RECEIVED_PARTIALLY || $statut == self::STATUS_RECEIVED_COMPLETELY || $statut == self::STATUS_CANCELED_AFTER_ORDER))
-            {
-            	$error++;
-                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
-                $result = -2;
-            }
 
             if (! $error)
             {

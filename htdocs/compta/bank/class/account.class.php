@@ -1306,11 +1306,8 @@ class Account extends CommonObject
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if (empty($mode))
-        {
-            $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
-        }
-        else if ($mode == 'transactions')
+        $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
+        if ($mode == 'transactions')
         {
             $url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
         }

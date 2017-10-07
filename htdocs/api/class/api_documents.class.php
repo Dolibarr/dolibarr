@@ -68,7 +68,7 @@ class Documents extends DolibarrApi
 	 */
 	public function index($module_part, $original_file='', $regeneratedoc=0)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		if (empty($module_part)) {
 				throw new RestException(400, 'bad value for parameter modulepart');
@@ -108,7 +108,7 @@ class Documents extends DolibarrApi
 				if( ! $result ) {
 					throw new RestException(404, 'Invoice not found');
 				}
-				$result = $this->invoice->generateDocument($this->invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $this->invoice->generateDocument($this->invoice->modelpdf, $langs, $hidedetails, $hidedesc, $hideref);
 				if( $result <= 0 ) {
 					throw new RestException(500, 'Error generating document');
 				}
