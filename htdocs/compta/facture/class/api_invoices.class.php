@@ -312,13 +312,13 @@ class Invoices extends DolibarrApi
      * @param int   $id             Id of invoice
      * @param int   $lineid 		Id of the line to delete
      *
-     * @url     DELETE {id}/deleteline/{lineid}
+     * @url     DELETE {id}/lines/{lineid}
      *
      * @return array
-     * @throws 304
      * @throws 400
      * @throws 401
      * @throws 404
+     * @throws 405
      */
     function deleteLine($id, $lineid) {
 
@@ -340,7 +340,7 @@ class Invoices extends DolibarrApi
 
       $result = $this->invoice->deleteline($lineid);
       if( $result < 0) {
-         throw new RestException(304);
+         throw new RestException(405, $this->invoice->error);
       }
 
       $result = $this->invoice->fetch($id);
@@ -355,11 +355,11 @@ class Invoices extends DolibarrApi
 
 
 
-    
+
     /**
      * Add a line to a given invoice
-     * 
-     * Exemple of POST query : { "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000", "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0", "fk_remise_except": null,  "product_type": "1", "rang": "-1", "special_code": "0", "fk_parent_line": null, "fk_fournprice": null, "pa_ht": "0.00000000", "label": "", "array_options": [], "situation_percent": "100", "fk_prev_id": null, "fk_unit": null }   
+     *
+     * Exemple of POST query : { "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000", "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0", "fk_remise_except": null,  "product_type": "1", "rang": "-1", "special_code": "0", "fk_parent_line": null, "fk_fournprice": null, "pa_ht": "0.00000000", "label": "", "array_options": [], "situation_percent": "100", "fk_prev_id": null, "fk_unit": null }
      *
      * @param int   $id             Id of invoice
      * @param array $request_data   Invoiceline data
@@ -381,14 +381,14 @@ class Invoices extends DolibarrApi
       if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
                           throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-      
-      $request_data = (object) $request_data;  
-            
+
+      $request_data = (object) $request_data;
+
       // Reset fk_parent_line for no child products and special product
       if (($request_data->product_type != 9 && empty($request_data->fk_parent_line)) || $request_data->product_type == 9) {
               $request_data->fk_parent_line = 0;
-      }  
-        
+      }
+
       $updateRes = $this->invoice->addline(
                               $request_data->desc,
                               $request_data->subprice,
@@ -436,13 +436,13 @@ class Invoices extends DolibarrApi
      * @url POST    {id}/settodraft
      *
      * @return  array
-     * 
+     *
      * @throws 200
      * @throws 304
      * @throws 401
      * @throws 404
      * @throws 500
-     * 
+     *
      */
     function settodraft($id, $idwarehouse=-1)
     {

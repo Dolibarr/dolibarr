@@ -370,8 +370,10 @@ class Proposals extends DolibarrApi
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
 	 * @return int
+     * @throws 401
+     * @throws 404
 	 */
-	function delLine($id, $lineid) {
+	function deleteLine($id, $lineid) {
 	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
@@ -384,9 +386,10 @@ class Proposals extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
-			$request_data = (object) $request_data;
+
+	  $request_data = (object) $request_data;
 	  $updateRes = $this->propal->deleteline($lineid);
-	  if ($updateRes == 1) {
+	  if ($updateRes > 0) {
 		return $this->get($id);
 	  }
 	  return false;
