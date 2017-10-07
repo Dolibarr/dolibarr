@@ -6078,9 +6078,10 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
-function picto_from_langcode($codelang)
+function picto_from_langcode($codelang, $moreatt = '')
 {
 	global $langs;
 
@@ -6090,7 +6091,7 @@ function picto_from_langcode($codelang)
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
+		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
 	}
 
 	$langtocountryflag = array(
@@ -6108,7 +6109,7 @@ function picto_from_langcode($codelang)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png');
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
 }
 
 /**
