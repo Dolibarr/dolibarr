@@ -66,7 +66,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE_PERSO',GETPOST("fieldphoneperso"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
-    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_COMPANY',GETPOST("fieldcompany"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ADDRESS',GETPOST("fieldaddress"),'chaine',0,'',$conf->entity)) $error++;
@@ -85,22 +85,22 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE',   GETPOST("fieldlastsubscriptiondate"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT', GETPOST("fieldlastsubscriptionamount"),'chaine',0,'',$conf->entity)) $error++;
 
-    // This one must be after the others
-    $valkey='';
-    $key=GETPOST("key");
-    if ($key) $valkey=$conf->global->$key;
-    if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$valkey,'chaine',0,'',$conf->entity)) $error++;
+	// This one must be after the others
+	$valkey='';
+	$key=GETPOST("key");
+	if ($key) $valkey=$conf->global->$key;
+	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$valkey,'chaine',0,'',$conf->entity)) $error++;
 
-    if (! $error)
-    {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-    	$db->rollback();
-    	dol_print_error($db);
-    }
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 
