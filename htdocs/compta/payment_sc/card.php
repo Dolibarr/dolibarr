@@ -159,8 +159,7 @@ if ($action == 'valide')
 }
 
 
-//$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
-$linkback = '';
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/payments.php">' . $langs->trans("BackToList") . '</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 
