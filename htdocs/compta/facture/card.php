@@ -2847,8 +2847,8 @@ else if ($id > 0 || ! empty($ref))
 		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 	} else {
-		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%'))";
-		$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'";
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 	}
 
 	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
@@ -2871,9 +2871,9 @@ else if ($id > 0 || ! empty($ref))
 
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
-		if($object->type == 0) $type_fac = 'ExcessReceived';
-		elseif($object->type == 2) $type_fac = 'CreditNote';
-		elseif($object->type == 3) $type_fac = 'Deposit';
+		if($object->type == Facture::TYPE_STANDARD) $type_fac = 'ExcessReceived';
+		elseif($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
+		elseif($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
@@ -3826,6 +3826,8 @@ else if ($id > 0 || ! empty($ref))
                 $obj = $db->fetch_object($resql);
                 $invoice->fetch($obj->fk_facture_source);
                 print '<tr><td colspan="' . $nbcols . '" align="right">';
+                if ($invoice->type == Facture::TYPE_STANDARD)
+                    print $langs->trans("ExcessReceived") . ' ';
                 if ($invoice->type == Facture::TYPE_CREDIT_NOTE)
                     print $langs->trans("CreditNote") . ' ';
                 if ($invoice->type == Facture::TYPE_DEPOSIT)
