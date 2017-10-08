@@ -5296,6 +5296,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
     		$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
     		$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
+
+    		$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+    		$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
+
     	}
     	else
     	{
@@ -5340,15 +5344,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
 	    	}
 
-	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
-	    	if ($object->table_element && $object->id > 0)
+	    	if (is_object($object) && $object->element == 'shipping')
 	    	{
-		    	$extrafieldstmp = new ExtraFields($db);
-		    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-		    	$object->fetch_optionals($object->id, $extralabels);
-		    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
-		    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-		    	}
+	    		$substitutionarray['__SHIPPINGTRACKNUM__']=$object->tracking_number;
+	    		$substitutionarray['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 	    	}
 
 	    	if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
@@ -5364,6 +5363,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
 	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
 	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+	    	}
+
+	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
+	    	if ($object->table_element && $object->id > 0)
+	    	{
+	    		$extrafieldstmp = new ExtraFields($db);
+	    		$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+	    		$object->fetch_optionals($object->id, $extralabels);
+	    		foreach ($extrafieldstmp->attribute_label as $key => $label) {
+	    			$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+	    		}
 	    	}
 
 	    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';

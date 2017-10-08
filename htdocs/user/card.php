@@ -1723,9 +1723,17 @@ else
 
 
 			//Select mail models is same action as presend
-			if (GETPOST('modelselected')) {
-				$action = 'presend';
-			}
+			if (GETPOST('modelselected')) $action = 'presend';
+
+			// Presend form
+			$modelmail='user';
+			$defaulttopic='Information';
+			$diroutput = $conf->user->dir_output;
+			$trackid = 'user'.$object->id;
+
+			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
+			/*
 			if ($action == 'presend')
 			{
 				// Show email form
@@ -1798,6 +1806,7 @@ else
 
 				dol_fiche_end();
 			}
+			*/
 
 			if (GETPOST('action','aZ09') != 'presend' && GETPOST('action','aZ09') != 'send')
 			{
@@ -2538,7 +2547,7 @@ else
 			print '</form>';
 		}
 
-		if ($action != 'edit')
+		if ($action != 'edit' && $action != 'presend')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			/*

@@ -170,6 +170,7 @@ if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send']=$la
 if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans('MailToThirdparty');
 if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
+$elementList['user']=$langs->trans('MailToUser');
 $elementList['all'] =$langs->trans('VisibleEverywhere');
 $elementList['none']=$langs->trans('VisibleNowhere');
 
@@ -227,7 +228,7 @@ if (empty($reshook))
             if ($value == 'content') continue;
             if ($value == 'content_lines') continue;
 
-            if ($value == 'topic') $_POST['topic']=$_POST['topic-'.$rowid];
+            if (GETPOST('actionmodify') && $value == 'topic') $_POST['topic']=$_POST['topic-'.$rowid];
 
             if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
             {
@@ -857,6 +858,8 @@ if ($resql)
                         if ($value == 'joinfiles')
                         {
                         	$align="center";
+                        	if ($valuetoshow) $valuetoshow=1;
+                        	else $valuetoshow='';
                         }
 
                         $class='tddict';
