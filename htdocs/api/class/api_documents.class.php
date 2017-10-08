@@ -23,6 +23,8 @@ use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 /**
  * API class for receive files
@@ -148,7 +150,7 @@ class Documents extends DolibarrApi
 	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 *
 	 * @param   string  $filename           Name of file to create ('FA1705-0123')
-	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', ...)
+	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
 	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir             Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
@@ -166,7 +168,10 @@ class Documents extends DolibarrApi
         var_dump($filecontent);
         exit;*/
 
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		if(empty($modulepart))
+		{
+			throw new RestException(400, 'Modulepart not provided.');
+		}
 
 		if (!DolibarrApiAccess::$user->rights->ecm->upload) {
 			throw new RestException(401);
@@ -186,8 +191,52 @@ class Documents extends DolibarrApi
 			if ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';
-				$object=new Facture($db);
+				$object = new Facture($this->db);
+			}
+			elseif ($modulepart == 'project')
+			{
+				$object = new Project($this->db);
+			}
+			elseif ($modulepart == 'task' || $modulepart == 'project_task')
+			{
+				$modulepart = 'project_task';
+				$object = new Task($this->db);
+
+				$task_result = $object->fetch('', $ref);
+
+				// Fetching the tasks project is required because its out_dir might be a subdirectory of the project
+				if($task_result > 0)
+				{
+					$project_result = $object->fetch_projet();
+
+					if($project_result >= 0)
+					{
+						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
+					}
+				}
+				else
+				{
+					throw new RestException(500, 'Error while fetching Task '.$ref);
+				}
+			}
+			// TODO Implement additional moduleparts
+			else
+			{
+				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
+			}
+
+			if(is_object($object))
+			{
 				$result = $object->fetch('', $ref);
+
+				if($result == 0)
+				{
+					throw new RestException(500, "Object with ref '".$ref.'" was not found.');
+			}
+				elseif ($result < 0)
+				{
+					throw new RestException(500, 'Error while fetching object.');
+				}
 			}
 
 			if (! ($object->id > 0))
@@ -195,7 +244,7 @@ class Documents extends DolibarrApi
    				throw new RestException(500, 'The object '.$modulepart." with ref '".$ref."' was not found.");
 			}
 
-			$tmp = dol_check_secure_access_document($modulepart, $tmpreldir.$object->ref, $entity, DolibarrApiAccess::$user, $ref, 'write');
+			$tmp = dol_check_secure_access_document($modulepart, $tmpreldir.dol_sanitizeFileName($object->ref), $entity, DolibarrApiAccess::$user, $ref, 'write');
 			$upload_dir = $tmp['original_file'];
 
 			if (empty($upload_dir) || $upload_dir == '/')
