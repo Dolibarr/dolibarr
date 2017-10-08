@@ -17,19 +17,20 @@
 
  use Luracast\Restler\RestException;
 
+ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for thirdparties
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
- * 
+ *
  */
 class Thirdparties extends DolibarrApi
 {
     /**
      *
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
         'name'
@@ -48,7 +49,7 @@ class Thirdparties extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
         $this->company = new Societe($this->db);
-        
+
         if (! empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
             static::$FIELDS[] = 'email';
         }
@@ -61,20 +62,20 @@ class Thirdparties extends DolibarrApi
    *
    * @param 	int 	$id ID of thirdparty
    * @return 	array|mixed data without useless information
-	 * 
+	 *
    * @throws 	RestException
    */
     function get($id)
-    {		
+    {
       if(! DolibarrApiAccess::$user->rights->societe->lire) {
         throw new RestException(401);
       }
-			
+
       $result = $this->company->fetch($id);
       if( ! $result ) {
           throw new RestException(404, 'Thirdparty not found');
       }
-		
+
       if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
@@ -84,14 +85,14 @@ class Thirdparties extends DolibarrApi
 
     /**
      * List thirdparties
-     * 
+     *
      * Get a list of thirdparties
-     * 
+     *
      * @param   string  $sortfield  Sort field
      * @param   string  $sortorder  Sort order
      * @param   int     $limit      Limit for list
      * @param   int     $page       Page number
-     * @param   int     $mode       Set to 1 to show only customers 
+     * @param   int     $mode       Set to 1 to show only customers
      *                              Set to 2 to show only prospects
      *                              Set to 3 to show only those are not customer neither prospect
      * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
@@ -99,12 +100,12 @@ class Thirdparties extends DolibarrApi
      */
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $sqlfilters = '') {
         global $db, $conf;
-        
+
         $obj_ret = array();
-        
+
         // case of external user, we force socids
         $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
-            
+
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
@@ -112,7 +113,7 @@ class Thirdparties extends DolibarrApi
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
-        
+
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql.= " WHERE t.fk_stcomm = st.id";
@@ -130,7 +131,7 @@ class Thirdparties extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -139,7 +140,7 @@ class Thirdparties extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
 
         if ($limit) {
@@ -175,7 +176,7 @@ class Thirdparties extends DolibarrApi
         }
 		return $obj_ret;
     }
-    
+
     /**
      * Create thirdparty object
      *
@@ -189,13 +190,13 @@ class Thirdparties extends DolibarrApi
       }
       // Check mandatory fields
       $result = $this->_validate($request_data);
-      
+
       foreach($request_data as $field => $value) {
           $this->company->$field = $value;
       }
       if ($this->company->create(DolibarrApiAccess::$user) < 0)
           throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
-      
+
       return $this->company->id;
     }
 
@@ -203,20 +204,20 @@ class Thirdparties extends DolibarrApi
      * Update thirdparty
      *
      * @param int   $id             Id of thirdparty to update
-     * @param array $request_data   Datas   
-     * @return int 
+     * @param array $request_data   Datas
+     * @return int
      */
     function put($id, $request_data = NULL)
     {
         if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
-        
+
         $result = $this->company->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Thirdparty not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -225,13 +226,13 @@ class Thirdparties extends DolibarrApi
             if ($field == 'id') continue;
             $this->company->$field = $value;
         }
-        
+
         if($this->company->update($id, DolibarrApiAccess::$user,1,'','','update'))
             return $this->get ($id);
-        
+
         return false;
     }
-    
+
     /**
      * Delete thirdparty
      *
@@ -252,7 +253,7 @@ class Thirdparties extends DolibarrApi
       }
       return $this->company->delete($id);
     }
-    
+
     /**
      * Get categories for a thirdparty
      *
@@ -266,9 +267,25 @@ class Thirdparties extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        $categories = new Categories();
-        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'customer', $id);
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
     }
 
     /**
@@ -318,24 +335,24 @@ class Thirdparties extends DolibarrApi
 	 * @return    array    Array of cleaned object properties
 	 */
 	function _cleanObjectDatas($object) {
-	
+
 	    $object = parent::_cleanObjectDatas($object);
-	
+
 	    unset($object->total_ht);
 	    unset($object->total_tva);
 	    unset($object->total_localtax1);
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
-	    
+
 	    return $object;
-	}	
-	
+	}
+
 	/**
      * Validate fields before create or update object
-     * 
+     *
      * @param array $data   Datas to validate
      * @return array
-     * 
+     *
      * @throws RestException
      */
     function _validate($data)

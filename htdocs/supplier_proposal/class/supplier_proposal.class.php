@@ -1116,8 +1116,8 @@ class SupplierProposal extends CommonObject
         $sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
         $sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN (' . getEntity('c_paiement').')';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN (' . getEntity('c_payment_term').')';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
         if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -2364,13 +2364,14 @@ class SupplierProposal extends CommonObject
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
-     *	@param      string	$get_params    	Parametres added to url
-     *  @param	    int   	$notooltip		1=Disable tooltip
-     *	@return     string          		String with URL
+     *	@param      int		$withpicto					Add picto into link
+     *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param      string	$get_params    				Parametres added to url
+     *  @param	    int   	$notooltip					1=Disable tooltip
+     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return     string          					String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $get_params='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf, $user;
 
@@ -2395,6 +2396,14 @@ class SupplierProposal extends CommonObject
         }
         if ($option == 'document') {
             $url = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params;
+        }
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
         $linkclose='';

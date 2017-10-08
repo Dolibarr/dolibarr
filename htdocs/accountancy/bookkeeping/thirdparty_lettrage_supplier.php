@@ -205,7 +205,7 @@ llxHeader ( '', 'Compta - Grand Livre' );
 		print_liste_field_titre("Docref", "liste.php", "bk.doc_ref" );
 // 		print_liste_field_titre("Numerocompte", "liste.php", "bk.numero_compte" );
 // 		print_liste_field_titre("Code_tiers", "liste.php", "bk.code_tiers" );
-		print_liste_field_titre("Labelcompte", "liste.php", "bk_label_compte" );
+		print_liste_field_titre("LabelAccount", "liste.php", "bk_label_compte" );
 		print_liste_field_titre("Debit", "liste.php", "bk.debit" );
 		print_liste_field_titre("Credit", "liste.php", "bk.credit" );
 		print_liste_field_titre("Amount", "liste.php", "bk.montant" );

@@ -1,4 +1,4 @@
-# MYMODULE FOR DOLIBARR ERP CRM
+# MYMODULE FOR <a href="https://www.dolibarr.org">DOLIBARR ERP CRM</a>
 
 ## Features
 MyModuleDescription

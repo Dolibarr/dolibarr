@@ -364,6 +364,8 @@ update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_ur
 drop table tmp_bank_url_expense_user;
 
 
+-- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
+
 
 -- Clean product prices
 --delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 

@@ -98,8 +98,8 @@ $form = new Form($db);
 
 
 if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page)) {
-    $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-    $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
+	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
 
 
@@ -134,67 +134,67 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 $param = '';
 $filter = array ();
 if (! empty($search_date_start)) {
-    $filter['t.doc_date>='] = $search_date_start;
-    $tmp=dol_getdate($search_date_start);
-    $param .= '&date_startmonth=' . $tmp['mon'] . '&date_startday=' . $tmp['mday'] . '&date_startyear=' . $tmp['year'];
+	$filter['t.doc_date>='] = $search_date_start;
+	$tmp=dol_getdate($search_date_start);
+	$param .= '&date_startmonth=' . $tmp['mon'] . '&date_startday=' . $tmp['mday'] . '&date_startyear=' . $tmp['year'];
 }
 if (! empty($search_date_end)) {
-    $filter['t.doc_date<='] = $search_date_end;
-    $tmp=dol_getdate($search_date_end);
-    $param .= '&date_endmonth=' . $tmp['mon'] . '&date_endday=' . $tmp['mday'] . '&date_endyear=' . $tmp['year'];
+	$filter['t.doc_date<='] = $search_date_end;
+	$tmp=dol_getdate($search_date_end);
+	$param .= '&date_endmonth=' . $tmp['mon'] . '&date_endday=' . $tmp['mday'] . '&date_endyear=' . $tmp['year'];
 }
 if (! empty($search_doc_date)) {
-    $filter['t.doc_date'] = $search_doc_date;
-    $tmp=dol_getdate($search_doc_date);
-    $param .= '&doc_datemonth=' . $tmp['mon'] . '&doc_dateday=' . $tmp['mday'] . '&doc_dateyear=' . $tmp['year'];
+	$filter['t.doc_date'] = $search_doc_date;
+	$tmp=dol_getdate($search_doc_date);
+	$param .= '&doc_datemonth=' . $tmp['mon'] . '&doc_dateday=' . $tmp['mday'] . '&doc_dateyear=' . $tmp['year'];
 }
 if (! empty($search_doc_type)) {
-    $filter['t.doc_type'] = $search_doc_type;
-    $param .= '&search_doc_type=' . $search_doc_type;
+	$filter['t.doc_type'] = $search_doc_type;
+	$param .= '&search_doc_type=' . $search_doc_type;
 }
 if (! empty($search_doc_ref)) {
-    $filter['t.doc_ref'] = $search_doc_ref;
-    $param .= '&search_doc_ref=' . $search_doc_ref;
+	$filter['t.doc_ref'] = $search_doc_ref;
+	$param .= '&search_doc_ref=' . $search_doc_ref;
 }
 if (! empty($search_accountancy_code)) {
-    $filter['t.numero_compte'] = $search_accountancy_code;
-    $param .= '&search_accountancy_code=' . $search_accountancy_code;
+	$filter['t.numero_compte'] = $search_accountancy_code;
+	$param .= '&search_accountancy_code=' . $search_accountancy_code;
 }
 if (! empty($search_accountancy_code_start)) {
-    $filter['t.numero_compte>='] = $search_accountancy_code_start;
-    $param .= '&search_accountancy_code_start=' . $search_accountancy_code_start;
+	$filter['t.numero_compte>='] = $search_accountancy_code_start;
+	$param .= '&search_accountancy_code_start=' . $search_accountancy_code_start;
 }
 if (! empty($search_accountancy_code_end)) {
-    $filter['t.numero_compte<='] = $search_accountancy_code_end;
-    $param .= '&search_accountancy_code_end=' . $search_accountancy_code_end;
+	$filter['t.numero_compte<='] = $search_accountancy_code_end;
+	$param .= '&search_accountancy_code_end=' . $search_accountancy_code_end;
 }
 if (! empty($search_accountancy_aux_code)) {
-    $filter['t.subledger_account'] = $search_accountancy_aux_code;
-    $param .= '&search_accountancy_aux_code=' . $search_accountancy_aux_code;
+	$filter['t.subledger_account'] = $search_accountancy_aux_code;
+	$param .= '&search_accountancy_aux_code=' . $search_accountancy_aux_code;
 }
 if (! empty($search_accountancy_aux_code_start)) {
-    $filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
-    $param .= '&search_accountancy_aux_code_start=' . $search_accountancy_aux_code_start;
+	$filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
+	$param .= '&search_accountancy_aux_code_start=' . $search_accountancy_aux_code_start;
 }
 if (! empty($search_accountancy_aux_code_end)) {
-    $filter['t.subledger_account<='] = $search_accountancy_aux_code_end;
-    $param .= '&search_accountancy_aux_code_end=' . $search_accountancy_aux_code_end;
+	$filter['t.subledger_account<='] = $search_accountancy_aux_code_end;
+	$param .= '&search_accountancy_aux_code_end=' . $search_accountancy_aux_code_end;
 }
 if (! empty($search_mvt_label)) {
-    $filter['t.label_operation'] = $search_mvt_label;
-    $param .= '&search_mvt_label=' . $search_mvt_label;
+	$filter['t.label_operation'] = $search_mvt_label;
+	$param .= '&search_mvt_label=' . $search_mvt_label;
 }
 if (! empty($search_direction)) {
-    $filter['t.sens'] = $search_direction;
-    $param .= '&search_direction=' . $search_direction;
+	$filter['t.sens'] = $search_direction;
+	$param .= '&search_direction=' . $search_direction;
 }
 if (! empty($search_ledger_code)) {
-    $filter['t.code_journal'] = $search_ledger_code;
-    $param .= '&search_ledger_code=' . $search_ledger_code;
+	$filter['t.code_journal'] = $search_ledger_code;
+	$param .= '&search_ledger_code=' . $search_ledger_code;
 }
 if (! empty($search_mvt_num)) {
-    $filter['t.piece_num'] = $search_mvt_num;
-    $param .= '&search_mvt_num=' . $search_mvt_num;
+	$filter['t.piece_num'] = $search_mvt_num;
+	$param .= '&search_mvt_num=' . $search_mvt_num;
 }
 
 if ($action == 'delbookkeeping') {
@@ -229,16 +229,16 @@ if ($action == 'delbookkeepingyearconfirm') {
 		}
 		else
 		{
-		    setEventMessages("RecordDeleted", null, 'mesgs');
+			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 		Header("Location: list.php");
 		exit;
 	}
 	else
 	{
-	    setEventMessages("NoRecordDeleted", null, 'warnings');
-	    Header("Location: list.php");
-	    exit;
+		setEventMessages("NoRecordDeleted", null, 'warnings');
+		Header("Location: list.php");
+		exit;
 	}
 }
 if ($action == 'delmouvconfirm') {
@@ -248,11 +248,11 @@ if ($action == 'delmouvconfirm') {
 	if (! empty($mvt_num)) {
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
-		    setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		else
 		{
-		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		Header("Location: list.php");
 		exit;
@@ -262,21 +262,21 @@ if ($action == 'delmouvconfirm') {
 // Export into a file with format defined into setup
 if ($action == 'export_file') {
 
-    $result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 
-    if ($result < 0)
-    {
-        setEventMessages($object->error, $object->errors, 'errors');
-    }
-    else
-    {
-        $accountancyexport = new AccountancyExport($db);
-        $accountancyexport->export($object->lines);
-        if (!empty($accountancyexport->errors)) {
-            setEventMessages('', $accountancyexport->errors, 'errors');
-        }
-        exit;
-    }
+	if ($result < 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+	else
+	{
+		$accountancyexport = new AccountancyExport($db);
+		$accountancyexport->export($object->lines);
+		if (!empty($accountancyexport->errors)) {
+			setEventMessages('', $accountancyexport->errors, 'errors');
+		}
+		exit;
+	}
 }
 
 
@@ -330,7 +330,7 @@ if ($action == 'delbookkeepingyear') {
 	);
 	$form_question['deljournal'] = array (
 			'name' => 'deljournal',
-			'type' => 'other',       // We don't use select here, the journal_array is already a select html component
+			'type' => 'other',	   // We don't use select here, the journal_array is already a select html component
 			'label' => $langs->trans('DelJournal'),
 			'value' => $journal_array,
 			'default' => $deljournal
@@ -340,7 +340,7 @@ if ($action == 'delbookkeepingyear') {
 	print $formconfirm;
 }
 
-//$param='';    param started before
+//$param='';	param started before
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
@@ -399,28 +399,28 @@ print '</td>';
 print '<td class="liste_titre">';
 print '<div class="nowrap">';
 print $langs->trans('From').' ';
-// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 // use setup of keypress to select thirdparty and this hang browser on large database.
 if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 {
-    print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 }
 else
 {
-    print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+	print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
 }
 print '</div>';
 print '<div class="nowrap">';
 print $langs->trans('to').' ';
-// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 // use setup of keypress to select thirdparty and this hang browser on large database.
 if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 {
-    print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 }
 else
 {
-    print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+	print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
 }
 print '</div>';
 print '</td>';
@@ -489,8 +489,8 @@ while ($i < min($num, $limit))
 }
 
 print '<tr class="liste_total">';
-if ($num < $limit) print '<td align="left" colspan="6">'.$langs->trans("Total").'</td>';
-else print '<td align="left" colspan="6">'.$langs->trans("Totalforthispage").'</td>';
+if ($num < $limit) print '<td align="left" colspan="7">'.$langs->trans("Total").'</td>';
+else print '<td align="left" colspan="7">'.$langs->trans("Totalforthispage").'</td>';
 print '</td>';
 print '<td  align="right">';
 print price($total_debit);

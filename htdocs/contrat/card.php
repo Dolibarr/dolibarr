@@ -327,7 +327,7 @@ if (empty($reshook))
 										$label = $lines[$i]->product_label;
 									}
 
-									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
+									$desc = ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
 								}
 								else {
 								    $desc = dol_htmlentitiesbr($lines[$i]->desc);
@@ -439,6 +439,14 @@ if (empty($reshook))
 	    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 	    	$error++;
 	    }
+
+      $date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
+      $date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+      if (!empty($date_start) && !empty($date_end) && $date_start > $date_end)
+      {
+          setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
+          $error++;
+      }
 
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
@@ -638,90 +646,100 @@ if (empty($reshook))
 
 	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
-	    $objectline = new ContratLigne($db);
-	    if ($objectline->fetch(GETPOST('elrowid')))
-	    {
-	        $db->begin();
+      if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update)
+      {
+          setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
+          $action = 'editline';
+          $_GET['rowid'] = GETPOST('elrowid');
+          $error++;
+      }
 
-	        if ($date_start_real_update == '') $date_start_real_update=$objectline->date_ouverture;
-	        if ($date_end_real_update == '')   $date_end_real_update=$objectline->date_cloture;
+      if (!$error) {
+          $objectline = new ContratLigne($db);
+          if ($objectline->fetch(GETPOST('elrowid')))
+          {
+              $db->begin();
 
-	        $vat_rate = GETPOST('eltva_tx');
-	        // Define info_bits
-	        $info_bits = 0;
-	        if (preg_match('/\*/', $vat_rate))
-	            $info_bits |= 0x01;
+              if ($date_start_real_update == '') $date_start_real_update=$objectline->date_ouverture;
+              if ($date_end_real_update == '')   $date_end_real_update=$objectline->date_cloture;
 
-    		// Define vat_rate
-    		$vat_rate = str_replace('*', '', $vat_rate);
-	        $localtax1_tx=get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
-	        $localtax2_tx=get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
+              $vat_rate = GETPOST('eltva_tx');
+              // Define info_bits
+              $info_bits = 0;
+              if (preg_match('/\*/', $vat_rate))
+                  $info_bits |= 0x01;
 
-	        $txtva = $vat_rate;
+            // Define vat_rate
+            $vat_rate = str_replace('*', '', $vat_rate);
+              $localtax1_tx=get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+              $localtax2_tx=get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 
-		    // Clean vat code
-	        $vat_src_code='';
-	        if (preg_match('/\((.*)\)/', $txtva, $reg))
-	        {
-	            $vat_src_code = $reg[1];
-	            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-	        }
+              $txtva = $vat_rate;
 
-		  	// ajout prix d'achat
-		  	$fk_fournprice = $_POST['fournprice'];
-		  	if ( ! empty($_POST['buying_price']) )
-		  	  $pa_ht = $_POST['buying_price'];
-		  	else
-		  	  $pa_ht = null;
+            // Clean vat code
+              $vat_src_code='';
+              if (preg_match('/\((.*)\)/', $txtva, $reg))
+              {
+                  $vat_src_code = $reg[1];
+                  $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+              }
 
-		    $fk_unit = GETPOST('unit', 'alpha');
+            // ajout prix d'achat
+            $fk_fournprice = $_POST['fournprice'];
+            if ( ! empty($_POST['buying_price']) )
+              $pa_ht = $_POST['buying_price'];
+            else
+              $pa_ht = null;
 
-	        $objectline->description=GETPOST('product_desc','none');
-	        $objectline->price_ht=GETPOST('elprice');
-	        $objectline->subprice=GETPOST('elprice');
-	        $objectline->qty=GETPOST('elqty');
-	        $objectline->remise_percent=GETPOST('elremise_percent');
-	        $objectline->tva_tx=($txtva?$txtva:0);	// Field may be disabled, so we use vat rate 0
-	        $objectline->vat_src_code=$vat_src_code;
-	        $objectline->localtax1_tx=is_numeric($localtax1_tx)?$localtax1_tx:0;
-	        $objectline->localtax2_tx=is_numeric($localtax2_tx)?$localtax2_tx:0;
-	        $objectline->date_ouverture_prevue=$date_start_update;
-	        $objectline->date_ouverture=$date_start_real_update;
-	        $objectline->date_fin_validite=$date_end_update;
-	        $objectline->date_cloture=$date_end_real_update;
-	        $objectline->fk_user_cloture=$user->id;
-	        $objectline->fk_fournprice=$fk_fournprice;
-	        $objectline->pa_ht=$pa_ht;
+            $fk_unit = GETPOST('unit', 'alpha');
 
-		    if ($fk_unit > 0) {
-			    $objectline->fk_unit = GETPOST('unit');
-		    } else {
-			    $objectline->fk_unit = null;
-		    }
+              $objectline->description=GETPOST('product_desc','none');
+              $objectline->price_ht=GETPOST('elprice');
+              $objectline->subprice=GETPOST('elprice');
+              $objectline->qty=GETPOST('elqty');
+              $objectline->remise_percent=GETPOST('elremise_percent');
+              $objectline->tva_tx=($txtva?$txtva:0);	// Field may be disabled, so we use vat rate 0
+              $objectline->vat_src_code=$vat_src_code;
+              $objectline->localtax1_tx=is_numeric($localtax1_tx)?$localtax1_tx:0;
+              $objectline->localtax2_tx=is_numeric($localtax2_tx)?$localtax2_tx:0;
+              $objectline->date_ouverture_prevue=$date_start_update;
+              $objectline->date_ouverture=$date_start_real_update;
+              $objectline->date_fin_validite=$date_end_update;
+              $objectline->date_cloture=$date_end_real_update;
+              $objectline->fk_user_cloture=$user->id;
+              $objectline->fk_fournprice=$fk_fournprice;
+              $objectline->pa_ht=$pa_ht;
 
-	        // Extrafields
-	        $extrafieldsline = new ExtraFields($db);
-	        $extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-	        $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
-	        $objectline->array_options=$array_options;
+            if ($fk_unit > 0) {
+              $objectline->fk_unit = GETPOST('unit');
+            } else {
+              $objectline->fk_unit = null;
+            }
 
-	        // TODO verifier price_min si fk_product et multiprix
+              // Extrafields
+              $extrafieldsline = new ExtraFields($db);
+              $extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
+              $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+              $objectline->array_options=$array_options;
 
-	        $result=$objectline->update($user);
-	        if ($result > 0)
-	        {
-	            $db->commit();
-	        }
-	        else
-	        {
-	        	setEventMessages($objectline->error, $objectline->errors, 'errors');
-	            $db->rollback();
-	        }
-	    }
-	    else
-	    {
-	    	setEventMessages($objectline->error, $objectline->errors, 'errors');
-	    }
+              // TODO verifier price_min si fk_product et multiprix
+
+              $result=$objectline->update($user);
+              if ($result > 0)
+              {
+                  $db->commit();
+              }
+              else
+              {
+                setEventMessages($objectline->error, $objectline->errors, 'errors');
+                  $db->rollback();
+              }
+          }
+          else
+          {
+            setEventMessages($objectline->error, $objectline->errors, 'errors');
+          }
+      }
 	}
 
 	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
@@ -1311,7 +1329,7 @@ else
 
 		// Contract card
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
         $morehtmlref='';

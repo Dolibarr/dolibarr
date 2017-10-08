@@ -38,6 +38,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
@@ -716,9 +717,13 @@ if (empty($reshook))
 			if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_SITUATION)
 			{
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
-				$sql = 'SELECT SUM(pf.amount) as total_paiements
-						FROM llx_c_paiement as c, llx_paiement_facture as pf, llx_paiement as p
-						WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+
+				$sql = 'SELECT SUM(pf.amount) as total_paiements';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+				$sql.= ' WHERE pf.fk_facture = '.$object->id;
+				$sql.= ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+				$sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
+				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
@@ -3798,6 +3803,7 @@ else if ($id > 0 || ! empty($ref))
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
     $sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+    $sql .= ' AND c.entity IN (' . getEntity('c_paiement').')';
     $sql .= ' ORDER BY p.datep, p.tms';
 
     $result = $db->query($sql);
@@ -3810,18 +3816,21 @@ else if ($id > 0 || ! empty($ref))
         if ($num > 0) {
             while ($i < $num) {
                 $objp = $db->fetch_object($result);
-                print '<tr class="oddeven"><td>';
+
                 $paymentstatic->id = $objp->rowid;
                 $paymentstatic->datepaye = $db->jdate($objp->dp);
                 $paymentstatic->ref = $objp->ref;
                 $paymentstatic->num_paiement = $objp->num_paiement;
                 $paymentstatic->payment_code = $objp->payment_code;
+
+                print '<tr class="oddeven"><td>';
                 print $paymentstatic->getNomUrl(1);
                 print '</td>';
                 print '<td>' . dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
                 $label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
                 print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';
-                if (! empty($conf->banque->enabled)) {
+                if (! empty($conf->banque->enabled))
+                {
                     $bankaccountstatic->id = $objp->baid;
                     $bankaccountstatic->ref = $objp->baref;
                     $bankaccountstatic->label = $objp->baref;
@@ -4324,7 +4333,7 @@ else if ($id > 0 || ! empty($ref))
 			// Delete
 			if ($user->rights->facture->supprimer)
 			{
-				if (! $object->is_erasable()) {
+				if ($object->is_erasable() <= 0) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
 				} else if ($objectidnext) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Delete') . '</a></div>';

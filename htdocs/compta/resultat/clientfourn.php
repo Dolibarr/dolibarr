@@ -822,7 +822,7 @@ else
 				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
-				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity = " . getEntity('c_paiement');
 				$sql.= " WHERE p.entity = ".getEntity('expensereport');
 				$sql.= " AND p.fk_statut>=5";
 
@@ -906,7 +906,7 @@ else
 			    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
 			    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
-			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity = " . getEntity('c_paiement');
 			    $sql.= " WHERE p.entity = ".getEntity('donation');
 			    $sql.= " AND fk_statut >= 2";
 			}

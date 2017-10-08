@@ -184,10 +184,9 @@ class Website extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $ref Ref
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    $id  	Id object
+	 * @param 	string $ref 	Ref
+	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -236,9 +235,6 @@ class Website extends CommonObject
 			if ($numrows > 0) {
 				// Lines
 				$this->fetchLines();
-				{
-					return -3;
-				}
 			}
 
 			if ($numrows > 0) {

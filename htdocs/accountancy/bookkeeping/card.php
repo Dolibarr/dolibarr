@@ -569,7 +569,7 @@ if ($action == 'create') {
 
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
-				print_liste_field_titre("Labelcompte");
+				print_liste_field_titre("LabelAccount");
 				print_liste_field_titre("Label");
 				print_liste_field_titre("Debit", "", "", "", "", 'align="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'align="right"');

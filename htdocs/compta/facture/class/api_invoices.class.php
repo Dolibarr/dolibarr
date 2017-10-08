@@ -305,16 +305,66 @@ class Invoices extends DolibarrApi
       }
       return $result;
     }
-    
+
+    /**
+     * Deletes a line of a given invoice
+     *
+     * @param int   $id             Id of invoice
+     * @param int   $lineid 		Id of the line to delete
+     *
+     * @url     DELETE {id}/lines/{lineid}
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function deleteLine($id, $lineid) {
+
+      if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                        throw new RestException(401);
+                  }
+      if(empty($lineid)) {
+         throw new RestException(400, 'Line ID is mandatory');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      $result = $this->invoice->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Invoice not found');
+      }
+
+      $result = $this->invoice->deleteline($lineid);
+      if( $result < 0) {
+         throw new RestException(405, $this->invoice->error);
+      }
+
+      $result = $this->invoice->fetch($id);
+
+      $this->invoice->getLinesArray();
+      $result = array();
+      foreach ($this->invoice->lines as $line) {
+        array_push($result,$this->_cleanObjectDatas($line));
+      }
+      return $result;
+    }
+
+
+
+
     /**
      * Add a line to a given invoice
-     * 
-     * Exemple of POST query : { "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000", "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0", "fk_remise_except": null,  "product_type": "1", "rang": "-1", "special_code": "0", "fk_parent_line": null, "fk_fournprice": null, "pa_ht": "0.00000000", "label": "", "array_options": [], "situation_percent": "100", "fk_prev_id": null, "fk_unit": null }   
+     *
+     * Exemple of POST query : { "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000", "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0", "fk_remise_except": null,  "product_type": "1", "rang": "-1", "special_code": "0", "fk_parent_line": null, "fk_fournprice": null, "pa_ht": "0.00000000", "label": "", "array_options": [], "situation_percent": "100", "fk_prev_id": null, "fk_unit": null }
      *
      * @param int   $id             Id of invoice
      * @param array $request_data   Invoiceline data
      *
-     * @url     POST {id}/lines
+     * @url     POST {id}/addline
      *
      * @return int
      */
@@ -331,14 +381,14 @@ class Invoices extends DolibarrApi
       if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
                           throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-      
-      $request_data = (object) $request_data;  
-            
+
+      $request_data = (object) $request_data;
+
       // Reset fk_parent_line for no child products and special product
       if (($request_data->product_type != 9 && empty($request_data->fk_parent_line)) || $request_data->product_type == 9) {
               $request_data->fk_parent_line = 0;
-      }  
-        
+      }
+
       $updateRes = $this->invoice->addline(
                               $request_data->desc,
                               $request_data->subprice,
@@ -378,7 +428,59 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Validate an order
+     * Sets an invoice as draft
+     *
+     * @param   int $id             Order ID
+     * @param   int $idwarehouse    Warehouse ID
+     *
+     * @url POST    {id}/settodraft
+     *
+     * @return  array
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     *
+     */
+    function settodraft($id, $idwarehouse=-1)
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->set_draft(DolibarrApiAccess::$user, $idwarehouse);
+        if ($result == 0) {
+                throw new RestException(304, 'Nothing done.');
+        }
+        if ($result < 0) {
+                throw new RestException(500, 'Error : '.$this->invoice->error);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+
+
+    /**
+     * Validate an invoice
      *
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
@@ -411,19 +513,81 @@ class Invoices extends DolibarrApi
 
     	$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
     	if ($result == 0) {
-    		throw new RestException(500, 'Error nothing done. May be object is already validated');
+    		throw new RestException(304, 'Error nothing done. May be object is already validated');
     	}
     	if ($result < 0) {
     		throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
     	}
 
-    	return array(
-	    	'success' => array(
-		    	'code' => 200,
-		    	'message' => 'Invoice validated (Ref='.$this->invoice->ref.')'
-	    	)
-    	);
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+
+
     }
+
+    /**
+     * Sets an invoice as paid
+     *
+     * @param   int 	$id            Order ID
+     * @param   string 	$close_code    Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
+     * @param   string 	$close_note    Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+     *
+     * @url POST    {id}/settopaid
+     *
+     * @return  array 	An invoice object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     */
+    function settopaid($id, $close_code='', $close_note='')
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->set_paid(DolibarrApiAccess::$user, $close_code, $close_note);
+        if ($result == 0) {
+                throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+                throw new RestException(500, 'Error : '.$this->invoice->error);
+        }
+
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+
+
+    }
+
 
     /**
      * Clean sensible object datas

@@ -55,7 +55,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
 	@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));   // We use @ here because this may return warning if safe mode is on or open_basedir is on
-	
+
 	if (count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
 
@@ -63,7 +63,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (! empty($conf->global->MAIN_CURL_SSLVERSION)) curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
-	
+
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -82,12 +82,12 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	if (! is_array($param)) parse_str($param, $array_param);
-    	else 
+    	else
     	{
     	    dol_syslog("parameter param must be a string", LOG_WARNING);
     	    $array_param=$param;
     	}
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields	
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
     }
     else if ($postorget == 'PUTALREADYFORMATED')
     {
@@ -121,7 +121,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     $response = curl_exec($ch);
 
     $request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
-    
+
     dol_syslog("getURLContent request=".$request);
     dol_syslog("getURLContent response=".$response);
 
@@ -130,7 +130,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     {
         // Ad keys to $rep
         $rep['content']=$response;
-        
+
         // moving to display page to display curl errors
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
@@ -146,12 +146,12 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     	//$rep['header_size']=$info['header_size'];
     	//$rep['http_code']=$info['http_code'];
     	dol_syslog("getURLContent http_code=".$rep['http_code']);
-    	
+
         // Add more keys to $rep
         $rep['content']=$response;
     	$rep['curl_error_no']='';
     	$rep['curl_error_msg']='';
-    	 
+
     	//closing the curl
         curl_close($ch);
     }
@@ -159,3 +159,19 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     return $rep;
 }
 
+
+/**
+ * Function get second level domain name.
+ * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
+ *
+ * @param	string	  $url 				    Full URL.
+ * @return	string						    Returns domaine name
+ */
+function getDomainFromURL($url)
+{
+	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url);				// Remove http(s)://
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
+	$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
+	$tmpdomain = preg_replace('/^[^\.]+\./', '', $tmpdomain);			// Remove part www. before domain name
+	return $tmpdomain;
+}
