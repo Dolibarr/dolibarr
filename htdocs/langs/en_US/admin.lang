@@ -462,6 +462,8 @@ Field=Field
 ProductDocumentTemplates=Document templates to generate product document
 FreeLegalTextOnExpenseReports=Free legal text on expense reports
 WatermarkOnDraftExpenseReports=Watermark on draft expense reports
+AttachMainDocByDefault=Set this to 1 if you want to attach main document to email by default (if applicable)
+FilesAttachedToEmail=Attach file
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
