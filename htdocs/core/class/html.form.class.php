@@ -6021,9 +6021,9 @@ class Form
 		{
 			$fullname=$object->getFullName($langs);
 			if ($object->morphy == 'mor') {
-				$ret.= dol_htmlentities($object->societe) . (($object->societe != $fullname)?' ('.dol_htmlentities($fullname).')':'');
+				$ret.= dol_htmlentities($object->societe) . ((! empty($fullname) && $object->societe != $fullname)?' ('.dol_htmlentities($fullname).')':'');
 			} else {
-				$ret.= dol_htmlentities($fullname) . (($object->societe != $fullname)?' ('.dol_htmlentities($object->societe).')':'');
+				$ret.= dol_htmlentities($fullname) . ((! empty($object->societe) && $object->societe != $fullname)?' ('.dol_htmlentities($object->societe).')':'');
 			}
 		}
 		else if (in_array($object->element, array('contact', 'user', 'usergroup')))
