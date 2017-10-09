@@ -1753,7 +1753,11 @@ TypeCdr=Use "None" if the date of payment term is date of invoice plus a delta i
 BaseCurrency=Reference currency of the company (go into setup of company to change this)
 WarningNoteModuleInvoiceForFrenchLaw=This module %s is compliant with french laws (Loi Finance 2016). 
 WarningNoteModulePOSForFrenchLaw=This module %s is compliant with french laws (Loi Finance 2016) because module Non Reversible Logs is automatically activated. 
-WarningInstallationMayBecomeNotCompliantWithLaw=You try to install the module %s that is an external module. Activating an external module means you trust the publisher of the module and you are sure that this module does not alterate negatively the behavior of your application and is compliant with laws of your country (%s). If the module bring a non legal feature, you become responsible for the use of a non legal software.   
+WarningInstallationMayBecomeNotCompliantWithLaw=You try to install the module %s that is an external module. Activating an external module means you trust the publisher of the module and you are sure that this module does not alterate negatively the behavior of your application and is compliant with laws of your country (%s). If the module bring a non legal feature, you become responsible for the use of a non legal software.
+MAIN_PDF_MARGIN_LEFT=Left margin on PDF
+MAIN_PDF_MARGIN_RIGHT=Right margin on PDF
+MAIN_PDF_MARGIN_TOP=Top margin on PDF
+MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
