@@ -3581,7 +3581,7 @@ class Form
 					}
 					else if ($input['type'] == 'password')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat'.$css.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat'.$css.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$m.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'select')
 					{
@@ -6017,7 +6017,16 @@ class Form
 		{
 			$ret.=dol_htmlentities($object->name);
 		}
-		else if (in_array($object->element, array('contact', 'user', 'usergroup', 'member')))
+		else if ($object->element == 'member')
+		{
+			$fullname=$object->getFullName($langs);
+			if ($object->morphy == 'mor') {
+				$ret.= dol_htmlentities($object->societe) . (($object->societe != $fullname)?' ('.dol_htmlentities($fullname).')':'');
+			} else {
+				$ret.= dol_htmlentities($fullname) . (($object->societe != $fullname)?' ('.dol_htmlentities($object->societe).')':'');
+			}
+		}
+		else if (in_array($object->element, array('contact', 'user', 'usergroup')))
 		{
 			$ret.=dol_htmlentities($object->getFullName($langs));
 		}
