@@ -1723,6 +1723,7 @@ MultiPriceRuleDesc=When option "Several level of prices per product/service" is 
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.
 SeeSubstitutionVars=See * note for list of possible substitution variables
+SeeChangeLog=See ChangeLog file (english only)
 AllPublishers=All publishers
 UnknownPublishers=Unknown publishers
 AddRemoveTabs=Add or remove tabs
