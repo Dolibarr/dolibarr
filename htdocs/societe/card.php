@@ -992,7 +992,7 @@ else
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
-        print '<input type="hidden" name="type" value='.GETPOST("type").'>';
+        print '<input type="hidden" name="type" value='.GETPOST("type",'alpha').'>';
         print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -1402,7 +1402,7 @@ else
 
 			$object->oldcopy = clone $object;
 
-            if (GETPOST('name'))
+            if (GETPOSTISSET('name'))
             {
                 // We overwrite with values if posted
                 $object->name					= GETPOST('name', 'alpha');

@@ -414,7 +414,7 @@ class Account extends CommonObject
         {
             $sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
             $sql.= " WHERE id=".$oper;
-            $sql.= " AND entity = " . getEntity('c_paiement') . ")";
+            $sql.= " AND entity IN (" . getEntity('c_paiement') . ")";
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1306,11 +1306,8 @@ class Account extends CommonObject
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if (empty($mode))
-        {
-            $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
-        }
-        else if ($mode == 'transactions')
+        $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
+        if ($mode == 'transactions')
         {
             $url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
         }

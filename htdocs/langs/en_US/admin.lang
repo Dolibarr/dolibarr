@@ -462,6 +462,8 @@ Field=Field
 ProductDocumentTemplates=Document templates to generate product document
 FreeLegalTextOnExpenseReports=Free legal text on expense reports
 WatermarkOnDraftExpenseReports=Watermark on draft expense reports
+AttachMainDocByDefault=Set this to 1 if you want to attach main document to email by default (if applicable)
+FilesAttachedToEmail=Attach file
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
@@ -1710,6 +1712,7 @@ MailToSendSupplierInvoice=To send supplier invoice
 MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 MailToMember=To send email from member page
+MailToUser=To send email from user page
 ByDefaultInList=Show by default on list view
 YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)

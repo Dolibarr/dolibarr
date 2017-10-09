@@ -38,6 +38,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
@@ -3815,18 +3816,21 @@ else if ($id > 0 || ! empty($ref))
         if ($num > 0) {
             while ($i < $num) {
                 $objp = $db->fetch_object($result);
-                print '<tr class="oddeven"><td>';
+
                 $paymentstatic->id = $objp->rowid;
                 $paymentstatic->datepaye = $db->jdate($objp->dp);
                 $paymentstatic->ref = $objp->ref;
                 $paymentstatic->num_paiement = $objp->num_paiement;
                 $paymentstatic->payment_code = $objp->payment_code;
+
+                print '<tr class="oddeven"><td>';
                 print $paymentstatic->getNomUrl(1);
                 print '</td>';
                 print '<td>' . dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
                 $label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
                 print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';
-                if (! empty($conf->banque->enabled)) {
+                if (! empty($conf->banque->enabled))
+                {
                     $bankaccountstatic->id = $objp->baid;
                     $bankaccountstatic->ref = $objp->baref;
                     $bankaccountstatic->label = $objp->baref;

@@ -240,6 +240,16 @@ function dol_shutdown()
 	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_INFO));
 }
 
+/**
+ * Return true if we are in a context of submitting a parameter
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISSET($paramname)
+{
+	return (isset($_POST['name']) || isset($_GET['name']));
+}
 
 /**
  *  Return value of a param into GET or POST supervariable.
@@ -1232,7 +1242,7 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (add css 'arearefnobottom' on div)
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
@@ -5296,6 +5306,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
     		$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
     		$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
+
+    		$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+    		$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
+
     	}
     	else
     	{
@@ -5340,15 +5354,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
 	    	}
 
-	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
-	    	if ($object->table_element && $object->id > 0)
+	    	if (is_object($object) && $object->element == 'shipping')
 	    	{
-		    	$extrafieldstmp = new ExtraFields($db);
-		    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-		    	$object->fetch_optionals($object->id, $extralabels);
-		    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
-		    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-		    	}
+	    		$substitutionarray['__SHIPPINGTRACKNUM__']=$object->tracking_number;
+	    		$substitutionarray['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 	    	}
 
 	    	if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
@@ -5364,6 +5373,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
 	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
 	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+	    	}
+
+	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
+	    	if ($object->table_element && $object->id > 0)
+	    	{
+	    		$extrafieldstmp = new ExtraFields($db);
+	    		$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+	    		$object->fetch_optionals($object->id, $extralabels);
+	    		foreach ($extrafieldstmp->attribute_label as $key => $label) {
+	    			$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+	    		}
 	    	}
 
 	    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
@@ -6078,9 +6098,10 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
-function picto_from_langcode($codelang)
+function picto_from_langcode($codelang, $moreatt = '')
 {
 	global $langs;
 
@@ -6090,7 +6111,7 @@ function picto_from_langcode($codelang)
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
+		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
 	}
 
 	$langtocountryflag = array(
@@ -6108,7 +6129,7 @@ function picto_from_langcode($codelang)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png');
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
 }
 
 /**

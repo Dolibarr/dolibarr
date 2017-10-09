@@ -113,14 +113,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
 		}
-		else if ($object->element == 'member')
+		else if ($object->element == 'member' || $object->element == 'user')
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;

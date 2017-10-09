@@ -82,13 +82,13 @@ else if ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, 
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
-    $usertoprocess=$user;
+	$usertoprocess=$user;
 	$search_usertoprocessid=$usertoprocess->id;
 }
 elseif ($search_usertoprocessid > 0)
 {
-    $usertoprocess=new User($db);
-    $usertoprocess->fetch($search_usertoprocessid);
+	$usertoprocess=new User($db);
+	$usertoprocess->fetch($search_usertoprocessid);
 	$search_usertoprocessid=$usertoprocess->id;
 }
 else
@@ -106,17 +106,17 @@ $object=new Task($db);
 // Purge criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $action = '';
-    $search_categ='';
-    $search_usertoprocessid = $user->id;
-    $search_task_ref = '';
-    $search_task_label = '';
-    $search_project_ref = '';
-    $search_thirdparty = '';
+	$action = '';
+	$search_categ='';
+	$search_usertoprocessid = $user->id;
+	$search_task_ref = '';
+	$search_task_label = '';
+	$search_project_ref = '';
+	$search_thirdparty = '';
 }
 if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
-    $action = '';
+	$action = '';
 }
 
 if (GETPOST('submitdateselect'))
@@ -129,57 +129,57 @@ if (GETPOST('submitdateselect'))
 
 if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
-    $action = 'assigntask';
+	$action = 'assigntask';
 
-    if ($taskid > 0)
-    {
+	if ($taskid > 0)
+	{
 		$result = $object->fetch($taskid, $ref);
 		if ($result < 0) $error++;
-    }
-    else
-    {
-    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
-    	$error++;
-    }
-    if (! GETPOST('type'))
-    {
-    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
-    	$error++;
-    }
-    if (! $error)
-    {
-    	$idfortaskuser=$usertoprocess->id;
+	}
+	else
+	{
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+		$error++;
+	}
+	if (! GETPOST('type'))
+	{
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+		$error++;
+	}
+	if (! $error)
+	{
+		$idfortaskuser=$usertoprocess->id;
 		$result = $object->add_contact($idfortaskuser, GETPOST("type"), 'internal');
 
-    	if ($result >= 0 || $result == -2)	// Contact add ok or already contact of task
-    	{
+		if ($result >= 0 || $result == -2)	// Contact add ok or already contact of task
+		{
 			// Test if we are already contact of the project (should be rare but sometimes we can add as task contact without being contact of project, like when admin user has been removed from contact of project)
-    		$sql='SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
-    		$sql.=' AND ec.fk_socpeople = '.$idfortaskuser." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
-    		$resql=$db->query($sql);
-    		if ($resql)
-    		{
-    			$obj=$db->fetch_object($resql);
-    			if (! $obj)	// User is not already linked to project, so we will create link to first type
-    			{
-    				$project = new Project($db);
-    				$project->fetch($object->fk_project);
-    				// Get type
-    				$listofprojcontact=$project->liste_type_contact('internal');
+			$sql='SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
+			$sql.=' AND ec.fk_socpeople = '.$idfortaskuser." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$obj=$db->fetch_object($resql);
+				if (! $obj)	// User is not already linked to project, so we will create link to first type
+				{
+					$project = new Project($db);
+					$project->fetch($object->fk_project);
+					// Get type
+					$listofprojcontact=$project->liste_type_contact('internal');
 
-    				if (count($listofprojcontact))
-    				{
-    					$typeforprojectcontact=reset(array_keys($listofprojcontact));
-    					$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
-    				}
-    			}
-    		}
-    		else
-    		{
-    			dol_print_error($db);
-    		}
-    	}
-    }
+					if (count($listofprojcontact))
+					{
+						$typeforprojectcontact=reset(array_keys($listofprojcontact));
+						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
+					}
+				}
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+		}
+	}
 
 	if ($result < 0)
 	{
@@ -206,48 +206,48 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 
 if ($action == 'addtime' && $user->rights->projet->lire)
 {
-    $timespent_duration=array();
+	$timespent_duration=array();
 
-    if (is_array($_POST))
-    {
-        foreach($_POST as $key => $time)
-        {
-            if (intval($time) > 0)
-            {
-                // Hours or minutes of duration
-                if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
-                {
-                    $id = $matches[1];
-    				if ($id > 0)
-    				{
-    	                // We store HOURS in seconds
-    	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
-
-    	                // We store MINUTES in seconds
-    	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
-    				}
-                }
-            }
-        }
-    }
-
-    if (count($timespent_duration) > 0)
-    {
-    	foreach($timespent_duration as $key => $val)
-    	{
-	        $object->fetch($key);
-		    $object->progress = GETPOST($key.'progress', 'int');
-	        $object->timespent_duration = $val;
-	        $object->timespent_fk_user = $user->id;
-	        $object->timespent_note = GETPOST($key.'note');
-	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
-	        {
-	        	$object->timespent_datehour = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
-	        	$object->timespent_withhour = 1;
-	        }
-	        else
+	if (is_array($_POST))
+	{
+		foreach($_POST as $key => $time)
+		{
+			if (intval($time) > 0)
 			{
-	        	$object->timespent_datehour = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
+				// Hours or minutes of duration
+				if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
+				{
+					$id = $matches[1];
+					if ($id > 0)
+					{
+						// We store HOURS in seconds
+						if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
+
+						// We store MINUTES in seconds
+						if($matches[2]=='min') $timespent_duration[$id] += $time*60;
+					}
+				}
+			}
+		}
+	}
+
+	if (count($timespent_duration) > 0)
+	{
+		foreach($timespent_duration as $key => $val)
+		{
+			$object->fetch($key);
+			$object->progress = GETPOST($key.'progress', 'int');
+			$object->timespent_duration = $val;
+			$object->timespent_fk_user = $user->id;
+			$object->timespent_note = GETPOST($key.'note');
+			if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
+			{
+				$object->timespent_datehour = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
+				$object->timespent_withhour = 1;
+			}
+			else
+			{
+				$object->timespent_datehour = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
 			}
 			$object->timespent_date = $object->timespent_datehour;
 
@@ -268,21 +268,21 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				$error++;
 				break;
 			}
-    	}
+		}
 
-    	if (! $error)
-    	{
-	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+		if (! $error)
+		{
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
-    	    // Redirect to avoid submit twice on back
-        	header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid?'id='.$projectid:'').($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
-        	exit;
-    	}
-    }
-    else
-    {
-   	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
-    }
+			// Redirect to avoid submit twice on back
+			header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid?'id='.$projectid:'').($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
+			exit;
+		}
+	}
+	else
+	{
+   		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
+	}
 }
 
 
@@ -318,8 +318,8 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,(e
 
 if ($id)
 {
-    $project->fetch($id);
-    $project->fetch_thirdparty();
+	$project->fetch($id);
+	$project->fetch_thirdparty();
 }
 
 $onlyopenedproject=1;	// or -1
@@ -465,7 +465,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ProjectRef").'</td>';
 if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
 {
-    print '<td>'.$langs->trans("ThirdParty").'</td>';
+	print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
