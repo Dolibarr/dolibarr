@@ -1430,7 +1430,7 @@ else
 		print '</td><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
-		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 		}
 		print '</td>';
 		print '</tr>';
