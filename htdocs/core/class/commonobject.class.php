@@ -4635,7 +4635,7 @@ abstract class CommonObject
 					case "edit":
 						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 						$getposttemp = GETPOST('options_'.$key, 'none');				// GETPOST can get value from GET, POST or setup of default values.
-						if (isset($getposttemp)) {
+						if ((isset($getposttemp) && $getposttemp != '') || is_array($getposttemp)) {
 							if (is_array($getposttemp)) {
 								// $getposttemp is an array but following code expects a comma separated string
 								$value = implode(",", $getposttemp);
