@@ -1627,7 +1627,7 @@ ProjectsSetup=Project module setup
 ProjectsModelModule=Project reports document model
 TasksNumberingModules=Tasks numbering module
 TaskModelModule=Tasks reports document model
-UseSearchToSelectProject=Use autocompletion fields to choose project (instead of using a list box)
+UseSearchToSelectProject=Wait you press a key before loading content of project combo list (This may increase performance if you have a large number of project, but it is less convenient)
 ##### ECM (GED) #####
 ##### Fiscal Year #####
 AccountingPeriods=Accounting periods

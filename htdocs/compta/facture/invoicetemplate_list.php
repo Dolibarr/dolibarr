@@ -520,6 +520,8 @@ if ($resql)
 			$invoicerectmp->frequency=$objp->frequency;
 			$invoicerectmp->suspend=$objp->suspend;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
+			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
+			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
 
 			print '<tr class="oddeven">';
 
@@ -603,7 +605,7 @@ if ($resql)
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 			   print '<td align="center">';
-			   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_when),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}

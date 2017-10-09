@@ -128,7 +128,7 @@ class Form
 	}
 
 	/**
-	 * Output val field for an editable field
+	 * Output value of a field for an editable field
 	 *
 	 * @param	string	$text			Text of label (not used in this function)
 	 * @param	string	$htmlname		Name of select field
@@ -141,9 +141,10 @@ class Form
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @param	string	$moreparam		More param to add on a href URL
 	 * @param   int     $notabletag     Do no output table tags
+	 * @param	string	$formatfunc		Call a specific function to output field
 	 * @return  string					HTML edit field
 	 */
-	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0)
+	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0, $formatfunc='')
 	{
 		global $conf,$langs,$db;
 
@@ -257,6 +258,11 @@ class Form
 					$ret.=$tmpcontent;
 				}
 				else $ret.=$value;
+
+				if ($formatfunc && method_exists($object, $formatfunc))
+				{
+					$ret=$object->$formatfunc($ret);
+				}
 			}
 		}
 		return $ret;

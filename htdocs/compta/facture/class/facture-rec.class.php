@@ -824,6 +824,30 @@ class FactureRec extends CommonInvoice
 	}
 
 	/**
+	 * Return if maximum number of generation is reached
+	 *
+	 * @return	boolean			False by default, True if maximum number of generation is reached
+	 */
+	function isMaxNbGenReached()
+	{
+		$ret = false;
+		if ($this->nb_gen_max > 0 && ($this->nb_gen_done >= $this->nb_gen_max)) $ret = true;
+		return $ret;
+	}
+
+	/**
+	 * Format string to output with by striking the string if max number of generation was reached
+	 *
+	 * @param	string		$ret	Default value to output
+	 * @return	boolean				False by default, True if maximum number of generation is reached
+	 */
+	function strikeIfMaxNbGenReached($ret)
+	{
+		// Special case to strike the date
+		return ($this->isMaxNbGenReached()?'<strike>':'').$ret.($this->isMaxNbGenReached()?'</strike>':'');
+	}
+
+	/**
 	 *  Create all recurrents invoices (for all entities if multicompany is used).
 	 *  A result may also be provided into this->output.
 	 *

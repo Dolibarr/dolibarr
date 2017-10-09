@@ -663,15 +663,12 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 
-				if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
-				{
-					// Thirdparty
-					print '<td class="tdoverflowmax100">';
-					$thirdpartystatic->id=$lines[$i]->socid;
-					$thirdpartystatic->name=$lines[$i]->thirdparty_name;
-					print $thirdpartystatic->getNomUrl(1, 'project', 10);
-					print '</td>';
-				}
+				// Thirdparty
+				print '<td class="tdoverflowmax100">';
+				$thirdpartystatic->id=$lines[$i]->socid;
+				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				print '</td>';
 
 				// Ref
 				print '<td>';
@@ -897,15 +894,12 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 
-				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
-				{
-					// Thirdparty
-					print '<td class="tdoverflowmax100">';
-					$thirdpartystatic->id=$lines[$i]->thirdparty_id;
-					$thirdpartystatic->name=$lines[$i]->thirdparty_name;
-					print $thirdpartystatic->getNomUrl(1, 'project');
-					print '</td>';
-				}
+				// Thirdparty
+				print '<td class="tdoverflowmax100">';
+				$thirdpartystatic->id=$lines[$i]->thirdparty_id;
+				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				print $thirdpartystatic->getNomUrl(1, 'project');
+				print '</td>';
 
 				// Ref
 				print '<td class="nowrap">';

@@ -5287,13 +5287,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
     		$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 
-    		$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
-    		$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
-    		$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
-
+    		if (is_object($object) && $object->element == 'shipping')
+    		{
+    			$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
+    			$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
+    			$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+    		}
     		$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
     		$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
-    		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_REF__';
+    		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 
 			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
@@ -5307,9 +5309,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
     		$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
 
-    		$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
-    		$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
-
+    		if (is_object($object) && $object->element == 'shipping')
+    		{
+    			$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+    			$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
+    		}
     	}
     	else
     	{
@@ -5396,6 +5400,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     	$substitutionarray['__AMOUNT__']          = is_object($object)?$object->total_ttc:'';
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object)?$object->total_ht:'';
         $substitutionarray['__AMOUNT_VAT__']      = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+		/* TODO Add key for multicurrency
+    	$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+        $substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency_code):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency_code)):'';
+		*/
         // For backward compatibility
         if ($onlykey != 2)
         {
