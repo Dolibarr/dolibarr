@@ -452,7 +452,7 @@ abstract class CommonObject
 	 *  @param		int		$withregion			1=Add region into address string
 	 *	@return		string							Full address string
 	 */
-	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
+	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
