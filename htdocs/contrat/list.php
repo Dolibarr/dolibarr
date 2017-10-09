@@ -62,6 +62,9 @@ $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_product_category=GETPOST('search_product_category','int');
+$search_dfmonth=GETPOST('search_dfmonth','int');
+$search_dfyear=GETPOST('search_dfyear','int');
+$search_op2df=GETPOST('search_op2df');
 $day=GETPOST("day","int");
 $year=GETPOST("year","int");
 $month=GETPOST("month","int");
@@ -126,6 +129,7 @@ $arrayfields=array(
     'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
     'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900),
     'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -133,7 +137,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -157,6 +161,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$day='';
 	$month='';
 	$year='';
+	$search_dfmonth='';
+	$search_dfyear='';
+    $search_op2df='';
     $search_name="";
     $search_email="";
     $search_town='';
@@ -205,6 +212,7 @@ $sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_
 $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";
 $sql.= ' SUM('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
@@ -278,16 +286,27 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+if ($search_dfyear > 0)
+{
+//	$sql.= " AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") ".$search_op2df."= '".$db->idate(($search_op2df == "<" ? dol_get_last_day($search_dfyear,$search_dfmonth,false) : dol_get_first_day($search_dfyear,$search_dfmonth,false)))."'";
+}
+
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code,";
 $sql.= " state.code_departement, state.nom";
+//$sql.= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").")";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+
+if ($search_dfyear > 0)
+{
+    $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") ".$search_op2df."= '".$db->idate(($search_op2df == "<" ? dol_get_last_day($search_dfyear,$search_dfmonth,false) : dol_get_first_day($search_dfyear,$search_dfmonth,false)))."'";
+}
 
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -323,16 +342,22 @@ if ($resql)
 	}
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($sall != '')                $param.='&sall='.$sall;
-    if ($search_contract != '')     $param.='&search_contract='.$search_contract;
-    if ($search_name != '')         $param.='&search_name='.$search_name;
-    if ($search_email != '')        $param.='&search_email='.$search_email;
-    if ($search_ref_supplier != '') $param.='&search_ref_supplier='.$search_ref_supplier;
-    if ($search_sale != '')         $param.='&search_sale=' .$search_sale;
-    if ($show_files)                $param.='&show_files=' .$show_files;
-    if ($optioncss != '')           $param.='&optioncss='.$optioncss;
+    if ($sall != '')                $param.='&sall='.urlencode($sall);
+    if ($search_contract != '')     $param.='&search_contract='.urlencode($search_contract);
+    if ($search_name != '')         $param.='&search_name='.urlencode($search_name);
+    if ($search_email != '')        $param.='&search_email='.urlencode($search_email);
+    if ($search_ref_customer != '') $param.='&search_ref_customer='.urlencode($search_ref_customer);
+    if ($search_ref_supplier != '') $param.='&search_ref_supplier='.urlencode($search_ref_supplier);
+    if ($search_op2df != '') 		$param.='&search_op2df='.urlencode($search_op2df);
+    if ($search_dfyear != '')       $param.='&search_dfyear='.urlencode($search_dfyear);
+    if ($search_dfmonth != '')      $param.='&search_dfmonth='.urlencode($search_dfmonth);
+    if ($search_sale != '')         $param.='&search_sale=' .urlencode($search_sale);
+    if ($search_user != '')			$param.='&search_user=' .urlencode($search_user);
+    if ($search_product_category != '')	$param.='&search_product_category=' .urlencode($search_product_category);
+    if ($show_files)                $param.='&show_files=' .urlencode($show_files);
+    if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
     foreach ($search_array_options as $key => $val)
     {
@@ -537,6 +562,18 @@ if ($resql)
         print '<td class="liste_titre">';
         print '</td>';
     }
+    // First end date
+    if (! empty($arrayfields['lower_planned_end_date']['checked']))
+    {
+            print '<td class="liste_titre" align="center">';
+            $arrayofoperators=array('<'=>'<','>'=>'>');
+            print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
+            print '</br>';
+            print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
+            print ' ';
+            $formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5);
+            print '</td>';
+    }
     // Status
     if (! empty($arrayfields['status']['checked']))
     {
@@ -581,6 +618,7 @@ if ($resql)
     print $hookmanager->resPrint;
 	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    if (! empty($arrayfields['lower_planned_end_date']['checked']))       print_liste_field_titre($arrayfields['lower_planned_end_date']['label'],$_SERVER["PHP_SELF"],"lower_planned_end_date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
     if (! empty($arrayfields['status']['checked']))
     {
         print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
@@ -599,6 +637,11 @@ if ($resql)
         $contracttmp->id=$obj->rowid;
         $contracttmp->ref_customer=$obj->ref_customer;
         $contracttmp->ref_supplier=$obj->ref_supplier;
+
+        if ($obj->socid > 0)
+        {
+        	$result=$socstatic->fetch($obj->socid);
+        }
 
         print '<tr class="oddeven">';
         if (! empty($arrayfields['c.ref']['checked']))
@@ -631,7 +674,13 @@ if ($resql)
         }
         if (! empty($arrayfields['s.nom']['checked']))
         {
-            print '<td><a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+            print '<td>';
+            //print '<a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a>';
+            if ($obj->socid > 0)
+            {
+            	print $socstatic->getNomUrl(1, '');
+            }
+            print '</td>';
         }
         if (! empty($arrayfields['s.email']['checked']))
         {
@@ -683,7 +732,6 @@ if ($resql)
             print '<td>';
             if ($obj->socid > 0)
             {
-            	$result=$socstatic->fetch($obj->socid);
             	$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
             	if ($listsalesrepresentatives < 0) dol_print_error($db);
             	$nbofsalesrepresentative=count($listsalesrepresentatives);
@@ -756,6 +804,14 @@ if ($resql)
         {
             print '<td align="center" class="nowrap">';
             print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
+        // Date lower end date
+        if (! empty($arrayfields['lower_planned_end_date']['checked']))
+        {
+            print '<td align="center" class="nowrap">';
+            print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day');
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }

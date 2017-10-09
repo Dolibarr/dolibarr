@@ -36,7 +36,7 @@ class RemiseCheque extends CommonObject
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
 	public $picto = 'payment';
-	
+
 	var $num;
 	var $intitule;
 	//! Numero d'erreur Plage 1024-1279
@@ -345,7 +345,7 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 
 		$this->db->begin();
-		
+
 		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
@@ -481,10 +481,10 @@ class RemiseCheque extends CommonObject
 
 
 	/**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *
-     *      @param      User	$user       Objet user
-     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param      User	$user       Objet user
+	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
@@ -523,6 +523,45 @@ class RemiseCheque extends CommonObject
 			}
 
 			return $response;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if ko, >0 if ok
+	 */
+	function load_state_board()
+	{
+		global $user;
+
+		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+		$sql = "SELECT count(b.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql.= " AND b.fk_type = 'CHQ'";
+		$sql.= " AND b.amount > 0";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["cheques"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
 		}
 		else
 		{
@@ -716,7 +755,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
 	 *	@param	date	$rejection_date    Date to use on the negative payment
-	 * 	@return	int                        Id of negative payment line created 
+	 * 	@return	int                        Id of negative payment line created
 	 */
 	function rejectCheck($bank_id, $rejection_date)
 	{
@@ -727,19 +766,19 @@ class RemiseCheque extends CommonObject
 
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
-		
+
 		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
             $this->error='ActionRefusedLineAlreadyConciliated';
 		    return -1;
 		}*/
-		
+
 		$this->db->begin();
-		
+
 		// Not conciliated, we can delete it
-		//$bankline->delete($user);    // We delete 
-			    
+		//$bankline->delete($user);    // We delete
+
 		$bankaccount = $payment->fk_account;
 
 		// Get invoices list to reopen them
@@ -753,7 +792,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment = new Paiement($db);
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
-			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement');
+			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement','code','id',1);
 			$rejectedPayment->num_paiement = $payment->numero;
 
 			while($obj = $db->fetch_object($resql))

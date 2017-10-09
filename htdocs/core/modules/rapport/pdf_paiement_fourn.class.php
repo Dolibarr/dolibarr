@@ -39,8 +39,5 @@ class pdf_paiement_fourn extends pdf_paiement
 	{
 		parent::__construct($db);
 		$this->doc_type = "fourn";
-		}
-
 	}
-
-
+}

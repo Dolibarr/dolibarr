@@ -129,7 +129,7 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
-	elseif ($object->element == 'member')
+	elseif ($object->element == 'user' || $object->element == 'member')
 	{
 		$liste['thirdparty'] = $object->getFullName($langs)." &lt;".$object->email."&gt;";
 	}
@@ -169,12 +169,15 @@ if ($action == 'presend')
 	$formmail->param['models_id']=GETPOST('modelmailselected','int');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+	$formmail->param['fileinit'] = array($file);
 
 	// Init list of files
-	if (GETPOST("mode") == 'init') {
+	/*if (GETPOST('mode','alpha') == 'init')
+	{
 		$formmail->clear_attached_files();
+
 		$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-	}
+	}*/
 
 	// Show form
 	print $formmail->get_form();

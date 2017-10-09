@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
- * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
+ * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
+ * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','alpha');
+$entity=GETPOST('entity','int');
 $code=GETPOST('code','alpha');
 
 $allowed=$user->admin;
@@ -181,8 +182,8 @@ $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as 
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10]= "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
-$tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
+$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = " . getEntity($tabname[12]);
+$tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = " . getEntity($tabname[13]);
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
@@ -259,8 +260,8 @@ $tabfield[8] = "code,libelle,country_id,country".(! empty($conf->global->SOCIETE
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle,position";
-$tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
-$tabfield[13]= "code,libelle,type,accountancy_code";
+$tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
+$tabfield[13]= "code,libelle,type,accountancy_code,entity";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle,sortorder";
@@ -335,8 +336,8 @@ $tabfieldinsert[8] = "code,libelle,fk_country".(! empty($conf->global->SOCIETE_S
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle,position";
-$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
-$tabfieldinsert[13]= "code,libelle,type,accountancy_code";
+$tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
+$tabfieldinsert[13]= "code,libelle,type,accountancy_code,entity";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label,sortorder";
@@ -733,7 +734,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($value == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
             }
             if ($i) $sql.=",";
             if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
@@ -785,7 +786,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
             }
             else if ($field == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
             }
             if ($i) $sql.=",";
             $sql.= $field."=";
@@ -798,6 +799,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
+        $sql.= " AND entity = '".getEntity($tabname[$id])."'";
 
         dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
@@ -820,7 +822,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+    $sql = "DELETE FROM ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
 
     dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
@@ -844,10 +846,10 @@ if ($action == $acts[0])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag($code)."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -864,10 +866,10 @@ if ($action == $acts[1])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag($code)."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -884,10 +886,10 @@ if ($action == 'activate_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag($code)."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -904,10 +906,10 @@ if ($action == 'disable_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag($code)."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = " . (int) $entity : '');
     }
 
     $result = $db->query($sql);
@@ -959,6 +961,7 @@ print "<br>\n";
 $param = '&id='.$id;
 if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
 if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
+if ($entity != '') $param.= '&entity=' . (int) $entity;
 $paramwithsearch = $param;
 if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
 if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
@@ -1016,6 +1019,7 @@ if ($id)
     if ($tabname[$id])
     {
         $alabelisused=0;
+        $withentity=null;
 
         $fieldlist=explode(',',$tabfield[$id]);
 
@@ -1026,6 +1030,11 @@ if ($id)
         print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
+        	if ($fieldlist[$field] == 'entity') {
+        		$withentity = getEntity($tabname[$id]);
+        		continue;
+        	}
+
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
@@ -1119,6 +1128,8 @@ if ($id)
         if ($id == 4) print '<td></td>';
         print '<td>';
         print '<input type="hidden" name="id" value="'.$id.'">';
+        if (! is_null($withentity))
+        	print '<input type="hidden" name="entity" value="'.$withentity.'">';
         print '</td>';
         print '<td style="min-width: 26px;"></td>';
         print '<td style="min-width: 26px;"></td>';
@@ -1197,7 +1208,9 @@ if ($id)
         $filterfound=0;
         foreach ($fieldlist as $field => $value)
         {
-            $showfield=1;							  	// By defaut
+        	if ($fieldlist[$field] == 'entity') continue;
+
+            $showfield=1;	// By default
 
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
 
@@ -1239,6 +1252,8 @@ if ($id)
         print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
+        	if ($fieldlist[$field] == 'entity') continue;
+
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de donnees
             $showfield=1;							  	// By defaut
@@ -1349,12 +1364,16 @@ if ($id)
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     // Show fields
-                    if (empty($reshook)) fieldList($fieldlist, $obj, $tabname[$id], 'edit');
+                    if (empty($reshook)) {
+                    	$withentity = fieldList($fieldlist, $obj, $tabname[$id], 'edit');
+                    }
 
                     print '<td colspan="3" align="center">';
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+                    if (! is_null($withentity))
+                    	print '<input type="hidden" name="entity" value="'.$withentity.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
@@ -1369,11 +1388,19 @@ if ($id)
 
                     if (empty($reshook))
                     {
+                    	$withentity=null;
+
                         foreach ($fieldlist as $field => $value)
                         {
-                            $showfield=1;
+                        	$showfield=1;
                         	$align="left";
-                            $valuetoshow=$obj->{$fieldlist[$field]};
+                        	$valuetoshow=$obj->{$fieldlist[$field]};
+
+                        	if ($fieldlist[$field] == 'entity') {
+                        		$withentity = $valuetoshow;
+                        		continue;
+                        	}
+
                             if ($value == 'element')
                             {
                                 $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
@@ -1588,7 +1615,8 @@ if ($id)
                     // If rowidcol not defined
                     if (empty($rowidcol) || in_array($id, array(6,7,8,13,17,19,27))) $rowidcol='rowid';
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((! empty($obj->{$rowidcol}) || $obj->{$rowidcol} == '0')?$obj->{$rowidcol}:(! empty($obj->code)?urlencode($obj->code):'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
-                    if ($param) $url .= '&'.$param;
+                    if (! empty($param)) $url .= '&'.$param;
+                    if (! is_null($withentity)) $url .= '&entity='.$withentity;
                     $url.='&';
 
 					// Favorite
@@ -1721,7 +1749,7 @@ $db->close();
  * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
- *	@return		void
+ *	@return		string						'' or value of entity into table	
  */
 function fieldList($fieldlist, $obj='', $tabname='', $context='')
 {
@@ -1735,8 +1763,15 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 	$formcompany = new FormCompany($db);
 	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
+	$withentity='';
+
 	foreach ($fieldlist as $field => $value)
 	{
+		if ($fieldlist[$field] == 'entity') {
+			$withentity = $obj->{$fieldlist[$field]};
+			continue;
+		}
+
 	    if (in_array($fieldlist[$field], array('code', 'libelle', 'type')) && $tabname == MAIN_DB_PREFIX."c_actioncomm" && in_array($obj->type, array('system','systemauto')))
         {
             $hidden = (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'');
@@ -1948,5 +1983,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print '</td>';
 		}
 	}
+
+	return $withentity;
 }
 

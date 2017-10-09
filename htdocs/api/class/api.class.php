@@ -56,9 +56,14 @@ class DolibarrApi
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode, $refreshCache);
+
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-	$this->r->setBaseUrls(DOL_MAIN_URL_ROOT, $urlwithroot);
+
+        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim(DOL_MAIN_URL_ROOT));
+        $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
+
+        $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
     }
 
@@ -130,6 +135,9 @@ class DolibarrApi
         unset($object->table_element);
         unset($object->table_element_line);
         unset($object->picto);
+
+        unset($object->skip_update_total);
+        unset($object->context);
 
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize

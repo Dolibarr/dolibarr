@@ -269,12 +269,12 @@ if ($mode != 'focus')
 {
     if ($mode != 'sortorder')
     {
-        $substitutionarray=getCommonSubstitutionArray($langs, 0, array('object')); // Must match list into GETPOST
-        $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+        $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount')); // Must match list into GETPOST
+		unset($substitutionarray['__USER_SIGNATURE__']);
         $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
         foreach($substitutionarray as $key => $val)
         {
-            $texthelp.=$key.'<br>';
+            $texthelp.=$key.' -> '.$val.'<br>';
         }
         $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');    // No tooltip on click, this also triggers the sort click
     }

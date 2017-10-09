@@ -52,6 +52,7 @@ class WebsitePage extends CommonObject
 	public $title;
 	public $description;
 	public $keywords;
+	public $htmlheader;
 	public $content;
 	public $status;
 	public $date_creation;
@@ -67,11 +68,12 @@ class WebsitePage extends CommonObject
 	    'title'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'description'   =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'keywords'      =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-	    'content'       =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-	    'lang'          =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+		'lang'          =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
 	    'fk_website'    =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
 	    'fk_page'       =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
+	    'htmlheader'    =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
+	    'content'       =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
 		'grabbed_from'  =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
 	    'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
@@ -126,6 +128,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.title,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
@@ -162,6 +165,7 @@ class WebsitePage extends CommonObject
 				$this->title = $obj->title;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
+				$this->htmlheader = $obj->htmlheader;
 				$this->content = $obj->content;
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
@@ -210,6 +214,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.title,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
@@ -255,6 +260,7 @@ class WebsitePage extends CommonObject
 				$record->title = $obj->title;
 				$record->description = $obj->description;
 				$record->keywords = $obj->keywords;
+				$record->htmlheader = $obj->htmlheader;
 				$record->content = $obj->content;
 				$record->lang = $obj->lang;
 				$record->fk_page = $obj->fk_page;
@@ -297,7 +303,27 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $trigger);
+		$result = $this->deleteCommon($user, $trigger);
+
+		if ($result > 0)
+		{
+			$websiteobj=new Website($this->db);
+			$result = $websiteobj->fetch($this->fk_website);
+
+			if ($result > 0)
+			{
+				global $dolibarr_main_data_root;
+				$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websiteobj->ref;
+
+				$filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
+				$filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
+
+				dol_delete_file($filealias);
+				dol_delete_file($filetpl);
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -469,6 +495,7 @@ class WebsitePage extends CommonObject
 		$this->title = 'My Page';
 		$this->description = 'This is my page';
 		$this->keywords = 'keyword1, keyword2';
+		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
 		$this->status = '';
 		$this->grabbed_from = '';

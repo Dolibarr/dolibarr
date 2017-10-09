@@ -26,9 +26,6 @@
  */
 
 require '../main.inc.php';
-if (! empty($conf->multicompany->enabled))
-	dol_include_once('/multicompany/class/actions_multicompany.class.php', 'ActionsMulticompany');
-
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
@@ -105,7 +102,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
 }
 

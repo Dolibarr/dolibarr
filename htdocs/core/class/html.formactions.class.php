@@ -157,9 +157,10 @@ class FormActions
      *  @param  string  $morecss        		More css on table
      *  @param	int		$max					Max number of record
      *  @param	string	$moreparambacktopage	More param for the backtopage
+     *  @param	string	$morehtmlright			More html text on right of title line
      *	@return	int								<0 if KO, >=0 if OK
      */
-    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='')
+    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='', $morehtmlright='')
     {
         global $langs,$conf,$user;
         global $bc;
@@ -196,7 +197,7 @@ class FormActions
         	$buttontoaddnewevent.= '</a>';
 
         	print '<!-- formactions->showactions -->'."\n";
-        	print load_fiche_titre($title, $buttontoaddnewevent, '');
+        	print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $buttontoaddnewevent);
 
         	$page=0; $param='';
 
@@ -206,10 +207,10 @@ class FormActions
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
         	print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Action', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Action', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
         	print '</tr>';
         	print "\n";
@@ -228,8 +229,14 @@ class FormActions
 
 	        		print '<tr class="oddeven">';
 					print '<td>'.$ref.'</td>';
-	        		print '<td>'.$label.'</td>';
 	        		print '<td>';
+	        		if (! empty($action->userownerid))
+	        		{
+	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
+	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
+	        		}
+	        		print '</td>';
+					print '<td>';
 	        		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	        		{
 	        		    if ($action->type_picto) print img_picto('', $action->type_picto);
@@ -242,6 +249,7 @@ class FormActions
 	        		}
 	        		print $action->type;
 	        		print '</td>';
+	        		print '<td>'.$label.'</td>';
 	        		print '<td align="center">'.dol_print_date($action->datep,'dayhour');
 	        		if ($action->datef)
 	        		{
@@ -252,13 +260,6 @@ class FormActions
 		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef,'hour');
 		        		}
 		        		else print '-'.dol_print_date($action->datef,'dayhour');
-	        		}
-	        		print '</td>';
-	        		print '<td>';
-	        		if (! empty($action->userownerid))
-	        		{
-	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
-	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
 	        		}
 	        		print '</td>';
 	        		print '<td align="right">';

@@ -140,14 +140,14 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	int				$list				Into list view by default
+	 *  @param	int				$list				Into list view by default (-1, 0 or 1)
 	 *  @param	int				$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0, $computed='', $entity='', $langfile='')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -279,7 +279,7 @@ class ExtraFields
 	 *  @param  array|string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
-	 *  @param	int				$list			Into list view by default
+	 *  @param	int				$list			Into list view by default (-1, 0 or 1)
 	 *  @param	int				$ishidden		Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
@@ -287,7 +287,7 @@ class ExtraFields
 	 *  @param	string			$langfile		Language file
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0, $default='', $computed='',$entity='', $langfile='')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $default='', $computed='',$entity='', $langfile='')
 	{
 		global $conf,$user;
 
@@ -804,7 +804,7 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 *
 	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format)
+	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -893,7 +893,7 @@ class ExtraFields
 			if (! is_object($form)) $form=new Form($this->db);
 
 			// TODO Must also support $moreparam
-			$out = $form->select_date($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
+			$out = $form->select_date($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, ($keysuffix != 'search_' ? 1 : 0), 1, 0, 1);
 		}
 		elseif (in_array($type,array('int')))
 		{
@@ -927,11 +927,14 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.price2num($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
+			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
+				$value=price($value);
+			}
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
-			if (!empty($value)) {
+			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value=price($value);
 			}
 			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
@@ -1323,7 +1326,8 @@ class ExtraFields
 		}
 		elseif ($type == 'password')
 		{
-			$out='<input type="password" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			// If prefix is 'search_', field is used as a filter, we use a common text field.
+			$out='<input type="'.($keysuffix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="'.$keysuffix.'options_'.$key.$keyprefix.'"/>';
@@ -1683,7 +1687,7 @@ class ExtraFields
 	 */
 	function showSeparator($key)
 	{
-		$out = '<tr class="liste_titre"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+		$out = '<tr class="trextrafieldseparator"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
 		return $out;
 	}
 

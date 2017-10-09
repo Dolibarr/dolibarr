@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
@@ -60,9 +60,9 @@ class CommandeFournisseur extends CommonOrder
     public $ref;
     public $ref_supplier;
     public $brouillon;
-    public $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-    //                                                              -> 7=Canceled/Never received -> (reopen) 3=Process runing
-    //									              -> 6=Canceled -> (reopen) 2=Approved
+    public $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+    //                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
+    //									                            -> 6=Canceled -> (reopen) 2=Approved
     //  		                                      -> 9=Refused  -> (reopen) 1=Validated
     //  Note: billed or not is on another field "billed"
     public $statuts;           // List of status
@@ -128,10 +128,43 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
 
-    /**
-     * Draft status
-     */
-    const STATUS_DRAFT = 0;
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Accepted
+	 */
+	const STATUS_ACCEPTED = 2;
+	/**
+	 * Order sent, shipment on process
+	 */
+	const STATUS_ORDERSENT = 3;
+	/**
+	 * Received partially
+	 */
+	const STATUS_RECEIVED_PARTIALLY = 4;
+	/**
+	 * Received completely
+	 */
+	const STATUS_RECEIVED_COMPLETELY = 5;
+	/**
+	 * Order canceled
+	 */
+	const STATUS_CANCELED = 6;
+	/**
+	 * Order canceled/never received
+	 */
+	const STATUS_CANCELED_AFTER_ORDER = 7;
+	/**
+	 * Refused
+	 */
+	const STATUS_REFUSED = 9;
+
 
 
 
@@ -190,8 +223,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ', c.fk_incoterms, c.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid AND cr.entity = " . getEntity('c_payment_term') . ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id AND p.entity = " . getEntity('c_paiement') . ")";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
@@ -418,11 +451,11 @@ class CommandeFournisseur extends CommonOrder
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " SET ref='".$this->db->escape($num)."',";
-            $sql.= " fk_statut = 1,";
+            $sql.= " fk_statut = ".self::STATUS_VALIDATED.",";
             $sql.= " date_valid='".$this->db->idate(dol_now())."',";
             $sql.= " fk_user_valid = ".$user->id;
             $sql.= " WHERE rowid = ".$this->id;
-            $sql.= " AND fk_statut = 0";
+            $sql.= " AND fk_statut = ".self::STATUS_DRAFT;
 
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -450,8 +483,8 @@ class CommandeFournisseur extends CommonOrder
                     // in order not to lose the attached files
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
-                    $dirsource = $conf->fournisseur->dir_output.'/commande/'.$oldref;
-                    $dirdest = $conf->fournisseur->dir_output.'/commande/'.$newref;
+                    $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
+                    $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
                     if (file_exists($dirsource))
                     {
                         dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
@@ -460,7 +493,7 @@ class CommandeFournisseur extends CommonOrder
                         {
                             dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->dir_output.'/commande/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
@@ -477,7 +510,7 @@ class CommandeFournisseur extends CommonOrder
             if (! $error)
             {
                 $result = 1;
-                $this->statut = 1;
+                $this->statut = self::STATUS_VALIDATED;
                 $this->ref = $num;
             }
 
@@ -537,7 +570,6 @@ class CommandeFournisseur extends CommonOrder
         $statutshort[5] = 'StatusOrderReceivedAllShort';
         $statutshort[6] = 'StatusOrderCanceledShort';
         $statutshort[7] = 'StatusOrderCanceledShort';
-        //$statutshort[8] = 'StatusOrderBilledShort';
         $statutshort[9] = 'StatusOrderRefusedShort';
 
         if ($mode == 0)
@@ -561,7 +593,6 @@ class CommandeFournisseur extends CommonOrder
             if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
             if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
             if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
-			if ($statut==8) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
             if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
         if ($mode == 4)
@@ -573,7 +604,6 @@ class CommandeFournisseur extends CommonOrder
             if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
             if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
             if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-			if ($statut==8) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
             if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
         }
         if ($mode == 5)
@@ -585,7 +615,6 @@ class CommandeFournisseur extends CommonOrder
             if ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
             if ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
             if ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
-            if ($statut==8) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
             if ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
     }
@@ -594,12 +623,13 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		string	$option			On what the link points
-     *  @param	    int   	$notooltip		1=Disable tooltip
-     *	@return		string					Chain with URL
+     *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param		string	$option						On what the link points
+     *  @param	    int   	$notooltip					1=Disable tooltip
+     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return		string								Chain with URL
      */
-    public function getNomUrl($withpicto=0,$option='',$notooltip=0)
+    public function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf;
 
@@ -618,6 +648,14 @@ class CommandeFournisseur extends CommonOrder
 
         $picto='order';
         $url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
         $linkclose='';
         if (empty($notooltip))
@@ -709,7 +747,7 @@ class CommandeFournisseur extends CommonOrder
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
-        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ';
+        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
         if ($this->db->query($sql))
         {
         	if (! $error)
@@ -807,10 +845,10 @@ class CommandeFournisseur extends CommonOrder
     	        $comment=' (second level)';
 			}
 			// If double approval is required and first approval, we keep status to 1 = validated
-			if ($movetoapprovestatus) $sql.= ", fk_statut = 2";
-			else $sql.= ", fk_statut = 1";
+			if ($movetoapprovestatus) $sql.= ", fk_statut = ".self::STATUS_ACCEPTED;
+			else $sql.= ", fk_statut = ".self::STATUS_VALIDATED;
             $sql.= " WHERE rowid = ".$this->id;
-            $sql.= " AND fk_statut = 1";
+            $sql.= " AND fk_statut = ".self::STATUS_VALIDATED;
 
             if ($this->db->query($sql))
             {
@@ -860,8 +898,8 @@ class CommandeFournisseur extends CommonOrder
                 {
                 	$this->ref = $this->newref;
 
-                	if ($movetoapprovestatus) $this->statut = 2;
-					else $this->statut = 1;
+                	if ($movetoapprovestatus) $this->statut = self::STATUS_ACCEPTED;
+					else $this->statut = self::STATUS_VALIDATED;
            			if (empty($secondlevel))	// standard or first level approval
 					{
 			            $this->date_approve = $now;
@@ -914,7 +952,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_REFUSED;
             $sql .= " WHERE rowid = ".$this->id;
 
             if ($this->db->query($sql))
@@ -968,7 +1006,7 @@ class CommandeFournisseur extends CommonOrder
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
         {
-            $statut = 6;
+            $statut = self::STATUS_CANCELED;
 
             $this->db->begin();
 
@@ -1029,13 +1067,13 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::commande", LOG_DEBUG);
             if ($this->db->query($sql))
             {
-                $this->statut = 3;
+                $this->statut = self::STATUS_ORDERSENT;
                 $this->methode_commande_id = $methode;
                 $this->date_commande = $date;
 
@@ -1136,7 +1174,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;
-        $sql.= ", 0";
+        $sql.= ", ".self::STATUS_DRAFT;
         $sql.= ", ".$this->db->escape($this->source);
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
         $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
@@ -1271,7 +1309,7 @@ class CommandeFournisseur extends CommonOrder
 		$objFrom = clone $this;
 
         $this->id=0;
-        $this->statut=0;
+        $this->statut=self::STATUS_DRAFT;
 
         // Clear fields
         $this->user_author_id     = $user->id;
@@ -1620,7 +1658,7 @@ class CommandeFournisseur extends CommonOrder
 
         $now=dol_now();
 
-        if (($this->statut == 3 || $this->statut == 4 || $this->statut == 5))
+        if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY))
         {
             $this->db->begin();
 
@@ -1943,10 +1981,16 @@ class CommandeFournisseur extends CommonOrder
 
         if ($user->rights->fournisseur->commande->receptionner)
         {
-            if ($type == 'par') $statut = 4;
-            if ($type == 'tot')	$statut = 5;
-            if ($type == 'nev') $statut = 7;
-            if ($type == 'can') $statut = 7;
+        	// Define the new status
+            if ($type == 'par') $statut = self::STATUS_RECEIVED_PARTIALLY;
+            elseif ($type == 'tot')	$statut = self::STATUS_RECEIVED_COMPLETELY;
+            elseif ($type == 'nev') $statut = self::STATUS_CANCELED_AFTER_ORDER;
+            elseif ($type == 'can') $statut = self::STATUS_CANCELED_AFTER_ORDER;
+			else {
+            	$error++;
+                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
+                return -2;
+			}
 
             // Some checks to accept the record
             if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
@@ -1980,13 +2024,6 @@ class CommandeFournisseur extends CommonOrder
             // TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
 
-            if (! $error && ! ($statut == 4 or $statut == 5 or $statut == 7))
-            {
-            	$error++;
-                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
-                $result = -2;
-            }
-
             if (! $error)
             {
                 $this->db->begin();
@@ -1994,7 +2031,7 @@ class CommandeFournisseur extends CommonOrder
                 $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
                 $sql.= " SET fk_statut = ".$statut;
                 $sql.= " WHERE rowid = ".$this->id;
-                $sql.= " AND fk_statut IN (3,4)";	// Process running or Partially received
+                $sql.= " AND fk_statut IN (".self::STATUS_ORDERSENT.",".self::STATUS_RECEIVED_PARTIALLY.")";	// Process running or Partially received
 
                 dol_syslog(get_class($this)."::Livraison", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -2217,7 +2254,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param      int		$status		New status
      *  @return     int         		<0 if KO, >0 if OK
      */
-    public function setStatus($user,$status)
+    public function setStatus($user, $status)
     {
         global $conf,$langs;
         $error=0;
@@ -2236,12 +2273,11 @@ class CommandeFournisseur extends CommonOrder
             $trigger_name[0] = 'DRAFT';
             $trigger_name[1] = 'VALIDATED';
             $trigger_name[2] = 'APPROVED';
-            $trigger_name[3] = 'ONPROCESS';
+            $trigger_name[3] = 'ORDERED';				// Ordered
             $trigger_name[4] = 'RECEIVED_PARTIALLY';
-            $trigger_name[5] = 'RECEIVED_ALL';
+            $trigger_name[5] = 'RECEIVED_COMPLETELY';
             $trigger_name[6] = 'CANCELED';
             $trigger_name[7] = 'CANCELED';
-            $trigger_name[8] = 'BILLED';
             $trigger_name[9] = 'REFUSED';
 
             // Call trigger
@@ -2606,7 +2642,7 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
-     *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+     *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {
@@ -2623,7 +2659,7 @@ class CommandeFournisseur extends CommonOrder
             $clause = " AND";
         }
         $sql.= $clause." c.entity = ".$conf->entity;
-        $sql.= " AND (c.fk_statut BETWEEN 1 AND 2)";
+        $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);

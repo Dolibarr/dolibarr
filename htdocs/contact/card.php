@@ -1064,7 +1064,7 @@ else
 
         }
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
