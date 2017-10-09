@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +47,20 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','aZ09');
 
-
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$contextpage=array('adminihm','globaladmin');
+$hookmanager->initHooks($contextpage);
 
 
 /*
  * Action
  */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (GETPOST('cancel','alpha'))
 {
