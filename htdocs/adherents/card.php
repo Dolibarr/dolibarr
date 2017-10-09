@@ -1354,8 +1354,8 @@ else
 			$texttosend=$object->makeSubstitution($adht->getMailOnValid());
 
 			$tmp=$langs->trans("SendAnEMailToMember");
-			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
-			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
+			$tmp.='<br>'.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp.='<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent='';
 			$helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
 			$helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
