@@ -121,7 +121,7 @@ $hookmanager->initHooks(array('membercard','globalcard'));
  * 	Actions
  */
 
-$parameters=array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas);
+$parameters=array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas, 'confirm'=>$confirm);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
