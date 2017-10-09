@@ -283,8 +283,17 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	   	{
 	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
+			$param='';
+			$param.=($mode?'&mode='.$mode:'');
+			$param.=($projectid?'id='.$projectid:'').($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'').($day?'&day='.$day:'').($month?'&month='.$month:'').($year?'&year='.$year:'');
+			$param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
+			$param.=($search_usertoprocessid > 0?'&search_usertoprocessid='.$search_usertoprocessid:'');
+			$param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
+			$param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
+			$param.=($search_task_label?'&search_task_label='.$search_task_label:'');
+
 	   	    // Redirect to avoid submit twice on back
-	       	header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid?'id='.$projectid:'').($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'').($mode?'&mode='.$mode:'').($day?'&day='.$day:'').($month?'&month='.$month:'').($year?'&year='.$year:''));
+	       	header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);
 	       	exit;
 	   	}
 	}
@@ -511,7 +520,7 @@ if (count($tasksarray) > 0)
 }
 else
 {
-	print '<tr><td colspan="15">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="16">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
 print '</div>';
