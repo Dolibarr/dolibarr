@@ -639,6 +639,7 @@ class Propal extends CommonObject
     	$pa_ht=price2num($pa_ht);
         if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
         if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
+        if (empty($type)) $type=0;
 
         if ($this->statut == self::STATUS_DRAFT)
         {

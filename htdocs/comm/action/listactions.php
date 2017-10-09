@@ -357,7 +357,7 @@ if ($resql)
         //$param='month='.$monthshown.'&year='.$year;
         $hourminsec='100000';
         $link = '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
-        $link.= $langs->trans("NewAction");
+        $link.= $langs->trans("AddAction");
         $link.= '</a>';
     }
 
@@ -372,9 +372,9 @@ if ($resql)
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
-    print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="center">';
+    print '<td class="liste_titre" align="center">';
 	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
@@ -396,9 +396,9 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre("ActionsOwnedByShort",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
@@ -452,11 +452,6 @@ if ($resql)
 		else print '&nbsp;';
 		print '</td>';
 
-		// Label
-		print '<td class="tdoverflowmax300">';
-		print $actionstatic->label;
-		print '</td>';
-
 		// Type
 		print '<td>';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -473,6 +468,11 @@ if ($resql)
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
 		if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
 		print dol_trunc($labeltype,28);
+		print '</td>';
+
+		// Label
+		print '<td class="tdoverflowmax300">';
+		print $actionstatic->label;
 		print '</td>';
 
 		// Start date

@@ -328,14 +328,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $langfiles;
 
     /**
-     * @var string[] Array of warnings to show when we activate the module
+     * @var array<string,string> Array of warnings to show when we activate the module
      *
      * array('always'='text') or array('FR'='text')
      */
     public $warnings_activation;
 
     /**
-     * @var string[] Array of warnings to show when we activate an external module
+     * @var array<string,string> Array of warnings to show when we activate an external module
      *
      * array('always'='text') or array('FR'='text')
      */

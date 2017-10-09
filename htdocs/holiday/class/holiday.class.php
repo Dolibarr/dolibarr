@@ -781,12 +781,13 @@ class Holiday extends CommonObject
     		$num_rows = $this->db->num_rows($resql);	// Note, we can have 2 records if on is morning and the other one is afternoon
     		if ($num_rows > 0)
     		{
+    			$arrayofrecord=array();
 	    		$i=0;
 	    		while ($i < $num_rows)
 	    		{
 	    			$obj = $this->db->fetch_object($resql);
 
-	    			// Note: $obj->halday is  0:Full days, 2:Sart afternoon end morning, -1:Start afternoon, 1:End morning
+	    			// Note: $obj->halfday is  0:Full days, 2:Sart afternoon end morning, -1:Start afternoon, 1:End morning
 	    			$arrayofrecord[$obj->rowid]=array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday);
 	    			$i++;
 	    		}

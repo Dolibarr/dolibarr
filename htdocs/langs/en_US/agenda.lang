@@ -12,6 +12,7 @@ Event=Event
 Events=Events
 EventsNb=Number of events
 ListOfActions=List of events
+EventReports=Event reports
 Location=Location
 ToUserOfGroup=To any user in group
 EventOnFullDay=Event on all day(s)

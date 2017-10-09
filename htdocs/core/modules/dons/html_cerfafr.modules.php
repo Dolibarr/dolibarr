@@ -136,27 +136,27 @@ class html_cerfafr extends ModeleDon
             	else $paymentmode = '';
 				
 				if ($don->modepaiementid==7){
-				$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
+					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
 				else if ($don->modepaiementid==4){
-				$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
+					$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaiementid==2 OR $don->modepaiementid==3 OR $don->modepaiementid==6){
-				$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
+				else if ($don->modepaiementid==2 || $don->modepaiementid==3 || $don->modepaiementid==6){
+					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
 				} 
 				else 
 				{
-				$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
+					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
 				
 				/*
 				if (empty($don->societe))
 				{
-				$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" checked="checked" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
+					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" checked="checked" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
 				}
 				else
 				{
-				$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
+					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
 				}
 				*/
 				

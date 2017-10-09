@@ -253,7 +253,7 @@ CREATE TABLE llx_expensereport_rules (
     code_expense_rules_type varchar(50) NOT NULL,
     is_for_all tinyint DEFAULT '0',
     entity integer DEFAULT 1
-);
+)ENGINE=innodb;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN rule_warning_message text;
 ALTER TABLE llx_expensereport_det ADD COLUMN fk_c_exp_tax_cat integer;
@@ -302,14 +302,16 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_SIGNED','Price request closed signed','Executed when a customer proposal is closed signed','proposal_supplier',10);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPOSAL_SUPPLIER_CLOSE_REFUSED','Price request closed refused','Executed when a customer proposal is closed refused','proposal_supplier',10);
 
+DROP TABLE llx_projet_task_comment;
 
-CREATE TABLE llx_projet_task_comment (
+CREATE TABLE llx_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
     tms timestamp,
     description text NOT NULL,
-    fk_user integer DEFAULT NULL,
-    fk_task integer DEFAULT NULL,
+    fk_user_author integer DEFAULT NULL,
+    fk_element integer DEFAULT NULL,
+    element_type varchar(50) DEFAULT NULL,
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;

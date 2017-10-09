@@ -3540,10 +3540,11 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
+ *	@param	string	$morehtmlcenter		Added message to show on center
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='', $morehtmlcenter='')
 {
 	global $conf;
 
@@ -3558,6 +3559,10 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
+	if (dol_strlen($morehtmlcenter))
+	{
+		$return.= '<td class="nobordernopadding" align="center" valign="middle">'.$morehtmlcenter.'</td>';
+	}
 	if (dol_strlen($morehtmlright))
 	{
 		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$morehtmlright.'</td>';
@@ -3585,9 +3590,10 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
+ *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0, $hidenavigation=0)
 {
 	global $conf,$langs;
 
@@ -3781,7 +3787,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
  *	@param	string	$rate			Rate value to format ('19.6', '19,6', '19.6%', '19,6%', '19.6 (CODEX)', ...)
  *  @param	boolean	$addpercent		Add a percent % sign in output
  *	@param	int		$info_bits		Miscellaneous information on vat (0=Default, 1=French NPR vat)
- *	@param	int		$usestarfornpr	1=Use '*' for NPR vat rate intead of MAIN_LABEL_MENTION_NPR
+ *	@param	int		$usestarfornpr	-1=Never show, 0 or 1=Use '*' for NPR vat rates
  *  @return	string					String with formated amounts ('19,6' or '19,6%' or '8.5% (NPR)' or '8.5% *' or '19,6 (CODEX)')
  */
 function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
@@ -3811,7 +3817,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
 		// TODO Split on / and output with a price2num to have clean numbers without ton of 000.
 		$ret=$rate.($addpercent?'%':'');
 	}
-	if ($info_bits & 1) $ret.=' *';
+	if (($info_bits & 1) && $usestarfornpr >= 0) $ret.=' *';
 	$ret.=$morelabel;
 	return $ret;
 }
@@ -6372,7 +6378,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 
 
 /**
- * Set focus onto field with selector
+ * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
  * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
  * @return	string				HTML code to set focus
