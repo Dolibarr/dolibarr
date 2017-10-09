@@ -444,7 +444,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"></td>';
@@ -463,10 +463,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ProjectRef").'</td>';
-if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
-{
-	print '<td>'.$langs->trans("ThirdParty").'</td>';
-}
+print '<td>'.$langs->trans("ThirdParty").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right" class="maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
@@ -498,8 +495,7 @@ if (count($tasksarray) > 0)
 	$j=0;
 	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable);
 
-	$colspan = 8;
-	if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) $colspan++;
+	$colspan = 9;
 
 	print '<tr class="liste_total">
                 <td class="liste_total" colspan="'.$colspan.'">';
