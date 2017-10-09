@@ -4604,7 +4604,7 @@ abstract class CommonObject
     */
 	function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
 	{
-		global $_POST, $conf, $langs;
+		global $_POST, $conf, $langs, $action;
 
 		$out = '';
 
@@ -4633,9 +4633,10 @@ abstract class CommonObject
 						$value=$this->array_options["options_".$key];
 						break;
 					case "edit":
-						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 						$getposttemp = GETPOST('options_'.$key, 'none');				// GETPOST can get value from GET, POST or setup of default values.
-						if (isset($getposttemp)) {
+						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
+						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET('options_'.$key))
+						{
 							if (is_array($getposttemp)) {
 								// $getposttemp is an array but following code expects a comma separated string
 								$value = implode(",", $getposttemp);

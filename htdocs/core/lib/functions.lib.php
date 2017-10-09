@@ -240,6 +240,16 @@ function dol_shutdown()
 	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_INFO));
 }
 
+/**
+ * Return true if we are in a context of submitting a parameter
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISSET($paramname)
+{
+	return (isset($_POST['name']) || isset($_GET['name']));
+}
 
 /**
  *  Return value of a param into GET or POST supervariable.
