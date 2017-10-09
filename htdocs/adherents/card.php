@@ -223,7 +223,7 @@ if (empty($reshook))
 		{
 			// User creation
 			$company = new Societe($db);
-			$result=$company->create_from_member($object,GETPOST('companyname'));
+			$result=$company->create_from_member($object, GETPOST('companyname', 'alpha'), GETPOST('companyalias', 'alpha'));
 
 			if ($result < 0)
 			{
@@ -1319,18 +1319,25 @@ else
 		// Confirm create third party
 		if ($action == 'create_thirdparty')
 		{
-			$name = $object->getFullName($langs);
-			if (! empty($name))
+			$companyalias='';
+			$fullname = $object->getFullName($langs);
+
+			if ($object->morphy == 'mor')
 			{
-				if ($object->societe) $name.=' ('.$object->societe.')';
+				$companyname=$object->societe;
+				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
-				$name=$object->societe;
+				$companyname=$fullname;
+				if (! empty($object->societe)) $companyalias=$object->societe;
 			}
 
 			// Create a form array
-			$formquestion=array(		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
+			$formquestion=array(
+				array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $companyname, 'css' => 'minwidth300', 'moreattr' => 'maxlength="128"'),
+				array('label' => $langs->trans("AliasNames"), 'type' => 'text', 'name' => 'companyalias', 'value' => $companyalias, 'css' => 'minwidth300', 'moreattr' => 'maxlength="128"')
+			);
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}

@@ -3572,14 +3572,16 @@ class Form
 				if (is_array($input) && ! empty($input))
 				{
 					$size=(! empty($input['size'])?' size="'.$input['size'].'"':'');
+					$moreattr=(! empty($input['moreattr'])?' '.$input['moreattr']:'');
+					$css=(! empty($input['css'])?' '.$input['css']:'');
 
 					if ($input['type'] == 'text')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat'.$css.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'password')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat'.$css.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'select')
 					{
