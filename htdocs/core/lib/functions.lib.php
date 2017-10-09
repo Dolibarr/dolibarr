@@ -248,7 +248,7 @@ function dol_shutdown()
  */
 function GETPOSTISSET($paramname)
 {
-	return (isset($_POST['name']) || isset($_GET['name']));
+	return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
 }
 
 /**
