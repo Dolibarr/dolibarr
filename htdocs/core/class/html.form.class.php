@@ -4790,7 +4790,54 @@ class Form
 						$retstring.="<script type='text/javascript'>";
 						$retstring.="$(function(){ $('#".$prefix."').datepicker({
             				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
+						closeText: '".$langs->trans("Close")."',
+						prevText: '".$langs->trans("Previous")."',
+						nextText: '".$langs->trans("Next")."',
+						currentText: '".$langs->trans("Today")."',
+						monthNames: [
+							'".$langs->trans("Month01")."',
+							'".$langs->trans("Month02")."',
+							'".$langs->trans("Month03")."',
+							'".$langs->trans("Month04")."',
+							'".$langs->trans("Month05")."',
+							'".$langs->trans("Month06")."',
+							'".$langs->trans("Month07")."',
+							'".$langs->trans("Month08")."',
+							'".$langs->trans("Month09")."',
+							'".$langs->trans("Month10")."',
+							'".$langs->trans("Month11")."',
+							'".$langs->trans("Month12")."'
+						],
+						dayNames: [
+							'".$langs->trans("Sunday")."',
+							'".$langs->trans("Monday")."',
+							'".$langs->trans("Tuesday")."',
+							'".$langs->trans("Wednesday")."',
+							'".$langs->trans("Thursday")."',
+							'".$langs->trans("Friday")."',
+							'".$langs->trans("Saturday")."'
+						],
+						dayNamesShort: [
+							'".$langs->trans("SundayMin")."',
+							'".$langs->trans("MondayMin")."',
+							'".$langs->trans("TuesdayMin")."',
+							'".$langs->trans("WednesdayMin")."',
+							'".$langs->trans("ThursdayMin")."',
+							'".$langs->trans("FridayMin")."',
+							'".$langs->trans("SaturdayMin")."'
+						],
+						dayNamesMin: [
+							'".$langs->trans("ShortSunday")."',
+							'".$langs->trans("ShortMonday")."',
+							'".$langs->trans("ShortTuesday")."',
+							'".$langs->trans("ShortWednesday")."',
+							'".$langs->trans("ShortThursday")."',
+							'".$langs->trans("ShortFriday")."',
+							'".$langs->trans("ShortSaturday")."'
+						],
                 			autoclose: true,
+						changeMonth: true,
+						changeYear: true,
                 			todayHighlight: true,";
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
 						{
