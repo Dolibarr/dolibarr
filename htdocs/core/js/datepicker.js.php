@@ -119,7 +119,9 @@ $(document).ready(function() {
 	$.datepicker.setDefaults({
 		autoSize: true,
 		changeMonth: true,
-		changeYear: true
+		changeYear: true,
+		altField: '#timestamp',
+		altFormat: '@'			// Gives a timestamp dateformat
 	});
 });
 
