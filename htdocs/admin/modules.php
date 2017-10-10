@@ -623,7 +623,7 @@ if ($mode == 'common')
             $imginfo="info_black";
         }
 
-        print '<tr>'."\n";
+        print '<tr class="oddeven">'."\n";
 
         // Picto + Name of module
         print '  <td width="200px">';
