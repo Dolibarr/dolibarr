@@ -26,7 +26,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 $langs->load("members");
 
@@ -267,7 +269,6 @@ if ($result)
     // Static objects
     $subscription=new Subscription($db);
     $adherent=new Adherent($db);
-    $accountstatic=new Account($db);
 
     $total=0;
     while ($i < min($num, $limit))
@@ -304,22 +305,24 @@ if ($result)
         print dol_trunc($obj->note,32);
         print '</td>';
 
-        // Banque
-        if (! empty($conf->banque->enabled))
-        {
-            if ($obj->fk_account)
-            {
-                $accountstatic->id=$obj->fk_account;
-                $accountstatic->fetch($obj->fk_account);
-                //$accountstatic->label=$obj->label;
-                print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-            }
-            else
-            {
-                print "<td>";
-                print "</td>\n";
-            }
-        }
+		// Banque
+		if (! empty($conf->banque->enabled))
+		{
+			$accountstatic=new Account($db);
+
+			if ($obj->fk_account)
+			{
+				$accountstatic->id=$obj->fk_account;
+				$accountstatic->fetch($obj->fk_account);
+				//$accountstatic->label=$obj->label;
+				print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+			}
+			else
+			{
+				print "<td>";
+				print "</td>\n";
+			}
+		}
 
         // Date start
         print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";
