@@ -4789,69 +4789,7 @@ class Form
 					{
 						$retstring.="<script type='text/javascript'>";
 						$retstring.="$(function(){ $('#".$prefix."').datepicker({
-            				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
-						closeText: '".$langs->trans("Close")."',
-						prevText: '".$langs->trans("Previous")."',
-						nextText: '".$langs->trans("Next")."',
-						currentText: '".$langs->trans("Today")."',
-						monthNames: [
-							'".$langs->trans("January")."',
-							'".$langs->trans("February")."',
-							'".$langs->trans("March")."',
-							'".$langs->trans("April")."',
-							'".$langs->trans("May")."',
-							'".$langs->trans("June")."',
-							'".$langs->trans("July")."',
-							'".$langs->trans("August")."',
-							'".$langs->trans("September")."',
-							'".$langs->trans("October")."',
-							'".$langs->trans("November")."',
-							'".$langs->trans("December")."'
-						],
-						monthNamesShort: [
-							'".$langs->trans("JanuaryMin")."',
-							'".$langs->trans("FebruaryMin")."',
-							'".$langs->trans("MarchMin")."',
-							'".$langs->trans("AprilMin")."',
-							'".$langs->trans("MayMin")."',
-							'".$langs->trans("JuneMin")."',
-							'".$langs->trans("JulyMin")."',
-							'".$langs->trans("AugustMin")."',
-							'".$langs->trans("SeptemberMin")."',
-							'".$langs->trans("OctoberMin")."',
-							'".$langs->trans("NovemberMin")."',
-							'".$langs->trans("DecemberMin")."'
-						],
-						dayNames: [
-							'".$langs->trans("Sunday")."',
-							'".$langs->trans("Monday")."',
-							'".$langs->trans("Tuesday")."',
-							'".$langs->trans("Wednesday")."',
-							'".$langs->trans("Thursday")."',
-							'".$langs->trans("Friday")."',
-							'".$langs->trans("Saturday")."'
-						],
-						dayNamesShort: [
-							'".$langs->trans("SundayMin")."',
-							'".$langs->trans("MondayMin")."',
-							'".$langs->trans("TuesdayMin")."',
-							'".$langs->trans("WednesdayMin")."',
-							'".$langs->trans("ThursdayMin")."',
-							'".$langs->trans("FridayMin")."',
-							'".$langs->trans("SaturdayMin")."'
-						],
-						dayNamesMin: [
-							'".$langs->trans("ShortSunday")."',
-							'".$langs->trans("ShortMonday")."',
-							'".$langs->trans("ShortTuesday")."',
-							'".$langs->trans("ShortWednesday")."',
-							'".$langs->trans("ShortThursday")."',
-							'".$langs->trans("ShortFriday")."',
-							'".$langs->trans("ShortSaturday")."'
-						],
                 			autoclose: true,
-						changeMonth: true,
-						changeYear: true,
                 			todayHighlight: true,";
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
 						{
