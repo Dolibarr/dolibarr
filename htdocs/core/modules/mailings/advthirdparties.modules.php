@@ -116,7 +116,7 @@ class mailing_advthirdparties extends MailingTargets
 			}
 		}
 
-		if  (($type_of_target==1) || ($type_of_target==2)) {
+		if  (($type_of_target==1) || ($type_of_target==2) || ($type_of_target==4)) {
 			// Select the third parties from category
 			if (count($socid)>0 || count($contactid)>0)
 			{
