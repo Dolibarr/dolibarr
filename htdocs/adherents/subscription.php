@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// TODO a lot of dependency on the bank module, but no test if this module is not activated!
+if (! empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
@@ -819,7 +822,6 @@ if ($rowid > 0)
         if ($result)
         {
             $subscriptionstatic=new Subscription($db);
-            $accountstatic=new Account($db);
 
             $num = $db->num_rows($result);
             $i = 0;
@@ -849,15 +851,17 @@ if ($rowid > 0)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->subscription).'</td>';
-                if (! empty($conf->banque->enabled))
-                {
-                    print '<td align="right">';
-                    if ($objp->bid)
-                    {
-                        $accountstatic->label=$objp->label;
-                        $accountstatic->id=$objp->baid;
-                        $accountstatic->number=$objp->number;
-                        $accountstatic->account_number=$objp->account_number;
+				if (! empty($conf->banque->enabled))
+				{
+					print '<td align="right">';
+					if ($objp->bid)
+					{
+						$accountstatic=new Account($db);
+
+						$accountstatic->label=$objp->label;
+						$accountstatic->id=$objp->baid;
+						$accountstatic->number=$objp->number;
+						$accountstatic->account_number=$objp->account_number;
 
 						if (! empty($conf->accounting->enabled))
 						{
@@ -867,28 +871,27 @@ if ($rowid > 0)
 							$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
 						}
 
-                        $accountstatic->ref=$objp->ref;
-                        print $accountstatic->getNomUrl(1);
-                    }
-                    else
-                    {
-                        print '&nbsp;';
-                    }
-                    print '</td>';
-                }
-                print "</tr>";
-                $i++;
-            }
-            print "</table>";
-        }
-        else
-        {
-            dol_print_error($db);
-        }
-    }
+						$accountstatic->ref=$objp->ref;
+						print $accountstatic->getNomUrl(1);
+					}
+					else
+					{
+						print '&nbsp;';
+					}
+					print '</td>';
+				}
+				print "</tr>";
+				$i++;
+			}
+			print "</table>";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
 
-
-    // Shon online payment link
+	// Shon online payment link
     $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 
     if ($useonlinepayment)
