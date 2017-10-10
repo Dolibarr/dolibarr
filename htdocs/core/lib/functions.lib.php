@@ -2194,9 +2194,21 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
+	$picto = '';
+	if($withpicto){
+		if($withpicto=='fax'){
+			$picto = 'phoning_fax';
+		}elseif($withpicto=='phone'){
+			$picto = 'phoning';
+		}elseif($withpicto=='mobile'){
+			$picto = 'phoning_mobile';
+		}else{
+			$picto = '';
+		}
+	}
 	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
 	else $rep.='<span style="margin-right: 10px;">';
-	$rep.=($withpicto?img_picto($titlealt, 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone;
+	$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
 	if ($adddivfloat) $rep.='</div>';
 	else $rep.='</span>';
 	return $rep;
