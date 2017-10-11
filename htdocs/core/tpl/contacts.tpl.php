@@ -35,13 +35,13 @@ elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
 elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
 elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
-elseif (! isset($permission) && isset($user->rights->$module->creer))			
-{ 
-	$permission=$user->rights->$module->creer; 
+elseif (! isset($permission) && isset($user->rights->$module->creer))
+{
+	$permission=$user->rights->$module->creer;
 }
 elseif (! isset($permission)  && isset($user->rights->$module->write))
 {
-	$permission=$user->rights->$module->write; 
+	$permission=$user->rights->$module->write;
 }
 
 $formcompany= new FormCompany($db);
@@ -55,8 +55,8 @@ $userstatic=new User($db);
 <div class="div-table-responsive">
 <div class="tagtable centpercent noborder allwidth">
 
-<?php 
-if ($permission) { 
+<?php
+if ($permission) {
 ?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
@@ -72,7 +72,7 @@ if ($permission) {
 	$var=true;
 	if (empty($hideaddcontactforuser))
 	{
-		
+
 	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -87,10 +87,10 @@ if ($permission) {
 		<?php
 		$tmpobject=$object;
 		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
-		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal'); 
+		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd right"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
+		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
 	<?php
@@ -98,7 +98,7 @@ if ($permission) {
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-		
+
 	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
@@ -110,9 +110,9 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
-			<?php 
-			// add company icon before select list 
-			if ($selectedCompany) 
+			<?php
+			// add company icon before select list
+			if ($selectedCompany)
 			{
 			    echo img_object('', 'company', 'class="hideonsmartphone"');
 			}
@@ -129,14 +129,14 @@ if ($permission) {
 			$formcompany->selectTypeContact($tmpobject, '', 'type','external'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
-		<div class="tagtd right noborderbottom">
+		<div class="tagtd center noborderbottom">
 			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled'; ?>>
 		</div>
 	</form>
 
-<?php 
+<?php
 	}
-} 
+}
 ?>
 
 	<form class="tagtr liste_titre liste_titre_add formnoborder">

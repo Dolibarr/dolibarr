@@ -243,6 +243,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
 print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($mode).'">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 // Page
@@ -301,13 +302,13 @@ print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="de
 print '</td>'."\n";
 // Field
 print '<td>';
-print '<input type="text" class="flat maxwidth100" name="defaultkey" value="">';
+print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="">';
 print '</td>';
 // Value
 if ($mode != 'focus')
 {
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone" name="defaultvalue" value="">';
+    print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="">';
     print '</td>';
 }
 // Limit to superadmin
@@ -409,6 +410,7 @@ else
 
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

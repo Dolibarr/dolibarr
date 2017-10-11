@@ -325,8 +325,9 @@ else
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    $typ=$extrafields->attribute_type[$tmpkey];
 	    $mode=0;
-	    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-	    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+	    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+	    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+	    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
 	    {
 	        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
 	    }
@@ -778,13 +779,13 @@ else
  			    if (! empty($arrayfields['p.duration']['checked']))
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)[a-z]/i',$obj->duration))
+    				if (preg_match('/([^a-z]+)[a-z]/i',$obj->duration))
     				{
-	    				if (preg_match('/([0-9]+)y/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-	    				elseif (preg_match('/([0-9]+)m/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-	    				elseif (preg_match('/([0-9]+)w/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-	    				elseif (preg_match('/([0-9]+)d/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-	    				//elseif (preg_match('/([0-9]+)h/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				if (preg_match('/([^a-z]+)y/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([^a-z]+)m/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([^a-z]+)w/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([^a-z]+)d/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([^a-z]+)h/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
 	    				else print $obj->duration;
     				}
     				print '</td>';

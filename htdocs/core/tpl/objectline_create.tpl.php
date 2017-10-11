@@ -37,7 +37,9 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
     $usemargins=1;
 }
 
-global $dateSelector, $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+if (! isset($dateSelector)) global $dateSelector;	// Take global var only if not already defined into function calling (for example formAddObjectLine)
+global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+
 if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
 elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;

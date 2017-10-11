@@ -2,6 +2,83 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 6.0.2 compared to 6.0.1 *****
+
+FIX: #7148
+FIX: #7288
+FIX: #7366 renaming table with pgsql
+FIX: #7435 Can't add payment term
+FIX: #7461
+FIX: #7464
+FIX: #7471
+FIX: #7473 Mass update of vat rates and other bugs on localtax
+FIX: #7475
+FIX: #7486 Empty value for multicurrency rate must be forbidden
+FIX: #7490
+FIX: #7505
+FIX: #7510 Bug: extrafield content disappear when generate pdf within intervention
+FIX: #7514
+FIX: #7531 #7537
+FIX: #7541
+FIX: #7546
+FIX: #7550
+FIX: #7554
+FIX: #7567
+FIX: Accountancy export model for Agiris Isacompta
+FIX: Allow create shipping if STOCK_SUPPORTS_SERVICES option is enabled
+FIX: Bad preview on scroping when special file names
+FIX: Generation of invoice from bulk action "Bill Orders"
+FIX: Implementation of a Luracast recommandation for the REST api server (#7370)
+FIX: Missing space in request
+FIX: Only modified values must be modified
+FIX: replenish if line test GETPOST on line 0
+FIX: Stripe not working on live mode
+FIX: wrong basePath in the swagger view
+FIX: Implementation of a Luracast recommandation for the REST api server
+
+***** ChangeLog for 6.0.1 compared to 6.0.* *****
+
+FIX: #7000 Dashboard link for late pending payment supplier invoices do not work
+FIX: #7325 Default VAT rate when editing template invoices is 0%
+FIX: #7330
+FIX: #7359
+FIX: #7367
+FIX: #7368
+FIX: #7391
+FIX: #7420
+FIX: Add some missing attributes in Adherent:makeSubstitution (type, phone…
+FIX: Bad const name
+FIX: Bad link to unpayed suppliers invoices
+FIX: Better protection to no send email when we change limit
+FIX: Calculation in the activity box
+FIX: Clean bad parameters when inserting line of template invoice
+FIX: dateSelector was not taken into account
+FIX: hidden option MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN
+FIX: journalization for bank journal should not rely on a label.
+FIX: menu enty when url is external link
+FIX: missing supplier qty and supplier discount in available fields for product export.
+FIX: multicompany better accuracy in rounding and with revenue stamp.
+FIX: Must use pdf format page as default for merging PDF.
+FIX: PDF output was sharing 2 different currencies in same total
+FIX: Position of signature on strato template
+FIX: Protection to avoid to apply credit note discount > remain to pay
+FIX: Remove warning when using log into syslog
+FIX: Responsive
+FIX: Security fixes (filter onload js, less verbose error message in
+FIX: SEPA recording payment must save one payment in bank per customer
+FIX: Several problem with the last event box on project/tasks
+FIX: Sign of amount in origin currency on credit note created from lines
+FIX: Some page of admin were not responsive
+FIX: SQL injection
+FIX: time.php crashed without project id in param
+FIX: transfer of line extrafields from order to invoice
+FIX: Upgrade missing on field
+FIX: View of timespent for another user
+FIX: ODT generation
+FIX: CVE-2017-9840, CVE-2017-14238, CVE-2017-14239, CVE-2017-14240, CVE-2017-14241,
+     CVE-2017-14242 
+
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
 
 NEW: Add experimental BlockeLog module (to log business events in a non reversible log file).
@@ -152,6 +229,9 @@ Following changes may create regression for some external modules, but were nece
 content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
 hook specifications so you must return output into "resprint".
 
+***** ChangeLog for 5.0.6 compared to 5.0.5 *****
+FIX: Removed a bad symbolic link into custom directory.
+FIX: Renaming a resource ref rename also the directory of attached files.
 
 ***** ChangeLog for 5.0.5 compared to 5.0.4 *****
 FIX: #7075 : bad path for document

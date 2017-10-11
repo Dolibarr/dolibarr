@@ -1918,7 +1918,7 @@ class Form
         $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
         if (count($warehouseStatusArray))
         {
-            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.implode(',',$warehouseStatusArray).'))';
+            $sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$this->db->escape(implode(',',$warehouseStatusArray)).'))';
         }
 
         if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -3274,7 +3274,7 @@ class Form
 
         $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-        $sql = 'SELECT rowid, label from '.MAIN_DB_PREFIX.'c_units';
+        $sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
         $sql.= ' WHERE active > 0';
 
         $resql = $this->db->query($sql);
@@ -4296,7 +4296,7 @@ class Form
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
-        print $this->selectcurrency($selected,$htmlname);
+        print $this->selectCurrency($selected,$htmlname);
     }
 
     /**
@@ -4306,35 +4306,40 @@ class Form
      *  @param  string	$htmlname    name of HTML select list
      * 	@return	string
      */
-    function selectCurrency($selected='',$htmlname='currency_id')
-    {
-        global $conf,$langs,$user;
+	function selectCurrency($selected='',$htmlname='currency_id')
+	{
+		global $conf,$langs,$user;
 
-        $langs->loadCacheCurrencies('');
+		$langs->loadCacheCurrencies('');
 
-        $out='';
+		$out='';
 
-        if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
+		if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-        foreach ($langs->cache_currencies as $code_iso => $currency)
-        {
-        	if ($selected && $selected == $code_iso)
-        	{
-        		$out.= '<option value="'.$code_iso.'" selected>';
-        	}
-        	else
-        	{
-        		$out.= '<option value="'.$code_iso.'">';
-        	}
-        	$out.= $currency['label'];
-        	$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
-        	$out.= '</option>';
-        }
-        $out.= '</select>';
-        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-        return $out;
-    }
+		$out.= '<select class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'" id="'.$htmlname.'">';
+		foreach ($langs->cache_currencies as $code_iso => $currency)
+		{
+			if ($selected && $selected == $code_iso)
+			{
+				$out.= '<option value="'.$code_iso.'" selected>';
+			}
+			else
+			{
+				$out.= '<option value="'.$code_iso.'">';
+			}
+			$out.= $currency['label'];
+			$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+			$out.= '</option>';
+		}
+		$out.= '</select>';
+		if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+
+		// Make select dynamic
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		$out .= ajax_combobox($htmlname);
+
+		return $out;
+	}
 
 	/**
      *	Return array of currencies in user language
@@ -5495,6 +5500,8 @@ class Form
         	print '<br><!-- showLinkedObjectBlock -->';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
 
+
+    		print '<div class="div-table-responsive-no-min">';
             print '<table class="noborder allwidth">';
 
             print '<tr class="liste_titre">';
@@ -5588,6 +5595,7 @@ class Form
         	}
 
         	print '</table>';
+			print '</div>';
 
         	return $nbofdifferenttypes;
         }
@@ -5632,8 +5640,8 @@ class Form
     		    'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
     		    'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
     		    'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
-    		    'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
-    		    'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn').')')
+    		    'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
+    		    'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn').')')
     		);
 		}
 

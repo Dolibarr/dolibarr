@@ -88,6 +88,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 9
 
 -- CYPRUS (id country=78)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (781, 78,   '19','0','VAT standard rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (782, 78,    '9','0','VAT Rate 9',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (783, 78,    '5','0','VAT Rate 5',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (784, 78,    '0','0','VAT Rate 0',1);
 
 -- DANMERK (id country=80)
@@ -133,13 +135,16 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 3
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 34,  3,   '0','0','VAT Rate 0',1);
 
 -- INDIA (id country=117)
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1171, 117, '12.5','0','VAT standard rate',     0);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1172, 117,    '4','0','VAT reduced rate',      0);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1173, 117,    '1','0','VAT super-reduced rate',0);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1174, 117,    '0','0','VAT Rate 0',            0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1171, 117,    '0','0','VAT Rate 0',            0);
 
-insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'CGST+SGST', 0,  9, '1', 9, '1', 0, 'CGST+SGST - Same state sales', 1);
-insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'IGST'     , 18, 0, '0', 0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1178, 117, 'C+S-5',   0, 2.5, '1', 2.5, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-5'     ,   5,   0, '0',   0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1180, 117, 'C+S-12',   0,   6, '1',   6, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1181, 117, 'I-12'     ,  12,   0, '0',   0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'I-18'     , 18,   0, '0',   0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1182, 117, 'C+S-28',  0,  14, '1',  14, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1183, 117, 'I-28'     , 28,   0, '0',   0, '0', 0, 'IGST',      1);
 
 -- IRELAND (id country=8)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (81,     8,    '0','0','VAT Rate 0',1);

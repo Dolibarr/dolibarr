@@ -51,7 +51,7 @@ if (! $error && count($toselect) > $maxformassaction)
     $error++;
 }
 
-if (! $error && $massaction == 'confirm_presend' && GETPOST('modelselected'))  // If we change the template, we must not send email, but keep on send email form
+if (! $error && $massaction == 'confirm_presend' && ! GETPOST('sendmail'))  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 {
     $massaction='presend';
 }
@@ -408,6 +408,12 @@ if (! $error && $massaction == 'confirm_presend')
 
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
 {
+	if (empty($diroutputmassaction))
+	{
+		dol_print_error(null, 'include of actions_massactions.inc.php is done but var $diroutputmassaction was not defined');
+		exit;
+	}
+
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -458,22 +464,23 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $outputlangs->setDefaultLang($newlang);
     }
 
-    if(!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT)) {
+    if(!empty($conf->global->USE_PDFTK_FOR_PDF_CONCAT))
+    {
     	// Create output dir if not exists
-	dol_mkdir($diroutputmassaction);
+		dol_mkdir($diroutputmassaction);
 
-	// Defined name of merged file
-	$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
-	$filename=preg_replace('/\s/','_',$filename);
+		// Defined name of merged file
+		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename=preg_replace('/\s/','_',$filename);
 
-	// Save merged file
-	if ($filter=='paye:0')
-	{
-	if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
-	else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
-	}
-	if ($year) $filename.='_'.$year;
-	if ($month) $filename.='_'.$month;
+		// Save merged file
+	    if (in_array($object->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
+		{
+			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+		}
+		if ($year) $filename.='_'.$year;
+		if ($month) $filename.='_'.$month;
 
     	if (count($files)>0)
     	{
@@ -503,7 +510,13 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     }
     else {
 	    // Create empty PDF
-	    $pdf=pdf_getInstance();
+    	$formatarray=pdf_getFormat();
+    	$page_largeur = $formatarray['width'];
+    	$page_hauteur = $formatarray['height'];
+    	$format = array($page_largeur,$page_hauteur);
+
+	    $pdf=pdf_getInstance($format);
+
 	    if (class_exists('TCPDF'))
 	    {
 			$pdf->setPrintHeader(false);
@@ -535,7 +548,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	    $filename=preg_replace('/\s/','_',$filename);
 
 	    // Save merged file
-	    if ($filter=='paye:0')
+	    if (in_array($object->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
 	    {
 			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));

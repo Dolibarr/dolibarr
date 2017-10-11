@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2015 	Charlie Benke           <charlies@patas-monkey.com>
@@ -740,7 +740,8 @@ if (empty($reshook))
 			$parameters=array('id'=>$object->id);
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
-			{   $result=$object->updateExtraField($_POST["attribute"]);
+			{
+				$result=$object->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
@@ -1379,7 +1380,7 @@ else if ($id > 0 || ! empty($ref))
 					print dol_htmlentitiesbr($objp->description);
 
 					// Date
-					print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
+					print '<td align="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)?dol_print_date($db->jdate($objp->date_intervention),'dayhour'):dol_print_date($db->jdate($objp->date_intervention),'day')).'</td>';
 
 					// Duration
 					print '<td align="right" width="150">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertSecondToTime($objp->duree):'').'</td>';
@@ -1452,7 +1453,8 @@ else if ($id > 0 || ! empty($ref))
 
 					// Date d'intervention
 					print '<td align="center" class="nowrap">';
-					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                                        if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($db->jdate($objp->date_intervention),'di',0,0,0,"date_intervention");
+                                        else $form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
 
                     // Duration
@@ -1519,7 +1521,8 @@ else if ($id > 0 || ! empty($ref))
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-				$form->select_date($timewithnohour,'di',1,1,0,"addinter");
+                                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($timewithnohour,'di',0,0,0,"addinter");
+                                else $form->select_date($timewithnohour,'di',1,1,0,"addinter");
 				print '</td>';
 
                 // Duration
@@ -1683,18 +1686,11 @@ else if ($id > 0 || ! empty($ref))
 		 * Built documents
 		 */
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$conf->ficheinter->dir_output . "/".$object->ref;
+		$filedir=$conf->ficheinter->dir_output . "/".$filename;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed=$user->rights->ficheinter->creer;
 		$delallowed=$user->rights->ficheinter->supprimer;
-		$genallowed=1;
-		$delallowed=1;
-
-		$var=true;
-
-		//print "<br>\n";
-		print $somethingshown=$formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
-
+		print $formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));

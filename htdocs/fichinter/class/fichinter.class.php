@@ -39,7 +39,7 @@ class Fichinter extends CommonObject
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
     public $picto = 'intervention';
-    
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -361,7 +361,7 @@ class Fichinter extends CommonObject
 				$this->fk_contrat	= $obj->fk_contrat;
 
 				$this->user_creation= $obj->fk_user_author;
-				
+
 				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -542,27 +542,58 @@ class Fichinter extends CommonObject
 	/**
 	 *	Returns amount based on user thm
 	 *
-	 *	@return     float amount
+	 *	@return     float 		Amount
 	 */
-	function getAmount() {
+	function getAmount()
+	{
 		global $db;
-		
+
 		$amount = 0;
-		
+
 		$this->author = new User($db);
 		$this->author->fetch($this->user_creation);
-		
+
 		$thm = $this->author->thm;
-		
-		foreach($this->lines as &$line) {
-			
-			$amount+=$line->qty * $thm;
-			
+
+		foreach($this->lines as $line) {
+			$amount += ($line->duration / 60 / 60 * $thm);
 		}
-		
-		return $amount;
+
+		return price2num($amount, 'MT');
 	}
-	
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param      string                  $modele         Force model to use ('' to not force)
+	 *  @param      Translate               $outputlangs    Object langs to use for output
+	 *  @param      int                     $hidedetails    Hide details of lines
+	 *  @param      int                     $hidedesc       Hide description
+	 *  @param      int                     $hideref        Hide ref
+	 *  @return     int                                     0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf,$langs;
+
+		$langs->load("interventions");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'soleil';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->FICHEINTER_ADDON_PDF)) {
+				$modele = $conf->global->FICHEINTER_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/fichinter/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
 	/**
 	 *	Returns the label status
 	 *
@@ -599,7 +630,7 @@ class Fichinter extends CommonObject
 			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
 		if ($mode == 6)
 		    return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
-		
+
 		return '';
 	}
 
@@ -949,7 +980,7 @@ class Fichinter extends CommonObject
 		return -2;
 	}
 
-	
+
 
     /**
      *	Load an object from its id and create a new one in database
@@ -1001,7 +1032,7 @@ class Fichinter extends CommonObject
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
-		
+
         // Create clone
         $result=$this->create($user);
         if ($result < 0) $error++;
@@ -1013,7 +1044,7 @@ class Fichinter extends CommonObject
             {
             	$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
             }
-            
+
         	// Hook of thirdparty module
             if (is_object($hookmanager))
             {
@@ -1043,8 +1074,8 @@ class Fichinter extends CommonObject
             return -1;
         }
     }
-	
-	
+
+
 	/**
 	 *	Adding a line of intervention into data base
 	 *

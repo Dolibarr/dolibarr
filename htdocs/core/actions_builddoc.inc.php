@@ -91,10 +91,13 @@ if ($action == 'builddoc' && $permissioncreate)
         }
         else
         {
-            setEventMessages($langs->trans("FileGenerated"), null);
+        	if (empty($donotredirect))	// This is se when include is done by bulk action "Bill Orders"
+        	{
+	            setEventMessages($langs->trans("FileGenerated"), null);
 
-            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
-            exit;
+	            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
+	            exit;
+        	}
         }
     }
 }

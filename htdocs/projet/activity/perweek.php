@@ -97,7 +97,7 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
     $usertoprocess=$user;
 	$search_usertoprocessid=$usertoprocess->id;
 }
-elseif (search_usertoprocessid > 0)
+elseif ($search_usertoprocessid > 0)
 {
     $usertoprocess=new User($db);
     $usertoprocess->fetch($search_usertoprocessid);
@@ -120,7 +120,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $action = '';
     $search_categ='';
-    $search_usertoprocessid = '';
+    $search_usertoprocessid = $user->id;
     $search_task_ref = '';
     $search_task_label = '';
     $search_project_ref = '';
@@ -246,6 +246,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				        $object->timespent_duration = $newduration;
 				        $object->timespent_fk_user = $usertoprocess->id;
 			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
+			        	$object->timespent_datehour = $object->timespent_date;
 
 						$result=$object->addTimeSpent($user);
 						if ($result < 0)
@@ -528,7 +529,7 @@ $modeinput='hours';
 
 print '<script type="text/javascript">';
 print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\'});';
 $i=0;
 while ($i < 7)
 {
