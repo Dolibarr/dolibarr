@@ -60,6 +60,7 @@ class BonPrelevement extends CommonObject
     var $labelstatut=array();
 
     var $invoice_in_error=array();
+	var $thirdparty_in_error=array();
 
 
     /**
@@ -756,16 +757,19 @@ class BonPrelevement extends CommonObject
      *	@param 	int		$banque		dolibarr mysoc bank
      *	@param	int		$agence		dolibarr mysoc bank office (guichet)
      *	@param	string	$mode		real=do action, simu=test only
+     *  @param	string	$format		FRST, RCUR or ALL
      *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
      */
-    function Create($banque=0, $agence=0, $mode='real')
+    function Create($banque=0, $agence=0, $mode='real', $format='ALL')
     {
         global $conf,$langs;
 
-        dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence, LOG_DEBUG);
+        dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
         require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
         require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+
+        if (empty($format)) return 'ErrorBadParametersForDirectDebitFileCreate';
 
         $error = 0;
 
@@ -776,9 +780,10 @@ class BonPrelevement extends CommonObject
 
         $puser = new User($this->db, $conf->global->PRELEVEMENT_USER);
 
-        /*
-         * Read invoices
-         */
+        $this->invoice_in_error = array();
+        $this->thirdparty_in_error = array();
+
+        // Read invoices
         $factures = array();
         $factures_prev = array();
         $factures_result = array();
@@ -851,6 +856,9 @@ class BonPrelevement extends CommonObject
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0, $soc->id);
 
+                        	if ($format == 'FRST' && $bac->frstrecur != 'FRST') continue;
+                        	if ($format == 'RCUR' && $bac->frstrecur != 'RCUR') continue;
+
                         	if ($bac->verif() >= 1)
                             {
                                 $factures_prev[$i] = $fac;
@@ -890,13 +898,13 @@ class BonPrelevement extends CommonObject
         dol_syslog($out);
 
         // Return warning
-        $i=0;
+        /*$i=0;
         foreach ($this->thirdparty_in_error as $key => $val)
         {
         	if ($i < 10) setEventMessages($val, null, 'warnings');
         	else setEventMessages('More error were discarded...', null, 'warnings');
         	$i++;
-        }
+        }*/
 
         if (count($factures_prev) > 0)
         {
@@ -1060,7 +1068,7 @@ class BonPrelevement extends CommonObject
                     $this->factures = $factures_prev_id;
 
                     // Generation of SEPA file $this->filename
-                    $this->generate();
+                    $this->generate($format);
                 }
                 dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
             }
@@ -1255,14 +1263,16 @@ class BonPrelevement extends CommonObject
      * - Others countries: Warning message
      * File is generated with name this->filename
      *
-     *	@return		int			0 if OK, <0 if KO
+     *  @param		string	$format		FRST, RCUR or ALL
+     *	@return		int					0 if OK, <0 if KO
      */
-    //TODO: Optimize code to read lines in a single function
-    function generate()
+    function generate($format='ALL')
     {
-        global $conf,$langs,$mysoc;
+    	global $conf,$langs,$mysoc;
 
-        $result = 0;
+	    //TODO: Optimize code to read lines in a single function
+
+    	$result = 0;
 
         dol_syslog(get_class($this)."::generate build file ".$this->filename);
 
@@ -1340,7 +1350,7 @@ class BonPrelevement extends CommonObject
 			// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all DrctDbtTxInf
 			if ($result != -2)
 			{
-				$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf);
+				$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format);
 			}
 			else
 			{
@@ -1663,9 +1673,10 @@ class BonPrelevement extends CommonObject
      *	@param	int		$nombre			0 or 1
      *	@param	float	$total			Total
      *	@param	string	$CrLf			End of line character
+     *  @param	string	$format			FRST or RCUR or ALL
      *	@return	string					String with SEPA Sender
      */
-    function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
+    function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n', $format='FRST')
     {
         // SEPA INITIALISATION
 		global $conf;
@@ -1706,7 +1717,7 @@ class BonPrelevement extends CommonObject
 			$country = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
-			$type = ($nombre == 1) ? 'FRST' : 'RCUR' ;
+
 			// SEPA Paiement Information
 			$XML_SEPA_INFO = '';
 			$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
@@ -1721,7 +1732,7 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
 			$XML_SEPA_INFO .= '					<Cd>CORE</Cd>'.$CrLf;
 			$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
-			$XML_SEPA_INFO .= '				<SeqTp>'.$type.'</SeqTp>'.$CrLf;
+			$XML_SEPA_INFO .= '				<SeqTp>'.$format.'</SeqTp>'.$CrLf;
 			$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
 			$XML_SEPA_INFO .= '			<ReqdColltnDt>'.$dateTime_ETAD.'</ReqdColltnDt>'.$CrLf;
 			$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;

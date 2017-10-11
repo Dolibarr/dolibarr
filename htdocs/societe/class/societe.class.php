@@ -2254,7 +2254,7 @@ class Societe extends CommonObject
     /**
      *  Return bank number property of thirdparty (label or rum)
      *
-     *	@param	string	$mode	'label' or 'rum'
+     *	@param	string	$mode	'label' or 'rum' or 'format'
      *  @return	string			Bank number
      */
     function display_rib($mode='label')
@@ -2278,6 +2278,10 @@ class Societe extends CommonObject
         		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
         	}
         	return $bac->rum;
+        }
+        elseif ($mode == 'format')
+        {
+        	return $bac->frstrecur;
         }
 
         return 'BadParameterToFunctionDisplayRib';

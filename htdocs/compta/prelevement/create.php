@@ -45,6 +45,8 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
 $action = GETPOST('action','alpha');
+$mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
+$format = GETPOST('format','alpha');
 
 
 /*
@@ -63,7 +65,7 @@ if ($action == 'create')
 {
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
     $bprev = new BonPrelevement($db);
-    $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
+    $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format);
     if ($result < 0)
     {
     	setEventMessages($bprev->error, $bprev->errors, 'errors');
@@ -76,7 +78,7 @@ if ($action == 'create')
         $mesg.='<br>'."\n";
         foreach($bprev->invoice_in_error as $key => $val)
         {
-        	$mesg.=$val."<br>\n";
+        	$mesg.='<span class="warning">'.$val."</span><br>\n";
         }
     }
     else
@@ -146,8 +148,30 @@ print "<div class=\"tabsAction\">\n";
 
 if ($nb)
 {
-    if ($pricetowithdraw) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("CreateAll")."</a>\n";
-    else print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+    if ($pricetowithdraw)
+    {
+    	if ($mysoc->isInEEC())
+    	{
+    		print '<a class="butAction" href="create.php?action=create&format=FRST">'.$langs->trans("CreateForSepaFRST")."</a>\n";
+    		print '<a class="butAction" href="create.php?action=create&format=RCUR">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+    	}
+    	else
+    	{
+    		print '<a class="butAction" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
+    	}
+    }
+    else
+    {
+    	if ($mysoc->isInEEC())
+    	{
+    		print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
+    		print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+    	}
+    	else
+    	{
+    		print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+    	}
+    }
 }
 else
 {
@@ -220,6 +244,8 @@ if ($resql)
             // RUM
             print '<td>';
             print $thirdpartystatic->display_rib('rum');
+            $format = $thirdpartystatic->display_rib('format');
+            if ($format) print ' ('.$format.')';
             print '</td>';
             // Amount
             print '<td align="right">';
