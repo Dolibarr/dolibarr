@@ -70,7 +70,7 @@ if (count($extrafields->attribute_type))
 
 		print '<tr class="oddeven">';
 		print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
-		print "<td>".$langs->trans($extrafields->attribute_label[$key])."</td>\n";
+		print "<td>".$extrafields->attribute_label[$key]."</td>\n";	// We don't translate here, we want admin to know what is the key not translated value
 		print "<td>".$key."</td>\n";
 		print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
 		print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
