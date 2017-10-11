@@ -70,7 +70,7 @@ class CompanyBankAccount extends Account
     function create(User $user = null, $notrigger=0)
     {
         $now	= dol_now();
-	$error	= 0;
+		$error	= 0;
         // Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1";
    		$result = $this->db->query($sql);
@@ -89,29 +89,27 @@ class CompanyBankAccount extends Account
             if ($this->db->affected_rows($resql))
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
-		    
-		    if (! $notrigger)
-		    {
-		   	 // Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
 
-			if(! $error )
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		    
-		    }
-		    else
-		    {
-		    	return 1;
-		    }
-               
+			    if (! $notrigger)
+			    {
+				   	// Call trigger
+					$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+					if ($result < 0) $error++;
+					// End call triggers
+
+					if (! $error)
+					{
+						return 1;
+					}
+					else
+					{
+						return 0;
+					}
+			    }
+			    else
+			    {
+			    	return 1;
+			    }
             }
         }
         else
@@ -132,14 +130,10 @@ class CompanyBankAccount extends Account
     {
 	    global $conf;
 	    $error = 0;
-	   
 
-        if (! $this->id)
-        {
-            $this->create();
-        }
-		
-		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+        if (! $this->id) return -1;
+
+        if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
 		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
@@ -169,8 +163,8 @@ class CompanyBankAccount extends Account
         $result = $this->db->query($sql);
         if ($result)
         {
-		
-		
+
+
 		if (! $notrigger)
 		{
 			// Call trigger
@@ -190,7 +184,7 @@ class CompanyBankAccount extends Account
 		{
 			return 1;
 		}
-		
+
         }
         else
         {
@@ -265,13 +259,13 @@ class CompanyBankAccount extends Account
     function delete(User $user = null, $notrigger=0)
     {
         global $conf;
-        
+
         $error = 0;
-        
+
         dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
-        
+
         $this->db->begin();
-        
+
         if (! $error && ! $notrigger)
         {
             // Call trigger
@@ -284,14 +278,14 @@ class CompanyBankAccount extends Account
         {
             $sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_rib";
             $sql .= " WHERE rowid  = " . $this->id;
-            
+
             if (! $this->db->query($sql))
         	{
         		$error++;
         		$this->errors[]=$this->db->lasterror();
         	}
         }
-        
+
         if (! $error)
         {
             $this->db->commit();
@@ -380,7 +374,7 @@ class CompanyBankAccount extends Account
     		return -1;
     	}
     }
-    
+
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
@@ -406,13 +400,13 @@ class CompanyBankAccount extends Account
         $this->proprio         = 'Owner';
         $this->owner_address   = 'Owner address';
         $this->country_id      = 1;
-        
+
         $this->rum             = 'UMR-CU1212-0007-5-1475405262';
         $this->date_rum        =dol_now() - 10000;
         $this->frstrecur       = 'FRST';
-        
+
         $this->socid = 0;
     }
-    
+
 }
 
