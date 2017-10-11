@@ -69,20 +69,20 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",     GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
     // Send mode parameters
-	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",      GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",         GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",        GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",      GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",         GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",         GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",        GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS",   GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
     // Content parameters
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE',GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",       GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		  GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",      GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE', GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -427,13 +427,30 @@ if ($action == 'edit')
 	print '"></td></tr>';
 
     // Default from type
-
-    $liste = array();
-    $liste['user'] = $langs->trans('UserEmail');
-    $liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	/*
+	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	}
+	else dol_print_error($db);*/
 
     print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
-    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
+    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
     print '</td></tr>';
 
     // Separator
@@ -569,13 +586,46 @@ else
 	print '</td></tr>';
 
 	// Default from type
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	}
+	else dol_print_error($db);
 
     print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
     print '<td>';
-    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
+    if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
+    {
         print $langs->trans('UserEmail');
-    } else {
-        print $langs->trans('CompanyEmail');
+    }
+    else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
+    {
+    	print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
+    }
+    else {
+    	$id = preg_replace('/senderprofile_/', '', $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE);
+    	if ($id > 0)
+    	{
+    		include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
+    		$emailsenderprofile = new EmailSenderProfile($db);
+    		$emailsenderprofile->fetch($id);
+    		print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
+    	}
     }
     print '</td></tr>';
 

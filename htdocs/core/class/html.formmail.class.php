@@ -444,6 +444,8 @@ class FormMail extends Form
                         }
                     } else {
                         $liste = array();
+
+                        // Add user email
                         if (empty($user->email))
                         {
                             $langs->load('errors');
@@ -453,9 +455,32 @@ class FormMail extends Form
                         {
                             $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
                         }
+
+                        // Add also company main email
                         $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
-                        // Add also email aliases if there is one
+
+                        // Add also email aliases if there is some
                         $listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+
+                        // Add also email aliases from the c_email_senderprofile table
+                        $sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
+                        $resql = $this->db->query($sql);
+                        if ($resql)
+                        {
+                        	$num = $this->db->num_rows($resql);
+                        	$i=0;
+                        	while($i < $num)
+                        	{
+                        		$obj = $this->db->fetch_object($resql);
+                        		if ($obj)
+                        		{
+                        			$listaliases['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+                        		}
+                        		$i++;
+                        	}
+                        }
+                        else dol_print_error($db);
+
                         foreach($listaliases as $typealias => $listalias)
                         {
                             $posalias=0;

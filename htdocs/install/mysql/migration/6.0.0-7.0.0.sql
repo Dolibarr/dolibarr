@@ -364,3 +364,20 @@ ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
 ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
+
+
+create table llx_c_email_senderprofile
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
+  private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
+  date_creation   datetime,
+  tms             timestamp,
+  label           varchar(255),					  -- Label of predefined email
+  email           varchar(255),					  -- Email
+  signature		  text                            -- Predefined signature
+  position        smallint,					      -- Position
+  active          tinyint DEFAULT 1  NOT NULL,
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(entity, label, email);
