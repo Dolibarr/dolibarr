@@ -213,7 +213,7 @@ if ($resql)
             // RIB
             print '<td>';
             print $thirdpartystatic->display_rib();
-            $bac->fetch(0, $obj->id);
+            $bac->fetch(0, $obj->socid);
             if ($bac->verif() <= 0) print img_warning('Error on default bank number RIB/IBAN');
             print '</td>';
             // RUM
