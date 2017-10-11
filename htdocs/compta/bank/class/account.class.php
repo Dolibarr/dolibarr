@@ -1345,6 +1345,8 @@ class Account extends CommonObject
     {
         require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 
+        $this->error_number = 0;
+
         // Call function to check BAN
         if (! checkBanForAccount($this))
         {
