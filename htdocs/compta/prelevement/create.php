@@ -46,7 +46,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 // Get supervariables
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
-$format = GETPOST('format','alpha');
+$format = GETPOST('format','aZ09');
 
 
 /*
