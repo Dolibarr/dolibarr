@@ -917,7 +917,7 @@ if ($resql)
     	$liststatus=array(
     	    Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
     	    Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-    	    Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSentShort"),
+    	    Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
     	    Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
     	    -3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
     	    Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
