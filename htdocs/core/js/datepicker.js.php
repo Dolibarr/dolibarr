@@ -45,68 +45,68 @@ else header('Cache-Control: no-cache');
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 $tradMonths=array(
-dol_escape_js($langs->transnoentitiesnoconv("January")),
-dol_escape_js($langs->transnoentitiesnoconv("February")),
-dol_escape_js($langs->transnoentitiesnoconv("March")),
-dol_escape_js($langs->transnoentitiesnoconv("April")),
-dol_escape_js($langs->transnoentitiesnoconv("May")),
-dol_escape_js($langs->transnoentitiesnoconv("June")),
-dol_escape_js($langs->transnoentitiesnoconv("July")),
-dol_escape_js($langs->transnoentitiesnoconv("August")),
-dol_escape_js($langs->transnoentitiesnoconv("September")),
-dol_escape_js($langs->transnoentitiesnoconv("October")),
-dol_escape_js($langs->transnoentitiesnoconv("November")),
-dol_escape_js($langs->transnoentitiesnoconv("December"))
+	dol_escape_js($langs->transnoentitiesnoconv("January")),
+	dol_escape_js($langs->transnoentitiesnoconv("February")),
+	dol_escape_js($langs->transnoentitiesnoconv("March")),
+	dol_escape_js($langs->transnoentitiesnoconv("April")),
+	dol_escape_js($langs->transnoentitiesnoconv("May")),
+	dol_escape_js($langs->transnoentitiesnoconv("June")),
+	dol_escape_js($langs->transnoentitiesnoconv("July")),
+	dol_escape_js($langs->transnoentitiesnoconv("August")),
+	dol_escape_js($langs->transnoentitiesnoconv("September")),
+	dol_escape_js($langs->transnoentitiesnoconv("October")),
+	dol_escape_js($langs->transnoentitiesnoconv("November")),
+	dol_escape_js($langs->transnoentitiesnoconv("December"))
 );
 
 $tradMonthsShort=array(
-$langs->trans("JanuaryMin"),
-$langs->trans("FebruaryMin"),
-$langs->trans("MarchMin"),
-$langs->trans("AprilMin"),
-$langs->trans("MayMin"),
-$langs->trans("JuneMin"),
-$langs->trans("JulyMin"),
-$langs->trans("AugustMin"),
-$langs->trans("SeptemberMin"),
-$langs->trans("OctoberMin"),
-$langs->trans("NovemberMin"),
-$langs->trans("DecemberMin")
+	$langs->trans("JanuaryMin"),
+	$langs->trans("FebruaryMin"),
+	$langs->trans("MarchMin"),
+	$langs->trans("AprilMin"),
+	$langs->trans("MayMin"),
+	$langs->trans("JuneMin"),
+	$langs->trans("JulyMin"),
+	$langs->trans("AugustMin"),
+	$langs->trans("SeptemberMin"),
+	$langs->trans("OctoberMin"),
+	$langs->trans("NovemberMin"),
+	$langs->trans("DecemberMin")
 );
 
 $tradDays=array(
-$langs->trans("Sunday"),
-$langs->trans("Monday"),
-$langs->trans("Tuesday"),
-$langs->trans("Wednesday"),
-$langs->trans("Thursday"),
-$langs->trans("Friday"),
-$langs->trans("Saturday")
+	$langs->trans("Sunday"),
+	$langs->trans("Monday"),
+	$langs->trans("Tuesday"),
+	$langs->trans("Wednesday"),
+	$langs->trans("Thursday"),
+	$langs->trans("Friday"),
+	$langs->trans("Saturday")
 );
 
 $tradDaysShort=array(
-$langs->trans("ShortSunday"),
-$langs->trans("ShortMonday"),
-$langs->trans("ShortTuesday"),
-$langs->trans("ShortWednesday"),
-$langs->trans("ShortThursday"),
-$langs->trans("ShortFriday"),
-$langs->trans("ShortSaturday")
+	$langs->trans("ShortSunday"),
+	$langs->trans("ShortMonday"),
+	$langs->trans("ShortTuesday"),
+	$langs->trans("ShortWednesday"),
+	$langs->trans("ShortThursday"),
+	$langs->trans("ShortFriday"),
+	$langs->trans("ShortSaturday")
 );
 
 $tradDaysMin=array(
-$langs->trans("SundayMin"),
-$langs->trans("MondayMin"),
-$langs->trans("TuesdayMin"),
-$langs->trans("WednesdayMin"),
-$langs->trans("ThursdayMin"),
-$langs->trans("FridayMin"),
-$langs->trans("SaturdayMin")
+	$langs->trans("SundayMin"),
+	$langs->trans("MondayMin"),
+	$langs->trans("TuesdayMin"),
+	$langs->trans("WednesdayMin"),
+	$langs->trans("ThursdayMin"),
+	$langs->trans("FridayMin"),
+	$langs->trans("SaturdayMin")
 );
 ?>
 
 
-// For eldy and jQuery date picker
+// For jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
@@ -140,8 +140,8 @@ jQuery(function($){
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
 		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
 		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
-		showMonthAfterYear: false,  // TODO add specific to country
-		yearSuffix: ''				// TODO add specific to country
+		showMonthAfterYear: false,  	/* TODO add specific to country	*/
+ 		yearSuffix: ''			/* TODO add specific to country */
 	};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
