@@ -205,7 +205,8 @@ if (empty($reshook))
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur');
     		$account->rum             = GETPOST('rum','alpha');
-    
+    		$account->datec			  = dol_now();
+
     		// This test can be done only once properties were set
     		if ($account->needIBAN() == 1)
     		{
