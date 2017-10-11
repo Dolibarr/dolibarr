@@ -366,7 +366,7 @@ if ($mode == 'desc')
 if ($mode == 'feature')
 {
     $text.='<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-    if (count($objMod->requiredby)) $text.=join(',', $objMod->depends);
+    if (count($objMod->depends)) $text.=join(',', $objMod->depends);
 	else $text.=$langs->trans("None");
     $text.='<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
 	if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
