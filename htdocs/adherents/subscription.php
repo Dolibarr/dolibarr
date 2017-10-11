@@ -32,13 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->banque->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-}
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-}
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -841,6 +837,8 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
+            $accountstatic=new Account($db);
+		
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
@@ -857,8 +855,6 @@ if ($rowid > 0)
 					print '<td align="right">';
 					if ($objp->bid)
 					{
-						$accountstatic=new Account($db);
-
 						$accountstatic->label=$objp->label;
 						$accountstatic->id=$objp->baid;
 						$accountstatic->number=$objp->number;
