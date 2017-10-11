@@ -2981,19 +2981,23 @@ class Societe extends CommonObject
      *  Create a third party into database from a member object
      *
      *  @param	Adherent	$member		Object member
-     * 	@param	string	$socname	Name of third party to force
+     * 	@param	string	$socname		Name of third party to force
+     *	@param	string	$socalias	Alias name of third party to force
      *  @return int					<0 if KO, id of created account if OK
      */
-    function create_from_member(Adherent $member,$socname='')
+    function create_from_member(Adherent $member, $socname='', $socalias='')
     {
         global $user,$langs;
 
         $name = $socname?$socname:$member->societe;
         if (empty($name)) $name=$member->getFullName($langs);
 
+        $alias = $socalias?$socalias:'';
+
         // Positionne parametres
         $this->nom=$name;				// TODO deprecated
         $this->name=$name;
+        $this->name_alias=$alias;
         $this->address=$member->address;
         $this->zip=$member->zip;
         $this->town=$member->town;
