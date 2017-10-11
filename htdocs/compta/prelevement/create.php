@@ -192,7 +192,9 @@ if ($resql)
 
     if ($num)
     {
-        $var = True;
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+    	$bac = new CompanyBankAccount($db);
+
         while ($i < $num && $i < 20)
         {
             $obj = $db->fetch_object($resql);
@@ -211,6 +213,8 @@ if ($resql)
             // RIB
             print '<td>';
             print $thirdpartystatic->display_rib();
+            $bac->fetch(0, $obj->id);
+            if ($bac->verif() <= 0) print img_warning('Error on default bank number RIB/IBAN');
             print '</td>';
             // RUM
             print '<td>';

@@ -849,7 +849,7 @@ class BonPrelevement extends CommonObject
                         if ($soc->fetch($fact->socid) >= 0)
                         {
                         	$bac = new CompanyBankAccount($this->db);
-                        	$bac->fetch(0,$soc->id);
+                        	$bac->fetch(0, $soc->id);
 
                             if ($bac->verif() >= 1)
                             //if (true)
@@ -862,7 +862,8 @@ class BonPrelevement extends CommonObject
                             else
 							{
 								dol_syslog(__METHOD__."::Check RIB Error on default bank number RIB/IBAN for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
-                                $this->invoice_in_error[$fac[0]]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty (reported by function verif) ".$soc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
+								$this->thirdparty_in_error[$soc->id]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
                             }
                         }
                         else
@@ -889,6 +890,14 @@ class BonPrelevement extends CommonObject
         //print $out."\n";
         dol_syslog($out);
 
+        // Return warning
+        $i=0;
+        foreach ($this->thirdparty_in_error as $key => $val)
+        {
+        	if ($i < 10) setEventMessages($val, null, 'warnings');
+        	else setEventMessages('More error were discarded...', null, 'warnings');
+        	$i++;
+        }
 
         if (count($factures_prev) > 0)
         {
