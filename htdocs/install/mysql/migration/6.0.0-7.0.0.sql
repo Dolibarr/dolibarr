@@ -375,9 +375,9 @@ create table llx_c_email_senderprofile
   tms             timestamp,
   label           varchar(255),					  -- Label of predefined email
   email           varchar(255),					  -- Email
-  signature		  text                            -- Predefined signature
+  signature		  text,                           -- Predefined signature
   position        smallint,					      -- Position
-  active          tinyint DEFAULT 1  NOT NULL,
+  active          tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(entity, label, email);
