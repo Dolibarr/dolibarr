@@ -269,6 +269,7 @@ if ($result)
     // Static objects
     $subscription=new Subscription($db);
     $adherent=new Adherent($db);
+    $accountstatic=new Account($db);
 
     $total=0;
     while ($i < min($num, $limit))
@@ -308,9 +309,7 @@ if ($result)
 		// Banque
 		if (! empty($conf->banque->enabled))
 		{
-			$accountstatic=new Account($db);
-
-			if ($obj->fk_account)
+			if ($obj->fk_account > 0)
 			{
 				$accountstatic->id=$obj->fk_account;
 				$accountstatic->fetch($obj->fk_account);
