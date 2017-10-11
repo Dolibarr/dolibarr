@@ -38,9 +38,7 @@ if (! empty($conf->banque->enabled)) {
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (! empty($conf->accounting->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
-}
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
