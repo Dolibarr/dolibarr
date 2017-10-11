@@ -1349,7 +1349,7 @@ class Account extends CommonObject
 
         // Call function to check BAN
 
-        if (! checkIbanForAccount($bac) || ! checkSwiftForAccount($bac))
+        if (! checkIbanForAccount($this) || ! checkSwiftForAccount($this))
         {
         	$this->error_number = 12;
         	$this->error_message = 'IBANSWIFTControlError';
