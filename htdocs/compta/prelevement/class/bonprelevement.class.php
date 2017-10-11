@@ -851,8 +851,7 @@ class BonPrelevement extends CommonObject
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0, $soc->id);
 
-                            if ($bac->verif() >= 1)
-                            //if (true)
+                        	if ($bac->verif() >= 1)
                             {
                                 $factures_prev[$i] = $fac;
                                 /* second tableau necessaire pour BonPrelevement */
@@ -861,9 +860,9 @@ class BonPrelevement extends CommonObject
                             }
                             else
 							{
-								dol_syslog(__METHOD__."::Check RIB Error on default bank number RIB/IBAN for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
-								$this->invoice_in_error[$fac[0]]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
-								$this->thirdparty_in_error[$soc->id]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
+								dol_syslog(__METHOD__."::Check RIB Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
+								$this->invoice_in_error[$fac[0]]="Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
+								$this->thirdparty_in_error[$soc->id]="Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
                             }
                         }
                         else
@@ -1525,9 +1524,9 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_zip			soc.zip
      *  @param	string		$row_town			soc.town
      *	@param	string		$row_country_code	c.code AS country,
-     *	@param	string		$row_cb				pl.code_banque AS cb,
-     *	@param	string		$row_cg				pl.code_guichet AS cg,
-     *	@param	string		$row_cc				pl.number AS cc,
+     *	@param	string		$row_cb				pl.code_banque AS cb,		Not used for SEPA
+     *	@param	string		$row_cg				pl.code_guichet AS cg,		Not used for SEPA
+     *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA
      *	@param	string		$row_somme			pl.amount AS somme,
      *	@param	string		$row_facnumber		f.facnumber
      *	@param	string		$row_idfac			pf.fk_facture AS idfac,

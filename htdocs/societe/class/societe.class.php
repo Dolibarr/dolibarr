@@ -1903,6 +1903,11 @@ class Societe extends CommonObject
         	$label.= '<u>' . $langs->trans("ShowContacts") . '</u>';
         	$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
         }
+        else if ($option == 'ban')
+        {
+        	$label.= '<u>' . $langs->trans("ShowBan") . '</u>';
+        	$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$this->id;
+        }
 
         // By default
         if (empty($linkstart))

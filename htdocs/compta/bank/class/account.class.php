@@ -1337,7 +1337,7 @@ class Account extends CommonObject
 
 
     /**
-     *     Return if an account has valid information
+     *     Return if an account has valid information for Direct debit payment
      *
      *     @return     int         1 if correct, <=0 if wrong
      */
@@ -1348,11 +1348,17 @@ class Account extends CommonObject
         $this->error_number = 0;
 
         // Call function to check BAN
-        if (! checkBanForAccount($this))
+
+        if (! checkIbanForAccount($bac) || ! checkSwiftForAccount($bac))
+        {
+        	$this->error_number = 12;
+        	$this->error_message = 'IBANSWIFTControlError';
+        }
+        /*if (! checkBanForAccount($this))
         {
             $this->error_number = 12;
-            $this->error_message = 'RIBControlError';
-        }
+            $this->error_message = 'BANControlError';
+        }*/
 
         if ($this->error_number == 0)
         {
