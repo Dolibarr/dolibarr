@@ -527,7 +527,7 @@ if ($resql)
             if (! empty($arrayfields['t.datec']['checked']))
             {
                 print '<td align="center">';
-                print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+                print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
             }
@@ -535,7 +535,7 @@ if ($resql)
             if (! empty($arrayfields['t.tms']['checked']))
             {
                 print '<td align="center">';
-                print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+                print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
                 print '</td>';
     		    if (! $i) $totalarray['nbfield']++;
             }

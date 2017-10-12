@@ -963,7 +963,7 @@ else
 		        if (! empty($arrayfields['p.datec']['checked']))
 		        {
 		            print '<td align="center">';
-		            print dol_print_date($obj->date_creation, 'dayhour');
+		            print dol_print_date($obj->date_creation, 'dayhour', 'tzuser');
 		            print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
 		        }
@@ -971,7 +971,7 @@ else
 		        if (! empty($arrayfields['p.tms']['checked']))
 		        {
 		            print '<td align="center">';
-		            print dol_print_date($obj->date_update, 'dayhour');
+		            print dol_print_date($obj->date_update, 'dayhour', 'tzuser');
 		            print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
 		        }
