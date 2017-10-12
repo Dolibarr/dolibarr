@@ -50,7 +50,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='position';
 if (! $sortorder) $sortorder='ASC';
 
-$id = GETPOST("bid",'int');
+$id = GETPOST("id",'int');
 
 
 /*
@@ -179,11 +179,11 @@ if ($resql)
         print '<td align="right" class="nowrap">';
         if ($user->rights->bookmark->creer)
         {
-        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
+        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
         }
         if ($user->rights->bookmark->supprimer)
         {
-            print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";
+            print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&id=$obj->rowid\">".img_delete()."</a>";
         }
         else
         {
@@ -209,7 +209,7 @@ print "<div class=\"tabsAction\">\n";
 
 if ($user->rights->bookmark->creer)
 {
-    print '<a class="butAction" href="card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
 }
 
 print '</div>';
