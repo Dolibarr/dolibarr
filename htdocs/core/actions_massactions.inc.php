@@ -663,6 +663,12 @@ if ($action == 'remove_file')
 // Validate records
 if (! $error && $massaction == 'validate' && $permtocreate)
 {
+	if ($object->element == 'invoice' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+	{
+		$langs->load("errors");
+		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
+		$error++;
+	}
 	if ($object->element == 'invoice_supplier' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
 	{
 		$langs->load("errors");

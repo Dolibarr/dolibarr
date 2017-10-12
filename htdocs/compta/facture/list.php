@@ -233,7 +233,8 @@ if (empty($reshook))
 	$objectclass='Facture';
 	$objectlabel='Invoices';
     $permtoread = $user->rights->facture->lire;
-	$permtodelete = $user->rights->facture->supprimer;
+    $permtocreate = $user->rights->facture->creer;
+    $permtodelete = $user->rights->facture->supprimer;
 	$uploaddir = $conf->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -573,7 +574,8 @@ if ($resql)
 	}
 
 	$arrayofmassactions=array(
-	    'presend'=>$langs->trans("SendByMail"),
+	    'validate'=>$langs->trans("Validate"),
+		'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($conf->prelevement->enabled)
