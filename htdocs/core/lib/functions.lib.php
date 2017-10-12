@@ -1625,7 +1625,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 				$offsettz=0;
 				$offsetdst=0;
 			}
-			elseif ($tzoutput == 'tzuser')
+			elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel')
 			{
 				$to_gmt=true;
 				$offsettzstring=(empty($_SESSION['dol_tz_string'])?'UTC':$_SESSION['dol_tz_string']);	// Example 'Europe/Berlin' or 'Indian/Reunion'
