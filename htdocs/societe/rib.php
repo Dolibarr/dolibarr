@@ -571,6 +571,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
             include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
             $modellist=ModeleBankAccountDoc::liste_modeles($db);
+
             $out = '';
             if (is_array($modellist) && count($modellist))
             {
@@ -585,6 +586,8 @@ if ($socid && $action != 'edit' && $action != "create")
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
+                if (! empty($conf->global->BANKADDON_PDF)) $modelselected = $conf->global->BANKADDON_PDF;
+
                 $out.= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
                 $out.= ajax_combobox('modelrib'.$rib->id);
 
