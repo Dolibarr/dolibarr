@@ -712,6 +712,7 @@ if ($source == 'order')
 	// Object
 
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
+	if (GETPOST('desc','alpha')) $text.='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
@@ -824,6 +825,7 @@ if ($source == 'invoice')
 	// Object
 
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
+	if (GETPOST('desc','alpha')) $text.='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
@@ -1006,7 +1008,7 @@ if ($source == 'contractline')
 	{
 		$text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
 	}
-
+	if (GETPOST('desc','alpha')) $text.='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
@@ -1149,6 +1151,7 @@ if ($source == 'membersubscription')
 	// Object
 
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
+	if (GETPOST('desc','alpha')) $text.='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
