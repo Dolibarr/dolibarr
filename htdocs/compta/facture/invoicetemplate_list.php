@@ -126,7 +126,7 @@ $arrayfields=array(
 	'recurring'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
     'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
+	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDoneShort"), 'checked'=>1),
     'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
     'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
     'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
