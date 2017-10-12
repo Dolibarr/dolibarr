@@ -277,7 +277,7 @@ if ($action == 'dopayment')
 	    $shipToStreet2=GETPOST("shipToStreet2");
 	    $phoneNum=GETPOST("phoneNum");
 	    $email=GETPOST("email");
-	    $desc=GETPOST("desc");
+	    $desc=GETPOST("desc",'alpha');
 
 		$mesg='';
 		if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
@@ -772,7 +772,9 @@ if ($source == 'order')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
-    print '<input type="hidden" name="desc" value="'.$langs->trans("Order").' '.$order->ref.'">'."\n";
+    $labeldesc=$langs->trans("Order").' '.$order->ref;
+    if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+    print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
 
@@ -893,7 +895,9 @@ if ($source == 'invoice')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
-    print '<input type="hidden" name="desc" value="'.$langs->trans("Invoice").' '.$invoice->ref.'">'."\n";
+    $labeldesc=$langs->trans("Invoice").' '.$invoice->ref;
+    if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+    print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
 // Payment on contract line
@@ -1096,7 +1100,9 @@ if ($source == 'contractline')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
-    print '<input type="hidden" name="desc" value="'.$langs->trans("Contract").' '.$contract->ref.'">'."\n";
+    $labeldesc=$langs->trans("Contract").' '.$contract->ref;
+    if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+    print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
 // Payment on member subscription
@@ -1252,7 +1258,9 @@ if ($source == 'membersubscription')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$member->email.'">'."\n";
-    print '<input type="hidden" name="desc" value="'.$langs->trans("PaymentSubscription").'">'."\n";
+    $labeldesc = $langs->trans("PaymentSubscription");
+    if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+    print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
 
