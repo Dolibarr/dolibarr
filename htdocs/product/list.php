@@ -66,7 +66,7 @@ $search_tobatch = GETPOST("search_tobatch",'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$type=(int) GETPOST("type","int");
+$type=GETPOST("type","int");
 
 //Show/hide child products. Hidden by default
 if (!$_POST) {
@@ -963,7 +963,7 @@ else
 		        if (! empty($arrayfields['p.datec']['checked']))
 		        {
 		            print '<td align="center">';
-		            print dol_print_date($obj->date_creation, 'dayhour');
+		            print dol_print_date($obj->date_creation, 'dayhour', 'tzuser');
 		            print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
 		        }
@@ -971,7 +971,7 @@ else
 		        if (! empty($arrayfields['p.tms']['checked']))
 		        {
 		            print '<td align="center">';
-		            print dol_print_date($obj->date_update, 'dayhour');
+		            print dol_print_date($obj->date_update, 'dayhour', 'tzuser');
 		            print '</td>';
 		            if (! $i) $totalarray['nbfield']++;
 		        }

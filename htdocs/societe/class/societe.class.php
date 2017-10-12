@@ -1903,6 +1903,11 @@ class Societe extends CommonObject
         	$label.= '<u>' . $langs->trans("ShowContacts") . '</u>';
         	$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
         }
+        else if ($option == 'ban')
+        {
+        	$label.= '<u>' . $langs->trans("ShowBan") . '</u>';
+        	$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$this->id;
+        }
 
         // By default
         if (empty($linkstart))
@@ -2249,7 +2254,7 @@ class Societe extends CommonObject
     /**
      *  Return bank number property of thirdparty (label or rum)
      *
-     *	@param	string	$mode	'label' or 'rum'
+     *	@param	string	$mode	'label' or 'rum' or 'format'
      *  @return	string			Bank number
      */
     function display_rib($mode='label')
@@ -2273,6 +2278,10 @@ class Societe extends CommonObject
         		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
         	}
         	return $bac->rum;
+        }
+        elseif ($mode == 'format')
+        {
+        	return $bac->frstrecur;
         }
 
         return 'BadParameterToFunctionDisplayRib';
@@ -2981,19 +2990,23 @@ class Societe extends CommonObject
      *  Create a third party into database from a member object
      *
      *  @param	Adherent	$member		Object member
-     * 	@param	string	$socname	Name of third party to force
+     * 	@param	string	$socname		Name of third party to force
+     *	@param	string	$socalias	Alias name of third party to force
      *  @return int					<0 if KO, id of created account if OK
      */
-    function create_from_member(Adherent $member,$socname='')
+    function create_from_member(Adherent $member, $socname='', $socalias='')
     {
         global $user,$langs;
 
         $name = $socname?$socname:$member->societe;
         if (empty($name)) $name=$member->getFullName($langs);
 
+        $alias = $socalias?$socalias:'';
+
         // Positionne parametres
         $this->nom=$name;				// TODO deprecated
         $this->name=$name;
+        $this->name_alias=$alias;
         $this->address=$member->address;
         $this->zip=$member->zip;
         $this->town=$member->town;

@@ -26,9 +26,6 @@
  */
 
 require '../main.inc.php';
-if (! empty($conf->multicompany->enabled))
-	dol_include_once('/multicompany/class/actions_multicompany.class.php', 'ActionsMulticompany');
-
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
@@ -647,7 +644,7 @@ while ($i < min($num,$limit))
     if (! empty($arrayfields['u.datec']['checked']))
     {
         print '<td align="center">';
-        print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+        print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
     }
@@ -655,7 +652,7 @@ while ($i < min($num,$limit))
     if (! empty($arrayfields['u.tms']['checked']))
     {
         print '<td align="center">';
-        print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+        print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
     }

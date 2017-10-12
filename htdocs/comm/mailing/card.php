@@ -203,7 +203,7 @@ if (empty($reshook))
 
 	                    $targetobject = null;		// Not defined with mass emailing
 	                    $parameters=array('mode'=>'emailing');
-	                    $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount'), $targetobject);			// Note: On mass emailing, this is null because be don't know object
+	                    $substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount'), $targetobject);			// Note: On mass emailing, this is null because be don't know object
 
 	                    // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;

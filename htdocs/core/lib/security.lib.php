@@ -87,7 +87,7 @@ function dol_hash($chain,$type=0)
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));
 	else if ($type == 3) return md5($chain);
-	else if ($type == 4) return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5
+	else if ($type == 4) return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 

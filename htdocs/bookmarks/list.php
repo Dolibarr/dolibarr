@@ -50,7 +50,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='position';
 if (! $sortorder) $sortorder='ASC';
 
-$id = GETPOST("bid",'int');
+$id = GETPOST("id",'int');
 
 
 /*
@@ -83,7 +83,7 @@ llxHeader('', $langs->trans("ListOfBookmarks"));
 
 print load_fiche_titre($langs->trans("ListOfBookmarks"));
 
-$sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
+$sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
@@ -107,7 +107,7 @@ if ($resql)
 
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
-    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"rowid","", $param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"title","", $param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre("Link",'','');
     print_liste_field_titre("Target",'','','','','align="center"');
@@ -127,7 +127,7 @@ if ($resql)
 
         // Id
         print '<td align="left">';
-        print "<a href=\"card.php?id=".$obj->bid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->bid."</a>";
+        print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->rowid."</a>";
         print '</td>';
 
         $linkintern=0;
@@ -136,21 +136,7 @@ if ($resql)
 
         // Title
         print "<td>";
-        if ($obj->rowid)
-        {
-            // Lien interne societe
-            $linkintern=1;
-            $link="Dolibarr";
-            if (! $obj->title)
-            {
-                // For compatibility with old Dolibarr bookmarks
-                require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-                $societe=new Societe($db);
-                $societe->fetch($obj->rowid);
-                $obj->title=$societe->name;
-            }
-            $title=img_object($langs->trans("ShowCompany"),"company").' '.$obj->title;
-        }
+        $linkintern=1;
         if ($linkintern) print "<a href=\"".$obj->url."\">";
         print $title;
         if ($linkintern) print "</a>";
@@ -193,11 +179,11 @@ if ($resql)
         print '<td align="right" class="nowrap">';
         if ($user->rights->bookmark->creer)
         {
-        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
+        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
         }
         if ($user->rights->bookmark->supprimer)
         {
-            print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";
+            print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&id=$obj->rowid\">".img_delete()."</a>";
         }
         else
         {
@@ -223,7 +209,7 @@ print "<div class=\"tabsAction\">\n";
 
 if ($user->rights->bookmark->creer)
 {
-    print '<a class="butAction" href="card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
+    print '<a class="butAction" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
 }
 
 print '</div>';

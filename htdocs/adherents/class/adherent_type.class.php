@@ -55,9 +55,9 @@ class AdherentType extends CommonObject
 	 * @since 5.0
 	 */
 	public $subscription;
-	/** @var string Public note */
+	/** @var string 	Public note */
 	public $note;
-	/** @var bool Can vote*/
+	/** @var integer	Can vote */
 	public $vote;
 	/** @var string Email sent during validation */
 	public $mail_valid;

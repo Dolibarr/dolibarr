@@ -28,6 +28,7 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -44,6 +45,8 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
 $action = GETPOST('action','alpha');
+$mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
+$format = GETPOST('format','aZ09');
 
 
 /*
@@ -62,7 +65,7 @@ if ($action == 'create')
 {
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
     $bprev = new BonPrelevement($db);
-    $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
+    $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format);
     if ($result < 0)
     {
     	setEventMessages($bprev->error, $bprev->errors, 'errors');
@@ -75,7 +78,7 @@ if ($action == 'create')
         $mesg.='<br>'."\n";
         foreach($bprev->invoice_in_error as $key => $val)
         {
-        	$mesg.=$val."<br>\n";
+        	$mesg.='<span class="warning">'.$val."</span><br>\n";
         }
     }
     else
@@ -145,8 +148,30 @@ print "<div class=\"tabsAction\">\n";
 
 if ($nb)
 {
-    if ($pricetowithdraw) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("CreateAll")."</a>\n";
-    else print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+    if ($pricetowithdraw)
+    {
+    	if ($mysoc->isInEEC())
+    	{
+    		print '<a class="butAction" href="create.php?action=create&format=FRST">'.$langs->trans("CreateForSepaFRST")."</a>\n";
+    		print '<a class="butAction" href="create.php?action=create&format=RCUR">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+    	}
+    	else
+    	{
+    		print '<a class="butAction" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
+    	}
+    }
+    else
+    {
+    	if ($mysoc->isInEEC())
+    	{
+    		print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
+    		print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+    	}
+    	else
+    	{
+    		print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+    	}
+    }
 }
 else
 {
@@ -192,7 +217,9 @@ if ($resql)
 
     if ($num)
     {
-        $var = True;
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+    	$bac = new CompanyBankAccount($db);
+
         while ($i < $num && $i < 20)
         {
             $obj = $db->fetch_object($resql);
@@ -206,15 +233,19 @@ if ($resql)
             // Thirdparty
             print '<td>';
             $thirdpartystatic->fetch($obj->socid);
-            print $thirdpartystatic->getNomUrl(1,'card');
+            print $thirdpartystatic->getNomUrl(1,'ban');
             print '</td>';
             // RIB
             print '<td>';
             print $thirdpartystatic->display_rib();
+            $bac->fetch(0, $obj->socid);
+            if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
             print '</td>';
             // RUM
             print '<td>';
             print $thirdpartystatic->display_rib('rum');
+            $format = $thirdpartystatic->display_rib('format');
+            if ($format) print ' ('.$format.')';
             print '</td>';
             // Amount
             print '<td align="right">';

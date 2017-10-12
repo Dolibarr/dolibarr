@@ -240,6 +240,16 @@ function dol_shutdown()
 	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_INFO));
 }
 
+/**
+ * Return true if we are in a context of submitting a parameter
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISSET($paramname)
+{
+	return (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+}
 
 /**
  *  Return value of a param into GET or POST supervariable.
@@ -1232,7 +1242,7 @@ function dol_get_fiche_end($notab=0)
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
  *	@param	string	$morehtmlleft	More html code to show before ref
  *	@param	string	$morehtmlstatus	More html code to show under navigation arrows
- *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (add css 'arearefnobottom' on div)
+ *  @param  int     $onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string	$morehtmlright	More html code to show before navigation arrows
  *  @return	void
  */
@@ -1589,7 +1599,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst)
- *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
+ *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position) (TODO not implemented yet)
  *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
@@ -1615,7 +1625,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 				$offsettz=0;
 				$offsetdst=0;
 			}
-			elseif ($tzoutput == 'tzuser')
+			elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel')
 			{
 				$to_gmt=true;
 				$offsettzstring=(empty($_SESSION['dol_tz_string'])?'UTC':$_SESSION['dol_tz_string']);	// Example 'Europe/Berlin' or 'Indian/Reunion'
@@ -1688,14 +1698,14 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
 		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
-		$ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);
+		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);			// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 	}
 	else
 	{
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
-			$ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+			$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);		// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
@@ -1703,8 +1713,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);					// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
-        $month=sprintf("%02d", $month);                             // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
+		$month=adodb_strftime('%m', $time+$offsettz+$offsetdst);					// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+        $month=sprintf("%02d", $month);	// $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput)
 		{
 			$monthtext=$outputlangs->transnoentities('Month'.$month);
@@ -1723,7 +1733,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (preg_match('/__a__/i',$format))
 	{
-		$w=adodb_strftime('%w',$time+$offsettz+$offsetdst);						// TODO Remove this
+		$w=adodb_strftime('%w', $time+$offsettz+$offsetdst);						// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret=str_replace('__A__',$dayweek,$ret);
 		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);
@@ -2184,9 +2194,21 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
+	$picto = '';
+	if($withpicto){
+		if($withpicto=='fax'){
+			$picto = 'phoning_fax';
+		}elseif($withpicto=='phone'){
+			$picto = 'phoning';
+		}elseif($withpicto=='mobile'){
+			$picto = 'phoning_mobile';
+		}else{
+			$picto = '';
+		}
+	}
 	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
 	else $rep.='<span style="margin-right: 10px;">';
-	$rep.=($withpicto?img_picto($titlealt, 'object_'.($withpicto=='fax'?'phoning_fax':'phoning').'.png').' ':'').$newphone;
+	$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
 	if ($adddivfloat) $rep.='</div>';
 	else $rep.='</span>';
 	return $rep;
@@ -3830,7 +3852,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
  *		@param	float		$amount			Amount to format
  *		@param	integer		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
- *		@param	int			$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before inserted into database or after a computation, so this parameter should be useless.
+ *		@param	int			$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
@@ -5277,13 +5299,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
     		$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 
-    		$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
-    		$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
-    		$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
-
+    		if (is_object($object) && $object->element == 'shipping')
+    		{
+    			$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
+    			$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
+    			$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+    		}
     		$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
     		$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
-    		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_REF__';
+    		$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 
 			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
@@ -5296,6 +5320,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     		$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
     		$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
     		$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
+
+    		if (is_object($object) && $object->element == 'shipping')
+    		{
+    			$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+    			$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
+    		}
     	}
     	else
     	{
@@ -5340,15 +5370,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
 	    	}
 
-	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
-	    	if ($object->table_element && $object->id > 0)
+	    	if (is_object($object) && $object->element == 'shipping')
 	    	{
-		    	$extrafieldstmp = new ExtraFields($db);
-		    	$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-		    	$object->fetch_optionals($object->id, $extralabels);
-		    	foreach ($extrafieldstmp->attribute_label as $key => $label) {
-		    		$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-		    	}
+	    		$substitutionarray['__SHIPPINGTRACKNUM__']=$object->tracking_number;
+	    		$substitutionarray['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 	    	}
 
 	    	if (is_object($object) && $object->element == 'contrat' && is_array($object->lines))
@@ -5366,6 +5391,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	    		$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
 	    	}
 
+	    	// Create dynamic tags for __EXTRAFIELD_FIELD__
+	    	if ($object->table_element && $object->id > 0)
+	    	{
+	    		$extrafieldstmp = new ExtraFields($db);
+	    		$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+	    		$object->fetch_optionals($object->id, $extralabels);
+	    		foreach ($extrafieldstmp->attribute_label as $key => $label) {
+	    			$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+	    		}
+	    	}
+
 	    	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
     	}
     }
@@ -5376,6 +5412,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
     	$substitutionarray['__AMOUNT__']          = is_object($object)?$object->total_ttc:'';
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object)?$object->total_ht:'';
         $substitutionarray['__AMOUNT_VAT__']      = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+		/* TODO Add key for multicurrency
+    	$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+        $substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency_code):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency_code)):'';
+		*/
         // For backward compatibility
         if ($onlykey != 2)
         {
@@ -6078,9 +6119,10 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
+ *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
-function picto_from_langcode($codelang)
+function picto_from_langcode($codelang, $moreatt = '')
 {
 	global $langs;
 
@@ -6090,7 +6132,7 @@ function picto_from_langcode($codelang)
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
+		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
 	}
 
 	$langtocountryflag = array(
@@ -6108,7 +6150,7 @@ function picto_from_langcode($codelang)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png');
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
 }
 
 /**
@@ -6378,7 +6420,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 
 
 /**
- * Set focus onto field with selector
+ * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
  * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
  * @return	string				HTML code to set focus

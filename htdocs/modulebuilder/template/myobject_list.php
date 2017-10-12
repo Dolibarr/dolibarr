@@ -369,7 +369,7 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -504,7 +504,7 @@ while ($i < min($num, $limit))
     print '<tr class="oddeven">';
     foreach($object->fields as $key => $val)
     {
-            if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+            if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;	// Discard some field output at end
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
             if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -512,7 +512,8 @@ while ($i < min($num, $limit))
             if (! empty($arrayfields['t.'.$key]['checked']))
             {
                 print '<td'.($align?' class="'.$align.'"':'').'>';
-                if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
+                if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
+                elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
                 elseif ($key == 'ref') print $object->getNomUrl(1, '', 0, '', 1);
                 elseif ($key == 'status') print $object->getLibStatut(3);
                 else print $obj->$key;
@@ -555,7 +556,7 @@ while ($i < min($num, $limit))
     // Rest of fields
     foreach($object->fields as $key => $val)
     {
-        if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+        if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;	// Keep only field not yet already output
         $align='';
         if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
         if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
@@ -563,7 +564,8 @@ while ($i < min($num, $limit))
         if (! empty($arrayfields['t.'.$key]['checked']))
         {
             print '<td'.($align?' class="'.$align.'"':'').'>';
-            if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
+            if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
+            elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
             elseif ($key == 'status') print $object->getLibStatut(3);
             else print $obj->$key;
             print '</td>';
@@ -633,7 +635,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if ($nbtotalofrecords === '' || $nbtotalofrecords)
+if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
     {

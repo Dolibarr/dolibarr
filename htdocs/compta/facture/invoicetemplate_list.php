@@ -126,7 +126,7 @@ $arrayfields=array(
 	'recurring'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
     'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
+	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDoneShort"), 'checked'=>1),
     'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
     'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
     'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
@@ -520,6 +520,8 @@ if ($resql)
 			$invoicerectmp->frequency=$objp->frequency;
 			$invoicerectmp->suspend=$objp->suspend;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
+			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
+			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
 
 			print '<tr class="oddeven">';
 
@@ -603,7 +605,7 @@ if ($resql)
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 			   print '<td align="center">';
-			   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_when),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}

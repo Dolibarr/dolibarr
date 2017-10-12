@@ -414,7 +414,7 @@ class Account extends CommonObject
         {
             $sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
             $sql.= " WHERE id=".$oper;
-            $sql.= " AND entity = " . getEntity('c_paiement') . ")";
+            $sql.= " AND entity IN (" . getEntity('c_paiement') . ")";
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1306,11 +1306,8 @@ class Account extends CommonObject
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if (empty($mode))
-        {
-            $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
-        }
-        else if ($mode == 'transactions')
+        $url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
+        if ($mode == 'transactions')
         {
             $url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
         }
@@ -1340,7 +1337,7 @@ class Account extends CommonObject
 
 
     /**
-     *     Return if an account has valid information
+     *     Return if an account has valid information for Direct debit payment
      *
      *     @return     int         1 if correct, <=0 if wrong
      */
@@ -1348,12 +1345,20 @@ class Account extends CommonObject
     {
         require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 
+        $this->error_number = 0;
+
         // Call function to check BAN
-        if (! checkBanForAccount($this))
+
+        if (! checkIbanForAccount($this) || ! checkSwiftForAccount($this))
+        {
+        	$this->error_number = 12;
+        	$this->error_message = 'IBANSWIFTControlError';
+        }
+        /*if (! checkBanForAccount($this))
         {
             $this->error_number = 12;
-            $this->error_message = 'RIBControlError';
-        }
+            $this->error_message = 'BANControlError';
+        }*/
 
         if ($this->error_number == 0)
         {

@@ -306,6 +306,15 @@ if (! $error && $massaction == 'confirm_presend')
                     $tmp=explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
                     $from = trim($tmp[($reg[1] - 1)]);
                 }
+                elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
+                	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE rowid = '.(int) $reg[1];
+                	$resql = $db->query($sql);
+                	$obj = $db->fetch_object($resql);
+                	if ($obj)
+                	{
+                		$from = $obj->label.' <'.$obj->email.'>';
+                	}
+                }
                 else {
                     $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
                 }
@@ -654,6 +663,12 @@ if ($action == 'remove_file')
 // Validate records
 if (! $error && $massaction == 'validate' && $permtocreate)
 {
+	if ($object->element == 'invoice' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+	{
+		$langs->load("errors");
+		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
+		$error++;
+	}
 	if ($object->element == 'invoice_supplier' && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
 	{
 		$langs->load("errors");

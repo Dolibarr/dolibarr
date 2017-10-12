@@ -54,20 +54,20 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
 
 if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 {
-    $db->begin();
+	$db->begin();
 
-    $object->fetch($id);
-    $result = $object->update_note(GETPOST('note','none'));
-    if ($result > 0)
-    {
-        $db->commit();
-        $action='';
-    }
-    else
-    {
-	    setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
-    }
+	$object->fetch($id);
+	$result = $object->update_note(GETPOST('note','none'));
+	if ($result > 0)
+	{
+		$db->commit();
+		$action='';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$db->rollback();
+	}
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
@@ -90,8 +90,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 }
 
 if ($action == 'confirm_valide' && $confirm == 'yes' &&
-    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 )
 {
 	$db->begin();
@@ -113,7 +113,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
-    $res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
@@ -127,7 +127,7 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
-    $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+	$datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -140,30 +140,10 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 }
 
 // Build document
-if ($action == 'builddoc')
-{
-	// Save modele used
-    $object->fetch($id);
-    $object->fetch_thirdparty();
-
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-    $outputlangs = $langs;
-    $newlang=GETPOST('lang_id','aZ09');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-	$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-    if ($result	< 0)
-    {
-		setEventMessages($object->error, $object->errors, 'errors');
-	    $action='';
-    }
-}
+$upload_dir = $conf->fournisseur->payment->dir_output;
+// TODO: get the appropriate permisson
+$permissioncreate = true;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 /*
@@ -217,18 +197,18 @@ if ($result > 0)
 	print '</td></tr>';*/
 
 	// Date payment
-    print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
-    print '</td></tr>';
+	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+	print '</td></tr>';
 
 	// Payment mode
 	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 	// Payment numero
-    print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
-    print '</td></tr>';
+	print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+	print '</td></tr>';
 
 	// Amount
 	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
@@ -239,41 +219,41 @@ if ($result > 0)
 	}
 
 	// Note
-    print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
-    print '</td></tr>';
+	print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
+	print '</td></tr>';
 
 	$allow_delete = 1 ;
-    // Bank account
+	// Bank account
 	if (! empty($conf->banque->enabled))
 	{
 		if ($object->bank_account)
 		{
-            $bankline=new AccountLine($db);
-            $bankline->fetch($object->bank_line);
-            if ($bankline->rappro)
-            {
-                $allow_delete=0;
-                $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-            }
+			$bankline=new AccountLine($db);
+			$bankline->fetch($object->bank_line);
+			if ($bankline->rappro)
+			{
+				$allow_delete=0;
+				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+			}
 
-            print '<tr>';
-            print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
-            print '<td colspan="3">';
-            print $bankline->getNomUrl(1,0,'showconciliated');
-            print '</td>';
-            print '</tr>';
+			print '<tr>';
+			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td colspan="3">';
+			print $bankline->getNomUrl(1,0,'showconciliated');
+			print '</td>';
+			print '</tr>';
 
-	    	print '<tr>';
-	    	print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
+			print '<tr>';
+			print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
 			print '<td colspan="3">';
 			$accountstatic=new Account($db);
 			$accountstatic->fetch($bankline->fk_account);
-	        print $accountstatic->getNomUrl(1);
-	    	print '</td>';
-	    	print '</tr>';
-        }
-    }
+			print $accountstatic->getNomUrl(1);
+			print '</td>';
+			print '</tr>';
+		}
+	}
 
 	print '</table>';
 
@@ -335,7 +315,7 @@ if ($result > 0)
 				if ($objp->paye == 1)
 				{
 					$allow_delete = 0;
-                    $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
+					$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 				}
 				$total = $total + $objp->amount;
 				$i++;
@@ -363,8 +343,8 @@ if ($result > 0)
 	{
 		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
 		{
-        	if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-	       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
@@ -375,14 +355,14 @@ if ($result > 0)
 	{
 		if ($user->rights->fournisseur->facture->supprimer)
 		{
-            if ($allow_delete)
-            {
+			if ($allow_delete)
+			{
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-            }
-            else
-            {
-                print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
-            }
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+			}
 		}
 	}
 	print '</div>';
@@ -392,27 +372,27 @@ if ($result > 0)
 	/*
      * Documents generes
      */
-    $ref=dol_sanitizeFileName($object->ref);
-    $filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-    $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
-    $genallowed=$user->rights->fournisseur->facture->creer;
-    $delallowed=$user->rights->fournisseur->facture->supprimer;
-    $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+	$ref=dol_sanitizeFileName($object->ref);
+	$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
+	$genallowed=$user->rights->fournisseur->facture->creer;
+	$delallowed=$user->rights->fournisseur->facture->supprimer;
+	$modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-    print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
-    $somethingshown=$formfile->numoffiles;
+	print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
+	$somethingshown=$formfile->numoffiles;
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-    //print '</td><td valign="top" width="50%">';
-    //print '<br>';
+	//print '</td><td valign="top" width="50%">';
+	//print '<br>';
 
-    // List of actions on element
-    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-    $formactions=new FormActions($db);
-    $somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
+	// List of actions on element
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	$formactions=new FormActions($db);
+	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
 
 	print '</div></div></div>';
-    //print '</td></tr></table>';
+	//print '</td></tr></table>';
 
 }
 else

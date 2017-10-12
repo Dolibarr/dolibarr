@@ -353,14 +353,16 @@ class Orders extends DolibarrApi
      * Delete a line to given order
      *
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of order to update
      * @param int   $lineid         Id of line to delete
      *
      * @url	DELETE {id}/lines/{lineid}
      *
      * @return int
+     * @throws 401
+     * @throws 404
      */
-    function delLine($id, $lineid) {
+    function deleteLine($id, $lineid) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
@@ -373,7 +375,8 @@ class Orders extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object) $request_data;
+
+      $request_data = (object) $request_data;
       $updateRes = $this->commande->deleteline(DolibarrApiAccess::$user,$lineid);
       if ($updateRes > 0) {
         return $this->get($id);

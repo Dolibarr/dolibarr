@@ -624,23 +624,31 @@ foreach ($listofreferent as $key => $value)
 				if ($qualifiedfortotal) $total_ttc = $total_ttc + $total_ttc_by_line;
 			}
 
-			// Calculate margin
-			if ($margin=="add")
-			{
-				$balance_ht+= $total_ht;
-				$balance_ttc+= $total_ttc;
-			}
-			else
-			{
-				$balance_ht-= $total_ht;
-				$balance_ttc-= $total_ttc;
-			}
+			// Each element with at least one line is output
+			$qualifiedforfinalprofit=true;
+			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit=false;
+			//var_dump($key);
 
-			// Show $total_ht & $total_ttc -- add a minus when necessary
-			if ($margin!="add")
+			// Calculate margin
+			if ($qualifiedforfinalprofit)
 			{
-				$total_ht = -$total_ht;
-				$total_ttc = -$total_ttc;
+				if ($margin=="add")
+				{
+					$balance_ht+= $total_ht;
+					$balance_ttc+= $total_ttc;
+				}
+				else
+				{
+					$balance_ht-= $total_ht;
+					$balance_ttc-= $total_ttc;
+				}
+
+				// Show $total_ht & $total_ttc -- add a minus when necessary
+				if ($margin!="add")
+				{
+					$total_ht = -$total_ht;
+					$total_ttc = -$total_ttc;
+				}
 			}
 
 			print '<tr class="oddeven">';
@@ -649,9 +657,15 @@ foreach ($listofreferent as $key => $value)
 			// Nb
 			print '<td align="right">'.$i.'</td>';
 			// Amount HT
-			print '<td align="right">'.price($total_ht).'</td>';
+			print '<td align="right">';
+			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else print price($total_ht);
+			print '</td>';
 			// Amount TTC
-			print '<td align="right">'.price($total_ttc).'</td>';
+			print '<td align="right">';
+			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else print price($total_ttc);
+			print '</td>';
 			print '</tr>';
 		}
 	}

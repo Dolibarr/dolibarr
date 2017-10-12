@@ -917,7 +917,7 @@ if ($resql)
     	$liststatus=array(
     	    Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
     	    Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-    	    Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSentShort"),
+    	    Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
     	    Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
     	    -3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
     	    Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
@@ -1307,7 +1307,7 @@ if ($resql)
         if (! empty($arrayfields['c.datec']['checked']))
         {
             print '<td align="center" class="nowrap">';
-            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }
@@ -1315,7 +1315,7 @@ if ($resql)
         if (! empty($arrayfields['c.tms']['checked']))
         {
             print '<td align="center" class="nowrap">';
-            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }

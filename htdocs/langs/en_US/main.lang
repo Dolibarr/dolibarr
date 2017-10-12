@@ -27,6 +27,7 @@ DatabaseConnection=Database connection
 NoTemplateDefined=No template available for this email type
 AvailableVariables=Available substitution variables
 NoTranslation=No translation
+Translation=Translation
 NoRecordFound=No record found
 NoRecordDeleted=No record deleted
 NotEnoughDataYet=Not enough data
