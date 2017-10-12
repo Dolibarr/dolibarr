@@ -611,6 +611,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 		}
 	}
 
+	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_BREAK_ON_PROJECT)?0:-1);	// 0 to start break , -1 no break
+
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
@@ -648,6 +650,31 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$projectstatic->public=$lines[$i]->public;
 
 				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
+				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->label=$lines[$i]->label;
+				$taskstatic->date_start=$lines[$i]->date_start;
+				$taskstatic->date_end=$lines[$i]->date_end;
+
+				$thirdpartystatic->id=$lines[$i]->socid;
+				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				$thirdpartystatic->email=$lines[$i]->thirdparty_email;
+
+				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
+				{
+					print '<tr class="oddeven trforbreak">'."\n";
+					print '<td colspan="11">';
+					print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					if ($projectstatic->title)
+					{
+						print ' - ';
+						print $projectstatic->title;
+					}
+					print '</td>';
+					print '</tr>';
+				}
+
+				if ($oldprojectforbreak != -1) $oldprojectforbreak = $projectstatic->id;
 
 				print '<tr class="oddeven">'."\n";
 
@@ -660,30 +687,23 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Project
 				print "<td>";
-				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 
 				// Thirdparty
 				print '<td class="tdoverflowmax100">';
-				$thirdpartystatic->id=$lines[$i]->socid;
-				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project', 10);
 				print '</td>';
 
 				// Ref
 				print '<td>';
-				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
-				print $taskstatic->getNomUrl(1, 'withproject', 'time');
-				print '</td>';
-
-				// Label task
-				print "<td>";
+				print '<!-- Task id = '.$lines[$i]->id.' -->';
 				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-				$taskstatic->id=$lines[$i]->id;
-				$taskstatic->ref=$lines[$i]->label;
-				$taskstatic->date_start=$lines[$i]->date_start;
-				$taskstatic->date_end=$lines[$i]->date_end;
-				print $taskstatic->getNomUrl(0, 'withproject', 'time');
+				print $taskstatic->getNomUrl(1, 'withproject', 'time');
+				// Label task
+				print '<br>';
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				print $taskstatic->label;
 				//print "<br>";
 				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
@@ -773,7 +793,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				print '</td>';
 
-				print '<td align="right">';
+				// Note
+				print '<td align="center">';
 				print '<textarea name="'.$lines[$i]->id.'note" rows="'.ROWS_2.'" id="'.$lines[$i]->id.'note"'.($disabledtask?' disabled="disabled"':'').'>';
 				print '</textarea>';
 				print '</td>';
@@ -850,6 +871,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	//dol_syslog('projectLinesPerWeek inc='.$inc.' firstdaytoshow='.$firstdaytoshow.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 
+	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_BREAK_ON_PROJECT)?0:-1);	// 0 = start break, -1 = never break
+
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -880,6 +903,33 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$projectstatic->public=$lines[$i]->public;
 				$projectstatic->thirdparty_name=$lines[$i]->thirdparty_name;
 
+				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
+				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->label=$lines[$i]->label;
+				$taskstatic->date_start=$lines[$i]->date_start;
+				$taskstatic->date_end=$lines[$i]->date_end;
+
+				$thirdpartystatic->id=$lines[$i]->thirdparty_id;
+				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				$thirdpartystatic->email=$lines[$i]->thirdparty_email;
+
+				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
+				{
+					print '<tr class="oddeven trforbreak">'."\n";
+					print '<td colspan="15">';
+					print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					if ($projectstatic->title)
+					{
+						print ' - ';
+						print $projectstatic->title;
+					}
+					print '</td>';
+					print '</tr>';
+				}
+
+				if ($oldprojectforbreak != -1) $oldprojectforbreak = $projectstatic->id;
+
 				print '<tr class="oddeven">'."\n";
 
 				// User
@@ -891,32 +941,24 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 				// Project
 				print '<td class="nowrap">';
-				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 
 				// Thirdparty
 				print '<td class="tdoverflowmax100">';
-				$thirdpartystatic->id=$lines[$i]->thirdparty_id;
-				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
-				print $thirdpartystatic->getNomUrl(1, 'project');
+				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project');
 				print '</td>';
 
 				// Ref
 				print '<td class="nowrap">';
-				$taskstatic->id=$lines[$i]->id;
-				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
-				print $taskstatic->getNomUrl(1, 'withproject', 'time');
-				print '</td>';
-
-				// Label task
-				print "<td>";
 				print '<!-- Task id = '.$lines[$i]->id.' -->';
 				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-				$taskstatic->id=$lines[$i]->id;
-				$taskstatic->ref=$lines[$i]->label;
-				$taskstatic->date_start=$lines[$i]->date_start;
-				$taskstatic->date_end=$lines[$i]->date_end;
-				print $taskstatic->getNomUrl(0, 'withproject', 'time');
+				print $taskstatic->getNomUrl(1, 'withproject', 'time');
+				// Label task
+				print '<br>';
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				//print $taskstatic->getNomUrl(0, 'withproject', 'time');
+				print $taskstatic->label;
 				//print "<br>";
 				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);

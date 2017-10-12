@@ -328,8 +328,8 @@ if ($id)
 
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
-if ($search_task_ref) $morewherefilter.=natural_search("t.ref", $search_task_ref);
-if ($search_task_label) $morewherefilter.=natural_search("t.label", $search_task_label);
+if ($search_task_ref)   $morewherefilter.=natural_search("t.ref", $search_task_ref);
+if ($search_task_label) $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
 if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
@@ -450,7 +450,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+//print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -468,10 +468,10 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("ProjectRef").'</td>';
+print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("ThirdParty").'</td>';
-print '<td>'.$langs->trans("RefTask").'</td>';
-print '<td>'.$langs->trans("LabelTask").'</td>';
+//print '<td>'.$langs->trans("RefTask").'</td>';
+print '<td>'.$langs->trans("Task").'</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
 /*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
@@ -517,7 +517,7 @@ if (count($tasksarray) > 0)
 	$level=0;
 	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable);
 
-	$colspan=8;
+	$colspan=7;
 
 	print '<tr class="liste_total">
                 <td class="liste_total" colspan="'.$colspan.'">';
@@ -536,7 +536,7 @@ if (count($tasksarray) > 0)
 }
 else
 {
-	print '<tr><td colspan="16">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="15">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
 print '</div>';
