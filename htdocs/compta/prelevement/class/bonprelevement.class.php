@@ -1580,8 +1580,10 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
 		$XML_DEBITOR .='					<PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-		if (trim($row_address)) 				$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""))),70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
-		if (trim($row_zip) || trim($row_town))	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent(strtr($row_zip.($row_zip && $row_town)?' ':''.$row_town), array(CHR(13) => ", ", CHR(10) => "")),70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
+		$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
+		$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town)?' ':''.$row_town)), array(CHR(13) => ", ", CHR(10) => ""));
+		if (trim($addressline1)) 	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1,70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
+		if (trim($addressline2))	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2,70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='					</PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='				</Dbtr>'.$CrLf;
 		$XML_DEBITOR .='				<DbtrAcct>'.$CrLf;
@@ -1739,8 +1741,10 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-			$XML_SEPA_INFO .= '					<AdrLine>'.strtoupper(dol_string_unaccent($configuration->global->MAIN_INFO_SOCIETE_ADDRESS)).'</AdrLine>'.$CrLf;
-			$XML_SEPA_INFO .= '					<AdrLine>'.strtoupper(dol_string_unaccent($configuration->global->MAIN_INFO_SOCIETE_ZIP.' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN)).'</AdrLine>'.$CrLf;
+			$addressline1 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline2 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN)?' ':'').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
+			if ($addressline1)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline1.'</AdrLine>'.$CrLf;
+			if ($addressline2)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline2.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 			$XML_SEPA_INFO .= '			</Cdtr>'.$CrLf;
 			$XML_SEPA_INFO .= '			<CdtrAcct>'.$CrLf;
