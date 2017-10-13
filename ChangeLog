@@ -13,14 +13,16 @@ NEW: complete_head_from_modules() in ldap_prepare_head()
 WARNING: 
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* The methode "cloture" on contact were renamed into "closeAll".
+* The methode "cloture" on contract were renamed into "closeAll".
 * The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
   __PROPALREF__, ...)
+* The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to standardize naming conventions. 
+* Substitution keys with syntax %XXX% were renamed into __XXX__ to match others.
 * Some REST API to access the dictionary (country, town, ...) were moved into a common API. 
 * Page bank/index.php and bank/bankentries.php were renamed into bank/list.php and bank/bankentries_list.php to
   follow page naming conventions (so default filter/sort order features can also work).
-* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed ORDER_SUPPLIER_STATUS_ORDERED
-* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY
+* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED
+* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY
 
 
 ***** ChangeLog for 6.0.2 compared to 6.0.1 *****

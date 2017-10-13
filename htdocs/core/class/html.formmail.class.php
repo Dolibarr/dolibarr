@@ -858,9 +858,9 @@ class FormMail extends Form
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
 				// Deal with format differences between message and signature (text / HTML)
-				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {
-					$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
-				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
+				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+					$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
+				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
@@ -1213,7 +1213,7 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__SIGNATURE__'] = 'TagSignature';
+			$tmparray['__USER_SIGNATURE__'] = 'TagSignature';
 			$tmparray['__CHECK_READ__'] = 'TagCheckMail';
 			$tmparray['__UNSUBSCRIBE__'] = 'TagUnsubscribe';
 				//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
