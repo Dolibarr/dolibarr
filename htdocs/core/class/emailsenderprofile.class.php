@@ -167,43 +167,43 @@ class EmailSenderProfile extends CommonObject
 	public function createFromClone(User $user, $fromid)
 	{
 		global $hookmanager, $langs;
-	    $error = 0;
+		$error = 0;
 
-	    dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-	    $object = new self($this->db);
+		$object = new self($this->db);
 
-	    $this->db->begin();
+		$this->db->begin();
 
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
+		// Load source object
+		$object->fetchCommon($fromid);
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
 
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
+		// Clear fields
+		$object->ref = "copy_of_".$object->ref;
+		$object->title = $langs->trans("CopyOf")." ".$object->title;
+		// ...
 
-	    // Create clone
+		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
+		$result = $object->createCommon($user);
+		if ($result < 0) {
+			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
+		}
 
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
