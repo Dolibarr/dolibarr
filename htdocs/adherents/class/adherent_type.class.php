@@ -230,6 +230,8 @@ class AdherentType extends CommonObject
 	{
 		global $user;
 
+		$error = 0;
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql.= " WHERE rowid = ".$this->id;
 

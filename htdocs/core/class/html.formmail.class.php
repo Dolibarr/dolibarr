@@ -480,7 +480,7 @@ class FormMail extends Form
                         		$i++;
                         	}
                         }
-                        else dol_print_error($db);
+                        else dol_print_error($this->db);
 
                         foreach($listaliases as $typealias => $listalias)
                         {
