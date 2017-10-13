@@ -100,10 +100,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder='ASC';
-if (! $sortfield) $sortfield='b.datev, b.dateo, b.rowid';
+if (! $sortfield) $sortfield='b.datev,b.dateo,b.rowid';
 
 $mode_balance_ok=false;
-//if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
+//if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
 if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
 {
     $sortfield = 'b.datev,b.dateo,b.rowid';
