@@ -481,7 +481,7 @@ class Expedition extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.billed";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
@@ -525,7 +525,7 @@ class Expedition extends CommonObject
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
-				$this->billed				= ($obj->fk_statut==2?1:0);
+				$this->billed               = $obj->billed;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
