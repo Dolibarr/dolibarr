@@ -299,11 +299,39 @@ if ($action == 'add')
 
             if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
             {
-                if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+                if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+                    {
+                        if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+                        {
+                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        }
+                        else
+                        {
+                            $urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+                        }
+                    }
+                }
+            	else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+                    if (! empty($conf->global->PAYBOX_SECURITY_TOKEN))
+                    {
+                    	if (! empty($conf->global->PAYBOX_SECURITY_TOKEN_UNIQUE))
+                    	{
+                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYBOX_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	}
+                    	else
+                    	{
+                    		$urlback.='&securekey='.urlencode($conf->global->PAYBOX_SECURITY_TOKEN);
+                    	}
+                    }
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
@@ -518,13 +546,13 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE))
     print '</td></tr>';
 }
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 {
-    print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-    print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass1" class="minwidth100" value="'.GETPOST("pass1").'"></td></tr>'."\n";
-    print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass2" class="minwidth100" value="'.GETPOST("pass2").'"></td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1").'"></td></tr>'."\n";
+    print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2").'"></td></tr>'."\n";
 }
 // Birthday
 print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
@@ -544,7 +572,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 // Comments
 print '<tr>';
 print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private')).'</textarea></td>';
+print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private','none')).'</textarea></td>';
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example

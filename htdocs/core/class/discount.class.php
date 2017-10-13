@@ -64,7 +64,7 @@ class DiscountAbsolute
      *  @param      int		$fk_facture_source	fk_facture_source
      *	@return		int							<0 if KO, =0 if not found, >0 if OK
      */
-    function fetch($rowid,$fk_facture_source=0)
+    function fetch($rowid, $fk_facture_source=0)
     {
     	global $conf;
 
@@ -78,6 +78,7 @@ class DiscountAbsolute
         $sql = "SELECT sr.rowid, sr.fk_soc,";
         $sql.= " sr.fk_user,";
         $sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
+        $sql.= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
         $sql.= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.description,";
         $sql.= " sr.datec,";
         $sql.= " f.facnumber as ref_facture_source";
@@ -97,9 +98,15 @@ class DiscountAbsolute
 
                 $this->id = $obj->rowid;
                 $this->fk_soc = $obj->fk_soc;
+
                 $this->amount_ht = $obj->amount_ht;
                 $this->amount_tva = $obj->amount_tva;
                 $this->amount_ttc = $obj->amount_ttc;
+
+                $this->multicurrency_amount_ht = $obj->multicurrency_amount_ht;
+                $this->multicurrency_amount_tva = $obj->multicurrency_amount_tva;
+                $this->multicurrency_amount_ttc = $obj->multicurrency_amount_ttc;
+
                 $this->tva_tx = $obj->tva_tx;
                 $this->fk_user = $obj->fk_user;
                 $this->fk_facture_line = $obj->fk_facture_line;
@@ -158,7 +165,7 @@ class DiscountAbsolute
         $sql.= ")";
         $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
-        $sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
+        $sql.= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -386,7 +393,7 @@ class DiscountAbsolute
     function getSumDepositsUsed($invoice, $multicurrency=0)
     {
         dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
-        
+
         if ($invoice->element == 'facture' || $invoice->element == 'invoice')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
@@ -407,7 +414,7 @@ class DiscountAbsolute
             dol_print_error($this->error);
             return -1;
         }
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -432,7 +439,7 @@ class DiscountAbsolute
     function getSumCreditNotesUsed($invoice, $multicurrency=0)
     {
         dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
-        
+
         if ($invoice->element == 'facture' || $invoice->element == 'invoice')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
@@ -453,7 +460,7 @@ class DiscountAbsolute
             dol_print_error($this->error);
             return -1;
         }
-            
+
         $resql=$this->db->query($sql);
         if ($resql)
         {

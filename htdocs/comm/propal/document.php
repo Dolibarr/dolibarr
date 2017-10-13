@@ -45,7 +45,6 @@ $ref		= GETPOST('ref','alpha');
 $socid='';
 if (! empty($user->societe_id))
 {
-	$action='';
 	$socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'propal', $id);

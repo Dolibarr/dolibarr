@@ -59,11 +59,18 @@ if ($action == 'setvalue' && $user->admin)
     if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK",GETPOST('ONLINE_PAYMENT_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
+	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO",GETPOST('ONLINE_PAYMENT_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL",GETPOST('ONLINE_PAYMENT_SENDEMAIL'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	// Payment token for URL
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN",GETPOST('PAYMENT_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE",GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 
     if (! $error)
@@ -195,6 +202,12 @@ print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
+print $langs->trans("MessageForm").'</td><td>';
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor->Create();
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
 $doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
@@ -212,6 +225,19 @@ print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$c
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
+// Payment token for URL
+print '<tr class="oddeven"><td>';
+print $langs->trans("SecurityToken").'</td><td>';
+print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+if (! empty($conf->use_javascript_ajax))
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("SecurityTokenIsUnique").'</td><td>';
+print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE),1);
+print '</td></tr>';
+
 print '</table>';
 
 dol_fiche_end();
@@ -225,120 +251,16 @@ print '<br><br>';
 
 $token='';
 
-
-// Url list
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
-print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<strong>'.getStripePaymentUrl(1,'free')."</strong><br><br>\n";
-if (! empty($conf->commande->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<strong>'.getStripePaymentUrl(1,'order')."</strong><br>\n";
-	if (! empty($conf->global->STRIPE_SECURITY_TOKEN) && ! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("orders");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Order")).': ';
-        print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref','alpha').'" size="10">';
-        print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_order_ref','alpha'))
-        {
-            print '<br> -> <strong>';
-            $url=getStripePaymentUrl(0,'order',GETPOST('generate_order_ref','alpha'));
-            print $url;
-            print "</strong><br>\n";
-        }
-        print '</form>';
-	}
-	print '<br>';
-}
-if (! empty($conf->facture->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<strong>'.getStripePaymentUrl(1,'invoice')."</strong><br>\n";
-	if (! empty($conf->global->STRIPE_SECURITY_TOKEN) && ! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("bills");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Invoice")).': ';
-        print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref','alpha').'" size="10">';
-        print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_invoice_ref','alpha'))
-        {
-            print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'invoice',GETPOST('generate_invoice_ref','alpha'));
-            print $url;
-            print "</strong><br>\n";
-        }
-        print '</form>';
-	}
-	print '<br>';
-}
-if (! empty($conf->contrat->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<strong>'.getStripePaymentUrl(1,'contractline')."</strong><br>\n";
-	if (! empty($conf->global->STRIPE_SECURITY_TOKEN) && ! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("contract");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Contract")).': ';
-        print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref','alpha').'" size="10">';
-        print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_contract_ref'))
-        {
-            print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'contractline',GETPOST('generate_contract_ref','alpha'));
-            print $url;
-            print "</strong><br>\n";
-        }
-        print '</form>';
-	}
-	print '<br>';
-}
-if (! empty($conf->adherent->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<strong>'.getStripePaymentUrl(1,'membersubscription')."</strong><br>\n";
-	if (! empty($conf->global->STRIPE_SECURITY_TOKEN) && ! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
-	{
-	    $langs->load("members");
-	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Member")).': ';
-        print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref','alpha').'" size="10">';
-        print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_member_ref'))
-        {
-            print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'membersubscription',GETPOST('generate_member_ref','alpha'));
-            print $url;
-            print "</strong><br>\n";
-        }
-        print '</form>';
-	}
-	print '<br>';
-}
-
-print info_admin($langs->trans("YouCanAddTagOnUrl"));
+include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 if (! empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-            $("#apidoca").hide();
+            $("#apidoc").hide();
             $("#apidoca").click(function() {
                 $("#apidoc").show();
             	$("#apidoca").hide();
-            });
-
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#STRIPE_SECURITY_TOKEN").val(token);
-				});
             });
     });';
 	print '</script>';

@@ -114,7 +114,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel) $action='';
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
@@ -320,7 +328,7 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	else if ($action == 'setmulticurrencyrate' && $user->rights->facture->creer) {
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')));
 	}
 
 	// bank account
@@ -435,8 +443,8 @@ if (empty($reshook))
 				$object->libelle			= GETPOST('label');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
-				$object->note_public		= GETPOST('note_public');
-				$object->note_private		= GETPOST('note_private');
+				$object->note_public		= GETPOST('note_public','none');
+				$object->note_private		= GETPOST('note_private','none');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -499,8 +507,8 @@ if (empty($reshook))
 				$object->libelle			= $_POST['label'];
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
-				$object->note_public		= GETPOST('note_public');
-				$object->note_private		= GETPOST('note_private');
+				$object->note_public		= GETPOST('note_public','none');
+				$object->note_private		= GETPOST('note_private','none');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -608,8 +616,8 @@ if (empty($reshook))
 				$object->libelle       = $_POST['label'];
 				$object->date          = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public   = GETPOST('note_public');
-				$object->note_private  = GETPOST('note_private');
+				$object->note_public   = GETPOST('note_public','none');
+				$object->note_private  = GETPOST('note_private','none');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account        = GETPOST('fk_account', 'int');
@@ -1211,14 +1219,13 @@ if (empty($reshook))
 	    }
 	}
 
-	/*
-	 * Send mail
-	 */
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
 	$trigger_name='BILL_SUPPLIER_SENTBYMAIL';
 	$paramname='id';
-	$mode='emailfromsupplierinvoice';
+	$autocopy='MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
 	$trackid='sin'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
@@ -1487,7 +1494,7 @@ if ($action == 'create')
 			});
 			</script>';
         }
-        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
     }
     print '</td></tr>';
 
@@ -1676,8 +1683,8 @@ if ($action == 'create')
     				print $desc;
 
     				print '<div id="credit_note_options" class="clearboth">';
-    				print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-    				print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+    				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+    				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
     				print '</div>';
 
     				print '</div></div>';
@@ -2021,7 +2028,7 @@ else
 
 
         // Supplier invoice card
-        $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     	$morehtmlref='<div class="refidno">';
     	// Ref supplier
@@ -2351,7 +2358,7 @@ else
     	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-    	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+    	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
     	$sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
     	$sql.= ' ORDER BY p.datep, p.tms';
@@ -2815,7 +2822,7 @@ else
 	                // List of actions on element
 	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	                $formactions=new FormActions($db);
-	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
+	                $somethingshown = $formactions->showactions($object,'invoice_supplier',$socid,1,'listaction'.($genallowed?'largetitle':''));
 
 					print '</div></div></div>';
 	                //print '</td></tr></table>';
@@ -2823,124 +2830,18 @@ else
 			}
         }
 
-        /*
-         * Show mail form
-         */
+        // Select mail models is same action as presend
         if (GETPOST('modelselected')) {
         	$action = 'presend';
         }
-        if ($action == 'presend')
-        {
-            $ref = dol_sanitizeFileName($object->ref);
-            include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref, preg_quote($ref,'/').'([^\-])+');
-            $file=$fileparams['fullname'];
 
-            // Define output language
-            $outputlangs = $langs;
-            $newlang = '';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-            	$newlang = $_REQUEST['lang_id'];
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-            	$newlang = $object->thirdparty->default_lang;
+        // Presend form
+        $modelmail='supplier_order_send';
+        $defaulttopic='SendBillRef';
+        $diroutput = $conf->fournisseur->facture->dir_output;
+        $trackid = 'sin'.$object->id;
 
-            if (!empty($newlang))
-            {
-                $outputlangs = new Translate('', $conf);
-                $outputlangs->setDefaultLang($newlang);
-                $outputlangs->load('bills');
-            }
-
-            // Build document if it not exists
-            if (! $file || ! is_readable($file))
-            {
-	            $result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-                if ($result < 0)
-                {
-                    dol_print_error($db,$object->error,$object->errors);
-                    exit;
-                }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref, preg_quote($ref,'/').'([^\-])+');
-                $file=$fileparams['fullname'];
-            }
-
-			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-            print '<div class="clearboth"></div>';
-            print '<br>';
-            print load_fiche_titre($langs->trans('SendBillByMail'));
-
-            dol_fiche_head('');
-
-            // Cree l'objet formulaire mail
-            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-            $formmail = new FormMail($db);
-            $formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-           	$formmail->trackid='sin'.$object->id;
-            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-            {
-            	include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            	$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'sin'.$object->id);
-            }
-            $formmail->withfrom=1;
-			$liste=array();
-			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
-			$formmail->withtocc=$liste;
-            $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtopic=$outputlangs->trans('SendBillRef','__REF__');
-            $formmail->withfile=2;
-            $formmail->withbody=1;
-            $formmail->withdeliveryreceipt=1;
-            $formmail->withcancel=1;
-			// Tableau des substitutions
-			$formmail->setSubstitFromObject($object);
-            $formmail->substit['__SUPPLIERINVREF__']=$object->ref;
-
-            //Find the good contact adress
-            $custcontact='';
-            $contactarr=array();
-            $contactarr=$object->liste_contact(-1,'external');
-
-            if (is_array($contactarr) && count($contactarr)>0) {
-            	foreach($contactarr as $contact) {
-            		if ($contact['libelle']==$langs->trans('TypeContact_invoice_supplier_external_BILLING')) {
-            			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-            			$contactstatic=new Contact($db);
-            			$contactstatic->fetch($contact['id']);
-            			$custcontact=$contactstatic->getFullName($langs,1);
-            		}
-            	}
-
-            	if (!empty($custcontact)) {
-            		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-            	}
-            }
-
-            // Tableau des parametres complementaires
-            $formmail->param['action']='send';
-            $formmail->param['models']='invoice_supplier_send';
-            $formmail->param['models_id']=GETPOST('modelmailselected','int');
-            $formmail->param['facid']=$object->id;
-            $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-            // Init list of files
-            if (GETPOST("mode")=='init')
-            {
-                $formmail->clear_attached_files();
-                $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-            }
-
-            // Show form
-            print $formmail->get_form();
-
-            dol_fiche_end();
-        }
+        include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
     }
 }
 

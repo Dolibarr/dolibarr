@@ -221,7 +221,36 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+} elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
+        $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
+        $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
+                $conf->entity);
+
+        if (!$res > 0) {
+                $error++;
+        }
+
+        if (!$error) {
+                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+                setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+} elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
+        $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
+        $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '',
+                $conf->entity);
+
+        if (!$res > 0) {
+                $error++;
+        }
+
+        if (!$error) {
+                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+                setEventMessages($langs->trans("Error"), null, 'errors');
+        }
 }
+
 
 
 /*
@@ -575,6 +604,40 @@ print '<input type="submit" class="button" value="' . $langs->trans("Modify") . 
 print '</td>';
 print '</tr>';
 print '</form>';
+// Use duration
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_FICHINTER_WITHOUT_DURATION">';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans("UseDurationOnFichinter");
+print '</td>';
+print '<td align="center">';
+print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"' . ($conf->global->FICHINTER_WITHOUT_DURATION?' checked':'') . '>';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</td>';
+print '</tr>';
+print '</form>';
+// use date without hour
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_FICHINTER_DATE_WITHOUT_HOUR">';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans("UseDateWithoutHourOnFichinter");
+print '</td>';
+print '<td align="center">';
+print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"' . ($conf->global->FICHINTER_DATE_WITHOUT_HOUR?' checked':'') . '>';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+
 
 
 print '</table>';

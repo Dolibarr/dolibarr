@@ -311,7 +311,7 @@ class Categorie extends CommonObject
 		$sql.= " import_key,";
 		$sql.= " entity";
 		$sql.= ") VALUES (";
-		$sql.= $this->fk_parent.",";
+		$sql.= $this->db->escape($this->fk_parent).",";
 		$sql.= "'".$this->db->escape($this->label)."',";
 		$sql.= "'".$this->db->escape($this->description)."',";
 		$sql.= "'".$this->db->escape($this->color)."',";
@@ -319,10 +319,10 @@ class Categorie extends CommonObject
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',";
-		$sql.= $type.",";
+		$sql.= "'".$this->db->escape($this->visible)."',";
+		$sql.= $this->db->escape($type).",";
 		$sql.= (! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":'null').",";
-		$sql.= $conf->entity;
+		$sql.= $this->db->escape($conf->entity);
 		$sql.= ")";
 
 		$res = $this->db->query($sql);
@@ -877,6 +877,100 @@ class Categorie extends CommonObject
 			$this->error=$this->db->error().' sql='.$sql;
 			return -1;
 		}
+	}
+
+	/**
+	 * List categories of an element id
+	 *
+	 * @param	int		$id			Id of element
+	 * @param	string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param	string	$sortfield	Sort field
+	 * @param	string	$sortorder	Sort order
+	 * @param	int		$limit		Limit for list
+	 * @param	int		$page		Page number
+	 * @return	array				Array of categories
+	 */
+	function getListForItem($id, $type='customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		global $conf;
+
+		$categories = array();
+
+		$sub_type = $type;
+		$subcol_name = "fk_".$type;
+		if ($type=="customer" || $type=="supplier") {
+			$sub_type="societe";
+			$subcol_name="fk_soc";
+		}
+		if ($type=="contact") {
+			$subcol_name="fk_socpeople";
+		}
+		$sql = "SELECT s.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
+		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
+		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
+		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.rowid = sub.fk_categorie';
+		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
+
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$result = $this->db->query($sql);
+			$nbtotalofrecords = $this->db->num_rows($result);
+		}
+
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if ($limit)	{
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$i=0;
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min)
+			{
+				$obj = $this->db->fetch_object($result);
+				$category_static = new Categorie($this->db);
+				if ($category_static->fetch($obj->rowid))
+				{
+					$categories[$i]['id'] 				= $category_static->id;
+					$categories[$i]['fk_parent']		= $category_static->fk_parent;
+					$categories[$i]['label']			= $category_static->label;
+					$categories[$i]['description']		= $category_static->description;
+					$categories[$i]['color']    		= $category_static->color;
+					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['visible']			= $category_static->visible;
+					$categories[$i]['type']			= $category_static->type;
+					$categories[$i]['entity']			= $category_static->entity;
+					$categories[$i]['array_options']	= $category_static->array_options;
+
+					// multilangs
+					if (! empty($conf->global->MAIN_MULTILANGS)) 	{
+						$categories[$i]['multilangs']	= $category_static->multilangs;
+					}
+				}
+				$i++;
+			}
+		}
+		else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		if ( ! count($categories)) {
+			return 0;
+		}
+
+		return $categories;
 	}
 
 	/**
@@ -1548,17 +1642,32 @@ class Categorie extends CommonObject
 			dol_mkdir($dir);
 		}
 
-		if (file_exists($dir))
-		{
-			$originImage = $dir . $file['name'];
-
-			// Cree fichier en taille origine
-			dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
-
-			if (file_exists($originImage))
+		if (file_exists($dir)) {
+			if (is_array($file['name']) && count($file['name']) > 0)
 			{
-			    // Create thumbs
-				$this->addThumbs($originImage);
+				$nbfile = count($file['name']);
+				for ($i = 0; $i <= $nbfile; $i ++) {
+
+					$originImage = $dir . $file['name'][$i];
+
+					// Cree fichier en taille origine
+					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
+
+					if (file_exists($originImage)) {
+						// Create thumbs
+						$this->addThumbs($originImage);
+					}
+				}
+			} else {
+				$originImage = $dir . $file['name'];
+
+				// Cree fichier en taille origine
+				dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
+
+				if (file_exists($originImage)) {
+					// Create thumbs
+					$this->addThumbs($originImage);
+				}
 			}
 		}
 	}

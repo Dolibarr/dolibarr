@@ -30,6 +30,7 @@ require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 $langs->load("products");
 $langs->load("companies");
+$langs->load("contracts");
 
 $sortfield=GETPOST('sortfield','alpha');
 $sortorder=GETPOST('sortorder','alpha');
@@ -186,7 +187,7 @@ foreach($listofstatus as $status)
     $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'data'=>(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
-        
+
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
         print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
@@ -206,7 +207,7 @@ $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
     if (empty($conf->use_javascript_ajax))
-    {      
+    {
     	print '<tr class="oddeven">';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
@@ -267,7 +268,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
-				
+
 			}
 		}
 		else
@@ -327,7 +328,7 @@ if ($result)
 
 	while ($i < $num)
 	{
-		$obj = $db->fetch_object($result);		
+		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
@@ -393,7 +394,7 @@ if ($resql)
 	while ($i < min($num,$max))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		print '<tr class="oddeven">';
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
@@ -473,7 +474,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		print '<tr class="oddeven">';
 
 		print '<td width="110" class="nowrap">';
@@ -553,7 +554,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		print '<tr class="oddeven">';
 
 		print '<td width="110" class="nowrap">';

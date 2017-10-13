@@ -31,7 +31,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity=(! empty($_GET['e']) ? (int) $_GET['e'] : (! empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
@@ -76,8 +76,10 @@ if (! empty($conf->paypal->enabled))
 
 $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
-$source=GETPOST('source');
+$source=GETPOST('s','alpha')?GETPOST('s','alpha'):GETPOST('source','alpha');
 $ref=GETPOST('ref');
+
+$suffix=GETPOST("suffix",'aZ09');
 
 
 // Detect $paymentmethod
@@ -143,10 +145,40 @@ $conf->dol_hide_leftmenu=1;
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 
-
 // Show message
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
+
+
+// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
+$width=0;
+// Define logo and logosmall
+$logosmall=$mysoc->logo_small;
+$logo=$mysoc->logo;
+$paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
+if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
+else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+// Define urllogo
+$urllogo='';
+if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+{
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$width=150;
+}
+elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+{
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$width=150;
+}
+// Output html code for logo
+if ($urllogo)
+{
+	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+	print '></center>';
+	print '<br>';
+}
 
 
 if (! empty($conf->paypal->enabled))
@@ -252,7 +284,9 @@ if ($ispaymentok)
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-    if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+
+    $key='ONLINE_PAYMENT_MESSAGE_OK';
+    if (! empty($conf->global->$key)) print $conf->global->$key;
 
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
@@ -408,7 +442,7 @@ else
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

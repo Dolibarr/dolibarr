@@ -42,7 +42,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
-$statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
+$statut=(GETPOST("statut",'intcomma')!='')?GETPOST("statut",'intcomma'):"-1";
 $search_all=GETPOST('sall', 'alphanohtml');
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
@@ -89,14 +89,14 @@ $sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql.= " ON p.rowid = d.fk_projet WHERE 1 = 1";
-if ($statut >= 0)
+$sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('don').")";
+if ($statut != '' && $statut != '-1')
 {
-	$sql .= " AND d.fk_statut = ".$statut;
+	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
 }
 if (trim($search_ref) != '')
 {
-    $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+    $sql.= natural_search('d.ref', $search_ref);
 }
 if (trim($search_all) != '')
 {
@@ -110,7 +110,7 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql.= natural_search(array('d.amount'), price2num(trim($search_amount)), 1);
+if ($search_amount) $sql.= natural_search('d.amount', $search_amount, 1);
 
 $sql.= $db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
@@ -131,17 +131,7 @@ if ($resql)
     //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	if ($statut >= 0)
-	{
-	    $donationstatic->statut=$statut;
-	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
-	}
-	else
-	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
-	}
-
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

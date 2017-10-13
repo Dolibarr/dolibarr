@@ -418,6 +418,21 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_total_discount_ht'] = '';
 		}
 
+		// Fetch project information if there is a project assigned to this object
+		if ($object->element != "project" && ! empty($object->fk_project) && $object->fk_project > 0)
+		{
+			if (! is_object($object->project))
+			{
+				$object->fetch_projet();
+			}
+			
+			$resarray[$array_key.'_project_ref'] = $object->project->ref;
+			$resarray[$array_key.'_project_title'] = $object->project->title;
+			$resarray[$array_key.'_project_description'] = $object->project->description;
+			$resarray[$array_key.'_project_date_start'] = dol_print_date($object->project->date_start, 'day');
+			$resarray[$array_key.'_project_date_end'] = dol_print_date($object->project->date_end, 'day');
+		}
+
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines)>0)
 		{

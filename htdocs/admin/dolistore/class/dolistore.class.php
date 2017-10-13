@@ -19,10 +19,11 @@
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class.php';
 
+
 /**
- * Class DolistoreModel
+ * Class Dolistore
  */
-class Dolistore extends DolistoreModel
+class Dolistore
 {
     // params
     public $start       // beginning of pagination
@@ -37,38 +38,54 @@ class Dolistore extends DolistoreModel
         , $lang         // the integer representing the lang in the store
         , $debug_api;   // usefull if no dialog
 
-    function __construct($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
+    /**
+     * Constructor
+     */
+    function __construct()
     {
         global $conf, $langs;
-
-        $this->start     = $options['start'];
-        $this->end       = $options['end'];
-        $this->per_page  = $options['per_page'];
-        $this->categorie = $options['categorie'];
-        $this->search    = $options['search'];
 
         $this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
         $this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';
         $this->vat_rate  = 1.2; // 20% de TVA
         $this->debug_api = false;
 
-        if ($this->end == 0) {
+        $langtmp    = explode('_', $langs->defaultlang);
+        $lang       = $langtmp[0];
+        $lang_array = array('en'=>0, 'fr'=>1, 'es'=>2, 'it'=>3, 'de'=>4);	// Into table ps_lang of Prestashop - 1
+        if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
+        $this->lang = $lang_array[$lang];
+    }
+
+    /**
+     * Load data from remote Dolistore market place.
+     * This fills ->categories
+     *
+     * @param 	array 	$options	Options
+     * @return	void
+     */
+    function getRemoteData($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
+    {
+        global $conf, $langs;
+
+    	$this->start     = $options['start'];
+        $this->end       = $options['end'];
+        $this->per_page  = $options['per_page'];
+        $this->categorie = $options['categorie'];
+        $this->search    = $options['search'];
+
+    	if ($this->end == 0) {
             $this->end = $this->per_page;
         }
 
-        $langtmp    = explode('_', $langs->defaultlang);
-        $lang       = $langtmp[0];
-        $lang_array = array('fr'=>1, 'en'=>2, 'es'=>3, 'it'=>4, 'de'=>5);
-        if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
-        $this->lang = $lang_array[$lang]; // 1=fr 2=en ...
-
-        try {
+    	try {
             $this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
                 $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
 
             // Here we set the option array for the Webservice : we want products resources
             $opt             = array();
             $opt['resource'] = 'products';
+
             // make a search to limit the id returned.
             if ($this->search != '') {
                 $opt2        = array();
@@ -96,7 +113,9 @@ class Dolistore extends DolistoreModel
             $opt['sort']           = 'id_desc';
             $opt['filter[active]'] = '[1]';
             $opt['limit']          = "$this->start,$this->end";
-            // Call
+			// $opt['filter[id]'] contais list of product id that are result of search
+
+            // Call API to get the detail
             $xml                   = $this->api->get($opt);
             $this->products        = $xml->products->children();
 
@@ -116,6 +135,144 @@ class Dolistore extends DolistoreModel
             else if ($trace[0]['args'][0] == 401) die('Bad auth key');
             else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
         }
+    }
+
+	/**
+	 * Return tree of Dolistore categories. $this->categories must have been loaded before.
+	 *
+	 * @param 	int			$parent		Id of parent category
+	 * @return 	string
+	 */
+    function get_categories($parent = 0)
+    {
+    	if (!isset($this->categories)) die('not possible');
+    	if ($parent != 0) {
+    		$html = '<ul>';
+    	} else {
+    		$html = '';
+    	}
+
+    	$nbofcateg = count($this->categories);
+    	for ($i = 0; $i < $nbofcateg; $i++)
+    	{
+    		$cat = $this->categories[$i];
+    		if ($cat->is_root_category == 1 && $parent == 0) {
+    			$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" '
+    				.'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang])).'"'
+    					.'>'.$cat->name->language[$this->lang].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
+    					$html .= self::get_categories($cat->id);
+    					$html .= "</li>\n";
+    		} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
+    			$select = ($cat->id == $this->categorie) ? ' selected' : '';
+    			$html   .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"'
+    				.' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang])).'" '
+    					.'>'.$cat->name->language[$this->lang].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
+    					$html   .= self::get_categories($cat->id);
+    					$html   .= "</li>\n";
+    		} else {
+
+    		}
+    	}
+
+    	if ($html == '<ul>') {
+    		return '';
+    	}
+    	if ($parent != 0) {
+    		return $html.'</ul>';
+    	} else {
+    		return $html;
+    	}
+    }
+
+    /**
+     * Return list of product formated for output
+     *
+     * @return string			HTML output
+     */
+    function get_products()
+    {
+    	global $langs, $conf;
+    	$html       = "";
+    	$parity     = "pair";
+    	$last_month = time() - (30 * 24 * 60 * 60);
+    	foreach ($this->products as $product) {
+    		$parity = ($parity == "impair") ? 'pair' : 'impair';
+
+    		// check new product ?
+    		$newapp = '';
+    		if ($last_month < strtotime($product->date_add)) {
+    			$newapp .= '<span class="newApp">'.$langs->trans('New').'</span> ';
+    		}
+
+    		// check updated ?
+    		if ($last_month < strtotime($product->date_upd) && $newapp == '') {
+    			$newapp .= '<span class="updatedApp">'.$langs->trans('Updated').'</span> ';
+    		}
+
+    		// add image or default ?
+    		if ($product->id_default_image != '') {
+    			$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.$product->id.'&id_image='.$product->id_default_image;
+    			$images    = '<a href="'.$image_url.'" class="fancybox" rel="gallery'.$product->id.'" title="'.$product->name->language[$this->lang].', '.$langs->trans('Version').' '.$product->module_version.'">'.
+    				'<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
+    		} else {
+    			$images = '<img src="'.DOL_URL_ROOT.'/admin/dolistore/img/NoImageAvailable.png" />';
+    		}
+
+    		// free or pay ?
+    		if ($product->price > 0) {
+    			$price         = '<h3>'.price(round((float) $product->price * $this->vat_rate, 2)).'&nbsp;&euro;</h3>';
+    			$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+    		} else {
+    			$price         = '<h3>'.$langs->trans('Free').'</h3>';
+    			$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
+    			$download_link.= '<br><br><a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+    		}
+
+    		//checking versions
+    		if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
+    			if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
+    				//compatible
+    				$version    = '<span class="compatible">'.$langs->trans('CompatibleUpTo', $product->dolibarr_max,
+    					$product->dolibarr_min, $product->dolibarr_max).'</span>';
+    					$compatible = '';
+    			} else {
+    				//never compatible, module expired
+    				$version    = '<span class="notcompatible">'.$langs->trans('NotCompatible', DOL_VERSION,
+    					$product->dolibarr_min, $product->dolibarr_max).'</span>';
+    					$compatible = 'NotCompatible';
+    			}
+    		} else {
+    			//need update
+    			$version    = '<span class="compatibleafterupdate">'.$langs->trans('CompatibleAfterUpdate', DOL_VERSION,
+    				$product->dolibarr_min, $product->dolibarr_max).'</span>';
+    				$compatible = 'NotCompatible';
+    		}
+
+    		//.'<br><a class="inline-block valignmiddle" target="_blank" href="'.$this->shop_url.$product->id.'"><span class="details button">'.$langs->trans("SeeInMarkerPlace").'</span></a>
+
+    		//output template
+    		$html .= '<tr class="app '.$parity.' '.$compatible.'">
+                <td align="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
+                <td class="margeCote"><h2 class="appTitle">'.$product->name->language[$this->lang]
+                    	.'<br/><small>'.$version.'</small></h2>
+                    <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.$product->reference.' - '.$langs->trans('Id').': '.$product->id.'</small><br><br>'.$product->description_short->language[$this->lang].'</td>
+                <td style="display:none;" class="long_description">'.$product->description->language[$this->lang].'</td>
+                <td class="margeCote" align="center">'.$price.'
+                </td>
+                <td class="margeCote">'.$download_link.'</td>
+                </tr>';
+    	}
+    	return $html;
+    }
+
+    function get_previous_link($text = '<<')
+    {
+    	return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
+    }
+
+    function get_next_link($text = '>>')
+    {
+    	return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
     }
 
     function get_previous_url()
@@ -182,135 +339,3 @@ class Dolistore extends DolistoreModel
     }
 }
 
-
-/**
- * Class DolistoreModel
- */
-class DolistoreModel
-{
-
-    function get_categories($parent = 0)
-    {
-        if (!isset($this->categories)) die('not possible');
-        if ($parent != 0) {
-            $html = '<ul>';
-        } else {
-            $html = '';
-        }
-
-        $nbofcateg = count($this->categories);
-        for ($i = 0; $i < $nbofcateg; $i++)
-        {
-            $cat = $this->categories[$i];
-            if ($cat->is_root_category == 1 && $parent == 0) {
-                $html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" '
-                    .'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang])).'"'
-                    .'>'.$cat->name->language[$this->lang].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
-                $html .= self::get_categories($cat->id);
-                $html .= "</li>\n";
-            } elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
-                $select = ($cat->id == $this->categorie) ? ' selected' : '';
-                $html   .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"'
-                    .' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang])).'" '
-                    .'>'.$cat->name->language[$this->lang].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
-                $html   .= self::get_categories($cat->id);
-                $html   .= "</li>\n";
-            } else {
-
-            }
-        }
-
-        if ($html == '<ul>') {
-            return '';
-        }
-        if ($parent != 0) {
-            return $html.'</ul>';
-        } else {
-            return $html;
-        }
-    }
-
-    function get_products()
-    {
-        global $langs, $conf;
-        $html       = "";
-        $parity     = "pair";
-        $last_month = time() - (30 * 24 * 60 * 60);
-        foreach ($this->products as $product) {
-            $parity = ($parity == "impair") ? 'pair' : 'impair';
-
-            // check new product ?
-            $newapp = '';
-            if ($last_month < strtotime($product->date_add)) {
-                $newapp .= '<span class="newApp">'.$langs->trans('New').'</span> ';
-            }
-
-            // check updated ?
-            if ($last_month < strtotime($product->date_upd) && $newapp == '') {
-                $newapp .= '<span class="updatedApp">'.$langs->trans('Updated').'</span> ';
-            }
-
-            // add image or default ?
-            if ($product->id_default_image != '') {
-                $image_url = dol_buildPath('/dolistore/ajax/image.php?id_product=', 2).$product->id.'&id_image='.$product->id_default_image;
-                $images    = '<a href="'.$image_url.'" class="fancybox" rel="gallery'.$product->id.'" title="'.$product->name->language[$this->lang].', '.$langs->trans('Version').' '.$product->module_version.'">'.
-                    '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
-            } else {
-                $images = '<img src="'.dol_buildPath('/dolistore/img/NoImageAvailable.png', 2).'" />';
-            }
-
-            // free or pay ?
-            if ($product->price > 0) {
-                $price         = '<h3>'.price(round((float) $product->price * $this->vat_rate, 2)).'&nbsp;&euro;</h3>';
-                $download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.dol_buildPath('/dolistore/img/follow.png',
-                        2).'" /></a>';
-            } else {
-                $price         = $langs->trans('Free');
-                $download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.dol_buildPath('/dolistore/img/Download-128.png',
-                        2).'" /></a>';
-            }
-
-            //checking versions
-            if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
-                if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
-                    //compatible
-                    $version    = '<span class="compatible">'.$langs->trans('CompatibleUpTo', $product->dolibarr_max,
-                            $product->dolibarr_min, $product->dolibarr_max).'</span>';
-                    $compatible = '';
-                } else {
-                    //never compatible, module expired
-                    $version    = '<span class="notcompatible">'.$langs->trans('NotCompatible', DOL_VERSION,
-                            $product->dolibarr_min, $product->dolibarr_max).'</span>';
-                    $compatible = 'NotCompatible';
-                }
-            } else {
-                //need update
-                $version    = '<span class="compatibleafterupdate">'.$langs->trans('CompatibleAfterUpdate', DOL_VERSION,
-                        $product->dolibarr_min, $product->dolibarr_max).'</span>';
-                $compatible = 'NotCompatible';
-            }
-
-            //output template
-            $html .= '<tr class="app '.$parity.' '.$compatible.'">
-                <td align="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
-                <td class="margeCote"><h2 class="appTitle"><a target="_blank" href="'.$this->shop_url.$product->id.'">'.$product->name->language[$this->lang].'</a><span class="details button">Details</span>'
-                .'<br/><small>'.$version.'</small></h2>
-                    <small> '.dol_print_date(strtotime($product->date_upd)).' - '.$langs->trans('Référence').': '.$product->reference.' - '.$langs->trans('Id').': '.$product->id.'</small><br><br>'.$product->description_short->language[$this->lang].'</td>
-                <td style="display:none;" class="long_description">'.$product->description->language[$this->lang].'</td>
-                <td class="margeCote" align="right">'.$price.'</td>
-                <td class="margeCote">'.$download_link.'</td>
-                </tr>';
-        }
-        return $html;
-    }
-
-    function get_previous_link($text = '<<')
-    {
-        return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
-    }
-
-    function get_next_link($text = '>>')
-    {
-        return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
-    }
-}

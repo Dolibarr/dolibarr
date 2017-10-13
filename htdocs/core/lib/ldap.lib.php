@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 function ldap_prepare_head()
 {
 	global $langs, $conf, $user;
+
 	$langs->load("ldap");
 
 	// Onglets
@@ -72,6 +74,20 @@ function ldap_prepare_head()
 		$head[$h][2] = 'members';
 		$h++;
 	}
+
+	if (! empty($conf->adherent->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
+		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
+		$head[$h][2] = 'memberstypes';
+		$h++;
+	}
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf,$langs,'',$head,$h,'ldap');
 
 	return $head;
 }
@@ -147,7 +163,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 			$hide=0;
 			if (! is_numeric($key))
 			{
-				
+
 				print '<tr '.$bc[$var].' valign="top">';
 				print '<td>';
 				print $key;

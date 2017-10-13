@@ -115,7 +115,8 @@ dol_syslog("Call newpaymentok with token=".$onlinetoken." paymentType=".$payment
 
 print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
 
-if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+$key='ONLINE_PAYMENT_MESSAGE_OK';
+if (! empty($conf->global->$key)) print $conf->global->$key;
 
 
 // Appel des triggers
@@ -192,7 +193,7 @@ if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 
 print "\n</div>\n";
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

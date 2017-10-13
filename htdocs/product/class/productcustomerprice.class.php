@@ -161,19 +161,19 @@ class Productcustomerprice extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= " " . $conf->entity . ",";
 		$sql .= " '" . $this->db->idate(dol_now()) . "',";
-		$sql .= " " . (! isset($this->fk_product) ? 'NULL' : "'" . $this->fk_product . "'") . ",";
-		$sql .= " " . (! isset($this->fk_soc) ? 'NULL' : "'" . $this->fk_soc . "'") . ",";
-		$sql .= " " . (empty($this->price) ? '0' : "'" . $this->price . "'") . ",";
-		$sql .= " " . (empty($this->price_ttc) ? '0' : "'" . $this->price_ttc . "'") . ",";
-		$sql .= " " . (empty($this->price_min) ? '0' : "'" . $this->price_min . "'") . ",";
-		$sql .= " " . (empty($this->price_min_ttc) ? '0' : "'" . $this->price_min_ttc . "'") . ",";
+		$sql .= " " . (! isset($this->fk_product) ? 'NULL' : "'" . $this->db->escape($this->fk_product) . "'") . ",";
+		$sql .= " " . (! isset($this->fk_soc) ? 'NULL' : "'" . $this->db->escape($this->fk_soc) . "'") . ",";
+		$sql .= " " . (empty($this->price) ? '0' : "'" . $this->db->escape($this->price) . "'") . ",";
+		$sql .= " " . (empty($this->price_ttc) ? '0' : "'" . $this->db->escape($this->price_ttc) . "'") . ",";
+		$sql .= " " . (empty($this->price_min) ? '0' : "'" . $this->db->escape($this->price_min) . "'") . ",";
+		$sql .= " " . (empty($this->price_min_ttc) ? '0' : "'" . $this->db->escape($this->price_min_ttc) . "'") . ",";
 		$sql .= " " . (! isset($this->price_base_type) ? 'NULL' : "'" . $this->db->escape($this->price_base_type) . "'") . ",";
 		$sql .= " ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null").",";
 		$sql .= " " . (! isset($this->tva_tx) ? 'NULL' : (empty($this->tva_tx)?0:$this->tva_tx)) . ",";
-		$sql .= " " . (! isset($this->recuperableonly) ? 'NULL' : "'" . $this->recuperableonly . "'") . ",";
-		$sql .= " " . (empty($this->localtax1_type) ? "'0'" : "'" . $this->localtax1_type . "'") . ",";
+		$sql .= " " . (! isset($this->recuperableonly) ? 'NULL' : "'" . $this->db->escape($this->recuperableonly) . "'") . ",";
+		$sql .= " " . (empty($this->localtax1_type) ? "'0'" : "'" . $this->db->escape($this->localtax1_type) . "'") . ",";
 		$sql .= " " . (! isset($this->localtax1_tx) ? 'NULL' : (empty($this->localtax1_tx)?0:$this->localtax1_tx)) . ",";
-		$sql .= " " . (empty($this->localtax2_type) ? "'0'" : "'" . $this->localtax2_type . "'") . ",";
+		$sql .= " " . (empty($this->localtax2_type) ? "'0'" : "'" . $this->db->escape($this->localtax2_type) . "'") . ",";
 		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx)?0:$this->localtax2_tx)) . ",";
 		$sql .= " " . $user->id . ",";
 		$sql .= " " . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . "";
@@ -329,6 +329,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
 		$sql .= " t.localtax2_tx,";
+		$sql .= " t.localtax1_type,";
+		$sql .= " t.localtax2_type,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
@@ -386,6 +388,8 @@ class Productcustomerprice extends CommonObject
 				$line->recuperableonly = $obj->recuperableonly;
 				$line->localtax1_tx = $obj->localtax1_tx;
 				$line->localtax2_tx = $obj->localtax2_tx;
+				$line->localtax1_type = $obj->localtax1_type;
+				$line->localtax2_type = $obj->localtax2_type;
 				$line->fk_user = $obj->fk_user;
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
@@ -660,8 +664,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " recuperableonly=" . (isset($this->recuperableonly) ? $this->recuperableonly : "null") . ",";
 		$sql .= " localtax1_tx=" . (isset($this->localtax1_tx) ? (empty($this->localtax1_tx)?0:$this->localtax1_tx) : "null") . ",";
 		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? (empty($this->localtax2_tx)?0:$this->localtax2_tx) : "null") . ",";
-		$sql .= " localtax1_type=" . (! empty($this->localtax1_type) ? "'".$this->localtax1_type."'": "'0'") . ",";
-		$sql .= " localtax2_type=" . (! empty($this->localtax2_type) ? "'".$this->localtax2_type."'": "'0'") . ",";
+		$sql .= " localtax1_type=" . (! empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'": "'0'") . ",";
+		$sql .= " localtax2_type=" . (! empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'": "'0'") . ",";
 		$sql .= " fk_user=" . $user->id . ",";
 		$sql .= " import_key=" . (isset($this->import_key) ? "'" . $this->db->escape($this->import_key) . "'" : "null") . "";
 

@@ -120,7 +120,9 @@ if ($ispaymentok)
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-    if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+
+	$key='ONLINE_PAYMENT_MESSAGE_OK';
+	if (! empty($conf->global->$key)) print $conf->global->$key;
 
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
@@ -191,7 +193,7 @@ if ($ispaymentok)
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

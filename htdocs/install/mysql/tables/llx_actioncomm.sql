@@ -52,17 +52,17 @@ create table llx_actioncomm
   location			varchar(128),
   durationp			real,							-- planed duration
 
-  label				varchar(256) NOT NULL,			-- label/title of event or topic of email
+  label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
   
-  email_subject		varchar(256),					-- when event was an email, we store here the subject. content is stored into note.
-  email_msgid		varchar(256),					-- when event was an email, we store here the msgid
-  email_from		varchar(256),					-- when event was an email, we store here the from
-  email_sender		varchar(256),					-- when event was an email, we store here the sender
-  email_to			varchar(256),					-- when event was an email, we store here the email_to
-  email_tocc		varchar(256),					-- when event was an email, we store here the email_tocc
-  email_tobcc		varchar(256),					-- when event was an email, we store here the email_tobcc
-  errors_to			varchar(256),					-- when event was an email, we store here the erros_to
+  email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
+  email_msgid		varchar(255),					-- when event was an email, we store here the msgid
+  email_from		varchar(255),					-- when event was an email, we store here the from
+  email_sender		varchar(255),					-- when event was an email, we store here the sender
+  email_to			varchar(255),					-- when event was an email, we store here the email_to
+  email_tocc		varchar(255),					-- when event was an email, we store here the email_tocc
+  email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
+  errors_to			varchar(255),					-- when event was an email, we store here the erros_to
   
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'

@@ -48,20 +48,21 @@ class DolEditor
     /**
      *      Create an object to build an HTML area to edit a large string content
      *
-     *      @param 	string	$htmlname		        HTML name of WYSIWIG field
-     *      @param 	string	$content		        Content of WYSIWIG field
-     *      @param	int		$width					Width in pixel of edit area (auto by default)
-     *      @param 	int		$height			        Height in pixel of edit area (200px by default)
-     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly', 'ace').
-     *      @param  string	$toolbarlocation       	Where bar is stored :
-     *                       		             	'In' each window has its own toolbar
-     *                              		      	'Out:name' share toolbar into the div called 'name'
-     *      @param  boolean	$toolbarstartexpanded  	Bar is visible or not at start
-	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *      @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like fckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
-     *      @param  int		$rows                   Size of rows for textarea tool
-	 *      @param  string	$cols                   Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
-	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
+     *      @param 	string	$htmlname		        		HTML name of WYSIWIG field
+     *      @param 	string	$content		        		Content of WYSIWIG field
+     *      @param	int		$width							Width in pixel of edit area (auto by default)
+     *      @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
+     *      @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+     *      @param  string	$toolbarlocation       			Where bar is stored :
+     *                       		             			'In' each window has its own toolbar
+     *                              		      			'Out:name' share toolbar into the div called 'name'
+     *      @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
+	 *		@param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *      @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
+	 *      												Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
+     *      @param  int		$rows                   		Size of rows for textarea tool
+	 *      @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
+	 *      @param	int		$readonly						0=Read/Edit, 1=Read only
 	 */
     function __construct($htmlname, $content, $width='', $height=200, $toolbarname='Basic', $toolbarlocation='In', $toolbarstartexpanded=false, $uselocalbrowser=true, $okforextendededitor=true, $rows=0, $cols=0, $readonly=0)
     {
@@ -169,7 +170,8 @@ class DolEditor
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
             $found=1;
-            //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'"'.($this->readonly?' disabled':'').' class="flat">';
+            //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
+            // TODO We do not put the disabled tag because on a read form, it change style with grey.
             $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
@@ -310,7 +312,7 @@ class DolEditor
 					'."\n";
 
         	$out.= 'jQuery(document).ready(function() {
-						jQuery("#savefile").click(function() {
+						jQuery(".buttonforacesave").click(function() {
         					console.log("We click on savefile button for component '.$this->htmlname.'");
         					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid")
         					console.log(aceEditor.getSession().getValue());

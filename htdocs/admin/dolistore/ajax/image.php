@@ -42,7 +42,7 @@ if (!$res) die("Include of main fails");
 global $lang, $user, $conf;
 
 
-dol_include_once('/dolistore/class/dolistore.class.php');
+require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 $dolistore = new Dolistore();
 
 $id_product = GETPOST('id_product', 'int');
@@ -65,3 +65,4 @@ try {
     else if ($trace[0]['args'][0] == 401) die('Bad auth key');
     else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
 }
+

@@ -47,7 +47,7 @@ class AccountingAccount extends CommonObject
 	var $fk_user_modif;
 	var $active;       // duplicate with status
 	var $status;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -56,7 +56,7 @@ class AccountingAccount extends CommonObject
 	function __construct($db) {
 		$this->db = $db;
 	}
-	
+
 	/**
 	 * Load record in memory
 	 *
@@ -67,7 +67,7 @@ class AccountingAccount extends CommonObject
 	 */
 	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0) {
 		global $conf;
-		
+
 		if ($rowid || $account_number) {
 			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
 			$sql .= ", ca.label as category_label";
@@ -87,7 +87,7 @@ class AccountingAccount extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				
+
 				if ($obj) {
 					$this->id = $obj->rowid;
 					$this->rowid = $obj->rowid;
@@ -105,7 +105,7 @@ class AccountingAccount extends CommonObject
 					$this->fk_user_modif = $obj->fk_user_modif;
 					$this->active = $obj->active;
 					$this->status = $obj->active;
-					
+
 					return $this->id;
 				} else {
 					return 0;
@@ -117,7 +117,7 @@ class AccountingAccount extends CommonObject
 		}
 		return - 1;
 	}
-	
+
 	/**
 	 * Insert new accounting account in chart of accounts
 	 *
@@ -129,7 +129,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 		$error = 0;
 		$now = dol_now();
-		
+
 		// Clean parameters
 		if (isset($this->fk_pcg_version))
 			$this->fk_pcg_version = trim($this->fk_pcg_version);
@@ -149,7 +149,7 @@ class AccountingAccount extends CommonObject
 			$this->fk_user_author = trim($this->fk_user_author);
 		if (isset($this->active))
 			$this->active = trim($this->active);
-			
+
 		if (empty($this->pcg_type) || $this->pcg_type == '-1')
 		{
 		    $this->pcg_type = 'XXXXXX';
@@ -160,7 +160,7 @@ class AccountingAccount extends CommonObject
 		}
 		// Check parameters
 		// Put here code to add control on parameters values
-			
+
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_account(";
 		$sql .= "datec";
@@ -179,31 +179,31 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . $conf->entity;
 		$sql .= ", " . (empty($this->fk_pcg_version) ? 'NULL' : "'" . $this->db->escape($this->fk_pcg_version) . "'");
 		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
-		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->pcg_subtype . "'");
-		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->account_number . "'");
+		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->db->escape($this->pcg_subtype) . "'");
+		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
 		$sql .= ", " . (empty($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
 		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
 		$sql .= ", " . (empty($this->account_category) ? 'NULL' : "'" . $this->db->escape($this->account_category) . "'");
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
 		$sql .= ")";
-		
+
 		$this->db->begin();
-		
+
 		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
 			$this->errors[] = "Error " . $this->db->lasterror();
 		}
-		
+
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
-			
+
 			// if (! $notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
-			
+
 			// // Call triggers
 			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			// $interface=new Interfaces($this->db);
@@ -212,7 +212,7 @@ class AccountingAccount extends CommonObject
 			// // End call triggers
 			// }
 		}
-		
+
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
@@ -226,14 +226,14 @@ class AccountingAccount extends CommonObject
 			return $this->id;
 		}
 	}
-	
+
 	/**
 	 * Update record
 	 *
 	 * @param  User $user      Use making update
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	function update($user) 
+	function update($user)
 	{
 	    // Check parameters
 	    if (empty($this->pcg_type) || $this->pcg_type == '-1')
@@ -244,9 +244,9 @@ class AccountingAccount extends CommonObject
 	    {
 	        $this->pcg_subtype = 'XXXXXX';
 	    }
-	     
+
 	    $this->db->begin();
-		
+
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
 		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
@@ -258,7 +258,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = " . $this->active;
 		$sql .= " WHERE rowid = " . $this->id;
-		
+
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -270,7 +270,7 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-	
+
 	/**
 	 * Check usage of accounting code
 	 *
@@ -278,16 +278,16 @@ class AccountingAccount extends CommonObject
 	 */
 	function checkUsage() {
 		global $langs;
-		
+
 		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
 		$sql .= "UNION";
 		$sql .= "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
-		
+
 		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
@@ -301,7 +301,7 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-	
+
 	/**
 	 * Delete object in database
 	 *
@@ -311,18 +311,18 @@ class AccountingAccount extends CommonObject
 	 */
 	function delete($user, $notrigger = 0) {
 		$error = 0;
-		
+
 		$result = $this->checkUsage();
-		
+
 		if ($result > 0) {
-			
+
 			$this->db->begin();
-			
+
 			// if (! $error) {
 			// if (! $notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
-			
+
 			// // Call triggers
 			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			// $interface=new Interfaces($this->db);
@@ -331,11 +331,11 @@ class AccountingAccount extends CommonObject
 			// // End call triggers
 			// }
 			// }
-			
+
 			if (! $error) {
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " WHERE rowid=" . $this->id;
-				
+
 				dol_syslog(get_class($this) . "::delete sql=" . $sql);
 				$resql = $this->db->query($sql);
 				if (! $resql) {
@@ -343,7 +343,7 @@ class AccountingAccount extends CommonObject
 					$this->errors[] = "Error " . $this->db->lasterror();
 				}
 			}
-			
+
 			// Commit or rollback
 			if ($error) {
 				foreach ( $this->errors as $errmsg ) {
@@ -360,7 +360,7 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-	
+
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
@@ -375,7 +375,7 @@ class AccountingAccount extends CommonObject
 	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-		
+
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
@@ -412,7 +412,7 @@ class AccountingAccount extends CommonObject
 		{
 			$linkstart = '';
 			$linkclose = '';
-			$linkend = '';			
+			$linkend = '';
 		}
 
 		$label_link = length_accountg($this->account_number);
@@ -423,7 +423,7 @@ class AccountingAccount extends CommonObject
 		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 * Information on record
 	 *
@@ -434,10 +434,10 @@ class AccountingAccount extends CommonObject
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
 		$sql .= ' WHERE a.rowid = ' . $id;
-		
+
 		dol_syslog(get_class($this) . '::info sql=' . $sql);
 		$result = $this->db->query($sql);
-		
+
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
@@ -460,7 +460,7 @@ class AccountingAccount extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 * Account desactivate
 	 *
@@ -469,17 +469,17 @@ class AccountingAccount extends CommonObject
 	 */
 	function account_desactivate($id) {
 		$result = $this->checkUsage();
-		
+
 		if ($result > 0) {
 			$this->db->begin();
-			
+
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 			$sql .= "SET active = '0'";
 			$sql .= " WHERE rowid = " . $this->db->escape($id);
-			
+
 			dol_syslog(get_class($this) . "::desactivate sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
-			
+
 			if ($result) {
 				$this->db->commit();
 				return 1;
@@ -492,7 +492,7 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-	
+
 	/**
 	 * Account activate
 	 *
@@ -501,11 +501,11 @@ class AccountingAccount extends CommonObject
 	 */
 	function account_activate($id) {
 		$this->db->begin();
-		
+
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= "SET active = '1'";
 		$sql .= " WHERE rowid = " . $this->db->escape($id);
-		
+
 		dol_syslog(get_class($this) . "::activate sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -517,8 +517,8 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
-	
-	
+
+
 	/**
 	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
@@ -529,7 +529,7 @@ class AccountingAccount extends CommonObject
 	{
 	    return $this->LibStatut($this->status,$mode);
 	}
-	
+
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -541,7 +541,7 @@ class AccountingAccount extends CommonObject
 	{
 	    global $langs;
 	    $langs->load('users');
-	
+
 	    if ($mode == 0)
 	    {
 	        $prefix='';

@@ -63,9 +63,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
-	if (GETPOST("cancel"))
+	if (GETPOST('cancel','alpha'))
 	{
-		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -98,7 +98,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 		if ($res > 0)
 		{
-			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 			header("Location: ".$backtopage);
 			exit;
 		}

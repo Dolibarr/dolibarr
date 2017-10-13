@@ -25,6 +25,8 @@
  * $elementtype
  */
 
+$langs->load("modulebuilder");
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
@@ -41,12 +43,12 @@
     		var alwayseditable = jQuery("#alwayseditable");
     		var list = jQuery("#list");
     		<?php
-    		if((GETPOST('type') != "select") &&  (GETPOST('type') != "sellist"))
+    		if((GETPOST('type','alpha') != "select") &&  (GETPOST('type','alpha') != "sellist"))
     		{
     			print 'jQuery("#value_choice").hide();';
     		}
 
-    		if (GETPOST('type') == "separate")
+    		if (GETPOST('type','alpha') == "separate")
     		{
 				print "jQuery('#size, #default_value').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
@@ -96,13 +98,13 @@
 
 			if (type == 'separate')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true);
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value').val('').prop('disabled', true);
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled');
+				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
 			}
     	}
     	init_typeoffields(jQuery("#type").val());
@@ -183,7 +185,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
     foreach($type2label as $key => $val)
     {
         $selected='';
-        if ($key == (GETPOST('type')?GETPOST('type'):$type)) $selected=' selected="selected"';
+        if ($key == (GETPOST('type','alpha')?GETPOST('type','alpha'):$type)) $selected=' selected="selected"';
         if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
         else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
     }
@@ -222,8 +224,8 @@ else
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile);  ?>"></td></tr>
 <!-- Computed value -->
 <tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
-<!-- Default value -->
-<!-- Edit of default into sql structure not yet supported -->
+<!-- Default Value (at sql setup level) -->
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
 <!-- Unique -->
 <tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique?' checked':''); ?>></td></tr>
 <!-- Required -->
@@ -238,11 +240,8 @@ else
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
 <!-- By default visible into list -->
-<?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
-<tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
-<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
-</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo ($list?' checked':''); ?>></td></tr>
-<?php } ?>
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("ByDefaultInList"), $langs->trans("VisibleDesc")); ?>
+</td><td class="valeur"><input id="list" size="1" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
 </table>
 
 <?php dol_fiche_end(); ?>

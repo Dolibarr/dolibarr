@@ -51,11 +51,11 @@ $search_version=GETPOST('search_version','alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = GETPOST('categorie', 'int') + 0;
-$options['start']     = GETPOST('start', 'int') + 0;
-$options['end']       = GETPOST('end', 'int') + 0;
+$options['categorie'] = ((GETPOST('categorie', 'int')?GETPOST('categorie', 'int'):0) + 0);
+$options['start']     = ((GETPOST('start', 'int')?GETPOST('start', 'int'):0) + 0);
+$options['end']       = ((GETPOST('end', 'int')?GETPOST('end', 'int'):0) + 0);
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore($options);
+$dolistore            = new Dolistore();
 
 
 if (! $user->admin)
@@ -254,7 +254,7 @@ if ($action == 'reset' && $user->admin)
 
 $form = new Form($db);
 
-$morejs  = array("/admin/dolistore/js/dolistore.js.php");
+//$morejs  = array("/admin/dolistore/js/dolistore.js.php");
 $morecss = array("/admin/dolistore/css/dolistore.css");
 
 // Set dir where external modules are installed
@@ -623,7 +623,7 @@ if ($mode == 'common')
             $imginfo="info_black";
         }
 
-        print '<tr>'."\n";
+        print '<tr class="oddeven">'."\n";
 
         // Picto + Name of module
         print '  <td width="200px">';
@@ -832,44 +832,54 @@ if ($mode == 'marketplace')
 
     if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
     {
-	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span>';
+    	// $options is array with filter criterias
+    	//var_dump($options);
+    	$dolistore->getRemoteData($options);
 
+	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+
+	    $previouslink = $dolistore->get_previous_link();
+	    $nextlink = $dolistore->get_next_link();
+
+	    print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">'
 
 	    ?>
-	    	<br><br>
-
-	        <div class="tabBar">
-	            <form method="POST" id="searchFormList" action="<?php echo $dolistore->url ?>">
+	            <form method="POST" class="centpercent" id="searchFormList" action="<?php echo $dolistore->url ?>">
 	            	<input type="hidden" name="mode" value="marketplace" />
-	                <div class="divsearchfield"><?php echo $langs->trans('Mot-cle') ?>:
+	                <div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
 	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 	                </div>
 	                <div class="divsearchfield">
-	                    <input class="button butAction searchDolistore" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-	                    <a class="button butActionDelete" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Tout afficher') ?></a>
-	                </div><br><br><br style="clear: both">
+	                    <input class="button" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
+	                    <a class="button" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
+
+	                    &nbsp;
+					</div>
+	                <div class="divsearchfield right">
+	                <?php
+	                print $previouslink;
+	                print $nextlink;
+	                ?>
+	                </div>
 	            </form>
-	        </div>
+
+	   <?php
+
+	   print '</div></div>';
+	   print '<div class="clearboth"></div>';
+
+	   ?>
+
 	        <div id="category-tree-left">
 	            <ul class="tree">
 	                <?php echo $dolistore->get_categories(); ?>
 	            </ul>
 	        </div>
 	        <div id="listing-content">
-	            <table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">
-	                <thead>
-	                    <tr class="liste_titre">
-	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
-	                    </tr>
-	                </thead>
+	            <table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 	                <tbody id="listOfModules">
 	                    <?php echo $dolistore->get_products($categorie); ?>
 	                </tbody>
-	                <tfoot>
-	                    <tr class="liste_titre">
-	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
-	                    </tr>
-	                </tfoot>
 	            </table>
 	        </div>
 
@@ -882,114 +892,110 @@ if ($mode == 'marketplace')
 
 if ($mode == 'deploy')
 {
-    dol_fiche_head($head, $mode, '', -1);
+	dol_fiche_head($head, $mode, '', -1);
 
+	$dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
+	$allowonlineinstall=true;
+	$allowfromweb=1;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
 
-    $allowonlineinstall=true;
-    $allowfromweb=1;
-    if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
+	$fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
+	$message='';
+	if (! empty($allowonlineinstall))
+	{
+		if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
+		{
+			$message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
+			$allowfromweb=-1;
+		}
+		else
+		{
+			if ($dirins_ok)
+			{
+				if (! is_writable(dol_osencode($dirins)))
+				{
+					$langs->load("errors");
+					$message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
+					$allowfromweb=0;
+				}
+			}
+			else
+			{
+				$message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+				$allowfromweb=0;
+			}
+		}
+	}
+	else
+	{
+		$message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
+		$allowfromweb=0;
+	}
 
-    $fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
-    $message='';
-    if (! empty($allowonlineinstall))
-    {
-        if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
-        {
-            $message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
-            $allowfromweb=-1;
-        }
-        else
-        {
-            if ($dirins_ok)
-            {
-                if (! is_writable(dol_osencode($dirins)))
-                {
-                    $langs->load("errors");
-                    $message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
-                    $allowfromweb=0;
-                }
-            }
-            else
-            {
+	if ($allowfromweb < 1)
+	{
+		print $langs->trans("SomethingMakeInstallFromWebNotPossible");
+		print $message;
+		//print $langs->trans("SomethingMakeInstallFromWebNotPossible2");
+		print '<br>';
+	}
 
-                $message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
-                $allowfromweb=0;
-            }
-        }
-    }
-    else
-    {
-        $message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
-        $allowfromweb=0;
-    }
+	print '<br>';
 
-    if ($allowfromweb < 1)
-    {
-    	print $langs->trans("SomethingMakeInstallFromWebNotPossible");
-    	print $message;
-    	//print $langs->trans("SomethingMakeInstallFromWebNotPossible2");
-    	print '<br>';
-    }
+	if ($allowfromweb >= 0)
+	{
+		if ($allowfromweb == 1)
+		{
+			//print $langs->trans("ThisIsProcessToFollow").'<br>';
+		}
+		else
+		{
+			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
+			print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+			print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
+			print '<b>'.$langs->trans("StepNb",2).'</b>: ';
+			print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+			print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+		}
 
-    print '<br>';
+		if ($allowfromweb == 1)
+		{
+			print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
 
-    if ($allowfromweb >= 0)
-    {
-    	if ($allowfromweb == 1)
-    	{
-    	    //print $langs->trans("ThisIsProcessToFollow").'<br>';
-    	}
-    	else
-    	{
-    	    print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
-        	print '<b>'.$langs->trans("StepNb",1).'</b>: ';
-        	print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
-        	print '<b>'.$langs->trans("StepNb",2).'</b>: ';
-        	print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
-        	print '<b>'.$langs->trans("StepNb",3).'</b>: ';
-    	}
+			print '<br>';
 
-    	if ($allowfromweb == 1)
-    	{
-    		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+			print '<input type="hidden" name="action" value="install">';
+			print '<input type="hidden" name="mode" value="deploy">';
+			print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+			print '</form>';
 
-    		print '<br>';
+			print '<br>';
+			print '<br>';
 
-            print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
-    		print '<input type="hidden" name="action" value="install">';
-    		print '<input type="hidden" name="mode" value="deploy">';
-    		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
-    		print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
-    		print '</form>';
+			print '<div class="center"><div class="logo_setup"></div></div>';
+		}
+		else
+		{
+			print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+			print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+			print $langs->trans("SetupIsReadyForUse").'<br>';
+		}
+	}
 
-            print '<br>';
-            print '<br>';
+	if (! empty($result['return']))
+	{
+		print '<br>';
 
-            print '<div class="center"><div class="logo_setup"></div></div>';
-    	}
-    	else
-    	{
-    		print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
-    		print '<b>'.$langs->trans("StepNb",4).'</b>: ';
-    		print $langs->trans("SetupIsReadyForUse").'<br>';
-    	}
-    }
+		foreach($result['return'] as $value)
+		{
+			echo $value.'<br>';
+		}
+	}
 
-
-    if (! empty($result['return']))
-    {
-    	print '<br>';
-
-    	foreach($result['return'] as $value)
-    	{
-    		echo $value.'<br>';
-    	}
-    }
-
-    dol_fiche_end();
+	dol_fiche_end();
 }
-
-
 
 if ($mode == 'develop')
 {

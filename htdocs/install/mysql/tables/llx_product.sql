@@ -60,7 +60,7 @@ create table llx_product
   tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch management (eat-by or lot management)
   fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
-  seuil_stock_alerte		integer      DEFAULT 0,
+  seuil_stock_alerte		integer      DEFAULT NULL,
   url						varchar(255),
   barcode					varchar(255) DEFAULT NULL,		-- barcode
   fk_barcode_type			integer      DEFAULT NULL,		-- barcode type

@@ -49,7 +49,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if (GETPOST('cancel') && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
@@ -125,7 +125,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		if ($res > 0 && $newid1 > 0 && $newid2 > 0)
 		{
 			$db->commit();
-			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id);	// To avoid pb whith back
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage?'&backtopage='.urlencode($backtopage):''));	// To avoid pb whith back
 			exit;
 		}
 		else
@@ -275,13 +275,13 @@ if ($socid > 0)
 	print '</table>';
 
 	print '</div>';
-	
+
 	if ($user->rights->societe->creer)
 	{
     	print '<br>';
-    
+
     	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
-    	
+
     	print '<div class="underbanner clearboth"></div>';
     	print '<table class="border" width="100%">';
     	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
@@ -292,8 +292,8 @@ if ($socid > 0)
     	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
     	print '</td></tr>';
     	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc').'"></td></tr>';
-    
+    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc','none').'"></td></tr>';
+
     	print "</table>";
 	}
 
@@ -362,7 +362,7 @@ if ($socid > 0)
     		while ($i < $num)
     		{
     			$obj = $db->fetch_object($resql);
-    
+
     			print '<tr class="oddeven">';
     			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
     			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
@@ -408,14 +408,14 @@ if ($socid > 0)
     			if ($user->rights->societe->creer || $user->rights->facture->creer)
     			{
     				print '<td class="nowrap">';
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=split&amp;remid='.$obj->rowid.'">'.img_split($langs->trans("SplitDiscount")).'</a>';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
     				print ' &nbsp; ';
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
     				print '</td>';
     			}
     			else print '<td>&nbsp;</td>';
     			print '</tr>';
-    
+
     			if ($_GET["action"]=='split' && GETPOST('remid') == $obj->rowid)
     			{
     				$showconfirminfo['rowid']=$obj->rowid;
@@ -427,7 +427,7 @@ if ($socid > 0)
 		else
 		{
 		    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-		}		
+		}
 		$db->free($resql);
 		print "</table>";
 
@@ -441,7 +441,7 @@ if ($socid > 0)
 				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 			);
 			$langs->load("dict");
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'], $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage?'&backtopage='.urlencode($backtopage):''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 		}
 	}
 	else
@@ -590,7 +590,7 @@ if ($socid > 0)
 		{
 		    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		
+
 		print "</table>";
 	}
 	else

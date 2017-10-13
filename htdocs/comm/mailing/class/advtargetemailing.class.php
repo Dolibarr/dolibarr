@@ -121,7 +121,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= " ".(! isset($this->name)?'NULL':"'".$this->db->escape($this->name)."'").",";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " ".(! isset($this->fk_mailing)?'NULL':"'".$this->fk_mailing."'").",";
+		$sql.= " ".(! isset($this->fk_mailing)?'NULL':"'".$this->db->escape($this->fk_mailing)."'").",";
 		$sql.= " ".(! isset($this->filtervalue)?'NULL':"'".$this->db->escape($this->filtervalue)."'").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->idate(dol_now())."',";
@@ -640,16 +640,16 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[]=$this->transformToSQL('t.firstname',$arrayquery['contact_firstname']);
 			}
 			if (!empty($arrayquery['contact_country']) && count($arrayquery['contact_country'])) {
-				$sqlwhere[]= " (t.fk_pays IN (".implode(',',$arrayquery['contact_country'])."))";
+				$sqlwhere[]= " (t.fk_pays IN (".$this->db->escape(implode(',',$arrayquery['contact_country']))."))";
 			}
 			if (!empty($arrayquery['contact_status']) && count($arrayquery['contact_status'])>0) {
-				$sqlwhere[]= " (t.statut IN (".implode(',',$arrayquery['contact_status'])."))";
+				$sqlwhere[]= " (t.statut IN (".$this->db->escape(implode(',',$arrayquery['contact_status']))."))";
 			}
 			if (!empty($arrayquery['contact_civility']) && count($arrayquery['contact_civility'])>0) {
-				$sqlwhere[]= " (t.civility IN ('".implode("','",$arrayquery['contact_civility'])."'))";
+				$sqlwhere[]= " (t.civility IN ('".$this->db->escape(implode("','",$arrayquery['contact_civility']))."'))";
 			}
 			if ($arrayquery['contact_no_email']!='') {
-				$sqlwhere[]= " (t.no_email='".$arrayquery['contact_no_email']."')";
+				$sqlwhere[]= " (t.no_email='".$this->db->escape($arrayquery['contact_no_email'])."')";
 			}
 			if ($arrayquery['contact_update_st_dt']!='') {
 				$sqlwhere[]= " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";
@@ -658,7 +658,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[]= " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
 			}
 			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ'])>0) {
-				$sqlwhere[]= " (contactcateg.fk_categorie IN (".implode(",",$arrayquery['contact_categ'])."))";
+				$sqlwhere[]= " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",",$arrayquery['contact_categ']))."))";
 			}
 
 			//Standard Extrafield feature

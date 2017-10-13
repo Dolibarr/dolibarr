@@ -50,8 +50,8 @@
  *		@param  array	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  double	$multicurrency_tx           Currency rate (1 by default)
- * 		@param  double	$pu_ht_devise				Amount in currency
- *		@return         array [ 
+ * 		@param  double	$pu_devise					Amount in currency
+ *		@return         array [
  *                       0=total_ht,
  *						 1=total_vat, (main vat only)
  *						 2=total_ttc, (total_ht + main vat + local taxes)
@@ -65,15 +65,16 @@
  *						10=total_tax2 for total_ht,
  *						11=pu_tax1 for pu_ht, !! should not be used
  *						12=pu_tax2 for pu_ht, !! should not be used
- *						13=!! should not be used
+ *						13=??                 !! should not be used
  *						14=total_tax1 for total_ht_without_discount,
- *						15=total_tax2 for total_ht_without_discount]
+ *						15=total_tax2 for total_ht_without_discount,
+ *
  * 						16=multicurrency_total_ht
  * 						17=multicurrency_total_tva
  * 						18=multicurrency_total_ttc
  * 						19=multicurrency_pu_ht
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100, $multicurrency_tx=1, $pu_ht_devise=0)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100, $multicurrency_tx=1, $pu_devise=0)
 {
 	global $conf,$mysoc,$db;
 
@@ -101,10 +102,10 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	//dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
 
 	$countryid=$seller->country_id;
-	
+
 	if (is_numeric($uselocaltax1_rate)) $uselocaltax1_rate=(float) $uselocaltax1_rate;
 	if (is_numeric($uselocaltax2_rate)) $uselocaltax2_rate=(float) $uselocaltax2_rate;
-	
+
 	if ($uselocaltax1_rate < 0) $uselocaltax1_rate=$seller->localtax1_assuj;
 	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
 
@@ -143,14 +144,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		}
 		else dol_print_error($db);
 	}
-	
+
 	// pu calculation from pu_devise if pu empty
-	if(empty($pu) && !empty($pu_ht_devise)) {
-		$pu = $pu_ht_devise / $multicurrency_tx;
-	} else {
-		$pu_ht_devise = $pu * $multicurrency_tx;
+	if(empty($pu) && !empty($pu_devise)) {
+		$pu = $pu_devise / $multicurrency_tx;
 	}
-	
+	if(empty($pu_devise) && !empty($multicurrency_tx)) {
+		$pu_devise = $pu * $multicurrency_tx;
+	}
+
 	// initialize total (may be HT or TTC depending on price_base_type)
 	$tot_sans_remise = $pu * $qty * $progress / 100;
 	$tot_avec_remise_ligne = $tot_sans_remise       * (1 - ($remise_percent_ligne / 100));
@@ -338,13 +340,47 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$result[10]=round($result[10]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
 		}
 	}
-	
+
 	// Multicurrency
-	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
-	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
-	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
-	$result[19] = price2num($pu_ht_devise, 'MU');
-	
+	if ($multicurrency_tx != 1)
+	{
+		// Recal function using the multicurrency price as reference price. We must set param $multicurrency_tx to 1 to avoid infinite loop.
+		$newresult = calcul_price_total($qty, $pu_devise, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller, $localtaxes_array, $progress, 1, 0);
+
+		$result[16] = $newresult[0];
+		$result[17] = $newresult[1];
+		$result[18] = $newresult[2];
+		$result[19] = $newresult[3];
+		$result[20] = $newresult[4];
+		$result[21] = $newresult[5];
+		$result[22] = $newresult[6];
+		$result[23] = $newresult[7];
+		$result[24] = $newresult[8];
+		$result[25] = $newresult[9];
+		$result[26] = $newresult[10];
+		/*
+		$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
+		$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
+		$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
+		$result[19] = price2num($pu_devise, 'MU');
+		*/
+	}
+	else
+	{
+		$result[16] = $result[0];
+		$result[17] = $result[1];
+		$result[18] = $result[2];
+		$result[19] = $result[3];
+		$result[20] = $result[4];
+		$result[21] = $result[5];
+		$result[22] = $result[6];
+		$result[23] = $result[7];
+		$result[24] = $result[8];
+		$result[25] = $result[9];
+		$result[26] = $result[10];
+	}
+
+	//var_dump($result);
 	// initialize result array
 	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 

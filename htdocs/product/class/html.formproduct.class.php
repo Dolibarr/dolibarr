@@ -57,7 +57,7 @@ class FormProduct
 	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
 	 * @param	string	$status		      	warehouse status filter, following comma separated filter options can be used
      *										'warehouseopen' = select products from open warehouses,
-	 *										'warehouseclosed' = select products from closed warehouses, 
+	 *										'warehouseclosed' = select products from closed warehouses,
 	 *										'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
 	 * @param	array	$exclude		    warehouses ids to exclude
@@ -68,28 +68,28 @@ class FormProduct
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
-		
+
 		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
 
 		$warehouseStatus = array();
 
-		if (preg_match('/warehouseclosed/', $status)) 
+		if (preg_match('/warehouseclosed/', $status))
 		{
 			$warehouseStatus[] = Entrepot::STATUS_CLOSED;
 		}
-		if (preg_match('/warehouseopen/', $status)) 
+		if (preg_match('/warehouseopen/', $status))
 		{
 			$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
 		}
-		if (preg_match('/warehouseinternal/', $status)) 
+		if (preg_match('/warehouseinternal/', $status))
 		{
 			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
 		}
-		
+
 		$sql = "SELECT e.rowid, e.label, e.description, e.fk_parent";
-		if (!empty($fk_product)) 
+		if (!empty($fk_product))
 		{
-			if (!empty($batch)) 
+			if (!empty($batch))
 			{
 				$sql.= ", pb.qty as stock";
 			}
@@ -107,7 +107,7 @@ class FormProduct
 		if (!empty($fk_product))
 		{
 			$sql.= " AND ps.fk_product = '".$fk_product."'";
-			if (!empty($batch)) 
+			if (!empty($batch))
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
             }
@@ -115,15 +115,15 @@ class FormProduct
 		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (".implode(',',$warehouseStatus).")";
+			$sql.= " AND e.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
 		}
 		else
 		{
 			$sql.= " AND e.statut = 1";
 		}
-		
-		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.implode(',', $exclude).')';
-		
+
+		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
+
 		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description, e.fk_parent";
 		$sql.= " ORDER BY e.label";
 
@@ -144,7 +144,7 @@ class FormProduct
 				$this->cache_warehouses[$obj->rowid]['stock'] = $obj->stock;
 				$i++;
 			}
-			
+
 			// Full label init
 			foreach($this->cache_warehouses as $obj_rowid=>$tab) {
 				$this->cache_warehouses[$obj_rowid]['full_label'] = $this->get_parent_path($tab);
@@ -158,18 +158,18 @@ class FormProduct
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
-	 * 
+	 *
 	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
 	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
 	private function get_parent_path($tab, $final_label='') {
-		
+
 		if(empty($final_label)) $final_label = $tab['label'];
-		
+
 		if(empty($tab['parent_id'])) return $final_label;
 		else {
 			if(!empty($this->cache_warehouses[$tab['parent_id']])) {
@@ -177,9 +177,9 @@ class FormProduct
 				return $this->get_parent_path($this->cache_warehouses[$tab['parent_id']], $final_label);
 			}
 		}
-		
+
 		return $final_label;
-		
+
 	}
 
 	/**
@@ -189,7 +189,7 @@ class FormProduct
 	 *  @param  string	$htmlname       Name of html select html
 	 *  @param  string	$filterstatus   warehouse status filter, following comma separated filter options can be used
      *									'warehouseopen' = select products from open warehouses,
-	 *									'warehouseclosed' = select products from closed warehouses, 
+	 *									'warehouseclosed' = select products from closed warehouses,
 	 *									'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 * 	@param	int		$disabled		1=Select is disabled
@@ -208,7 +208,7 @@ class FormProduct
 		global $conf,$langs,$user;
 
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
-		
+
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
 		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude);
@@ -219,10 +219,9 @@ class FormProduct
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$comboenhancement = ajax_combobox($htmlname, $events);
 			$out.= $comboenhancement;
-			$nodatarole=($comboenhancement?' data-role="none"':'');
 		}
-		
-		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'"'.$nodatarole.'>';
+
+		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{

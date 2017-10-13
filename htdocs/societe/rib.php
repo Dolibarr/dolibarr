@@ -205,7 +205,10 @@ if (empty($reshook))
     		$account->owner_address   = GETPOST('owner_address','alpha');
     		$account->frstrecur       = GETPOST('frstrecur');
     		$account->rum             = GETPOST('rum','alpha');
-    
+    		$account->datec			  = dol_now();
+
+    		$db->begin();
+
     		// This test can be done only once properties were set
     		if ($account->needIBAN() == 1)
     		{
@@ -225,25 +228,43 @@ if (empty($reshook))
 
     		if (! $error)
     		{
-    		    if (empty($account->rum))
+    		    $result = $account->create($user);
+    		    if ($result < 0)
     		    {
-    		        $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
-    		        $account->date_rum = dol_now();
+    		    	$error++;
+    		    	setEventMessages($account->error, $account->errors, 'errors');
+    		    	$action='create';     // Force chargement page création
     		    }
 
+    		    if (empty($account->rum))
+    		    {
+    		    	$account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
+    		    	$account->date_rum = dol_now();
+    		    }
+    		}
+
+    		if (! $error)
+    		{
     		    $result = $account->update($user);	// This will set the UMR number.
-        	    // TODO Use create and include update into create method
-        	    if (! $result)
-        	    {
+    		    if ($result < 0)
+    		    {
+    		    	$error++;
         		    setEventMessages($account->error, $account->errors, 'errors');
-        	        $_GET["action"]='create';     // Force chargement page création
+        	        $action='create';
         	    }
-        	    else
-        	    {
-        	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
-        	        header('Location: '.$url);
-        	        exit;
-        	    }
+    		}
+
+    		if (! $error)
+    		{
+    			$db->commit();
+
+        	    $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
+    			header('Location: '.$url);
+    			exit;
+    		}
+    		else
+    		{
+    			$db->rollback();
     		}
     	}
     }
@@ -320,11 +341,14 @@ $formfile = new FormFile($db);
 llxHeader();
 
 $head=societe_prepare_head($object);
-
 if (! $id)
-    $account->fetch(0,$object->id);
+{
+	$account->fetch(0,$object->id);
+}
 else
+{
     $account->fetch($id);
+}
 if (empty($account->socid)) $account->socid=$object->id;
 
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
@@ -441,7 +465,8 @@ if ($socid && $action != 'edit' && $action != "create")
     $var = false;
     if (is_array($rib_list))
     {
-        print '<table class="liste" width="100%">';
+		print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+    	print '<table class="liste" width="100%">';
 
         print '<tr class="liste_titre">';
         print_liste_field_titre("LabelRIB");
@@ -546,6 +571,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
             include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
             $modellist=ModeleBankAccountDoc::liste_modeles($db);
+
             $out = '';
             if (is_array($modellist) && count($modellist))
             {
@@ -560,6 +586,8 @@ if ($socid && $action != 'edit' && $action != "create")
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
+                if (! empty($conf->global->BANKADDON_PDF)) $modelselected = $conf->global->BANKADDON_PDF;
+
                 $out.= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
                 $out.= ajax_combobox('modelrib'.$rib->id);
 
@@ -618,6 +646,7 @@ if ($socid && $action != 'edit' && $action != "create")
         }
 
         print '</table>';
+        print '</div>';
     } else {
         dol_print_error($db);
     }
@@ -772,7 +801,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
-    	print '<td><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
+    	print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"></td></tr>';
 
     	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
     	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
@@ -869,7 +898,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     	// RUM
     	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-    	print '<td colspan="4"><input size="30" type="text" name="rum" value="'.dol_escape_htmltag($account->rum).'"><br>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum','alpha').'"><br>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
     	print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
     	$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));

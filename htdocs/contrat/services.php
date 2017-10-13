@@ -115,6 +115,11 @@ $companystatic=new Societe($db);
 $arrayfields=array(
     'c.ref'=>array('label'=>$langs->trans("Contract"), 'checked'=>1, 'position'=>80),
     'p.description'=>array('label'=>$langs->trans("Service"), 'checked'=>1, 'position'=>80),
+	'cd.qty'=>array('label'=>$langs->trans("Qty"), 'checked'=>0, 'position'=>100),
+	'cd.total_ht'=>array('label'=>$langs->trans("TotalHT"), 'checked'=>0, 'position'=>100),
+	'cd.total_tva'=>array('label'=>$langs->trans("TotalVAT"), 'checked'=>0, 'position'=>100),
+	'cd.tva_tx'=>array('label'=>$langs->trans("VAT"), 'checked'=>0, 'position'=>100),
+	'cd.subprice'=>array('label'=>$langs->trans("PriceUHT"), 'checked'=>0, 'position'=>100),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>100),
     'cd.date_ouverture_prevue'=>array('label'=>$langs->trans("DateStartPlannedShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode == "0")),
     'cd.date_ouverture'=>array('label'=>$langs->trans("DateStartRealShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode > 0)),
@@ -129,7 +134,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -140,8 +145,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -199,7 +204,11 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk
 $sql.= " cd.date_ouverture_prevue,";
 $sql.= " cd.date_ouverture,";
 $sql.= " cd.date_fin_validite,";
-$sql.= " cd.date_cloture,";
+$sql.= " cd.qty,";
+$sql.= " cd.total_ht,";
+$sql.= " cd.total_tva,";
+$sql.= " cd.tva_tx,";
+$sql.= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
 $sql.= " cd.tms as date_update";
 // Add fields from extrafields
@@ -237,6 +246,20 @@ if (! empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $fi
 if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1)."'";
 if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2)."'";
 if (! empty($filter_opcloture) && $filter_opcloture != -1 && $filter_datecloture != '') $sql.= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture)."'";
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode_search=0;
+    if (in_array($typ, array('int','double','real'))) $mode_search=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode_search=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
+    }
+}
 $sql .= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
@@ -271,7 +294,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader(null, $langs->trans("Services"));
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
 if ($search_name)      $param.='&amp;search_name='.urlencode($search_name);
@@ -312,6 +335,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title=$langs->trans("ListOfServices");
 if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"
@@ -362,6 +386,11 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['c.ref']['checked'])) print_liste_field_titre($arrayfields['c.ref']['label'],$_SERVER["PHP_SELF"],"c.ref","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['p.description']['checked'])) print_liste_field_titre($arrayfields['p.description']['label'],$_SERVER["PHP_SELF"],"p.description","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['cd.qty']['checked']))  print_liste_field_titre($arrayfields['cd.qty']['label'],$_SERVER["PHP_SELF"],"cd.qty","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.total_ht']['checked']))  print_liste_field_titre($arrayfields['cd.total_ht']['label'],$_SERVER["PHP_SELF"],"cd.total_ht","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.total_tva']['checked']))  print_liste_field_titre($arrayfields['cd.total_tva']['label'],$_SERVER["PHP_SELF"],"cd.total_tva","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.tva_tx']['checked']))  print_liste_field_titre($arrayfields['cd.tva_tx']['label'],$_SERVER["PHP_SELF"],"cd.tva_tx","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['cd.subprice']['checked']))  print_liste_field_titre($arrayfields['cd.subprice']['label'],$_SERVER["PHP_SELF"],"cd.subprice","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.nom']['checked'])) print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture_prevue']['label'],$_SERVER["PHP_SELF"],"cd.date_ouverture_prevue","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['cd.date_ouverture']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture']['label'],$_SERVER["PHP_SELF"],"cd.date_ouverture","",$param,'align="center"',$sortfield,$sortorder);
@@ -407,6 +436,32 @@ if (! empty($arrayfields['p.description']['checked']))
 	print '<input type="text" class="flat maxwidth100" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
 	print '</td>';
 }
+// detail lines
+if (! empty($arrayfields['cd.qty']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.total_ht']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.total_tva']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.tva_tx']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (! empty($arrayfields['cd.subprice']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Third party
 if (! empty($arrayfields['s.nom']['checked']))
 {
@@ -414,6 +469,8 @@ if (! empty($arrayfields['s.nom']['checked']))
 	print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
+
+
 if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 {
 	print '<td class="liste_titre" align="center">';
@@ -464,7 +521,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
             $align=$extrafields->getAlignFlag($key);
             $typeofextrafield=$extrafields->attribute_type[$key];
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
             {
                 $crit=$val;
                 $tmpkey=preg_replace('/search_options_/','',$key);
@@ -473,6 +530,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
                 if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
                 print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
             }
+			else
+			{
+				// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+			}
             print '</td>';
         }
     }
@@ -557,6 +619,38 @@ while ($i < min($num,$limit))
 		print '</td>';
     }
 
+    if (! empty($arrayfields['cd.qty']['checked']))
+    {
+    	print '<td>';
+    	print $obj->qty;
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.total_ht']['checked']))
+    {
+    	print '<td>';
+    	print price($obj->total_ht);
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.total_tva']['checked']))
+    {
+    	print '<td>';
+    	print price($obj->total_tva);
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.tva_tx']['checked']))
+    {
+    	print '<td>';
+    	print price2num($obj->tva_tx).'%';
+    	print '</td>';
+    }
+    if (! empty($arrayfields['cd.subprice']['checked']))
+    {
+    	print '<td>';
+    	print price($obj->subprice);
+    	print '</td>';
+    }
+
+
 	// Third party
     if (! empty($arrayfields['s.nom']['checked']))
     {
@@ -626,7 +720,7 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['cd.datec']['checked']))
 	{
 	    print '<td align="center">';
-	    print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+	    print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
 	}
@@ -634,7 +728,7 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['cd.tms']['checked']))
 	{
 	    print '<td align="center">';
-	    print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+	    print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
 	}

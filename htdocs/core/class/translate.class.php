@@ -151,7 +151,7 @@ class Translate
 	        $this->load($domain);
 	    }
 	}
-	
+
 	/**
 	 *  Load translation key-value for a particular file, into a memory array.
 	 *  If data for file already loaded, do nothing.
@@ -177,7 +177,7 @@ class Translate
 		global $conf,$db;
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
-		
+
 		// Check parameters
 		if (empty($domain))
 		{
@@ -185,8 +185,8 @@ class Translate
 		    return -1;
 		}
 		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
-		
-		
+
+
 		// Load $this->tab_translate[] from database
 		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
 
@@ -278,14 +278,14 @@ class Translate
 						 * and split the rest until a line feed.
 						 * This is more efficient than fgets + explode + trim by a factor of ~2.
 						 */
-						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]")) 
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]"))
 						{
-							if (isset($line[1])) 
+							if (isset($line[1]))
 							{
 								list($key, $value) = $line;
 								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
-								if (empty($this->tab_translate[$key])) 
+								if (empty($this->tab_translate[$key]))
 								{ // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 									$value = preg_replace('/\\n/', "\n", $value); // Parse and render carriage returns
 									if ($key == 'DIRECTION') { // This is to declare direction of language
@@ -375,8 +375,8 @@ class Translate
                     if (! empty($tmparray2[1])) $this->tab_translate[$tmparray2[0]]=$tmparray2[1];
                 }
             }
-		}		
-        
+		}
+
         // Check to be sure that SeparatorDecimal differs from SeparatorThousand
 		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])
 		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]='';
@@ -401,7 +401,7 @@ class Translate
 		global $conf;
 
 		$domain='database';
-		
+
 		// Check parameters
 		if (empty($db)) return 0;    // Database handler can't be used
 
@@ -418,7 +418,7 @@ class Translate
 		}
 
 		$this->_tab_loaded[$newdomain] = 1;   // We want to be sure this function is called once only.
-		
+
         $fileread=0;
 		$langofdir=(empty($forcelangdir)?$this->defaultlang:$forcelangdir);
 
@@ -467,24 +467,24 @@ class Translate
 		if (! $found && ! empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 		{
     		// Overwrite translation with database read
-            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."'";            
+            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."'";
 		    $resql=$db->query($sql);
-		    
+
 		    if ($resql)
 		    {
     		    $num = $db->num_rows($resql);
     		    if ($num)
     		    {
     				if ($usecachekey) $tabtranslatedomain=array();	// To save lang content in cache
-    
+
     				$i = 0;
     				while ($i < $num)	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
     				{
     				    $obj=$db->fetch_object($resql);
-    
+
     				    $key=$obj->transkey;
     					$value=$obj->transvalue;
-    					
+
 						//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 						if (empty($this->tab_translate[$key]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 						{
@@ -493,12 +493,12 @@ class Translate
 							$this->tab_translate[$key]=$value;
 							if ($usecachekey) $tabtranslatedomain[$key]=$value;	// To save lang content in cache
 						}
-    					
+
     					$i++;
     				}
-    
+
     				$fileread=1;
-    
+
     				// TODO Move cache write out of loop on dirs
     				// To save lang content for usecachekey into cache
     				if ($usecachekey && count($tabtranslatedomain))
@@ -524,9 +524,9 @@ class Translate
 
 		return 1;
 	}
-	
-	
-                
+
+
+
 	/**
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
 	 * Search in lang file, then into database. Key must be any complete entry into lang file: CurrencyEUR, ...
@@ -559,7 +559,7 @@ class Translate
 		}
         elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',1);
         }
 		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
         {
@@ -611,8 +611,8 @@ class Translate
                     $str=preg_replace('/'.preg_quote($tmparray2[0]).'/',$tmparray2[1],$str);
                 }
             }
-        
-            if (! preg_match('/^Format/',$key)) 
+
+            if (! preg_match('/^Format/',$key))
             {
             	//print $str;
             	$str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
@@ -690,9 +690,9 @@ class Translate
                     $tmparray2=explode(':',$tmp);
                     $str=preg_replace('/'.preg_quote($tmparray2[0]).'/',$tmparray2[1],$str);
                 }
-            }    		
+            }
 
-            if (! preg_match('/^Format/',$key)) 
+            if (! preg_match('/^Format/',$key))
             {
             	//print $str;
            		$str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
@@ -867,10 +867,11 @@ class Translate
 	 * 		@param	string	$fieldkey		Field for key
 	 * 		@param	string	$fieldlabel		Field for label
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
+	 *      @param  int		$filteronentity	Use a filter on entity
 	 *      @return string					Label in UTF8 (but without entities)
 	 *      @see dol_getIdFromCode
 	 */
-	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keyforselect='')
+	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keyforselect='',$filteronentity=0)
 	{
 		// If key empty
 		if ($key == '') return '';
@@ -893,6 +894,7 @@ class Translate
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 		$sql.= " WHERE ".$fieldkey." = '".($keyforselect?$keyforselect:$key)."'";
+		if ($filteronentity) $sql.= " AND entity IN (" . getEntity($tablename). ')';
 		dol_syslog(get_class($this).'::getLabelFromKey', LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
@@ -930,7 +932,7 @@ class Translate
 	}
 
 	/**
-	 *	Return a currency code into its symbol. 
+	 *	Return a currency code into its symbol.
 	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code

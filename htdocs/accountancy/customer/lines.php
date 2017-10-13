@@ -130,6 +130,8 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('', $langs->trans("CustomersVentilation") . ' - ' . $langs->trans("Dispatched"));
 
 print '<script type="text/javascript">

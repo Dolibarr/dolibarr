@@ -70,13 +70,17 @@ $search_societe=GETPOST('search_societe');
 $search_montant_ht=GETPOST('search_montant_ht');
 $search_montant_vat=GETPOST('search_montant_vat');
 $search_montant_ttc=GETPOST('search_montant_ttc');
+$search_payment_mode=GETPOST('search_payment_mode');
+$search_payment_term=GETPOST('search_payment_term');
 $day=GETPOST('day');
 $year=GETPOST('year');
 $month=GETPOST('month');
 $day_date_when=GETPOST('day_date_when');
 $year_date_when=GETPOST('year_date_when');
 $month_date_when=GETPOST('month_date_when');
-$search_frequency=GETPOST('search_frequency');
+$search_recurring=GETPOST('search_recurring','int');
+$search_frequency=GETPOST('search_frequency','alpha');
+$search_unit_frequency=GETPOST('search_unit_frequency','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -111,35 +115,13 @@ $permissionnote = $user->rights->facture->creer; // Used by the include of actio
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
-$arrayfields=array(
-    'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-    'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-    'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
-    'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-    'f.frequency'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
-    'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
-    'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
-    'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
-    'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-    'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-);
-// Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-    }
-}
-
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -147,7 +129,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (GETPOST('cancel')) $action='';
+    if (GETPOST('cancel','alpha')) $action='';
 
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
@@ -167,13 +149,17 @@ if (empty($reshook))
         $search_montant_ht='';
         $search_montant_vat='';
         $search_montant_ttc='';
+        $search_montant_mode='';
+        $search_montant_term='';
         $day='';
         $year='';
         $month='';
         $day_date_when='';
         $year_date_when='';
         $month_date_when='';
+        $search_recurring='';
         $search_frequency='';
+        $search_unit_frequency='';
         $search_array_options=array();
     }
 
@@ -223,8 +209,8 @@ if (empty($reshook))
     	if (! $error)
     	{
     		$object->titre = GETPOST('titre', 'alpha');
-    		$object->note_private = GETPOST('note_private');
-    		$object->note_public  = GETPOST('note_public');
+    		$object->note_private = GETPOST('note_private','none');
+    		$object->note_public  = GETPOST('note_public','none');
     		$object->usenewprice = GETPOST('usenewprice');
 
     		$object->frequency = $frequency;
@@ -299,7 +285,7 @@ if (empty($reshook))
     // Delete
     if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer)
     {
-    	$object->delete();
+    	$object->delete($user);
     	header("Location: " . $_SERVER['PHP_SELF'] );
     	exit;
     }
@@ -374,7 +360,7 @@ if (empty($reshook))
     	// For triggers
     	$line->id = $lineid;
 
-    	if ($line->delete() > 0)
+    	if ($line->delete($user) > 0)
     	{
     		$result=$object->update_price(1);
 
@@ -402,16 +388,16 @@ if (empty($reshook))
     	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
     	if ($ret < 0)
     		$error ++;
-    		
+
     		if (! $error) {
-    			
+
     			$result = $object->insertExtraFields();
     			if ($result < 0) {
     				$error ++;
     			}
     		} else if ($reshook < 0)
     			$error ++;
-    			
+
     			if ($error) {
     				$action = 'edit_extras';
     				setEventMessages($object->error, $object->errors, 'errors');
@@ -727,7 +713,7 @@ if (empty($reshook))
         }
     }
 
-    elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel'))
+    elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel','alpha'))
     {
     	if (! $object->fetch($id) > 0)	dol_print_error($db);
     	$object->fetch_thirdparty();
@@ -737,7 +723,7 @@ if (empty($reshook))
     	$date_end = '';
     	//$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
     	//$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-    	$description = dol_htmlcleanlastbr(GETPOST('product_desc') ? GETPOST('product_desc') : GETPOST('desc'));
+    	$description = dol_htmlcleanlastbr(GETPOST('product_desc','none') ? GETPOST('product_desc','none') : GETPOST('desc','none'));
     	$pu_ht = GETPOST('price_ht');
     	$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
     	$qty = GETPOST('qty');
@@ -760,7 +746,7 @@ if (empty($reshook))
             $extrafieldsline = new ExtraFields($db);
             $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
             $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-            
+
             $objectline = new FactureLigneRec($db);
             if ($objectline->fetch(GETPOST('lineid')))
             {
@@ -771,7 +757,7 @@ if (empty($reshook))
             		setEventMessages($langs->trans('Error').$result, null, 'errors');
             	}
             }
-            
+
             // Unset extrafield
             if (is_array($extralabelsline))
     	    {
@@ -934,6 +920,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 $companystatic = new Societe($db);
+$invoicerectmp = new FactureRec($db);
 
 $now = dol_now();
 $tmparray=dol_getdate($now);
@@ -978,24 +965,24 @@ if ($action == 'create')
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
 		print '</tr>';
 
-		$note_public=GETPOST('note_public')?GETPOST('note_public'):$object->note_public;
-		$note_private=GETPOST('note_private')?GETPOST('note_private'):$object->note_private;
+		$note_public=GETPOST('note_public','none')?GETPOST('note_public','none'):$object->note_public;
+		$note_private=GETPOST('note_private','none')?GETPOST('note_private','none'):$object->note_private;
 
 		// Help of substitution key
-		$substitutionarray=array(
-		    '__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($object->total_ht).')',
-		    '__TOTAL_TTC__' =>  $langs->trans("AmountTTC").' ('.$langs->trans("Example").': '.price($object->total_ttc).')',
-		    '__INVOICE_PREVIOUS_MONTH__' => $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'm'),'%m').')',
-		    '__INVOICE_MONTH__' =>  $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%m').')',
-		    '__INVOICE_NEXT_MONTH__' => $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'),'%m').')',
-		    '__INVOICE_PREVIOUS_MONTH_TEXT__' => $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'm'),'%B').')',
-		    '__INVOICE_MONTH_TEXT__' =>  $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%B').')',
-		    '__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%B').')',
-		    '__INVOICE_PREVIOUS_YEAR__' => $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'y'),'%Y').')',
-		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')',
-		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')'
-		);
-		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
+		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
+
+		$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'm'),'%m').')';
+		$substitutionarray['__INVOICE_MONTH__'] = $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%m').')';
+		$substitutionarray['__INVOICE_NEXT_MONTH__'] = $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'),'%m').')';
+		$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'm'),'%B').')';
+		$substitutionarray['__INVOICE_MONTH_TEXT__'] = $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%B').')';
+		$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%B').')';
+		$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'y'),'%Y').')';
+		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date,'%Y').')';
+		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'),'%Y').')';
+		// Only on template invoices
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency),'dayhour').')';
 
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
@@ -1037,7 +1024,7 @@ if ($action == 'create')
 
 		// Payment mode
 		print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none', '', 1);
 		print "</td></tr>";
 
 		// Project
@@ -1054,7 +1041,7 @@ if ($action == 'create')
 		// Bank account
 		if ($object->fk_account > 0)
 		{
-			print "<tr><td>".$langs->trans('RIB')."</td><td>";
+			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 			print "</td></tr>";
 		}
@@ -1072,7 +1059,7 @@ if ($action == 'create')
 
 		print '<table class="border" width="100%">';
 
-		// Frequency
+		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
@@ -1117,7 +1104,7 @@ if ($action == 'create')
 		    $disableedit=1;
 		    $disablemove=1;
 		    $disableremove=1;
-		    $ret = $object->printObjectLines('', $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		    $ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1176,7 +1163,7 @@ else
 
 		// Recurring invoice content
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/fiche-rec.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/invoicetemplate_list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='';
 		if ($action != 'editref') $morehtmlref.=$form->editfieldkey($object->ref, 'ref', $object->ref, $object, $user->rights->facture->creer, '', '', 0, 2);
@@ -1301,20 +1288,21 @@ else
 		// Help of substitution key
 		$dateexample=dol_now();
 		if (! empty($object->frequency) && ! empty($object->date_when)) $dateexample=$object->date_when;
-		$substitutionarray=array(
-		    '__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($object->total_ht).')',
-		    '__TOTAL_TTC__' =>  $langs->trans("AmountTTC").' ('.$langs->trans("Example").': '.price($object->total_ttc).')',
-		    '__INVOICE_PREVIOUS_MONTH__' => $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%m').')',
-		    '__INVOICE_MONTH__' =>  $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%m').')',
-		    '__INVOICE_NEXT_MONTH__' => $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'),'%m').')',
-		    '__INVOICE_PREVIOUS_MONTH_TEXT__' => $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%B').')',
-		    '__INVOICE_MONTH_TEXT__' =>  $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%B').')',
-		    '__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')',
-		    '__INVOICE_PREVIOUS_YEAR__' => $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'),'%Y').')',
-		    '__INVOICE_YEAR__' =>  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')',
-		    '__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')'
-		);
-		$substitutionarray['__(TransKey)__']=$langs->trans("TransKey");
+
+		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
+
+		$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%m').')';
+		$substitutionarray['__INVOICE_MONTH__'] = $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%m').')';
+		$substitutionarray['__INVOICE_NEXT_MONTH__'] = $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'),'%m').')';
+		$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'),'%B').')';
+		$substitutionarray['__INVOICE_MONTH_TEXT__'] = $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%B').')';
+		$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')';
+		$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'),'%Y').')';
+		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')';
+		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')';
+		// Only on template invoices
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency),'dayhour').')';
 
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
@@ -1361,11 +1349,11 @@ else
 		print "</td>";
 		print '</tr>';
 
-		
+
 		// Other attributes
 		$cols = 2;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-		
+
     	print '</table>';
 
     	print '</div>';
@@ -1409,7 +1397,7 @@ else
 		{
 		    	if ($object->frequency > 0)
 		    	{
-				print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+					print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
 		    	}
 		    	else
 		    	{
@@ -1431,7 +1419,7 @@ else
 		print '</td><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
-		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 		}
 		print '</td>';
 		print '</tr>';
@@ -1533,7 +1521,7 @@ else
 		{
 		    //$disableedit=1;
 		    //$disablemove=1;
-		    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		    $ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		// Form to add new line
@@ -1541,10 +1529,8 @@ else
 		{
 		    if ($action != 'editline')
 		    {
-    		    $var = true;
-
     		    // Add free products/services
-    		    $object->formAddObjectLine(0, $mysoc, $soc);                          // No date selector for template invoice
+    		    $object->formAddObjectLine(0, $mysoc, $object->thirdparty);                          // No date selector for template invoice
 
     		    $parameters = array();
     		    $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1612,364 +1598,6 @@ else
         print '</div></div>';
 
 	}
-	else
-	{
-		/*
-		 *  List mode
-		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency,";
-		$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
-		$sql.= " f.datec, f.tms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
-		if (! $user->rights->societe->client->voir && ! $socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
-		$sql.= " WHERE f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
-		if (! $user->rights->societe->client->voir && ! $socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-		}
-		if ($search_ref) $sql .= natural_search('f.titre', $search_ref);
-		if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-		if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
-		if ($search_montant_vat != '') $sql.= natural_search('f.tva', $search_montant_vat, 1);
-		if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-		if ($search_frequency > 0)    $sql.= natural_search('f.frequency', $search_frequency);
-		if ($search_frequency == '1') $sql.= ' AND f.frequency > 0';
-		if ($search_frequency == '0') $sql.= ' AND (f.frequency IS NULL or f.frequency = 0)';
-
-		if ($month > 0)
-		{
-		    if ($year > 0 && empty($day))
-		        $sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-		        else if ($year > 0 && ! empty($day))
-		            $sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-		            else
-		                $sql.= " AND date_format(f.date_last_gen, '%m') = '".$month."'";
-		}
-		else if ($year > 0)
-		{
-		    $sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-		}
-		if ($month_date_when > 0)
-		{
-		    if ($year_date_when > 0 && empty($day_date_when))
-		        $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,$month_date_when,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,$month_date_when,false))."'";
-		        else if ($year_date_when > 0 && ! empty($day_date_when))
-		            $sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date_when, $day_date_when, $year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date_when, $day_date_when, $year_date_when))."'";
-			else
-			$sql.= " AND date_format(f.date_when, '%m') = '".$month_date_when."'";
-		}
-		else if ($year_date_when > 0)
-		{
-		    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
-		}
-
-		$nbtotalofrecords = '';
-    	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-    	{
-    		$result = $db->query($sql);
-    		$nbtotalofrecords = $db->num_rows($result);
-    	}
-
-    	$sql.= $db->order($sortfield, $sortorder);
-    	$sql.= $db->plimit($limit+1,$offset);
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-
-			$param='';
-            if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-			if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-			if ($socid)              $param.='&socid='.$socid;
-			if ($day)                $param.='&day='.$day;
-			if ($month)              $param.='&month='.$month;
-			if ($year)               $param.='&year=' .$year;
-			if ($day_date_when)      $param.='&day_date_when='.$day_date_when;
-			if ($month_date_when)    $param.='&month_date_when='.$month_date_when;
-			if ($year_date_when)     $param.='&year_date_when=' .$year_date_when;
-			if ($search_ref)         $param.='&search_ref=' .$search_ref;
-			if ($search_societe)     $param.='&search_societe=' .$search_societe;
-			if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
-			if ($search_montant_vat != '') $param.='&search_montant_vat='.$search_montant_vat;
-			if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
-			if ($search_frequency > 0)     $param.='&search_frequency='  .$search_frequency;
-			if ($option)             $param.="&option=".$option;
-			if ($optioncss != '')    $param.='&optioncss='.$optioncss;
-			// Add $param from extra fields
-			foreach ($search_array_options as $key => $val)
-			{
-			    $crit=$val;
-			    $tmpkey=preg_replace('/search_options_/','',$key);
-			    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-			}
-
-			$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
-
-            $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-			$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-			//$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-
-            print '<form method="POST" id="searchFormList" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-            if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-        	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-        	print '<input type="hidden" name="action" value="list">';
-        	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-        	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-            print '<input type="hidden" name="page" value="'.$page.'">';
-            print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-            print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-
-	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
-
-			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
-
-			$i = 0;
-
-			print '<div class="div-table-responsive">';
-            print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-			// Filters lines
-			print '<tr class="liste_titre_filter">';
-			// Ref
-			if (! empty($arrayfields['f.titre']['checked']))
-			{
-			    print '<td class="liste_titre" align="left">';
-			    print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-			    print '</td>';
-			}
-			// Thirpdarty
-			if (! empty($arrayfields['s.nom']['checked']))
-			{
-			    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
-			}
-			if (! empty($arrayfields['f.total']['checked']))
-			{
-			    // Amount
-			    print '<td class="liste_titre" align="right">';
-			    print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
-			    print '</td>';
-			}
-			if (! empty($arrayfields['f.tva']['checked']))
-			{
-			    // Amount
-			    print '<td class="liste_titre" align="right">';
-			    print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
-			    print '</td>';
-			}
-			if (! empty($arrayfields['f.total_ttc']['checked']))
-			{
-			    // Amount
-			    print '<td class="liste_titre" align="right">';
-			    print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
-			    print '</td>';
-			}
-			if (! empty($arrayfields['f.frequency']['checked']))
-			{
-			    // Recurring or not
-			    print '<td class="liste_titre" align="center">';
-			    print $form->selectyesno('search_frequency', $search_frequency, 1, false, 1);
-			    print '</td>';
-			}
-			if (! empty($arrayfields['f.nb_gen_done']['checked']))
-			{
-			    // Nb generation
-			    print '<td class="liste_titre" align="center">';
-			    print '</td>';
-			}
-			// Date invoice
-			if (! empty($arrayfields['f.date_last_gen']['checked']))
-			{
-			    print '<td class="liste_titre" align="center">';
-			    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-			    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-			    $formother->select_year($year?$year:-1,'year',1, 20, 5);
-			    print '</td>';
-			}
-			// Date due
-			if (! empty($arrayfields['f.date_when']['checked']))
-			{
-			    print '<td class="liste_titre" align="center">';
-			    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_date_when" value="'.$day_date_when.'">';
-			    print '<input class="flat" type="text" size="1" maxlength="2" name="month_date_when" value="'.$month_date_when.'">';
-			    $formother->select_year($year_date_when?$year_date_when:-1,'year_date_when',1, 20, 5);
-			    print '</td>';
-			}
-			// Extra fields
-			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-			{
-			    foreach($extrafields->attribute_label as $key => $val)
-			    {
-			        if (! empty($arrayfields["ef.".$key]['checked']))
-			        {
-			            $align=$extrafields->getAlignFlag($key);
-			            $typeofextrafield=$extrafields->attribute_type[$key];
-			            print '<td class="liste_titre'.($align?' '.$align:'').'">';
-			            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-			            {
-			                $crit=$val;
-			                $tmpkey=preg_replace('/search_options_/','',$key);
-			                $searchclass='';
-			                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-			                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-			                print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-			            }
-			            print '</td>';
-			        }
-			    }
-			}
-			// Fields from hook
-			$parameters=array('arrayfields'=>$arrayfields);
-			$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			// Date creation
-			if (! empty($arrayfields['f.datec']['checked']))
-			{
-			    print '<td class="liste_titre">';
-			    print '</td>';
-			}
-			// Date modification
-			if (! empty($arrayfields['f.tms']['checked']))
-			{
-			    print '<td class="liste_titre">';
-			    print '</td>';
-			}
-			// Action column
-			print '<td class="liste_titre" align="middle">';
-			$searchpicto=$form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
-			print $searchpicto;
-			print '</td>';
-			print "</tr>\n";
-
-
-			print '<tr class="liste_titre">';
-			if (! empty($arrayfields['f.titre']['checked']))         print_liste_field_titre($arrayfields['f.titre']['label'],$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
-			if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
-			if (! empty($arrayfields['f.total']['checked']))         print_liste_field_titre($arrayfields['f.total']['label'],$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.tva']['checked']))           print_liste_field_titre($arrayfields['f.tva']['label'],$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'],$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.frequency']['checked']))     print_liste_field_titre($arrayfields['f.frequency']['label'],$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'],$_SERVER['PHP_SELF'],"f.nb_gen_done","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.date_last_gen']['checked'])) print_liste_field_titre($arrayfields['f.date_last_gen']['label'],$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
-			print "</tr>\n";
-
-
-			if ($num > 0)
-			{
-				$var=true;
-				while ($i < min($num,$limit))
-				{
-					$objp = $db->fetch_object($resql);
-
-					$companystatic->id=$objp->socid;
-					$companystatic->name=$objp->name;
-
-					print '<tr class="oddeven">';
-
-					if (! empty($arrayfields['f.titre']['checked']))
-					{
-					   print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
-					   print "</a></td>\n";
-					}
-					if (! empty($arrayfields['s.nom']['checked']))
-					{
-					   print '<td class="tdoverflowmax200">'.$companystatic->getNomUrl(1,'customer').'</td>';
-					}
-					if (! empty($arrayfields['f.total']['checked']))
-					{
-					   print '<td align="right">'.price($objp->total).'</td>'."\n";
-					}
-					if (! empty($arrayfields['f.tva']['checked']))
-					{
-					   print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
-					}
-					if (! empty($arrayfields['f.total_ttc']['checked']))
-					{
-					   print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
-					}
-					if (! empty($arrayfields['f.frequency']['checked']))
-					{
-					   print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
-					}
-					if (! empty($arrayfields['f.nb_gen_done']['checked']))
-					{
-					    print '<td align="center">';
-					    print ($objp->frequency ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
-					    print '</td>';
-					}
-					if (! empty($arrayfields['f.date_last_gen']['checked']))
-					{
-					   print '<td align="center">';
-					   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_last_gen),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
-					   print '</td>';
-					}
-					if (! empty($arrayfields['f.date_when']['checked']))
-					{
-					   print '<td align="center">';
-					   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_when),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
-					   print '</td>';
-					}
-					if (! empty($arrayfields['f.datec']['checked']))
-					{
-					   print '<td align="center">';
-					   print dol_print_date($db->jdate($objp->datec),'dayhour');
-					   print '</td>';
-					}
-					if (! empty($arrayfields['f.tms']['checked']))
-					{
-					   print '<td align="center">';
-					   print dol_print_date($db->jdate($objp->tms),'dayhour');
-					   print '</td>';
-					}
-					// Action column
-					print '<td align="center">';
-					if ($user->rights->facture->creer)
-					{
-				        if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
-				        {
-                            print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-                            print $langs->trans("CreateBill").'</a>';
-				        }
-				        else
-				        {
-				            print $langs->trans("DateIsNotEnough");
-				        }
-					}
-					else
-					{
-					    print "&nbsp;";
-					}
-					print "</td>";
-					print "</tr>\n";
-					$i++;
-				}
-			}
-			else
-			{
-			    $colspan=1;
-			    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
-			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
-			}
-
-			print "</table>";
-			print "</div>";
-			print "</form>";
-
-			$db->free($resql);
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-	}
-
 }
 
 llxFooter();

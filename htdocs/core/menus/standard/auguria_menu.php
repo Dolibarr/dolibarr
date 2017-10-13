@@ -163,13 +163,13 @@ class MenuManager
         			$canonurl=preg_replace('/\?.*$/','',$val['url']);
 
         			print '<a class="alilevel0" href="#">';
-        			
+
 					// Add font-awesome
 					if ($val['level'] == 0 && $val['mainmenu'] == 'home') print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
-        			
+
 					print $val['titre'];
         			print '</a>'."\n";
-        			
+
         			// Search submenu fot this mainmenu entry
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
@@ -183,7 +183,7 @@ class MenuManager
         			//var_dump($canonnexturl);
         			print '<ul>'."\n";
         			if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
-        				|| (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/index.php') !== false))
+        				|| (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/list.php') !== false))
 					{
 						// We add sub entry
 						print str_pad('',1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic

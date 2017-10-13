@@ -77,7 +77,6 @@ class box_activity extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        $totalMnt = 0;
         $totalnb = 0;
         $line = 0;
         $cachetime = 3600;
@@ -94,8 +93,6 @@ class box_activity extends ModeleBoxes
 
         // compute the year limit to show
         $tmpdate= dol_time_plus_duree(dol_now(), -1*$nbofperiod, "m");
-
-        $cumuldata = array();
 
 
         // list the summary of the propals
@@ -146,11 +143,10 @@ class box_activity extends ModeleBoxes
         		$data = dol_readcachefile($cachedir, $filename);
         	}
 
-        	$cumuldata=array_merge($cumuldata, $data);
         	if (! empty($data))
         	{
         		$j=0;
-        		while ($line < count($cumuldata))
+        		while ($j < count($data))
         		{
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="left" width="16"',
@@ -176,7 +172,6 @@ class box_activity extends ModeleBoxes
         			'td' => 'class="right"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
         			);
-        			$totalMnt += $data[$j]->Mnttot;
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $propalstatic->LibStatut($data[$j]->fk_statut,3),
@@ -231,10 +226,9 @@ class box_activity extends ModeleBoxes
                 $data = dol_readcachefile($cachedir, $filename);
             }
 
-            $cumuldata=array_merge($cumuldata, $data);
             if (! empty($data)) {
                 $j=0;
-                while ($line < count($cumuldata)) {
+                while ($j < count($data)) {
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
@@ -259,7 +253,6 @@ class box_activity extends ModeleBoxes
                         'td' => 'class="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
-                    $totalMnt += $data[$j]->Mnttot;
                     $this->info_box_contents[$line][4] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $commandestatic->LibStatut($data[$j]->fk_statut,0,3),
@@ -290,11 +283,11 @@ class box_activity extends ModeleBoxes
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
-        		$sql.= " WHERE f.entity = ".$conf->entity;
+        		$sql.= " WHERE f.entity IN (".getEntity('facture').')';
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
         		$sql.= " AND f.fk_soc = s.rowid";
-        		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND paye=1";
+        		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND f.paye=1";
         		$sql.= " GROUP BY f.fk_statut";
         		$sql.= " ORDER BY f.fk_statut DESC";
 
@@ -317,10 +310,9 @@ class box_activity extends ModeleBoxes
         		$data = dol_readcachefile($cachedir, $filename);
         	}
 
-        	$cumuldata=array_merge($cumuldata, $data);
         	if (! empty($data)) {
         		$j=0;
-        		while ($line < count($cumuldata)) {
+        		while ($j < count($data)) {
         			$billurl="search_status=2&amp;paye=1&amp;year=".$data[$j]->annee;
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="left" width="16"',
@@ -347,10 +339,8 @@ class box_activity extends ModeleBoxes
         			);
 
         			// We add only for the current year
-        			if ($data[$j]->annee == date("Y")) {
-        				$totalnb += $data[$j]->nb;
-        				$totalMnt += $data[$j]->Mnttot;
-        			}
+       				$totalnb += $data[$j]->nb;
+
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $facturestatic->LibStatut(1,$data[$j]->fk_statut,3),
@@ -371,12 +361,13 @@ class box_activity extends ModeleBoxes
 
         	$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 
+        	$data = array();
         	if ($refresh) {
         		$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-        		$sql.= " WHERE f.entity = ".$conf->entity;
+        		$sql.= " WHERE f.entity IN (".getEntity('facture').')';
         		$sql.= " AND f.fk_soc = s.rowid";
-        		$sql.= " AND paye=0";
+        		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND f.paye=0";
         		$sql.= " GROUP BY f.fk_statut";
         		$sql.= " ORDER BY f.fk_statut DESC";
 
@@ -399,11 +390,11 @@ class box_activity extends ModeleBoxes
         		$data = dol_readcachefile($cachedir, $filename);
         	}
 
-        	$cumuldata=array_merge($cumuldata, $data);
         	if (! empty($data)) {
-        		$j=0;
+        		$alreadypaid=-1;
 
-        		while ($line < count($cumuldata)) {
+        		$j=0;
+        		while ($j < count($data)) {
         			$billurl="search_status=".$data[$j]->fk_statut."&amp;paye=0";
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="left" width="16"',
@@ -428,10 +419,9 @@ class box_activity extends ModeleBoxes
         			'td' => 'class="right"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
         			);
-        			$totalMnt += $objp->Mnttot;
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
-        			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3),
+        			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3, $alreadypaid),
         			);
         			$line++;
         			$j++;
@@ -441,16 +431,11 @@ class box_activity extends ModeleBoxes
         			'td' => 'align="center"',
         			'text'=>$langs->trans("NoRecordedInvoices"),
         			);
-        	} else {
-        		$this->info_box_contents[0][0] = array(
-        		'td' => '',
-        		'maxlength'=>500, 'text' => ($db->error().' sql='.$sql),
-        		);
         	}
         }
 
 		// Add the sum in the bottom of the boxes
-		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total"');
+		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total_wrap"');
 		$this->info_box_contents[$line][1] = array('td' => 'align="left" class="liste_total" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$line][2] = array('td' => 'align="right" class="liste_total" ', 'text' => $totalnb);
 		$this->info_box_contents[$line][3] = array('td' => 'align="right" class="liste_total" ', 'text' => '');

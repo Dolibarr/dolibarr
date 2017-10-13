@@ -93,7 +93,7 @@ class modAdherent extends DolibarrModules
 
         $this->const[$r][0] = "ADHERENT_MAIL_VALID";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n";
+        $this->const[$r][2] = "Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n__INFOS__\r\n\r\n";
         $this->const[$r][3] = "Mail de validation";
         $this->const[$r][4] = 0;
         $r++;
@@ -121,7 +121,7 @@ class modAdherent extends DolibarrModules
 
         $this->const[$r][0] = "ADHERENT_MAIL_COTIS";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Bonjour %FIRSTNAME%,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée";
+        $this->const[$r][2] = "Bonjour __FIRSTNAME__,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée";
         $this->const[$r][3] = "Mail de validation de cotisation";
         $this->const[$r][4] = 0;
         $r++;
@@ -135,21 +135,21 @@ class modAdherent extends DolibarrModules
 
         $this->const[$r][0] = "ADHERENT_CARD_HEADER_TEXT";
         $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "%YEAR%";
+        $this->const[$r][2] = "__YEAR__";
         $this->const[$r][3] = "Texte imprimé sur le haut de la carte adhérent";
         $this->const[$r][4] = 0;
         $r++;
 
         $this->const[$r][0] = "ADHERENT_CARD_FOOTER_TEXT";
         $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "%COMPANY%";
+        $this->const[$r][2] = "__COMPANY__";
         $this->const[$r][3] = "Texte imprimé sur le bas de la carte adhérent";
         $this->const[$r][4] = 0;
         $r++;
 
         $this->const[$r][0] = "ADHERENT_CARD_TEXT";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "%FULLNAME%\r\nID: %ID%\r\n%EMAIL%\r\n%ADDRESS%\r\n%ZIP% %TOWN%\r\n%COUNTRY%";
+        $this->const[$r][2] = "__FULLNAME__\r\nID: __ID__\r\n__EMAIL__\r\n__ADDRESS__\r\n__ZIP__ __TOWN__\r\n__COUNTRY__";
         $this->const[$r][3] = "Text to print on member cards";
         $this->const[$r][4] = 0;
         $r++;
@@ -184,7 +184,7 @@ class modAdherent extends DolibarrModules
 
         $this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%";
+        $this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY%";
         $this->const[$r][3] = "Text to print on member address sheets";
         $this->const[$r][4] = 0;
         $r++;
@@ -324,7 +324,7 @@ class modAdherent extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r]=array('a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-        $this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m-%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
+        $this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
     }
 
 

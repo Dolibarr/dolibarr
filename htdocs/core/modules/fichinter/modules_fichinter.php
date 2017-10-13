@@ -60,8 +60,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 
 
 /**
- *  \class      ModeleNumRefFicheinter
- *  \brief      Classe mere des modeles de numerotation des references de fiches d'intervention
+ *  Classe mere des modeles de numerotation des references de fiches d'intervention
  */
 abstract class ModeleNumRefFicheinter
 {

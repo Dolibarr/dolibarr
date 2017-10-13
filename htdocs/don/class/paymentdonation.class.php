@@ -32,7 +32,7 @@ class PaymentDonation extends CommonObject
 	public $element='payment_donation';			//!< Id that identify managed objects
 	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
     public $picto = 'payment';
-    
+
 	public $rowid;
 
 	public $fk_donation;
@@ -175,6 +175,7 @@ class PaymentDonation extends CommonObject
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_donation as t)";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " AND pt.entity = " . getEntity('c_paiement');
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -443,7 +444,7 @@ class PaymentDonation extends CommonObject
 	{
 	    return '';
 	}
-	
+
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -454,11 +455,11 @@ class PaymentDonation extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
-	
+
 	    return '';
 	}
-	
-	
+
+
 	/**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

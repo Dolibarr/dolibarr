@@ -510,8 +510,6 @@ class FormWebsite
         {
         	if ($lines[$i]->fk_parent == $parent)
             {
-                $var = !$var;
-
 				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project
@@ -1119,7 +1117,7 @@ class FormWebsite
 
         	$emptybox=new ModeleBoxes($db);
 
-            $boxlista.="\n<!-- Box left container -->\n";
+            $boxlista ="\n<!-- Box left container -->\n";
             $boxlista.='<div id="left" class="connectedSortable">'."\n";
 
             // Define $box_max_lines
@@ -1152,7 +1150,7 @@ class FormWebsite
             $boxlista.= "</div>\n";
             $boxlista.= "<!-- End box left container -->\n";
 
-            $boxlistb.= "\n<!-- Box right container -->\n";
+            $boxlistb = "\n<!-- Box right container -->\n";
             $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
             $ii=0;

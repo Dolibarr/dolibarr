@@ -73,6 +73,10 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
+
 $viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut','alpha');
@@ -80,9 +84,6 @@ $object_statut=GETPOST('propal_statut','alpha');
 $sall=GETPOST('sall', 'alphanohtml');
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
-$search_day=GETPOST("search_day","int");
-$search_month=GETPOST("search_month","int");
-$search_year=GETPOST("search_year","int");
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -95,8 +96,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='p.ref';
 if (! $sortorder) $sortorder='DESC';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='proposallist';
+// Initialize technical object to manage context to save list fields
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'proposallist';
 
 // Security check
 $module='propal';
@@ -157,7 +158,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -168,8 +169,8 @@ $object = new Propal($db);	// To be passed as parameter of executeHooks that nee
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -237,7 +238,7 @@ llxHeader('',$langs->trans('Proposal'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' p.rowid, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
@@ -320,8 +321,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -370,9 +372,10 @@ if ($resql)
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
-	if ($search_month)              $param.='&search_month='.urlencode($search_month);
-	if ($search_year)               $param.='&search_year='.urlencode($search_year);
-    if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year='.urlencode($search_year);
+	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
     if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
     if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
@@ -410,105 +413,18 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
 	if ($massaction == 'presend')
 	{
-	    $langs->load("mails");
-
-	    if (! GETPOST('cancel'))
-	    {
-	        $objecttmp=new Propal($db);
-	        $listofselectedid=array();
-	        $listofselectedthirdparties=array();
-	        $listofselectedref=array();
-	        foreach($arrayofselected as $toselectid)
-	        {
-	            $result=$objecttmp->fetch($toselectid);
-	            if ($result > 0)
-	            {
-	                $listofselectedid[$toselectid]=$toselectid;
-	                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
-	                $listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
-	                $listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
-	            }
-	        }
-	    }
-
-	    print '<input type="hidden" name="massaction" value="confirm_presend">';
-
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	    $formmail = new FormMail($db);
-
-	    dol_fiche_head(null, '', '');
-
 	    $topicmail="SendSupplierProposalRef";
 	    $modelmail="supplier_proposal_send";
+	    $objecttmp=new Propal($db);
+	    $trackid='ord'.$object->id;
 
-	    // Cree l'objet formulaire mail
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	    $formmail = new FormMail($db);
-	    $formmail->withform=-1;
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-	    {
-	        $formmail->trackid='ord'.$object->id;
-	    }
-	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-	    {
-	        include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	        $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-	    }
-	    $formmail->withfrom=1;
-	    $liste=$langs->trans("AllRecipientSelected");
-	    if (count($listofselectedthirdparties) == 1)
-	    {
-	        $liste=array();
-	        $thirdpartyid=array_shift($listofselectedthirdparties);
-	        $soc=new Societe($db);
-	        $soc->fetch($thirdpartyid);
-	        foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-	        {
-	            $liste[$key]=$value;
-	        }
-	        $formmail->withtoreadonly=0;
-	    }
-	    else
-	    {
-	        $formmail->withtoreadonly=1;
-	    }
-	    $formmail->withto=$liste;
-	    $formmail->withtofree=0;
-	    $formmail->withtocc=1;
-	    $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-	    $formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
-	    $formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
-	    $formmail->withbody=1;
-	    $formmail->withdeliveryreceipt=1;
-	    $formmail->withcancel=1;
-	    // Tableau des substitutions
-	    $formmail->substit['__REF__']='__REF__';	// We want to keep the tag
-	    $formmail->substit['__SIGNATURE__']=$user->signature;
-	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
-	    $formmail->substit['__PERSONALIZED__']='';
-	    $formmail->substit['__CONTACTCIVNAME__']='';
-
-	    // Tableau des parametres complementaires du post
-	    $formmail->param['action']=$action;
-	    $formmail->param['models']=$modelmail;
-	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
-	    $formmail->param['id']=join(',',$arrayofselected);
-	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-	    print $formmail->get_form();
-
-	    dol_fiche_end();
+	    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
 	}
 
 	if ($sall)
@@ -612,7 +528,7 @@ if ($resql)
 	// Date
 	if (! empty($arrayfields['p.date']['checked']))
 	{
-	    print '<td class="liste_titre" colspan="1" align="center">';
+	    print '<td class="liste_titre" align="center">';
     	//print $langs->trans('Month').': ';
     	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
     	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
@@ -623,7 +539,7 @@ if ($resql)
 	// Date end
 	if (! empty($arrayfields['p.fin_validite']['checked']))
 	{
-	   print '<td class="liste_titre" colspan="1">&nbsp;</td>';
+	   print '<td class="liste_titre">&nbsp;</td>';
 	}
 	if (! empty($arrayfields['p.total_ht']['checked']))
 	{
@@ -810,6 +726,7 @@ if ($resql)
 		$companystatic->name=$obj->name;
 		$companystatic->client=$obj->client;
 		$companystatic->code_client=$obj->code_client;
+		$companystatic->email=$obj->email;
 
 		// Thirdparty
 		if (! empty($arrayfields['s.nom']['checked']))
@@ -949,7 +866,7 @@ if ($resql)
         if (! empty($arrayfields['p.datec']['checked']))
         {
             print '<td align="center" class="nowrap">';
-            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }
@@ -957,7 +874,7 @@ if ($resql)
         if (! empty($arrayfields['p.tms']['checked']))
         {
             print '<td align="center" class="nowrap">';
-            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }

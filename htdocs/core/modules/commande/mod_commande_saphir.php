@@ -88,9 +88,12 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
+    	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
+    	$mysoc->typent_code='TTTTTTTTTT';
      	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
+		$mysoc->typent_code=$old_code_type;
 
 		if (! $numExample)
 		{
@@ -121,7 +124,9 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc,$object->date);
+		$date = ($object->date_commande ? $object->date_commande : $object->date);
+
+		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc,$date);
 
 		return  $numFinal;
 	}
