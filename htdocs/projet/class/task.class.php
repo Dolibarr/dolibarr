@@ -676,7 +676,7 @@ class Task extends CommonObject
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
 	 * @return 	array						Array of tasks
 	 */
-	function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
+	function getTasksArray($usert=null, $userp=null, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
 	{
 		global $conf;
 
