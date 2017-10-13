@@ -773,6 +773,9 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 div.fiche>form>div.div-table-responsive {
     min-height: 392px;
 }
+div.fiche>div.tabBar>form>div.div-table-responsive {
+    min-height: 392px;
+}
 
 .flexcontainer {
     <?php if (in_array($conf->browser->name, array('chrome','firefox'))) echo 'display: inline-flex;'."\n"; ?>
