@@ -985,9 +985,10 @@ if (! function_exists("llxHeader"))
      * @param 	array  	$arrayofcss			Array of complementary css files
      * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
      * @param   string  $morecssonbody      More CSS on body tag.
+     * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
      * @return	void
      */
-	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $morecssonbody='')
+	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $morecssonbody='', $replacemainareaby='')
 	{
 	    global $conf;
 
@@ -1008,6 +1009,11 @@ if (! function_exists("llxHeader"))
 		}
 
 		// main area
+		if ($replacemainareaby)
+		{
+			print $replacemainareaby;
+			return;
+		}
 		main_area($title);
 	}
 }
