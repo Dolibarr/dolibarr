@@ -1188,17 +1188,12 @@ class Form
         // On recherche les remises
         $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
         $sql.= " re.description, re.fk_facture_source";
-        if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST)) $sql.= ", f.facnumber";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-        if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture f ON (f.rowid = re.fk_facture_source)";
         $sql.= " WHERE re.fk_soc = ".(int) $socid;
         $sql.= " AND re.entity = " . $conf->entity;
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
-        // Prevent sql error on the ambiguous column
-        if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST)) $sql = preg_replace('/(.*)(?!re\.)fk_facture_source(.*)/m', '\1 re.fk_facture_source \2', $sql);
-        
         dol_syslog(get_class($this)."::select_remises", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1230,7 +1225,11 @@ class Form
                         $disabled=' disabled';
                     }
 
-                    if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST) && !empty($obj->facnumber)) $desc=$desc.' - '.$obj->facnumber;
+					if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST) && !empty($obj->fk_facture_source))
+					{
+						$tmpfac = new Facture($this->db);
+						if ($tmpfac->fetch($obj->fk_facture_source) > 0) $desc=$desc.' - '.$tmpfac->ref;
+					}
 
                     print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
                     $i++;
