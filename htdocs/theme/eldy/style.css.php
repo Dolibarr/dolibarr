@@ -3259,6 +3259,12 @@ table.valid {
 /* Tooltips                                                                       */
 /* ============================================================================== */
 
+/* For tooltip using dialog */
+.ui-dialog.highlight.ui-widget.ui-widget-content.ui-front {
+    z-index: 3000;
+}
+
+/* For tooltip using tipTip */
 #tooltip {
 	position: absolute;
 	width: <?php print dol_size(450,'width'); ?>px;

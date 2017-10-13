@@ -1971,13 +1971,14 @@ if (! function_exists("llxFooter"))
     		print '<script type="text/javascript">
             	jQuery(document).ready(function () {
             		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(($conf->browser->layout == 'phone' ? 400 : 700),'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-            		jQuery(".classfortooltiponclicktext").dialog({ width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false });
+            		jQuery(".classfortooltiponclicktext").dialog({ closeOnEscape: true, classes: { "ui-dialog": "highlight" }, height: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false }).css("z-index: 5000");
             		jQuery(".classfortooltiponclick").click(function () {
             		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
             		    if ($(this).attr(\'dolid\'))
             		    {
-                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));
+                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
             		        obj.dialog("open");
+
             		    }
             		});
                 });
