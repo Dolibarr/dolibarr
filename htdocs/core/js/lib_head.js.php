@@ -43,8 +43,79 @@ top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
+
+
+
+// Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
+$tradMonths=array(
+dol_escape_js($langs->transnoentitiesnoconv("January")),
+dol_escape_js($langs->transnoentitiesnoconv("February")),
+dol_escape_js($langs->transnoentitiesnoconv("March")),
+dol_escape_js($langs->transnoentitiesnoconv("April")),
+dol_escape_js($langs->transnoentitiesnoconv("May")),
+dol_escape_js($langs->transnoentitiesnoconv("June")),
+dol_escape_js($langs->transnoentitiesnoconv("July")),
+dol_escape_js($langs->transnoentitiesnoconv("August")),
+dol_escape_js($langs->transnoentitiesnoconv("September")),
+dol_escape_js($langs->transnoentitiesnoconv("October")),
+dol_escape_js($langs->transnoentitiesnoconv("November")),
+dol_escape_js($langs->transnoentitiesnoconv("December"))
+);
+
+$tradMonthsShort=array(
+$langs->trans("JanuaryMin"),
+$langs->trans("FebruaryMin"),
+$langs->trans("MarchMin"),
+$langs->trans("AprilMin"),
+$langs->trans("MayMin"),
+$langs->trans("JuneMin"),
+$langs->trans("JulyMin"),
+$langs->trans("AugustMin"),
+$langs->trans("SeptemberMin"),
+$langs->trans("OctoberMin"),
+$langs->trans("NovemberMin"),
+$langs->trans("DecemberMin")
+);
+
+$tradDays=array(
+$langs->trans("Sunday"),
+$langs->trans("Monday"),
+$langs->trans("Tuesday"),
+$langs->trans("Wednesday"),
+$langs->trans("Thursday"),
+$langs->trans("Friday"),
+$langs->trans("Saturday")
+);
+
+$tradDaysShort=array(
+$langs->trans("ShortSunday"),
+$langs->trans("ShortMonday"),
+$langs->trans("ShortTuesday"),
+$langs->trans("ShortWednesday"),
+$langs->trans("ShortThursday"),
+$langs->trans("ShortFriday"),
+$langs->trans("ShortSaturday")
+);
+
+$tradDaysMin=array(
+$langs->trans("SundayMin"),
+$langs->trans("MondayMin"),
+$langs->trans("TuesdayMin"),
+$langs->trans("WednesdayMin"),
+$langs->trans("ThursdayMin"),
+$langs->trans("FridayMin"),
+$langs->trans("SaturdayMin")
+);
+
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
+
+// For jQuery date picker
+var tradMonths = <?php echo json_encode($tradMonths) ?>;
+var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
+var tradDays = <?php echo json_encode($tradDays) ?>;
+var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
+var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
 
 
 /**

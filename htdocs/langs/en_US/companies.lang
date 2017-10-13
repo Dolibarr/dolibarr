@@ -267,6 +267,7 @@ CustomerAbsoluteDiscountShort=Absolute discount
 CompanyHasRelativeDiscount=This customer has a default discount of <b>%s%%</b>
 CompanyHasNoRelativeDiscount=This customer has no relative discount by default
 CompanyHasAbsoluteDiscount=This customer has discount available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discount available (commercial, down payments) for <b>%s</b> %s
 CompanyHasCreditNote=This customer still has credit notes for <b>%s</b> %s
 CompanyHasNoAbsoluteDiscount=This customer has no discount credit available
 CustomerAbsoluteDiscountAllUsers=Absolute discounts (granted by all users)
