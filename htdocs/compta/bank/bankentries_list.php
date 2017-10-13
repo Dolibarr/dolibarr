@@ -963,6 +963,55 @@ if ($resql)
             else dol_print_error($db);
 
             $balancecalculated=true;
+
+            // Output a line with start balance
+            if ($user->rights->banque->consolidate && $action == 'reconcile')
+            {
+            	$tmpnbfieldbeforebalance=0;
+            	$tmpnbfieldafterbalance=0;
+            	$balancefieldfound=false;
+            	foreach($arrayfields as $key => $val)
+            	{
+            		if ($key == 'balance')
+            		{
+            			$balancefieldfound=true;
+            			continue;
+            		}
+           			if (! empty($arrayfields[$key]['checked']))
+           			{
+           				if (! $balancefieldfound) $tmpnbfieldbeforebalance++;
+           				else $tmpnbfieldafterbalance++;
+           			}
+            	}
+            	// Extra fields
+            	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            	{
+            		foreach($extrafields->attribute_label as $key => $val)
+            		{
+            			if (! empty($arrayfields["ef.".$key]['checked']))
+            			{
+		           			if (! empty($arrayfields[$key]['checked']))
+		           			{
+		           				if (! $balancefieldfound) $tmpnbfieldbeforebalance++;
+		           				else $tmpnbfieldafterbalance++;
+		           			}
+            			}
+            		}
+            	}
+
+            	print '<tr class="oddeven trforbreak">';
+            	if ($tmpnbfieldbeforebalance)
+            	{
+            		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
+            		print '</td>';
+            	}
+				print '<td align="right">';
+            	print price2num($balance, 'MT');
+				print '</td>';
+				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '</td>';
+            	print '</tr>';
+            }
         }
 
         $balance = price2num($balance + ($sign * $objp->amount),'MT');
