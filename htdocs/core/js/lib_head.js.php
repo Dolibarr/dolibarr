@@ -117,6 +117,39 @@ var tradDays = <?php echo json_encode($tradDays) ?>;
 var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
 var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
 
+// For JQuery date picker
+$(document).ready(function() {
+	$.datepicker.setDefaults({
+		autoSize: true,
+		changeMonth: true,
+		changeYear: true,
+		altField: '#timestamp',
+		altFormat: '@'			// Gives a timestamp dateformat
+	});
+});
+
+jQuery(function($){
+	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
+		closeText: '<?php echo $langs->trans("Close2") ?>',
+		prevText: '<?php echo $langs->trans("Previous") ?>',
+		nextText: '<?php echo $langs->trans("Next") ?>',
+		currentText: '<?php echo $langs->trans("Now") ?>',
+		monthNames: tradMonths,
+		monthNamesShort: tradMonthsShort,
+		dayNames: tradDays,
+		dayNamesShort: tradDaysShort,
+		dayNamesMin: tradDaysMin,
+		weekHeader: '<?php echo $langs->trans("Week"); ?>',
+		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',
+		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
+		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
+		showMonthAfterYear: false,  	/* TODO add specific to country	*/
+ 		yearSuffix: ''			/* TODO add specific to country */
+	};
+	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+});
+
+
 
 /**
  * Set select2 translations (if module was loaded).

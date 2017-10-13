@@ -4803,8 +4803,10 @@ class Form
 					{
 						$retstring.="<script type='text/javascript'>";
 						$retstring.="$(function(){ $('#".$prefix."').datepicker({
-                			autoclose: true,
+            				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
+							autoclose: true,
                 			todayHighlight: true,";
+							// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
 						{
 						$retstring.="
