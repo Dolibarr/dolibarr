@@ -2132,7 +2132,7 @@ elseif (! empty($object->id))
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
-    print '<div class="div-table-responsive">';
+    print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Add free products/services form

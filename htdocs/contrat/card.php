@@ -1994,7 +1994,7 @@ else
 			<input type="hidden" name="id" value="'.$object->id.'">
 			';
 
-            print '<div class="div-table-responsive">';
+            print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines
 
             // Trick to not show product entries
