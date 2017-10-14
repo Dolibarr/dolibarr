@@ -227,12 +227,13 @@ complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
-$tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
+// We use select_thirdparty_list instead of select_company so we can use $filter and share same code for customer and supplier.
+$tmp_companies = $form->select_thirdparty_list($socid, 'socid', $filter, 1, 0, 0, array(), '', 1);
 //Array passed as an argument to Form::selectarray to build a proper select input
 $companies = array();
 
 foreach ($tmp_companies as $value) {
-	$companies[$value['value']] = $value['label'];
+	$companies[$value['key']] = $value['label'];
 }
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
