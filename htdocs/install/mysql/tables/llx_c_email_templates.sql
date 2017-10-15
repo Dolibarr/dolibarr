@@ -33,6 +33,7 @@ create table llx_c_email_templates
   enabled         varchar(255) DEFAULT '1',		  -- Condition to have this module visible
   active          tinyint DEFAULT 1  NOT NULL,
   topic			  text,                           -- Predefined topic
-  content         text,                           -- Predefined text
+  joinfiles		  text,                           -- Files to attach
+  content         mediumtext,                     -- Predefined text
   content_lines   text                            -- Predefined lines
 )ENGINE=innodb;

@@ -26,17 +26,19 @@ include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class
 class Dolistore
 {
     // params
-    public $start       // beginning of pagination
-        , $end          // end of pagination
-        , $per_page     // pagination: display per page
-        , $categorie    // the current categorie
-        , $search       // the search keywords
-        // setups
-        , $url          // the url of this page
-        , $shop_url     // the url of the shop
-        , $vat_rate     // the vat rate used in the shop (prices are provided without vat)
-        , $lang         // the integer representing the lang in the store
-        , $debug_api;   // usefull if no dialog
+    public $start;       // beginning of pagination
+    public $end;         // end of pagination
+    public $per_page;    // pagination: display per page
+    public $categorie;   // the current categorie
+    public $search;      // the search keywords
+
+    // setups
+    public $url;         // the url of this page
+    public $shop_url;    // the url of the shop
+    public $vat_rate;    // the vat rate used in the shop (prices are provided without vat)
+    public $lang;        // the integer representing the lang in the store
+    public $debug_api;   // usefull if no dialog
+
 
     /**
      * Constructor

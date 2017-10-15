@@ -171,14 +171,14 @@ $constantes=array(
 		);
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-$helptext.='%YEAR%, %MONTH%, %DAY%';
+$helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext.='__YEAR__, __MONTH__, __DAY__';
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-//$helptext.='%YEAR%, %MONTH%, %DAY%';	// Not supported
+$helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+//$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
 
 form_constantes($constantes, 0, $helptext);
 

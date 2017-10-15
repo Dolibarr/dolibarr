@@ -60,18 +60,21 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
 
 	if (! $_POST["paiementtype"] > 0)
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
+        $action = 'create';
 	}
 	if ($datepaye == '')
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), null, 'errors');
 		$error++;
+        $action = 'create';
 	}
     if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
     {
-        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
+        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), null, 'errors');
         $error++;
+        $action = 'create';
     }
 
 	if (! $error)
@@ -91,7 +94,8 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
         if (count($amounts) <= 0)
         {
             $error++;
-            $errmsg='ErrorNoPaymentDefined';
+            setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
+            $action='create';
         }
 
         if (! $error)
@@ -112,18 +116,20 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
     		    $paymentid = $paiement->create($user, (GETPOST('closepaidcontrib')=='on'?1:0));
                 if ($paymentid < 0)
                 {
-                    $errmsg=$paiement->error;
-                    $error++;
+                	$error++;
+                	setEventMessages($paiement->error, null, 'errors');
+                	$action='create';
                 }
     		}
 
             if (! $error)
             {
-                $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)',$_POST['accountid'],'','');
-                if (! $result > 0)
+                $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)', GETPOST('accountid','int'),'','');
+                if (! ($result > 0))
                 {
-                    $errmsg=$paiement->error;
-                    $error++;
+                	$error++;
+                	setEventMessages($paiement->error, null, 'errors');
+                	$action='create';
                 }
             }
 
@@ -141,7 +147,6 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
         }
 	}
 
-	$_GET["action"]='create';
 }
 
 
@@ -266,7 +271,7 @@ if ($action == 'create')
 	{
 		$objp = $charge;
 
-		
+
 
 		print '<tr class="oddeven">';
 

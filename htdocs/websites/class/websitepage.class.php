@@ -303,7 +303,27 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $trigger);
+		$result = $this->deleteCommon($user, $trigger);
+
+		if ($result > 0)
+		{
+			$websiteobj=new Website($this->db);
+			$result = $websiteobj->fetch($this->fk_website);
+
+			if ($result > 0)
+			{
+				global $dolibarr_main_data_root;
+				$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websiteobj->ref;
+
+				$filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
+				$filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
+
+				dol_delete_file($filealias);
+				dol_delete_file($filetpl);
+			}
+		}
+
+		return $result;
 	}
 
 	/**

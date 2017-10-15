@@ -55,9 +55,9 @@ class AdherentType extends CommonObject
 	 * @since 5.0
 	 */
 	public $subscription;
-	/** @var string Public note */
+	/** @var string 	Public note */
 	public $note;
-	/** @var bool Can vote*/
+	/** @var integer	Can vote */
 	public $vote;
 	/** @var string Email sent during validation */
 	public $mail_valid;
@@ -229,6 +229,8 @@ class AdherentType extends CommonObject
 	function delete()
 	{
 		global $user;
+
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql.= " WHERE rowid = ".$this->id;

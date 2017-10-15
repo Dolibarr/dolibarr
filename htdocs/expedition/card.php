@@ -2151,6 +2151,16 @@ else if ($id || $ref)
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
+
+	// Presend form
+	$modelmail='shipping_send';
+	$defaulttopic='SendShippingRef';
+	$diroutput = $conf->expedition->dir_output. '/sending';
+	$trackid = 'shi'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
+	/*
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -2278,7 +2288,7 @@ else if ($id || $ref)
 		print $formmail->get_form();
 
 		dol_fiche_end();
-	}
+	}*/
 }
 
 

@@ -24,49 +24,6 @@
 define('NOSCANPOSTFORINJECTION',1);
 define('NOSTYLECHECK',1);
 
-
-/**
- *	Show HTML header HTML + BODY + Top menu + left menu + DIV
- *
- * @param 	string 	$head				Optionnal head lines
- * @param 	string 	$title				HTML title
- * @param	string	$help_url			Url links to help page
- * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- *                                  	For other external page: http://server/url
- * @param	string	$target				Target to use on links
- * @param 	int    	$disablejs			More content into html header
- * @param 	int    	$disablehead		More content into html header
- * @param 	array  	$arrayofjs			Array of complementary js files
- * @param 	array  	$arrayofcss			Array of complementary css files
- * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (set this only if autodetect fails)
- * @return	void
- */
-function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
-{
-    global $conf;
-
-    // html header
-    top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
-    print '<body id="mainbody">';
-
-    // top menu and left menu area
-    if (empty($conf->dol_hide_topmenu))
-    {
-        top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
-    }
-    if (empty($conf->dol_hide_leftmenu))
-    {
-        left_menu('', $help_url, '', '', 1, $title, 1);
-    }
-
-    // main area
-    //main_area($title);
-    print '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">'."\n";
-}
-
-
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -198,7 +155,7 @@ $form = new Form($db);
 
 $help_url='';
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url);
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

@@ -985,9 +985,10 @@ if (! function_exists("llxHeader"))
      * @param 	array  	$arrayofcss			Array of complementary css files
      * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
      * @param   string  $morecssonbody      More CSS on body tag.
+     * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
      * @return	void
      */
-	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $morecssonbody='')
+	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $morecssonbody='', $replacemainareaby='')
 	{
 	    global $conf;
 
@@ -1008,6 +1009,11 @@ if (! function_exists("llxHeader"))
 		}
 
 		// main area
+		if ($replacemainareaby)
+		{
+			print $replacemainareaby;
+			return;
+		}
 		main_area($title);
 	}
 }
@@ -1321,12 +1327,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
-
-            // Add datepicker default options
-            /*if (! defined('DISABLE_DATE_PICKER'))
-            {
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
-            }*/
 
             // JS forced by modules (relative url starting with /)
             if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
@@ -1971,13 +1971,14 @@ if (! function_exists("llxFooter"))
     		print '<script type="text/javascript">
             	jQuery(document).ready(function () {
             		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(($conf->browser->layout == 'phone' ? 400 : 700),'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-            		jQuery(".classfortooltiponclicktext").dialog({ width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false });
+            		jQuery(".classfortooltiponclicktext").dialog({ closeOnEscape: true, classes: { "ui-dialog": "highlight" }, maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false }).css("z-index: 5000");
             		jQuery(".classfortooltiponclick").click(function () {
             		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
             		    if ($(this).attr(\'dolid\'))
             		    {
-                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));
+                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
             		        obj.dialog("open");
+
             		    }
             		});
                 });

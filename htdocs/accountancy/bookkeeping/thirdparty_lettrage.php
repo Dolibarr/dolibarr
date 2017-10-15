@@ -85,13 +85,13 @@ if ($action == 'lettering') {
 
 if ($action == 'autolettrage') {
 
-	$result = $BookKeeping->LettrageTiers($socid);
+	$result = $BookKeeping->lettrageTiers($socid);
 
-	if( $result < 0 ){
-							setEventMessages('', $BookKeeping->errors, 'errors' );
-							$error++;
-
-						}
+	if( $result < 0 )
+	{
+		setEventMessages('', $BookKeeping->errors, 'errors' );
+		$error++;
+	}
 
 }
 

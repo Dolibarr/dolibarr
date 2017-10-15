@@ -50,7 +50,7 @@ $substitutionarrayfortest=array(
 '__ID__' => 'RecipientIdRecord',
 //'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
 '__CHECK_READ__' => (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'',
-'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),		// Done into actions_sendmails
+'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),		// Done into actions_sendmails
 '__LOGIN__' => 'RecipientLogin',
 '__LASTNAME__' => 'RecipientLastname',
 '__FIRSTNAME__' => 'RecipientFirstname',
@@ -69,20 +69,20 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
-    // Send mode parameters
-	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",      GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
-    // Content parameters
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE',GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",     GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
+	// Send mode parameters
+	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",         GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",        GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",      GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",         GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",         GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",        GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS",   GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
+	// Content parameters
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",       GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		  GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",      GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE', GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -124,27 +124,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
-$head[$h][1] = $langs->trans("OutGoingEmailSetup");
-$head[$h][2] = 'common';
-$h++;
-
-if ($conf->mailing->enabled)
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
-	$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
-	$head[$h][2] = 'common_emailing';
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
-$head[$h][2] = 'templates';
-$h++;
-
+$head = email_admin_prepare_head();
 
 // List of sending methods
 $listofmethods=array();
@@ -426,19 +406,36 @@ if ($action == 'edit')
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_FROM)?$conf->global->MAIN_MAIL_EMAIL_FROM:'');
 	print '"></td></tr>';
 
-    // Default from type
+	// Default from type
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	/*
+	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	}
+	else dol_print_error($db);*/
 
-    $liste = array();
-    $liste['user'] = $langs->trans('UserEmail');
-    $liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
+	print '</td></tr>';
 
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
-    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
-    print '</td></tr>';
+	// Separator
 
-    // Separator
-
-    print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
 
@@ -452,24 +449,24 @@ if ($action == 'edit')
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-    dol_fiche_end();
+	dol_fiche_end();
 
-    print '<br><div class="center">';
-    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</div>';
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
 else
 {
-    dol_fiche_head($head, 'common', '', -1);
+	dol_fiche_head($head, 'common', '', -1);
 
-    print $langs->trans("EMailsDesc")."<br>\n";
-    print "<br>\n";
+	print $langs->trans("EMailsDesc")."<br>\n";
+	print "<br>\n";
 
 
 	$var=true;
@@ -569,21 +566,54 @@ else
 	print '</td></tr>';
 
 	// Default from type
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	}
+	else dol_print_error($db);
 
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
-    print '<td>';
-    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
-        print $langs->trans('UserEmail');
-    } else {
-        print $langs->trans('CompanyEmail');
-    }
-    print '</td></tr>';
+	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+	print '<td>';
+	if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
+	{
+		print $langs->trans('UserEmail');
+	}
+	else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
+	{
+		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
+	}
+	else {
+		$id = preg_replace('/senderprofile_/', '', $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE);
+		if ($id > 0)
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
+			$emailsenderprofile = new EmailSenderProfile($db);
+			$emailsenderprofile->fetch($id);
+			print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
+		}
+	}
+	print '</td></tr>';
 
 	// Separator
 
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
-    // Errors To
+	// Errors To
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
@@ -610,10 +640,10 @@ else
 	dol_fiche_end();
 
 
-    if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
-    {
-        print '<br>';
-        /*
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
+	{
+		print '<br>';
+		/*
 	    // Warning 1
     	if ($linuxlike)
     	{
@@ -623,9 +653,9 @@ else
     			print info_admin($langs->trans("SendmailOptionNotComplete"));
     		}
     	}*/
-    	// Warning 2
-   	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
-    }
+		// Warning 2
+   		print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+	}
 
 
 	// Boutons actions
@@ -657,8 +687,8 @@ else
 
 	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && ! in_array($action, array('testconnect', 'test', 'testhtml')))
 	{
-        $text = $langs->trans("WarningPHPMail");
-	    print info_admin($text);
+		$text = $langs->trans("WarningPHPMail");
+		print info_admin($text);
 	}
 
 	// Run the test to connect
@@ -686,7 +716,7 @@ else
 	// Show email send test form
 	if ($action == 'test' || $action == 'testhtml')
 	{
-	    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
 
 		dol_fiche_head('');
@@ -722,7 +752,7 @@ else
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
-        if (GETPOST("mode")=='init')
+		if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 		}

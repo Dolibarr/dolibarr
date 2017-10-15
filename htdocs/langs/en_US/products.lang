@@ -100,7 +100,6 @@ ParentProductsNumber=Number of parent packaging product
 ParentProducts=Parent products
 IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
 IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
-Translation=Translation
 KeywordFilter=Keyword filter
 CategoryFilter=Category filter
 ProductToAddSearch=Search product to add

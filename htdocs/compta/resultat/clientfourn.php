@@ -338,7 +338,7 @@ else
 	/*
 	 * Factures clients
 	 */
-	print '<tr><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES')
 	{
@@ -500,7 +500,7 @@ else
 	$sql .= " GROUP BY name, socid";
 	$sql.= $db->order($sortfield, $sortorder);
 
-	print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
 
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
@@ -554,7 +554,7 @@ else
 	 * Charges sociales non deductibles
 	 */
 
-	print '<tr><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES')
 	{
@@ -630,7 +630,7 @@ else
 	 * Charges sociales deductibles
 	 */
 
-	print '<tr><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES')
 	{
@@ -727,7 +727,7 @@ else
 
 	if (! empty($conf->salaries->enabled))
 	{
-		print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
+		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
 	 	if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')
 		{
@@ -840,7 +840,7 @@ else
 		    $sql.= $db->order($newsortfield, $sortorder);
 		}
 
-		print '<tr><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
+		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
 
 		dol_syslog("get expense report outcome");
 		$result=$db->query($sql);
@@ -890,7 +890,7 @@ else
 
 	if (! empty($conf->don->enabled))
 	{
-		print '<tr><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
+		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')
 		{
@@ -972,7 +972,7 @@ else
 	 * VAT
 	 */
 
-	print '<tr><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
 

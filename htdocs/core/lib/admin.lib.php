@@ -1527,3 +1527,50 @@ function phpinfo_array()
 	return $info_arr;
 }
 
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	    		    head array with tabs
+ */
+function email_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	if ($user->admin && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
+		$head[$h][1] = $langs->trans("OutGoingEmailSetup");
+		$head[$h][2] = 'common';
+		$h++;
+
+		if ($conf->mailing->enabled)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+			$head[$h][2] = 'common_emailing';
+			$h++;
+		}
+	}
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+	$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+	$head[$h][2] = 'templates';
+	$h++;
+
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
+		$head[$h][1] = $langs->trans("EmailSenderProfiles");
+		$head[$h][2] = 'senderprofiles';
+		$h++;
+	}
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'email_admin','remove');
+
+	return $head;
+}
+
+

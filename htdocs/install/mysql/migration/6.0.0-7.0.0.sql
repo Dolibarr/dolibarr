@@ -25,6 +25,28 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) COLLATE utf8_unicode_ci;
+
+
 -- Missing in 5.0
 ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
 
@@ -40,6 +62,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 
 -- For 7.0
+
+ALTER TABLE llx_user ADD COLUMN birth date;
 
 -- VMYSQL4.1 ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
 
@@ -77,6 +101,8 @@ UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 
 ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
+ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles varchar(255) DEFAULT '1';
+ALTER TABLE llx_c_email_templates MODIFY COLUMN content mediumtext;
 
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'adherent','member','',0,null,null,'(SendAnEMailToMember)',1,1,1,'__(CardContent)__','__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br />\n__(Lastname)__ : __MEMBER_LASTNAME__<br />\n__(Fullname)__ : __MEMBER_FULLNAME__<br />\n__(Company)__ : __MEMBER_COMPANY__<br />\n__(Address)__ : __MEMBER_ADDRESS__<br />\n__(Zip)__ : __MEMBER_ZIP__<br />\n__(Town)__ : __MEMBER_TOWN__<br />\n__(Country)__ : __MEMBER_COUNTRY__<br />\n__(Email)__ : __MEMBER_EMAIL__<br />\n__(Birthday)__ : __MEMBER_BIRTH__<br />\n__(Photo)__ : __MEMBER_PHOTO__<br />\n__(Login)__ : __MEMBER_LOGIN__<br />\n__(Password)__ : __MEMBER_PASSWORD__<br />\n__(Phone)__ : __MEMBER_PHONE__<br />\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br />\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null);
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,1,0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null);
@@ -107,7 +133,8 @@ ALTER TABLE llx_website_page MODIFY COLUMN pageurl varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN lang varchar(6);
 ALTER TABLE llx_website_page ADD COLUMN fk_page integer;
 ALTER TABLE llx_website_page ADD COLUMN grabbed_from varchar(255);
-ALTER TABLE llx_website_page ADD COLUMN htmlheader text;
+ALTER TABLE llx_website_page ADD COLUMN htmlheader mediumtext;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader mediumtext;
 
 ALTER TABLE llx_website_page MODIFY COLUMN status INTEGER DEFAULT 1;
 UPDATE llx_website_page set status = 1 WHERE status IS NULL;
@@ -329,23 +356,6 @@ DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_DEVISE')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_PIECE')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPENSEREPORT_JOURNAL')__;
 
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) CHARACTER SET utf8;
--- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) COLLATE utf8_unicode_ci;
-
 ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
@@ -354,3 +364,21 @@ ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
 ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
+
+ALTER TABLE llx_projet CHANGE datec datec datetime;
+
+create table llx_c_email_senderprofile
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
+  private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
+  date_creation   datetime,
+  tms             timestamp,
+  label           varchar(255),					  -- Label of predefined email
+  email           varchar(255),					  -- Email
+  signature		  text,                           -- Predefined signature
+  position        smallint,					      -- Position
+  active          tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(entity, label, email);
