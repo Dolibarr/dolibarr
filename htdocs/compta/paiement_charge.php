@@ -169,6 +169,20 @@ if ($action == 'create')
     $charge->paiementtype=$charge->mode_reglement_id?$charge->mode_reglement_id:$charge->paiementtype;
 
 	$total = $charge->amount;
+		if (! empty($conf->use_javascript_ajax))
+		{
+			print "\n".'<script type="text/javascript" language="javascript">';
+
+			//Add js for AutoFill
+			print ' $(document).ready(function () {';
+			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                            var amount = $(this).data("value");
+							document.getElementById($(this).data(\'rowid\')).value = amount ;
+						});';
+			print '	});'."\n";
+
+			print '	</script>'."\n";
+		}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
@@ -294,7 +308,12 @@ if ($action == 'create')
 		if ($sumpaid < $objp->amount)
 		{
 			$namef = "amount_".$objp->id;
-			print '<input type="text" size="8" name="'.$namef.'">';
+			$nameRemain = "remain_".$objp->id;
+			if (!empty($conf->use_javascript_ajax))
+					print img_picto("Auto fill",'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+			$remaintopay=$objp->amount - $sumpaid;
+			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
 		}
 		else
 		{
