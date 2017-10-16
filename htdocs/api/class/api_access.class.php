@@ -143,7 +143,7 @@ class DolibarrApiAccess implements iAuthenticate
         }
 		else
 		{
-		    throw new RestException(401, "Failed to login to API. No parameter 'DOLAPIKEY' on HTTP header (neither in URL).");
+		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 
     $userClass::setCacheIdentifier(static::$role);
