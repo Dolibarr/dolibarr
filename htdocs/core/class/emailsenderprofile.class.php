@@ -273,6 +273,8 @@ class EmailSenderProfile extends CommonObject
         $result = '';
         $companylink = '';
 
+        $label=$this->label;
+
         $url='';
         //$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
 
