@@ -4592,18 +4592,18 @@ abstract class CommonObject
 		else return 0;
 	}
 
-   /**
-    * Function to show lines of extrafields with output datas
-    *
-    * @param Extrafields   $extrafields    Extrafield Object
-    * @param string        $mode           Show output (view) or input (edit) for extrafield
-    * @param array         $params         Optional parameters
-    * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-    * @param string        $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-    *
-    * @return string
-    */
-	function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='', $keysuffix='')
+	/**
+	 * Function to show lines of extrafields with output datas
+	 *
+	 * @param Extrafields   $extrafields    Extrafield Object
+	 * @param string        $mode           Show output (view) or input (edit) for extrafield
+	 * @param array         $params         Optional parameters
+	 * @param string        $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 *
+	 * @return string
+	 */
+	function showOptionals($extrafields, $mode='view', $params=null, $keysuffix='', $keyprefix='')
 	{
 		global $_POST, $conf, $langs, $action;
 
@@ -4631,12 +4631,12 @@ abstract class CommonObject
 
 				switch($mode) {
 					case "view":
-						$value=$this->array_options["options_".$key.$keyprefix];
+						$value=$this->array_options["options_".$key.$keysuffix];
 						break;
 					case "edit":
-						$getposttemp = GETPOST($keysuffix.'options_'.$key.$keyprefix, 'none');				// GETPOST can get value from GET, POST or setup of default values.
+						$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none');				// GETPOST can get value from GET, POST or setup of default values.
 						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
-						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keysuffix.'options_'.$key.$keyprefix))
+						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 						{
 							if (is_array($getposttemp)) {
 								// $getposttemp is an array but following code expects a comma separated string
@@ -4676,12 +4676,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
-						$value = GETPOSTISSET($keysuffix.'options_'.$key.$keyprefix)?dol_mktime(GETPOST($keysuffix.'options_'.$key.$keyprefix."hour",'int',3), GETPOST($keysuffix.'options_'.$key.$keyprefix."min",'int',3), 0, GETPOST($keysuffix.'options_'.$key.$keyprefix."month",'int',3), GETPOST($keysuffix.'options_'.$key.$keyprefix."day",'int',3), GETPOST($keysuffix.'options_'.$key.$keyprefix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attribute_type[$key],array('price','double')))
 					{
-						$value = GETPOSTISSET($keysuffix.'options_'.$key.$keyprefix)?price2num(GETPOST($keysuffix.'options_'.$key.$keyprefix,'int',3)):$this->array_options['options_'.$key];
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix,'int',3)):$this->array_options['options_'.$key];
 					}
 
 					$labeltoshow = $langs->trans($label);
@@ -4700,7 +4700,7 @@ abstract class CommonObject
 							$out .= $extrafields->showOutputField($key, $value);
 							break;
 						case "edit":
-							$out .= $extrafields->showInputField($key, $value, '', $keyprefix, '', 0, $this->id);
+							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id);
 							break;
 					}
 
@@ -4714,7 +4714,7 @@ abstract class CommonObject
 			$out .= "\n";
 			// Add code to manage list depending on others
 			if (! empty($conf->use_javascript_ajax))
-			$out .= '
+				$out .= '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
@@ -4743,10 +4743,11 @@ abstract class CommonObject
 						setListDependencies();
 				    });
 				</script>'."\n";
-			$out .= '<!-- /showOptionalsInput --> '."\n";
+				$out .= '<!-- /showOptionalsInput --> '."\n";
 		}
 		return $out;
 	}
+
 
 	/**
 	 * Returns the rights used for this class
