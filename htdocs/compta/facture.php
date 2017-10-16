@@ -637,9 +637,9 @@ if (empty($reshook))
 
 			foreach ($amount_ht as $tva_tx => $xxx)
 			{
-				$discount->amount_ht = abs($amount_ht[$tva_tx]);
-				$discount->amount_tva = abs($amount_tva[$tva_tx]);
-				$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+				$discount->amount_ht = -1 * ($amount_ht[$tva_tx]);
+				$discount->amount_tva = -1 * ($amount_tva[$tva_tx]);
+				$discount->amount_ttc = -1 * ($amount_ttc[$tva_tx]);
 				$discount->tva_tx = abs($tva_tx);
 
 				$result = $discount->create($user);
