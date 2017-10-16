@@ -61,7 +61,7 @@ class UserBankAccount extends Account
      * @param   User   $user		User
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create($user='')
+    function create(User $user=null, $notrigger=0)
     {
         $now=dol_now();
 
@@ -90,7 +90,7 @@ class UserBankAccount extends Account
      *	@param	User	$user	Object user
      *	@return	int				<=0 if KO, >0 if OK
      */
-    function update($user='')
+    function update(User $user=null, $notrigger=0)
     {
     	global $conf;
 
