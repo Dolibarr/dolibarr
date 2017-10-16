@@ -421,7 +421,7 @@ class Invoices extends DolibarrApi
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       throw new RestException(400, 'Unable to insert the new line. Check your inputs.');

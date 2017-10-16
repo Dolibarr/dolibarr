@@ -1606,7 +1606,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
+			// all type of template is allowed
+			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);  
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
@@ -2151,40 +2152,6 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 		return $tmp;
 	}
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
-}
-
-/**
- *	Return true if the color is light
- *
- *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int							-1 : Error with argument passed |0 : color is dark | 1 : color is light
- */
-function colorIsLight($stringcolor)
-{
-	$res = -1;
-	if (!empty($stringcolor))
-	{
-		$res = 0;
-		$tmp=explode(',', $stringcolor);
-		if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
-		{
-			$r = $tmp[0];
-			$g = $tmp[1];
-			$b = $tmp[2];
-		}
-		else
-		{
-			$hexr=$stringcolor[0].$stringcolor[1];
-			$hexg=$stringcolor[2].$stringcolor[3];
-			$hexb=$stringcolor[4].$stringcolor[5];
-			$r = hexdec($hexr);
-			$g = hexdec($hexg);
-			$b = hexdec($hexb);
-		}
-		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-		if ($bright > 0.6) $res = 1;
-	}
-	return $res;
 }
 
 /**

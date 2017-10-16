@@ -21,12 +21,14 @@
 
 class BlockedLog
 {
-
 	/**
 	 * Id of the log
 	 * @var int
 	 */
 	public $id;
+
+	public $error = '';
+	public $errors = array();
 
 	/**
 	 * Unique fingerprint of the log
@@ -78,7 +80,7 @@ class BlockedLog
 
 	public $object_data = null;
 
-	public $error = 0;
+
 
 	/**
 	 *      Constructor
@@ -126,7 +128,7 @@ class BlockedLog
 
 	/**
 	 *      try to retrieve user author
-	*/
+	 */
 	public function getUser() {
 		global $langs, $cachedUser;
 
@@ -188,8 +190,6 @@ class BlockedLog
 			$this->object_data->amounts = $object->amounts;
 
 		}
-
-
 	}
 
 	/**
@@ -231,7 +231,7 @@ class BlockedLog
 				$this->action			= $obj->action;
 				$this->element			= $obj->element;
 
-				$this->fk_object		= trim($obj->fk_object);
+				$this->fk_object		= $obj->fk_object;
 				$this->date_object		= $this->db->jdate($obj->date_object);
 				$this->ref_object		= $obj->ref_object;
 
@@ -432,10 +432,10 @@ class BlockedLog
 	/**
 	 *	return log object for a element.
 	 *
-	 *	@param	string $element      	element to search
-	 *	@param	int $fk_object			id of object to search
-	 *	@param	int $limit      		max number of element, 0 for all
-	 *	@param	string $order      		sort of query
+	 *	@param	string 	$element      	element to search
+	 *	@param	int 	$fk_object		id of object to search
+	 *	@param	int 	$limit      	max number of element, 0 for all
+	 *	@param	string 	$order      	sort of query
 	 *	@return	array					array of object log
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $order = -1) {

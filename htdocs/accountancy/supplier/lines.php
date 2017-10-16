@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -52,6 +54,9 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
@@ -96,6 +101,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
+	$search_day = '';
+	$search_month = '';
+	$search_year = '';
 	$search_country = '';
 	$search_tvaintra = '';
 }
@@ -130,6 +138,9 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 /*
  * View
  */
+
+$form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader('', $langs->trans("SuppliersVentilation") . ' - ' . $langs->trans("Dispatched"));
 
@@ -189,6 +200,19 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("l.tva_tx", $search_vat, 1);
 }
+if ($search_month > 0)
+{
+	if ($search_year > 0 && empty($search_day))
+		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+		else if ($search_year > 0 && ! empty($search_day))
+			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
+			else
+				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
+}
+else if ($search_year > 0)
+{
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+}
 if (strlen(trim($search_country))) {
 	$sql .= " AND (co.label like'" . $search_country . "%')";
 }
@@ -231,6 +255,9 @@ if ($result) {
 		$param .= "&search_account=" . $search_account;
 	if ($search_vat)
 		$param .= "&search_vat=" . $search_vat;
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year='.urlencode($search_year);
 	if ($search_country)
 		$param .= "&search_country=" . $search_country;
 	if ($search_tvaintra)
@@ -262,7 +289,11 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre center">';
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+   	$formother->select_year($search_year,'search_year',1, 20, 5);
+	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';

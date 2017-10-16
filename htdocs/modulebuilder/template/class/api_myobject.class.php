@@ -231,7 +231,7 @@ class MyObjectApi extends DolibarrApi
         }
 
         if($this->myobject->update($id, DolibarrApiAccess::$user))
-            return $this->get ($id);
+            return $this->get($id);
 
         return false;
     }
