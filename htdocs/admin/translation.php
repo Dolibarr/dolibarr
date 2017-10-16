@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +171,7 @@ if ($action == 'add')
 		    else
 		    {
 		        setEventMessages($db->lasterror(), null, 'errors');
-		    }
+            }
 			$action='';
 		}
 	}
@@ -291,9 +292,9 @@ if ($mode == 'overwrite')
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="">';
+    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
     print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="">';
+    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
     print '</td>';
     // Limit to superadmin
     /*if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -483,7 +484,7 @@ if ($mode == 'searchkey')
     //}
     print '</td>';
     // Action column
-    print '<td class="liste_titre nowrap" align="right">';
+    print '<td class="nowrap" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpicto;
     print '</td>';
@@ -508,8 +509,27 @@ if ($mode == 'searchkey')
         {
             if ($val != $newlangfileonly->tab_translate[$key])
             {
+                // retrieve rowid
+                $sql = "SELECT rowid";
+                $sql.= " FROM " . MAIN_DB_PREFIX . "overwrite_trans";
+                $sql.= " WHERE transkey = '".$key."'";
+                $sql.= " AND entity IN (" . $user->entity . ", " . $conf->entity . ")";
+                dol_syslog("translation::select from table", LOG_DEBUG);
+                $result = $db->query($sql);
+                if ($result)
+                {
+                    $obj = $db->fetch_object($result);
+                }
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?rowid=' . $obj->rowid . '&entity=' . $conf->entity . '&action=edit">' . img_edit() . '</a>';
+                print '&nbsp;&nbsp;';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?rowid=' . $obj->rowid . '&entity=' . $conf->entity . '&action=delete">' . img_delete() . '</a>';
+                print '&nbsp;&nbsp;';
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
                 print $form->textwithpicto('', $htmltext, 1, 'info');
+            }
+            else if (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+            {
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit() . '</a>';
             }
         }
         else
