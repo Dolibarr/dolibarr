@@ -337,6 +337,7 @@ NextDateToExecution=Date for next invoice generation
 DateLastGeneration=Date of latest generation
 MaxPeriodNumber=Max nb of invoice generation
 NbOfGenerationDone=Nb of invoice generation already done
+NbOfGenerationDoneShort=Nb of generation done
 MaxGenerationReached=Maximum nb of generations reached
 InvoiceAutoValidate=Validate invoices automatically
 GeneratedFromRecurringInvoice=Generated from template recurring invoice %s

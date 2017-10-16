@@ -172,6 +172,8 @@ class Commande extends CommonOrder
 	 * Shipment on process
 	 */
 	const STATUS_SHIPMENTONPROCESS = 2;
+	const STATUS_ACCEPTED = 2;				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+
 	/**
 	 * Closed (Sent, billed or not)
 	 */

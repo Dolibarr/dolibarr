@@ -25,7 +25,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 $langs->load("companies");
 $langs->load("bills");
@@ -231,20 +233,20 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+		{
+			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
 			if ($object->fk_bank)
 			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($object->fk_bank);
+				$bankline=new AccountLine($db);
+				$result=$bankline->fetch($object->fk_bank);
 				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
 			{
 				print $langs->trans("NoneF");
 			}
-	    	print '</td></tr>';
-	    }
+			print '</td></tr>';
+		}
 	}
 
 	print '</table>';
@@ -326,26 +328,25 @@ if ($rowid && $action != 'edit')
     // Amount
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
-    // Bank line
+	// Bank line
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
+		{
+			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 			if ($object->fk_bank)
 			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($object->fk_bank);
-		    	print $bankline->getNomUrl(1,0,'showall');
+				$bankline=new AccountLine($db);
+				$result=$bankline->fetch($object->fk_bank);
+				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
 			{
 				print $langs->trans("NoneF");
 			}
-	    	print '</td></tr>';
-	    }
+			print '</td></tr>';
+		}
 	}
-
 
     print "</table>\n";
     print '</div>';

@@ -304,22 +304,22 @@ if ($result)
         print dol_trunc($obj->note,32);
         print '</td>';
 
-        // Banque
-        if (! empty($conf->banque->enabled))
-        {
-            if ($obj->fk_account)
-            {
-                $accountstatic->id=$obj->fk_account;
-                $accountstatic->fetch($obj->fk_account);
-                //$accountstatic->label=$obj->label;
-                print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-            }
-            else
-            {
-                print "<td>";
-                print "</td>\n";
-            }
-        }
+		// Banque
+		if (! empty($conf->banque->enabled))
+		{
+			if ($obj->fk_account > 0)
+			{
+				$accountstatic->id=$obj->fk_account;
+				$accountstatic->fetch($obj->fk_account);
+				//$accountstatic->label=$obj->label;
+				print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+			}
+			else
+			{
+				print "<td>";
+				print "</td>\n";
+			}
+		}
 
         // Date start
         print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";

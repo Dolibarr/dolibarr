@@ -47,7 +47,7 @@ function dol_basename($pathfile)
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
  *                                      but must not contains the start and end '/'. Filter is checked into basename only.
  *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked into fullpath.
- *  @param	string		$sortcriteria	Sort criteria ("","fullname","relativename","name","date","size")
+ *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  *  @param	int			$nohook			Disable all hooks

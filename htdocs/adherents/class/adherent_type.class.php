@@ -167,7 +167,7 @@ class AdherentType extends CommonObject
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql.= "note = '".$this->db->escape($this->note)."',";
-		$sql.= "vote = '".$this->db->escape($this->vote)."',";
+		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql.= " WHERE rowid =".$this->id;
 
@@ -229,6 +229,8 @@ class AdherentType extends CommonObject
 	function delete()
 	{
 		global $user;
+
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql.= " WHERE rowid = ".$this->id;

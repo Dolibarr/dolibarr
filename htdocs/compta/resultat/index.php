@@ -893,10 +893,19 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
+// Loop on each year to ouput
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td class="liste_titre" align="center">'.$langs->trans("Outcome").'</td>';
-	print '<td class="liste_titre" align="center" class="borderrightlight">'.$langs->trans("Income").'</td>';
+	print '<td class="liste_titre" align="center">';
+	$htmlhelp='';
+	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
+	print $form->textwithpicto($langs->trans("Outcome"), $htmlhelp);
+	print '</td>';
+	print '<td class="liste_titre" align="center" class="borderrightlight">';
+	$htmlhelp='';
+	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetreive");
+	print $form->textwithpicto($langs->trans("Income"), $htmlhelp);
+	print '</td>';
 }
 print '</tr>';
 
@@ -967,7 +976,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);
 		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee],'MT'):0);
-		print price($in-$out).'</td>';
+		print price(price2num($in-$out, 'MT')).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}
 }

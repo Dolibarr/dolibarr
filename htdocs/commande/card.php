@@ -2395,7 +2395,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
-        print '<div class="div-table-responsive">';
+        print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
@@ -2479,7 +2479,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Create contract
-				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED || $object->statut == Commande::STATUS_CLOSED)) {
+				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 				    $langs->load("contracts");
 
 				    if ($user->rights->contrat->creer) {
@@ -2512,7 +2512,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Set to shipped
-				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED) && $user->rights->commande->cloturer) {
+				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS) && $user->rights->commande->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=shipped">' . $langs->trans('ClassifyShipped') . '</a></div>';
 				}
 

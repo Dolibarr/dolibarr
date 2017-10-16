@@ -34,20 +34,20 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormMail extends Form
 {
-    var $db;
+	var $db;
 
-    var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
+	var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
 
-    var $fromname;
-    var $frommail;
-    var $replytoname;
-    var $replytomail;
-    var $toname;
-    var $tomail;
+	var $fromname;
+	var $frommail;
+	var $replytoname;
+	var $replytomail;
+	var $toname;
+	var $tomail;
 	var $trackid;
 
-    var $withsubstit;			// Show substitution array
-    var $withfrom;
+	var $withsubstit;			// Show substitution array
+	var $withfrom;
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
@@ -57,221 +57,221 @@ class FormMail extends Form
 	/**
 	 * @var int|int[]
 	 */
-    public $withto;				// Show recipient emails
-    var $withtofree;			// Show free text for recipient emails
-    var $withtocc;
-    var $withtoccc;
-    var $withtopic;
-    var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-    var $withmaindocfile;		// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
-    var $withbody;
+	public $withto;				// Show recipient emails
+	var $withtofree;			// Show free text for recipient emails
+	var $withtocc;
+	var $withtoccc;
+	var $withtopic;
+	var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	var $withmaindocfile;		// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+	var $withbody;
 
-    var $withfromreadonly;
-    var $withreplytoreadonly;
-    var $withtoreadonly;
-    var $withtoccreadonly;
+	var $withfromreadonly;
+	var $withreplytoreadonly;
+	var $withtoreadonly;
+	var $withtoccreadonly;
 	var $withtocccreadonly;
 	var $withtopicreadonly;
-    var $withfilereadonly;
-    var $withdeliveryreceipt;
-    var $withcancel;
-    var $withfckeditor;
+	var $withfilereadonly;
+	var $withdeliveryreceipt;
+	var $withcancel;
+	var $withfckeditor;
 
-    var $substit=array();
-    var $substit_lines=array();
-    var $param=array();
+	var $substit=array();
+	var $substit_lines=array();
+	var $param=array();
 
-    var $error;
+	var $error;
 
-    public $lines_model;
+	public $lines_model;
 
 
-    /**
-     *	Constructor
-     *
-     *  @param	DoliDB	$db      Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 *	Constructor
+	 *
+	 *  @param	DoliDB	$db      Database handler
+	 */
+	function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->withform=1;
+		$this->withform=1;
 
-        $this->withfrom=1;
-        $this->withto=1;
-        $this->withtofree=1;
-        $this->withtocc=1;
-        $this->withtoccc=0;
-        $this->witherrorsto=0;
-        $this->withtopic=1;
-        $this->withfile=0;			// 1=Add section "Attached files". 2=Can add files.
-        $this->withmaindocfile=0;	// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
-        $this->withbody=1;
+		$this->withfrom=1;
+		$this->withto=1;
+		$this->withtofree=1;
+		$this->withtocc=1;
+		$this->withtoccc=0;
+		$this->witherrorsto=0;
+		$this->withtopic=1;
+		$this->withfile=0;			// 1=Add section "Attached files". 2=Can add files.
+		$this->withmaindocfile=0;	// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+		$this->withbody=1;
 
-        $this->withfromreadonly=1;
-        $this->withreplytoreadonly=1;
-        $this->withtoreadonly=0;
-        $this->withtoccreadonly=0;
-	    $this->withtocccreadonly=0;
-        $this->witherrorstoreadonly=0;
-        $this->withtopicreadonly=0;
-        $this->withfilereadonly=0;
-        $this->withbodyreadonly=0;
-        $this->withdeliveryreceiptreadonly=0;
-        $this->withfckeditor=-1;	// -1 = Auto
+		$this->withfromreadonly=1;
+		$this->withreplytoreadonly=1;
+		$this->withtoreadonly=0;
+		$this->withtoccreadonly=0;
+		$this->withtocccreadonly=0;
+		$this->witherrorstoreadonly=0;
+		$this->withtopicreadonly=0;
+		$this->withfilereadonly=0;
+		$this->withbodyreadonly=0;
+		$this->withdeliveryreceiptreadonly=0;
+		$this->withfckeditor=-1;	// -1 = Auto
 
-        return 1;
-    }
+		return 1;
+	}
 
-    /**
-     * Clear list of attached files in send mail form (also stored in session)
-     *
-     * @return	void
-     */
-    function clear_attached_files()
-    {
-        global $conf,$user;
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	/**
+	 * Clear list of attached files in send mail form (also stored in session)
+	 *
+	 * @return	void
+	 */
+	function clear_attached_files()
+	{
+		global $conf,$user;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        // Set tmp user directory
-        $vardir=$conf->user->dir_output."/".$user->id;
-        $upload_dir = $vardir.'/temp/';                     // TODO Add $keytoavoidconflict in upload_dir path
-        if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
+		// Set tmp user directory
+		$vardir=$conf->user->dir_output."/".$user->id;
+		$upload_dir = $vardir.'/temp/';                     // TODO Add $keytoavoidconflict in upload_dir path
+		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
 
-        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-        unset($_SESSION["listofpaths".$keytoavoidconflict]);
-        unset($_SESSION["listofnames".$keytoavoidconflict]);
-        unset($_SESSION["listofmimes".$keytoavoidconflict]);
-    }
+		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+		unset($_SESSION["listofpaths".$keytoavoidconflict]);
+		unset($_SESSION["listofnames".$keytoavoidconflict]);
+		unset($_SESSION["listofmimes".$keytoavoidconflict]);
+	}
 
-    /**
-     * Add a file into the list of attached files (stored in SECTION array)
-     *
-     * @param 	string   $path   Full absolute path on filesystem of file, including file name
-     * @param 	string   $file   Only filename
-     * @param 	string   $type   Mime type
-     * @return	void
-     */
-    function add_attached_files($path,$file,$type)
-    {
-        $listofpaths=array();
-        $listofnames=array();
-        $listofmimes=array();
+	/**
+	 * Add a file into the list of attached files (stored in SECTION array)
+	 *
+	 * @param 	string   $path   Full absolute path on filesystem of file, including file name
+	 * @param 	string   $file   Only filename
+	 * @param 	string   $type   Mime type
+	 * @return	void
+	 */
+	function add_attached_files($path,$file,$type)
+	{
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
 
-        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
-        if (! in_array($file,$listofnames))
-        {
-            $listofpaths[]=$path;
-            $listofnames[]=$file;
-            $listofmimes[]=$type;
-            $_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-            $_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-            $_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
-        }
-    }
-
-    /**
-     * Remove a file from the list of attached files (stored in SECTION array)
-     *
-     * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
-     * @return	void
-     */
-    function remove_attached_files($keytodelete)
-    {
-        $listofpaths=array();
-        $listofnames=array();
-        $listofmimes=array();
-
-        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
-        if ($keytodelete >= 0)
-        {
-            unset ($listofpaths[$keytodelete]);
-            unset ($listofnames[$keytodelete]);
-            unset ($listofmimes[$keytodelete]);
-            $_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-            $_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-            $_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
-            //var_dump($_SESSION['listofpaths']);
-        }
-    }
-
-    /**
-     * Return list of attached files (stored in SECTION array)
-     *
-     * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
-     */
-    function get_attached_files()
-    {
-        $listofpaths=array();
-        $listofnames=array();
-        $listofmimes=array();
-
-        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
-        return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
-    }
-
-    /**
-     *	Show the form to input an email
-     *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-     *  this->withmaindocfile
-     *
-     *	@param	string	$addfileaction		Name of action when posting file attachments
-     *	@param	string	$removefileaction	Name of action when removing file attachments
-     *	@return	void
-     */
-    function show_form($addfileaction='addfile',$removefileaction='removefile')
-    {
-        print $this->get_form($addfileaction,$removefileaction);
-    }
-
-    /**
-     *	Get the form to input an email
-     *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-     *  this->withfile
-     *  this->param:	Contains more parameteres like email templates info
-     *
-     *	@param	string	$addfileaction		Name of action when posting file attachments
-     *	@param	string	$removefileaction	Name of action when removing file attachments
-     *	@return string						Form to show
-     */
-    function get_form($addfileaction='addfile',$removefileaction='removefile')
-    {
-        global $conf, $langs, $user, $hookmanager, $form;
-
-        if (! is_object($form)) $form=new Form($this->db);
-
-        $langs->load("other");
-        $langs->load("mails");
-
-        $hookmanager->initHooks(array('formmail'));
-
-        $parameters=array(
-        	'addfileaction' => $addfileaction,
-        	'removefileaction'=> $removefileaction,
-            'trackid'=> $this->trackid
-        );
-        $reshook=$hookmanager->executeHooks('getFormMail', $parameters, $this);
-
-        if (!empty($reshook))
-        {
-        	return $hookmanager->resPrint;
-        }
-        else
+		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+		if (! in_array($file,$listofnames))
 		{
-        	$out='';
+			$listofpaths[]=$path;
+			$listofnames[]=$file;
+			$listofmimes[]=$type;
+			$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+			$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+			$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+		}
+	}
 
-        	$disablebademails=1;
+	/**
+	 * Remove a file from the list of attached files (stored in SECTION array)
+	 *
+	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
+	 * @return	void
+	 */
+	function remove_attached_files($keytodelete)
+	{
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
 
-       		// Define output language
+		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+		if ($keytodelete >= 0)
+		{
+			unset ($listofpaths[$keytodelete]);
+			unset ($listofnames[$keytodelete]);
+			unset ($listofmimes[$keytodelete]);
+			$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+			$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+			$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+			//var_dump($_SESSION['listofpaths']);
+		}
+	}
+
+	/**
+	 * Return list of attached files (stored in SECTION array)
+	 *
+	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
+	 */
+	function get_attached_files()
+	{
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
+
+		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
+	}
+
+	/**
+	 *	Show the form to input an email
+	 *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 *  this->withmaindocfile
+	 *
+	 *	@param	string	$addfileaction		Name of action when posting file attachments
+	 *	@param	string	$removefileaction	Name of action when removing file attachments
+	 *	@return	void
+	 */
+	function show_form($addfileaction='addfile',$removefileaction='removefile')
+	{
+		print $this->get_form($addfileaction,$removefileaction);
+	}
+
+	/**
+	 *	Get the form to input an email
+	 *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 *  this->withfile
+	 *  this->param:	Contains more parameteres like email templates info
+	 *
+	 *	@param	string	$addfileaction		Name of action when posting file attachments
+	 *	@param	string	$removefileaction	Name of action when removing file attachments
+	 *	@return string						Form to show
+	 */
+	function get_form($addfileaction='addfile',$removefileaction='removefile')
+	{
+		global $conf, $langs, $user, $hookmanager, $form;
+
+		if (! is_object($form)) $form=new Form($this->db);
+
+		$langs->load("other");
+		$langs->load("mails");
+
+		$hookmanager->initHooks(array('formmail'));
+
+		$parameters=array(
+			'addfileaction' => $addfileaction,
+			'removefileaction'=> $removefileaction,
+			'trackid'=> $this->trackid
+		);
+		$reshook=$hookmanager->executeHooks('getFormMail', $parameters, $this);
+
+		if (!empty($reshook))
+		{
+			return $hookmanager->resPrint;
+		}
+		else
+		{
+			$out='';
+
+			$disablebademails=1;
+
+	   		// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
@@ -426,7 +426,8 @@ class FormMail extends Form
                     if (! ($this->fromtype === 'user' && $this->fromid > 0)
                         && ! ($this->fromtype === 'company')
                         && ! preg_match('/user_aliases/', $this->fromtype)
-                        && ! preg_match('/global_aliases/', $this->fromtype))
+                        && ! preg_match('/global_aliases/', $this->fromtype)
+                    	&& ! preg_match('/senderprofile/', $this->fromtype))
                     {
                         // Use this->fromname and this->frommail or error if not defined
                         $out.= $this->fromname;
@@ -444,6 +445,8 @@ class FormMail extends Form
                         }
                     } else {
                         $liste = array();
+
+                        // Add user email
                         if (empty($user->email))
                         {
                             $langs->load('errors');
@@ -453,9 +456,32 @@ class FormMail extends Form
                         {
                             $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
                         }
+
+                        // Add also company main email
                         $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
-                        // Add also email aliases if there is one
+
+                        // Add also email aliases if there is some
                         $listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+
+                        // Add also email aliases from the c_email_senderprofile table
+                        $sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
+                        $resql = $this->db->query($sql);
+                        if ($resql)
+                        {
+                        	$num = $this->db->num_rows($resql);
+                        	$i=0;
+                        	while($i < $num)
+                        	{
+                        		$obj = $this->db->fetch_object($resql);
+                        		if ($obj)
+                        		{
+                        			$listaliases['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+                        		}
+                        		$i++;
+                        	}
+                        }
+                        else dol_print_error($this->db);
+
                         foreach($listaliases as $typealias => $listalias)
                         {
                             $posalias=0;
@@ -832,14 +858,14 @@ class FormMail extends Form
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
 				// Deal with format differences between message and signature (text / HTML)
-				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {
-					$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
-				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
+				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+					$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
+				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
 
-        		if (isset($_POST["message"]) &&  ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
+				if (isset($_POST["message"]) &&  ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
 				else
 				{
 					$defaultmessage=make_substitutions($defaultmessage,$this->substit);
@@ -848,59 +874,59 @@ class FormMail extends Form
 					$defaultmessage=preg_replace("/^\n+/","",$defaultmessage);
 				}
 
-        		$out.= '<tr>';
-        		$out.= '<td valign="top">'.$langs->trans("MailText").'</td>';
-        		$out.= '<td>';
-        		if ($this->withbodyreadonly)
-        		{
-        			$out.= nl2br($defaultmessage);
-        			$out.= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
-        		}
-        		else
-        		{
-        			if (! isset($this->ckeditortoolbar)) $this->ckeditortoolbar = 'dolibarr_notes';
+				$out.= '<tr>';
+				$out.= '<td valign="top">'.$langs->trans("MailText").'</td>';
+				$out.= '<td>';
+				if ($this->withbodyreadonly)
+				{
+					$out.= nl2br($defaultmessage);
+					$out.= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
+				}
+				else
+				{
+					if (! isset($this->ckeditortoolbar)) $this->ckeditortoolbar = 'dolibarr_notes';
 
-        			// Editor wysiwyg
-        			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        			if ($this->withfckeditor == -1)
-        			{
-        				if (! empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $this->withfckeditor=1;
+					// Editor wysiwyg
+					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+					if ($this->withfckeditor == -1)
+					{
+						if (! empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $this->withfckeditor=1;
 						else $this->withfckeditor=0;
-        			}
+					}
 
-        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,'95%');
-        			$out.= $doleditor->Create(1);
-        		}
-        		$out.= "</td></tr>\n";
-        	}
+					$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,'95%');
+					$out.= $doleditor->Create(1);
+				}
+				$out.= "</td></tr>\n";
+			}
 
-        	$out.= '</table>'."\n";
+			$out.= '</table>'."\n";
 
-        	if ($this->withform == 1 || $this->withform == -1)
-        	{
-        		$out.= '<br><div class="center">';
-        		$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
-        		// Add a javascript test to avoid to forget to submit file before sending email
-        		if ($this->withfile == 2 && $conf->use_javascript_ajax)
-        		{
-        			$out.= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
-        		}
-        		$out.= ' />';
-        		if ($this->withcancel)
-        		{
-        			$out.= ' &nbsp; &nbsp; ';
-        			$out.= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
-        		}
-        		$out.= '</div>'."\n";
-        	}
+			if ($this->withform == 1 || $this->withform == -1)
+			{
+				$out.= '<br><div class="center">';
+				$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+				// Add a javascript test to avoid to forget to submit file before sending email
+				if ($this->withfile == 2 && $conf->use_javascript_ajax)
+				{
+					$out.= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
+				}
+				$out.= ' />';
+				if ($this->withcancel)
+				{
+					$out.= ' &nbsp; &nbsp; ';
+					$out.= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
+				}
+				$out.= '</div>'."\n";
+			}
 
-        	if ($this->withform == 1) $out.= '</form>'."\n";
+			if ($this->withform == 1) $out.= '</form>'."\n";
 
-        	// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
-        	if (! empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY))
-        	{
-	        	$out.= '<script type="text/javascript" language="javascript">';
-		        $out.= 'jQuery(document).ready(function () {';
+			// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
+			if (! empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY))
+			{
+				$out.= '<script type="text/javascript" language="javascript">';
+				$out.= 'jQuery(document).ready(function () {';
 				$out.= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
 	    						if (code == 13) {
@@ -910,13 +936,13 @@ class FormMail extends Form
 							});';
 				$out.='		})';
 				$out.= '</script>';
-        	}
+			}
 
-        	$out.= "<!-- End form mail -->\n";
+			$out.= "<!-- End form mail -->\n";
 
-        	return $out;
-        }
-    }
+			return $out;
+		}
+	}
 
 
 
@@ -966,22 +992,22 @@ class FormMail extends Form
 			{
 				$defaultmessage='';
 				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
-	        	elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-	        	elseif ($type_template=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
-	        	elseif ($type_template=='supplier_proposal_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal"); }
-	        	elseif ($type_template=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
-	        	elseif ($type_template=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-	        	elseif ($type_template=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-	        	elseif ($type_template=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
-	        	elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
-	        	elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
-	        	elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
+				elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+				elseif ($type_template=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
+				elseif ($type_template=='supplier_proposal_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal"); }
+				elseif ($type_template=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
+				elseif ($type_template=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+				elseif ($type_template=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+				elseif ($type_template=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
+				elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
+				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
+				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
 
-	        	$ret['label']='default';
-	        	$ret['lang']=$outputlangs->defaultlang;
-	        	$ret['topic']='';
-	        	$ret['joinfiles']=1;
-	        	$ret['content']=$defaultmessage;
+				$ret['label']='default';
+				$ret['lang']=$outputlangs->defaultlang;
+				$ret['topic']='';
+				$ret['joinfiles']=1;
+				$ret['content']=$defaultmessage;
 				$ret['content_lines']='';
 			}
 
@@ -1104,41 +1130,41 @@ class FormMail extends Form
 
 		$this->substit=$tmparray;
 
-        // Fill substit_lines with each object lines content
-        if (is_array($object->lines))
-        {
-            foreach ($object->lines as $line)
-            {
-                $substit_line = array(
-                    '__PRODUCT_REF__' => isset($line->product_ref) ? $line->product_ref : '',
-                    '__PRODUCT_LABEL__' => isset($line->product_label) ? $line->product_label : '',
-                    '__PRODUCT_DESCRIPTION__' => isset($line->product_desc) ? $line->product_desc : '',
-                    '__LABEL__' => isset($line->label) ? $line->label : '',
-                    '__DESCRIPTION__' => isset($line->desc) ? $line->desc : '',
-                    '__DATE_START_YMD__' => dol_print_date($line->date_start, 'day', 0, $outputlangs),
-                    '__DATE_END_YMD__' => dol_print_date($line->date_end, 'day', 0, $outputlangs),
-                    '__QUANTITY__' => $line->qty,
-                    '__SUBPRICE__' => price($line->subprice),
-                    '__AMOUNT__' => price($line->total_ttc),
-                    '__AMOUNT_EXCL_TAX__' => price($line->total_ht),
-                    //'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically just after
-                );
+		// Fill substit_lines with each object lines content
+		if (is_array($object->lines))
+		{
+			foreach ($object->lines as $line)
+			{
+				$substit_line = array(
+					'__PRODUCT_REF__' => isset($line->product_ref) ? $line->product_ref : '',
+					'__PRODUCT_LABEL__' => isset($line->product_label) ? $line->product_label : '',
+					'__PRODUCT_DESCRIPTION__' => isset($line->product_desc) ? $line->product_desc : '',
+					'__LABEL__' => isset($line->label) ? $line->label : '',
+					'__DESCRIPTION__' => isset($line->desc) ? $line->desc : '',
+					'__DATE_START_YMD__' => dol_print_date($line->date_start, 'day', 0, $outputlangs),
+					'__DATE_END_YMD__' => dol_print_date($line->date_end, 'day', 0, $outputlangs),
+					'__QUANTITY__' => $line->qty,
+					'__SUBPRICE__' => price($line->subprice),
+					'__AMOUNT__' => price($line->total_ttc),
+					'__AMOUNT_EXCL_TAX__' => price($line->total_ht),
+					//'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically just after
+				);
 
-                // Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
-                if (!empty($line->fk_product))
-                {
-                    $extrafields = new ExtraFields($this->db);
-                    $extralabels = $extrafields->fetch_name_optionals_label('product', true);
-                    $product = new Product($this->db);
-                    $product->fetch($line->fk_product, '', '', 1);
-                    $product->fetch_optionals($product->id, $extralabels);
-                    foreach ($extrafields->attribute_label as $key => $label) {
-                        $substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
-                    }
-                }
-                $this->substit_lines[] = $substit_line;
-            }
-        }
+				// Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
+				if (!empty($line->fk_product))
+				{
+					$extrafields = new ExtraFields($this->db);
+					$extralabels = $extrafields->fetch_name_optionals_label('product', true);
+					$product = new Product($this->db);
+					$product->fetch($line->fk_product, '', '', 1);
+					$product->fetch_optionals($product->id, $extralabels);
+					foreach ($extrafields->attribute_label as $key => $label) {
+						$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
+					}
+				}
+				$this->substit_lines[] = $substit_line;
+			}
+		}
 	}
 
 	/**
@@ -1162,11 +1188,11 @@ class FormMail extends Form
 
 			if ($mode == 'formwithlines')
 			{
-			    $tmparray['__LINES__'] = '__LINES__';      // Will be set by the get_form function
+				$tmparray['__LINES__'] = '__LINES__';      // Will be set by the get_form function
 			}
 			if ($mode == 'formforlines')
 			{
-			    $tmparray['__QUANTITY__'] = '__QUANTITY__';   // Will be set by the get_form function
+				$tmparray['__QUANTITY__'] = '__QUANTITY__';   // Will be set by the get_form function
 			}
 		}
 
@@ -1187,7 +1213,7 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__SIGNATURE__'] = 'TagSignature';
+			$tmparray['__USER_SIGNATURE__'] = 'TagSignature';
 			$tmparray['__CHECK_READ__'] = 'TagCheckMail';
 			$tmparray['__UNSUBSCRIBE__'] = 'TagUnsubscribe';
 				//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing

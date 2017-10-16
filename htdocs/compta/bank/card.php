@@ -669,7 +669,6 @@ else
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT)
 		{
-			print '<br>';
 
 			print '<div class="underbanner clearboth"></div>';
 

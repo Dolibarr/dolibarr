@@ -258,6 +258,15 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$tmp=explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
 				$from = trim($tmp[($reg[1] - 1)]);
 			}
+			elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
+				$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE rowid = '.(int) $reg[1];
+				$resql = $db->query($sql);
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$from = $obj->label.' <'.$obj->email.'>';
+				}
+			}
 			else {
 				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 			}

@@ -669,14 +669,14 @@ class Task extends CommonObject
 	 * @param	int		$projectid			Project id
 	 * @param	int		$socid				Third party id
 	 * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 * @param	string	$filteronprojref	Filter on project ref
+	 * @param	string	$filteronproj    	Filter on project ref or label
 	 * @param	string	$filteronprojstatus	Filter on project status
 	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
 	 * @return 	array						Array of tasks
 	 */
-	function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
+	function getTasksArray($usert=null, $userp=null, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
 	{
 		global $conf;
 
@@ -690,7 +690,7 @@ class Task extends CommonObject
 		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
 		$sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
-		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name";
+		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		if ($mode == 0)
@@ -751,7 +751,7 @@ class Task extends CommonObject
 		}
 		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 		if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
-		if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$this->db->escape($filteronprojref)."%'";
+		if ($filteronproj) $sql.= " AND (p.ref LIKE '%".$this->db->escape($filteronproj)."%' OR p.title LIKE '%".$this->db->escape($filteronproj)."%')";
 		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
 		if ($morewherefilter) $sql.=$morewherefilter;
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
@@ -807,8 +807,10 @@ class Task extends CommonObject
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
 					$tasks[$i]->rang	   		= $obj->rang;
 
+					$tasks[$i]->socid           = $obj->thirdparty_id;	// For backward compatibility
 					$tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
+					$tasks[$i]->thirdparty_email= $obj->thirdparty_email;
 				}
 
 				$i++;
@@ -1695,8 +1697,8 @@ class Task extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
-	
-	
+
+
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1706,12 +1708,12 @@ class Task extends CommonObject
 	function load_board($user)
 	{
 		global $conf, $langs;
-		
+
 		$mine=0; $socid=$user->societe_id;
-		
+
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
-		
+
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 		$sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
@@ -1734,29 +1736,29 @@ class Task extends CommonObject
 		if ($resql)
 		{
 			$task_static = new Task($this->db);
-			
+
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->projet->task->warning_delay/60/60/24;
 			$response->label = $langs->trans("OpenedTasks");
 			if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
 			$response->img = img_object('',"task");
-			
+
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
-				
+
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
 				$task_static->fk_statut = $obj->status;
 				$task_static->date_end = $this->db->jdate($obj->datee);
-				
+
 				if ($task_static->hasDelay()) {
 					$response->nbtodolate++;
 				}
 			}
-			
+
 			return $response;
 		}
 		else
@@ -1765,8 +1767,8 @@ class Task extends CommonObject
 			return -1;
 		}
 	}
-	
-	
+
+
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
@@ -1775,12 +1777,12 @@ class Task extends CommonObject
 	function load_state_board()
 	{
 		global $user;
-		
+
 		$mine=0; $socid=$user->societe_id;
-		
+
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
-		
+
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -1794,11 +1796,11 @@ class Task extends CommonObject
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 		if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			
+
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj=$this->db->fetch_object($resql))
 			{

@@ -147,6 +147,7 @@ class MyObject extends CommonObject
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
 	}
 
 	/**
@@ -227,11 +228,9 @@ class MyObject extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines($id, $ref = null)
+	public function fetchLines()
 	{
 		$this->lines=array();
 
@@ -261,7 +260,7 @@ class MyObject extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $trigger);
+		return $this->deleteCommon($user, $notrigger);
 	}
 
 	/**

@@ -86,7 +86,7 @@ if (empty($newmask))	// This should no happen
 
 if ($dirins && $action == 'initmodule' && $modulename)
 {
-	if (preg_match('/\s/', $modulename))
+	if (preg_match('/[^a-z0-9_]/i', $modulename))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -174,7 +174,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
-	if (preg_match('/\s/', $objectname))
+	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -182,6 +182,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
+
+	// The dir was not created by init
+	dol_mkdir($destdir.'/class');
+	dol_mkdir($destdir.'/img');
+	dol_mkdir($destdir.'/lib');
+	dol_mkdir($destdir.'/scripts');
+	dol_mkdir($destdir.'/sql');
+	dol_mkdir($destdir.'/test/phpunit');
 
 	// Scan dir class to find if an object with same name already exists.
 	if (! $error)
@@ -443,7 +451,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
 if ($dirins && $action == 'confirm_delete')
 {
-	if (preg_match('/\s/', $module))
+	if (preg_match('/[^a-z0-9_]/i', $module))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -476,7 +484,7 @@ if ($dirins && $action == 'confirm_delete')
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 {
-	if (preg_match('/[^a-z0-9]/i', $objectname))
+	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');

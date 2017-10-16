@@ -47,10 +47,14 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action=GETPOST('action', 'alpha');
-$id=GETPOST('account');
-$ref=GETPOST('ref');
-$dvid=GETPOST('dvid');
-$numref=GETPOST('num');
+$id=GETPOST('account','int');
+$ref=GETPOST('ref','alpha');
+$dvid=GETPOST('dvid','alpha');
+$numref=GETPOST('num','alpha');
+$ve=GETPOST("ve",'alpha');
+$brref=GETPOST('brref','alpha');
+$oldbankreceipt=GETPOST('oldbankreceipt','alpha');
+$newbankreceipt=GETPOST('newbankreceipt','alpha');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
@@ -95,6 +99,59 @@ if ($id > 0 || ! empty($ref))
 // Initialize technical object to manage context to save list fields
 $contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
+
+// Define number of receipt to show (current, previous or next one ?)
+$found=false;
+if ($_GET["rel"] == 'prev')
+{
+	// Recherche valeur pour num = numero releve precedent
+	$sql = "SELECT DISTINCT(b.num_releve) as num";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " WHERE b.num_releve < '".$db->escape($numref)."'";
+	$sql.= " AND b.fk_account = ".$object->id;
+	$sql.= " ORDER BY b.num_releve DESC";
+
+	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$numrows = $db->num_rows($resql);
+		if ($numrows > 0)
+		{
+			$obj = $db->fetch_object($resql);
+			$numref = $obj->num;
+			$found=true;
+		}
+	}
+}
+elseif ($_GET["rel"] == 'next')
+{
+	// Recherche valeur pour num = numero releve precedent
+	$sql = "SELECT DISTINCT(b.num_releve) as num";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " WHERE b.num_releve > '".$db->escape($numref)."'";
+	$sql.= " AND b.fk_account = ".$object->id;
+	$sql.= " ORDER BY b.num_releve ASC";
+
+	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$numrows = $db->num_rows($resql);
+		if ($numrows > 0)
+		{
+			$obj = $db->fetch_object($resql);
+			$numref = $obj->num;
+			$found=true;
+		}
+	}
+}
+else {
+	// On veut le releve num
+	$found=true;
+}
+
+
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 $sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql.= " b.fk_bordereau,";
@@ -104,7 +161,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= ", ".MAIN_DB_PREFIX."bank as b";
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
 $sql.= " WHERE b.num_releve='".$db->escape($numref)."'";
-if (!isset($numref))	$sql.= " OR b.num_releve is null";
+if (empty($numref))	$sql.= " OR b.num_releve is null";
 $sql.= " AND b.fk_account = ".$object->id;
 $sql.= " AND b.fk_account = ba.rowid";
 $sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
@@ -116,6 +173,16 @@ $sqlrequestforbankline = $sql;
 /*
  * Actions
  */
+
+if ($action == 'confirm_editbankreceipt' && ! empty($oldbankreceipt) && ! empty($newbankreceipt))
+{
+	// TODO Add a test to check newbankreceipt does not exists yet
+	$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX.'bank SET num_releve = "'.$db->escape($newbankreceipt).'" WHERE num_releve = "'.$db->escape($oldbankreceipt).'"';
+	$result = $db->query($sqlupdate);
+	if ($result < 0) dol_print_error($db);
+
+	$action='view';
+}
 
 // ZIP creation
 if ($action=="dl" && $numref > 0)
@@ -347,16 +414,22 @@ if (empty($numref))
 		}
 
 		print '</div>';
-		print '<br><br>';
 
 
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows);
+
+		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="confirm_editbankreceipt">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="account" value="'.$object->id.'">';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("AccountStatement").'</td>';
 		print '<td align="right">'.$langs->trans("InitialBankBalance").'</td>';
 		print '<td align="right">'.$langs->trans("EndBankBalance").'</td>';
+		print '<td></td>';
 		print '</tr>';
 
 		$balancestart=array();
@@ -372,7 +445,20 @@ if (empty($numref))
 			}
 			else
 			{
-				print '<tr class="oddeven"><td><a href="releve.php?num='.$objp->numr.'&amp;account='.$object->id.'">'.$objp->numr.'</a></td>';
+				print '<tr class="oddeven">';
+				print '<td>';
+				if ($action != 'editbankreceipt' || $objp->numr != $brref)
+				{
+					print '<a href="releve.php?num='.$objp->numr.'&account='.$object->id.'">'.$objp->numr.'</a>';
+				}
+				else
+				{
+					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
+					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
+					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
+					print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				}
+				print '</td>';
 
 				// Calculate start amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -402,11 +488,18 @@ if (empty($numref))
 				}
 				print '<td align="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
 
+				print '<td align="center">';
+				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
+				}
+				print '</td>';
+
 				print '</tr>'."\n";
 			}
 			$i++;
 		}
 		print "</table>\n";
+		print '</form>';
 
 		print "\n</div>\n";
 	}
@@ -420,58 +513,6 @@ else
 	/**
 	 *   Show list of bank statements
 	 */
-	$ve=$_GET["ve"];
-
-	// Define number of receipt to show (current, previous or next one ?)
-	$found=false;
-	if ($_GET["rel"] == 'prev')
-	{
-		// Recherche valeur pour num = numero releve precedent
-		$sql = "SELECT DISTINCT(b.num_releve) as num";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve < '".$db->escape($numref)."'";
-		$sql.= " AND b.fk_account = ".$object->id;
-		$sql.= " ORDER BY b.num_releve DESC";
-
-		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$numrows = $db->num_rows($resql);
-			if ($numrows > 0)
-			{
-				$obj = $db->fetch_object($resql);
-				$numref = $obj->num;
-				$found=true;
-			}
-		}
-	}
-	elseif ($_GET["rel"] == 'next')
-	{
-		// Recherche valeur pour num = numero releve precedent
-		$sql = "SELECT DISTINCT(b.num_releve) as num";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve > '".$db->escape($numref)."'";
-		$sql.= " AND b.fk_account = ".$object->id;
-		$sql.= " ORDER BY b.num_releve ASC";
-
-		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$numrows = $db->num_rows($resql);
-			if ($numrows > 0)
-			{
-				$obj = $db->fetch_object($resql);
-				$numref = $obj->num;
-				$found=true;
-			}
-		}
-	}
-	else {
-		// On veut le releve num
-		$found=true;
-	}
 
     $mesprevnext='';
 	$mesprevnext.='<div class="pagination"><ul>';
@@ -713,6 +754,7 @@ else
 					dol_print_error($db);
 				}
 			}
+
 			print "</td>";
 
 			if ($objp->amount < 0)

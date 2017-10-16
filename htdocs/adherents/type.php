@@ -107,7 +107,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -160,7 +160,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);

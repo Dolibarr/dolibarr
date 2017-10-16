@@ -182,7 +182,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		else $classname = 'class="tmenu"';
 		$idsel='accountancy';
 
-		$menu->add('/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("Accountancy"), 0, $showmode, $atarget, "accountancy", '', 50, $id, $idsel, $classname);
+		$menu->add('/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("Accountancy"), 0, $showmode, $atarget, "accountancy", '', 52, $id, $idsel, $classname);
 	}
 
 

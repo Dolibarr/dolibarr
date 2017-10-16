@@ -1447,9 +1447,13 @@ else
 			print '</td>';
 			print "</tr>\n";
 
+			//$childids = $user->getAllChildIds(1);
+
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 			{
+            	// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
+            	// However, he can see the valuation of timesheet of its subordinates even without these permissions.
 				$langs->load("salaries");
 
 				// THM

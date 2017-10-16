@@ -232,7 +232,7 @@ if ($result)
 		if (! empty($conf->banque->enabled))
 		{
 			print '<td>';
-			if ($obj->fk_bank > 0)
+			if ($obj->bid > 0)
 			{
 				$accountstatic->id=$obj->bid;
 				$accountstatic->ref=$obj->bref;

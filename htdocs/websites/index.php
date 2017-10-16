@@ -24,48 +24,6 @@
 define('NOSCANPOSTFORINJECTION',1);
 define('NOSTYLECHECK',1);
 
-
-/**
- *	Show HTML header HTML + BODY + Top menu + left menu + DIV
- *
- * @param 	string 	$head				Optionnal head lines
- * @param 	string 	$title				HTML title
- * @param	string	$help_url			Url links to help page
- * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- *                                  	For other external page: http://server/url
- * @param	string	$target				Target to use on links
- * @param 	int    	$disablejs			More content into html header
- * @param 	int    	$disablehead		More content into html header
- * @param 	array  	$arrayofjs			Array of complementary js files
- * @param 	array  	$arrayofcss			Array of complementary css files
- * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (set this only if autodetect fails)
- * @return	void
- */
-function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
-{
-	global $conf;
-
-	// html header
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
-	print '<body id="mainbody">';
-
-	// top menu and left menu area
-	if (empty($conf->dol_hide_topmenu))
-	{
-		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
-	}
-	if (empty($conf->dol_hide_leftmenu))
-	{
-		left_menu('', $help_url, '', '', 1, $title, 1);
-	}
-
-	// main area
-	//main_area($title);
-	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">'."\n";
-}
-
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -222,6 +180,8 @@ if ($action == 'addsite')
 // Add page
 if ($action == 'add')
 {
+	dol_mkdir($pathofwebsite);
+
 	$db->begin();
 
 	$objectpage->fk_website = $object->id;
@@ -282,20 +242,25 @@ if ($action == 'add')
 			}
 
 			$objectpage->content = $tmp['content'];
-			$objectpage->content = preg_replace('/^.*<body[^>]*>/ims', '', $objectpage->content);
-			$objectpage->content = preg_replace('/<\/body[^>]*>.*$/ims', '', $objectpage->content);
+			$objectpage->content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $objectpage->content);
+			$objectpage->content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $objectpage->content);
 
+			$absoluteurlinaction=$urltograbdirwithoutslash;
+			// TODO Replace 'action="$urltograbdirwithoutslash' into action="/"
+			// TODO Replace 'action="$urltograbdirwithoutslash..."' into   action="..."
+			// TODO Replace 'a href="$urltograbdirwithoutslash' into a href="/"
+			// TODO Replace 'a href="$urltograbdirwithoutslash..."' into a href="..."
 
 			// Now loop to fetch all css files. Include them inline into header of page
 			$objectpage->htmlheader = $tmp['content'];
-			$objectpage->htmlheader = preg_replace('/^.*<head[^>]*>/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<\/head[^>]*>.*$/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<base[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="robot[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="keywords[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="title[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="description[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="generator[^>]*>\n*/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/^.*<head(\s[^>]*)*>/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<\/head(\s[^>]*)*>.*$/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<base(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<meta name="robot(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<meta name="keywords(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<meta name="title(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<meta name="description(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+			$objectpage->htmlheader = preg_replace('/<meta name="generator(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
 			//$objectpage->htmlheader = preg_replace('/<meta name="verify-v1[^>]*>\n*/ims', '', $objectpage->htmlheader);
 			//$objectpage->htmlheader = preg_replace('/<meta name="msvalidate.01[^>]*>\n*/ims', '', $objectpage->htmlheader);
 			$objectpage->htmlheader = preg_replace('/<title>[^<]*<\/title>\n*/ims', '', $objectpage->htmlheader);
@@ -304,12 +269,14 @@ if ($action == 'add')
 			// Now loop to fetch JS
 			$tmp = $objectpage->htmlheader;
 
-			preg_match_all('/<script([^\.]+)src="([^>"]+)"([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
+			preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
 			foreach ($regs[0] as $key => $val)
 			{
-				$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+				dol_syslog("We will grab the resource ".$regs[2][$key]);
 
 				$linkwithoutdomain = $regs[2][$key];
+				$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+
 				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 				if (preg_match('/^http/', $regs[2][$key]))
 				{
@@ -317,6 +284,15 @@ if ($action == 'add')
 					$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
 					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 				}
+
+				//print $domaintograb.' - '.$domaintograbbis.' - '.$urltograbdirwithoutslash.' - ';
+				//print $linkwithoutdomain.' - '.$urltograbbis."<br>\n";
+
+				// Test if this is an external URL of grabbed web site. If yes, we do not load resource
+				$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
+				$domaintograbbis = getDomainFromURL($urltograbbis);
+				if ($domaintograb != $domaintograbbis) continue;
+
 				/*
     			$tmpgeturl = getURLContent($urltograbbis);
     			if ($tmpgeturl['curl_error_no'])
@@ -335,9 +311,9 @@ if ($action == 'add')
     				if (! empty($conf->global->MAIN_UMASK))
     					@chmod($file, octdec($conf->global->MAIN_UMASK));
     			}
+				*/
 
-    			$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-    			*/
+    			//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 				$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
 			}
 			$objectpage->htmlheader = trim($tmp);
@@ -346,11 +322,14 @@ if ($action == 'add')
 			// Now loop to fetch CSS
 			$pagecsscontent = "\n".'<style>'."\n";
 
-			preg_match_all('/<link([^\.]+)href="([^>"]+\.css)"([^>]*)>/i', $objectpage->htmlheader, $regs);
+			preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
 			foreach ($regs[0] as $key => $val)
 			{
-				$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+				dol_syslog("We will grab the resource ".$regs[2][$key]);
+
 				$linkwithoutdomain = $regs[2][$key];
+				$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+
 				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 				if (preg_match('/^http/', $regs[2][$key]))
 				{
@@ -358,6 +337,14 @@ if ($action == 'add')
 					$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
 					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 				}
+
+				//print $domaintograb.' - '.$domaintograbbis.' - '.$urltograbdirwithoutslash.' - ';
+				//print $linkwithoutdomain.' - '.$urltograbbis."<br>\n";
+
+				// Test if this is an external URL of grabbed web site. If yes, we do not load resource
+				$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
+				$domaintograbbis = getDomainFromURL($urltograbbis);
+				if ($domaintograb != $domaintograbbis) continue;
 
 				$tmpgeturl = getURLContent($urltograbbis);
 				if ($tmpgeturl['curl_error_no'])
@@ -368,13 +355,13 @@ if ($action == 'add')
 				}
 				else
 				{
-				 //dol_mkdir(dirname($filetosave));
+					 //dol_mkdir(dirname($filetosave));
 
-				 //$fp = fopen($filetosave, "w");
-				 //fputs($fp, $tmpgeturl['content']);
-				 //fclose($fp);
-				 //if (! empty($conf->global->MAIN_UMASK))
-				 //	@chmod($file, octdec($conf->global->MAIN_UMASK));
+					 //$fp = fopen($filetosave, "w");
+					 //fputs($fp, $tmpgeturl['content']);
+					 //fclose($fp);
+					 //if (! empty($conf->global->MAIN_UMASK))
+					 //	@chmod($file, octdec($conf->global->MAIN_UMASK));
 				 }
 
 				 //	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
@@ -489,6 +476,16 @@ if ($action == 'add')
 		$pageid = $objectpage->id;
 
 		// To generate the CSS, robot and htmlheader file.
+
+		// Check symlink to medias and restore it if ko
+		$pathtomedias=DOL_DATA_ROOT.'/medias';
+		$pathtomediasinwebsite=$pathofwebsite.'/medias';
+		if (! is_link(dol_osencode($pathtomediasinwebsite)))
+		{
+			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+			dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+		}
 
 		if (! dol_is_file($filehtmlheader))
 		{
@@ -1085,13 +1082,15 @@ $formwebsite = new FormWebsite($db);
 
 $help_url='';
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0,
-	array(
-		'/includes/ace/ace.js',
-		'/includes/ace/ext-statusbar.js',
-		'/includes/ace/ext-language_tools.js',
-		//'/includes/ace/ext-chromevox.js'
-	), array());
+$arrayofjs = array(
+	'/includes/ace/ace.js',
+	'/includes/ace/ext-statusbar.js',
+	'/includes/ace/ext-language_tools.js',
+	//'/includes/ace/ext-chromevox.js'
+);
+$arrayofcss = array();
+
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

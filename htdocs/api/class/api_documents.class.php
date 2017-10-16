@@ -129,6 +129,77 @@ class Documents extends DolibarrApi
 		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
 	}
 
+	/**
+	 * Return the list of documents of a dedicated element (from its ID or Ref)
+	 *
+	 * @param   string 	$modulepart		Name of module or area concerned ('facture', 'project', 'member', ...)
+	 * @param	int		$id				ID of element
+	 * @param	string	$ref			Ref of element
+	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
+	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @return	array					Array of documents with path
+	 *
+	 * @throws RestException
+	 *
+	 * @url GET list
+	 */
+	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
+	{
+		global $conf;
+
+		if (empty($modulepart)) {
+			throw new RestException(400, 'bad value for parameter modulepart');
+		}
+
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'bad value for parameter id or ref');
+		}
+
+		$id = (empty($id)?0:$id);
+
+		if ($modulepart == 'societe' || $modulepart == 'thirdparty')
+		{
+			if (!DolibarrApiAccess::$user->rights->societe->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Societe($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Thirdparty not found');
+			}
+
+			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
+		}
+		else if ($modulepart == 'adherent' || $modulepart == 'member')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Adherent($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Member not found');
+			}
+
+			$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
+		}
+		else
+		{
+			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
+		}
+
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		if (empty($filearray)) {
+			throw new RestException(404, 'Modulepart '.$modulepart.' with Id '.$object->id.(! empty($object->Ref)?' and Ref '.$object->ref:'').' does not have any documents.');
+		}
+
+		return $filearray;
+	}
+
 
 	/**
 	 * Return a document.
@@ -185,9 +256,11 @@ class Documents extends DolibarrApi
 
 		// Define $uploadir
 		$object = null;
-		$entity = $user->entity;
+		$entity = DolibarrApiAccess::$user->entity;
 		if ($ref)
 		{
+			$tmpreldir='';
+
 			if ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';

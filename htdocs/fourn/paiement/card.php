@@ -367,11 +367,10 @@ if ($result > 0)
 	}
 	print '</div>';
 
+	/*
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	/*
-     * Documents generes
-     */
+	// Documents generes
 	$ref=dol_sanitizeFileName($object->ref);
 	$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 	$urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
@@ -393,7 +392,7 @@ if ($result > 0)
 
 	print '</div></div></div>';
 	//print '</td></tr></table>';
-
+	*/
 }
 else
 {

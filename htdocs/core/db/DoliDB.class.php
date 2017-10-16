@@ -59,7 +59,7 @@ abstract class DoliDB implements Database
 	public $lastqueryerror;
 	/** @var string Last error message */
 	public $lasterror;
-	/** @var int Last error number */
+	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
 	/** @var bool Status */
@@ -238,16 +238,16 @@ abstract class DoliDB implements Database
 				else $return.=', ';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				
+
 				$tmpsortorder = trim($orders[$i]);
-				
+
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {
 					$return .= ' ASC';
 				} elseif (strtoupper($tmpsortorder) === 'DESC') {
 					$return .= ' DESC';
 				}
-				
+
 				$i++;
 			}
 			return $return;

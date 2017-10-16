@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2017      Laurent Destailleur  <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -167,7 +167,7 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="update">';
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
-
+/*
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
@@ -194,7 +194,7 @@ print "</table>\n";
 
 
 print '<br>';
-
+*/
 
 // Others params
 
