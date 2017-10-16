@@ -637,6 +637,10 @@ if (empty($reshook))
 
 			foreach ($amount_ht as $tva_tx => $xxx)
 			{
+        if($amount_ht[$tva_tx] == 0){ // no need to create discount if sum of amount in this vat is null
+          continue;
+        }
+
 				$discount->amount_ht = -1 * ($amount_ht[$tva_tx]);
 				$discount->amount_tva = -1 * ($amount_tva[$tva_tx]);
 				$discount->amount_ttc = -1 * ($amount_ttc[$tva_tx]);
