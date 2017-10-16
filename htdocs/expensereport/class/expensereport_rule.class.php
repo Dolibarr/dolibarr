@@ -96,15 +96,15 @@ class ExpenseReportRule extends CoreObject
 
 
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
+	/**
+	 * Attribute object linked with database
+	 * @var array
+	 */
 	protected $fields=array(
 		'rowid'=>array('type'=>'integer','index'=>true)
 		,'dates'=>array('type'=>'date')
 		,'datee'=>array('type'=>'date')
-	    ,'amount'=>array('type'=>'double')
+		,'amount'=>array('type'=>'double')
 		,'restrictive'=>array('type'=>'integer')
 		,'fk_user'=>array('type'=>'integer')
 		,'fk_usergroup'=>array('type'=>'integer')
@@ -114,16 +114,16 @@ class ExpenseReportRule extends CoreObject
 		,'entity'=>array('type'=>'integer')
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
 	public function __construct(DoliDB &$db)
 	{
 		global $conf;
 
-        parent::__construct($db);
+		parent::__construct($db);
 		parent::init();
 
 		$this->errors = array();
