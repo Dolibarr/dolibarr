@@ -4713,7 +4713,7 @@ abstract class CommonObject
 			}
 			$out .= "\n";
 			// Add code to manage list depending on others
-			if (! empty($conf->use_javascript_ajax))
+			if (! empty($conf->use_javascript_ajax)) {
 				$out .= '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
@@ -4744,6 +4744,7 @@ abstract class CommonObject
 				    });
 				</script>'."\n";
 				$out .= '<!-- /showOptionalsInput --> '."\n";
+			}
 		}
 		return $out;
 	}
