@@ -256,9 +256,11 @@ class Documents extends DolibarrApi
 
 		// Define $uploadir
 		$object = null;
-		$entity = $user->entity;
+		$entity = DolibarrApiAccess::$user->entity;
 		if ($ref)
 		{
+			$tmpreldir='';
+
 			if ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';
