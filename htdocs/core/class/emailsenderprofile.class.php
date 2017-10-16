@@ -267,22 +267,22 @@ class EmailSenderProfile extends CommonObject
 	function getNomUrl($withpicto=0)
 	{
 		global $db, $conf, $langs;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        $result = '';
-        $companylink = '';
+		$result = '';
+		$companylink = '';
 
-        $url='';
-        //$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
+		$url='';
+		//$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
 
 		$linkstart = '';
 		$linkend='';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
-            if ($withpicto != 2) $result.=' ';
+		if ($withpicto)
+		{
+			$result.=($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
+			if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $linkstart . $this->label . $linkend;
 		return $result;

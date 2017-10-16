@@ -313,7 +313,7 @@ if ($action == 'add')
     			}
 				*/
 
-    			//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+				//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 				$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
 			}
 			$objectpage->htmlheader = trim($tmp);

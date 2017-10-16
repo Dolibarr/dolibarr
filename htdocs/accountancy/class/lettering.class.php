@@ -33,12 +33,12 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class lettering extends BookKeeping
 {
-    /**
-     * lettrageTiers
-     *
-     * @param   int   $socid	Thirdparty id
-     * @return  int				<0 if KO, >0 if OK
-     */
+	/**
+	 * lettrageTiers
+	 *
+	 * @param   int   $socid	Thirdparty id
+	 * @return  int				<0 if KO, >0 if OK
+	 */
 	public function lettrageTiers($socid) {
 
 		$db = $this->db;
@@ -121,7 +121,7 @@ class lettering extends BookKeeping
 
 		/**
 			Prise en charge des lettering complexe avec prelevment , virement
-		*/
+		 */
 		$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering, bu.url_id , bu.type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  " . MAIN_DB_PREFIX . "bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
