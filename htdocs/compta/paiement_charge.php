@@ -202,14 +202,12 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("SocialContribution")."</td></tr>";
-
-	print '<tr><td>'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_libelle."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->lib."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -221,12 +219,8 @@ if ($action == 'create')
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-
-	print '<tr class="liste_titre">';
-	print "<td colspan=\"2\">".$langs->trans("Payment").'</td>';
-	print '</tr>';
+	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
