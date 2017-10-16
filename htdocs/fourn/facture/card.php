@@ -1432,6 +1432,10 @@ if ($action == 'create')
             $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
             $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
             $datedue=($datetmp==''?-1:$datetmp);
+            
+            // Replicate extrafields
+            $objectsrc->fetch_optionals($originid);
+            $object->array_options = $objectsrc->array_options;
         }
     }
     else
