@@ -1114,7 +1114,7 @@ if ($resql)
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
-    	                print $bankstatic->getNomUrl(1);
+    	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ' '.$langs->trans("toward").' ';
     	                $bankstatic->id=$objp->bankid;
     	                $bankstatic->label=$objp->bankref;
@@ -1131,7 +1131,7 @@ if ($resql)
     	                $banklinestatic->fetch($links[$key]['url_id']);
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
-    	                print $bankstatic->getNomUrl(1);
+    	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ')';
     	            }
     	            //var_dump($links);
