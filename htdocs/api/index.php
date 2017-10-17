@@ -37,6 +37,10 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');       // Do not lo
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 
+// Force entity if a value provided int HTTP header. Otherwise, will use the entity of user of token used.
+if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
+
+
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
 if (! $res) die("Include of main fails");
@@ -237,6 +241,7 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
     else
     {
         $classfile = str_replace('_', '', $module);
+        if ($module == 'contracts')        $moduledirforclass = 'contrat';
         if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
         if ($module == 'supplierorders')   $classfile = 'supplier_orders';
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');

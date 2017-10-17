@@ -29,6 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
@@ -44,6 +49,7 @@ $sens=GETPOST("sens","int");
 $amount=GETPOST("amount");
 $paymenttype=GETPOST("paymenttype");
 $accountancy_code=GETPOST("accountancy_code","int");
+$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -67,6 +73,13 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	// Link to a project
+	if ($action == 'classin' && $user->rights->banque->modifier)
+	{
+		$object->fetch($id);
+		$object->setProject(GETPOST('projectid'));
+	}
+
 	if ($cancel)
 	{
 		if ($action != 'addlink')
@@ -98,6 +111,7 @@ if (empty($reshook))
 		$object->fk_user_author=$user->id;
 		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
 		$object->sens=GETPOST('sens');
+		$object->fk_project= GETPOST('fk_project');
 
 		if (empty($datep) || empty($datev))
 		{
@@ -205,6 +219,7 @@ llxHeader("",$langs->trans("VariousPayment"));
 
 $form = new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id)
 {
@@ -306,6 +321,21 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$formproject=new FormProjets($db);
+
+		// Associated project
+		$langs->load("projects");
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+		$numproject=$formproject->select_projects(-1, $projectid,'fk_project',0,0,1,1);
+
+		print '</td></tr>';
+	}
+
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -333,19 +363,52 @@ if ($action == 'create')
 
 if ($id)
 {
-
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, 'payment');
 
-	print '<table class="border" width="100%">';
-
+	$morehtmlref='<div class="refidno">';
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$langs->load("projects");
+		$morehtmlref.=$langs->trans('Project') . ' ';
+		if ($user->rights->tax->charges->creer)
+		{
+			if ($action != 'classify')
+				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+		} else {
+			if (! empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				$morehtmlref.=$proj->ref;
+				$morehtmlref.='</a>';
+			} else {
+				$morehtmlref.='';
+			}
+		}
+	}
+	$morehtmlref.='</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	print "<tr>";
-	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-	print '</td></tr>';
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border" width="100%">';
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -403,6 +466,11 @@ if ($id)
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
+
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
 

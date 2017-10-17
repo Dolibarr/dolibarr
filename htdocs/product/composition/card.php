@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -142,7 +142,7 @@ if ($action == 'search')
 {
 	$current_lang = $langs->getDefaultLang();
 
-    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
+    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
     $sql.= ' p.fk_product_type, p.tms as datem';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ', pl.label as labelm, pl.description as descriptionm';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -203,12 +203,12 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($user->rights->produit->lire || $user->rights->service->lire)
 	{
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
         if ($object->type!=Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
         {
@@ -220,7 +220,7 @@ if ($id > 0 || ! empty($ref))
     		// Nature
     		if ($object->type!=Product::TYPE_SERVICE)
     		{
-    			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+    			print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td>';
     			print $object->getLibFinished();
     			print '</td></tr>';
     		}
@@ -228,7 +228,7 @@ if ($id > 0 || ! empty($ref))
     		if (empty($conf->global->PRODUIT_MULTIPRICES))
     		{
     		    // Price
-    			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+    			print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
     			if ($object->price_base_type == 'TTC')
     			{
     				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
@@ -552,7 +552,8 @@ if ($id > 0 || ! empty($ref))
 						// check if a product is not already a parent product of this one
 						$prod_arbo=new Product($db);
 						$prod_arbo->id=$objp->rowid;
-						if ($prod_arbo->type==Product::TYPE_ASSEMBLYKIT || $prod_arbo->type== Product::TYPE_STOCKKIT)
+						// This type is not supported (not required to have virtual products working).
+						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT)
 						{
 							$is_pere=0;
 							$prod_arbo->get_sousproduits_arbo();
@@ -575,7 +576,8 @@ if ($id > 0 || ! empty($ref))
 							}
 						}
 
-						print "\n<tr ".$bc[$var].">";
+						print "\n".'<tr class="oddeven">';
+
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
 						$productstatic->label=$objp->label;

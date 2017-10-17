@@ -48,6 +48,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='244,244,244';    // line pair
+$colorbacklinebreak='214,218,220';
 $colorbackbody='248,248,248';
 $colortexttitlenotab='90,90,90';
 $colortexttitle='20,20,20';
@@ -107,8 +108,10 @@ $borderwith=2;
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
+if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
 
@@ -136,6 +139,7 @@ $colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
 $colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
 $colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
+$colorbacklinebreak  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEBREAK)    ?$colorbacklinebreak:$conf->global->THEME_ELDY_LINEBREAK)    :(empty($user->conf->THEME_ELDY_LINEBREAK)?$colorbacklinebreak:$user->conf->THEME_ELDY_LINEBREAK);
 $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 $colortexttitlenotab =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$conf->global->THEME_ELDY_TEXTTITLENOTAB)             :(empty($user->conf->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$user->conf->THEME_ELDY_TEXTTITLENOTAB);
 $colortexttitle      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLE)    ?$colortext:$conf->global->THEME_ELDY_TEXTTITLE)             :(empty($user->conf->THEME_ELDY_TEXTTITLE)?$colortexttitle:$user->conf->THEME_ELDY_TEXTTITLE);
@@ -284,7 +288,7 @@ textarea.cke_source:focus
 
 .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
-.liste_titre input[name=month_lim] {
+.liste_titre input[name=month_lim], .liste_titre input[name=month_create] {
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -340,10 +344,63 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
+input.buttonpayment {
+	min-width: 280px;
+	margin-bottom: 15px;
+	background-image: none;
+	line-height: 24px;
+	padding: 8px;
+	background: none;
+	border: 2px solid #666666;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 26px;
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentcb {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
+	background-size: 24px;
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentcheque {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+}
+input.buttonpaymentpaypal {
+	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentpaybox {
+	background-image: url(<?php echo dol_buildpath($path.'/paybox/img/object_paybox.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+input.buttonpaymentstripe {
+	background-image: url(<?php echo dol_buildpath($path.'/stripe/img/object_stripe.png',1) ?>);
+	background-repeat: no-repeat;
+	background-position: 8px 7px;
+}
+/* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.1);
     margin-right: 1px !important;
+}
+td.onholidaymorning, td.onholidayafternoon {
+	background-color: #fdf6f2;
+}
+td.onholidayallday {
+	background-color: #f4eede;
 }
 
 select.flat, form.flat select {
@@ -542,8 +599,14 @@ textarea.centpercent {
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
+.paddingleft2 {
+	padding-<?php print $left; ?>: 2px;
+}
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
+}
+.paddingright2 {
+	padding-<?php print $right; ?>: 2px;
 }
 .cursorpointer {
 	cursor: pointer;
@@ -641,6 +704,12 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax200 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax300 {
     max-width: 300px;
     overflow: hidden;
@@ -671,7 +740,9 @@ div.myavailability {
 	margin-top: 6px;
 	margin-bottom: 12px;
 }
-
+#builddoc_form ~ .showlinkedobjectblock {
+    margin-top: 20px;
+}
 
 /* For the long description of module */
 .moduledesclong p img,.moduledesclong p a img {
@@ -710,7 +781,7 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-    display: inline-flex;
+    <?php if (in_array($conf->browser->browsername, array('chrome','firefox'))) echo 'display: inline-flex;' ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -720,10 +791,11 @@ div.fiche>form>div.div-table-responsive {
 .thumbstat150 {
 	flex: 1 1 150px;
 }
-.thumbstat, thumbstat150 {
+.thumbstat, .thumbstat150 {
     /* flex-grow: 1; */
     /* flex-shrink: 1; */
     /* flex-basis: 140px; */
+	display: inline;
     width: 100%;
     justify-content: flex-start;
     align-self: flex-start;
@@ -805,9 +877,21 @@ div.fiche>form>div.div-table-responsive {
     .minwidth500imp { min-width: 100px !important; }
 }
 
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	body {
+		font-size: <?php print $fontsize+3; ?>px;
+	}
+}
+
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
+	body {
+		font-size: <?php print $fontsize+3; ?>px;
+	}
+
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
 
     .tdoverflowonsmartphone {
@@ -1048,6 +1132,9 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
+body.onlinepaymentbody div.fiche {	/* For online payment page */
+	margin: 20px !important;
+}
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -1171,6 +1258,10 @@ div.attacharea {
 	padding-top: 18px;
 	padding-bottom: 10px;
 }
+div.attachareaformuserfileecm {
+	padding-top: 0;
+	padding-bottom: 0;
+}
 div.arearef {
 	padding-top: 2px;
 	padding-bottom: 5px;
@@ -1185,6 +1276,9 @@ div.heightref {
 }
 div.divphotoref {
 	padding-right: 20px;
+}
+div.paginationref {
+	padding-bottom: 10px;
 }
 div.statusref {
 	float: right;
@@ -1430,6 +1524,10 @@ div.mainmenu {
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
 	background-position-x: center;
+}
+
+div.mainmenu.billing {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>);
 }
 
 div.mainmenu.accountancy {
@@ -1950,25 +2048,8 @@ td.ecmroot {
 }
 
 .largebutton {
-    /*background-image: -o-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: -ms-linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-    background-image: linear-gradient(bottom, rgba(200,200,200,0.1) 0%, rgba(255,255,255,0.3) 120%) !important;
-
-    background: #FFF;
-    background-repeat: repeat-x !important;
-    */
-	border-top: 1px solid #CCC !important;
-
-    /*-moz-border-radius: 2px 2px 2px 2px !important;
-	-webkit-border-radius: 2px 2px 2px 2px !important;
-	border-radius: 2px 2px 2px 2px !important;
-    -moz-box-shadow: 2px 2px 4px #f4f4f4;
-    -webkit-box-shadow: 2px 2px 4px #f4f4f4;
-    box-shadow: 2px 2px 4px #f4f4f4;*/
-
-    padding: 10px 4px 14px 4px !important;
+	/* border-top: 1px solid #CCC !important; */
+    padding: 0px 4px 14px 4px !important;
     min-height: 32px;
 }
 
@@ -1996,8 +2077,12 @@ div.tabs {
     clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 6px; }		/* To avoid overlap of tabs when not browser */
-
+div.tabsElem {
+	margin-top: 6px;
+}		/* To avoid overlap of tabs when not browser */
+div.tabsElem a {
+    font-weight: normal !important;
+}
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
@@ -2681,6 +2766,9 @@ td.evenodd, tr.nohoverpair td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
+.trforbreak td {
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important;
+}
 
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;
@@ -2799,16 +2887,19 @@ input.liste_titre {
     border: 0px;
 }
 
-.noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
-	/* height: 32px; */
-}
-.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
-    /* border-top: 1px solid #f4f4f4; */
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #332266;
     font-weight: normal;
-    white-space: nowrap;
     padding: 4px;
 }
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
+    white-space: nowrap;
+}
+.noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
+	white-space: normal;
+}
+
+
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
 }
@@ -3058,11 +3149,12 @@ div.warning {
   color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0d0b0;
+  /* border: 1px solid #e0d0b0; */
+  border: 2px solid #805000
   -moz-border-radius:3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  background: #EFDF9A;
+  /* background: #EFDF9A; */
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -3080,15 +3172,13 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #303035;
+  color: #fff;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0e0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background: #868;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: #989;
 }
 
 div.warning a, div.info a, div.error a {
@@ -3178,8 +3268,8 @@ div.titre {
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
-#dolpaymenttable { width: 600px; font-size: 13px; }
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -3968,6 +4058,12 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+}
+.jnotify-container .jnotify-notification .jnotify-message {
+	font-weight: normal;
+}
+.jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
+    color: #a28918 !important;
 }
 
 /* use or not ? */

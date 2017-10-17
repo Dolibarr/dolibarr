@@ -1079,22 +1079,26 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode           Mode
 	 * @return number                  <0 if KO, >0 if OK
 	 */
-	public function updateByMvt($piece_num='', $field='', $value='', $mode='') {
+	public function updateByMvt($piece_num='', $field='', $value='', $mode='')
+	{
+		$error=0;
+
 		$this->db->begin();
+
 		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
 		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$value."'");
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
 
 		if (! $resql) {
-			$error ++;
+			$error++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -1224,18 +1228,17 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by piece number
 	 *
-	 * @param int $piecenum peicenum to delete
-	 * @param string $mode Mode
-	 * @return int Result
+	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @return 	int 				Result
 	 */
-	function deleteMvtNum($piecenum, $mode) {
+	function deleteMvtNum($piecenum) {
 		global $conf;
 
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element. $mode;
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
@@ -1522,11 +1525,16 @@ class BookKeeping extends CommonObject
 	 * @param  string   $piece_num     Piece num
 	 * @return void
 	 */
-	public function transformTransaction($direction=0,$piece_num='') {
+	public function transformTransaction($direction=0,$piece_num='')
+	{
+		$error = 0;
+
 		$this->db->begin();
-		if ($direction==0) {
+
+		if ($direction==0)
+		{
 			$next_piecenum=$this->getNextNumMvt();
-			if ($result < 0) {
+			if ($next_piecenum < 0) {
 				$error++;
 			}
 			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element.'(doc_date, doc_type,';

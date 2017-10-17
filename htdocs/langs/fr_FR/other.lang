@@ -180,6 +180,7 @@ EMailTextInterventionAddedContact=Une nouvelle intervention %s vous a été assi
 EMailTextInterventionValidated=La fiche intervention %s vous concernant a été validée.
 EMailTextInvoiceValidated=La facture %s vous concernant a été validée.
 EMailTextProposalValidated=La proposition commerciale %s vous concernant a été validée.
+EMailTextProposalClosedSigned=La proposition commerciale %s a été fermée signée.
 EMailTextOrderValidated=La commande %s vous concernant a été validée.
 EMailTextOrderApproved=La commande %s a été approuvée.
 EMailTextOrderValidatedBy=La commande %s a été enregistrée par %s

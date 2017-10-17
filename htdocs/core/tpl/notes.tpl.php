@@ -17,15 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $permission must be defined by caller.
-// $cssclass   must be defined by caller. For example cssclass='fieldtitle"
+// $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
+// $cssclass   		must be defined by caller. For example $cssclass='fieldtitle"
 $module       = $object->element;
 $note_public  = 'note_public';
 $note_private = 'note_private';
 
 $colwidth=(isset($colwidth)?$colwidth:(empty($cssclass)?'25':''));
-
-$permission=(isset($permission)?$permission:(isset($user->rights->$module->creer)?$user->rights->$module->creer:0));    // If already defined by caller page
+// Set $permission from the $permissionnote var defined on calling page
+$permission=(isset($permissionnote)?$permissionnote:(isset($permission)?$permission:(isset($user->rights->$module->create)?$user->rights->$module->create:(isset($user->rights->$module->creer)?$user->rights->$module->creer:0))));
 $moreparam=(isset($moreparam)?$moreparam:'');
 $value_public=$object->note_public;
 $value_private=$object->note_private;
@@ -70,9 +70,9 @@ else $typeofdata='textarea:12:95%';
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border centpercent">'."\n";
 if ($module != 'product') {
-	// No public note yet on products 
+	// No public note yet on products
 	print '<div class="tagtr table-border-row">'."\n";
-	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'">'."\n";
+	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
 	print '<div class="tagtd table-val-border-col">'."\n";
@@ -82,14 +82,14 @@ if ($module != 'product') {
 }
 if (empty($user->societe_id)) {
 	print '<div class="tagtr table-border-row">'."\n";
-	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass); .'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'">'."\n";
+	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
 	print '<div class="tagtd table-val-border-col">'."\n";
 	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";
-} 
+}
 print '</div>'."\n";
 ?>
 <!-- END PHP TEMPLATE NOTES-->

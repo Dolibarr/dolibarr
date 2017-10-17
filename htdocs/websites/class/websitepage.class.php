@@ -52,6 +52,7 @@ class WebsitePage extends CommonObject
 	public $title;
 	public $description;
 	public $keywords;
+	public $htmlheader;
 	public $content;
 	public $status;
 	public $date_creation;
@@ -62,23 +63,25 @@ class WebsitePage extends CommonObject
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
 	public $fields=array(
-	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'index'=>true, 'position'=>1,  'comment'=>'Id'),
-		'pageurl'       =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>true, 'index'=>true, 'position'=>10, 'searchall'=>1, 'comment'=>'Alias of page'),
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
+		'pageurl'       =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Alias of page'),
 	    'title'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'description'   =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'keywords'      =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-	    'content'       =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-	    'lang'          =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+		'lang'          =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
-	    'fk_website'    =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'position'=>40,  'searchall'=>0),
-	    'fk_page'       =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
-	    //'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
+	    'fk_website'    =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
+	    'fk_page'       =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
+	    'htmlheader'    =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
+	    'content'       =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
+		'grabbed_from'  =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
+	    'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		//'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>500),
 		//'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>true,  'position'=>1000, 'nullifempty'=>1),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -98,109 +101,11 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int             <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$error = 0;
-        $now=dol_now();
-
-		// Clean parameters
-		if (isset($this->fk_website)) {
-			 $this->fk_website = trim($this->fk_website);
-		}
-		if (isset($this->pageurl)) {
-			 $this->pageurl = trim($this->pageurl);
-		}
-		if (isset($this->title)) {
-			 $this->title = trim($this->title);
-		}
-		if (isset($this->description)) {
-			 $this->description = trim($this->description);
-		}
-		if (isset($this->keywords)) {
-			 $this->keywords = trim($this->keywords);
-		}
-		if (isset($this->content)) {
-			 $this->content = trim($this->content);
-		}
-		if (isset($this->status)) {
-			 $this->status = trim($this->status);
-		}
-		if (empty($this->date_creation)) {
-			 $this->date_creation = $now;
-		}
-		if (empty($this->date_modification)) {
-			 $this->date_modification = $now;
-		}
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		$sql.= 'fk_website,';
-		$sql.= 'pageurl,';
-		$sql.= 'title,';
-		$sql.= 'description,';
-		$sql.= 'keywords,';
-		$sql.= 'content,';
-		$sql.= 'lang,';
-		$sql.= 'fk_page,';
-		$sql.= 'status,';
-		$sql.= 'date_creation,';
-		$sql.= 'tms';
-		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->fk_website)?'NULL':$this->fk_website).',';
-		$sql .= ' '.(! isset($this->pageurl)?'NULL':"'".$this->db->escape($this->pageurl)."'").',';
-		$sql .= ' '.(! isset($this->title)?'NULL':"'".$this->db->escape($this->title)."'").',';
-		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
-		$sql .= ' '.(! isset($this->keywords)?'NULL':"'".$this->db->escape($this->keywords)."'").',';
-		$sql .= ' '.(! isset($this->content)?'NULL':"'".$this->db->escape($this->content)."'").',';
-		$sql .= ' '.(! isset($this->lang)?'NULL':"'".$this->db->escape($this->lang)."'").',';
-		$sql .= ' '.(empty($this->fk_page)?'NULL':$this->db->escape($this->fk_page)).',';
-		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
-		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?"'".$this->db->idate($now)."'":"'".$this->db->idate($this->date_creation)."'").',';
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
-		$sql .= ')';
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (! $resql) {
-			$error++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-		}
-
-		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
-
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error)
-		{
-			$this->db->rollback();
-
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-
-			return $this->id;
-		}
+		return $this->createCommon($user, $notrigger);
 	}
 
 	/**
@@ -223,10 +128,12 @@ class WebsitePage extends CommonObject
 		$sql .= " t.title,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
 		$sql .= " t.status,";
+		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
@@ -258,10 +165,12 @@ class WebsitePage extends CommonObject
 				$this->title = $obj->title;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
+				$this->htmlheader = $obj->htmlheader;
 				$this->content = $obj->content;
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->status = $obj->status;
+				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
@@ -305,10 +214,12 @@ class WebsitePage extends CommonObject
 		$sql .= " t.title,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
+		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
 		$sql .= " t.status,";
+		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
@@ -349,10 +260,12 @@ class WebsitePage extends CommonObject
 				$record->title = $obj->title;
 				$record->description = $obj->description;
 				$record->keywords = $obj->keywords;
+				$record->htmlheader = $obj->htmlheader;
 				$record->content = $obj->content;
 				$record->lang = $obj->lang;
 				$record->fk_page = $obj->fk_page;
 				$record->status = $obj->status;
+				$record->grabbed_from = $obj->grabbed_from;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
 				//var_dump($record->id);
@@ -374,144 +287,43 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		$error = 0;
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		// Clean parameters
-
-		if (isset($this->fk_website)) {
-			 $this->fk_website = trim($this->fk_website);
-		}
-		if (isset($this->pageurl)) {
-			 $this->pageurl = trim($this->pageurl);
-		}
-		if (isset($this->title)) {
-			 $this->title = trim($this->title);
-		}
-		if (isset($this->description)) {
-			 $this->description = trim($this->description);
-		}
-		if (isset($this->keywords)) {
-			 $this->keywords = trim($this->keywords);
-		}
-		if (isset($this->content)) {
-			 $this->content = trim($this->content);
-		}
-		if (isset($this->status)) {
-			 $this->status = trim($this->status);
-		}
-
-		// Check parameters
-		// Put here code to add a control on parameters values
-
-		// Update request
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		$sql .= ' fk_website = '.(isset($this->fk_website)?$this->fk_website:"null").',';
-		$sql .= ' pageurl = '.(isset($this->pageurl)?"'".$this->db->escape($this->pageurl)."'":"null").',';
-		$sql .= ' title = '.(isset($this->title)?"'".$this->db->escape($this->title)."'":"null").',';
-		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
-		$sql .= ' keywords = '.(isset($this->keywords)?"'".$this->db->escape($this->keywords)."'":"null").',';
-		$sql .= ' content = '.(isset($this->content)?"'".$this->db->escape($this->content)."'":"null").',';
-		$sql .= ' lang = '.(isset($this->lang)?"'".$this->db->escape($this->lang)."'":"null").',';
-		$sql .= ' fk_page = '.(empty($this->fk_page)?"null":$this->db->escape($this->fk_page)).',';
-		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
-		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
-		$sql .= ' WHERE rowid=' . $this->id;
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-		}
-
-		if ($this->old_object->pageurl != $this->pageurl)
-		{
-		      dol_syslog("The alias was changed, we must rename/recreate the page file into document");
-
-		}
-
-		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-
-			return 1;
-		}
+		return $this->updateCommon($user, $notrigger);
 	}
 
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		$result = $this->deleteCommon($user, $trigger);
 
-		$error = 0;
+		if ($result > 0)
+		{
+			$websiteobj=new Website($this->db);
+			$result = $websiteobj->fetch($this->fk_website);
 
-		$this->db->begin();
+			if ($result > 0)
+			{
+				global $dolibarr_main_data_root;
+				$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websiteobj->ref;
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+				$filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
+				$filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				dol_delete_file($filealias);
+				dol_delete_file($filetpl);
 			}
 		}
 
-		if (!$error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE rowid=' . $this->id;
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-
-			return 1;
-		}
+		return $result;
 	}
 
 	/**
@@ -523,7 +335,7 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
 	 * @param	int		$newwebsite			0=Same web site, 1=New web site
-	 * @return 	int 						New id of clone
+	 * @return 	mixed 						New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
@@ -564,7 +376,7 @@ class WebsitePage extends CommonObject
 		if (!$error) {
 			$this->db->commit();
 
-			return $object->id;
+			return $object;
 		} else {
 			$this->db->rollback();
 
@@ -683,8 +495,10 @@ class WebsitePage extends CommonObject
 		$this->title = 'My Page';
 		$this->description = 'This is my page';
 		$this->keywords = 'keyword1, keyword2';
+		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
 		$this->status = '';
+		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
 	}

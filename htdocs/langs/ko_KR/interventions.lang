@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervention
-Interventions=Interventions
+Interventions=중재
 InterventionCard=Intervention card
 NewIntervention=New intervention
 AddIntervention=Create intervention
@@ -8,7 +8,7 @@ ListOfInterventions=List of interventions
 ActionsOnFicheInter=Actions on intervention
 LastInterventions=Latest %s interventions
 AllInterventions=All interventions
-CreateDraftIntervention=Create draft
+CreateDraftIntervention=초안 만들기
 InterventionContact=Intervention contact
 DeleteIntervention=Delete intervention
 ValidateIntervention=Validate intervention
@@ -40,7 +40,7 @@ InterventionSentByEMail=Intervention %s sent by EMail
 InterventionDeletedInDolibarr=Intervention %s deleted
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
-LastModifiedInterventions=Latest %s modified interventions
+LastModifiedInterventions=최신 %s 개입 된 개입
 FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Following-up customer contact

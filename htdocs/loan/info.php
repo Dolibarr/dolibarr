@@ -43,6 +43,8 @@ $result = restrictedArea($user, 'loan', $id, '','');
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Info");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("",$title,$help_url);

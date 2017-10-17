@@ -44,7 +44,7 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='expensereport';
 
 
@@ -207,24 +207,26 @@ $head=expensereport_admin_prepare_head();
 
 dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
 
-// Interventions numbering model
 /*
-print load_fiche_titre($langs->trans("FicheinterNumberingModules"),'','');
+ * Expense report numbering model
+ */
+
+print load_fiche_titre($langs->trans("ExpenseReportNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
 
 clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/fichinter/");
+	$dir = dol_buildpath($reldir."core/modules/expensereport/");
 
 	if (is_dir($dir))
 	{
@@ -235,21 +237,20 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (preg_match('/^(mod_.*)\.php$/i',$file,$reg))
+				if (substr($file, 0, 18) == 'mod_expensereport_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
-					$file = $reg[1];
-					$classname = substr($file,4);
+					$file = substr($file, 0, dol_strlen($file)-4);
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file($db);
+
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
 					{
-						// Show modules according to features level
-						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
@@ -264,24 +265,26 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->FICHEINTER_ADDON == $classname)
+						if ($conf->global->EXPENSEREPORT_ADDON == $file)
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"),'switch_off');
+							print '</a>';
 						}
 						print '</td>';
 
-						$ficheinter=new Fichinter($db);
-						$ficheinter->initAsSpecimen();
+						$exp=new ExpenseReport($db);
+						$exp->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc,$ficheinter);
-                        if ("$nextval" != $langs->trans("NotAvailable")) {   // Keep " on nextval
+						$nextval=$module->getNextValue($exp);
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
                                 if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
@@ -291,11 +294,12 @@ foreach ($dirmodels as $reldir)
                                 $htmltooltip.=$langs->trans($module->error).'<br>';
                             }
                         }
+
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
-						print '</tr>';
+						print "</tr>\n";
 					}
 				}
 			}
@@ -303,9 +307,7 @@ foreach ($dirmodels as $reldir)
 		}
 	}
 }
-
-print '</table><br>';
-*/
+print "</table><br>\n";
 
 /*
  *  Documents models for Interventions
@@ -398,7 +400,7 @@ foreach ($dirmodels as $reldir)
 		    				if (in_array($name, $def))
 		    				{
 		    					print "<td align=\"center\">\n";
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 		    					print img_picto($langs->trans("Enabled"),'switch_on');
 		    					print '</a>';
 		    					print "</td>";
@@ -406,7 +408,7 @@ foreach ($dirmodels as $reldir)
 		    				else
 		    				{
 		    					print "<td align=\"center\">\n";
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 		    					print "</td>";
 		    				}
 
@@ -418,7 +420,7 @@ foreach ($dirmodels as $reldir)
 		    				}
 		    				else
 		    				{
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		    				}
 		    				print '</td>';
 

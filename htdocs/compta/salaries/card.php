@@ -214,6 +214,12 @@ if ($action == 'create')
 		$pastmonthyear--;
 	}
 
+	$datespmonth = GETPOST('datespmonth', 'int');
+	$datespday = GETPOST('datespday', 'int');
+	$datespyear = GETPOST('datespyear', 'int');
+	$dateepmonth = GETPOST('dateepmonth', 'int');
+	$dateepday = GETPOST('dateepday', 'int');
+	$dateepyear = GETPOST('dateepyear', 'int');
 	$datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
 	$dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
@@ -253,7 +259,7 @@ if ($action == 'create')
 	// Label
 	print '<tr><td>';
 	print fieldLabel('Label','label',1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->trans("SalaryPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period

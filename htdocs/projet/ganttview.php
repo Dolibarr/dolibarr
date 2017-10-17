@@ -307,9 +307,14 @@ if (count($tasksarray)>0)
 	    $dateformatinput2="%m/%d/%Y";   // How the date for data are formated
   		//var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
+
+	    print '<div class="div-table-responsive">';
+
 	    print '<div id="tabs" class="gantt" style="width: 80vw; border: 1px solid #ACACAC;">'."\n";
 		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
+
+		print '</div>';
 	}
 	else
 	{

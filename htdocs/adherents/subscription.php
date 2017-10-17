@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -109,12 +109,11 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 	{
 		// Creation user
 		$company = new Societe($db);
-		$result=$company->create_from_member($object,$_POST["companyname"]);
+		$result=$company->create_from_member($object, GETPOST('companyname', 'alpha'), GETPOST('companyalias', 'alpha'));
 
 		if ($result < 0)
 		{
 			$langs->load("errors");
-			$errmsg=$langs->trans($company->error);
 			setEventMessages($company->error, $company->errors, 'errors');
 		}
 		else
@@ -124,7 +123,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 	}
 	else
 	{
-		$errmsg=$object->error;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -212,7 +211,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     {
         $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
     }
-    $subscription=$_POST["subscription"];	// Amount of subscription
+    $subscription=price2num(GETPOST("subscription",'alpha'));	// Amount of subscription
     $label=$_POST["label"];
 
     // Payment informations
@@ -230,6 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         $error++;
         $langs->load("errors");
         $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateSubscription"));
+        setEventMessages($errmsg, null, 'errors');
         $action='addsubscription';
     }
     if (GETPOST('end') && ! $datesubend)
@@ -237,6 +237,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         $error++;
         $langs->load("errors");
         $errmsg=$langs->trans("ErrorBadDateFormat",$langs->transnoentitiesnoconv("DateEndSubscription"));
+        setEventMessages($errmsg, null, 'errors');
         $action='addsubscription';
     }
     if (! $datesubend)
@@ -247,16 +248,20 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     {
         $error++;
         $errmsg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment"));
+        setEventMessages($errmsg, null, 'errors');
         $action='addsubscription';
     }
+
+    $amount = price2num(GETPOST("subscription",'alpha'));
 
     // Check if a payment is mandatory or not
     if (! $error && $adht->subscription)	// Member type need subscriptions
     {
-        if (! is_numeric($_POST["subscription"]))
+        if (! is_numeric($amount))
         {
             // If field is '' or not a numeric value
             $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+        	setEventMessages($errmsg, null, 'errors');
             $error++;
             $action='addsubscription';
         }
@@ -274,7 +279,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 {
                     if ($_POST["accountid"])   $errmsg=$langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
                 }
-                if ($errmsg) $action='addsubscription';
+                if ($errmsg)
+                {
+        			setEventMessages($errmsg, null, 'errors');
+                	$action='addsubscription';
+                }
             }
         }
     }
@@ -320,6 +329,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                         {
                             $error++;
                             $errmsg=$db->lasterror();
+        					setEventMessages($errmsg, null, 'errors');
                         }
                     }
                     else
@@ -327,14 +337,16 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                         $error++;
                         $errmsg=$acct->error;
                         $errmsgs=$acct->errors;
-                    }
+        				setEventMessages($errmsg, $errmsgs, 'errors');
+					}
                 }
                 else
 				{
                     $error++;
                     $errmsg=$acct->error;
                     $errmsgs=$acct->errors;
-                }
+        			setEventMessages($errmsg, $errmsgs, 'errors');
+				}
             }
 
             // If option choosed, we create invoice
@@ -352,6 +364,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 	{
                 		$langs->load("errors");
                 		$errmsg=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
+        				setEventMessages($errmsg, null, 'errors');
                 		$error++;
                 	}
                 }
@@ -362,6 +375,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $errmsg=$customer->error;
 	                    $errmsgs=$acct->errors;
+        				setEventMessages($errmsg, $errmsgs, 'errors');
 	                    $error++;
 	                }
                 }
@@ -379,6 +393,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                    {
 	                        $error++;
 	                        $errmsg='ErrorNoPaymentTermRECEPFound';
+        					setEventMessages($errmsg, null, 'errors');
 	                    }
 	                }
 	                $invoice->socid=$object->fk_soc;
@@ -396,6 +411,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $errmsg=$invoice->error;
 	                    $errmsgs=$invoice->errors;
+        				setEventMessages($errmsg, $errmsgs, 'errors');
 	                    $error++;
 	                }
                 }
@@ -416,6 +432,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                if ($result <= 0)
 	                {
 	                    $errmsg=$invoice->error;
+        				setEventMessages($errmsg, null, 'errors');
 	                    $error++;
 	                }
                 }
@@ -428,6 +445,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	                {
 	                    $errmsg=$invoice->error;
 	                    $errmsgs=$invoice->errors;
+        				setEventMessages($errmsg, $errmsgs, 'errors');
 	                    $error++;
 	                }
                 }
@@ -443,7 +461,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $paymentdate;
                     $paiement->amounts      = $amounts;
-                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement');
+                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement','code','id',1);
                     $paiement->num_paiement = $num_chq;
                     $paiement->note         = $label;
 
@@ -455,6 +473,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                         {
                             $errmsg=$paiement->error;
                             $errmsgs=$paiement->errors;
+        					setEventMessages($errmsg, $errmsgs, 'errors');
                             $error++;
                         }
                     }
@@ -536,6 +555,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
+        			setEventMessages($errmsg, null, 'errors');
                 }
             }
 
@@ -581,7 +601,7 @@ if ($rowid > 0)
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'rowid', $linkback);
 
@@ -769,13 +789,9 @@ if ($rowid > 0)
             if ($object->statut > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
             else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 
-            print "<br>\n";
-
             print '</div>';
-            print '<br>';
         }
     }
-
 
     /*
      * List of subscriptions
@@ -799,7 +815,6 @@ if ($rowid > 0)
         if ($result)
         {
             $subscriptionstatic=new Subscription($db);
-            $accountstatic=new Account($db);
 
             $num = $db->num_rows($result);
             $i = 0;
@@ -818,6 +833,8 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
+            $accountstatic=new Account($db);
+		
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
@@ -829,20 +846,23 @@ if ($rowid > 0)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->subscription).'</td>';
-                if (! empty($conf->banque->enabled))
-                {
-                    print '<td align="right">';
-                    if ($objp->bid)
-                    {
-                        $accountstatic->label=$objp->label;
-                        $accountstatic->id=$objp->baid;
-                        $accountstatic->number=$objp->number;
-                        $accountstatic->account_number=$objp->account_number;
+				if (! empty($conf->banque->enabled))
+				{
+					print '<td align="right">';
+					if ($objp->bid)
+					{
+						$accountstatic->label=$objp->label;
+						$accountstatic->id=$objp->baid;
+						$accountstatic->number=$objp->number;
+						$accountstatic->account_number=$objp->account_number;
 
-                        $accountingjournal = new AccountingJournal($db);
-                        $accountingjournal->fetch($objp->fk_accountancy_journal);
+						if (! empty($conf->accounting->enabled))
+						{
+							$accountingjournal = new AccountingJournal($db);
+							$accountingjournal->fetch($objp->fk_accountancy_journal);
 
-                        $accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+							$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+						}
 
                         $accountstatic->ref=$objp->ref;
                         print $accountstatic->getNomUrl(1);
@@ -862,23 +882,20 @@ if ($rowid > 0)
         {
             dol_print_error($db);
         }
-
-
-        // Link for paypal payment
-        if (! empty($conf->paypal->enabled))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-            print showPaypalPaymentUrl('membersubscription',$object->ref);
-        }
-
-        // Link for stripe payment
-        if (! empty($conf->stripe->enabled))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
-            print showStripePaymentUrl('membersubscription',$object->ref);
-        }
-
     }
+
+
+    // Shon online payment link
+    $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+
+    if ($useonlinepayment)
+    {
+    	print '<br>';
+
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+    	print showOnlinePaymentUrl('membersubscription', $object->ref);
+    }
+
 
     /*
      * Add new subscription form
@@ -947,19 +964,25 @@ if ($rowid > 0)
 		// Confirm create third party
 		if ($action == 'create_thirdparty')
 		{
-			$name = $object->getFullName($langs);
-			if (! empty($name))
+			$companyalias='';
+			$fullname = $object->getFullName($langs);
+
+			if ($object->morphy == 'mor')
 			{
-				if ($object->morphy == 'mor' && ! empty($object->societe)) $name=$object->societe.' ('.$name.')';
-				else if ($object->societe) $name.=' ('.$object->societe.')';
+				$companyname=$object->societe;
+				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
-				$name=$object->societe;
+				$companyname=$fullname;
+				if (! empty($object->societe)) $companyalias=$object->societe;
 			}
 
 			// Create a form array
-			$formquestion=array(array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
+			$formquestion=array(
+				array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $companyname, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"'),
+				array('label' => $langs->trans("AliasNames"), 'type' => 'text', 'name' => 'companyalias', 'value' => $companyalias, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"')
+			);
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
@@ -1073,12 +1096,12 @@ if ($rowid > 0)
                     	print '</a>)';
                     }
                     if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
-                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-                    {
-                    	$prodtmp=new Product($db);
-                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
-                    }
+					if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+					{
+						$prodtmp=new Product($db);
+						$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
+					}
                     print '<br>';
                 }
                 // Add invoice with payments
@@ -1098,12 +1121,12 @@ if ($rowid > 0)
                     	print '</a>)';
                     }
                     if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
-                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-                    {
-                    	$prodtmp=new Product($db);
-                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
-                    }
+					if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+					{
+						$prodtmp=new Product($db);
+						$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
+					}
                     print '<br>';
                 }
                 print '</td></tr>';

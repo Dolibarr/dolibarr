@@ -53,8 +53,8 @@ MemberResiliatedInDolibarr=%s üyeliği bitirilmiştir
 MemberDeletedInDolibarr=Silinen üyelik %s
 MemberSubscriptionAddedInDolibarr=Abonelik eklenen üye %s
 ShipmentValidatedInDolibarr=Sevkiyat %s doğrulandı
-ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentClassifyClosedInDolibarr=%s sevkiyatı faturalandı olarak sınıflandırıldı
+ShipmentUnClassifyCloseddInDolibarr=%s sevkiyatı yeniden açıldı olarak sınıflandırıldı
 ShipmentDeletedInDolibarr=Silinen sevkiyat %s
 OrderCreatedInDolibarr=%s siparişi oluşturuldu
 OrderValidatedInDolibarr=%s Siparişi doğrulandı
@@ -75,17 +75,17 @@ InterventionSentByEMail=%s Müdahalesi Eposta ile gönderildi
 ProposalDeleted=Teklif silindi
 OrderDeleted=Sipariş silindi
 InvoiceDeleted=Fatura silindi
-PRODUCT_CREATEInDolibarr=Product %s created
-PRODUCT_MODIFYInDolibarr=Product %s modified
-PRODUCT_DELETEInDolibarr=Product %s deleted
+PRODUCT_CREATEInDolibarr=Ürün %s oluşturuldu
+PRODUCT_MODIFYInDolibarr=Ürün %s değiştirildi
+PRODUCT_DELETEInDolibarr=Ürün %s silindi
 ##### End agenda events #####
 AgendaModelModule=Etkinlik için belge şablonları
 DateActionStart=Başlama tarihi
 DateActionEnd=Bitiş tarihi
 AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
 AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsNotAdmin=Çıktıyı <b>%s</b> kullanıcısına ait olmayan etkinliklere sınırlamak için <b>logina=!%s</b>.
+AgendaUrlOptions4=Çıktıyı <b>%s</b> kullanıcısına (sahip ve diğerleri) atanmış etkinliklere sınırlamak için <b>logint=%s</b>.
 AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle

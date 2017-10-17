@@ -85,14 +85,13 @@ class PaymentTerm // extends CommonObject
 		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
 
 
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(";
-
 		$sql.= "rowid,";
+		$sql.= "entity,";
 		$sql.= "code,";
 		$sql.= "sortorder,";
 		$sql.= "active,";
@@ -101,21 +100,17 @@ class PaymentTerm // extends CommonObject
 		$sql.= "type_cdr,";
 		$sql.= "nbjour,";
 		$sql.= "decalage";
-
-
         $sql.= ") VALUES (";
-
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
+		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
+		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term'):"'".$this->db->escape($this->entity)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
-		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->sortorder."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
+		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->db->escape($this->sortorder)."'").",";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
 		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
 		$sql.= " ".(! isset($this->libelle_facture)?'NULL':"'".$this->db->escape($this->libelle_facture)."'").",";
-		$sql.= " ".(! isset($this->type_cdr)?'NULL':"'".$this->type_cdr."'").",";
-		$sql.= " ".(! isset($this->nbjour)?'NULL':"'".$this->nbjour."'").",";
-		$sql.= " ".(! isset($this->decalage)?'NULL':"'".$this->decalage."'")."";
-
-
+		$sql.= " ".(! isset($this->type_cdr)?'NULL':"'".$this->db->escape($this->type_cdr)."'").",";
+		$sql.= " ".(! isset($this->nbjour)?'NULL':"'".$this->db->escape($this->nbjour)."'").",";
+		$sql.= " ".(! isset($this->decalage)?'NULL':"'".$this->db->escape($this->decalage)."'")."";
 		$sql.= ")";
 
 		$this->db->begin();
@@ -172,6 +167,7 @@ class PaymentTerm // extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
+		$sql.= " t.entity";
 
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
@@ -185,6 +181,7 @@ class PaymentTerm // extends CommonObject
 
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.rowid = ".$id;
+        $sql.= " AND t.entity = " . getEntity('c_payment_term');
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -234,6 +231,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.code = 'RECEP'";
+        $sql.= " AND t.entity = " . getEntity('c_payment_term');
 
     	dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -262,9 +260,10 @@ class PaymentTerm // extends CommonObject
      *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return     int       			  	<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
-    {
-    	global $conf, $langs;
+	function update($user=null, $notrigger=0)
+	{
+		global $conf, $langs;
+
 		$error=0;
 
 		// Clean parameters
@@ -283,9 +282,8 @@ class PaymentTerm // extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
-
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
 		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
 		$sql.= " sortorder=".(isset($this->sortorder)?$this->sortorder:"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
@@ -294,39 +292,38 @@ class PaymentTerm // extends CommonObject
 		$sql.= " type_cdr=".(isset($this->type_cdr)?$this->type_cdr:"null").",";
 		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
-
-
-        $sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid = " . $this->id;
+		$sql.= " AND entity = " . getEntity('c_payment_term');
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
+				// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// End call triggers
+			}
 		}
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
@@ -336,7 +333,7 @@ class PaymentTerm // extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 
  	/**
@@ -352,7 +349,8 @@ class PaymentTerm // extends CommonObject
 		$error=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_payment_term";
-		$sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid = " . $this->id;
+		$sql.= " AND t.entity = " . getEntity('c_payment_term');
 
 		$this->db->begin();
 

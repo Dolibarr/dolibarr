@@ -316,7 +316,7 @@ class CommandeApi extends DolibarrApi
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       return false;
@@ -389,7 +389,7 @@ class CommandeApi extends DolibarrApi
      *
      * @return int
      */
-    function delLine($id, $lineid) {
+    function deleteLine($id, $lineid) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }

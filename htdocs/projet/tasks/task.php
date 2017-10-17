@@ -279,6 +279,7 @@ if ($id > 0 || ! empty($ref))
             print '</table>';
 
             print '</div>';
+
             print '<div class="fichehalfright">';
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
@@ -468,6 +469,7 @@ if ($id > 0 || ! empty($ref))
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
@@ -490,8 +492,21 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 
+			// Description
+			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+			print nl2br($object->description);
+			print '</td></tr>';
+
+			print '</table>';
+			print '</div>';
+
+			print '<div class="fichehalfright"><div class="ficheaddleft">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border" width="100%">';
+
 			// Progress declared
-			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			if ($object->progress != '')
 			{
 				print $object->progress.' %';
@@ -506,12 +521,7 @@ if ($id > 0 || ! empty($ref))
 				if ($tmparray['total_duration'] > 0 && ! empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
 			}
-			else print '';
-			print '</td></tr>';
-
-			// Description
-			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-			print nl2br($object->description);
+			else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
 			print '</td></tr>';
 
 			// Other attributes
@@ -522,6 +532,10 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			print '</div>';
+			print '</div>';
+
+			print '</div>';
+			print '<div class="clearboth"></div>';
 
 			dol_fiche_end();
 		}
@@ -587,6 +601,11 @@ if ($id > 0 || ! empty($ref))
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
 
 			print '</div></div></div>';
 		}

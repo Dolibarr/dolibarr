@@ -82,7 +82,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
         if (! function_exists('mb_substr')) { print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(); }
-        
+
         print __METHOD__."\n";
     }
 
@@ -278,6 +278,15 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	    $this->assertFalse($tmp['tablet']);
 	    $this->assertEquals('classic', $tmp['layout']);
 
+	    //Internet Explorer 11 bis
+	    $user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; NP06; rv:11.0) like Gecko';
+	    $tmp=getBrowserInfo($user_agent);
+	    $this->assertEquals('ie',$tmp['browsername']);
+	    $this->assertEquals('11.0',$tmp['browserversion']);
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
 	    //iPad
 	    $user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
 	    $tmp=getBrowserInfo($user_agent);
@@ -445,11 +454,11 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $text='<a href="/myurl" title="<u>Afficher projet</u>">ABC</a>';
         $after=dol_string_nohtmltag($text,1);
         $this->assertEquals("ABC",$after,"test6");
-        
+
         $text='<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
         $after=dol_string_nohtmltag($text,1);
         $this->assertEquals("DEF",$after,"test7");
-        
+
         return true;
     }
 

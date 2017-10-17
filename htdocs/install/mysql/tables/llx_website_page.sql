@@ -27,8 +27,10 @@ CREATE TABLE llx_website_page
 	keywords      varchar(255),
 	lang          varchar(6),
 	fk_page       integer,          
+	htmlheader	  text,
 	content		  mediumtext,		-- text is not enough in size
     status        integer DEFAULT 1,
+	grabbed_from   varchar(255),
     fk_user_create integer,
     fk_user_modif  integer,
     date_creation  datetime,

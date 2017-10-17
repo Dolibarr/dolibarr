@@ -35,7 +35,7 @@ AgendaSetupOtherDesc= Ta strona zawiera opcje, pozwalające eksportować Twoje z
 AgendaExtSitesDesc=Ta strona pozwala zdefiniować zewnętrzne źródła kalendarzy, aby zobaczyć uwzględnić zapisane tam zdarzenia w agendzie Dolibarr'a.
 ActionsEvents=Zdarzenia, dla których Dolibarr stworzy automatycznie zadania w agendzie
 ##### Agenda event labels #####
-NewCompanyToDolibarr=Third party %s created
+NewCompanyToDolibarr=Kontrahent %s utworzony
 ContractValidatedInDolibarr=Umowa% s potwierdzone
 PropalClosedSignedInDolibarr=Wniosek% s podpisana
 PropalClosedRefusedInDolibarr=Wniosek% s odmówił
@@ -48,7 +48,7 @@ InvoiceDeleteDolibarr=Usunięcie faktury %s
 InvoicePaidInDolibarr=Faktura% s zmieniła się zwrócić
 InvoiceCanceledInDolibarr=Faktura% s anulowana
 MemberValidatedInDolibarr=% S potwierdzone państwa
-MemberModifiedInDolibarr=Member %s modified
+MemberModifiedInDolibarr=Użytkownik %s zmodyfikowany
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Użytkownik usunął%
 MemberSubscriptionAddedInDolibarr=Zapisy na członka% s dodany
@@ -75,9 +75,9 @@ InterventionSentByEMail=Interwencja %s wysłana mailem
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
-PRODUCT_CREATEInDolibarr=Product %s created
-PRODUCT_MODIFYInDolibarr=Product %s modified
-PRODUCT_DELETEInDolibarr=Product %s deleted
+PRODUCT_CREATEInDolibarr=Produkt %s utworzony
+PRODUCT_MODIFYInDolibarr=Produkt %s zmodyfikowany
+PRODUCT_DELETEInDolibarr=Produkt %s usunięty
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Data rozpoczęcia
@@ -87,8 +87,8 @@ AgendaUrlOptions3=<b>logina =%s</b>, aby ograniczyć wyjścia do działań będ�
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>projekt=PROJECT_ID</b> by ograniczyć wyjścia do działań związanych z projektem <b>PROJECT_ID</b>.
-AgendaShowBirthdayEvents=Show birthdays of contacts
-AgendaHideBirthdayEvents=Hide birthdays of contacts
+AgendaShowBirthdayEvents=Wyświetlaj urodziny kontaktów
+AgendaHideBirthdayEvents=Ukryj urodziny kontaktów
 Busy=Zajęty
 ExportDataset_event1=Lista zdarzeń w agendzie
 DefaultWorkingDays=Domyślne zakres dni roboczych w tygodniu (przykład: 1-5, 1-6)

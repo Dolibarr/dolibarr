@@ -36,26 +36,50 @@ insert into llx_c_type_fees (code,label,active) values ('TF_OTHER',    'Other', 
 insert into llx_c_type_fees (code,label,active) values ('TF_TRIP',     'Transportation',   1);
 insert into llx_c_type_fees (code,label,active) values ('TF_LUNCH',    'Lunch',  1);
 
-INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
-('EX_KME', 'ExpLabelKm', 1, '625100'),
-('EX_FUE', 'ExpLabelFuelCV', 0, '606150'),
-('EX_HOT', 'ExpLabelHotel', 0, '625160'),
-('EX_PAR', 'ExpLabelParkingCV', 0, '625160'),
-('EX_TOL', 'ExpLabelTollCV', 0, '625160'),
-('EX_TAX', 'ExpLabelVariousTaxes', 0, '637800'),
-('EX_IND', 'ExpLabelIndemnityTransportationSubscription', 0, '648100'),
-('EX_SUM', 'ExpLabelMaintenanceSupply', 0, '606300'),
-('EX_SUO', 'ExpLabelOfficeSupplies', 0, '606400'),
-('EX_CAR', 'ExpLabelCarRental', 0, '613000'),
-('EX_DOC', 'ExpLabelDocumentation', 0, '618100'),
-('EX_CUR', 'ExpLabelCustomersReceiving', 0, '625710'),
-('EX_OTR', 'ExpLabelOtherReceiving', 0, '625700'),
-('EX_POS', 'ExpLabelPostage', 0, '626100'),
-('EX_CAM', 'ExpLabelMaintenanceRepairCV', 0, '615300'),
-('EX_EMM', 'ExpLabelEmployeesMeal', 0, '625160'),
-('EX_GUM', 'ExpLabelGuestsMeal', 0, '625160'),
-('EX_BRE', 'ExpLabelBreakfast', 0, '625160'),
-('EX_FUE_VP', 'ExpLabelFuelPV', 0, '606150'),
-('EX_TOL_VP', 'ExpLabelTollPV', 0, '625160'),
-('EX_PAR_VP', 'ExpLabelParkingPV', 0, '625160'),
-('EX_CAM_VP', 'ExpLabelMaintenanceRepairPV', 0, '615300');
+
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_KME',    'ExpLabelKm', 1);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_FUE',    'ExpLabelFuelCV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_HOT',    'ExpLabelHotel', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_PAR',    'ExpLabelParkingCV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_TOL',    'ExpLabelTollCV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_TAX',    'ExpLabelVariousTaxes', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_IND',    'ExpLabelIndemnityTransSubscrip', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_SUM',    'ExpLabelMaintenanceSupply', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_SUO',    'ExpLabelOfficeSupplies', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_CAR',    'ExpLabelCarRental', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_DOC',    'ExpLabelDocumentation', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_CUR',    'ExpLabelCustomersReceiving', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_OTR',    'ExpLabelOtherReceiving', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_POS',    'ExpLabelPostage', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_CAM',    'ExpLabelMaintenanceRepairCV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_EMM',    'ExpLabelEmployeesMeal', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_GUM',    'ExpLabelGuestsMeal', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_BRE',    'ExpLabelBreakfast', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_FUE_VP', 'ExpLabelFuelPV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_TOL_VP', 'ExpLabelTollPV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_PAR_VP', 'ExpLabelParkingPV', 0);
+INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_CAM_VP', 'ExpLabelMaintenanceRepairPV', 0);
+
+-- Set accoutancy_code for french accounting plan
+--UPDATE llx_c_type_fees SET accountancy_code = '625100' WHERE code = 'EX_KME';
+--UPDATE llx_c_type_fees SET accountancy_code = '606150' WHERE code = 'EX_FUE';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_HOT';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_PAR';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_TOL';
+--UPDATE llx_c_type_fees SET accountancy_code = '637800' WHERE code = 'EX_TAX';
+--UPDATE llx_c_type_fees SET accountancy_code = '648100' WHERE code = 'EX_IND';
+--UPDATE llx_c_type_fees SET accountancy_code = '606300' WHERE code = 'EX_SUM';
+--UPDATE llx_c_type_fees SET accountancy_code = '606400' WHERE code = 'EX_SUO';
+--UPDATE llx_c_type_fees SET accountancy_code = '613000' WHERE code = 'EX_CAR';
+--UPDATE llx_c_type_fees SET accountancy_code = '618100' WHERE code = 'EX_DOC';
+--UPDATE llx_c_type_fees SET accountancy_code = '625710' WHERE code = 'EX_CUR';
+--UPDATE llx_c_type_fees SET accountancy_code = '625700' WHERE code = 'EX_OTR';
+--UPDATE llx_c_type_fees SET accountancy_code = '626100' WHERE code = 'EX_POS';
+--UPDATE llx_c_type_fees SET accountancy_code = '615300' WHERE code = 'EX_CAM';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_EMM';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_GUM';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_BRE';
+--UPDATE llx_c_type_fees SET accountancy_code = '606150' WHERE code = 'EX_FUE_VP';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_TOL_VP';
+--UPDATE llx_c_type_fees SET accountancy_code = '625160' WHERE code = 'EX_PAR_VP';
+--UPDATE llx_c_type_fees SET accountancy_code = '615300' WHERE code = 'EX_CAM_VP';

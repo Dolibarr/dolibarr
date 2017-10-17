@@ -334,7 +334,7 @@ foreach my $target (sort keys %CHOOSEDTARGET) {
 }
 foreach my $target (sort keys %CHOOSEDPUBLISH) {
 	if ($CHOOSEDPUBLISH{$target} < 0) { next; }
-	if ($target eq 'ASSO') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
+	if ($target eq 'ASSO') { $nbofpublishneedchangelog++; }
 	if ($target eq 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
 }
@@ -366,7 +366,9 @@ if ($nboftargetok) {
 		}
 		else			# For a maintenance release
 		{
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			
 		}
 		print "\n";
 		if (! $ret)

@@ -69,7 +69,7 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type','int');
 $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 $duration_value = GETPOST('duration_value');
@@ -281,9 +281,9 @@ if (empty($reshook))
             $object->barcode_type_coder     = $stdobject->barcode_type_coder;
             $object->barcode_type_label     = $stdobject->barcode_type_label;
 
-            $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
+            $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc','none'));
             $object->url					 = GETPOST('url');
-            $object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private'));
+            $object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private','none'));
             $object->note               	 = $object->note_private;   // deprecated
             $object->customcode              = GETPOST('customcode');
             $object->country_id              = GETPOST('country_id');
@@ -340,7 +340,7 @@ if (empty($reshook))
             if ($id > 0)
             {
 				// Category association
-				$categories = GETPOST('categories');
+				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -358,7 +358,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-    	if (GETPOST('cancel'))
+    	if (GETPOST('cancel','alpha'))
         {
             $action = '';
         }
@@ -370,11 +370,11 @@ if (empty($reshook))
 
                 $object->ref                    = $ref;
                 $object->label                  = GETPOST('label');
-                $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
+                $object->description            = dol_htmlcleanlastbr(GETPOST('desc','none'));
             	$object->url					= GETPOST('url');
     			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     			{
-                	$object->note_private           = dol_htmlcleanlastbr(GETPOST('note_private'));
+                	$object->note_private           = dol_htmlcleanlastbr(GETPOST('note_private','none'));
                     $object->note                   = $object->note_private;
     			}
                 $object->customcode             = GETPOST('customcode');
@@ -444,7 +444,7 @@ if (empty($reshook))
                     if ($object->update($object->id, $user) > 0)
                     {
 						// Category association
-						$categories = GETPOST('categories');
+						$categories = GETPOST('categories', 'array');
 						$object->setCategories($categories);
 
                         $action = 'view';
@@ -977,7 +977,7 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
-        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+        $doleditor = new DolEditor('desc', GETPOST('desc','none'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
         $doleditor->Create();
 
         print "</td></tr>";
@@ -1092,7 +1092,7 @@ else
             print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
             // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-            $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+            $doleditor = new DolEditor('note_private', GETPOST('note_private','none'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
     	    $doleditor->Create();
 
             print "</td></tr>";
@@ -1488,7 +1488,7 @@ else
 
             dol_fiche_head($head, 'card', $titre, -1, $picto);
 
-            $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+            $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;

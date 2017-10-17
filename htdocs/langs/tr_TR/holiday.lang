@@ -16,7 +16,7 @@ CancelCP=İptal edildi
 RefuseCP=Reddedildi
 ValidatorCP=Onaylayan
 ListeCP=İzinler listesi
-ReviewedByCP=Will be approved by
+ReviewedByCP=Şunun tarafından onaylanacak
 DescCP=Açıklama
 SendRequestCP=İzin isteği oluştur
 DelayToRequestCP=İzin istekleri enaz <b>%s gün</b> önce yapolmalıdır.
@@ -76,9 +76,9 @@ BoxTitleLastLeaveRequests=Değiştirilen son %s izin isteği
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
 HolidaysCancelation=İzin isteği iptali
-EmployeeLastname=Employee last name
-EmployeeFirstname=Employee first name
-TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+EmployeeLastname=Çalışanın soyadı
+EmployeeFirstname=Çalışanın ilk adı
+TypeWasDisabledOrRemoved=Ayrılma türü (id %s) devre dışı bırakıldı veya kaldırıldı
 
 ## Configuration du Module ##
 LastUpdateCP=İzin tahsislerinin son otomatik güncellenmesi

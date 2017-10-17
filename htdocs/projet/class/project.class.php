@@ -296,6 +296,7 @@ class Project extends CommonObject
             $sql.= ", fk_user_close=" . ($this->fk_user_close > 0 ? $this->fk_user_close : "null");
             $sql.= ", opp_amount = " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
+            $sql.= ", fk_user_modif = " . $user->id;
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -390,7 +391,7 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -428,6 +429,7 @@ class Project extends CommonObject
                 $this->note_public = $obj->note_public;
                 $this->socid = $obj->fk_soc;
                 $this->user_author_id = $obj->fk_user_creat;
+                $this->user_modification_id = $obj->fk_user_modif;
                 $this->user_close_id = $obj->fk_user_close;
                 $this->public = $obj->public;
                 $this->statut = $obj->fk_statut;
@@ -441,6 +443,7 @@ class Project extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 $this->fetch_optionals();
+                $this->fetchComments();
 
                 return 1;
             }

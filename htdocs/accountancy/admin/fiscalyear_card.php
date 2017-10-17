@@ -20,6 +20,7 @@
  * \ingroup     Advanced accountancy
  * \brief       Page to show a fiscal year
  */
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
@@ -145,11 +146,11 @@ else if ($action == 'update') {
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
 llxHeader("",$title,$helpurl);
-
-$form = new Form($db);
 
 if ($action == 'create')
 {

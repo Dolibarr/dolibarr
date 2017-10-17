@@ -143,7 +143,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 4096);
+            $buf = fgets($fp, 32768);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
             if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
@@ -173,7 +173,11 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             			}
             			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
             			{
-							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation)))) $qualified=0;
+            				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+            				//var_dump($reg[2]);
+            				//var_dump($dbcollation);
+            				if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified=0;
+            				//var_dump($qualified);
             			}
             		}
             	}
@@ -187,9 +191,9 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             }
 
             // Add line buf to buffer if not a comment
-            if (! preg_match('/^--/',$buf))
+            if (! preg_match('/^\s*--/',$buf))
             {
-                $buf=preg_replace('/--.*$/','',$buf); //remove comment from a line that not start with -- before add it to the buffer
+                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
@@ -532,6 +536,43 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 
+
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function modules_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=common";
+	$head[$h][1] = $langs->trans("AvailableModules");
+	$head[$h][2] = 'common';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=marketplace";
+	$head[$h][1] = $langs->trans("ModulesMarketPlaces");
+	$head[$h][2] = 'marketplace';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=deploy";
+	$head[$h][1] = $langs->trans("AddExtensionThemeModuleOrOther");
+	$head[$h][2] = 'deploy';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=develop";
+	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
+	$head[$h][2] = 'develop';
+	$h++;
+
+	return $head;
+}
+
+
 /**
  * Prepare array with list of tabs
  *
@@ -564,7 +605,7 @@ function security_prepare_head()
     $head[$h][2] = 'filedownload';
     $h++;
 	*/
-    
+
     $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
     $head[$h][1] = $langs->trans("ExternalAccess");
     $head[$h][2] = 'proxy';
@@ -1210,7 +1251,7 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Description").'</td>';
+    print '<td class="titlefield">'.$langs->trans("Description").'</td>';
     print '<td>';
     $text = $langs->trans("Value");
     print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
@@ -1485,4 +1526,51 @@ function phpinfo_array()
 	}
 	return $info_arr;
 }
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	    		    head array with tabs
+ */
+function email_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	if ($user->admin && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
+		$head[$h][1] = $langs->trans("OutGoingEmailSetup");
+		$head[$h][2] = 'common';
+		$h++;
+
+		if ($conf->mailing->enabled)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+			$head[$h][2] = 'common_emailing';
+			$h++;
+		}
+	}
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+	$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+	$head[$h][2] = 'templates';
+	$h++;
+
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
+		$head[$h][1] = $langs->trans("EmailSenderProfiles");
+		$head[$h][2] = 'senderprofiles';
+		$h++;
+	}
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'email_admin','remove');
+
+	return $head;
+}
+
 

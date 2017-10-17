@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2015 	Charlie Benke           <charlies@patas-monkey.com>
@@ -64,7 +64,7 @@ $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
 $origin=GETPOST('origin','alpha');
 $originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
-$note_public = GETPOST('note_public');
+$note_public = GETPOST('note_public','none');
 $lineid = GETPOST('line_id','int');
 
 //PDF
@@ -208,8 +208,8 @@ if (empty($reshook))
 	    $object->description	= GETPOST('description');
 	    $object->ref			= $ref;
 	    $object->modelpdf		= GETPOST('model','alpha');
-	    $object->note_private	= GETPOST('note_private');
-	    $object->note_public	= GETPOST('note_public');
+	    $object->note_private	= GETPOST('note_private','none');
+	    $object->note_public	= GETPOST('note_public','none');
 
 		if ($object->socid > 0)
 		{
@@ -714,16 +714,19 @@ if (empty($reshook))
 		exit;
 	}
 
-	/*
-	 * Send mail
-	 */
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$paramname='id';
-	$mode='emailfromintervention';
+	$trigger_name='FICHINTER_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_FICHINTER_TO';
 	$trackid='int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
+	// Actions to build doc
+	$upload_dir = $conf->ficheinter->dir_output;
+	$permissioncreate = $user->rights->ficheinter->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras')
 	{
@@ -740,7 +743,8 @@ if (empty($reshook))
 			$parameters=array('id'=>$object->id);
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
-			{   $result=$object->updateExtraField($_POST["attribute"]);
+			{
+				$result=$object->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
@@ -751,11 +755,6 @@ if (empty($reshook))
 
 		if ($error) $action = 'edit_extras';
 	}
-
-	// Actions to build doc
-	$upload_dir = $conf->ficheinter->dir_output;
-	$permissioncreate = $user->rights->ficheinter->creer;
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheinter->creer)
 	{
@@ -879,8 +878,8 @@ if ($action == 'create')
 
 			$soc = $objectsrc->client;
 
-			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private')));
-			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public'));
+			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private','none')));
+			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public','none'));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -1150,7 +1149,7 @@ else if ($id > 0 || ! empty($ref))
 
 
 	// Intervention card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 	$morehtmlref='<div class="refidno">';
@@ -1379,7 +1378,7 @@ else if ($id > 0 || ! empty($ref))
 					print dol_htmlentitiesbr($objp->description);
 
 					// Date
-					print '<td align="center" width="150">'.dol_print_date($db->jdate($objp->date_intervention),'dayhour').'</td>';
+					print '<td align="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)?dol_print_date($db->jdate($objp->date_intervention),'dayhour'):dol_print_date($db->jdate($objp->date_intervention),'day')).'</td>';
 
 					// Duration
 					print '<td align="right" width="150">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertSecondToTime($objp->duree):'').'</td>';
@@ -1452,7 +1451,8 @@ else if ($id > 0 || ! empty($ref))
 
 					// Date d'intervention
 					print '<td align="center" class="nowrap">';
-					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                                        if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($db->jdate($objp->date_intervention),'di',0,0,0,"date_intervention");
+                                        else $form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
 
                     // Duration
@@ -1519,7 +1519,8 @@ else if ($id > 0 || ! empty($ref))
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-				$form->select_date($timewithnohour,'di',1,1,0,"addinter");
+                                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($timewithnohour,'di',0,0,0,"addinter");
+                                else $form->select_date($timewithnohour,'di',1,1,0,"addinter");
 				print '</td>';
 
                 // Duration
@@ -1683,18 +1684,11 @@ else if ($id > 0 || ! empty($ref))
 		 * Built documents
 		 */
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$conf->ficheinter->dir_output . "/".$object->ref;
+		$filedir=$conf->ficheinter->dir_output . "/".$filename;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed=$user->rights->ficheinter->creer;
 		$delallowed=$user->rights->ficheinter->supprimer;
-		$genallowed=1;
-		$delallowed=1;
-
-		$var=true;
-
-		//print "<br>\n";
-		print $somethingshown=$formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
-
+		print $formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
@@ -1706,130 +1700,24 @@ else if ($id > 0 || ! empty($ref))
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
-		$somethingshown=$formactions->showactions($object,'fichinter',$socid);
+		$somethingshown = $formactions->showactions($object,'fichinter',$socid,1);
 
 		print '</div></div></div>';
 	}
 
 
-	/*
-	 * Action presend
-	 */
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
-	if ($action == 'presend')
-	{
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file=$fileparams['fullname'];
 
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
+	// Presend form
+	$modelmail='fichinter_send';
+	$defaulttopic='SendInterventionRef';
+	$diroutput = $conf->ficheinter->dir_output;
+	$trackid = 'int'.$object->id;
 
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('interventions');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file))
-		{
-			$result=fichinter_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0)
-			{
-				dol_print_error($db,$result);
-				exit;
-			}
-			$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file=$fileparams['fullname'];
-		}
-
-		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-		print '<div class="clearboth"></div>';
-		print '<br>';
-		print load_fiche_titre($langs->trans('SendInterventionByMail'));
-
-		dol_fiche_head('');
-
-		// Create form object
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		$formmail->trackid='int'.$object->id;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'int'.$object->id);
-		}
-		$formmail->withfrom=1;
-		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
-		$formmail->withtocc=$liste;
-		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$outputlangs->trans('SendInterventionRef','__FICHINTERREF__');
-		$formmail->withfile=2;
-		$formmail->withbody=1;
-		$formmail->withdeliveryreceipt=1;
-		$formmail->withcancel=1;
-
-		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
-		$formmail->substit['__FICHINTERREF__']=$object->ref;
-
-		//Find the good contact adress
-		$custcontact='';
-		$contactarr=array();
-		$contactarr=$object->liste_contact(-1,'external');
-
-		if (is_array($contactarr) && count($contactarr)>0) {
-			foreach($contactarr as $contact) {
-				if ($contact['libelle']==$langs->trans('TypeContact_fichinter_external_CUSTOMER')) {
-					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-					$contactstatic=new Contact($db);
-					$contactstatic->fetch($contact['id']);
-					$custcontact=$contactstatic->getFullName($langs,1);
-				}
-			}
-
-			if (!empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action']='send';
-		$formmail->param['models']='fichinter_send';
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['fichinter_id']=$object->id;
-		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-		// Init list of files
-		if (GETPOST("mode")=='init')
-		{
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-		}
-
-		print $formmail->get_form();
-
-		dol_fiche_end();
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 

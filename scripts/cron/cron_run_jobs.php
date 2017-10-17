@@ -55,9 +55,9 @@ $key=$argv[1];
 if (! isset($argv[2]) || ! $argv[2]) {
 	usage($path,$script_file);
 	exit(-1);
-} else {
-	$userlogin=$argv[2];
 }
+
+$userlogin=$argv[2];
 
 
 // Global variables
@@ -69,8 +69,11 @@ $error=0;
  * Main
  */
 
+// current date
+$now=dol_now();
+
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . $now . " *****\n";
 
 // Check security key
 if ($key != $conf->global->CRON_KEY)
@@ -114,6 +117,7 @@ else
 		exit(-1);
 	}
 }
+$user->getrights();
 
 if (isset($argv[3]) || $argv[3])
 {
@@ -136,6 +140,7 @@ if ($result<0)
 	exit(-1);
 }
 
+
 $qualifiedjobs = array();
 foreach($object->lines as $val)
 {
@@ -145,8 +150,6 @@ foreach($object->lines as $val)
 
 // TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
-// current date
-$now=dol_now();
 $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
 $nbofjobslaunchedko=0;

@@ -33,12 +33,12 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class lettering extends BookKeeping
 {
-    /**
-     * lettrageTiers
-     *
-     * @param   int   $socid      Thirdparty id
-     * @return  void
-     */
+	/**
+	 * lettrageTiers
+	 *
+	 * @param   int   $socid	Thirdparty id
+	 * @return  int				<0 if KO, >0 if OK
+	 */
 	public function lettrageTiers($socid) {
 
 		$db = $this->db;
@@ -121,7 +121,7 @@ class lettering extends BookKeeping
 
 		/**
 			Prise en charge des lettering complexe avec prelevment , virement
-		*/
+		 */
 		$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering, bu.url_id , bu.type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  " . MAIN_DB_PREFIX . "bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
@@ -229,12 +229,14 @@ class lettering extends BookKeeping
 			}
 		}
 
-
+		return 1;
 	}
 
 
 	public function updatelettrage($ids, $notrigger=false){
 		$error = 0;
+
+		$lettre='';
 
 		$sql = "SELECT lettering_code FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
 		$sql .= " lettering_code != '' GROUP BY lettering_code ORDER BY lettering_code DESC limit 1;  ";
@@ -252,39 +254,42 @@ class lettering extends BookKeeping
 		}
 // 			var_dump(__line__, $error);
 
-		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-		$sql .= " rowid IN (".implode(',', $ids).") ";
-		$result = $this->db->query ( $sql );
-		if ($result) {
-			$obj = $this->db->fetch_object ( $result );
-// 			print_r($obj);
-			if( !(round(abs($obj->deb),2) === round(abs($obj->cred),2)) ){
-// 				echo $sql;
-// 				print_r($obj);
-				$this->errors[] = 'Total not exacts '.round(abs($obj->deb),2).' vs '. round(abs($obj->cred),2);
+		if (! $error)
+		{
+			$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
+			$sql .= " rowid IN (".implode(',', $ids).") ";
+			$result = $this->db->query ( $sql );
+			if ($result) {
+				$obj = $this->db->fetch_object ( $result );
+	// 			print_r($obj);
+				if( !(round(abs($obj->deb),2) === round(abs($obj->cred),2)) ){
+	// 				echo $sql;
+	// 				print_r($obj);
+					$this->errors[] = 'Total not exacts '.round(abs($obj->deb),2).' vs '. round(abs($obj->cred),2);
+					$error++;
+				}
+			}
+			else{
+				$this->errors[] = 'Erreur sql'.$this->db->lasterror();;
 				$error++;
 			}
 		}
-		else{
-			$this->errors[] = 'Erreur sql'.$this->db->lasterror();;
-			$error++;
-		}
-
-
-		// Update request
 
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql.= " lettering_code='".$lettre."'";
-		$sql.= " , date_lettering = " .$now ;  // todo correct date it's false
-		$sql.= "  WHERE rowid IN (".implode(',', $ids).") ";
-// 		echo $sql ;
-//
-// 		var_dump(__line__, $error);
-// 		print_r($this->errors);
-// 		exit;
-		$this->db->begin();
+		// Update request
+		if (! $error)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
+			$sql.= " lettering_code='".$lettre."'";
+			$sql.= " , date_lettering = " .$now ;  // todo correct date it's false
+			$sql.= "  WHERE rowid IN (".implode(',', $ids).") ";
+	// 		echo $sql ;
+	//
+	// 		var_dump(__line__, $error);
+	// 		print_r($this->errors);
+	// 		exit;
+			$this->db->begin();
 
 			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -306,6 +311,7 @@ class lettering extends BookKeeping
 				}
 			}
 // 				var_dump(__line__, $error);
+
 			// Commit or rollback
 			if ($error)
 			{
@@ -324,6 +330,8 @@ class lettering extends BookKeeping
 				$this->db->commit();
 				return 1;
 			}
+		}
+		return -1;
 	}
 
 }

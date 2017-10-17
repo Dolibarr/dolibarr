@@ -35,7 +35,8 @@ require_once '../main.inc.php';
 // This can happen only with a bookmark or forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http'))
 {
-   die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
+    unset($_SESSION["dol_login"]);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
 
 global $conf, $langs, $user;

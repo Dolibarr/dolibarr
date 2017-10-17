@@ -374,13 +374,12 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
-		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
+
 		$array_key.'_total_ht'=>price2num($object->total_ht),
 		$array_key.'_total_vat'=>(! empty($object->total_vat)?price2num($object->total_vat):price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
-		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
 
 		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
@@ -411,18 +410,44 @@ abstract class CommonDocGenerator
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
 		);
 
-		// Add vat by rates
-		foreach ($object->lines as $line)
+		if (method_exists($object, 'getTotalDiscount')) {
+			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
+			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
+		} else {
+			$resarray[$array_key.'_total_discount_ht_locale'] = '';
+			$resarray[$array_key.'_total_discount_ht'] = '';
+		}
+
+		// Fetch project information if there is a project assigned to this object
+		if ($object->element != "project" && ! empty($object->fk_project) && $object->fk_project > 0)
 		{
-		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
-			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
-			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
-			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
-		    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
-			$vatformated=vatrate($line->tva_tx);
-			if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
-			$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
-			$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+			if (! is_object($object->project))
+			{
+				$object->fetch_projet();
+			}
+			
+			$resarray[$array_key.'_project_ref'] = $object->project->ref;
+			$resarray[$array_key.'_project_title'] = $object->project->title;
+			$resarray[$array_key.'_project_description'] = $object->project->description;
+			$resarray[$array_key.'_project_date_start'] = dol_print_date($object->project->date_start, 'day');
+			$resarray[$array_key.'_project_date_end'] = dol_print_date($object->project->date_end, 'day');
+		}
+
+		// Add vat by rates
+		if (is_array($object->lines) && count($object->lines)>0)
+		{
+			foreach ($object->lines as $line)
+			{
+			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
+				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
+				$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+				$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
+			    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
+				$vatformated=vatrate($line->tva_tx);
+				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
+				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
+				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+			}
 		}
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))

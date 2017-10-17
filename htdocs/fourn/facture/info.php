@@ -46,6 +46,8 @@ $object = new FactureFournisseur($db);
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
@@ -61,7 +63,7 @@ $head = facturefourn_prepare_head($object);
 $titre=$langs->trans('SupplierInvoice');
 dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'bill');
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref='<div class="refidno">';
 // Ref supplier

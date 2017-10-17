@@ -25,7 +25,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 $langs->load("companies");
 $langs->load("bills");
@@ -39,7 +41,7 @@ $errmsg='';
 $action=GETPOST("action",'alpha');
 $rowid=GETPOST("rowid","int")?GETPOST("rowid","int"):GETPOST("id","int");
 $typeid=GETPOST("typeid","int");
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm');
 
 if (! $user->rights->adherent->cotisation->lire)
@@ -231,20 +233,20 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+		{
+			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
 			if ($object->fk_bank)
 			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($object->fk_bank);
+				$bankline=new AccountLine($db);
+				$result=$bankline->fetch($object->fk_bank);
 				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
 			{
 				print $langs->trans("NoneF");
 			}
-	    	print '</td></tr>';
-	    }
+			print '</td></tr>';
+		}
 	}
 
 	print '</table>';
@@ -326,26 +328,25 @@ if ($rowid && $action != 'edit')
     // Amount
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
-    // Bank line
+	// Bank line
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
+		{
+			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 			if ($object->fk_bank)
 			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($object->fk_bank);
-		    	print $bankline->getNomUrl(1,0,'showall');
+				$bankline=new AccountLine($db);
+				$result=$bankline->fetch($object->fk_bank);
+				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
 			{
 				print $langs->trans("NoneF");
 			}
-	    	print '</td></tr>';
-	    }
+			print '</td></tr>';
+		}
 	}
-
 
     print "</table>\n";
     print '</div>';
@@ -402,21 +403,15 @@ if ($rowid && $action != 'edit')
     // Show links to link elements
     /*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-
-    // Link for paypal payment
-    /*
-    if (! empty($conf->paypal->enabled) && $object->statut != 0) {
-        include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
-        print showPaypalPaymentUrl('invoice', $object->ref);
-    }
     */
+
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
     // List of actions on element
     /*
     include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'invoice', $socid);
+    $somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
     */
 
     print '</div></div></div>';

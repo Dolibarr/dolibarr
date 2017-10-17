@@ -140,7 +140,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
-		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->virtualhost)."',";
+		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
@@ -184,10 +184,9 @@ class Website extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $ref Ref
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    $id  	Id object
+	 * @param 	string $ref 	Ref
+	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -236,9 +235,6 @@ class Website extends CommonObject
 			if ($numrows > 0) {
 				// Lines
 				$this->fetchLines();
-				{
-					return -3;
-				}
 			}
 
 			if ($numrows > 0) {
@@ -480,26 +476,45 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Load an object from its id and create a new one in database
+	 * Load an object from its id and create a new one in database.
+	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
 	 * @param	User	$user		User making the clone
 	 * @param 	int 	$fromid 	Id of object to clone
 	 * @param	string	$newref		New ref
-	 * @return 	int 				New id of clone
+	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone($user, $fromid, $newref='')
+	public function createFromClone($user, $fromid, $newref)
 	{
         global $hookmanager, $langs;
-        $error=0;
+		global $dolibarr_main_data_root;
+
+		$error=0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$object = new self($this->db);
 
+        // Check no site with ref exists
+		if ($object->fetch(0, $newref) > 0)
+		{
+			$this->error='NewRefIsAlreadyUsed';
+			return -1;
+		}
+
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
+
+		$oldidforhome=$object->fk_default_home;
+
+		$pathofwebsiteold=$dolibarr_main_data_root.'/websites/'.$object->ref;
+		$pathofwebsitenew=$dolibarr_main_data_root.'/websites/'.$newref;
+		dol_delete_dir_recursive($pathofwebsitenew);
+
+		$fileindex=$pathofwebsitenew.'/index.php';
+
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -519,11 +534,92 @@ class Website extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+		if (! $error)
+		{
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
+
+			// Check symlink to medias and restore it if ko
+			$pathtomedias=DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';
+			if (! is_link(dol_osencode($pathtomediasinwebsite)))
+			{
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			}
+
+			$newidforhome=0;
+
+			// Duplicate pages
+			$objectpages = new WebsitePage($this->db);
+			$listofpages = $objectpages->fetchAll($fromid);
+			foreach($listofpages as $pageid => $objectpageold)
+			{
+				// Delete old file
+				$filetplold=$pathofwebsitenew.'/page'.$pageid.'.tpl.php';
+				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+				dol_delete_file($filetplold);
+
+				// Create new file
+				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id);
+				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
+				if (is_object($objectpagenew) && $objectpagenew->pageurl)
+				{
+		            $filealias=$pathofwebsitenew.'/'.$objectpagenew->pageurl.'.php';
+					$filetplnew=$pathofwebsitenew.'/page'.$objectpagenew->id.'.tpl.php';
+
+					// Save page alias
+					$result=dolSavePageAlias($filealias, $object, $objectpagenew);
+					if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+
+					$result=dolSavePageContent($filetplnew, $object, $objectpagenew);
+					if (! $result) setEventMessages('Failed to write file '.$filetplnew, null, 'errors');
+
+					if ($pageid == $oldidforhome)
+					{
+						$newidforhome = $objectpagenew->id;
+					}
+				}
+				else
+				{
+					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
+					$error++;
+				}
+			}
+		}
+
+		if (! $error)
+		{
+			// Restore id of home page
+			$object->fk_default_home = $newidforhome;
+		    $res = $object->update($user);
+		    if (! $res > 0)
+		    {
+		        $error++;
+		        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+		    }
+
+		    if (! $error)
+		    {
+		        dol_delete_file($fileindex);
+
+		    	$filetpl=$pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
+
+		    	$indexcontent = '<?php'."\n";
+		        $indexcontent.= '// File generated to provide a shortcut to the Home Page - DO NOT MODIFY - It is just an include.'."\n";
+		        $indexcontent.= "include_once './".basename($filetpl)."'\n";
+		        $indexcontent.= '?>'."\n";
+		        $result = file_put_contents($fileindex, $indexcontent);
+		        if (! empty($conf->global->MAIN_UMASK))
+		            @chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		    }
+		}
+
 		// End
 		if (!$error) {
 			$this->db->commit();
 
-			return $object->id;
+			return $object;
 		} else {
 			$this->db->rollback();
 

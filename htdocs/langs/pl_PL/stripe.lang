@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Stripe module setup
+StripeSetup=Konfiguracja modułu Stripe
 StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-StripeOrCBDoPayment=Pay with credit card or Stripe
+StripeOrCBDoPayment=Zapłać przy użyciu karty lub Stripe 
 FollowingUrlAreAvailableToMakePayments=Nastepujące adresy są dostępne dla klienta, by mógł dokonać płatności za faktury zamówienia
 PaymentForm=Forma płatności
 WelcomeOnPaymentPage=Witamy w naszej usłudze płatności online
@@ -13,7 +13,7 @@ STRIPE_PAYONLINE_SENDEMAIL=Napisz e-mail, aby poinformować po płatności (sukc
 Creditor=Wierzyciel
 PaymentCode=Kod płatności
 StripeDoPayment=Przejdź do płatności
-YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+YouWillBeRedirectedOnStripe=Zostaniesz przekierowany na bezpieczoną stronę Stripe aby podać dane karty kredytowej.
 Continue=Dalej
 ToOfferALinkForOnlinePayment=URL %s płatności
 ToOfferALinkForOnlinePaymentOnOrder=URL zaoferowania %s płatności online interfejsu użytkownika za zamówienie
@@ -22,19 +22,19 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL zaoferowania płatności online %
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL zaoferowania płatności online %s interfejsu użytkownika w celu utworzenia dowolnej kwoty.
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online %s interfejs użytkownika jest członkiem subskrypcji
 YouCanAddTagOnUrl=Możesz również dodać parametr <b>&</b> url <b>= <i>wartość</i> tagu</b> do żadnej z tych adresów URL (wymagany tylko dla bezpłatnych), aby dodać swój komentarz płatności tag.
-SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+SetupStripeToHavePaymentCreatedAutomatically=Skonfiguruj swój Stripe z linkiem <b>z %s</b> do opłat stworzonych automatycznie, gdy są zatwierdzone przez Stripe.
 YourPaymentHasBeenRecorded=Ta strona potwierdza, że ​​płatność została wprowadzona. Dziękuję.
 YourPaymentHasNotBeenRecorded=Twoja płatność nie została wprowadzona i transakcja została anulowana. Dziękuję.
 AccountParameter=Parametry konta
 UsageParameter=Parametry serwera
 InformationToFindParameters=Pomóż znaleźć %s informacje o koncie
-STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+STRIPE_CGI_URL_V2=Link do modułu płatności Stripe CGI
 VendorName=Nazwa dostawcy
 CSSUrlForPaymentForm=Styl CSS arkuszy dla form płatności
 MessageOK=Wiadomość dla zatwierdzonych stron. Powrót do płatności
 MessageKO=Wiadomość dla odwołanych stron. Powrót do płatności
-NewStripePaymentReceived=New Stripe payment received
-NewStripePaymentFailed=New Stripe payment tried but failed
+NewStripePaymentReceived=Nowa płatność Stripe otrzymana
+NewStripePaymentFailed=Próbowano wykonać płatność Stripe, ale nie powiodła się
 STRIPE_TEST_SECRET_KEY=Secret test key
 STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
 STRIPE_LIVE_SECRET_KEY=Secret live key
