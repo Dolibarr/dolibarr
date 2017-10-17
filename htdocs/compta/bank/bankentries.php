@@ -372,6 +372,8 @@ if (dol_strlen($search_dv_end) > 0)   $param .= '&search_end_dvmonth=' . GETPOST
 if ($search_req_nb) $param.='&amp;req_nb='.urlencode($search_req_nb);
 if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+if(!empty($search_conciliated) || $search_conciliated === 0) $param.='&search_conciliated='.$search_conciliated;
+
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {
