@@ -806,13 +806,13 @@ class ExtraFields
 	 * @param  string  $key            Key of attribute
 	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parametes on html input tag
-	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
 	 * @param  int     $objectid       Current object id
 	 * @return string
 	 */
-	function showInputField($key, $value, $moreparam='', $keyprefix='', $keysuffix='', $showsize=0, $objectid=0)
+	function showInputField($key, $value, $moreparam='', $keysuffix='', $keyprefix='', $showsize=0, $objectid=0)
 	{
 		global $conf,$langs;
 
@@ -831,51 +831,51 @@ class ExtraFields
 
 		if ($computed)
 		{
-		    if ($keysuffix != 'search_') return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
-		    else return '';
+			if ($keyprefix != 'search_') return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+			else return '';
 		}
 
 		if (empty($showsize))
 		{
-		    if ($type == 'date')
-    		{
-    			//$showsize=10;
-    		    $showsize = 'minwidth100imp';
-    		}
+			if ($type == 'date')
+			{
+				//$showsize=10;
+				$showsize = 'minwidth100imp';
+			}
 			elseif ($type == 'datetime')
-    		{
-    			//$showsize=19;
-    			$showsize = 'minwidth200imp';
-    		}
-    		elseif (in_array($type,array('int','double','price')))
-    		{
-    			//$showsize=10;
-    			$showsize = 'maxwidth75';
-    		}
-    		elseif ($type == 'url')
-    		{
-    		    $showsize='minwidth400';
-    		}
-    		elseif ($type == 'boolean')
-    		{
-    		    $showsize='';
-    		}
-    		else
-    		{
-    			if (round($size) < 12)
-    			{
-    			    $showsize = 'minwidth100';
-    			}
-    			else if (round($size) <= 48)
-    			{
-    			    $showsize = 'minwidth200';
-    			}
-    			else
-    			{
-    			    //$showsize=48;
-    			    $showsize = 'minwidth400';
-    			}
-    		}
+			{
+				//$showsize=19;
+				$showsize = 'minwidth200imp';
+			}
+			elseif (in_array($type,array('int','double','price')))
+			{
+				//$showsize=10;
+				$showsize = 'maxwidth75';
+			}
+			elseif ($type == 'url')
+			{
+				$showsize='minwidth400';
+			}
+			elseif ($type == 'boolean')
+			{
+				$showsize='';
+			}
+			else
+			{
+				if (round($size) < 12)
+				{
+					$showsize = 'minwidth100';
+				}
+				else if (round($size) <= 48)
+				{
+					$showsize = 'minwidth200';
+				}
+				else
+				{
+					//$showsize=48;
+					$showsize = 'minwidth400';
+				}
+			}
 		}
 
 		if (in_array($type,array('date','datetime')))
@@ -893,26 +893,26 @@ class ExtraFields
 			if (! is_object($form)) $form=new Form($this->db);
 
 			// TODO Must also support $moreparam
-			$out = $form->select_date($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, ($keysuffix != 'search_' ? 1 : 0), 1, 0, 1);
+			$out = $form->select_date($value, $keyprefix.'options_'.$key.$keysuffix, $showtime, $showtime, $required, '', 1, ($keyprefix != 'search_' ? 1 : 0), 1, 0, 1);
 		}
 		elseif (in_array($type,array('int')))
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
-            $out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor($keysuffix.'options_'.$key.$keyprefix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
+			$doleditor=new DolEditor($keyprefix.'options_'.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
 			$out=$doleditor->Create(1);
 		}
 		elseif ($type == 'boolean')
@@ -923,21 +923,21 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
 		}
 		elseif ($type == 'select')
 		{
@@ -945,10 +945,10 @@ class ExtraFields
 			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
+				$out.= ajax_combobox($keyprefix.'options_'.$key.$keysuffix, array(), 0);
 			}
 
-			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
@@ -967,10 +967,10 @@ class ExtraFields
 			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
+				$out.= ajax_combobox($keyprefix.'options_'.$key.$keysuffix, array(), 0);
 			}
 
-			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
 			if (is_array($param['options']))
 			{
 				$param_list=array_keys($param['options']);
@@ -1132,7 +1132,7 @@ class ExtraFields
 			$form = new Form($db);
 
 			$value_arr=explode(',',$value);
-			$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
+			$out=$form->multiselectarray($keyprefix.'options_'.$key.$keysuffix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 
 		}
 		elseif ($type == 'radio')
@@ -1140,11 +1140,11 @@ class ExtraFields
 			$out='';
 			foreach ($param['options'] as $keyopt => $val)
 			{
-				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
+				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
-				$out.=' id="'.$keysuffix.'options_'.$key.$keyprefix.'_'.$keyopt.'"';
+				$out.=' id="'.$keyprefix.'options_'.$key.$keysuffix.'_'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked':'');
-				$out.='/><label for="'.$keysuffix.'options_'.$key.$keyprefix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out.='/><label for="'.$keyprefix.'options_'.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
 			}
 		}
 		elseif ($type == 'chkbxlst')
@@ -1268,15 +1268,15 @@ class ExtraFields
 							if (empty($labeltoshow))
 								$labeltoshow = '(not defined)';
 
-							if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+								if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+									$data[$obj->rowid]=$labeltoshow;
+								}
+
+								if (! empty($InfoFieldList[3])) {
+									$parent = $parentName . ':' . $obj->{$parentField};
+								}
+
 								$data[$obj->rowid]=$labeltoshow;
-							}
-
-							if (! empty($InfoFieldList[3])) {
-								$parent = $parentName . ':' . $obj->{$parentField};
-							}
-
-							$data[$obj->rowid]=$labeltoshow;
 						}
 
 						$i ++;
@@ -1286,7 +1286,7 @@ class ExtraFields
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 					$form = new Form($db);
 
-					$out=$form->multiselectarray($keysuffix.'options_'.$key.$keyprefix, $data, $value_arr, '', 0, '', 0, '100%');
+					$out=$form->multiselectarray($keyprefix.'options_'.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
 
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
@@ -1305,39 +1305,40 @@ class ExtraFields
 			dol_include_once($InfoFieldList[1]);
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
-			    $valuetoshow=$value;
-                if (!empty($value))
-                {
-                    $object = new $InfoFieldList[0]($this->db);
-                    $resfetch=$object->fetch($value);
-                    if ($resfetch > 0)
-                    {
-                        $valuetoshow=$object->ref;
-                        if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
-                    }
-                }
-                $out.='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$valuetoshow.'" >';
+				$valuetoshow=$value;
+				if (!empty($value))
+				{
+					$object = new $InfoFieldList[0]($this->db);
+					$resfetch=$object->fetch($value);
+					if ($resfetch > 0)
+					{
+						$valuetoshow=$object->ref;
+						if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
+					}
+				}
+				$out.='<input type="text" class="flat '.$showsize.'" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$valuetoshow.'" >';
 			}
 			else
 			{
-			    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-			    $out.='Error bad setup of extrafield';
+				dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+				$out.='Error bad setup of extrafield';
 			}
 		}
 		elseif ($type == 'password')
 		{
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
-			$out='<input type="'.($keysuffix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
-			$out='<input type="hidden" value="'.$value.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="'.$keysuffix.'options_'.$key.$keyprefix.'"/>';
+			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'"/>';
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
-		elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
-		*/
+		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+		 */
 		return $out;
 	}
+
 
 	/**
 	 * Return HTML string to put an output field into a page
