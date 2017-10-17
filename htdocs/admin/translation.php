@@ -227,7 +227,9 @@ else
 
 print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
 
+//print '<span class="opacitymedium">';
 print $langs->trans("TranslationDesc")."<br>\n";
+//print '</span>';
 print "<br>\n";
 
 $current_language_code=$langs->defaultlang;
@@ -320,7 +322,7 @@ if ($mode == 'overwrite')
     $sql = "SELECT rowid, entity, lang, transkey, transvalue";
     $sql.= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
     $sql.= " WHERE 1 = 1";
-    //$sql.= " AND entity IN (".$user->entity.",".$conf->entity.")";
+    $sql.= " AND entity IN (".getEntity('overwrite_trans').")";
     $sql.= $db->order($sortfield, $sortorder);
 
     dol_syslog("translation::select from table", LOG_DEBUG);
@@ -513,7 +515,7 @@ if ($mode == 'searchkey')
                 $sql = "SELECT rowid";
                 $sql.= " FROM " . MAIN_DB_PREFIX . "overwrite_trans";
                 $sql.= " WHERE transkey = '".$key."'";
-                $sql.= " AND entity IN (" . $user->entity . ", " . $conf->entity . ")";
+                $sql.= " AND entity IN (" . getEntity('overwrite_trans') . ")";
                 dol_syslog("translation::select from table", LOG_DEBUG);
                 $result = $db->query($sql);
                 if ($result)
@@ -529,7 +531,15 @@ if ($mode == 'searchkey')
             }
             else if (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
             {
-                print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit() . '</a>';
+            	//print $key.'-'.$val;
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit_add($langs->trans("Overwrite")) . '</a>';
+            }
+
+            if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+            {
+            	$transifexlangfile='$';		// $ means 'All'
+            	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
+            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'object_globe').'</a>';
             }
         }
         else

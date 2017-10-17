@@ -771,6 +771,7 @@ Calendar=Calendrier
 GroupBy=Grouper par...
 ViewFlatList=Voir vue liste
 RemoveString=Supprimer la chaine '%s'
+Translation=Traduction
 SomeTranslationAreUncomplete=Certains languages pourraient n'être que partiellement traduis, ou contenir des erreurs. Si vous en détectez, vous pouvez les corriger en vous enregistrant sur <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>
 DirectDownloadLink=Lien de téléchargement direct
 Download=Téléchargement
