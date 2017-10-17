@@ -816,6 +816,10 @@ if (GETPOST('textbrowser','int') || (! empty($conf->browser->name) && $conf->bro
 {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER=1;
 }
+elseif (! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))
+{
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER=$user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+}
 
 // Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu','int') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
@@ -1093,9 +1097,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
-		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser','int')) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
+		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
+		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
 		// Displays title
 		$appli=constant('DOL_APPLICATION_TITLE');

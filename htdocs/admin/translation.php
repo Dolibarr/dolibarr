@@ -209,19 +209,26 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 $param='&mode='.$mode;
 
-$enabledisablehtml = $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml='';
+if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
-    $enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
+    //$enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
+    $enabledisablehtml.='<span class="fa fa-toggle-off valignmiddle" style="font-size: 2em; color: #999;" alt="'.$langs->trans("Disabled").'">';
+    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
+    $enabledisablehtml.='</span>';
     $enabledisablehtml.='</a>';
 }
 else
 {
     // Button on, click to disable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
-    $enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
+    //$enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
+    $enabledisablehtml.='<span class="fa fa-toggle-on valignmiddle" style="font-size: 2em; color: #227722;" alt="'.$langs->trans("Activated").'">';
+    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
+    $enabledisablehtml.='</span>';
     $enabledisablehtml.='</a>';
 }
 
@@ -262,11 +269,14 @@ if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
 
+	print '<div class="justify"><span class="opacitymedium">';
     print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
     $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
-    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a>)<br>';
+    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$langs->trans("Here").'</a>)<br>';
     print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
     print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
+    print '</span></div>';
+
     print '<br>';
 
 
