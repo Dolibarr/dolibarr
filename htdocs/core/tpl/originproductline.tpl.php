@@ -19,8 +19,8 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
-<?php 
-print '<tr'.$bc[$var].'>';
+<?php
+print '<tr class="oddeven'.(empty($this->tpl['strike'])?'':' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
 print '<td>'.$this->tpl['description'].'</td>';
 print '<td align="right">'.$this->tpl['vat_rate'].'</td>';
@@ -29,7 +29,7 @@ if (!empty($conf->multicurrency->enabled))
 	print '<td align="right">'.$this->tpl['multicurrency_price'].'</td>';
 
 print '<td align="right">'.$this->tpl['qty'].'</td>';
-if($conf->global->PRODUCT_USE_UNITS) 
+if($conf->global->PRODUCT_USE_UNITS)
 	print '<td align="left">'.$langs->trans($this->tpl['unit']).'</td>';
 
 print '<td align="right">'.$this->tpl['remise_percent'].'</td>';

@@ -2284,6 +2284,14 @@ if ($action == 'create')
 					}
 				}
 
+				// Create an intervention
+				if (! empty($conf->service->enabled) && ! empty($conf->ficheinter->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+					if ($user->rights->ficheinter->creer) {
+						$langs->load("interventions");
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fichinter/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddIntervention") . '</a></div>';
+					}
+				}
+
 				// Create contract
 				if ($conf->contrat->enabled && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");

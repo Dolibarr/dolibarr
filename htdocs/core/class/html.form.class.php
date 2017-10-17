@@ -4742,6 +4742,7 @@ class Form
 			{
 				$shour = dol_print_date($set_time, "%H");
 				$smin = dol_print_date($set_time, "%M");
+				$ssec = dol_print_date($set_time, "%S");
 			}
 		}
 		else
@@ -4752,6 +4753,7 @@ class Form
 			$sday = '';
 			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? '' : $conf->global->MAIN_DEFAULT_DATE_HOUR;
 			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? '' : $conf->global->MAIN_DEFAULT_DATE_MIN;
+			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? '' : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
@@ -4932,6 +4934,8 @@ class Form
 				$retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
 			}
 			$retstring.='</select>';
+
+			$retstring.='<input type="hidden" name="'.$prefix.'sec" value="'.$ssec.'">';
 		}
 
 		// Add a "Now" link

@@ -3648,11 +3648,12 @@ abstract class CommonObject
 	 * 	Return HTML table table of source object lines
 	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
 	 *  If lines are into a template, title must also be into a template
-	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
 	 *
+	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
 	 *  @return	void
 	 */
-	function printOriginLinesList()
+	function printOriginLinesList($restrictlist='')
 	{
 		global $langs, $hookmanager, $conf;
 
@@ -3674,8 +3675,6 @@ abstract class CommonObject
 
 		foreach ($this->lines as $line)
 		{
-
-
 			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 			{
 				if (empty($line->fk_parent_line))
@@ -3687,7 +3686,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printOriginLine($line,$var);
+				$this->printOriginLine($line, $var, $restrictlist);
 			}
 
 			$i++;
@@ -3700,11 +3699,12 @@ abstract class CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line		Line
-	 * 	@param	string				$var		Var
+	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	string				$var				Var
+	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 * 	@return	void
 	 */
-	function printOriginLine($line,$var)
+	function printOriginLine($line, $var, $restrictlist='')
 	{
 		global $langs, $conf;
 
@@ -3805,6 +3805,10 @@ abstract class CommonObject
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->getLabelOfUnit('long');
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
+
+		// Is the line strike or not
+		$this->tpl['strike']=0;
+		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) $this->tpl['strike']=1;
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
