@@ -1031,6 +1031,14 @@ td.showDragHandle {
 	height: calc(100% - 50px);*/
 }
 
+<?php if (!empty($conf->global->THEME_TOPMENU_STICKY_POSITION)) {  ?>
+.side-nav-vert {
+	position: sticky;
+	top: 0px;
+	z-index: 90;
+}
+<?php } ?>
+
 .side-nav {
 	display: table-cell;
 	border-right: 1px solid #d0d0d0;
