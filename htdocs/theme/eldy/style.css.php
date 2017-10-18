@@ -3453,6 +3453,10 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 /* Gantt
 /* ============================================================================== */
 
+div.gTaskInfo {
+    background: #f0f0f0 !important;
+}
+
 td.gtaskname {
     overflow: hidden;
     text-overflow: ellipsis;

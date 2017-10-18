@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $id=GETPOST('id','int');
@@ -65,6 +67,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $userstatic=new User($db);
 $companystatic=new Societe($db);
+$contactstatic=new Contact($db);
 $task = new Task($db);
 
 $arrayofcss=array('/includes/jsgantt/jsgantt.css');
@@ -239,6 +242,7 @@ if (count($tasksarray)>0)
 	foreach($tasksarray as $key => $val)
 	{
 		$task->fetch($val->id);
+
 		$tasks[$taskcursor]['task_id']=$val->id;
 		$tasks[$taskcursor]['task_parent']=$val->fk_parent;
         $tasks[$taskcursor]['task_is_group'] = 0;
@@ -261,7 +265,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
 		$tasks[$taskcursor]['task_color']='b4d1ea';
 		$idofusers=$task->getListContactId('internal');
-		$idofthirdparty=$task->getListContactId('external');
+		$idofcontacts=$task->getListContactId('external');
   		$s='';
 		if (count($idofusers)>0)
 		{
@@ -275,18 +279,26 @@ if (count($tasksarray)>0)
 				$i++;
 			}
 		}
-		//if (count($idofusers)>0 && (count($idofthirdparty)>0)) $s.=' - ';
-		if (count($idofthirdparty)>0)
+		//if (count($idofusers)>0 && (count($idofcontacts)>0)) $s.=' - ';
+		if (count($idofcontacts)>0)
 		{
 			if ($s) $s.=' - ';
 			$s.=$langs->trans("Externals").': ';
 			$i=0;
-			foreach($idofthirdparty as $valid)
+			$contactidfound=array();
+			foreach($idofcontacts as $valid)
 			{
-				$companystatic->fetch($valid);
-				if ($i) $s.=',';
-				$s.=$companystatic->name;
-				$i++;
+				if (empty($contactidfound[$valid]))
+				{
+					$res = $contactstatic->fetch($valid);
+					if ($res > 0)
+					{
+						if ($i) $s.=', ';
+						$s.=$contactstatic->getFullName($langs);
+						$contactidfound[$valid]=1;
+						$i++;
+					}
+				}
 			}
 		}
 		//if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
