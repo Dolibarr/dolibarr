@@ -2748,8 +2748,8 @@ if ($action != 'makeorder')
     		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
     		$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
     		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    		$genallowed=$user->rights->fournisseur->commande->creer;
-    		$delallowed=$user->rights->fournisseur->commande->supprimer;
+    		$genallowed=$user->rights->fournisseur->commande->lire;
+    		$delallowed=$user->rights->fournisseur->commande->creer;
 
     		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
     		$somethingshown=$formfile->numoffiles;

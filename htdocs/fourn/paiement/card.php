@@ -182,13 +182,13 @@ if ($result > 0)
 	}
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
-	
+
+
 	dol_banner_tab($object,'id',$linkback,1,'rowid','ref');
-	
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
 
 	/*print '<tr>';
@@ -258,7 +258,7 @@ if ($result > 0)
 	print '</table>';
 
 	print '</div>';
-	
+
 	print '<br>';
 
 	/**
@@ -295,7 +295,7 @@ if ($result > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven">';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
@@ -321,7 +321,7 @@ if ($result > 0)
 				$i++;
 			}
 		}
-		
+
 
 		print "</table>\n";
 		$db->free($resql);
@@ -366,7 +366,7 @@ if ($result > 0)
 		}
 	}
 	print '</div>';
-	
+
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	/*
@@ -375,8 +375,8 @@ if ($result > 0)
     $ref=dol_sanitizeFileName($object->ref);
     $filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
     $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
-    $genallowed=$user->rights->fournisseur->facture->creer;
-    $delallowed=$user->rights->fournisseur->facture->supprimer;
+    $genallowed=$user->rights->fournisseur->facture->lire;
+    $delallowed=$user->rights->fournisseur->facture->creer;
     $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
     print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);

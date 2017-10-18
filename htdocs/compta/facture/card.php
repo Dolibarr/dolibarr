@@ -1378,7 +1378,7 @@ if (empty($reshook))
 
 				$object->situation_counter = $object->situation_counter + 1;
 				$id = $object->createFromCurrent($user);
-				if ($id <= 0) 
+				if ($id <= 0)
 				{
 					$mesg = $object->error;
 				}
@@ -4291,8 +4291,8 @@ else if ($id > 0 || ! empty($ref))
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
-		$genallowed = $user->rights->facture->creer;
-		$delallowed = $user->rights->facture->supprimer;
+		$genallowed = $user->rights->facture->lire;
+		$delallowed = $user->rights->facture->creer;
 
 		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		$somethingshown = $formfile->numoffiles;

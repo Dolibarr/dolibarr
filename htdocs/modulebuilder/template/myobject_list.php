@@ -640,7 +640,7 @@ if ($nbtotalofrecords === '' || $nbtotalofrecords)
 
         $filedir=$diroutputmassaction;
         $genallowed=$user->rights->mymodule->read;
-        $delallowed=$user->rights->mymodule->read;
+        $delallowed=$user->rights->mymodule->create;
 
         print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }

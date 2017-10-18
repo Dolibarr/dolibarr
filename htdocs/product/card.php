@@ -2030,8 +2030,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $relativepath = $comref . '/' . $objectref . '.pdf';
     $filedir = $conf->produit->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$user->rights->produit->creer;
-    $delallowed=$user->rights->produit->supprimer;
+    $genallowed=$user->rights->produit->lire;
+    $delallowed=$user->rights->produit->creer;
 
     $var=true;
 
