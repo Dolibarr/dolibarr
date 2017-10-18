@@ -633,7 +633,7 @@ if ($resql)
 
 		$filedir=$diroutputmassaction;
 		$genallowed=$user->rights->ficheinter->lire;
-		$delallowed=$user->rights->ficheinter->supprimer;
+		$delallowed=$user->rights->ficheinter->creer;
 
 		print $formfile->showdocuments('massfilesarea_interventions','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

@@ -577,7 +577,7 @@ if ($action == 'mupdate')
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissioncreate = ($user->rights->agenda->allactions->delete ||	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete));
+$permissioncreate = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -1478,8 +1478,8 @@ if ($id > 0)
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
             $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed=$user->rights->agenda->myactions->create;
-	        $delallowed=$user->rights->agenda->myactions->delete;
+            $genallowed=$user->rights->agenda->myactions->read;
+	        $delallowed=$user->rights->agenda->myactions->create;
 
             $var=true;
 

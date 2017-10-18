@@ -2124,8 +2124,8 @@ else
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->contrat->creer;
-			$delallowed = $user->rights->contrat->supprimer;
+			$genallowed = $user->rights->contrat->lire;
+			$delallowed = $user->rights->contrat->creer;
 
 			$var = true;
 

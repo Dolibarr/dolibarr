@@ -1719,8 +1719,8 @@ else if ($id > 0 || ! empty($ref))
 		$filename=dol_sanitizeFileName($object->ref);
 		$filedir=$conf->ficheinter->dir_output . "/".$filename;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed=$user->rights->ficheinter->creer;
-		$delallowed=$user->rights->ficheinter->supprimer;
+		$genallowed=$user->rights->ficheinter->lire;
+		$delallowed=$user->rights->ficheinter->creer;
 		print $formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		// Show links to link elements

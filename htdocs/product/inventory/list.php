@@ -595,7 +595,7 @@ if ($nbtotalofrecords === '' || $nbtotalofrecords)
 
         $filedir=$diroutputmassaction;
         $genallowed=$user->rights->inventory->read;
-        $delallowed=$user->rights->inventory->read;
+        $delallowed=$user->rights->inventory->create;
 
         print $formfile->showdocuments('massfilesarea_inventory','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }

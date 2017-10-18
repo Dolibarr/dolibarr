@@ -2122,7 +2122,7 @@ else if ($id || $ref)
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 		$genallowed=$user->rights->expedition->lire;
-		$delallowed=$user->rights->expedition->supprimer;
+		$delallowed=$user->rights->expedition->creer;
 
 		print $formfile->showdocuments('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 

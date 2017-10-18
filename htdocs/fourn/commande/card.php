@@ -2386,6 +2386,7 @@ elseif (! empty($object->id))
 			// Set status to ordered (action=commande)
 			print '<!-- form to record supplier order -->'."\n";
 			print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
+
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
 			print load_fiche_titre($langs->trans("ToOrder"),'','');
@@ -2407,6 +2408,7 @@ elseif (! empty($object->id))
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 			print '</table>';
+
 			print '</form>';
 			print "<br>";
 		}
@@ -2423,8 +2425,8 @@ elseif (! empty($object->id))
 			$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
 			$filedir = $conf->fournisseur->dir_output	. '/commande/' .	$comfournref;
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed=$user->rights->fournisseur->commande->creer;
-			$delallowed=$user->rights->fournisseur->commande->supprimer;
+			$genallowed=$user->rights->fournisseur->commande->lire;
+			$delallowed=$user->rights->fournisseur->commande->creer;
 
 			print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
 			$somethingshown=$formfile->numoffiles;

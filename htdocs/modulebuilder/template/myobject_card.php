@@ -585,8 +585,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $relativepath = $comref . '/' . $comref . '.pdf';
 	    $filedir = $conf->mymodule->dir_output . '/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->mymodule->creer;
-	    $delallowed = $user->rights->mymodule->supprimer;
+	    $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
+	    $delallowed = $user->rights->mymodule->create;	// If you can create/edit, you can remove a file on card
 	    print $formfile->showdocuments('mymodule', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 

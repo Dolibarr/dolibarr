@@ -1763,8 +1763,8 @@ if ($action == 'create')
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->supplier_proposal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->supplier_proposal->creer;
-		$delallowed = $user->rights->supplier_proposal->supprimer;
+		$genallowed = $user->rights->supplier_proposal->lire;
+		$delallowed = $user->rights->supplier_proposal->creer;
 
 		print $formfile->showdocuments('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
