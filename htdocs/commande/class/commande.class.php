@@ -557,9 +557,10 @@ class Commande extends CommonOrder
      *  Close order
      *
      * 	@param      User	$user       Objet user that close
+     *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
      *	@return		int					<0 if KO, >0 if OK
      */
-    function cloture($user)
+    function cloture($user, $notrigger=0)
     {
         global $conf;
 
@@ -580,10 +581,13 @@ class Commande extends CommonOrder
 
             if ($this->db->query($sql))
             {
-	            // Call trigger
-	            $result=$this->call_trigger('ORDER_CLOSE',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+            	if (! $notrigger)
+            	{
+		            // Call trigger
+	            	$result=$this->call_trigger('ORDER_CLOSE',$user);
+	            	if ($result < 0) $error++;
+		            // End call triggers
+            	}
 
                 if (! $error)
                 {

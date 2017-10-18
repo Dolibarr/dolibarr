@@ -340,6 +340,10 @@ class SupplierOrders extends DolibarrApi
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);
 
         return $object;
     }
