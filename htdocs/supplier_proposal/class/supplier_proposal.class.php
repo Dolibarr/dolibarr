@@ -1305,44 +1305,6 @@ class SupplierProposal extends CommonObject
     }
 
     /**
-     *	Update value of extrafields on the proposal
-     *
-     *	@param      User	$user       Object user that modify
-     *	@return     int         		<0 if ko, >0 if ok
-     */
-    function update_extrafields($user)
-    {
-    	$action='update';
-
-    	// Actions on extra fields (by external module or standard code)
-    	$hookmanager->initHooks(array('supplier_proposaldao'));
-    	$parameters=array('id'=>$this->id);
-    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-    	if (empty($reshook))
-    	{
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    		{
-    			$result=$this->insertExtraFields();
-    			if ($result < 0)
-    			{
-    				$error++;
-    			}
-    		}
-    	}
-    	else if ($reshook < 0) $error++;
-
-		if (!$error)
-	    {
-	    	return 1;
-	    }
-	    else
-	    {
-	    	return -1;
-	    }
-
-    }
-
-    /**
      *  Set status to validated
      *
      *  @param	User	$user       Object user that validate

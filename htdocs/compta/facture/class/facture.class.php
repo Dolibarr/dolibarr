@@ -747,7 +747,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$invertdetail	Reverse sign of amounts for lines
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function createFromCurrent($user,$invertdetail=0)
+	function createFromCurrent(User $user, $invertdetail=0)
 	{
 		global $conf;
 
@@ -948,11 +948,12 @@ class Facture extends CommonInvoice
 	 *  Load an object from an order and create a new invoice into database
 	 *
 	 *  @param      Object			$object         	Object source
+	 *  @param		User			$user				Object user
 	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
 	 */
-	function createFromOrder($object)
+	function createFromOrder($object, User $user)
 	{
-		global $user,$hookmanager;
+		global $hookmanager;
 
 		$error=0;
 

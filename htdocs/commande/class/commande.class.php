@@ -1077,11 +1077,12 @@ class Commande extends CommonOrder
      *  Load an object from a proposal and create a new order into database
      *
      *  @param      Object			$object 	        Object source
+     *  @param		User			$user				User making creation
      *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
      */
-    function createFromProposal($object)
+    function createFromProposal($object, User $user)
     {
-        global $conf,$user,$hookmanager;
+        global $conf, $hookmanager;
 
 		dol_include_once('/core/class/extrafields.class.php');
 
@@ -3047,48 +3048,6 @@ class Commande extends CommonOrder
 			return 1;
 		}
 	}
-
-    /**
-     *	Update value of extrafields on order
-     *
-     *	@param      User	$user       Object user that modify
-     *	@return     int         		<0 if ko, >0 if ok
-     */
-    function update_extrafields($user)
-    {
-        global $hookmanager, $conf;
-
-    	$action='create';
-        $error = 0;
-
-    	// Actions on extra fields (by external module or standard code)
-    	// TODO le hook fait double emploi avec le trigger !!
-    	$hookmanager->initHooks(array('orderdao'));
-    	$parameters=array('id'=>$this->id);
-    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-    	if (empty($reshook))
-    	{
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    		{
-    			$result=$this->insertExtraFields();
-    			if ($result < 0)
-    			{
-    				$error++;
-    			}
-    		}
-    	}
-    	else if ($reshook < 0) $error++;
-
-    	if (!$error)
-    	{
-    		return 1;
-    	}
-    	else
-    	{
-    		return -1;
-    	}
-
-    }
 
     /**
      *	Delete the customer order

@@ -1506,48 +1506,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Update value of extrafields on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@return     int         		<0 if ko, >0 if ok
-	 */
-	function update_extrafields($user)
-	{
-		global $conf, $hookmanager;
-
-		$action='update';
-		$error = 0;
-
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('propaldao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-		}
-		else if ($reshook < 0) $error++;
-
-		if (!$error)
-		{
-			return 1;
-		}
-		else
-		{
-			return -1;
-		}
-
-	}
-
-	/**
 	 *  Set status to validated
 	 *
 	 *  @param	User	$user       Object user that validate
@@ -2258,7 +2216,7 @@ class Propal extends CommonObject
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$statut		Statut
 	 *	@param      string	$note		Comment
-	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
 	function cloture($user, $statut, $note, $notrigger=0)
@@ -2297,7 +2255,7 @@ class Propal extends CommonObject
 					return -2;
 				}
 			}
-			if ($statut == self::STATUS_BILLED)
+			if ($statut == self::STATUS_BILLED)	// Why this ?
 			{
 				$trigger_name='PROPAL_CLASSIFY_BILLED';
 			}

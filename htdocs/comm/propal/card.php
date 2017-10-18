@@ -612,14 +612,15 @@ if (empty($reshook))
 	// Close proposal
 	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel','alpha'))
 	{
-		if (! GETPOST('statut')) {
+		if (! GETPOST('statut','int')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
-				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','alpha'));
+				$newprivatenote = dol_concatdesc($object->note_private, GETPOST('note_private','alpha'));
+				$result=$object->cloture($user, GETPOST('statut','int'), $newprivatenote);
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');

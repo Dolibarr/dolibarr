@@ -65,7 +65,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 $newobject->context['origin'] = $object->element;
                 $newobject->context['origin_id'] = $object->id;
 
-                $ret=$newobject->createFromProposal($object);
+                $ret=$newobject->createFromProposal($object, $user);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
             }
@@ -84,7 +84,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 $newobject->context['origin'] = $object->element;
                 $newobject->context['origin_id'] = $object->id;
 
-                $ret=$newobject->createFromOrder($object);
+                $ret=$newobject->createFromOrder($object, $user);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
             }
@@ -117,11 +117,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	}
         }
 
-        // classify billed order & billed propososal 
+        // classify billed order & billed propososal
         if ($action == 'BILL_VALIDATE')
         {
         	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
-			
+
 			// First classify billed the order to allow the proposal classify process
 			if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
         	{
@@ -144,7 +144,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		}
         		return $ret;
         	}
-			
+
 			// Second classify billed the proposal.
         	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
         	{
@@ -167,7 +167,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		}
         		return $ret;
         	}
-        	
+
         }
 
         // Invoice classify billed order
@@ -234,7 +234,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         				}
         			}
         		}
-				
+
         		//Build array of quantity ordered by product
         		if (is_array($order->lines) && count($order->lines)>0) {
         			foreach($order->lines as $orderline) {
