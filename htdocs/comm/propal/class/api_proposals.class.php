@@ -549,6 +549,7 @@ class Proposals extends DolibarrApi
 		);
 	}
 
+
 	/**
 	 * Validate fields before create or update object
 	 *
@@ -567,6 +568,7 @@ class Proposals extends DolibarrApi
 		}
 		return $propal;
 	}
+
 
 	/**
 	 * Clean sensible object datas
