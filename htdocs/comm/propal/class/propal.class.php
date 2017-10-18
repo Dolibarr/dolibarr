@@ -2215,7 +2215,7 @@ class Propal extends CommonObject
 	 *
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$statut		Statut
-	 *	@param      string	$note		Comment
+	 *	@param      string	$note		Complete private note with this note
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
@@ -2228,8 +2228,10 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		$resql=$this->db->query($sql);

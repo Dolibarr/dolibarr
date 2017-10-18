@@ -512,7 +512,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int	    $status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
-	 * @param   string  $note_private   Add this mention to the private note
+	 * @param   string  $note_private   Add this mention at end of private note
 	 * @param   int     $notrigger      Disabled triggers
 	 *
 	 * @url POST    {id}/close

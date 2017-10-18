@@ -619,8 +619,7 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
-				$newprivatenote = dol_concatdesc($object->note_private, GETPOST('note_private','alpha'));
-				$result=$object->cloture($user, GETPOST('statut','int'), $newprivatenote);
+				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','none'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1688,8 +1687,8 @@ if ($action == 'create')
 		//Form to close proposal (signed or not)
 		$formquestion = array(
 				array('type' => 'select','name' => 'statut','label' => $langs->trans("CloseAs"),'values' => array(2=>$object->labelstatut [2],3=>$object->labelstatut [3])),
-				//array('type' => 'other','name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '<textarea cols="30" rows="' . ROWS_3 . '" wrap="soft" name="note_private" id="note_private">'.$object->note_private.'</textarea>'));
-				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => $object->note_private));
+				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '')				// Field to complete private note (not replace)
+		);
 
 		if (! empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
