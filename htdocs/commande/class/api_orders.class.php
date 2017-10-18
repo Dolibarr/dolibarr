@@ -507,12 +507,6 @@ class Orders extends DolibarrApi
      * @url POST    {id}/close
      *
      * @return  array
-     * FIXME An error 403 is returned if the request has an empty body.
-     * Error message: "Forbidden: Content type `text/plain` is not supported."
-     * Workaround: send this in the body
-     * {
-     *   "notrigger": 0
-     * }
      */
     function close($id, $notrigger=0)
     {
@@ -538,9 +532,9 @@ class Orders extends DolibarrApi
 
     	return array(
     	'success' => array(
-    	'code' => 200,
-    	'message' => 'Order closed (Ref='.$this->commande->ref.')'
-    	)
+	    	'code' => 200,
+	    	'message' => 'Order closed (Ref='.$this->commande->ref.')'
+	    	)
     	);
     }
 
