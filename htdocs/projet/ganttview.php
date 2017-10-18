@@ -322,7 +322,7 @@ if (count($tasksarray)>0)
 
 	    print '<div class="div-table-responsive">';
 
-	    print '<div id="tabs" class="gantt" style="width: 80vw; border: 1px solid #ACACAC;">'."\n";
+	    print '<div id="tabs" class="gantt" style="width: 80vw;">'."\n";
 		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
 

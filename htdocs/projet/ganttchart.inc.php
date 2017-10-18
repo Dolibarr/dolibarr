@@ -99,9 +99,14 @@ if (g.getDivId() != null)
 	g.setShowComp(1); 		// Show/Hide % Complete(0/1)
 	g.setShowStartDate(1); 	// Show/Hide % Complete(0/1)
 	g.setShowEndDate(1); 	// Show/Hide % Complete(0/1)
-	g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
+	g.setShowTaskInfoLink(1);
+	g.setFormatArr("day","week","month") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
 	g.setCaptionType('Caption');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
+	g.setUseFade(0);
+	g.setDayColWidth(20);
 	/* g.setShowTaskInfoLink(1) */
+	g.addLang('<?php print $langs->getDefaultLang(1);?>', vLangs['<?php print $langs->getDefaultLang(1);?>']);
+	g.setLang('<?php print $langs->getDefaultLang(1);?>');
 
 	<?php
 	$level=0;
@@ -208,7 +213,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $s = "\n// Add taks id=".$task["task_id"]." level = ".$level."\n";
    // $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
     // For JSGanttImproved
-    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js(trim($name))."','".$start_date."', '".$end_date."', '".$task['task_css']."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]).", '".$parent."', 1, '".($depend?$depend:$parent."SS")."', '".($percent >= 0 ? $percent.'%' : '0%')."','".dol_escape_js($task['note'])."'));";
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js(trim($name))."','".$start_date."', '".$end_date."', '".$task['task_css']."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]).", ".$parent.", 1, '".($depend?$depend:$parent."SS")."', '".($percent >= 0 ? $percent.'%' : '0%')."','".dol_escape_js($task['note'])."', g));";
     echo $s;
 
 

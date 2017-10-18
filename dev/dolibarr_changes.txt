@@ -82,8 +82,14 @@ with
 // LDR To open in same window
 //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
 window.location.href=pRef
-* Replace hard coded string with i18n["String"];
 
+* Replace
+vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
+with                       
+var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
+vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
+vTmpNode.setAttribute('href',vTaskList[i].getLink());
+                        
 
 JCROP:
 ------

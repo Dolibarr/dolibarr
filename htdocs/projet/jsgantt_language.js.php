@@ -42,7 +42,7 @@ global $langs;
 
 var vLangs={'<?php print $langs->getDefaultLang(1);?>':
 	{
-	'format':'<?php print $langs->transnoentities('Period');?>','hour':'"<?php print $langs->transnoentities('Hour'); ?>','day':'<?php print $langs->transnoentities('Day'); ?>',
+	'format':'<?php print '-';?>','hour':'"<?php print $langs->transnoentities('Hour'); ?>','day':'<?php print $langs->transnoentities('Day'); ?>',
     'week':'<?php print $langs->transnoentities('Week'); ?>','month':'<?php print $langs->transnoentities('Month'); ?>','quarter':'<?php print $langs->transnoentities('Quadri'); ?>',
     'hours':'<?php print $langs->transnoentities('Hours'); ?>','days':'<?php print $langs->transnoentities('Days'); ?>','weeks':'<?php print $langs->transnoentities('Weeks');?>',
     'months':'<?php print $langs->transnoentities('Months'); ?>','quarters':'<?php print $langs->transnoentities('Quadri'); ?>','hr':'Hr','dy':'<?php print $langs->transnoentities('Day'); ?>','wk':'<?php print $langs->transnoentities('Week'); ?>','mth':'<?php print $langs->transnoentities('Month'); ?>','qtr':'<?php print $langs->transnoentities('Quadri'); ?>','hrs':'<?php print $langs->transnoentities('Hours'); ?>',

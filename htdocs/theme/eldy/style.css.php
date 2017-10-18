@@ -3530,21 +3530,6 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	       cursor:pointer;
 	     }
 
-/* ============================================================================== */
-/* Gantt
-/* ============================================================================== */
-
-div.gTaskInfo {
-    background: #f0f0f0 !important;
-}
-.gtaskblue {
-	background: rgb(108,152,185) !important;
-}
-td.gtaskname {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
@@ -3913,6 +3898,26 @@ pre#editfilecontentaceeditorid {
 div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
+
+.gtaskname div, .gtaskname {
+	font-size: unset !important;
+}
+div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
+	font-size: unset !important;
+	font-weight: normal !important;
+	color: #000 !important;
+}
+div.gTaskInfo {
+    background: #f0f0f0 !important;
+}
+.gtaskblue {
+	background: rgb(108,152,185) !important;
+}
+td.gtaskname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 
 
 /* ============================================================================== */
