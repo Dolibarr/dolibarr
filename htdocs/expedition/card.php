@@ -69,6 +69,7 @@ $id = $origin_id;
 if (empty($origin_id)) $origin_id  = GETPOST('origin_id','int');    // Id of order or propal
 if (empty($origin_id)) $origin_id  = GETPOST('object_id','int');    // Id of order or propal
 $ref=GETPOST('ref','alpha');
+$line_id = GETPOST('lineid','int')?GETPOST('lineid','int'):'';
 
 // Security check
 $socid='';
@@ -594,6 +595,18 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+	}
+
+	elseif ($action == 'deleteline' && ! empty($line_id))
+	{
+		$object->fetch($id);
+		$line = new ExpeditionLigne($db);
+		$line->id = $line_id;
+		$result = $line->delete($user);
+		if($result >= 0) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit();
+		}
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -1769,6 +1782,8 @@ else if ($id || $ref)
 			print '<td align="left">'.$langs->trans("Batch").'</td>';
 		}
 
+		print '<td class="linecoledit"></td>';
+		print '<td class="linecoldelete" width="10"></td>';
 		print "</tr>\n";
 
 		$var=false;
@@ -1992,6 +2007,18 @@ else if ($id || $ref)
 					print '<td></td>';
 				}
 			}
+
+			// edit-delete buttons
+			print '<td class="linecoledit" align="center">';
+			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">';
+			print img_edit();
+			print '</a>';
+			print '</td>';
+			print '<td class="linecoldelete" width="10">';
+			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=deleteline&amp;lineid=' . $lines[$i]->id . '">';
+			print img_delete();
+			print '</a>';
+			print '</td>';
 			print "</tr>";
 
 			// Display lines extrafields
@@ -2003,8 +2030,6 @@ else if ($id || $ref)
 				print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 				print '</tr>';
 			}
-
-
 		}
 
 		// TODO Show also lines ordered but not delivered
