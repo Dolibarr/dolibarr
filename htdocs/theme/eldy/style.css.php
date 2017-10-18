@@ -3456,7 +3456,9 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 div.gTaskInfo {
     background: #f0f0f0 !important;
 }
-
+.gtaskblue {
+	background: rgb(108,152,185) !important;
+}
 td.gtaskname {
     overflow: hidden;
     text-overflow: ellipsis;
