@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
@@ -373,48 +373,18 @@ class Expedition extends CommonObject
 	 */
 	function create_line($entrepot_id, $origin_line_id, $qty,$array_options=0)
 	{
-		global $conf;
-		$error = 0;
-		$line_id = 0;
+		$expeditionline = new ExpeditionLigne($this->db);
+		$expeditionline->fk_expedition = $this->id;
+		$expeditionline->entrepot_id = $entrepot_id;
+		$expeditionline->fk_origin_line = $origin_line_id;
+		$expeditionline->qty = $qty;
+		$expeditionline->$array_options = $array_options;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
-		$sql.= "fk_expedition";
-		$sql.= ", fk_entrepot";
-		$sql.= ", fk_origin_line";
-		$sql.= ", qty";
-		$sql.= ") VALUES (";
-		$sql.= $this->id;
-		$sql.= ", ".($entrepot_id?$entrepot_id:'null');
-		$sql.= ", ".$origin_line_id;
-		$sql.= ", ".$qty;
-		$sql.= ")";
-
-		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
+		if (($lineId = $expeditionline->insert()) < 0)
 		{
-			$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
+			$this->error[]=$expeditionline->error;
 		}
-		else
-		{
-			$error++;
-		}
-
-		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
-		{
-			$expeditionline = new ExpeditionLigne($this->db);
-			$expeditionline->array_options=$array_options;
-			$expeditionline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$expeditionline->table_element);
-			$result=$expeditionline->insertExtraFields();
-			if ($result < 0)
-			{
-				$this->error[]=$expeditionline->error;
-				$error++;
-			}
-		}
-
-		if (! $error) return $line_id;
-		else return -1;
+		return $lineId;
 	}
 
 
@@ -2307,7 +2277,7 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      User	$user        	User that modify
+	 *	@param      User	$user			User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return		int						<0 if KO, line id >0 if OK
 	 */
@@ -2323,10 +2293,10 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->errors[] = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
-        // Clean parameters
-        if (empty($this->entrepot_id)) $this->entrepot_id='null';
+		// Clean parameters
+		if (empty($this->entrepot_id)) $this->entrepot_id='null';
 
-        $this->db->begin();
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
 		$sql.= "fk_expedition";
@@ -2334,9 +2304,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql.= ", fk_origin_line";
 		$sql.= ", qty";
 		$sql.= ") VALUES (";
-		$sql.= $this->id;
+		$sql.= $this->fk_expedition;
 		$sql.= ", ".$this->entrepot_id;
-		$sql.= ", ".$this->origin_line_id;
+		$sql.= ", ".$this->fk_origin_line;
 		$sql.= ", ".$this->qty;
 		$sql.= ")";
 
@@ -2347,7 +2317,6 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->rowid;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -2355,74 +2324,49 @@ class ExpeditionLigne extends CommonObjectLine
 				}
 			}
 
-            if (! $error && ! $notrigger)
-            {
-	            // Call trigger
-	            $result=$this->call_trigger('LINESHIPMENT_INSERT',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
-            }
+			if (! $error && ! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('LINESHIPPING_INSERT',$user);
+				if ($result < 0)
+				{
+					$this->errors[]=$this->error;
+					$error++;
+				}
+				// End call triggers
+			}
 
-	        if (!$error) {
-		        $this->db->commit();
-		        return $this->id;
-	        }
+			if (! $error) {
+				$this->db->commit();
+				return $this->id;
+			}
 
-	        foreach($this->errors as $errmsg)
-	        {
-		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-		        $this->error.=($this->error?', '.$errmsg:$errmsg);
-	        }
-	        $this->db->rollback();
-	        return -1*$error;
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
 		}
 		else
 		{
 			$error++;
 		}
-
-		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
-		{
-			$expeditionline = new ExpeditionLigne($this->db);
-			$expeditionline->array_options=$array_options;
-			$expeditionline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$expeditionline->table_element);
-			$result=$expeditionline->insertExtraFields();
-			if ($result < 0)
-			{
-				$this->error[]=$expeditionline->error;
-				$error++;
-			}
-		}
-
-		if (! $error) return $line_id;
-		else return -1;
-
-		// ////////////////////
-
-        dol_syslog(get_class($this)."::insert", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
-
-			
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -2;
-        }
-    }
+	}
 
 	/**
 	 * 	Delete shipment line.
 	 *  
+	 *	@param		User	$user			User that modify
+	 *	@param		int		$notrigger		0=launch triggers after, 1=disable triggers
 	 * 	@return		int		>0 if OK, <0 if KO
 	 */
-	function delete()
+	function delete($user = null, $notrigger = 0)
 	{
 		global $conf;
+
+		$error=0;
 
 		$this->db->begin();
 				
@@ -2435,15 +2379,14 @@ class ExpeditionLigne extends CommonObjectLine
 			if (!$this->db->query($sql))
 			{
 				$this->errors[]=$this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -2;
+				$error++;
 			}
 		}
 		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		if ( $this->db->query($sql))
+		if (! $error && $this->db->query($sql))
 		{
 			// Remove extrafields
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -2452,26 +2395,40 @@ class ExpeditionLigne extends CommonObjectLine
 				if ($result < 0)
 				{
 					$this->errors[]=$this->error;
-					$this->db->rollback();
-					return -4;
+					$error++;
 				}
-				else
-				{
-					$this->db->commit();
-					return 1;
-				}
-			} 
-			else 
+			}
+			if (! $error && ! $notrigger) 
 			{
-				$this->db->commit();
-				return 1;
+				// Call trigger
+				$result=$this->call_trigger('LINESHIPPING_DELETE',$user);
+				if ($result < 0)
+				{
+					$this->errors[]=$this->error;
+					$error++;
+				}
+				// End call triggers
 			}
 		}
 		else
 		{
 			$this->errors[]=$this->db->lasterror()." - sql=$sql";
+			$error++;
+		}
+
+		if (! $error) {
+			$this->db->commit();
+			return 1;
+		}
+		else 
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
 			$this->db->rollback();
-			return -3;
+			return -1*$error;
 		}
 	}
 	
@@ -2480,150 +2437,171 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *  @return		int					< 0 if KO, > 0 if OK
 	 */
-	function update()
-    {
-        global $conf;
+	function update($user = null, $notrigger = 0)
+	{
+		global $conf;
+		
+		$error=0;
 
-        dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
-        
-    	// Add a protection to refuse deleting if shipment is not in draft status
+		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
+
+		// check parameters
 		if (! isset($this->id) || ! isset($this->entrepot_id))
 		{
 			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
-			$this->errors[]='ErrorBadParameters';
+			$this->errors[]='ErrorMandatoryParametersNotProvided';
+			$error++;
 			return -1;
 		}
-        
-        $this->db->begin();
 
-        // Clean parameters
-        if (empty($this->qty)) $this->qty=0;
-        $qty=price2num($this->qty);
-        $remainingQty = 0;
-        $batch = null;
-        $batch_id = null;
-        if (is_array($this->detail_batch)) 
-        {
-        	if (count($this->detail_batch) > 1) 
-        	{
-        		dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
-        		$this->errors[]='ErrorBadParameters';
-				return -7;
-        	}
-        	else
-        	{
-        		$batch = $this->detail_batch[0]->batch;
-        		$batch_id = $this->detail_batch[0]->fk_origin_stock;
-        	}
-        }
-        else
-        {
-        	$batch = $this->detail_batch->batch;
-        	$batch_id = $this->detail_batch->fk_origin_stock;
-        }
+		$this->db->begin();
+
+		// Clean parameters
+		if (empty($this->qty)) $this->qty=0;
+		$qty=price2num($this->qty);
+		$remainingQty = 0;
+		$batch = null;
+		$batch_id = null;
+		if (is_array($this->detail_batch)) 
+		{
+			if (count($this->detail_batch) > 1) 
+			{
+				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
+				$this->errors[]='ErrorBadParameters';
+				$error++;
+			}
+			else
+			{
+				$batch = $this->detail_batch[0]->batch;
+				$batch_id = $this->detail_batch[0]->fk_origin_stock;
+			}
+		}
+		else
+		{
+			$batch = $this->detail_batch->batch;
+			$batch_id = $this->detail_batch->fk_origin_stock;
+		}
 
 		// update lot
 
-		if (!empty($batch) && $conf->productbatch->enabled)
+		if (! empty($batch) && $conf->productbatch->enabled)
 		{
 			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
-        		$this->errors[]='ErrorBadParameters';
-				return -8;
+				$this->errors[]='ErrorMandatoryParametersNotProvided';
+				$error++;
 			}
-			
+
 			// fetch remaining lot qty
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 			if (($lotArray = ExpeditionLineBatch::fetchAll($this->db, $this->id)) < 0)
 			{
 				$this->errors[]=$this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
-				$this->db->rollback();
-				return -4;
-			}	
-			foreach ($lotArray as $lot) 
+				$error++;
+			}
+			else 
 			{
-				if ($batch != $lot->batch) 
+				foreach ($lotArray as $lot) 
 				{
-					$remainingQty += $lot->dluo_qty;
-				}
-			}
-			
-			//fetch lot details
-			
-			// fetch from product_lot
-			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-			$lot = new Productlot($this->db);
-			if ($lot->fetch(0,$this->fk_product,$batch) < 0) 
-			{
-				$this->errors[] = $lot->errors;
-				return -3;
-			}
-			
-			// delete lot expedition line
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
-			$sql.= " WHERE fk_expeditiondet = ".$this->id;
-			$sql.= " AND batch = '".$this->db->escape($batch)."'";
-
-			if (!$this->db->query($sql))
-			{
-				$this->errors[]=$this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -2;
-			}
-						
-			if ($qty > 0) {
-				if (isset($lot->id)) 
-				{
-					$shipmentLot = new ExpeditionLineBatch($this->db);
-					$shipmentLot->batch = $lot->batch;
-					$shipmentLot->eatby = $lot->eatby;
-					$shipmentLot->sellby = $lot->sellby;
-					$shipmentLot->entrepot_id = $this->entrepot_id;
-					$shipmentLot->dluo_qty = $qty;
-					$shipmentLot->fk_origin_stock = $batch_id;
-					if ($shipmentLot->create($this->id) < 0) 
+					if ($batch != $lot->batch) 
 					{
-						$this->errors[]=$shipmentLot->errors;
-						$this->db->rollback();
-						return -6;
+						$remainingQty += $lot->dluo_qty;
+					}
+				}
+				
+				//fetch lot details
+				
+				// fetch from product_lot
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+				$lot = new Productlot($this->db);
+				if ($lot->fetch(0,$this->fk_product,$batch) < 0) 
+				{
+					$this->errors[] = $lot->errors;
+					$error++;
+				}
+				else
+				{
+					// delete lot expedition line
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
+					$sql.= " WHERE fk_expeditiondet = ".$this->id;
+					$sql.= " AND batch = '".$this->db->escape($batch)."'";
+		
+					if (!$this->db->query($sql))
+					{
+						$this->errors[]=$this->db->lasterror()." - sql=$sql";
+						$error++;
+					}
+					else if ($qty > 0) 
+					{
+						if (isset($lot->id)) 
+						{
+							$shipmentLot = new ExpeditionLineBatch($this->db);
+							$shipmentLot->batch = $lot->batch;
+							$shipmentLot->eatby = $lot->eatby;
+							$shipmentLot->sellby = $lot->sellby;
+							$shipmentLot->entrepot_id = $this->entrepot_id;
+							$shipmentLot->dluo_qty = $qty;
+							$shipmentLot->fk_origin_stock = $batch_id;
+							if ($shipmentLot->create($this->id) < 0) 
+							{
+								$this->errors[]=$shipmentLot->errors;
+								$error++;
+							}
+						}
 					}
 				}
 			}
 		}
-
-		// update line
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql.= " fk_entrepot = ".$this->entrepot_id;
-		$sql.= " , qty = ".($qty + $remainingQty);
-		$sql.= " WHERE rowid = ".$this->id;
-		
-		if (!$this->db->query($sql)) 
+		if (! $error)
 		{
-			$this->errors[]=$this->db->lasterror()." - sql=$sql";
-			$this->db->rollback();
-			return -5;
-		}
-		
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-		{
-			$this->id=$this->rowid;
-			$result=$this->insertExtraFields();
-			if ($result < 0)
+			// update line
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+			$sql.= " fk_entrepot = ".$this->entrepot_id;
+			$sql.= " , qty = ".($qty + $remainingQty);
+			$sql.= " WHERE rowid = ".$this->id;
+			
+			if (!$this->db->query($sql)) 
 			{
-				$this->errors[]=$this->error;
-				$this->db->rollback();
-				return -4;
+				$this->errors[]=$this->db->lasterror()." - sql=$sql";
+				$error++;
 			}
 			else
 			{
-				$this->db->commit();
-				return 1;
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$this->errors[]=$this->error;
+						$error++;
+					}
+				}
 			}
-		} 
-		else 
+		}
+		if (! $error && ! $notrigger) 
 		{
+			// Call trigger
+			$result=$this->call_trigger('LINESHIPPING_UPDATE',$user);
+			if ($result < 0)
+			{
+				$this->errors[]=$this->error;
+				$error++;
+			}
+			// End call triggers
+		}
+		if (!$error) {
 			$this->db->commit();
 			return 1;
+		}
+		else 
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
 		}
 	}
 }
