@@ -171,7 +171,9 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $link=DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
 
     // Name
+    //$name='<a href="'.DOL_URL_ROOT.'/projet/task/tasks.php?id='.$task['task_id'].'">'.$task['task_name'].'</a>';
     $name=$task['task_name'];
+
     /*for($i=0; $i < $level; $i++) {
         $name=' - '.$name;
     }*/
