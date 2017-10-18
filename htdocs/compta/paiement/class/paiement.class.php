@@ -93,6 +93,7 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)

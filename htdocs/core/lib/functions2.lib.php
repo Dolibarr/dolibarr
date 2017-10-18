@@ -723,6 +723,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // but we should use local year and month of user
 
     // For debugging
+    //dol_syslog("mask=".$mask, LOG_DEBUG);
     //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
     //$mask='FA{yy}{mm}-{0000@99}';
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
@@ -1147,6 +1148,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
     return $numFinal;
 }
+
 function get_string_between($string, $start, $end){
     $string = " ".$string;
      $ini = strpos($string,$start);
@@ -1155,6 +1157,7 @@ function get_string_between($string, $start, $end){
      $len = strpos($string,$end,$ini) - $ini;
      return substr($string,$ini,$len);
 }
+
 /**
  * Check value
  *
@@ -1603,7 +1606,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
+			// all type of template is allowed
+			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);  
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
@@ -2148,40 +2152,6 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 		return $tmp;
 	}
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
-}
-
-/**
- *	Return true if the color is light
- *
- *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int							-1 : Error with argument passed |0 : color is dark | 1 : color is light
- */
-function colorIsLight($stringcolor)
-{
-	$res = -1;
-	if (!empty($stringcolor))
-	{
-		$res = 0;
-		$tmp=explode(',', $stringcolor);
-		if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
-		{
-			$r = $tmp[0];
-			$g = $tmp[1];
-			$b = $tmp[2];
-		}
-		else
-		{
-			$hexr=$stringcolor[0].$stringcolor[1];
-			$hexg=$stringcolor[2].$stringcolor[3];
-			$hexb=$stringcolor[4].$stringcolor[5];
-			$r = hexdec($hexr);
-			$g = hexdec($hexg);
-			$b = hexdec($hexb);
-		}
-		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-		if ($bright > 0.6) $res = 1;
-	}
-	return $res;
 }
 
 /**

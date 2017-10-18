@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,29 +47,36 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','aZ09');
 
-
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$contextpage=array('adminihm','globaladmin');
+$hookmanager->initHooks($contextpage);
 
 
 /*
  * Action
  */
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 if (GETPOST('cancel','alpha'))
 {
-    $action='';
+	$action='';
 }
 
 if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACKGROUND))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    $logofile=$conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
-    dol_delete_file($logofile);
-    dolibarr_del_const($db, "MAIN_LOGIN_BACKGROUND",$conf->entity);
-    $mysoc->logo='';
+	$logofile=$conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
+	dol_delete_file($logofile);
+	dolibarr_del_const($db, "MAIN_LOGIN_BACKGROUND",$conf->entity);
+	$mysoc->logo='';
 
-    /*$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+	/*$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
     dol_delete_file($logosmallfile);
     dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$conf->entity);
     $mysoc->logo_small='';
@@ -89,54 +96,58 @@ if ($action == 'update')
 
 	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'),'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'),'chaine',0,'',$conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', $val,'chaine',0,'',$conf->entity);
 
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val,'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', $val,'chaine',0,'',$conf->entity);
 
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_VERMENU_BACK1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_VERMENU_BACK1', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_VERMENU_BACK1', $val,'chaine',0,'',$conf->entity);
+
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val,'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val,'chaine',0,'',$conf->entity);
 
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
-    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR1', $val,'chaine',0,'',$conf->entity);
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
-    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR2', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR2', $val,'chaine',0,'',$conf->entity);
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR1', $val,'chaine',0,'',$conf->entity);
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR2', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_LINEIMPAIR2', $val,'chaine',0,'',$conf->entity);
 
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'),array()))));
-    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR1', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR1', $val,'chaine',0,'',$conf->entity);
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'),array()))));
-    if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val,'chaine',0,'',$conf->entity);
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR1', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR1', $val,'chaine',0,'',$conf->entity);
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEPAIR1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val,'chaine',0,'',$conf->entity);
 
-    $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
 
-    if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
+	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val,'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val,'chaine',0,'',$conf->entity);
 
-    dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK",		$_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
 	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
@@ -147,43 +158,43 @@ if ($action == 'update')
 	$varforimage='imagebackground'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
 	{
-	    if (preg_match('/([^\\/:]+)$/i',$_FILES[$varforimage]["name"],$reg))
-	    {
-	        $original_file=$reg[1];
+		if (preg_match('/([^\\/:]+)$/i',$_FILES[$varforimage]["name"],$reg))
+		{
+			$original_file=$reg[1];
 
-	        $isimage=image_format_supported($original_file);
-	        if ($isimage >= 0)
-	        {
-	            dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
-	            if (! is_dir($dirforimage))
-	            {
-	                dol_mkdir($dirforimage);
-	            }
-	            $result=dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"],$dirforimage.$original_file,1,0,$_FILES[$varforimage]['error']);
-	            if ($result > 0)
-	            {
-	                dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND",$original_file,'chaine',0,'',$conf->entity);
-	            }
-	            else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
-	            {
-	                $error++;
-	                $langs->load("errors");
-	                $tmparray=explode(':',$result);
-	                setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]), null, 'errors');
-	            }
-	            else
-	            {
-	                $error++;
-	                setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-	            }
-	        }
-	        else
-	        {
-	            $error++;
-	            $langs->load("errors");
-	            setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
-	        }
-	    }
+			$isimage=image_format_supported($original_file);
+			if ($isimage >= 0)
+			{
+				dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
+				if (! is_dir($dirforimage))
+				{
+					dol_mkdir($dirforimage);
+				}
+				$result=dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"],$dirforimage.$original_file,1,0,$_FILES[$varforimage]['error']);
+				if ($result > 0)
+				{
+					dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND",$original_file,'chaine',0,'',$conf->entity);
+				}
+				else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+				{
+					$error++;
+					$langs->load("errors");
+					$tmparray=explode(':',$result);
+					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus',$tmparray[1]), null, 'errors');
+				}
+				else
+				{
+					$error++;
+					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+				}
+			}
+			else
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+			}
+		}
 	}
 
 
@@ -214,59 +225,59 @@ print "<br>\n";
 
 if ($action == 'edit')	// Edit
 {
-    //WYSIWYG Editor
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	//WYSIWYG Editor
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-    print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="update">';
+	print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
 
-    clearstatcache();
+	clearstatcache();
 
-    print '<br>';
-    print '<table summary="edit" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
+	print '<br>';
+	print '<table summary="edit" class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Default language
-    print '<tr><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-    print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300');
-    print '</td>';
+	// Default language
+	print '<tr><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
+	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300');
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Multilingual GUI
-    print '<tr><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-    print $form->selectyesno('MAIN_MULTILANGS',$conf->global->MAIN_MULTILANGS,1);
-    print '</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
+	print $form->selectyesno('MAIN_MULTILANGS',$conf->global->MAIN_MULTILANGS,1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	print '</table><br>'."\n";
 
-    // Themes and themes options
-    show_theme(null,1);
-    print '<br>';
+	// Themes and themes options
+	show_theme(null,1);
+	print '<br>';
 
-    // Other
-    print '<table summary="edit" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	// Other
+	print '<table summary="edit" class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Max size of lists
-    print '<tr><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+	print '<tr><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
-    print '<tr><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
+	print '<tr><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // show input border
-    /*
+	// show input border
+	/*
     print '<tr><td>'.$langs->trans("showInputBorder").'</td><td>';
     print $form->selectyesno('main_showInputBorder',isset($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)?$conf->global->THEME_ELDY_SHOW_BORDER_INPUT:0,1);
     print '</td>';
@@ -275,38 +286,38 @@ if ($action == 'edit')	// Edit
     */
 
 	// Disable javascript and ajax
-    print '<tr><td>'.$langs->trans("DisableJavascript").'</td><td>';
-    print $form->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
-    print '</td>';
+	print '<tr><td>'.$langs->trans("DisableJavascript").'</td><td>';
+	print $form->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // First day for weeks
-    print '<tr><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
-    print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
-    print '</td>';
+	// First day for weeks
+	print '<tr><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
+	print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // DefaultWorkingDays
-    print '<tr><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
-    print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5').'">';
-    print '</td>';
+	// DefaultWorkingDays
+	print '<tr><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5').'">';
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // DefaultWorkingHours
-    print '<tr><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
-    print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18').'">';
-    print '</td>';
+	// DefaultWorkingHours
+	print '<tr><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18').'">';
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Firstname/Name
-    print '<tr><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
 	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"),1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
-    print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
-    print '</td>';
+	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -342,27 +353,27 @@ if ($action == 'edit')	// Edit
 	print '</tr>';
 
 	// Hide wiki link on login page
-    print '<tr><td class="titlefield">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td>';
-    print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
-    print '</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td>';
+	print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Message of the day on home page
-    $substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount'));
-    complete_substitutions_array($substitutionarray, $langs);
+	$substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount'));
+	complete_substitutions_array($substitutionarray, $langs);
 
-    print '<tr><td class="titlefield">';
-    $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-    foreach($substitutionarray as $key => $val)
-    {
-        $texthelp.=$key.'<br>';
-    }
-    print $form->textwithpicto($langs->trans("MessageOfDay"), $texthelp, 1, 'help', '', 0, 2, 'tooltipmessageofday');
+	print '<tr><td class="titlefield">';
+	$texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+	foreach($substitutionarray as $key => $val)
+	{
+		$texthelp.=$key.'<br>';
+	}
+	print $form->textwithpicto($langs->trans("MessageOfDay"), $texthelp, 1, 'help', '', 0, 2, 'tooltipmessageofday');
 
-    print '</td><td colspan="2">';
+	print '</td><td colspan="2">';
 
-    $doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
+	$doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
 
 	print '</td></tr>'."\n";
@@ -379,12 +390,12 @@ if ($action == 'edit')	// Edit
 
 	// Message on login page
 	$substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount','user'));
-    complete_substitutions_array($substitutionarray, $langs);
-    print '<tr><td>';
+	complete_substitutions_array($substitutionarray, $langs);
+	print '<tr><td>';
 	$texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 	foreach($substitutionarray as $key => $val)
 	{
-	    $texthelp.=$key.'<br>';
+		$texthelp.=$key.'<br>';
 	}
 	print $form->textwithpicto($langs->trans("MessageLogin"), $texthelp, 1, 'help', '', 0, 2, 'tooltipmessagelogin');
 	print '</td><td colspan="2">';
@@ -401,16 +412,16 @@ if ($action == 'edit')	// Edit
 
 	// Background
 	print '<tr><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
-    print '<div class="centpercent inline-block">';
+	print '<div class="centpercent inline-block">';
 	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
 	if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-	    print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
-	    if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
-	        print ' &nbsp; ';
-	        print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
-	    }
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
+		if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
+			print ' &nbsp; ';
+			print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
+		}
 	} else {
-	    print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+		print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 	}
 	print '</div>';
 	print '</td></tr>';
@@ -418,31 +429,31 @@ if ($action == 'edit')	// Edit
 	print '</table>'."\n";
 
 
-    print '<br><div class="center">';
-    print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; ';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</div>';
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; ';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 else	// Show
 {
-    // Language
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td><td>&nbsp;</td></tr>';
+	// Language
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td><td>&nbsp;</td></tr>';
 
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-    $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
-    print ($s?$s.' ':'');
-    print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
-    print '</td>';
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
+	$s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+	print ($s?$s.' ':'');
+	print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print '</td>';
 	print '<td width="20">';
-    if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
+	if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''),$conf->global->MAIN_LANG_DEFAULT),1);
 	print '</td>';
 	print "</tr>";
 
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -450,19 +461,19 @@ else	// Show
 
 
 	// Themes
-    show_theme(null,0);
-    print '<br>';
+	show_theme(null,0);
+	print '<br>';
 
 
-    // Other
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
+	// Other
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-    print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-    print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -473,38 +484,38 @@ else	// Show
     print "</tr>";
 	*/
 
-    // Disable javascript/ajax
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableJavascript").'</td><td>';
-    print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
-    print '<td width="20">&nbsp;</td>';
-    print "</tr>";
+	// Disable javascript/ajax
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableJavascript").'</td><td>';
+	print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
 	// First day for weeks
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
-    print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
-    print '</td>';
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
+	print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // DefaultWorkingDays
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
-    print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
-    print '</td>';
+	// DefaultWorkingDays
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+	print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // DefaultWorkingHours
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
-    print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
-    print '</td>';
+	// DefaultWorkingHours
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+	print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Firstname / Name position
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
-    if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print $langs->trans("Firstname").' '.$langs->trans("Lastname"); }
-    else { print $langs->trans("Lastname").' '.$langs->trans("Firstname"); }
-    print '</td>';
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+	if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print $langs->trans("Firstname").' '.$langs->trans("Lastname"); }
+	else { print $langs->trans("Lastname").' '.$langs->trans("Firstname"); }
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -513,8 +524,8 @@ else	// Show
 	print yn((isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0),1);
 	print '</td></tr>';
 
-    // Show logo
-    print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+	// Show logo
+	print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
@@ -527,62 +538,62 @@ else	// Show
 	 print '</tr>';
 	 */
 
-    // Show bugtrack link
+	// Show bugtrack link
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
 	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-    // Link to wiki help
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
-    print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
-    print '</td></tr>';
+	// Link to wiki help
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
+	print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
+	print '</td></tr>';
 
-    // Message of the day
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-    if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
-    else print '&nbsp;';
-    print '</td></tr>'."\n";
+	// Message of the day
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
+	if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
+	else print '&nbsp;';
+	print '</td></tr>'."\n";
 
-    print '</table>'."\n";
+	print '</table>'."\n";
 
-    print '<br>';
+	print '<br>';
 
-    // Login page
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td><td>&nbsp;</td></tr>';
+	// Login page
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td><td>&nbsp;</td></tr>';
 
-    // Message login
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-    if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
-    else print '&nbsp;';
-    print '</td></tr>'."\n";
+	// Message login
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
+	if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
+	else print '&nbsp;';
+	print '</td></tr>'."\n";
 
 	// Link to help center
-    print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
-    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
-    print '</td></tr>';
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
+	print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
+	print '</td></tr>';
 
-    // Background login
-    print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
-    print '<div class="centpercent inline-block">';
-    print $conf->global->MAIN_LOGIN_BACKGROUND;
-    if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
-    {
-        print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
-    }
-    else
-    {
-        print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
-    }
-    print '</div>';
-    print '</td></tr>';
+	// Background login
+	print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td colspan="2">';
+	print '<div class="centpercent inline-block">';
+	print $conf->global->MAIN_LOGIN_BACKGROUND;
+	if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
+	{
+		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
+	}
+	else
+	{
+		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	}
+	print '</div>';
+	print '</td></tr>';
 
-    print '</table>'."\n";
+	print '</table>'."\n";
 
-    print '<div class="tabsAction tabsActionNoBottom">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-    print '</div>';
+	print '<div class="tabsAction tabsActionNoBottom">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '</div>';
 }
 
 

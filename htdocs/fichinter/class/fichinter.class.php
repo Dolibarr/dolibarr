@@ -38,7 +38,7 @@ class Fichinter extends CommonObject
 	public $table_element='fichinter';
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
-    public $picto = 'intervention';
+	public $picto = 'intervention';
 
 	/**
 	 * {@inheritdoc}
@@ -83,7 +83,7 @@ class Fichinter extends CommonObject
 	 *	Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
- 	 */
+	 */
 	function __construct($db)
 	{
 		$this->db = $db;
@@ -152,7 +152,7 @@ class Fichinter extends CommonObject
 	 *	Create an intervention into data base
 	 *
 	 *  @param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function create($user, $notrigger=0)
@@ -237,13 +237,13 @@ class Fichinter extends CommonObject
 			}
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            {
-            	$result=$this->insertExtraFields();
-            	if ($result < 0)
-            	{
-            		$error++;
-            	}
-            }
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 			// Add linked object
 			if (! $error && $this->origin && $this->origin_id)
@@ -253,13 +253,13 @@ class Fichinter extends CommonObject
 			}
 
 
-            if (! $notrigger)
-            {
-                // Call trigger
-                $result=$this->call_trigger('FICHINTER_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('FICHINTER_CREATE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
 
 			if (! $error)
 			{
@@ -287,7 +287,7 @@ class Fichinter extends CommonObject
 	 *	Update an intervention
 	 *
 	 *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function update($user, $notrigger=0)
@@ -316,10 +316,10 @@ class Fichinter extends CommonObject
 
 			if (! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('FICHINTER_MODIFY',$user);
-                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('FICHINTER_MODIFY',$user);
+				if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+				// End call triggers
 			}
 
 			$this->db->commit();
@@ -446,7 +446,7 @@ class Fichinter extends CommonObject
 	 *	Validate a intervention
 	 *
 	 *	@param		User		$user		User that validate
-     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function setValid($user, $notrigger=0)
@@ -471,7 +471,7 @@ class Fichinter extends CommonObject
 			{
 				$num = $this->ref;
 			}
-            $this->newref = $num;
+			$this->newref = $num;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";
@@ -492,10 +492,10 @@ class Fichinter extends CommonObject
 
 			if (! $error && ! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('FICHINTER_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('FICHINTER_VALIDATE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)
@@ -517,17 +517,17 @@ class Fichinter extends CommonObject
 
 						if (@rename($dirsource, $dirdest))
 						{
-	                        dol_syslog("Rename ok");
-	                        // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->ficheinter->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
-	                        foreach($listoffiles as $fileentry)
-	                        {
-	                        	$dirsource=$fileentry['name'];
-	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
-	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
-	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
-	                        	@rename($dirsource, $dirdest);
-	                        }
+							dol_syslog("Rename ok");
+							// Rename docs starting with $oldref with $newref
+							$listoffiles=dol_dir_list($conf->ficheinter->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+							foreach($listoffiles as $fileentry)
+							{
+								$dirsource=$fileentry['name'];
+								$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+								$dirsource=$fileentry['path'].'/'.$dirsource;
+								$dirdest=$fileentry['path'].'/'.$dirdest;
+								@rename($dirsource, $dirdest);
+							}
 						}
 					}
 				}
@@ -647,7 +647,7 @@ class Fichinter extends CommonObject
 		if ($mode == 5)
 			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
 		if ($mode == 6)
-		    return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
 
 		return '';
 	}
@@ -655,28 +655,52 @@ class Fichinter extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-	 *	@param		string	$option			Options
-	 *	@return		string					String with URL
+	 *	@param		int		$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+	 *	@param		string	$option						Options
+	 *  @param	    int   	$notooltip					1=Disable tooltip
+	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return		string								String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result='';
-        $label = '<u>' . $langs->trans("ShowIntervention") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+		$label = '<u>' . $langs->trans("ShowIntervention") . '</u>';
+		if (! empty($this->ref))
+			$label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
 		$picto='intervention';
+		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+	   	}
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowIntervention");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip"';
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -809,7 +833,7 @@ class Fichinter extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -875,10 +899,10 @@ class Fichinter extends CommonObject
 
 				if (! $notrigger)
 				{
-                    // Call trigger
-                    $result=$this->call_trigger('FICHINTER_DELETE',$user);
-                    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-                    // End call triggers
+					// Call trigger
+					$result=$this->call_trigger('FICHINTER_DELETE',$user);
+					if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+					// End call triggers
 				}
 
 				$this->db->commit();
@@ -1000,98 +1024,98 @@ class Fichinter extends CommonObject
 
 
 
-    /**
-     *	Load an object from its id and create a new one in database
-     *
-     *	@param		int			$socid			Id of thirdparty
-     *	@return		int							New id of clone
-     */
-    function createFromClone($socid=0)
-    {
-        global $user,$hookmanager;
+	/**
+	 *	Load an object from its id and create a new one in database
+	 *
+	 *	@param		int			$socid			Id of thirdparty
+	 *	@return		int							New id of clone
+	 */
+	function createFromClone($socid=0)
+	{
+		global $user,$hookmanager;
 
-        $error=0;
+		$error=0;
 
-        $this->context['createfromclone'] = 'createfromclone';
+		$this->context['createfromclone'] = 'createfromclone';
 
-        $this->db->begin();
+		$this->db->begin();
 
 		// get extrafields so they will be clone
 		foreach($this->lines as $line)
 			$line->fetch_optionals($line->rowid);
 
-        // Load source object
-        $objFrom = clone $this;
+		// Load source object
+		$objFrom = clone $this;
 
-        // Change socid if needed
-        if (! empty($socid) && $socid != $this->socid)
-        {
-            $objsoc = new Societe($this->db);
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
 
-            if ($objsoc->fetch($socid)>0)
-            {
-                $this->socid 				= $objsoc->id;
-                //$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-                //$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-                $this->fk_project			= '';
-                $this->fk_delivery_address	= '';
-            }
+			if ($objsoc->fetch($socid)>0)
+			{
+				$this->socid 				= $objsoc->id;
+				//$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				//$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= '';
+				$this->fk_delivery_address	= '';
+			}
 
-            // TODO Change product price if multi-prices
-        }
+			// TODO Change product price if multi-prices
+		}
 
-        $this->id=0;
+		$this->id=0;
 		$this->ref = '';
-        $this->statut=0;
+		$this->statut=0;
 
-        // Clear fields
-        $this->user_author_id     = $user->id;
-        $this->user_valid         = '';
-        $this->date_creation      = '';
-        $this->date_validation    = '';
-        $this->ref_client         = '';
+		// Clear fields
+		$this->user_author_id     = $user->id;
+		$this->user_valid         = '';
+		$this->date_creation      = '';
+		$this->date_validation    = '';
+		$this->ref_client         = '';
 
-        // Create clone
-        $result=$this->create($user);
-        if ($result < 0) $error++;
+		// Create clone
+		$result=$this->create($user);
+		if ($result < 0) $error++;
 
-        if (! $error)
-        {
-            // Add lines because it is not included into create function
-            foreach ($this->lines as $line)
-            {
-            	$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
-            }
+		if (! $error)
+		{
+			// Add lines because it is not included into create function
+			foreach ($this->lines as $line)
+			{
+				$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
+			}
 
-        	// Hook of thirdparty module
-            if (is_object($hookmanager))
-            {
-                $parameters=array('objFrom'=>$objFrom);
-                $action='';
-                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0) $error++;
-            }
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+				$parameters=array('objFrom'=>$objFrom);
+				$action='';
+				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
-            // Call trigger
-            $result=$this->call_trigger('INTERVENTION_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
-        }
+			// Call trigger
+			$result=$this->call_trigger('INTERVENTION_CLONE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
 
-        unset($this->context['createfromclone']);
+		unset($this->context['createfromclone']);
 
-        // End
-        if (! $error)
-        {
-            $this->db->commit();
-            return $this->id;
-        }
-        else
-        {
-            $this->db->rollback();
-            return -1;
-        }
-    }
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 
 	/**
@@ -1314,7 +1338,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	Insert the line into database
 	 *
 	 *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function insert($user, $notrigger=0)
@@ -1362,14 +1386,14 @@ class FichinterLigne extends CommonObjectLine
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            {
-            	$this->id=$this->rowid;
-            	$result=$this->insertExtraFields();
-            	if ($result < 0)
-            	{
-            		$error++;
-            	}
-            }
+			{
+				$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 
 			$result=$this->update_total();
@@ -1380,10 +1404,10 @@ class FichinterLigne extends CommonObjectLine
 
 				if (! $notrigger)
 				{
-                    // Call trigger
-                    $result=$this->call_trigger('LINEFICHINTER_CREATE',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
+					// Call trigger
+					$result=$this->call_trigger('LINEFICHINTER_CREATE',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
 				}
 			}
 
@@ -1410,7 +1434,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	Update intervention into database
 	 *
 	 *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function update($user,$notrigger=0)
@@ -1433,14 +1457,14 @@ class FichinterLigne extends CommonObjectLine
 		{
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        	{
-        		$this->id=$this->rowid;
-        		$result=$this->insertExtraFields();
-        		if ($result < 0)
-        		{
-        			$error++;
-        		}
-        	}
+			{
+				$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 			$result=$this->update_total();
 			if ($result > 0)
@@ -1448,10 +1472,10 @@ class FichinterLigne extends CommonObjectLine
 
 				if (! $notrigger)
 				{
-                    // Call trigger
-                    $result=$this->call_trigger('LINEFICHINTER_UPDATE',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
+					// Call trigger
+					$result=$this->call_trigger('LINEFICHINTER_UPDATE',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
 				}
 			}
 
@@ -1531,12 +1555,14 @@ class FichinterLigne extends CommonObjectLine
 	 *	Delete a intervention line
 	 *
 	 *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */
 	function deleteline($user,$notrigger=0)
 	{
 		global $langs,$conf;
+
+		$error=0;
 
 		if ($this->statut == 0)
 		{
@@ -1553,14 +1579,14 @@ class FichinterLigne extends CommonObjectLine
 				{
 					if (! $notrigger)
 					{
-                        // Call trigger
-                        $result=$this->call_trigger('LINEFICHINTER_DELETE',$user);
-                        if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-                        // End call triggers
+						// Call trigger
+						$result=$this->call_trigger('LINEFICHINTER_DELETE',$user);
+						if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+						// End call triggers
 					}
 
-                    $this->db->commit();
-                    return $result;
+					$this->db->commit();
+					return $result;
 				}
 				else
 				{

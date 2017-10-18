@@ -100,7 +100,6 @@ ParentProductsNumber=Nbre de produits virtuels/packages parent
 ParentProducts=Produits parents
 IfZeroItIsNotAVirtualProduct=Si 0, ce produit n'est pas un produit virtuel
 IfZeroItIsNotUsedByVirtualProduct=Si 0, ce produit n'est pas utilisé par un produit virtuel
-Translation=Traduction
 KeywordFilter=Filtre par mot-clé
 CategoryFilter=Filtre par catégorie
 ProductToAddSearch=Recherche des produits à ajouter

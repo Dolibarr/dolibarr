@@ -125,7 +125,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 		else
 		{
-			$this->posxtva=112;
+			$this->posxtva=110;
 			$this->posxup=126;
 			$this->posxqty=145;
 		}
@@ -496,8 +496,8 @@ class pdf_crabe extends ModelePDFFactures
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
-						$pdf->SetXY($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 3, $vat_rate, 0, 'R');
+						$pdf->SetXY($this->posxtva-5, $curY);
+						$pdf->MultiCell($this->posxup-$this->posxtva+4, 3, $vat_rate, 0, 'R');
 					}
 
 					// Unit price before discount
@@ -820,7 +820,7 @@ class pdf_crabe extends ModelePDFFactures
 		$sql = "SELECT p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 		$sql.= " cp.code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id AND cp.entity = " . getEntity('c_paiement');
 		$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
 		//$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = 1";
 		$sql.= " ORDER BY p.datep";
@@ -1566,7 +1566,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->type == 1) $title=$outputlangs->transnoentities("InvoiceReplacement");
 		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
-		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
+		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProForma");
 		if ($this->situationinvoice) $title=$outputlangs->transnoentities("InvoiceSituation");
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 

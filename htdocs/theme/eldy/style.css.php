@@ -47,6 +47,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='248,248,248';    // line pair
 $colorbacklinepair2='248,248,248';    // line pair
 $colorbacklinepairhover='238,246,252';    // line pair
+$colorbacklinebreak='214,218,220';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
@@ -100,26 +101,27 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
+$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:0);
 $borderwith=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
+if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
 
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
-    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
-    $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='13';
-    $conf->global->THEME_ELDY_FONT_SIZE2='12';
+	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
+	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
+	$conf->global->THEME_ELDY_TEXT='0,0,0';
+	$conf->global->THEME_ELDY_FONT_SIZE1='13';
+	$conf->global->THEME_ELDY_FONT_SIZE2='12';
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -133,6 +135,7 @@ $colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
 $colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
 $colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
+$colorbacklinebreak  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEBREAK)    ?$colorbacklinebreak:$conf->global->THEME_ELDY_LINEBREAK)    :(empty($user->conf->THEME_ELDY_LINEBREAK)?$colorbacklinebreak:$user->conf->THEME_ELDY_LINEBREAK);
 $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
 $colortexttitlenotab =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$conf->global->THEME_ELDY_TEXTTITLENOTAB)             :(empty($user->conf->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$user->conf->THEME_ELDY_TEXTTITLENOTAB);
 $colortexttitle      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLE)    ?$colortexttitle:$conf->global->THEME_ELDY_TEXTTITLE)             :(empty($user->conf->THEME_ELDY_TEXTTITLE)?$colortexttitle:$user->conf->THEME_ELDY_TEXTTITLE);
@@ -145,7 +148,7 @@ $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
 
 //$colortopbordertitle1=$colorbackhmenu1;
@@ -167,9 +170,9 @@ $colorbacktitle1=join(',',colorStringToArray($colorbacktitle1));    // Normalize
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
 {
-    $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
-    if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-    else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
+	$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
+	if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
+	else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
 }
 
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
@@ -248,7 +251,8 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-th a, .thumbstat, a.tab { color: rgb(<?php print $colortexttitle; ?>) !important; font-weight: bold !important; }
+.thumbstat, a.tab { color: rgb(<?php print $colortexttitle; ?>) !important; font-weight: bold !important; }
+th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
 a.tab { font-weight: bold !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
@@ -269,7 +273,7 @@ input.select2-input {
 
 .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
-.liste_titre input[name=month_lim] {
+.liste_titre input[name=month_lim], .liste_titre input[name=month_create] {
 	margin-right: 4px;
 }
 input[type=submit] {
@@ -445,17 +449,22 @@ input[name=weight], input[name=volume], input[name=surface], input[name=sizeheig
 input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
+.trextrafieldseparator td {
+    border-bottom: 2px solid rgb(120,120,120) !important;
+}
 
 hr { border: 0; border-top: 1px solid #ccc; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
+	margin-bottom: 0;
+	margin-top: 0;
+	margin-left: 5px;
+	margin-right: 5px;
     font-family: <?php print $fontlist ?>;
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
 	padding: 3px 14px;
-	margin-bottom: 0;
-	margin-top: 0;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -478,9 +487,9 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	border-radius: 2px;
 }
 .button:focus, .buttonDelete:focus  {
-	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	-moz-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:hover, .buttonDelete:hover   {
 	/* warning: having a larger shadow has side effect when button is completely on left of a table */
@@ -569,6 +578,9 @@ textarea.centpercent {
 }
 .right {
 	text-align: <?php print $right; ?>;
+}
+.justify {
+	text-align: justify;
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
@@ -762,6 +774,9 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
 }
 div.fiche>form>div.div-table-responsive {
+    min-height: 392px;
+}
+div.fiche>div.tabBar>form>div.div-table-responsive {
     min-height: 392px;
 }
 
@@ -1087,7 +1102,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'6':'26')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'12')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'20':'12')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1232,6 +1247,9 @@ div.heightref {
 }
 div.divphotoref {
 	padding-right: 20px;
+}
+div.paginationref {
+	padding-bottom: 10px;
 }
 div.statusref {
 	float: right;
@@ -2060,7 +2078,7 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 }
 div.tabBar div.titre {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 
 div.tabBarWithBottom {
@@ -2406,6 +2424,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 }
 table.liste td, table.noborder td, div.noborder form div {
 	padding: 7px 2px 7px 3px;			/* t r b l */
+	line-height: 1.2em;
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 0px;			/* t r b l */
@@ -2645,7 +2664,9 @@ td.evenodd, tr.nohoverpair td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
-
+.trforbreak td {
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important;
+}
 
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;
@@ -2669,18 +2690,11 @@ tr.nobottom td, tr.nobottom , td.nobottom {
 div.liste_titre .tagtd {
 	vertical-align: middle;
 }
-/*div.liste_titre {
-	box-shadow: 2px 2px 4px #CCC;
-}*/
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
 	padding-top: 2px;
 	padding-bottom: 2px;
-
-/*	border-top-width: 1px;
-	border-top-color: #BBB;
-	border-top-style: solid;*/
 }
 div.liste_titre_bydiv {
 	border-top-width: <?php echo $borderwith ?>px;
@@ -2691,7 +2705,8 @@ div.liste_titre_bydiv {
 	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	width: calc(100% - 1px);	/* 1px more, i don't know why */
+	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
+	width: calc(100%);
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2933,13 +2948,11 @@ span.dashboardlineko {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -24px;
-    padding: 1px 2px 1px 2px;
+    top: -26px;
+    padding: 0px 5px 0px 5px;
     border-radius: .25em;
 
     background-color: #9f4705;
-    padding: 0px 5px 0px 5px;
-    top: -26px;
 }
 .imglatecoin {
     padding: 1px 3px 1px 1px;
@@ -3252,6 +3265,12 @@ table.valid {
 /* Tooltips                                                                       */
 /* ============================================================================== */
 
+/* For tooltip using dialog */
+.ui-dialog.highlight.ui-widget.ui-widget-content.ui-front {
+    z-index: 3000;
+}
+
+/* For tooltip using tipTip */
 #tooltip {
 	position: absolute;
 	width: <?php print dol_size(450,'width'); ?>px;

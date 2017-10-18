@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2015 	Charlie Benke           <charlies@patas-monkey.com>
@@ -60,6 +60,7 @@ $ref		= GETPOST('ref','alpha');
 $socid		= GETPOST('socid','int');
 $contratid	= GETPOST('contratid','int');
 $action		= GETPOST('action','alpha');
+$cancel		= GETPOST('cancel','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
 $origin=GETPOST('origin','alpha');
@@ -105,6 +106,16 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
@@ -201,11 +212,11 @@ if (empty($reshook))
 	else if ($action == 'add' && $user->rights->ficheinter->creer)
 	{
 	    $object->socid			= $socid;
-	    $object->duration			= GETPOST('duration','int');
+	    $object->duration		= GETPOST('duration','int');
 	    $object->fk_project		= GETPOST('projectid','int');
 	    $object->fk_contrat		= GETPOST('contratid','int');
 	    $object->author			= $user->id;
-	    $object->description	= GETPOST('description');
+	    $object->description	= GETPOST('description','none');
 	    $object->ref			= $ref;
 	    $object->modelpdf		= GETPOST('model','alpha');
 	    $object->note_private	= GETPOST('note_private','none');
@@ -276,7 +287,7 @@ if (empty($reshook))
 						$fk_parent_line=0;
 						$num=count($lines);
 
-						for ($i=0;$i<$num;$i++)
+						for ($i=0; $i<$num; $i++)
 						{
 							$product_type=($lines[$i]->product_type?$lines[$i]->product_type:Product::TYPE_PRODUCT);
 
@@ -743,7 +754,8 @@ if (empty($reshook))
 			$parameters=array('id'=>$object->id);
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
-			{   $result=$object->updateExtraField($_POST["attribute"]);
+			{
+				$result=$object->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
@@ -828,7 +840,7 @@ if ($action == 'create')
 
 	$soc=new Societe($db);
 
-	print load_fiche_titre($langs->trans("AddIntervention"));
+	print load_fiche_titre($langs->trans("AddIntervention"), '', 'title_commercial');
 
 	dol_htmloutput_mesg($mesg);
 
@@ -1007,6 +1019,30 @@ if ($action == 'create')
         	$newclassname=$classname;
         	if ($newclassname=='Propal') $newclassname='CommercialProposal';
         	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+
+        	// Amount
+        	/* Hide amount because we only copy services so amount may differ than source
+        	print '<tr><td>' . $langs->trans('TotalHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
+        	print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
+        	if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
+        	{
+        		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1) . "</td></tr>";
+        	}
+
+        	if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
+        	{
+        		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2) . "</td></tr>";
+        	}
+
+        	print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
+
+        	if (!empty($conf->multicurrency->enabled))
+        	{
+        		print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+        		print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+        		print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+        	}
+        	*/
         }
 
         print '</table>';
@@ -1028,6 +1064,18 @@ if ($action == 'create')
 		print '</div>';
 
 		print '</form>';
+
+		// Show origin lines
+		if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+			$title = $langs->trans('Services');
+			print load_fiche_titre($title);
+
+			print '<table class="noborder" width="100%">';
+
+			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS)?'services':'');	// Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
+
+			print '</table>';
+		}
 	}
 	else
 	{
@@ -1148,7 +1196,7 @@ else if ($id > 0 || ! empty($ref))
 
 
 	// Intervention card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 	$morehtmlref='<div class="refidno">';
@@ -1603,22 +1651,8 @@ else if ($id > 0 || ! empty($ref))
 					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 				}
 
-				// Event agenda
-				if (! empty($conf->global->FICHINTER_ADDLINK_TO_EVENT))
-				{
-					if (! empty($conf->agenda->enabled) && $object->statut > Fichinter::STATUS_DRAFT)
-					{
-						$langs->load("agenda");
-						if ($object->statut < Fichinter::STATUS_BILLED)
-						{
-							if ($user->rights->agenda->myactions->create) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddEvent").'</a></div>';
-							else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddEvent").'</a></div>';
-						}
-					}
-				}
-
 				// Proposal
-				if (! empty($conf->propal->enabled) && $object->statut > Fichinter::STATUS_DRAFT)
+				if ($conf->service->enabled && ! empty($conf->propal->enabled) && $object->statut > Fichinter::STATUS_DRAFT)
 				{
 					$langs->load("propal");
 					if ($object->statut < Fichinter::STATUS_BILLED)
@@ -1683,18 +1717,11 @@ else if ($id > 0 || ! empty($ref))
 		 * Built documents
 		 */
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$conf->ficheinter->dir_output . "/".$object->ref;
+		$filedir=$conf->ficheinter->dir_output . "/".$filename;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed=$user->rights->ficheinter->creer;
 		$delallowed=$user->rights->ficheinter->supprimer;
-		$genallowed=1;
-		$delallowed=1;
-
-		$var=true;
-
-		//print "<br>\n";
-		print $somethingshown=$formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
-
+		print $formfile->showdocuments('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));

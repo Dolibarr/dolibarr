@@ -199,8 +199,8 @@ if ($action == 'add')
     $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
     // Clean parameters
-	$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
-	$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+	$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour",'int'), $fulldayevent?'00':GETPOST("apmin",'int'), $fulldayevent?'00':GETPOST("apsec",'int'), GETPOST("apmonth",'int'), GETPOST("apday",'int'), GETPOST("apyear",'int'));
+	$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour",'int'), $fulldayevent?'59':GETPOST("p2min",'int'), $fulldayevent?'59':GETPOST("apsec",'int'), GETPOST("p2month",'int'), GETPOST("p2day",'int'), GETPOST("p2year",'int'));
 
 	// Check parameters
 	if (! $datef && $percentage == 100)
@@ -771,9 +771,9 @@ if ($action == 'create')
 		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
 		if (!empty($user->societe_id)) {
-			print $form->select_thirdparty_list($user->societe_id, 'socid', '', 1, 1, 0, $events);
+			print $form->select_company($user->societe_id, 'socid', '', 1, 1, 0, $events);
 		} else {
-			print $form->select_thirdparty_list('', 'socid', '', 'SelectThirdParty', 1, 0, $events);
+			print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events);
 		}
 
 	}
@@ -781,7 +781,7 @@ if ($action == 'create')
 
 	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-	$form->select_contacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
+	$form->selectcontacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
 	print '</td></tr>';
 
 
@@ -1202,14 +1202,13 @@ if ($id > 0)
 
 		// Link to other agenda views
 		$out='';
-		$out.=img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
+		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-		$out.='<br>';
-		$out.=img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
+		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-		$out.=img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
+		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-		$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
+		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback.=$out;
 

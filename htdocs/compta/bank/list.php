@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/compta/bank/index.php
+ *       \file       htdocs/compta/bank/list.php
  *       \ingroup    banque
  *       \brief      Home page of bank module
  */
@@ -103,7 +103,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
     }
 }
 
@@ -611,7 +611,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['balance']['checked']))
     {
 		print '<td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, 0, -1, $obj->currency_code).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, 0, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];

@@ -54,7 +54,7 @@ if ($action == 'getlastversion')
     $sfurl = simplexml_load_string($result['content']);
 }
 
-	
+
 /*
  * View
  */
@@ -107,19 +107,21 @@ if (function_exists('curl_init'))
             }
 
             // Show version
-            print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
+            print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b>';
         }
         else
         {
-            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b>';
         }
     }
     else
     {
-        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
+        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a>';
     }
 }
 
+print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
+print '<a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/ChangeLog" target="_blank">'.$langs->trans("SeeChangeLog").'</a>';
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
@@ -343,7 +345,7 @@ foreach($configfileparameters as $key => $value)
 	{
 		$newkey = preg_replace('/^\?/','',$key);
 
-		if (preg_match('/^\?/',$key) && empty(${$newkey})) 
+		if (preg_match('/^\?/',$key) && empty(${$newkey}))
 		{
 		    if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled))
                 continue;    // We discard parameters starting with ?

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +171,7 @@ if ($action == 'add')
 		    else
 		    {
 		        setEventMessages($db->lasterror(), null, 'errors');
-		    }
+            }
 			$action='';
 		}
 	}
@@ -208,25 +209,34 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 $param='&mode='.$mode;
 
-$enabledisablehtml = $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml='';
+if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
-    $enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
+    //$enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
+    $enabledisablehtml.='<span class="fa fa-toggle-off valignmiddle" style="font-size: 2em; color: #999;" alt="'.$langs->trans("Disabled").'">';
+    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
+    $enabledisablehtml.='</span>';
     $enabledisablehtml.='</a>';
 }
 else
 {
     // Button on, click to disable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
-    $enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
+    //$enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
+    $enabledisablehtml.='<span class="fa fa-toggle-on valignmiddle" style="font-size: 2em; color: #227722;" alt="'.$langs->trans("Activated").'">';
+    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
+    $enabledisablehtml.='</span>';
     $enabledisablehtml.='</a>';
 }
 
 print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
 
+//print '<span class="opacitymedium">';
 print $langs->trans("TranslationDesc")."<br>\n";
+//print '</span>';
 print "<br>\n";
 
 $current_language_code=$langs->defaultlang;
@@ -259,11 +269,14 @@ if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
 
+	print '<div class="justify"><span class="opacitymedium">';
     print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
     $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
-    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a>)<br>';
+    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$langs->trans("Here").'</a>)<br>';
     print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
     print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
+    print '</span></div>';
+
     print '<br>';
 
 
@@ -291,9 +304,9 @@ if ($mode == 'overwrite')
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="">';
+    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
     print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="">';
+    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
     print '</td>';
     // Limit to superadmin
     /*if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -319,7 +332,7 @@ if ($mode == 'overwrite')
     $sql = "SELECT rowid, entity, lang, transkey, transvalue";
     $sql.= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
     $sql.= " WHERE 1 = 1";
-    //$sql.= " AND entity IN (".$user->entity.",".$conf->entity.")";
+    $sql.= " AND entity IN (".getEntity('overwrite_trans').")";
     $sql.= $db->order($sortfield, $sortorder);
 
     dol_syslog("translation::select from table", LOG_DEBUG);
@@ -483,7 +496,7 @@ if ($mode == 'searchkey')
     //}
     print '</td>';
     // Action column
-    print '<td class="liste_titre nowrap" align="right">';
+    print '<td class="nowrap" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpicto;
     print '</td>';
@@ -508,8 +521,35 @@ if ($mode == 'searchkey')
         {
             if ($val != $newlangfileonly->tab_translate[$key])
             {
+                // retrieve rowid
+                $sql = "SELECT rowid";
+                $sql.= " FROM " . MAIN_DB_PREFIX . "overwrite_trans";
+                $sql.= " WHERE transkey = '".$key."'";
+                $sql.= " AND entity IN (" . getEntity('overwrite_trans') . ")";
+                dol_syslog("translation::select from table", LOG_DEBUG);
+                $result = $db->query($sql);
+                if ($result)
+                {
+                    $obj = $db->fetch_object($result);
+                }
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?rowid=' . $obj->rowid . '&entity=' . $conf->entity . '&action=edit">' . img_edit() . '</a>';
+                print '&nbsp;&nbsp;';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?rowid=' . $obj->rowid . '&entity=' . $conf->entity . '&action=delete">' . img_delete() . '</a>';
+                print '&nbsp;&nbsp;';
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
                 print $form->textwithpicto('', $htmltext, 1, 'info');
+            }
+            else if (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+            {
+            	//print $key.'-'.$val;
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit_add($langs->trans("Overwrite")) . '</a>';
+            }
+
+            if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+            {
+            	$transifexlangfile='$';		// $ means 'All'
+            	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
+            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'object_globe').'</a>';
             }
         }
         else

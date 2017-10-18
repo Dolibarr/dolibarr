@@ -69,7 +69,7 @@ $required_fields = array(
 );
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElementType")));
 
 
 if (! isset($argv[1])) {
@@ -214,7 +214,7 @@ exit($error);
  * @param 	string	$element	Value to test
  * @return	boolean				True of false
  */
-function dolValidElement($element)
+function dolValidElementType($element)
 {
 	return (trim($element) != '');
 }

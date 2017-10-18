@@ -440,7 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // Documents
 	    $comref = dol_sanitizeFileName($object->ref);
 	    $relativepath = $comref . '/' . $comref . '.pdf';
-	    $filedir = $conf->inventory->dir_output . '/' . $comref;
+	    $filedir = $conf->product->dir_output . '/inventory/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->inventory->creer;
 	    $delallowed = $user->rights->inventory->supprimer;
@@ -463,126 +463,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
+	//Select mail models is same action as presend
 	/*
-	 * Action presend
-	 */
-    /*
-	if ($action == 'presend')
-	{
-		$object->fetch_projet();
+	if (GETPOST('modelselected')) $action = 'presend';
 
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file = $fileparams['fullname'];
+	// Presend form
+	$modelmail='inventory';
+	$defaulttopic='InformationMessage';
+	$diroutput = $conf->product->dir_output.'/inventory';
+	$trackid = 'stockinv'.$object->id;
 
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('commercial');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file)) {
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
-			}
-			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
-		}
-
-		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-		print '<div class="clearboth"></div>';
-		print '<br>';
-		print load_fiche_titre($langs->trans('SendOrderByMail'));
-
-		dol_fiche_head('');
-
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		$formmail->trackid='ord'.$object->id;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-		}
-		$formmail->withfrom = 1;
-		$liste = array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
-			$liste [$key] = $value;
-		$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
-		$formmail->withtocc = $liste;
-		$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-		if (empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
-		} else if (! empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__ (__REFCLIENT__)');
-		}
-		$formmail->withfile = 2;
-		$formmail->withbody = 1;
-		$formmail->withdeliveryreceipt = 1;
-		$formmail->withcancel = 1;
-		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
-		$formmail->substit ['__ORDERREF__'] = $object->ref;
-
-		$custcontact = '';
-		$contactarr = array();
-		$contactarr = $object->liste_contact(- 1, 'external');
-
-		if (is_array($contactarr) && count($contactarr) > 0)
-		{
-			foreach ($contactarr as $contact)
-			{
-				if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
-					$contactstatic = new Contact($db);
-					$contactstatic->fetch($contact ['id']);
-					$custcontact = $contactstatic->getFullName($langs, 1);
-				}
-			}
-
-			if (! empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'order_send';
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['orderid'] = $object->id;
-		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
-
-		// Init list of files
-		if (GETPOST("mode") == 'init') {
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-		}
-
-		// Show form
-		print $formmail->get_form();
-
-		dol_fiche_end();
-	}*/
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+	*/
 }
 
 

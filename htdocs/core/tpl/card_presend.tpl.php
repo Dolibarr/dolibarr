@@ -34,16 +34,19 @@ if ($action == 'presend')
 
 	$object->fetch_projet();
 
-	$ref = dol_sanitizeFileName($object->ref);
-	include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-	$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-	//
-	if ($object->element == 'invoice_supplier')
+	if (! in_array($object->element, array('societe', 'user')))
 	{
-		$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
-	}
+		$ref = dol_sanitizeFileName($object->ref);
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+		//
+		if ($object->element == 'invoice_supplier')
+		{
+			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
+		}
 
-	$file = $fileparams['fullname'];
+		$file = $fileparams['fullname'];
+	}
 
 	// Define output language
 	$outputlangs = $langs;
@@ -72,16 +75,19 @@ if ($action == 'presend')
 	}
 
 	// Build document if it not exists
-	if (! $file || ! is_readable($file)) {
-		if ($object->element != 'member')
-		{
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
+	if (! in_array($object->element, array('societe', 'user')))
+	{
+		if (! $file || ! is_readable($file)) {
+			if ($object->element != 'member')
+			{
+				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result <= 0) {
+					dol_print_error($db, $object->error, $object->errors);
+					exit();
+				}
+				$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+				$file = $fileparams['fullname'];
 			}
-			$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file = $fileparams['fullname'];
 		}
 	}
 
@@ -106,7 +112,7 @@ if ($action == 'presend')
 	if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 	{
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
+		$formmail->frommail=dolAddEmailTrackId($formmail->frommail, $trackid);
 	}
 	$formmail->withfrom = 1;
 
@@ -123,7 +129,7 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
-	elseif ($object->element == 'member')
+	elseif ($object->element == 'user' || $object->element == 'member')
 	{
 		$liste['thirdparty'] = $object->getFullName($langs)." &lt;".$object->email."&gt;";
 	}
@@ -163,12 +169,15 @@ if ($action == 'presend')
 	$formmail->param['models_id']=GETPOST('modelmailselected','int');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+	$formmail->param['fileinit'] = array($file);
 
 	// Init list of files
-	if (GETPOST("mode") == 'init') {
+	/*if (GETPOST('mode','alpha') == 'init')
+	{
 		$formmail->clear_attached_files();
+
 		$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-	}
+	}*/
 
 	// Show form
 	print $formmail->get_form();

@@ -48,6 +48,28 @@ function societe_prepare_head(Societe $object)
     $head[$h][2] = 'card';
     $h++;
 
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+	    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$nbContact = 0;	// TODO
+
+		$sql = "SELECT COUNT(p.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+		$sql .= " WHERE p.fk_soc = ".$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbContact = $obj->nb;
+		}
+
+	    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans('ContactsAddresses');
+	    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+	    $head[$h][2] = 'contact';
+	    $h++;
+	}
+
     if ($object->client==1 || $object->client==2 || $object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
@@ -766,7 +788,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="page" value="'.$page.'">';
 
 
-	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-nomin">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
@@ -1283,11 +1305,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
-        $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-        $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre">';
         $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
         $out.='</td>';
+        $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+        $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
@@ -1312,9 +1334,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		}
 		$out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Owner"));
+        $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
-        $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList('');
 		$out.=getTitleFieldOfList('');
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
@@ -1347,6 +1369,25 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.=$userstatic->getLoginUrl(1);
             $userstatic->fetch($histo[$key]['userid']);
             $out.=$userstatic->getNomUrl(-1);
+            $out.='</td>';
+
+            // Type
+            $out.='<td>';
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+            {
+            	if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
+            	else {
+            		if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
+            		if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
+            		if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
+            	}
+            	$out.=$actionstatic->type;
+            }
+            else {
+            	$typelabel = $actionstatic->type;
+            	if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
+            	$out.=$typelabel;
+            }
             $out.='</td>';
 
             // Title
@@ -1387,25 +1428,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && ! $histo[$key]['dateend'] && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
             if ($late) $out.=img_warning($langs->trans("Late")).' ';
             $out.="</td>\n";
-
-            // Type
-			$out.='<td>';
-			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
-    			if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
-    			else {
-    			    if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
-    			    if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
-    			    if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
-    			}
-			    $out.=$actionstatic->type;
-			}
-			else {
-			    $typelabel = $actionstatic->type;
-			    if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
-			    $out.=$typelabel;
-			}
-			$out.='</td>';
 
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';

@@ -1439,7 +1439,7 @@ else if ($id || $ref)
 		}
 
 		// Shipment card
-		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
 		$morehtmlref='<div class="refidno">';
 		// Ref customer shipment
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
@@ -2151,6 +2151,16 @@ else if ($id || $ref)
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
+
+	// Presend form
+	$modelmail='shipping_send';
+	$defaulttopic='SendShippingRef';
+	$diroutput = $conf->expedition->dir_output. '/sending';
+	$trackid = 'shi'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
+	/*
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -2221,7 +2231,7 @@ else if ($id || $ref)
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
 		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
 		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
@@ -2278,7 +2288,7 @@ else if ($id || $ref)
 		print $formmail->get_form();
 
 		dol_fiche_end();
-	}
+	}*/
 }
 
 

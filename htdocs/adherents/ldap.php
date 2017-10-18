@@ -59,26 +59,23 @@ if (! $result)
 
 if ($action == 'dolibarr2ldap')
 {
-	$db->begin();
-
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
-
-	$result=$ldap->update($dn,$info,$user,$olddn);
-
-	if ($result >= 0)
+	if ($result > 0)
 	{
-		setEventMessages($langs->trans("MemberSynchronized"), null, 'mesgs');
-		$db->commit();
+		$info=$object->_load_ldap_info();
+		$dn=$object->_load_ldap_dn($info);
+		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
+		$result=$ldap->update($dn,$info,$user,$olddn);
 	}
-	else
-	{
+
+	if ($result >= 0) {
+		setEventMessages($langs->trans("MemberSynchronized"), null, 'mesgs');
+	}
+	else {
 		setEventMessages($ldap->errors, $ldap->error, 'errors');
-		$db->rollback();
 	}
 }
 
@@ -96,7 +93,7 @@ $head = member_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'rowid', $linkback);
 

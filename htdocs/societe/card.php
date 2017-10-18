@@ -59,7 +59,7 @@ $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel     = GETPOST('cancel','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
-$socid		= GETPOST('socid','int');
+$socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
 
@@ -92,8 +92,6 @@ if (! empty($canvas))
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
-
-
 
 
 /*
@@ -310,159 +308,155 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
             $error++;
-            $action=($action=='add'?'create':'edit');
         }
         if (GETPOST('client') < 0)
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
             $error++;
-            $action=($action=='add'?'create':'edit');
         }
         if (GETPOST('fournisseur') < 0)
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
-            $action=($action=='add'?'create':'edit');
+
         }
 
-        if ($action == 'update')
+        if (! $error)
         {
-        	$ret=$object->fetch($socid);
-			$object->oldcopy = clone $object;
-        }
-		else $object->canvas=$canvas;
+        	if ($action == 'update')
+	        {
+	        	$ret=$object->fetch($socid);
+				$object->oldcopy = clone $object;
+	        }
+			else $object->canvas=$canvas;
 
-        if (GETPOST("private") == 1)	// Ask to create a contact
-        {
-            $object->particulier       = GETPOST("private");
+	        if (GETPOST("private") == 1)	// Ask to create a contact
+	        {
+	            $object->particulier       = GETPOST("private");
 
-            $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
-            // Add non official properties
-            $object->name_bis          = GETPOST('name','alpha');
-            $object->firstname         = GETPOST('firstname','alpha');
-        }
-        else
-        {
-            $object->name              = GETPOST('name', 'alpha');
-        }
-        $object->name_alias            = GETPOST('name_alias');
-        $object->address               = GETPOST('address');
-        $object->zip                   = GETPOST('zipcode', 'alpha');
-        $object->town                  = GETPOST('town', 'alpha');
-        $object->country_id            = GETPOST('country_id', 'int');
-        $object->state_id              = GETPOST('state_id', 'int');
-        $object->skype                 = GETPOST('skype', 'alpha');
-        $object->phone                 = GETPOST('phone', 'alpha');
-        $object->fax                   = GETPOST('fax','alpha');
-        $object->email                 = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-        $object->url                   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
-        $object->idprof1               = trim(GETPOST('idprof1', 'alpha'));
-        $object->idprof2               = trim(GETPOST('idprof2', 'alpha'));
-        $object->idprof3               = trim(GETPOST('idprof3', 'alpha'));
-        $object->idprof4               = trim(GETPOST('idprof4', 'alpha'));
-        $object->idprof5               = trim(GETPOST('idprof5', 'alpha'));
-        $object->idprof6               = trim(GETPOST('idprof6', 'alpha'));
-        $object->prefix_comm           = GETPOST('prefix_comm', 'alpha');
-        $object->code_client           = GETPOST('code_client', 'alpha');
-        $object->code_fournisseur      = GETPOST('code_fournisseur', 'alpha');
-        $object->capital               = GETPOST('capital', 'alpha');
-        $object->barcode               = GETPOST('barcode', 'alpha');
+	            $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
+	            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
+	            // Add non official properties
+	            $object->name_bis          = GETPOST('name','alpha');
+	            $object->firstname         = GETPOST('firstname','alpha');
+	        }
+	        else
+	        {
+	            $object->name              = GETPOST('name', 'alpha');
+	        }
+	        $object->name_alias            = GETPOST('name_alias');
+	        $object->address               = GETPOST('address');
+	        $object->zip                   = GETPOST('zipcode', 'alpha');
+	        $object->town                  = GETPOST('town', 'alpha');
+	        $object->country_id            = GETPOST('country_id', 'int');
+	        $object->state_id              = GETPOST('state_id', 'int');
+	        $object->skype                 = GETPOST('skype', 'alpha');
+	        $object->phone                 = GETPOST('phone', 'alpha');
+	        $object->fax                   = GETPOST('fax','alpha');
+	        $object->email                 = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+	        $object->url                   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+	        $object->idprof1               = trim(GETPOST('idprof1', 'alpha'));
+	        $object->idprof2               = trim(GETPOST('idprof2', 'alpha'));
+	        $object->idprof3               = trim(GETPOST('idprof3', 'alpha'));
+	        $object->idprof4               = trim(GETPOST('idprof4', 'alpha'));
+	        $object->idprof5               = trim(GETPOST('idprof5', 'alpha'));
+	        $object->idprof6               = trim(GETPOST('idprof6', 'alpha'));
+	        $object->prefix_comm           = GETPOST('prefix_comm', 'alpha');
+	        $object->code_client           = GETPOST('code_client', 'alpha');
+	        $object->code_fournisseur      = GETPOST('code_fournisseur', 'alpha');
+	        $object->capital               = GETPOST('capital', 'alpha');
+	        $object->barcode               = GETPOST('barcode', 'alpha');
 
-        $object->tva_intra             = GETPOST('tva_intra', 'alpha');
-        $object->tva_assuj             = GETPOST('assujtva_value', 'alpha');
-        $object->status                = GETPOST('status', 'alpha');
+	        $object->tva_intra             = GETPOST('tva_intra', 'alpha');
+	        $object->tva_assuj             = GETPOST('assujtva_value', 'alpha');
+	        $object->status                = GETPOST('status', 'alpha');
 
-        // Local Taxes
-        $object->localtax1_assuj       = GETPOST('localtax1assuj_value', 'alpha');
-        $object->localtax2_assuj       = GETPOST('localtax2assuj_value', 'alpha');
+	        // Local Taxes
+	        $object->localtax1_assuj       = GETPOST('localtax1assuj_value', 'alpha');
+	        $object->localtax2_assuj       = GETPOST('localtax2assuj_value', 'alpha');
 
-        $object->localtax1_value	   = GETPOST('lt1', 'alpha');
-        $object->localtax2_value	   = GETPOST('lt2', 'alpha');
+	        $object->localtax1_value	   = GETPOST('lt1', 'alpha');
+	        $object->localtax2_value	   = GETPOST('lt2', 'alpha');
 
-        $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
-        $object->effectif_id           = GETPOST('effectif_id', 'int');
-        $object->typent_id             = GETPOST('typent_id','int');
+	        $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
+	        $object->effectif_id           = GETPOST('effectif_id', 'int');
+	        $object->typent_id             = GETPOST('typent_id','int');
 
-        $object->typent_code           = dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
+	        $object->typent_code           = dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
 
-        $object->client                = GETPOST('client', 'int');
-        $object->fournisseur           = GETPOST('fournisseur', 'int');
+	        $object->client                = GETPOST('client', 'int');
+	        $object->fournisseur           = GETPOST('fournisseur', 'int');
 
-        $object->commercial_id         = GETPOST('commercial_id', 'int');
-        $object->default_lang          = GETPOST('default_lang');
+	        $object->commercial_id         = GETPOST('commercial_id', 'int');
+	        $object->default_lang          = GETPOST('default_lang');
 
-        // Webservices url/key
-        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
-        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
+	        // Webservices url/key
+	        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+	        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
 
-		// Incoterms
-		if (!empty($conf->incoterm->enabled))
-		{
-			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
-			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
-		}
+			// Incoterms
+			if (!empty($conf->incoterm->enabled))
+			{
+				$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
+				$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
+			}
 
-		// Multicurrency
-		if (!empty($conf->multicurrency->enabled))
-		{
-			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-		}
+			// Multicurrency
+			if (!empty($conf->multicurrency->enabled))
+			{
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			}
 
-        // Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0)
-		{
-			 $error++;
-			 $action = ($action=='add'?'create':'edit');
-		}
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0)
+			{
+				 $error++;
+			}
 
-        if (GETPOST('deletephoto')) $object->logo = '';
-        else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
+	        if (GETPOST('deletephoto')) $object->logo = '';
+	        else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
-        // Check parameters
-        if (! GETPOST('cancel','alpha'))
-        {
-            if (! empty($object->email) && ! isValidEMail($object->email))
-            {
-                $langs->load("errors");
-                $error++;
-                setEventMessages('', $langs->trans("ErrorBadEMail",$object->email), 'errors');
-                $action = ($action=='add'?'create':'edit');
-            }
-            if (! empty($object->url) && ! isValidUrl($object->url))
-            {
-                $langs->load("errors");
-                setEventMessages('', $langs->trans("ErrorBadUrl",$object->url), 'errors');
-                $action = ($action=='add'?'create':'edit');
-            }
-            if ($object->fournisseur && ! $conf->fournisseur->enabled)
-            {
-                $langs->load("errors");
-                setEventMessages('', $langs->trans("ErrorSupplierModuleNotEnabled"), 'errors');
-                $action = ($action=='add'?'create':'edit');
-            }
-            if (! empty($object->webservices_url)) {
-                //Check if has transport, without any the soap client will give error
-                if (strpos($object->webservices_url, "http") === false)
-                {
-                    $object->webservices_url = "http://".$object->webservices_url;
-                }
-                if (! isValidUrl($object->webservices_url)) {
-                    $langs->load("errors");
-                    $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->webservices_url);
-                    $action = ($action=='add'?'create':'edit');
-                }
-            }
+	        // Check parameters
+	        if (! GETPOST('cancel','alpha'))
+	        {
+	            if (! empty($object->email) && ! isValidEMail($object->email))
+	            {
+	                $langs->load("errors");
+	                $error++;
+	                setEventMessages('', $langs->trans("ErrorBadEMail",$object->email), 'errors');
+	            }
+	            if (! empty($object->url) && ! isValidUrl($object->url))
+	            {
+	                $langs->load("errors");
+	                setEventMessages('', $langs->trans("ErrorBadUrl",$object->url), 'errors');
+	            }
+	            if ($object->fournisseur && ! $conf->fournisseur->enabled)
+	            {
+	                $langs->load("errors");
+	                setEventMessages('', $langs->trans("ErrorSupplierModuleNotEnabled"), 'errors');
+	            }
+	            if (! empty($object->webservices_url)) {
+	                //Check if has transport, without any the soap client will give error
+	                if (strpos($object->webservices_url, "http") === false)
+	                {
+	                    $object->webservices_url = "http://".$object->webservices_url;
+	                }
+	                if (! isValidUrl($object->webservices_url)) {
+	                    $langs->load("errors");
+	                    $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->webservices_url);
+	                }
+	            }
 
-            // We set country_id, country_code and country for the selected country
-            $object->country_id=GETPOST('country_id')!=''?GETPOST('country_id'):$mysoc->country_id;
-            if ($object->country_id)
-            {
-            	$tmparray=getCountry($object->country_id,'all');
-            	$object->country_code=$tmparray['code'];
-            	$object->country=$tmparray['label'];
-            }
+	            // We set country_id, country_code and country for the selected country
+	            $object->country_id=GETPOST('country_id')!=''?GETPOST('country_id'):$mysoc->country_id;
+	            if ($object->country_id)
+	            {
+	            	$tmparray=getCountry($object->country_id,'all');
+	            	$object->country_code=$tmparray['code'];
+	            	$object->country=$tmparray['label'];
+	            }
+	        }
         }
 
         if (! $error)
@@ -992,13 +986,13 @@ else
 
         dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
-        print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+        print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">';		// Chrome ignor autocomplete
 
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
-        print '<input type="hidden" name="type" value='.GETPOST("type").'>';
+        print '<input type="hidden" name="type" value='.GETPOST("type",'alpha').'>';
         print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -1408,7 +1402,7 @@ else
 
 			$object->oldcopy = clone $object;
 
-            if (GETPOST('name'))
+            if (GETPOSTISSET('name'))
             {
                 // We overwrite with values if posted
                 $object->name					= GETPOST('name', 'alpha');
@@ -2372,69 +2366,68 @@ else
         /*
          *  Actions
          */
-        print '<div class="tabsAction">'."\n";
+        if ($action != 'presend')
+        {
+	        print '<div class="tabsAction">'."\n";
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
-		{
-			$at_least_one_email_contact = false;
-			$TContact = $object->contact_array_objects();
-			foreach ($TContact as &$contact)
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
 			{
-				if (!empty($contact->email))
+				$at_least_one_email_contact = false;
+				$TContact = $object->contact_array_objects();
+				foreach ($TContact as &$contact)
 				{
-					$at_least_one_email_contact = true;
-					break;
+					if (!empty($contact->email))
+					{
+						$at_least_one_email_contact = true;
+						break;
+					}
 				}
+
+		        if (! empty($object->email) || $at_least_one_email_contact)
+		        {
+		        	$langs->load("mails");
+		        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+		        }
+		        else
+				{
+		        	$langs->load("mails");
+		       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+		        }
+
+		        if ($user->rights->societe->creer)
+		        {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		        }
+
+		        if ($user->rights->societe->supprimer)
+		        {
+		        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+		        }
+
+		        if ($user->rights->societe->supprimer)
+		        {
+		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
+		            {
+		                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+		            }
+		            else
+					{
+		                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+		            }
+		        }
 			}
 
-	        if (! empty($object->email) || $at_least_one_email_contact)
-	        {
-	        	$langs->load("mails");
-	        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
-	        }
-	        else
-			{
-	        	$langs->load("mails");
-	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
-	        }
-
-	        if ($user->rights->societe->creer)
-	        {
-	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-	        }
-
-	        if ($user->rights->societe->supprimer)
-	        {
-	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
-	        }
-
-	        if ($user->rights->societe->supprimer)
-	        {
-	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-	            }
-	        }
-		}
-
-        print '</div>'."\n";
+	        print '</div>'."\n";
+        }
 
         //Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
 		}
-		if ($action == 'presend')
+		/*if ($action == 'presend')
 		{
-			/*
-			 * Affiche formulaire mail
-			*/
-
 			// By default if $action=='presend'
 			$titreform='SendMail';
 			$topicmail='';
@@ -2485,36 +2478,11 @@ else
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
 			// Array of substitutions
-			$formmail->setSubstitFromObject($object);
+			$formmail->setSubstitFromObject($object, $outputlangs);
 			$formmail->substit['__THIRDPARTY_ID__']=$object->id;		// substit in setSubstitFromObject was wrong for this one
 			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;	// substit in setSubstitFromObject was wrong for this one
 			$formmail->substit['__PERSONALIZED__']='';					// deprecated
 			$formmail->substit['__CONTACTCIVNAME__']='';
-
-			//Find the good contact adress
-			/*
-			$custcontact='';
-			$contactarr=array();
-			$contactarr=$object->liste_contact(-1,'external');
-
-			if (is_array($contactarr) && count($contactarr)>0)
-			{
-			foreach($contactarr as $contact)
-			{
-			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
-
-			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-
-			$contactstatic=new Contact($db);
-			$contactstatic->fetch($contact['id']);
-			$custcontact=$contactstatic->getFullName($langs,1);
-			}
-			}
-
-			if (!empty($custcontact)) {
-			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-			}*/
 
 
 			// Tableau des parametres complementaires du post
@@ -2533,14 +2501,15 @@ else
 			print $formmail->get_form();
 
 			dol_fiche_end();
-		}
-		else
+		}*/
+
+		if ($action != 'presend')
 		{
+			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
-				print '<div class="fichecenter"><div class="fichehalfleft">';
-	            print '<a name="builddoc"></a>'; // ancre
+				print '<a name="builddoc"></a>'; // ancre
 
 	            /*
 	             * Documents generes
@@ -2553,35 +2522,38 @@ else
 	            $var=true;
 
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
-
-				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-				print '</div></div></div>';
-
-	            print '<br>';
 	        }
-
-	        print '<div class="fichecenter"><br></div>';
 
 	        // Subsidiaries list
 	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
 	        {
-	           $result=show_subsidiaries($conf,$langs,$db,$object);
+	        	$result=show_subsidiaries($conf,$langs,$db,$object);
 	        }
 
-	        // Contacts list
-	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-	        {
-	            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-	        }
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	        // Addresses list
-	        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-	        {
-	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-	        }
+			$MAX = 10;
+
+			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
+			$morehtmlright.= $langs->trans("SeeAll");
+			$morehtmlright.= '</a>';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAX, '', $morehtmlright);		// Show all action for thirdparty
+
+			print '</div></div></div>';
 		}
+
+		// Presend form
+		$modelmail='thirdparty';
+		$defaulttopic='Information';
+		$diroutput = $conf->societe->dir_output;
+		$trackid = 'thi'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
     }
 }
 

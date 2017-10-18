@@ -107,7 +107,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -160,7 +160,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -365,7 +365,7 @@ if ($rowid > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
 

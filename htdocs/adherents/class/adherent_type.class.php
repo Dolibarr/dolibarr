@@ -55,11 +55,11 @@ class AdherentType extends CommonObject
 	 * @since 5.0
 	 */
 	public $subscription;
-	/** @var string Public note */
+	/** @var string 	Public note */
 	public $note;
-	/** @var bool Can vote*/
+	/** @var integer	Can vote */
 	public $vote;
-	/** @var bool Email sent during validation */
+	/** @var string Email sent during validation */
 	public $mail_valid;
 	/** @var array Array of members */
 	public $members=array();
@@ -167,7 +167,7 @@ class AdherentType extends CommonObject
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql.= "note = '".$this->db->escape($this->note)."',";
-		$sql.= "vote = '".$this->db->escape($this->vote)."',";
+		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql.= " WHERE rowid =".$this->id;
 
@@ -229,6 +229,8 @@ class AdherentType extends CommonObject
 	function delete()
 	{
 		global $user;
+
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql.= " WHERE rowid = ".$this->id;
@@ -481,7 +483,7 @@ class AdherentType extends CommonObject
 
 		// Initialise parametres
 		$this->id = 0;
-		$this->ref = 0;
+		$this->ref = 'MTSPEC';
 		$this->specimen=1;
 
 		$this->label='MEMBERS TYPE SPECIMEN';

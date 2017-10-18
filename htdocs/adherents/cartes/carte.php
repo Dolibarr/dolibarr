@@ -116,25 +116,25 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
     		// List of values to scan for a replacement
             $substitutionarray = array (
-                '%ID%'=>$objp->rowid,
-                '%LOGIN%'=>$objp->login,
-                '%FIRSTNAME%'=>$objp->firstname,
-                '%LASTNAME%'=>$objp->lastname,
-                '%FULLNAME%'=>$adherentstatic->getFullName($langs),
-                '%COMPANY%'=>$objp->company,
-                '%ADDRESS%'=>$objp->address,
-                '%ZIP%'=>$objp->zip,
-                '%TOWN%'=>$objp->town,
-                '%COUNTRY%'=>$objp->country,
-                '%COUNTRY_CODE%'=>$objp->country_code,
-                '%EMAIL%'=>$objp->email,
-                '%BIRTH%'=>dol_print_date($objp->birth,'day'),
-                '%TYPE%'=>$objp->type,
-                '%YEAR%'=>$year,
-                '%MONTH%'=>$month,
-                '%DAY%'=>$day,
-                '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-                '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/"
+                '__ID__'=>$objp->rowid,
+                '__LOGIN__'=>$objp->login,
+                '__FIRSTNAME__'=>$objp->firstname,
+                '__LASTNAME__'=>$objp->lastname,
+                '__FULLNAME__'=>$adherentstatic->getFullName($langs),
+                '__COMPANY__'=>$objp->company,
+                '__ADDRESS__'=>$objp->address,
+                '__ZIP__'=>$objp->zip,
+                '__TOWN__'=>$objp->town,
+                '__COUNTRY__'=>$objp->country,
+                '__COUNTRY_CODE__'=>$objp->country_code,
+                '__EMAIL__'=>$objp->email,
+                '__BIRTH__'=>dol_print_date($objp->birth,'day'),
+                '__TYPE__'=>$objp->type,
+                '__YEAR__'=>$year,
+                '__MONTH__'=>$month,
+                '__DAY__'=>$day,
+                '__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+                '__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
             );
             complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
@@ -179,7 +179,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             // For labels
             if ($mode == 'label')
             {
-            	if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT="%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%";
+            	if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT="__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
                 $textleft=make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
                 $textheader='';
                 $textfooter='';

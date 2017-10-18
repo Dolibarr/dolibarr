@@ -262,8 +262,8 @@ class FactureRec extends CommonInvoice
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		//$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity IN (' . getEntity('c_payment_term').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN (' . getEntity('c_paiement').')';
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		if ($rowid) $sql.= ' WHERE f.rowid='.$rowid;
 		elseif ($ref) $sql.= " WHERE f.titre='".$this->db->escape($ref)."'";
@@ -821,6 +821,30 @@ class FactureRec extends CommonInvoice
 	{
 		if (empty($this->date_when)) return false;
 		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+	}
+
+	/**
+	 * Return if maximum number of generation is reached
+	 *
+	 * @return	boolean			False by default, True if maximum number of generation is reached
+	 */
+	function isMaxNbGenReached()
+	{
+		$ret = false;
+		if ($this->nb_gen_max > 0 && ($this->nb_gen_done >= $this->nb_gen_max)) $ret = true;
+		return $ret;
+	}
+
+	/**
+	 * Format string to output with by striking the string if max number of generation was reached
+	 *
+	 * @param	string		$ret	Default value to output
+	 * @return	boolean				False by default, True if maximum number of generation is reached
+	 */
+	function strikeIfMaxNbGenReached($ret)
+	{
+		// Special case to strike the date
+		return ($this->isMaxNbGenReached()?'<strike>':'').$ret.($this->isMaxNbGenReached()?'</strike>':'');
 	}
 
 	/**

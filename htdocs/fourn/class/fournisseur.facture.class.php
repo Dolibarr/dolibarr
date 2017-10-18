@@ -517,8 +517,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid AND cr.entity = " . getEntity('c_payment_term') . ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id AND p.entity = " . getEntity('c_paiement') . ")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
@@ -1089,6 +1089,10 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
         dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
+
+        // Force to have object complete for checks
+        $this->fetch_thirdparty();
+        $this->fetch_lines();
 
         // Check parameters
         if ($this->statut > self::STATUS_DRAFT)	// This is to avoid to validate twice (avoid errors on logs and stock management)
@@ -1808,7 +1812,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
 
-	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0&mainmenu=accountancy&leftmenu=suppliers_bills';
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=accountancy&leftmenu=suppliers_bills';
 	        $response->img=img_object($langs->trans("Bills"),"bill");
 
             $facturestatic = new FactureFournisseur($this->db);
@@ -1839,15 +1843,16 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		string	$option			Where point the link
-     *	@param		int		$max			Max length of shown ref
-     *	@param		int		$short			1=Return just URL
-     *	@param		string	$moretitle		Add more text to title tooltip
-     *  @param	    int   	$notooltip		1=Disable tooltip
-     * 	@return		string					String with URL
+     *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param		string	$option						Where point the link
+     *	@param		int		$max						Max length of shown ref
+     *	@param		int		$short						1=Return just URL
+     *	@param		string	$moretitle					Add more text to title tooltip
+     *  @param	    int   	$notooltip					1=Disable tooltip
+     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     * 	@return		string								String with URL
      */
-    public function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip=0)
+    public function getNomUrl($withpicto=0, $option='',$max=0, $short=0, $moretitle='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf;
 
@@ -1857,6 +1862,14 @@ class FactureFournisseur extends CommonInvoice
         else $url = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id;
 
         if ($short) return $url;
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
         $picto='bill';
         if ($this->type == self::TYPE_REPLACEMENT) $picto.='r'; // Replacement invoice
@@ -2541,15 +2554,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->tva_tx)) {
-			$this->tva_tx = 0;
-		}
-		if (empty($this->localtax1_tx)) {
-			$this->localtax1_tx = 0;
-		}
-		if (empty($this->localtax2_tx)) {
-			$this->localtax2_tx = 0;
-		}
+		if (empty($this->remise_percent)) $this->remise_percent = 0;
+		if (empty($this->tva_tx))  		  $this->tva_tx = 0;
+		if (empty($this->localtax1_tx))   $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx))   $this->localtax2_tx = 0;
 
 		$this->db->begin();
 
