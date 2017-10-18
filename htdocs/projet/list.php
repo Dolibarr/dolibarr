@@ -607,8 +607,9 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '<td class="liste_titre nowrap" align="right">';
 	$arrayofstatus = array();
 	foreach($object->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
-	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 selectarrowonleft');
+	print ajax_combobox('search_status');
 	print '</td>';
 }
 // Action column

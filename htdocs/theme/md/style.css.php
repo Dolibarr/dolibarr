@@ -804,6 +804,13 @@ div.fiche>form>div.div-table-responsive {
     align-self: flex-start;
 }
 
+select.selectarrowonleft {
+	direction: rtl;
+}
+select.selectarrowonleft option {
+	direction: ltr;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */

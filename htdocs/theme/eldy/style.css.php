@@ -801,6 +801,13 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
     align-self: flex-start;
 }
 
+select.selectarrowonleft {
+	direction: rtl;
+}
+select.selectarrowonleft option {
+	direction: ltr;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -4380,7 +4387,7 @@ dl.dropdown {
 }
 .dropdown ul {
     margin: -1px 0 0 0;
-    text-align: left;
+    text-align: <?php echo $left; ?>;
 }
 .dropdown dd {
     position:relative;
@@ -4399,7 +4406,7 @@ dl.dropdown {
     background-color: #FFF;
     border: 1px solid #888;
     display:none;
-    right:0px;						/* pop is align on right */
+    <?php echo $right; ?>:0px;						/* pop is align on right */
     padding: 2px 15px 2px 5px;
     position:absolute;
     top:2px;
@@ -4416,7 +4423,7 @@ dl.dropdown {
 	padding: 2px;
 }
 .dropdown dd ul li input[type="checkbox"] {
-    margin-right: 3px;
+    margin-<?php echo $right; ?>: 3px;
 }
 .dropdown dd ul li a, .dropdown dd ul li span {
     padding: 3px;
