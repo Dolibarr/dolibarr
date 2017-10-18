@@ -218,10 +218,10 @@ class lettering extends BookKeeping
 
 	/**
 	 *
-	 * @param array $ids
-	 * @param boolean $notrigger
-	 * @return number
-	 */
+	 * @param array $ids ids array
+	 * @param boolean $notrigger no trigger
+ 	* @return number
+	*/
 	public function updateLettrage($ids = array(), $notrigger = false) {
 		$error = 0;
 
