@@ -1400,13 +1400,14 @@ class Contrat extends CommonObject
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @return int             				<0 si erreur, >0 si ok
+	 * 	@param 	string		$rang 				Position
+	 *  @return int             				<0 if KO, >0 if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null, $rang=0)
 	{
 		global $user, $langs, $conf, $mysoc;
 
-		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
+		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");
 
 		if ($this->statut >= 0)
 		{
@@ -1616,7 +1617,7 @@ class Contrat extends CommonObject
 	{
 		global $user, $conf, $langs, $mysoc;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$qty=trim($qty);
 		$desc=trim($desc);
 		$desc=trim($desc);
@@ -1625,6 +1626,7 @@ class Contrat extends CommonObject
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
 		$pa_ht=price2num($pa_ht);
+		if (empty($fk_fournprice)) $fk_fournprice=0;
 
 		$subprice = $price;
 		$remise = 0;
@@ -1701,7 +1703,7 @@ class Contrat extends CommonObject
 		$sql.= ", total_localtax1='".price2num($total_localtax1)."'";
 		$sql.= ", total_localtax2='".price2num($total_localtax2)."'";
 		$sql.= ", total_ttc='".      price2num($total_ttc)."'";
-		$sql.= ", fk_product_fournisseur_price='".$fk_fournprice."'";
+		$sql.= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
 		$sql.= ", buy_price_ht='".price2num($pa_ht)."'";
 		if ($date_start > 0) { $sql.= ",date_ouverture_prevue='".$this->db->idate($date_start)."'"; }
 		else { $sql.=",date_ouverture_prevue=null"; }
@@ -1772,7 +1774,7 @@ class Contrat extends CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	function deleteline($idline,$user)
+	function deleteline($idline, User $user)
 	{
 		global $conf, $langs;
 
@@ -2343,7 +2345,17 @@ class Contrat extends CommonObject
 		}
 	}
 
-	/**
+    /**
+	 * 	Create an array of order lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+     */
+    function getLinesArray()
+    {
+        return $this->fetch_lines();
+    }
+
+    /**
 	 *  Create a document onto disk according to template module.
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
@@ -3033,7 +3045,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " info_bits,";
 		$sql.= " price_ht, remise, fk_product_fournisseur_price, buy_price_ht";
 		if ($this->date_ouverture_prevue > 0) { $sql.= ",date_ouverture_prevue"; }
-		if ($this->date_fin_validite > 0)   { $sql.= ",date_fin_validite"; }
+		if ($this->date_fin_validite > 0)     { $sql.= ",date_fin_validite"; }
 		$sql.= ") VALUES ($this->fk_contrat, '', '" . $this->db->escape($this->description) . "',";
 		$sql.= ($this->fk_product>0 ? $this->fk_product : "null").",";
 		$sql.= " '".$this->db->escape($this->qty)."',";
@@ -3051,8 +3063,8 @@ class ContratLigne extends CommonObjectLine
 		else $sql.= ' null,';
 		if ($this->pa_ht > 0) $sql.= ' '.price2num($this->pa_ht);
 		else $sql.= ' null';
-		if ($this->date_ouverture_prevue > 0) { $sql.= ",'".$this->db->idate($this->date_ouverture_prevue)."'"; }
-		if ($this->date_fin_validite > 0) { $sql.= ",'".$this->db->idate($this->date_fin_validite)."'"; }
+		if ($this->date_ouverture > 0) { $sql.= ",'".$this->db->idate($this->date_ouverture)."'"; }
+		if ($this->date_cloture > 0)   { $sql.= ",'".$this->db->idate($this->date_cloture)."'"; }
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

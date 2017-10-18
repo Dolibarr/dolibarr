@@ -907,7 +907,7 @@ class ActionComm extends CommonObject
             return $db->lasterror();
         }
     }
-    
+
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -918,7 +918,7 @@ class ActionComm extends CommonObject
     function load_board($user, $load_state_board=0)
     {
     	global $conf, $langs;
-    	
+
     	if(empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp";
     	else {
     		$this->nb=array();
@@ -934,7 +934,7 @@ class ActionComm extends CommonObject
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
     	if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
     	if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
-    	
+
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -956,7 +956,7 @@ class ActionComm extends CommonObject
 	    			if ($agenda_static->hasDelay()) $response->nbtodolate++;
     			} else $this->nb["actionscomm"]=$obj->nb;
     		}
-    		
+
     		$this->db->free($resql);
     		if(empty($load_state_board)) return $response;
     		else return 1;

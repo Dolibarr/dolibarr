@@ -287,7 +287,7 @@ class Proposals extends DolibarrApi
 	  );
 
 	  if ($updateRes > 0) {
-		return $this->get($id)->line->rowid;
+		return $updateRes;
 
 	  }
 	  return false;
