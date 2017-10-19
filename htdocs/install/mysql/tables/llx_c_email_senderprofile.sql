@@ -26,7 +26,7 @@ create table llx_c_email_senderprofile
   tms             timestamp,
   label           varchar(255),					  -- Label of predefined email
   email           varchar(255) NOT NULL,		  -- Email
-  signature		  text                            -- Predefined signature
+  signature		  text,                           -- Predefined signature
   position        smallint DEFAULT 0,		      -- Position
-  active          tinyint DEFAULT 1  NOT NULL,
+  active          tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
