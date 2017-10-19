@@ -1225,6 +1225,12 @@ class Form
                         $disabled=' disabled';
                     }
 
+					if (!empty($conf->global->MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST) && !empty($obj->fk_facture_source))
+					{
+						$tmpfac = new Facture($this->db);
+						if ($tmpfac->fetch($obj->fk_facture_source) > 0) $desc=$desc.' - '.$tmpfac->ref;
+					}
+
                     print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
                     $i++;
                 }
@@ -4153,15 +4159,26 @@ class Form
             print '<input type="hidden" name="action" value="setabsolutediscount">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<div class="inline-block">';
-            if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+            if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))	// Never use this option.
             {
                 if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
                 else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
             }
             else
             {
-                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%'))") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
-                else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+                if (! $filter)
+                {
+                	print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
+                }
+                elseif ($filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))") 
+                {
+                	// Replace trans key with CompanyHasDownPaymentOrCommercialDiscount
+                	print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
+                }
+                else 
+                {
+                	print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+                }
             }
             if (empty($hidelist)) print ': ';
             print '</div>';

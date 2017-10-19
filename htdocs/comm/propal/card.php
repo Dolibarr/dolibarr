@@ -611,7 +611,7 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
-				$result=$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note','none'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -2355,8 +2355,8 @@ if ($action == 'create')
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->propal->creer;
-		$delallowed = $user->rights->propal->supprimer;
+		$genallowed = $user->rights->propal->lire;
+		$delallowed = $user->rights->propal->creer;
 
 		$var = true;
 

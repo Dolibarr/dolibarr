@@ -732,7 +732,7 @@ if ($resql)
 
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->expensereport->lire;
-	    $delallowed=$user->rights->expensereport->lire;
+	    $delallowed=$user->rights->expensereport->creer;
 
 	    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

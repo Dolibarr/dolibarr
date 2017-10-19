@@ -604,7 +604,7 @@ if ($resql)
 
 	    $filedir=$diroutputmassaction;
 	    $genallowed=$user->rights->facture->lire;
-	    $delallowed=$user->rights->facture->lire;
+	    $delallowed=$user->rights->facture->creer;
 
 	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

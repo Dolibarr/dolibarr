@@ -1432,6 +1432,10 @@ if ($action == 'create')
             $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
             $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
             $datedue=($datetmp==''?-1:$datetmp);
+
+            // Replicate extrafields
+            $objectsrc->fetch_optionals($originid);
+            $object->array_options = $objectsrc->array_options;
         }
     }
     else
@@ -2028,6 +2032,7 @@ else
     	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->facture->creer, 'string', '', null, null, '', 1);
     	// Thirdparty
     	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)';
     	// Project
     	if (! empty($conf->projet->enabled))
     	{
@@ -2796,8 +2801,8 @@ else
 	                $subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 	                $filedir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
 	                $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
-	                $genallowed=$user->rights->fournisseur->facture->creer;
-	                $delallowed=$user->rights->fournisseur->facture->supprimer;
+	                $genallowed=$user->rights->fournisseur->facture->lire;
+	                $delallowed=$user->rights->fournisseur->facture->creer;
 	                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
 	                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
