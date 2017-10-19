@@ -196,6 +196,7 @@ class Orders extends DolibarrApi
           }
           $this->commande->lines = $lines;
         }*/
+
         if ($this->commande->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
         }
@@ -386,7 +387,7 @@ class Orders extends DolibarrApi
     /**
      * Update order general fields (won't touch lines of order)
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of order to update
      * @param array $request_data   Datas
      *
      * @return int
@@ -398,7 +399,7 @@ class Orders extends DolibarrApi
 
         $result = $this->commande->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Commande not found');
+            throw new RestException(404, 'Order not found');
         }
 
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
