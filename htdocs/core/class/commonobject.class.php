@@ -4047,13 +4047,14 @@ abstract class CommonObject
 
 			if (in_array(get_class($this), array('Adherent')))
 			{
-				$arrayofrecords = array();   // The write_file of templates of adherent class need this
+				$arrayofrecords = array();   // The write_file of templates of adherent class need this var
 				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			}
 			else
 			{
 				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 			}
+			// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
 			if ($resultwritefile > 0)
 			{
@@ -4080,9 +4081,19 @@ abstract class CommonObject
 						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 						$ecmfile=new EcmFiles($this->db);
 						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
+
+						if (! empty($conf->global->PROPOSAL_USE_ONLINE_SIGN))
+						{
+							if (empty($ecmfile->share))	// Because object not found or share not set yet
+							{
+								require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+								$ecmfile->share = getRandomPassword(true);
+							}
+						}
+
 						if ($result > 0)
 						{
-							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
 							$ecmfile->fullpath_orig = '';
 							$ecmfile->gen_or_uploaded = 'generated';
 							$ecmfile->description = '';    // indexed content
@@ -4097,7 +4108,7 @@ abstract class CommonObject
 						{
 							$ecmfile->filepath = $rel_dir;
 							$ecmfile->filename = $filename;
-							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
 							$ecmfile->fullpath_orig = '';
 							$ecmfile->gen_or_uploaded = 'generated';
 							$ecmfile->description = '';    // indexed content
@@ -4107,6 +4118,21 @@ abstract class CommonObject
 							{
 								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 							}
+						}
+
+						/*$this->result['fullname']=$destfull;
+						$this->result['filepath']=$ecmfile->filepath;
+						$this->result['filename']=$ecmfile->filename;*/
+
+						// Update the last_main_doc field into main object
+						$update_main_doc_field=0;
+						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
+						if ($update_main_doc_field && ! empty($this->table_element))
+						{
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+							$sql.= ' WHERE rowid = '.$this->id;
+							$resql = $this->db->query($sql);
+							if (! $resql) dol_print_error($this->db);
 						}
 					}
 				}

@@ -4378,7 +4378,7 @@ else if ($id > 0 || ! empty($ref))
 		// Show online payment link
 		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 
-		if ($object->statut != 0 && $useonlinepayment)
+		if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment)
 		{
 			print '<br>';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';

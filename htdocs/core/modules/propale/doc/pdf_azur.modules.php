@@ -43,6 +43,7 @@ class pdf_azur extends ModelePDFPropales
 	var $db;
 	var $name;
 	var $description;
+	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
 	var $type;
 
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
@@ -74,8 +75,9 @@ class pdf_azur extends ModelePDFPropales
 		$this->db = $db;
 		$this->name = "azur";
 		$this->description = $langs->trans('DocModelAzurDescription');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Dimension page pour format A4
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -760,7 +762,7 @@ class pdf_azur extends ModelePDFPropales
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else

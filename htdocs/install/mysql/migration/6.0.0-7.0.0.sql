@@ -79,6 +79,20 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 ALTER TABLE llx_ecm_files MODIFY label varchar(128) NOT NULL;
 ALTER TABLE llx_ecm_files ADD COLUMN share varchar(128) NULL after label;
+ALTER TABLE llx_ecm_files ADD COLUMN src_object_type varchar(32);
+ALTER TABLE llx_ecm_files ADD COLUMN src_object_id integer;
+
+
+ALTER TABLE llx_propal ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_commande ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_facture ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_contrat ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_expedition ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_fichinter ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_livraison ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_supplier_proposal ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_facture_fourn ADD COLUMN last_main_doc varchar(255);
+ALTER TABLE llx_commande_fournisseur ADD COLUMN last_main_doc varchar(255);
 
 
 ALTER TABLE llx_c_paiement        ADD COLUMN position        integer NOT NULL DEFAULT 0;

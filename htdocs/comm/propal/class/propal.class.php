@@ -1252,7 +1252,7 @@ class Propal extends CommonObject
 		$sql.= ", p.datep as dp";
 		$sql.= ", p.fin_validite as dfv";
 		$sql.= ", p.date_livraison as date_livraison";
-		$sql.= ", p.model_pdf, p.ref_client, p.extraparams";
+		$sql.= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
 		$sql.= ", p.note_private, p.note_public";
 		$sql.= ", p.fk_projet, p.fk_statut";
 		$sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
@@ -1306,6 +1306,7 @@ class Propal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_projet;
 				$this->modelpdf             = $obj->model_pdf;
+				$this->last_main_doc		= $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;

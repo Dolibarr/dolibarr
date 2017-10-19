@@ -45,6 +45,7 @@ class pdf_crabe extends ModelePDFFactures
     var $db;
     var $name;
     var $description;
+	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
     var $type;
 
     var $phpmin = array(4,3,0); // Minimum version of PHP required by module
@@ -86,7 +87,9 @@ class pdf_crabe extends ModelePDFFactures
 		$this->db = $db;
 		$this->name = "crabe";
 		$this->description = $langs->trans('PDFCrabeDescription');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
+		// Dimensiont page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -702,7 +705,7 @@ class pdf_crabe extends ModelePDFFactures
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // No error
 			}
 			else

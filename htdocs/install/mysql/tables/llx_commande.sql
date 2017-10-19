@@ -54,6 +54,7 @@ create table llx_commande
   note_private			text,
   note_public			text,
   model_pdf				varchar(255),
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
 
   facture				tinyint   default 0,
   fk_account			integer,						-- bank account

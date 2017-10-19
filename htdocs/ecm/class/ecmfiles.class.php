@@ -48,7 +48,7 @@ class EcmFiles //extends CommonObject
 	 */
 	public $ref;					// hash of file path
 	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
-	public $share;					// hash for file sharing. empty by default
+	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
 	public $filename;
 	public $filepath;

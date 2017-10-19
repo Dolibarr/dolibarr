@@ -47,7 +47,9 @@ CREATE TABLE llx_supplier_proposal (
   fk_mode_reglement integer DEFAULT NULL,
   note_private text,
   note_public text,
-  model_pdf varchar(255) DEFAULT NULL,
+  model_pdf 			varchar(255) DEFAULT NULL,
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
+
   date_livraison date DEFAULT NULL,
   fk_shipping_method integer DEFAULT NULL,
   import_key varchar(14) DEFAULT NULL,

@@ -673,7 +673,7 @@ if ($source == 'order')
 
 	$order=new Commande($db);
 	$result=$order->fetch('',$ref);
-	if ($result < 0)
+	if ($result <= 0)
 	{
 		$mesg=$order->error;
 		$error++;
@@ -788,7 +788,7 @@ if ($source == 'invoice')
 
 	$invoice=new Facture($db);
 	$result=$invoice->fetch('',$ref);
-	if ($result < 0)
+	if ($result <= 0)
 	{
 		$mesg=$invoice->error;
 		$error++;
@@ -911,7 +911,7 @@ if ($source == 'contractline')
 	$contractline=new ContratLigne($db);
 
 	$result=$contractline->fetch('',$ref);
-	if ($result < 0)
+	if ($result <= 0)
 	{
 		$mesg=$contractline->error;
 		$error++;
@@ -1116,7 +1116,7 @@ if ($source == 'membersubscription')
 
 	$member=new Adherent($db);
 	$result=$member->fetch('',$ref);
-	if ($result < 0)
+	if ($result <= 0)
 	{
 		$mesg=$member->error;
 		$error++;
