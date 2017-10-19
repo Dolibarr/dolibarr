@@ -285,23 +285,23 @@ if (empty($user->societe_id))
 	    // Dashboard Link lines
 	    $links=array(
 	        DOL_URL_ROOT.'/user/index.php',
-    	    DOL_URL_ROOT.'/societe/list.php?type=c',
-    	    DOL_URL_ROOT.'/societe/list.php?type=p',
-    	    DOL_URL_ROOT.'/societe/list.php?type=f',
-    	    DOL_URL_ROOT.'/contact/list.php',
+    	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
+    	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
+    	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
+    	    DOL_URL_ROOT.'/contact/list.php?mainmenu=companies',
     	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
-    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
-    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-    	    DOL_URL_ROOT.'/contrat/list.php',
-    	    DOL_URL_ROOT.'/fichinter/list.php',
-    	    DOL_URL_ROOT.'/fourn/commande/list.php',
-	        DOL_URL_ROOT.'/fourn/facture/list.php',
-	        DOL_URL_ROOT.'/supplier_proposal/list.php',
+    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
+    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy&leftmenu=customers_bills',
+    	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
+    	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
+    	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
+	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
+	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
-    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport'
 	    );
 	    // Translation lang files
 	    $langfile=array("users",
