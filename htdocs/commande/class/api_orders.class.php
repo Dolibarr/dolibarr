@@ -52,9 +52,9 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Get properties of a commande object
+     * Get properties of an order object
      *
-     * Return an array with commande informations
+     * Return an array with order informations
      *
      * @param       int         $id         ID of order
      * @return 	array|mixed data without useless information
@@ -176,7 +176,7 @@ class Orders extends DolibarrApi
      * Create order object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of commande
+     * @return  int     ID of order
      */
     function post($request_data = NULL)
     {
@@ -236,8 +236,8 @@ class Orders extends DolibarrApi
     /**
      * Add a line to given order
      *
-     * @param int   $id             Id of commande to update
-     * @param array $request_data   Orderline data
+     * @param int   $id             Id of order to update
+     * @param array $request_data   OrderLine data
      *
      * @url	POST {id}/lines
      *
@@ -281,12 +281,13 @@ class Orders extends DolibarrApi
                         $request_data->label,
                         $request_data->array_options,
                         $request_data->fk_unit,
-                        $this->element,
-                        $request_data->id
+                        $request_data->origin,
+                        $request_data->origin_id,
+                        $request_data->multicurrency_subprice
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       return false;
@@ -295,9 +296,9 @@ class Orders extends DolibarrApi
     /**
      * Update a line to given order
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of order to update
      * @param int   $lineid         Id of line to update
-     * @param array $request_data   Orderline data
+     * @param array $request_data   OrderLine data
      *
      * @url	PUT {id}/lines/{lineid}
      *
@@ -310,7 +311,7 @@ class Orders extends DolibarrApi
 
       $result = $this->commande->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Order not found');
       }
 
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
@@ -338,7 +339,8 @@ class Orders extends DolibarrApi
                         $request_data->label,
                         $request_data->special_code,
                         $request_data->array_options,
-                        $request_data->fk_unit
+                        $request_data->fk_unit,
+      					$request_data->multicurrency_subprice
       );
 
       if ($updateRes > 0) {
@@ -353,7 +355,7 @@ class Orders extends DolibarrApi
      * Delete a line to given order
      *
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of order to update
      * @param int   $lineid         Id of line to delete
      *
      * @url	DELETE {id}/lines/{lineid}

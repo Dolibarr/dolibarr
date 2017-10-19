@@ -280,14 +280,14 @@ class Proposals extends DolibarrApi
                         $request_data->date_end,
                         $request_data->array_options,
                         $request_data->fk_unit,
-                        $this->element,
-                        $request_data->id,
+                        $request_data->origin,
+                        $request_data->origin_id,
                         $request_data->multicurrency_subprice,
                         $request_data->fk_remise_except
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       return false;
