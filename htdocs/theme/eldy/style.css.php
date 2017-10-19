@@ -1038,11 +1038,11 @@ td.showDragHandle {
 	height: calc(100% - 50px);*/
 }
 
-<?php if (!empty($conf->global->THEME_TOPMENU_STICKY_POSITION)) {  ?>
+<?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 90;
+	z-index: 210;
 }
 <?php } ?>
 
@@ -4875,10 +4875,12 @@ div.tabsElem a.tab {
 	}
 	div.login_block {
 		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+		/* Style when phone layout or when using the menuhider */
 		display: none;
 		padding-top: 20px;
 		padding-left: 20px;
     	padding-right: 20px;
+    	padding-bottom: 16px;
 		<?php } else { ?>
 		padding-top: 10px;
 		padding-left: 5px;

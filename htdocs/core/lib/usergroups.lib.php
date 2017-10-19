@@ -68,7 +68,7 @@ function user_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("UserRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
+		$head[$h][1] = $langs->trans("Rights"). ' <span class="badge">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}

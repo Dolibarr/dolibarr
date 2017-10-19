@@ -288,16 +288,16 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	{
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
-	
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	
+
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-	
+
 	/*
 	 * Last salaries
 	 */
-	if (! empty($conf->salaries->enabled) && 
+	if (! empty($conf->salaries->enabled) &&
 		($user->rights->salaries->read || ($user->rights->salaries->read && $object->id == $user->id))
 		)
 	{
@@ -334,7 +334,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
                 print '<td class="nowrap">';
                 $salary->id = $objp->rowid;
 				$salary->ref = $objp->rowid;
-				
+
                 print $salary->getNomUrl(1);
 				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->datesp),'day')."</td>\n";
 				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dateep),'day')."</td>\n";
@@ -350,11 +350,11 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			dol_print_error($db);
 		}
 	}
-	
+
 	/*
 	 * Last holidays
 	 */
-	if (! empty($conf->holiday->enabled) && 
+	if (! empty($conf->holiday->enabled) &&
 		($user->rights->holiday->read_all || ($user->rights->holiday->read && $object->id == $user->id))
 		)
 	{
@@ -393,7 +393,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 				$holiday->ref = $objp->rowid;
                 $holiday->fk_type = $objp->fk_type;
 				$nbopenedday=num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
-				
+
                 print $holiday->getNomUrl(1);
 				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
@@ -413,7 +413,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	/*
 	 * Last expense report
 	 */
-	if (! empty($conf->expensereport->enabled) && 
+	if (! empty($conf->expensereport->enabled) &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
 		)
 	{
@@ -436,7 +436,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		        print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?search_user='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
+    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
     			print '</tr></table></td>';
     			print '</tr>';
             }
@@ -451,7 +451,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
                 $exp->id = $objp->rowid;
 				$exp->ref = $objp->ref;
                 $exp->fk_type = $objp->fk_type;
-				
+
                 print $exp->getNomUrl(1);
 				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';

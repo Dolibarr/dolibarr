@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -62,6 +63,7 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
 
+$id = GETPOST('id', 'int');
 
 $sall         = GETPOST('sall', 'alphanohtml');
 $search_ref   = GETPOST('search_ref');
@@ -181,12 +183,26 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
+$fuser = new User($db);
+
 $title = $langs->trans("ListOfTrips");
 llxHeader('', $title);
 
 $max_year = 5;
 $min_year = 5;
 
+// Récupération de l'ID de l'utilisateur
+$user_id = $user->id;
+
+if ($id > 0)
+{
+	// Charge utilisateur edite
+	$fuser->fetch($id, '', '', 1);
+	$fuser->getrights();
+	$user_id = $fuser->id;
+
+	$search_user = $user_id;
+}
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
@@ -327,9 +343,50 @@ if ($resql)
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-	$title = $langs->trans("ListTripsAndExpenses");
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+	if ($id > 0)		// For user tab
+	{
+		$title = $langs->trans("User");
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$head = user_prepare_head($fuser);
+
+		dol_fiche_head($head, 'expensereport', $title, -1, 'user');
+
+		dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<br>';
+
+		/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+		{
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<br>';
+
+			showMyBalance($holiday, $user_id);
+		}*/
+
+		dol_fiche_end();
+
+		print '<div class="tabsAction">';
+
+		$canedit=(($user->id == $user_id && $user->rights->expensereport->creer) || ($user->id != $user_id));
+
+		// Boutons d'actions
+		if ($canedit)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=request&id='.$user_id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
+		}
+
+		print '</div>';
+	}
+	else
+	{
+		$title = $langs->trans("ListTripsAndExpenses");
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+	}
 
 	if ($massaction == 'presend')
 	{
@@ -743,22 +800,24 @@ if ($resql)
 
 	print '</form>'."\n";
 
-
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+	if (empty($id))
 	{
-	    // Show list of available documents
-	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	    $urlsource.=str_replace('&amp;','&',$param);
+		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+		{
+		    // Show list of available documents
+		    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+		    $urlsource.=str_replace('&amp;','&',$param);
 
-	    $filedir=$diroutputmassaction;
-	    $genallowed=$user->rights->expensereport->lire;
-	    $delallowed=$user->rights->expensereport->creer;
+		    $filedir=$diroutputmassaction;
+		    $genallowed=$user->rights->expensereport->lire;
+		    $delallowed=$user->rights->expensereport->creer;
 
-	    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+		    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+		}
+		else
+		{
+		    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+		}
 	}
 }
 else
