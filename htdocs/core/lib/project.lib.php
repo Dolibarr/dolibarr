@@ -1147,6 +1147,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 
 	$arrayidtypeofcontact=array();
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -1346,6 +1347,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	}
 
 	print "</table>";
+	print '</div>';
 
 	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
 	{
