@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
  * API class for invoices
@@ -241,10 +241,10 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Add a line to given order
+     * Add a line to a given invoice
      *
      * @param int   $id             Id of invoice to update
-     * @param array $request_data   Orderline data
+     * @param array $request_data   InvoiceLine data
      *
      * @url	POST {id}/lines
      *
@@ -304,7 +304,7 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Update a line to given order
+     * Update a line to a given invoice
      *
      * @param int   $id             Id of invoice to update
      * @param int   $lineid         Id of line to update
@@ -363,7 +363,7 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Delete a line to given order
+     * Delete a line to a given invoice
      *
      *
      * @param int   $id             Id of invoice to update
@@ -461,9 +461,9 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Validate an order
+     * Validate an invoice
      *
-     * @param   int $id             Order ID
+     * @param   int $id             Invoice ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
