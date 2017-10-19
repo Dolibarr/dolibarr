@@ -762,7 +762,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 				// Time spent by user
 				print '<td align="right">';
-				$tmptimespent=$taskstatic->getSummaryOfTimeSpent();
+				$tmptimespent=$taskstatic->getSummaryOfTimeSpent('', $fuser->id);
 				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'],'allhourmin');
 				else print '--:--';
 				print "</td>\n";

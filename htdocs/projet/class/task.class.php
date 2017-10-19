@@ -911,9 +911,10 @@ class Task extends CommonObject
      *  Calculate total of time spent for task
      *
      *  @param	int		$id 		Id of object (here task)
+     *  @param	int		$user_id	Filter on user time
      *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
      */
-    function getSummaryOfTimeSpent($id='')
+    function getSummaryOfTimeSpent($id='', $user_id='')
     {
         global $langs;
 
@@ -927,6 +928,7 @@ class Task extends CommonObject
         $sql.= " SUM(t.task_duration) as total_duration";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
+        if(!empty($user_id)) $sql.= " AND t.fk_user = ".$user_id;
 
         dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
         $resql=$this->db->query($sql);
