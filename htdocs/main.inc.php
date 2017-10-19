@@ -1607,7 +1607,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 		print "\n";
 
-		if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone' && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
+		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone
+		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			if (! is_object($form)) $form=new Form($db);
 			$selected=-1;
@@ -1615,42 +1616,16 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		}
 		else
 		{
-			// Define $searchform
-			if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
-			{
-				$langs->load("companies");
-				$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'maxwidth100', 'sall', 'T', 'searchleftt', img_object('','company'));
-			}
+			if (! is_object($form)) $form=new Form($db);
+			$selected=-1;
+			$usedbyinclude=1;
+			include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
+			$conf->global->MAIN_HTML5_PLACEHOLDER=1;
 
-			if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+			foreach($arrayresult as $key => $val)
 			{
-				$langs->load("companies");
-				$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'maxwidth100', 'sall', 'A', 'searchleftc', img_object('','contact'));
-			}
-
-			if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-			)
-			{
-				$langs->load("products");
-				$searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'maxwidth100', 'sall', 'P', 'searchleftp', img_object('','product'));
-			}
-
-			if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
-			{
-				$langs->load("projects");
-				$searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'maxwidth100', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
-			}
-
-			if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
-			{
-				$langs->load("members");
-				$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'maxwidth100', 'sall', 'M', 'searchleftm', img_object('','user'));
-			}
-
-			if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
-			{
-				$langs->load("users");
-				$searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'maxwidth100', 'sall', 'M', 'searchleftuser', img_object('','user'));
+				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleftt', img_picto('',$val['img']));
+				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleftt', img_picto('', $val['img'], '', false, 1, 1));
 			}
 		}
 
@@ -1663,7 +1638,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		}
 		else $searchform=$hookmanager->resPrint;
 
-		if ($conf->use_javascript_ajax && $conf->browser->layout == 'phone')
+		if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
 			$searchform.='<script type="text/javascript">

@@ -56,28 +56,28 @@ $arrayresult=array();
 // Define $searchform
 if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->rights->societe->lire)
 {
-	$arrayresult['searchintothirdparty']=array('position'=>10, 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('','object_company').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintothirdparty']=array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('','object_company').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php?sall='.urlencode($search_boxvalue));
 }
 
 if (! empty($conf->societe->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED) && $user->rights->societe->lire)
 {
-	$arrayresult['searchintocontact']=array('position'=>15, 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('','object_contact').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintocontact']=array('position'=>15, 'shortcut'=>'A', 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('','object_contact').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php?sall='.urlencode($search_boxvalue));
 }
 
 if (! empty($conf->adherent->enabled) && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->rights->adherent->lire)
 {
-	$arrayresult['searchintomember']=array('position'=>20, 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintomember']=array('position'=>20, 'shortcut'=>'M', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php?sall='.urlencode($search_boxvalue));
 }
 
 if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
 && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED))
 {
-	$arrayresult['searchintoproduct']=array('position'=>30, 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue),'text'=>img_picto('','object_product').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintoproduct']=array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue),'text'=>img_picto('','object_product').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php?sall='.urlencode($search_boxvalue));
 }
 
 if (! empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->rights->projet->lire)
 {
-	$arrayresult['searchintoprojects']=array('position'=>40, 'img'=>'object_projectpub', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('','object_projectpub').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php?search_all='.urlencode($search_boxvalue));
+	$arrayresult['searchintoprojects']=array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_projectpub', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('','object_projectpub').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php?search_all='.urlencode($search_boxvalue));
 }
 if (! empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->rights->projet->lire)
 {
@@ -126,7 +126,7 @@ if (! empty($conf->ficheinter->enabled) && empty($conf->global->MAIN_SEARCHFORM_
 // HR
 if (! empty($conf->user->enabled) && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && $user->rights->user->user->lire)
 {
-	$arrayresult['searchintouser']=array('position'=>200, 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoUsers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/index.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintouser']=array('position'=>200, 'shortcut'=>'U', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoUsers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/index.php?sall='.urlencode($search_boxvalue));
 }
 if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire)
 {

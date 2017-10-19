@@ -842,6 +842,7 @@ select.selectarrowonleft option {
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
+.maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
@@ -3171,7 +3172,7 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 div.titre {
 	font-family: <?php print $fontlist ?>;
-	font-size: 14px;
+	font-size: 1.1em;
 	/* font-weight: bold; */
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
