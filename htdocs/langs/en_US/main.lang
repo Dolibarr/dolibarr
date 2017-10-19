@@ -820,6 +820,7 @@ EMailTemplates=Emails templates
 FileNotShared=File not shared to exernal public
 Project=Project
 Projects=Projects
+Rights=Permissions
 # Week day
 Monday=Monday
 Tuesday=Tuesday

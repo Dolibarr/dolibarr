@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignore errors of duplicate record (INSERT IGNORE)
 AutoDetectLang=Autodetect (browser language)
 FeatureDisabledInDemo=Feature disabled in demo
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=Permissions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
