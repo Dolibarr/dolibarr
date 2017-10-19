@@ -118,7 +118,7 @@ class DolibarrApiAccess implements iAuthenticate
 					$stored_key = $obj->api_key;
 					$userentity = $obj->entity;
 
-					if (! defined("DOLENTITY") && $conf->entity != $obj->entity)		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
+					if (! defined("DOLENTITY") && $conf->entity != ($obj->entity?$obj->entity:1))		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
 					{
 						$conf->entity = ($obj->entity?$obj->entity:1);
 						// We must also reload global conf to get params from the entity
