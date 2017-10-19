@@ -4519,6 +4519,8 @@ class Form
 	{
 		global $langs,$conf,$mysoc;
 
+		$langs->load('errors');
+
 		$return='';
 
 		// Define defaultnpr, defaultttx and defaultcode
