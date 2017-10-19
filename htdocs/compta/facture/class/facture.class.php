@@ -1193,7 +1193,7 @@ class Facture extends CommonInvoice
 		$sql.= ', f.datec as datec';
 		$sql.= ', f.date_valid as datev';
 		$sql.= ', f.tms as datem';
-		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc,';
+		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
