@@ -4,7 +4,6 @@ DeleteWebsite=Apagar website
 ConfirmDeleteWebsite=Você tem certeza que deseja apagar este web site. Todas as páginas e conteúdos serão removidos.
 WEBSITE_PAGENAME=Nome da Página/Apelido
 WEBSITE_CSS_URL=URL do arquivo CSS externo.
-WEBSITE_CSS_INLINE=Conteúdo CSS
 MediaFiles=Biblioteca de mídias
 EditPageMeta=Editar Meta
 Website=Web Site

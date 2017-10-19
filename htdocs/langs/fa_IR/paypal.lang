@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=راه اندازی ماژول پی پال
 PaypalDesc=این ماژول صفحات پیشنهاد به اجازه پرداخت <a href="http://www.paypal.com" target="_blank">پی پال</a> توسط مشتریان. این می تواند برای پرداخت رایگان و پرداخت در یک شیء خاص Dolibarr استفاده می شود (فاکتور، سفارش، ...)
-PaypalOrCBDoPayment=پرداخت با کارت اعتباری یا پی پال
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=پرداخت با پی پال
 PAYPAL_API_SANDBOX=تست حالت / گودال ماسهبازی
 PAYPAL_API_USER=نام کاربری API
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=ارائه پرداخت "جدایی ناپذیر" (کارت اعتباری + پی پال) و یا "پی پال" تنها
 PaypalModeIntegral=انتگرال
 PaypalModeOnlyPaypal=پی پال تنها
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=این شناسه از معامله <b>است:٪ s</b>
 PAYPAL_ADD_PAYMENT_URL=اضافه کردن آدرس از پرداخت پی پال زمانی که شما یک سند ارسال از طریق پست
 PredefinedMailContentLink=شما می توانید بر روی لینک زیر کلیک کنید امن به پرداخت خود را (پی پال) اگر آن را در حال حاضر انجام می شود. از٪ s
-YouAreCurrentlyInSandboxMode=شما در حال حاضر در "گودال ماسهبازی" حالت
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=ایمیل پس از پرداخت برای هشدار دادن به (موفقیت یا نه)
+ONLINE_PAYMENT_SENDEMAIL=ایمیل پس از پرداخت برای هشدار دادن به (موفقیت یا نه)
 ReturnURLAfterPayment=URL بازگشت پس از پرداخت
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

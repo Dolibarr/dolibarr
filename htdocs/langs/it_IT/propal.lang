@@ -64,6 +64,7 @@ ProposalLine=Linea della proposta
 AvailabilityPeriod=Tempi di consegna
 SetAvailability=Imposta i tempi di consegna
 AfterOrder=dopo ordine
+OtherProposals=Altre proposte
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immediato
 AvailabilityTypeAV_1W=1 settimana

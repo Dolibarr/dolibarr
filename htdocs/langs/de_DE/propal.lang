@@ -64,6 +64,7 @@ ProposalLine=Angebotsposition
 AvailabilityPeriod=Gültig bis
 SetAvailability=Gültigkeitszeitraum definieren
 AfterOrder=nach Bestellung
+OtherProposals=Andere Angebote
 ##### Availability #####
 AvailabilityTypeAV_NOW=Sofort
 AvailabilityTypeAV_1W=7 Tage

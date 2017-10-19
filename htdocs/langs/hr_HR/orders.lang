@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Drugo odobrenje je već napravljeno
 SupplierOrderReceivedInDolibarr=Narudžba dobavljaču %s zaprimljena %s
 SupplierOrderSubmitedInDolibarr=Narudžba dobavljaču %s poslana
 SupplierOrderClassifiedBilled=Narudžba dobavljaču %s postavljena za naplatu
+OtherOrders=Other orders
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Predstavnik praćena narudžbe kupca
 TypeContact_commande_internal_SHIPPING=Predstavnik praćenja utovara

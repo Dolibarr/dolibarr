@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 MenuBankCash=Bank/Kasse
+MenuVariousPayment=Diverse utbetalinger
+MenuNewVariousPayment=Ny Diverse betalinger
 BankName=Banknavn
 FinancialAccount=Konto
 BankAccount=Bankkonto
@@ -155,3 +157,6 @@ NewVariousPayment=Nye diverse betaling
 VariousPayment=Diverse utbetalinger
 VariousPayments=Diverse utbetalinger
 ShowVariousPayment=Vis diverse betalinger
+AddVariousPayment=Legg til Diverse betalinger
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

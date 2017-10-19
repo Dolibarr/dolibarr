@@ -19,7 +19,6 @@ FormatDateHourShort=%d-%m-%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
-NoTemplateDefined=Geen model gedefinieerd voor dit email type
 NoRecordFound=Geen record gevonden
 ErrorFileNotUploaded=Bestand is niet geüpload. Controleer of de grootte niet meer is dan maximaal toegestaan, of er vrije ruimte beschikbaar is op de schijf en of er niet al een bestand met dezelfde naam in deze map bestaat.
 ErrorWrongHostParameter=Verkeerde host instelling

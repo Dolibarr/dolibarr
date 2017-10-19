@@ -64,6 +64,7 @@ ProposalLine=Návrh linky
 AvailabilityPeriod=Dostupnosť meškanie
 SetAvailability=Nastavte si obsadenosť meškanie
 AfterOrder=po objednaní
+OtherProposals=Ďalšie návrhy
 ##### Availability #####
 AvailabilityTypeAV_NOW=Bezprostredný
 AvailabilityTypeAV_1W=1 týždeň

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banque
 MenuBankCash=Banques/Caisses
+MenuVariousPayment=Opérations diverses
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Nom de la banque
 FinancialAccount=Compte
 BankAccount=Compte bancaire
@@ -38,9 +40,6 @@ AccountStatement=Relevé
 AccountStatementShort=Relevé
 AccountStatements=Relevés
 LastAccountStatements=Derniers relevés bancaires
-AutoReportLastAccountStatement=Proposer automatiquement le dernier relevé bancaire rapproché
-BankAccountReleveModule=Rapprochement relevés bancaires
-Conciliated=Rapproché
 IOMonthlyReporting=Rapport mensuel E/S
 BankAccountDomiciliation=Domiciliation du compte
 BankAccountCountry=Pays du compte
@@ -158,3 +157,6 @@ NewVariousPayment=Nouvelle opération diverse
 VariousPayment=Opérations diverses
 VariousPayments=Opérations diverses
 ShowVariousPayment=Afficher les opérations diverses
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

@@ -64,6 +64,7 @@ ProposalLine=Pasiūlymo eilutė
 AvailabilityPeriod=Tinkamumo vėlavimas
 SetAvailability=Nustatykite tinkamumo vėlavimą
 AfterOrder=po užsakymo
+OtherProposals=Kiti pasiūlymai
 ##### Availability #####
 AvailabilityTypeAV_NOW=Nedelsiamas
 AvailabilityTypeAV_1W=1 savaitė

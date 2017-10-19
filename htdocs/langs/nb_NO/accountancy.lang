@@ -31,6 +31,9 @@ ConfirmDeleteCptCategory=Er du sikker på at du vil fjerne denne regnskapskontoe
 JournalizationInLedgerStatus=Status for journalisering
 AlreadyInGeneralLedger=Allerede journalført i hovedbøker
 NotYetInGeneralLedger=Ikke ennå journalisert i ledgers
+GroupIsEmptyCheckSetup=Gruppen er tom, sjekk oppsettet for den personlige regnskapsgruppen
+DetailByAccount=Vis detaljer etter konto
+AccountWithNonZeroValues=Kontoer med ingen nullverdier
 
 MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
 MainAccountForSuppliersNotDefined=Hoved regnskapskonto for leverandører som ikke er definert i oppsettet
@@ -54,7 +57,7 @@ AccountancyAreaDescContrib=TRINN %s: Definer standard regnskapskonto for spesial
 AccountancyAreaDescDonation=TRINN %s: Definer standard regnskapskonto for donasjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescMisc=TRINN %s: Definer obligatorisk standardkonto og standard regnskapskontoer for diverse transaksjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescLoan=TRINN %s: Definer standard regnskapskonto for lån. Bruk menyoppføringen %s.
-AccountancyAreaDescBank=TRINN %s: Definer regnskapskontoer for hver bank- og finanskonto. Gå til kortet for hver finansiell konto for å gjøre dette. Du kan starte fra side %s.
+AccountancyAreaDescBank=TRINN %s: Definer regnskapskontoer og journalkode for hver bank- og finansregnskap. For dette, bruk menyoppføringen %s.
 AccountancyAreaDescProd=TRINN %s: Definer regnskapskontoer for dine varer/tjenester. Bruk menyoppføringen %s.
 
 AccountancyAreaDescBind=TRINN %s: Kontroller at bindingen mellom eksisterende %s linjer og regnskapskonto er ferdig, slik at applikasjonen vil kunne journalføre transaksjoner i hovedboken med ett klikk. Fullfør manglende bindinger. Bruk menyen %s.
@@ -63,6 +66,7 @@ AccountancyAreaDescAnalyze=TRINN %s: Legg til eller endre eksisterende transaksj
 
 AccountancyAreaDescClosePeriod=TRINN %s: Lukk perioden slik at ingen endringer kan bli gjort.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trinn i oppsettet ble ikke fullført (regnskapskodejournal ikke definert for alle bankkontoer)
 MenuAccountancy=Regnskap
 Selectchartofaccounts=Velg kontomodell
 ChangeAndLoad=Endre og last inn
@@ -74,6 +78,7 @@ ShowAccountingAccount=Vis regnskapskonto
 ShowAccountingJournal=Vis regnskapsjournal
 AccountAccountingSuggest=Foreslått regnskapskonto
 MenuDefaultAccounts=Standard kontoer
+MenuBankAccounts=Bankkonti
 MenuVatAccounts=MVA-kontoer
 MenuTaxAccounts=Skattekontoer
 MenuExpenseReportAccounts=Kontoer for utgiftsrapporter
@@ -143,14 +148,19 @@ Doctype=Dokumenttype
 Docdate=Dato
 Docref=Referanse
 Code_tiers=Tredjepart
-Labelcompte=Kontoetikett
+LabelAccount=Kontoetikett
+LabelOperation=Label operation
 Sens=som betyr
 Codejournal=Journal
 NumPiece=Del nummer
 TransactionNumShort=Transaksjonsnummer
-AccountingCategory=Regnskapskonto-grupper
+AccountingCategory=Personlige grupper
 GroupByAccountAccounting=Grupper etter regnskapskonto
+AccountingAccountGroupsDesc=Her kan du definere noen grupper av regnskapskontoer. Den blir brukt i rapporten <b> %s</b> for å vise inntekt/utgift med data gruppert i henhold til disse gruppene.
 ByAccounts=Etter kontoer
+ByPredefinedAccountGroups=Etter forhåndsdefinerte grupper
+ByPersonalizedAccountGroups=Etter personlige grupper
+ByYear=Etter år
 NotMatch=Ikke valgt
 DeleteMvt=Slett linjer fra hovedboken
 DelYear=År som skal slettes
@@ -161,7 +171,7 @@ DelBookKeeping=Slett post fra hovedboken
 FinanceJournal=Finansjournal
 ExpenseReportsJournal=Journal for utgiftsrapporter
 DescFinanceJournal=Finansjournal med alle typer betalinger etter bankkonto
-DescJournalOnlyBindedVisible=Dette er en oversikt over postene som er bundet til regnskapskonto og kan registreres i hovedboken.
+DescJournalOnlyBindedVisible=Dette er en oversikt over poster som er bundet til regnskapskonto og kan registreres i hovedboken.
 VATAccountNotDefined=MVA-konto er ikke definert
 ThirdpartyAccountNotDefined=Konto for tredjepart er ikke definert
 ProductAccountNotDefined=Konto for vare er ikke definert
@@ -180,8 +190,9 @@ ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
 
-Pcgtype=Kontoklasse
-Pcgsubtype=Subklasse av konto
+Pcgtype=Kontogruppe
+Pcgsubtype=Konto-undergruppe
+PcgtypeDesc=Gruppe og undergruppe av konto brukes som forhåndsdefinerte "filter"- og "grupperings" -kriterier for enkelte regnskapsrapporter. For eksempel brukes "Inntekt" eller "Utgift som grupper for regnskapskontoer for produkter for å bygge utgifts-/inntektsrapporten.
 
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
@@ -213,14 +224,14 @@ ChangeBinding=Endre bindingen
 
 ## Admin
 ApplyMassCategories=Masseinnlegging av kategorier
-AddAccountFromBookKeepingWithNoCategories=Legg til allerede brukt konto, uten kategorier
+AddAccountFromBookKeepingWithNoCategories=Tilgjengelig konto er ennå ikke i en personlig gruppe
 CategoryDeleted=Kategori for regnskapskontoen er blitt slettet
 AccountingJournals=Regnskapsjournaler
 AccountingJournal=Regnskapsjournal
 NewAccountingJournal=Ny regnskapsjourna
 ShowAccoutingJournal=Vis regnskapsjournal
 Nature=Natur
-AccountingJournalType1=Ulike operasjoner
+AccountingJournalType1=Diverse operasjoner
 AccountingJournalType2=Salg
 AccountingJournalType3=Innkjøp
 AccountingJournalType4=Bank
@@ -246,16 +257,16 @@ ChartofaccountsId=Kontoplan ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap
-InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for varer og tjenester som ikke har regnskapskonto definert for salg og kjøp.
+InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for produkter og tjenester som ikke har en regnskapskonto definert for salg og kjøp.
 DefaultBindingDesc=Denne siden kan brukes til å sette en standardkonto til bruk for å for å koble transaksjonsposter om lønnsutbetaling, donasjon, skatter og MVA når ingen bestemt regnskapskonto er satt.
 Options=Innstillinger
 OptionModeProductSell=Salgsmodus
 OptionModeProductBuy=Innkjøpsmodus
 OptionModeProductSellDesc=Vis alle varer for salg, med regnskapskonto
 OptionModeProductBuyDesc=Vis alle varer for kjøp, med regnskapskonto
-CleanFixHistory=Fjern regnskapskode fra linjer som ikke finnes i kontodiagram
+CleanFixHistory=Fjern regnskapskode fra linjer som ikke finnes i kontooversikt
 CleanHistory=Nullstill alle bindinger for valgt år
-
+PredefinedGroups=Forhåndsdefinerte grupper
 WithoutValidAccount=Uten gyldig dedikert konto
 WithValidAccount=Med gyldig dedikert konto
 ValueNotIntoChartOfAccount=Denne verdien av regnskapskonto eksisterer ikke i kontoplanen
@@ -273,5 +284,6 @@ BookeppingLineAlreayExists=Linjene eksisterer allerede i bokføringen
 NoJournalDefined=Ingen journal definert
 Binded=Bundne linjer
 ToBind=Linjer som skal bindes
+UseMenuToSetBindindManualy=Autodeteksjon ikke mulig, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
 
-WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke manuelt endrede transaksjoner i hovedboken. Den blir erstattet av en mer komplett rapport i en neste versjon.
+WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.

@@ -31,6 +31,9 @@ ConfirmDeleteCptCategory=Tem a certeza que deseja remover esta conta contabilís
 JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Já foi registado nos diários contabilísticos
 NotYetInGeneralLedger=Not yet journalized in ledgers
+GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
+DetailByAccount=Show detail by account
+AccountWithNonZeroValues=Accounts with non zero values
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -54,7 +57,7 @@ AccountancyAreaDescContrib=PASSO %s: Defina a conta contabilística para despesa
 AccountancyAreaDescDonation=PASSO %s: Defina a conta contabilística para donativos. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=PASSO %s: Defina a conta contabilística para empréstimos. Para tal pode usar a entrada do menu %s.
-AccountancyAreaDescBank=PASSO %s: Defina a conta contabilística para cada conta bancária e financeira. Para tal vá à ficha de cada conta bancária ou financeira. Comece na página %s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=PASSO %s: Defina a contas contabilística para os seus produtos. Para tal pode usar a entrada %s do menu.
 
 AccountancyAreaDescBind=PASSO %s: Verifique a ligação entre as linhas %s existentes e a conta contabilística foi efetuada, de forma a que a aplicação possa registar as transações no Livro Razão num só clique. Complete ligações que faltam. Para tal, utilize a entrada do menu %s.
@@ -63,6 +66,7 @@ AccountancyAreaDescAnalyze=PASSO %s: Adicionar ou editar transações e gerar re
 
 AccountancyAreaDescClosePeriod=PASSO %s: Fechar período para que não seja possível modificar no futuro.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
 MenuAccountancy=Contabilidade
 Selectchartofaccounts=Selecione gráfico de contas ativo 
 ChangeAndLoad=Mudar e carregar
@@ -74,6 +78,7 @@ ShowAccountingAccount=Mostrar conta contabilística
 ShowAccountingJournal=Mostrar diário contabilistico
 AccountAccountingSuggest=Conta contabilística sugerida
 MenuDefaultAccounts=Contas padrão
+MenuBankAccounts=Contas Bancárias
 MenuVatAccounts=Contas de IVA
 MenuTaxAccounts=Contas fiscais
 MenuExpenseReportAccounts=Contas de relatório de despesas
@@ -143,14 +148,19 @@ Doctype=Tipo de documento
 Docdate=Data
 Docref=Referência
 Code_tiers=Terceiros
-Labelcompte=Etiqueta de conta
+LabelAccount=Etiqueta de conta
+LabelOperation=Label operation
 Sens=Sentido
 Codejournal=Diário
 NumPiece=Número da peça
 TransactionNumShort=Núm. de transação
-AccountingCategory=Grupos de contas contabilísticas
+AccountingCategory=Personalized groups
 GroupByAccountAccounting=Agrupar por conta contabilística
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
 ByAccounts=Por contas
+ByPredefinedAccountGroups=By predefined groups
+ByPersonalizedAccountGroups=By personalized groups
+ByYear=por ano
 NotMatch=Não configurado
 DeleteMvt=Eliminar as linhas do Livro Razão
 DelYear=Ano a apagar
@@ -161,7 +171,7 @@ DelBookKeeping=Eliminar entrada do Livro Razão
 FinanceJournal=Diário financeiro
 ExpenseReportsJournal=Diário de relatórios de despesas
 DescFinanceJournal=Diário financeiro incluindo todos os tipos de pagamentos por conta bancária
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Conta para efeitos de IVA não definido
 ThirdpartyAccountNotDefined=Conta para terceiros não definido
 ProductAccountNotDefined=Conta para o produto não definido
@@ -180,8 +190,9 @@ ListAccounts=Lista de contas contabilísticas
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
-Pcgtype=Classe de conta
-Pcgsubtype=Sub-classe de conta
+Pcgtype=Group of account
+Pcgsubtype=Subgroup of account
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total de volume de negócios sem impostos
 TotalMarge=Margem total de vendas
@@ -213,14 +224,14 @@ ChangeBinding=Alterar vinculação
 
 ## Admin
 ApplyMassCategories=Aplicar categorias em massa
-AddAccountFromBookKeepingWithNoCategories=Adicionar conta já foi utilizado com nenhuma categoria
+AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
 CategoryDeleted=Categoria para a conta contabilística foi removida
 AccountingJournals=Diários contabilisticos
 AccountingJournal=Diário contabilistico
 NewAccountingJournal=Novo diário contabilistico
 ShowAccoutingJournal=Mostrar diário contabilistico
 Nature=Natureza
-AccountingJournalType1=Várias operações
+AccountingJournalType1=Miscellaneous operation
 AccountingJournalType2=Vendas
 AccountingJournalType3=Compras
 AccountingJournalType4=Banco
@@ -246,16 +257,16 @@ ChartofaccountsId=ID de plano de contas
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidade
-InitAccountancyDesc=Esta página pode ser usado para inicializar uma conta contabilística sobre os produtos e serviços que não têm conta de contabilidade definida para vendas e compras.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=Esta página pode ser usada para definir uma conta padrão a ser usada para vincular registo de transações sobre salários, doações, impostos e IVA quando nenhuma conta contabilística específica estiver definida.
 Options=Opções
 OptionModeProductSell=Modo de vendas
 OptionModeProductBuy=Modo de compras
 OptionModeProductSellDesc=Mostrar todos os produtos com conta contabilística para as vendas.
 OptionModeProductBuyDesc=Mostrar todos os produtos com conta contabilística para as compras.
-CleanFixHistory=Remover o código de contabilidade de linhas que não existe em gráficos de conta
+CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Repor todas as vinculações para o ano selecionado
-
+PredefinedGroups=Predefined groups
 WithoutValidAccount=Sem conta dedicada válido
 WithValidAccount=Com conta dedicada válida
 ValueNotIntoChartOfAccount=Este valor de conta de contabilística não existe no plano de contas
@@ -273,5 +284,6 @@ BookeppingLineAlreayExists=Linhas já existente em contabilidade
 NoJournalDefined=Nenhum diário definido
 Binded=Linhas vinculadas
 ToBind=Linhas a vincular
+UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
-WarningReportNotReliable=Aviso: este relatório não é baseado no livro razão, por isso não contém transações que foram modificadas manualmente no livro razão. O relatório será substituído por uma versão mais completa do mesmo numa próxima versão.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.

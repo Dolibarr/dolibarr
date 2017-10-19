@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Второ одобрение вече е направ
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=Други поръчки
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Представител проследява поръчка на клиент
 TypeContact_commande_internal_SHIPPING=Представител проследява доставка
