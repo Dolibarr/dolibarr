@@ -75,6 +75,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
     }
 
