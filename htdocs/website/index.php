@@ -1143,16 +1143,16 @@ if (count($object->records) > 0)
 {
 	// ***** Part for web sites
 
-	print '<div class="websiteelection hideonsmartphoneimp minwwidth100">';
+	print '<div class="websiteselection hideonsmartphoneimp minwwidth100">';
 	print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddWebsite")).'" name="createsite">';
 	print '</div>';
 
-	print '<div class="websiteelection hideonsmartphoneimp">';
+	print '<div class="websiteselection hideonsmartphoneimp">';
 	print $langs->trans("Website").': ';
 	print '</div>';
 
 	// List of website
-	print '<div class="websiteelection">';
+	print '<div class="websiteselection">';
 	$out='';
 	$out.='<select name="website" class="minwidth100" id="website">';
 	if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
@@ -1245,14 +1245,14 @@ if (count($object->records) > 0)
 
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-		print '<div class="websiteelection hideonsmartphoneimp minwidth100">';
+		print '<div class="websiteselection hideonsmartphoneimp minwidth100">';
 		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
 		print '</div>';
 
-		print '<div class="websiteelection hideonsmartphoneimp">';
+		print '<div class="websiteselection hideonsmartphoneimp">';
 		print $langs->trans("Page").': ';
 		print '</div>';
-		print '<div class="websiteelection">';
+		print '<div class="websiteselection">';
 
 		if ($action != 'add')
 		{
@@ -1433,7 +1433,7 @@ if (count($object->records) > 0)
 }
 else
 {
-	print '<div class="websiteelection">';
+	print '<div class="websiteselection">';
 	$langs->load("errors");
 	print $langs->trans("ErrorModuleSetupNotComplete");
 	print '<div>';

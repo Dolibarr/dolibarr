@@ -16,7 +16,7 @@
  */
 
 /**
- *     	\file       htdocs/public/websites/index.php
+ *     	\file       htdocs/public/website/index.php
  *		\ingroup    website
  *		\brief      Page to output pages
  *		\author	    Laurent Destailleur
@@ -66,8 +66,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_AP
 
 if (empty($pageid))
 {
-    require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
     $object=new Website($db);
     $object->fetch(0, $websitekey);
@@ -138,11 +138,11 @@ if ($pageid == 'css')   // No more used ?
     //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
     //else
     header('Cache-Control: no-cache');
-    $original_file=$dolibarr_main_data_root.'/websites/'.$websitekey.'/styles.css.php';
+    $original_file=$dolibarr_main_data_root.'/website/'.$websitekey.'/styles.css.php';
 }
 else
 {
-    $original_file=$dolibarr_main_data_root.'/websites/'.$websitekey.'/page'.$pageid.'.tpl.php';
+    $original_file=$dolibarr_main_data_root.'/website/'.$websitekey.'/page'.$pageid.'.tpl.php';
 }
 
 // Find the subdirectory name as the reference

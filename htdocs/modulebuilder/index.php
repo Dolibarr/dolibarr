@@ -1598,7 +1598,7 @@ elseif (! empty($module))
 		                                $type=gettype($tmpobjet->$propname);
 		                                $default=$propdefault[$propname];
 		                                // Discard generic properties
-		                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
+		                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'ismultientitymanaged'))) continue;
 
 		                                // Keep or not lines
 		                                if (in_array($propname, array('fk_element', 'lines'))) continue;

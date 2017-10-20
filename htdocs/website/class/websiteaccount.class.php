@@ -45,17 +45,14 @@ class WebsiteAccount extends CommonObject
 	public $table_element = 'websiteaccount';
 
 	/**
-	 * @var array  Does this field is linked to a thirdparty ?
-	 */
-	protected $isnolinkedbythird = 1;
-	/**
 	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	protected $ismultientitymanaged = 1;
+	protected $ismultientitymanaged = 0;
+
 	/**
 	 * @var string String with name of icon for websiteaccount
 	 */
-	public $picto = 'websiteaccount@website';
+	public $picto = 'object_globe';
 
 
 	/**

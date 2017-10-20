@@ -1,5 +1,4 @@
--- Module to manage resources into Dolibarr ERP/CRM
--- Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+-- Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,9 +11,22 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
-ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
-
-ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);
+CREATE TABLE llx_websiteaccount(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	login varchar(64) NOT NULL, 
+	label varchar(255), 
+	note_public text, 
+	note_private text, 
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer, 
+	fk_soc integer
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
