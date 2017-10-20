@@ -32,14 +32,14 @@
 -- Descriptif des plans comptables CL PC-MIPYME
 --
 
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4785, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1', '0', 'Activo Circulante', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4786, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.10.1', '4785', 'Caja', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4787, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.20.1', '4785', 'Banco', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4788, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.30.1', '4785', 'Insumos', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4789, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.40.1', '4785', 'Productos en Proceso', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4790, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.50.1', '4785', 'Mercaderias', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4791, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.60.1', '4785', 'Depósito  a Plazo', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4792, 'PC-MIPYME', 'Activo ', 'Circulante ', '1.1.70.1', '4785', 'Valores Negociables', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4785, 'PC-MIPYME', 'Activo', 'Circulante', '1.1', '0', 'Activo Circulante', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4786, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.10.1', '4785', 'Caja', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4787, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.20.1', '4785', 'Banco', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4788, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.30.1', '4785', 'Insumos', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4789, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.40.1', '4785', 'Productos en Proceso', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4790, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.50.1', '4785', 'Mercaderias', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4791, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.60.1', '4785', 'Depósito  a Plazo', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4792, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.70.1', '4785', 'Valores Negociables', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4793, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.80.1 ', '4785', 'Deudores por Ventas', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4794, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.90.1', '4785', 'Documnetos por cobrar', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4795, 'PC-MIPYME', 'Activo', 'Circulante', '1.1.100.1', '4785', 'Documentos por cobrar de Terceros', 1);
@@ -80,7 +80,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4832, 'PC-MIPYME', 'Activo', 'Otros', '1.3.50.1', '4826', 'Documentos y Cuentas por Cobrar a Empresas Relacionada Largo Plazo', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4833, 'PC-MIPYME', 'Activo', 'Otros', '1.3.60.1', '4826', 'Impuestos Diferidos Largo Plazo', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4834, 'PC-MIPYME', 'Activo', 'Otros', '1.3.70.1', '4826', 'Intangibles', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4835, 'PC-MIPYME', 'Activo', 'Otros ', '1.3.80.1', '4826', 'Otros Activos. ', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4835, 'PC-MIPYME', 'Activo', 'Otros', '1.3.80.1', '4826', 'Otros Activos. ', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4836, 'PC-MIPYME', 'Activo', 'Otros', '1.3.90.1', '4826', 'Otros Activos Trabajadores', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4837, 'PC-MIPYME', 'Activo', 'Otros', '1.3.100.1', '4826', 'Contratos de Leasing de Largo Plazo', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4838, 'PC-MIPYME', 'Activo', 'Otros', '1.3.110.1', '4826', 'Inversión Ley Arica', 1);

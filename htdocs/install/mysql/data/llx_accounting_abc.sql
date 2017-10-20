@@ -52,4 +52,4 @@ INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (4,
 INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (5, 'DK-STD', 'Standardkontoplan fra SKAT', 1);
 
 -- Description of chart of account CL CL-PYME
-INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (6, 'PC-MIPYME', '	The PYME accountancy Chile plan', 1);
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (6, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
