@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -126,6 +127,10 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
     }
 }
 
+$canedituser=(! empty($user->admin) || $user->rights->user->user->creer);
+
+$object = new ExpenseReport($db);
+$objectuser = new User($db);
 
 
 /*
@@ -172,6 +177,51 @@ if (empty($reshook))
     $permtodelete = $user->rights->expensereport->supprimer;
     $uploaddir = $conf->expensereport->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+    if ($action == 'update' && ! $cancel)
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+    	if ($canedituser)    // Case we can edit all field
+    	{
+    		$error = 0;
+
+    		if (!$error)
+    		{
+    			$objectuser->fetch($id);
+
+    			$objectuser->oldcopy = clone $objectuser;
+
+    			$db->begin();
+
+    			$objectuser->default_range = GETPOST('default_range');
+    			$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
+
+    			if (!$error) {
+    				$ret = $objectuser->update($user);
+    				if ($ret < 0) {
+    					$error++;
+    					if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+    						$langs->load("errors");
+    						setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
+    					}
+    					else
+    					{
+    						setEventMessages($objectuser->error, $objectuser->errors, 'errors');
+    					}
+    				}
+    			}
+
+    			if (!$error && !count($objectuser->errors)) {
+    				setEventMessages($langs->trans("UserModified"), null, 'mesgs');
+    				$db->commit();
+    			}
+    			else {
+    				$db->rollback();
+    			}
+    		}
+    	}
+    }
 }
 
 
@@ -338,7 +388,7 @@ if ($resql)
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="action" value="'.($action=='edit'?'update':'list').'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -355,9 +405,43 @@ if ($resql)
 
 		dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
+		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<br>';
+		if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+		{
+			print '<table class="border centpercent">';
+
+			if ($action == 'edit')
+			{
+				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td>';
+				print $form->selectExpenseCategories($fuser->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($fuser->default_c_exp_tax_cat);
+				print $form->selectarray('default_range', range(0, $maxRangeNum), $fuser->default_range);
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
+				print '<td class="fk_c_exp_tax_cat">';
+				print dol_getIdFromCode($db, $fuser->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
+				print '<td>';
+				print $fuser->default_range;
+				print '</td></tr>';
+			}
+
+			print '</table>';
+		}
+
+		print '</div>';
 
 		/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
@@ -370,17 +454,31 @@ if ($resql)
 
 		dol_fiche_end();
 
-		print '<div class="tabsAction">';
-
-		$canedit=(($user->id == $user_id && $user->rights->expensereport->creer) || ($user->id != $user_id));
-
-		// Boutons d'actions
-		if ($canedit)
+		if ($action != 'edit')
 		{
-			print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=request&id='.$user_id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
-		}
+			print '<div class="tabsAction">';
 
-		print '</div>';
+			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$user_id.'" class="butAction">'.$langs->trans("Modify").'</a>';
+			}
+
+			$canedit=(($user->id == $user_id && $user->rights->expensereport->creer) || ($user->id != $user_id));
+
+			// Boutons d'actions
+			if ($canedit)
+			{
+				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=request&id='.$user_id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
+			}
+
+			print '</div>';
+		}
+		else
+		{
+			print '<div class="center">';
+			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print '</div><br>';
+		}
 	}
 	else
 	{
@@ -653,22 +751,22 @@ if ($resql)
 			}
 			// Start date
 			if (! empty($arrayfields['d.date_debut']['checked'])) {
-                print '<td align="center">'.($obj->date_debut > 0 ? dol_print_date($obj->date_debut, 'day') : '').'</td>';
+                print '<td align="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
                 if (! $i) $totalarray['nbfield']++;
             }
             // End date
 			if (! empty($arrayfields['d.date_fin']['checked'])) {
-			    print '<td align="center">'.($obj->date_fin > 0 ? dol_print_date($obj->date_fin, 'day') : '').'</td>';
+			    print '<td align="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
 			// Date validation
 			if (! empty($arrayfields['d.date_valid']['checked'])) {
-			    print '<td align="center">'.($obj->date_valid > 0 ? dol_print_date($obj->date_valid, 'day') : '').'</td>';
+			    print '<td align="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
 			// Date approval
 			if (! empty($arrayfields['d.date_approve']['checked'])) {
-			    print '<td align="center">'.($obj->date_approve > 0 ? dol_print_date($obj->date_approve, 'day') : '').'</td>';
+			    print '<td align="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
 			// Amount HT

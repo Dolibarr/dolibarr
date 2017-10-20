@@ -1386,7 +1386,7 @@ if (count($object->records) > 0)
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
 			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
-			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 0, 2, 'tooltipsubstitution');
+			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 		}
 		print '</div>';	// end websitehelp
 
