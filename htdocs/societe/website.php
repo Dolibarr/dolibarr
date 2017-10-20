@@ -23,13 +23,17 @@
 
 /**
  *  \file       htdocs/societe/website.php
- *  \ingroup    societe
+ *  \ingroup    website
  *  \brief      Page of web sites accounts
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/websites/class/websiteaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
 
 $langs->load("companies");
 
@@ -87,96 +91,161 @@ if (empty($reshook))
  */
 
 $contactstatic = new Contact($db);
+$objectwebsiteaccount = new WebsiteAccount($db);
 
 $form = new Form($db);
 
-if ($id > 0)
+$langs->load("companies");
+
+$object = new Societe($db);
+$result = $object->fetch($id);
+
+$title = $langs->trans("WebisteAccounts");
+llxHeader('', $title);
+
+$head = societe_prepare_head($object);
+
+dol_fiche_head($head, 'websites', $langs->trans("ThirdParty"), - 1, 'company');
+
+$linkback = '<a href="' . DOL_URL_ROOT . '/societe/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<table class="border centpercent">';
+
+// Prefix
+if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
-	$langs->load("companies");
-
-
-	$object = new Societe($db);
-	$result = $object->fetch($id);
-
-	$title=$langs->trans("WebisteAccounts");
-	llxHeader('',$title);
-
-	$head = societe_prepare_head($object);
-
-	dol_fiche_head($head, 'websites', $langs->trans("ThirdParty"), -1, 'company');
-
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-
-    print '<div class="fichecenter">';
-
-    print '<div class="underbanner clearboth"></div>';
-
-	print '<table class="border centpercent">';
-
-    // Prefix
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-    	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
-
-    if ($object->client)
-    {
-    	print '<tr><td class="titlefield">';
-    	print $langs->trans('CustomerCode').'</td><td colspan="3">';
-    	print $object->code_client;
-    	if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-    	print '</td></tr>';
-    }
-
-    if ($object->fournisseur)
-    {
-    	print '<tr><td class="titlefield">';
-    	print $langs->trans('SupplierCode').'</td><td colspan="3">';
-    	print $object->code_fournisseur;
-    	if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-    	print '</td></tr>';
-    }
-
-    print '</table>';
-
-	print '</div>';
-
-	dol_fiche_end();
-
-
-
-	$morehtmlcenter='';
-	if (! empty($conf->website->enabled))
-	{
-		if (! empty($user->rights->societe->lire))
-		{
-			$morehtmlcenter.='<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create'.$out.'">'.$langs->trans("AddWebsiteAccount").'</a>';
-		}
-		else
-		{
-			$morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
-		}
-	}
-
-   	print '<br>';
-
-    $param='&id='.$id;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-
-	print_barre_liste($langs->trans("WebsiteAccounts"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
-
-
-
-
-
-
+	print '<tr><td class="titlefield">' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
 }
+
+if ($object->client) {
+	print '<tr><td class="titlefield">';
+	print $langs->trans('CustomerCode') . '</td><td colspan="3">';
+	print $object->code_client;
+	if ($object->check_codeclient() != 0)
+		print ' <font class="error">(' . $langs->trans("WrongCustomerCode") . ')</font>';
+	print '</td></tr>';
+}
+
+if ($object->fournisseur) {
+	print '<tr><td class="titlefield">';
+	print $langs->trans('SupplierCode') . '</td><td colspan="3">';
+	print $object->code_fournisseur;
+	if ($object->check_codefournisseur() != 0)
+		print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
+	print '</td></tr>';
+}
+
+print '</table>';
+
+print '</div>';
+
+dol_fiche_end();
+
+$morehtmlcenter = '';
+if (! empty($conf->website->enabled)) {
+	if (! empty($user->rights->societe->lire)) {
+		$morehtmlcenter .= '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=create' . $out . '">' . $langs->trans("AddWebsiteAccount") . '</a>';
+	} else {
+		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
+	}
+}
+
+print '<br>';
+
+$param = '&id=' . $id;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"])
+	$param .= '&contextpage=' . $contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit)
+	$param .= '&limit=' . $limit;
+
+print_barre_liste($langs->trans("WebsiteAccounts"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, - 1, '', '', '', '', 0, 1, 1);
+
+
+
+
+// Build and execute select
+// --------------------------------------------------------------------
+$sql = 'SELECT ';
+foreach($objectwebsiteaccount->fields as $key => $val)
+{
+	$sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql=preg_replace('/, $/','', $sql);
+$sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as t";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."websiteaccount_extrafields as ef on (t.rowid = ef.fk_object)";
+$sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
+foreach($search as $key => $val)
+{
+	$mode_search=(($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key]))?1:0);
+	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
+}
+if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+	$crit=$val;
+	$tmpkey=preg_replace('/search_options_/','',$key);
+	$typ=$extrafields->attribute_type[$tmpkey];
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;    							// Search on a numeric
+	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode_search=2;    		// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+	{
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
+	}
+}
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $objectwebsiteaccount);    // Note that $action and $objectwebsiteaccount may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
+/* If a group by is required
+ $sql.= " GROUP BY "
+ foreach($objectwebsiteaccount->fields as $key => $val)
+ {
+ $sql.='t.'.$key.', ';
+ }
+ // Add fields from extrafields
+ foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+ // Add where from hooks
+ $parameters=array();
+ $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
+ $sql.=$hookmanager->resPrint;
+ */
+
+$sql.=$db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit+1, $offset);
+
+dol_syslog($script_file, LOG_DEBUG);
+$resql=$db->query($sql);
+if (! $resql)
+{
+	dol_print_error($db);
+	exit;
+}
+
+
 
 
 llxFooter();

@@ -16,11 +16,11 @@
  */
 
 /**
- * 	\defgroup   websites     Module websites
- *  \brief      Websites module descriptor.
- *  \file       htdocs/core/modules/modWebsites.class.php
+ * 	\defgroup   website     Module website
+ *  \brief      website module descriptor.
+ *  \file       htdocs/core/modules/modWebsite.class.php
  *  \ingroup    websites
- *  \brief      Description and activation file for module Websites
+ *  \brief      Description and activation file for module Website
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *	Class to describe Websites module
  */
-class modWebsites extends DolibarrModules
+class modWebsite extends DolibarrModules
 {
 
     /**
@@ -49,7 +49,7 @@ class modWebsites extends DolibarrModules
         $this->module_position = 50;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable to build and serve public websites with CMS features";
+        $this->description = "Enable to build and serve public web sites with CMS features";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -60,11 +60,11 @@ class modWebsites extends DolibarrModules
         $this->picto='globe';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/websites/temp");
+		$this->dirs = array("/website/temp");
 
         // Config pages
         //-------------
-        $this->config_page_url = array('websites.php');
+        $this->config_page_url = array('website.php');
 
         // Dependancies
         //-------------
@@ -80,7 +80,7 @@ class modWebsites extends DolibarrModules
 
         // New pages on tabs
         // -----------------
-       	$this->tabs[] = array('data'=>'thirdparty:+websites:WebSites:website:$user->rights->websites->read:/societe/website.php?mainmenu=home&id=__ID__');  					// To add a new tab identified by code tabname1
+       	$this->tabs[] = array('data'=>'thirdparty:+website:WebSites:website:($conf->societe->enabled && $user->rights->societe->lire):/societe/website.php?mainmenu=home&id=__ID__');  					// To add a new tab identified by code tabname1
 
         // Boxes
         //------
@@ -88,7 +88,7 @@ class modWebsites extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-		$this->rights_class = 'websites';
+		$this->rights_class = 'website';
 		$r=0;
 
 		$this->rights[$r][0] = 10001;
@@ -114,12 +114,12 @@ class modWebsites extends DolibarrModules
         $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'top',			                // This is a Left menu entry
 						        'titre'=>'Websites',
-                                'mainmenu'=>'websites',
-						        'url'=>'/websites/index.php',
-						        'langs'=>'websites',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                'mainmenu'=>'website',
+						        'url'=>'/website/index.php',
+						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>100,
-						        'enabled'=>'$conf->websites->enabled',  		// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-						        'perms'=>'$user->rights->websites->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'enabled'=>'$conf->website->enabled',  		// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+						        'perms'=>'$user->rights->website->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
@@ -130,7 +130,7 @@ class modWebsites extends DolibarrModules
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='MyWebsitePages';	// Translation key (used only if key ExportDataset_xxx_z not found)
         $this->export_icon[$r]='globe';
-        $keyforclass = 'WebsitePage'; $keyforclassfile='/websites/class/websitepage.class.php'; $keyforelement='Website';
+        $keyforclass = 'WebsitePage'; $keyforclassfile='/website/class/websitepage.class.php'; $keyforelement='Website';
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         //$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';

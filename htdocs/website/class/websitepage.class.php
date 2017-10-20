@@ -20,8 +20,8 @@
  */
 
 /**
- * \file    websites/websitepage.class.php
- * \ingroup websites
+ * \file    website/websitepage.class.php
+ * \ingroup website
  * \brief   File for the CRUD class of websitepage (Create/Read/Update/Delete)
  */
 
@@ -313,7 +313,7 @@ class WebsitePage extends CommonObject
 			if ($result > 0)
 			{
 				global $dolibarr_main_data_root;
-				$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websiteobj->ref;
+				$pathofwebsite=$dolibarr_main_data_root.'/website/'.$websiteobj->ref;
 
 				$filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
 				$filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
@@ -408,7 +408,7 @@ class WebsitePage extends CommonObject
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/websites/card.php?id='.$this->id.'"';
+        $link = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';
 		$linkend='</a>';

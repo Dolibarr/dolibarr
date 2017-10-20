@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
-require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
-require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 $langs->load("admin");
 $langs->load("other");
@@ -96,7 +96,7 @@ if (($pageid > 0 || $pageref) && $action != 'add')
 }
 
 global $dolibarr_main_data_root;
-$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
+$pathofwebsite=$dolibarr_main_data_root.'/website/'.$website;
 $filehtmlheader=$pathofwebsite.'/htmlheader.html';
 $filecss=$pathofwebsite.'/styles.css.php';
 $filejs=$pathofwebsite.'/javascript.js.php';
@@ -831,7 +831,7 @@ if ($action == 'updatemeta')
 			$mastercontent = '<?php'."\n";
 			$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
 			$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-			//$mastercontent.= "include_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';"."\n";
+			//$mastercontent.= "include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';"."\n";
 			//$mastercontent.= '$website = new WebSite($db)'."\n";
 			$mastercontent.= '?>'."\n";
 			$result = file_put_contents($filemaster, $mastercontent);
@@ -1090,7 +1090,7 @@ $arrayofjs = array(
 );
 $arrayofcss = array();
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1143,16 +1143,16 @@ if (count($object->records) > 0)
 {
 	// ***** Part for web sites
 
-	print '<div class="websiteselection hideonsmartphoneimp minwwidth100">';
+	print '<div class="websiteelection hideonsmartphoneimp minwwidth100">';
 	print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddWebsite")).'" name="createsite">';
 	print '</div>';
 
-	print '<div class="websiteselection hideonsmartphoneimp">';
+	print '<div class="websiteelection hideonsmartphoneimp">';
 	print $langs->trans("Website").': ';
 	print '</div>';
 
-	// List of websites
-	print '<div class="websiteselection">';
+	// List of website
+	print '<div class="websiteelection">';
 	$out='';
 	$out.='<select name="website" class="minwidth100" id="website">';
 	if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
@@ -1177,14 +1177,14 @@ if (count($object->records) > 0)
 	if ($website)
 	{
 		$virtualurl='';
-		$dataroot=DOL_DATA_ROOT.'/websites/'.$website;
+		$dataroot=DOL_DATA_ROOT.'/website/'.$website;
 		if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
 	}
 
 	if ($website && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 	{
 		$disabled='';
-		if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
+		if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
 
 		print ' &nbsp; ';
 
@@ -1200,12 +1200,12 @@ if (count($object->records) > 0)
 
 	print '</div>';
 
-	// Button for websites
+	// Button for website
 	print '<div class="websitetools">';
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 	{
-		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
+		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/website/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
 		print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
 		print '</a>';
 
@@ -1217,7 +1217,7 @@ if (count($object->records) > 0)
 		print '</div>';
 
 		$urlext=$virtualurl;
-		$urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
+		$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
 		print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
 		print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
 		print '</a>';
@@ -1245,14 +1245,14 @@ if (count($object->records) > 0)
 
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-		print '<div class="websiteselection hideonsmartphoneimp minwidth100">';
+		print '<div class="websiteelection hideonsmartphoneimp minwidth100">';
 		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
 		print '</div>';
 
-		print '<div class="websiteselection hideonsmartphoneimp">';
+		print '<div class="websiteelection hideonsmartphoneimp">';
 		print $langs->trans("Page").': ';
 		print '</div>';
-		print '<div class="websiteselection">';
+		print '<div class="websiteelection">';
 
 		if ($action != 'add')
 		{
@@ -1296,7 +1296,7 @@ if (count($object->records) > 0)
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 		{
 			$disabled='';
-			if (empty($user->rights->websites->write)) $disabled=' disabled="disabled"';
+			if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
 
 			// Confirmation to clone
 			if ($action == 'createfromclone') {
@@ -1351,7 +1351,7 @@ if (count($object->records) > 0)
 			$websitepage = new WebSitePage($db);
 			$websitepage->fetch($pageid);
 
-			$realpage=$urlwithroot.'/public/websites/index.php?website='.$website.'&pageref='.$websitepage->pageurl;
+			$realpage=$urlwithroot.'/public/website/index.php?website='.$website.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
 
 			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
@@ -1365,7 +1365,7 @@ if (count($object->records) > 0)
 			print '</div>';
 
 			$urlext=$virtualurl.'/'.$pagealias.'.php';
-			$urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
+			$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
 			print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext)).'">';
 			print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
 			print '</a>';
@@ -1414,7 +1414,7 @@ if (count($object->records) > 0)
                                 url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
                                 data: {
                                     field: \'editval_virtualhost\',
-                                    element: \'websites\',
+                                    element: \'website\',
                                     table_element: \'website\',
                                     fk_element: '.$object->id.',
                                     value: newurl,
@@ -1433,7 +1433,7 @@ if (count($object->records) > 0)
 }
 else
 {
-	print '<div class="websiteselection">';
+	print '<div class="websiteelection">';
 	$langs->load("errors");
 	print $langs->trans("ErrorModuleSetupNotComplete");
 	print '<div>';
@@ -1575,7 +1575,7 @@ if ($action == 'createsite')
 	/*$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath('/websites/index.php',1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("AddSite");
    	$head[$h][2] = 'card';
 	$h++;
@@ -1605,7 +1605,7 @@ if ($action == 'createsite')
 	print '</td></tr>';
 
 	print '<tr><td>';
-	print $form->textwithpicto($langs->trans('Virtualhost'), $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/websites/<i>websiteref</i>'), 1, 'help', '', 0, 2, 'tooltipvirtual');
+	print $form->textwithpicto($langs->trans('Virtualhost'), $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>'), 1, 'help', '', 0, 2, 'tooltipvirtual');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($sitedesc).'">';
 	print '</td></tr>';
@@ -1642,7 +1642,7 @@ if ($action == 'editmeta' || $action == 'create')
 	/*$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath('/websites/index.php',1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("AddPage");
    	$head[$h][2] = 'card';
 	$h++;
@@ -1686,7 +1686,7 @@ if ($action == 'editmeta' || $action == 'create')
 		print '<tr><td class="titlefield">';
 		print $langs->trans('WEBSITE_PAGEURL');
 		print '</td><td>';
-		print '/public/websites/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
+		print '/public/website/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
 		print '</td></tr>';
 
 		/*
@@ -1875,7 +1875,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
         //include_once $original_file_osencoded;
         */
 
-		/*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'&pageid='.$pageid.'"/>';
+		/*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/website/index.php?website='.$website.'&pageid='.$pageid.'"/>';
         print '</iframe>';*/
 	}
 	else
@@ -1913,7 +1913,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
 	$aliascontent.= 'global $dolibarr_main_data_root;'."\n";
 	$aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
-	$aliascontent.= 'else require $dolibarr_main_data_root.\'/websites/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+	$aliascontent.= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 	$aliascontent.= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
 	if (! empty($conf->global->MAIN_UMASK))
@@ -1965,7 +1965,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
 	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";
-	$tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/websites/'.$object->ref.'/htmlheader.html"); ?>'."\n";
+	$tplcontent.= '<?php print file_get_contents(DOL_DATA_ROOT."/website/'.$object->ref.'/htmlheader.html"); ?>'."\n";
 	$tplcontent.= '<!-- Include HTML header from page inline block -->'."\n";
 	$tplcontent.= $objectpage->htmlheader."\n";
 	$tplcontent.= '</head>'."\n";

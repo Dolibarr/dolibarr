@@ -20,9 +20,9 @@
  */
 
 /**
- * \file        htdocs/modulebuilder/template/class/myobject.class.php
- * \ingroup     mymodule
- * \brief       This file is a CRUD class file for MyObject (Create/Read/Update/Delete)
+ * \file        class/websiteaccount.class.php
+ * \ingroup     website
+ * \brief       This file is a CRUD class file for WebsiteAccount (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -31,31 +31,31 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for MyObject
+ * Class for WebsiteAccount
  */
-class MyObject extends CommonObject
+class WebsiteAccount extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'myobject';
+	public $element = 'websiteaccount';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'myobject';
+	public $table_element = 'websiteaccount';
 
 	/**
 	 * @var array  Does this field is linked to a thirdparty ?
 	 */
 	protected $isnolinkedbythird = 1;
 	/**
-	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	protected $ismultientitymanaged = 1;
 	/**
-	 * @var string String with name of icon for myobject
+	 * @var string String with name of icon for websiteaccount
 	 */
-	public $picto = 'myobject@mymodule';
+	public $picto = 'websiteaccount@website';
 
 
 	/**
@@ -75,37 +75,34 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-     */
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields=array(
-	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200'),
-	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Amount'),
-		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>45),
-		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>46),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
-	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
-		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>500),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>1,    'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
+		'login' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Login',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1,),
+		'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
+		'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Active')),
+		'fk_soc' => array('type'=>'integer', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1,),
 	);
-
 	public $rowid;
-	public $ref;
-	public $entity;
+	public $login;
 	public $label;
-	public $amount;
-	public $status;
+	public $note_public;
+	public $note_private;
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
+	public $status;
+	public $fk_soc;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -115,21 +112,21 @@ class MyObject extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'myobjectdet';
+	//public $table_element_line = 'websiteaccountdet';
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_myobject';
+	//public $fk_element = 'fk_websiteaccount';
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'MyObjectline';
+	//public $class_element_line = 'WebsiteAccountline';
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
-	//protected $childtables=array('myobjectdet');
+	//protected $childtables=array('websiteaccountdet');
 	/**
-	 * @var MyObjectLine[]     Array of subtable lines
+	 * @var WebsiteAccountLine[]     Array of subtable lines
 	 */
 	//public $lines = array();
 
@@ -147,7 +144,6 @@ class MyObject extends CommonObject
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
 	}
 
 	/**
@@ -234,7 +230,7 @@ class MyObject extends CommonObject
 	{
 		$this->lines=array();
 
-		// Load lines with object MyObjectLine
+		// Load lines with object WebsiteAccountLine
 
 		return count($this->lines)?1:0;
 	}
@@ -284,11 +280,11 @@ class MyObject extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyObject") . '</u>';
+        $label = '<u>' . $langs->trans("WebsiteAccount") . '</u>';
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/website/websiteaccount_card.php',1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -303,7 +299,7 @@ class MyObject extends CommonObject
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowMyObject");
+                $label=$langs->trans("ShowWebsiteAccount");
                 $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
@@ -483,10 +479,10 @@ class MyObject extends CommonObject
 }
 
 /**
- * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
+ * Class WebsiteAccountLine. You can also remove this and generate a CRUD class for lines objects.
  */
 /*
-class MyObjectLine
+class WebsiteAccountLine
 {
 	// @var int ID
 	public $id;

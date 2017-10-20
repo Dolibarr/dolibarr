@@ -16,7 +16,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/websites.php
+ *	    \file       htdocs/admin/website.php
  *		\ingroup    setup
  *		\brief      Page to administer web sites
  */
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -99,11 +99,11 @@ $tabrowid[1] = "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
-$tabcond[1] = (! empty($conf->websites->enabled));
+$tabcond[1] = (! empty($conf->website->enabled));
 
 // List of help for fields
 $tabhelp=array();
-$tabhelp[1]  = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/websites/<i>websiteref</i>'));
+$tabhelp[1]  = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -205,7 +205,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         if ($result)	// Add is ok
         {
 			global $dolibarr_main_data_root;
-			$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$websitekey;
+			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$websitekey;
 			$filehtmlheader=$pathofwebsite.'/htmlheader.html';
 			$filecss=$pathofwebsite.'/styles.css.php';
 			$filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
@@ -283,8 +283,8 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             $newname = dol_sanitizeFileName(GETPOST('ref','aZ09'));
             if ($newname != $website->ref)
             {
-	            $srcfile=DOL_DATA_ROOT.'/websites/'.$website->ref;
-	            $destfile=DOL_DATA_ROOT.'/websites/'.$newname;
+	            $srcfile=DOL_DATA_ROOT.'/website/'.$website->ref;
+	            $destfile=DOL_DATA_ROOT.'/website/'.$newname;
 
             	if (dol_is_dir($destfile))
             	{
