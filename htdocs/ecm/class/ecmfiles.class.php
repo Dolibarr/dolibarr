@@ -141,6 +141,7 @@ class EcmFiles //extends CommonObject
 			 $this->acl = trim($this->acl);
 		}
 		if (empty($this->date_c)) $this->date_c = dol_now();
+		if (empty($this->date_m)) $this->date_m = dol_now();
 
 		// If ref not defined
 		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
