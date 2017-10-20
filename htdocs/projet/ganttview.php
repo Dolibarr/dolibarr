@@ -195,27 +195,35 @@ if ($id > 0 || ! empty($ref))
  * Buttons actions
  */
 
-print '<div class="tabsAction">';
-
-if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+if ($id > 0)
 {
-    if ($object->public || $userWrite > 0)
-    {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&tab=gantt&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
-    }
-    else
-    {
-        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-    }
+
+	print '<div class="tabsAction">';
+
+	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+	{
+	    if ($object->public || $userWrite > 0)
+	    {
+	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&tab=gantt&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
+	    }
+	    else
+	    {
+	        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+	    }
+	}
+	else
+	{
+	    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+	}
+
+	print '</div>';
+
+	print '<br>';
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+	print_fiche_titre($langs->trans("GanttView"));
 }
-
-print '</div>';
-
-print '<br>';
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
@@ -237,24 +245,28 @@ if (count($tasksarray)>0)
 	$datehourformat=$langs->trans("FormatDateShortJQuery").' '.$langs->trans("FormatHourShortJQuery");	// Used by include ganttchart.inc.php later
 	$array_contacts=array();
 	$tasks=array();
-	$project_dependencies=array();
+	$task_dependencies=array();
 	$taskcursor=0;
 	foreach($tasksarray as $key => $val)
 	{
 		$task->fetch($val->id);
 
 		$tasks[$taskcursor]['task_id']=$val->id;
-		$tasks[$taskcursor]['task_parent']=$val->fk_parent;
+		$tasks[$taskcursor]['task_project_id']=$val->fk_project;
+		$tasks[$taskcursor]['task_parent']=($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project);
         $tasks[$taskcursor]['task_is_group'] = 0;
         $tasks[$taskcursor]['task_css'] = 'gtaskblue';
 
-        if($val->fk_parent > 0 && $task->hasChildren()> 0){
+        if ($val->fk_parent != 0 && $task->hasChildren()> 0){
             $tasks[$taskcursor]['task_is_group']=1;
-            $tasks[$taskcursor]['task_css'] = 'gtaskred';
+        	$tasks[$taskcursor]['task_css']='ggroupblack';
+            //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
         }
-        elseif($task->hasChildren()> 0) {
+        elseif ($task->hasChildren()> 0) {
             $tasks[$taskcursor]['task_is_group'] = 1;
-            $tasks[$taskcursor]['task_css'] = 'gtaskgreen';
+        	//$tasks[$taskcursor]['task_is_group'] = 0;
+            $tasks[$taskcursor]['task_css'] = 'ggroupblack';
+            //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
         }
 		$tasks[$taskcursor]['task_milestone']='0';
 		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
@@ -315,9 +327,12 @@ if (count($tasksarray)>0)
  	if (! empty($conf->use_javascript_ajax))
 	{
 	    //var_dump($_SESSION);
-	    $dateformatinput='mm/dd/yyyy';  // How the date for data are formated
-	    $dateformatinput2="%m/%d/%Y";   // How the date for data are formated
-  		//var_dump($dateformatinput);
+
+		// How the date for data are formated (format used bu jsgantt)
+	    $dateformatinput='yyyy-mm-dd';
+	    // How the date for data are formated (format used by dol_print_date)
+	    $dateformatinput2='standard';
+	    //var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
 
 	    print '<div class="div-table-responsive">';

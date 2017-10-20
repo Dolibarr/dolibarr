@@ -820,7 +820,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'gresource');
 						/*vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());*/
                         var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
-                        vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
+                        vTmpNode=this.newNode(vTmpNode, 'a', null, '', (vTaskList[i].getLink() != '' ? vLangs[vLang]['moreinfo'] : ''));
                         vTmpNode.setAttribute('href',vTaskList[i].getLink());
  						
 					}

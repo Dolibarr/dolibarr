@@ -3922,11 +3922,29 @@ div.gTaskInfo {
 .gtaskblue {
 	background: rgb(108,152,185) !important;
 }
+.gtaskgreen {
+    background: rgb(160,173,58) !important;
+}
 td.gtaskname {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+td.gminorheadingwkend {
+    color: #888 !important;
+}
+td.gminorheading {
+    color: #666 !important;
+}
+.gtaskname div, .gtaskname {
+    min-width: 200px !important;
+    max-width: 200px !important;
+    width: 200px !important;
+}
+.gpccomplete div, .gpccomplete {
+    min-width: 40px !important;
+    max-width: 40px !important;
+    width: 40px !important;
+}
 
 
 /* ============================================================================== */
