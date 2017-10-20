@@ -1988,7 +1988,7 @@ else
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 
-    	// Prospect/Customer
+    	// Supplier
     	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
     	print yn($object->fournisseur);
     	print '</td></tr>';
