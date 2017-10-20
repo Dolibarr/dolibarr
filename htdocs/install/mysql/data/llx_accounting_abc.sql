@@ -6,6 +6,7 @@
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+-- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -49,3 +50,6 @@ INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (4,
 
 -- Description of chart of account DK DK-STD
 INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (5, 'DK-STD', 'Standardkontoplan fra SKAT', 1);
+
+-- Description of chart of account CL CL-PYME
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (6, 'PC-MIPYME', '	The PYME accountancy Chile plan', 1);
