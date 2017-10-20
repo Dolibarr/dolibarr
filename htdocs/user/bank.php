@@ -312,18 +312,14 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
 			$num = $db->num_rows($resql);
 
-            if ($num > 0)
-            {
-		        print '<table class="noborder" width="100%">';
+	        print '<table class="noborder" width="100%">';
 
-                print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/index.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
-    			print '</tr></table></td>';
-    			print '</tr>';
-            }
+            print '<tr class="liste_titre">';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/index.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
+   			print '</tr></table></td>';
+   			print '</tr>';
 
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
@@ -343,7 +339,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			print "</table>";
 		}
 		else
 		{
@@ -369,18 +366,14 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
 			$num = $db->num_rows($resql);
 
-            if ($num > 0)
-            {
-		        print '<table class="noborder" width="100%">';
+	        print '<table class="noborder" width="100%">';
 
-                print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastHolidays",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
-    			print '</tr></table></td>';
-    			print '</tr>';
-            }
+            print '<tr class="liste_titre">';
+  			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastHolidays",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
+   			print '</tr></table></td>';
+   			print '</tr>';
 
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
@@ -402,7 +395,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			print "</table>";
 		}
 		else
 		{
@@ -428,18 +422,14 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
 			$num = $db->num_rows($resql);
 
-            if ($num > 0)
-            {
-		        print '<table class="noborder" width="100%">';
+	        print '<table class="noborder" width="100%">';
 
-                print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
-    			print '</tr></table></td>';
-    			print '</tr>';
-            }
+            print '<tr class="liste_titre">';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
+   			print '</tr></table></td>';
+   			print '</tr>';
 
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
@@ -460,7 +450,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			print "</table>";
 		}
 		else
 		{

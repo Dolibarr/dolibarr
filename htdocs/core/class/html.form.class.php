@@ -438,8 +438,11 @@ class Form
 
 		$s='';$textfordialog='';
 
-		$htmltext=str_replace('"',"&quot;",$htmltext);
-		if ($tooltiptrigger != '')
+		if ($tooltiptrigger == '')
+		{
+			$htmltext=str_replace('"',"&quot;",$htmltext);
+		}
+		else
 		{
 			$classfortooltip='classfortooltiponclick';
 			$textfordialog.='<div style="display: none;" id="idfortooltiponclick_'.$tooltiptrigger.'" class="classfortooltiponclicktext">'.$htmltext.'</div>';
@@ -6448,7 +6451,7 @@ class Form
 	 */
 	function selectExpenseCategories($selected='', $htmlname='fk_c_exp_tax_cat', $useempty=0, $excludeid=array(), $target='', $default_selected=0, $params=array())
 	{
-		global $db,$conf,$langs;
+		global $db, $conf, $langs, $user;
 
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql.= ' AND entity IN (0,'.getEntity('').')';
@@ -6459,13 +6462,14 @@ class Form
 		if ($resql)
 		{
 			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
-			if ($useempty) $out.= '<option value="0"></option>';
+			if ($useempty) $out.= '<option value="0">&nbsp;</option>';
 
 			while ($obj = $db->fetch_object($resql))
 			{
 				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
 			}
 			$out.= '</select>';
+			if (! empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
 			if (!empty($target))
 			{

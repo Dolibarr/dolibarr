@@ -1170,8 +1170,6 @@ RuleForGeneratedPasswords=Rule to generate suggested passwords or validate passw
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 UsersSetup=Users module setup
 UserMailRequired=EMail required to create a new user
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=HRM module setup
 ##### Company setup #####
