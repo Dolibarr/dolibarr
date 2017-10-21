@@ -257,39 +257,39 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-	  	$updateRes = $this->propal->addline(
-						$request_data->desc,
-						$request_data->subprice,
-						$request_data->qty,
-						$request_data->tva_tx,
-						$request_data->localtax1_tx,
-						$request_data->localtax2_tx,
-						$request_data->fk_product,
-						$request_data->remise_percent,
-						'HT',
-						0,
-						$request_data->info_bits,
-						$request_data->product_type,
-						$request_data->rang,
-						$request_data->special_code,
-						$fk_parent_line,
-						$request_data->fk_fournprice,
-						$request_data->pa_ht,
-						$request_data->label,
-						$request_data->date_start,
-						$request_data->date_end,
-						$request_data->array_options,
-						$request_data->fk_unit,
-						$this->element,
-						$request_data->id,
-						$request_data->multicurrency_subprice,
-						$request_data->fk_remise_except
-	  );
+      	$updateRes = $this->propal->addline(
+                        $request_data->desc,
+                        $request_data->subprice,
+                        $request_data->qty,
+                        $request_data->tva_tx,
+                        $request_data->localtax1_tx,
+                        $request_data->localtax2_tx,
+                        $request_data->fk_product,
+                        $request_data->remise_percent,
+                        'HT',
+                        0,
+                        $request_data->info_bits,
+                        $request_data->product_type,
+                        $request_data->rang,
+                        $request_data->special_code,
+                        $fk_parent_line,
+                        $request_data->fk_fournprice,
+                        $request_data->pa_ht,
+                        $request_data->label,
+                        $request_data->date_start,
+                        $request_data->date_end,
+                        $request_data->array_options,
+                        $request_data->fk_unit,
+                        $request_data->origin,
+                        $request_data->origin_id,
+                        $request_data->multicurrency_subprice,
+                        $request_data->fk_remise_except
+      );
 
-	  if ($updateRes > 0) {
-		return $updateRes;
-
+      if ($updateRes > 0) {
+        return $updateRes;
 	  }
+
 	  return false;
 	}
 

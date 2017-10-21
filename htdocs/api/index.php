@@ -37,7 +37,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');       // Do not lo
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 
-// Force entity if a value provided int HTTP header. Otherwise, will use the entity of user of token used.
+// Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
 if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
 
 
