@@ -1741,12 +1741,12 @@ else
 					}
 
 					print '<table class="noborder" width="100%">'."\n";
-					print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
+					print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 					if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 					{
-						print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+						print '<th class="liste_titre">'.$langs->trans("Entity").'</td>';
 					}
-					print '<th align="right">';
+					print '<th class="liste_titre" align="right">';
 					if ($caneditgroup)
 					{
 						// Users/Groups management only in master entity if transverse mode

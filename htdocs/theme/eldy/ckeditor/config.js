@@ -37,7 +37,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['Maximize','Preview'],
 	    ['PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],	// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	 	['CreateDiv','ShowBlocks'],
+	    ['CreateDiv','ShowBlocks'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
 	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
