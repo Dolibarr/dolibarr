@@ -230,7 +230,7 @@ dol_fiche_end();
 $morehtmlcenter = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=create' . $param . '">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create' . $param . '">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
 		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
@@ -318,25 +318,7 @@ if (! $resql)
 
 $num = $db->num_rows($resql);
 
-
-
 $arrayofselected=is_array($toselect)?$toselect:array();
-
-$param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-foreach($search as $key => $val)
-{
-	$param.= '&search_'.$key.'='.urlencode($search[$key]);
-}
-if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
-// Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-}
 
 // List of mass actions available
 $arrayofmassactions =  array(
@@ -358,7 +340,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="id" value="'.$id.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.' '.$morehtmlcenter, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.' '.$morehtmlcenter, $num, $nbtotalofrecords, 'unlock', 0, '', '', $limit);
 
 if ($sall)
 {
