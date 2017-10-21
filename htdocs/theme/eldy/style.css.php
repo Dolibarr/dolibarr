@@ -4347,7 +4347,9 @@ a span.select2-chosen
 	border-left: none;
 
 }
-
+.select2-container--default .select2-results>.select2-results__options{
+    max-height: 400px;
+}
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {

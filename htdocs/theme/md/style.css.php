@@ -4362,6 +4362,9 @@ a span.select2-chosen
 	border-top: none;
 	border-left: 1px solid #ddd;
 }
+.select2-container--default .select2-results>.select2-results__options{
+    max-height: 400px;
+}
 
 
 
