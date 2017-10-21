@@ -206,7 +206,7 @@ if (count($object->records) > 0)
 	if ($website)
 	{
 		$virtualurl='';
-		$dataroot=DOL_DATA_ROOT.'/websites/'.$website;
+		$dataroot=DOL_DATA_ROOT.'/collab/'.$website;
 		if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
 	}
 
@@ -238,7 +238,7 @@ if (count($object->records) > 0)
 		print '</div>';
 
 		$urlext=$virtualurl;
-		$urlint=$urlwithroot.'/public/websites/index.php?website='.$website;
+		$urlint=$urlwithroot.'/public/collab/index.php?website='.$website;
 		//if (! empty($object->virtualhost))
 		//{
 			print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
@@ -246,7 +246,7 @@ if (count($object->records) > 0)
 			print '</a>';
 		//}
 
-		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
+		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/collab/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
 		print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
 		print '</a>';
 	}
@@ -347,7 +347,7 @@ if (count($object->records) > 0)
 			$websitepage = new WebSitePage($db);
 			$websitepage->fetch($pageid);
 
-			$realpage=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
+			$realpage=$urlwithroot.'/public/collab/index.php?website='.$website.'&page='.$pageid;
 			$pagealias = $websitepage->pageurl;
 
 			print '<div class="websiteinputurl">';

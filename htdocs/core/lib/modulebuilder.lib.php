@@ -254,6 +254,15 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             $texttoinsert.= "\t".$key." ".$val['type'];
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
+            else
+            {
+            	if ($val['default'] != '')
+            	{
+            		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
+            		else if (preg_match('/varchar/', $val['type'])) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+            		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
+            	}
+            }
             $texttoinsert.= (($val['notnull'] > 0)?' NOT NULL':'');
             if ($i < count($object->fields)) $texttoinsert.=", ";
             $texttoinsert.= "\n";

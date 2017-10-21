@@ -1566,7 +1566,7 @@ div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
 
-div.mainmenu.websites {
+div.mainmenu.website {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png',1) ?>);
 }
 
@@ -1752,8 +1752,8 @@ table.login_table_securitycode tr td {
 div.login_block {
 	position: absolute;
 	text-align: <?php print $right; ?>;
-	<?php print $right; ?>: 5px;
-	top: 4px;
+	<?php print $right; ?>: 0;
+	top: 0;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1780,6 +1780,7 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
+	padding-top: 3px;
 	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
 	min-width: 120px;
 	<?php } ?>
@@ -4901,16 +4902,17 @@ div.tabsElem a.tab {
     	padding-right: 20px;
     	padding-bottom: 16px;
 		<?php } else { ?>
-		padding-top: 10px;
+		padding-top: 5px;
 		padding-left: 5px;
     	padding-right: 5px;
+    	padding-bottom: 5px;
     	<?php } ?>
 		top: inherit !important;
 		left: 0 !important;
 		text-align: center;
         vertical-align: middle;
         background: #FFF;
-        height: 42px;
+        height: 50px;
 
     	z-index: 202;
     	min-width: 190px;

@@ -2669,7 +2669,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
-	global $conf;
+	global $conf, $langs;
 
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath)
@@ -2680,6 +2680,23 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	}
 	else
 	{
+		if ($picto == 'switch_off')
+		{
+			$enabledisablehtml='';
+			$enabledisablehtml.='<span class="fa fa-toggle-off valignmiddle" style="font-size: 2em; color: #999;" alt="'.dol_escape_htmltag($titlealt).'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
+			$enabledisablehtml.='</span>';
+			return $enabledisablehtml;
+		}
+		if ($picto == 'switch_on')
+		{
+			$enabledisablehtml='';
+			$enabledisablehtml.='<span class="fa fa-toggle-on valignmiddle" style="font-size: 2em; color: #227722;" alt="'.dol_escape_htmltag($titlealt).'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
+			$enabledisablehtml.='</span>';
+			return $enabledisablehtml;
+		}
+
 		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 		$url = DOL_URL_ROOT;
 		$theme = $conf->theme;

@@ -34,7 +34,6 @@ class Holiday extends CommonObject
 {
 	public $element='holiday';
 	public $table_element='holiday';
-	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'holiday';
 

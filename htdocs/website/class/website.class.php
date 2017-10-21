@@ -20,8 +20,8 @@
  */
 
 /**
- * \file    websites/website.class.php
- * \ingroup websites
+ * \file    website/website.class.php
+ * \ingroup website
  * \brief   File for the CRUD class of website (Create/Read/Update/Delete)
  */
 
@@ -509,8 +509,8 @@ class Website extends CommonObject
 
 		$oldidforhome=$object->fk_default_home;
 
-		$pathofwebsiteold=$dolibarr_main_data_root.'/websites/'.$object->ref;
-		$pathofwebsitenew=$dolibarr_main_data_root.'/websites/'.$newref;
+		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$object->ref;
+		$pathofwebsitenew=$dolibarr_main_data_root.'/website/'.$newref;
 		dol_delete_dir_recursive($pathofwebsitenew);
 
 		$fileindex=$pathofwebsitenew.'/index.php';
@@ -652,7 +652,7 @@ class Website extends CommonObject
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/websites/card.php?id='.$this->id.'"';
+        $link = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';
 		$linkend='</a>';
