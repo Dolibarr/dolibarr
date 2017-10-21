@@ -5252,6 +5252,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
+	 *  @see ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5261,7 +5262,7 @@ class Form
 		// TODO Use an internal dolibarr component instead of select2
 		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
 
-		$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+		$out='<select type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'"></select>';
 
 		$tmpplugin='select2';
 		$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
@@ -5276,44 +5277,40 @@ class Form
 				    	url: "'.$url.'",
 				    	dataType: \'json\',
 				    	delay: 250,
-				    	data: function (searchTerm, pageNumber, context) {
+				    	data: function (params) {
 				    		return {
-						    	q: searchTerm, // search term
-				    			page: pageNumber
+						    	q: params.term, 	// search term
+				    			page: params.page
 				    		};
 			    		},
-			    		results: function (remoteData, pageNumber, query) {
-			    			console.log(remoteData);
-				    	    saveRemoteData = remoteData;
+			    		processResults: function (data) {
+			    			// parse the results into the format expected by Select2.
+			    			// since we are using custom formatting functions we do not need to alter the remote JSON data
+			    			//console.log(data);
+							saveRemoteData = data;
 				    	    /* format json result for select2 */
 				    	    result = []
-				    	    $.each( remoteData, function( key, value ) {
+				    	    $.each( data, function( key, value ) {
 				    	       result.push({id: key, text: value.text});
                             });
 			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			return {results: result, more:false}
-    					},
-			    		/*processResults: function (data, page) {
-			    			// parse the results into the format expected by Select2.
-			    			// since we are using custom formatting functions we do not need to
-			    			// alter the remote JSON data
-			    			console.log(data);
-			    			return {
-			    				results: data.items
-			    			};
-			    		},*/
+			    			//console.log(result);
+			    			return {results: result, more: false}
+			    		},
 			    		cache: true
 			    	},
-			        dropdownCssClass: "css-'.$htmlname.'",
+	 				language: select2arrayoflanguage,
+			        /* dropdownCssClass: "css-'.$htmlname.'", */
 				    placeholder: "'.dol_escape_js($placeholder).'",
-			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
 			        formatResult: function(result, container, query, escapeMarkup) {
                         return escapeMarkup(result.text);
-                    }
+                    },
 			    });
 
                 '.($callurlonselect ? '
+                /* Code to execute a GET when we select a value */
                 $(".'.$htmlname.'").change(function() {
 			    	var selected = $(".'.$htmlname.'").select2("val");
 			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */

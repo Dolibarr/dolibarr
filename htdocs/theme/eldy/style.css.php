@@ -399,7 +399,7 @@ select.flat, form.flat select {
 	font-weight: normal;
 }
 .optionblue {
-	color: rgb(<?php echo $colortextlink; ?>) !important;
+	color: rgb(<?php echo $colortextlink; ?>);
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
@@ -4225,9 +4225,38 @@ div.dataTables_length select {
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
 }
+.select2-container--open .select2-dropdown--above {
+    border-bottom: solid 1px rgba(0,0,0,.2);
+}
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
 	border-bottom: solid 1px rgba(0,0,0,.2);
+}
+.select2-container--default .select2-selection--single
+{
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+}
+.select2-container--default .select2-selection--multiple {
+	border: solid 1px rgba(0,0,0,.2);
+	border-radius: 0 !important;
+}
+.select2-search__field
+{
+	outline: none;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: solid 1px rgba(0,0,0,.2) !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
@@ -4322,8 +4351,15 @@ a span.select2-chosen
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
-    text-align: left;
+    text-align: <?php echo $left; ?>;
     opacity: 0.4;
+}
+span#select2-boxbookmark-container, span#select2-boxcombo-container {
+    text-align: <?php echo $left; ?>;
+    opacity: 0.5;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+	padding-left: 6px;
 }
 /* Style used before the select2 js is executed on boxcombo */
 #boxbookmark.boxcombo, #boxcombo.boxcombo {
