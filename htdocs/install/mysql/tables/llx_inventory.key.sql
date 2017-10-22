@@ -19,3 +19,4 @@
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_datev (datev);

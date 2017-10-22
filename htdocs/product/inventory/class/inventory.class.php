@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
  * \brief       This file is a CRUD class file for Inventory (Create/Read/Update/Delete)
  */
 
-// Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -77,14 +76,14 @@ class Inventory extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'ref' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'fk_warehouse' => array('type'=>'integer', 'label'=>'', 'visible'=>1, 'enabled'=>1, 'index'=>1,),
-		'date_inventory' => array('type'=>'date', 'label'=>'', 'visible'=>1, 'enabled'=>1,),
-		'title' => array('type'=>'varchar(255)', 'label'=>'', 'visible'=>1, 'enabled'=>1,),
+		'fk_warehouse' => array('type'=>'integer', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'index'=>1,),
+		'date_inventory' => array('type'=>'date', 'label'=>'DateInventory', 'visible'=>1, 'enabled'=>1,),
+		'title' => array('type'=>'varchar(255)', 'label'=>'t', 'visible'=>1, 'enabled'=>1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'index'=>1,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
-		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
+		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
+		'datev' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
+		'fk_user_author' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
 		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValid', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'index'=>1,),
@@ -104,7 +103,6 @@ class Inventory extends CommonObject
 	public $fk_user_modif;
 	public $fk_user_valid;
 	public $import_key;
-	// END MODULEBUILDER PROPERTIES
 
 
 
@@ -168,7 +166,7 @@ class Inventory extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = $url = dol_buildpath('/inventory/m_card.php',1).'?id='.$this->id;
+        $url = DOL_URL_ROOT . '/product/inventory/card.php?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
