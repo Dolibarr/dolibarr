@@ -6,6 +6,7 @@ ProposalsDraft=Draft quotations
 ProposalsOpened=Open quotations
 Prop=Quotations
 CommercialProposal=Quotation
+PdfCommercialProposalTitle=Quotation
 ProposalCard=Quotation card
 NewProp=New quotation
 NewPropal=New quotation

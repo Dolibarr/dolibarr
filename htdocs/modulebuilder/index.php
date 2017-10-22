@@ -86,7 +86,7 @@ if (empty($newmask))	// This should no happen
 
 if ($dirins && $action == 'initmodule' && $modulename)
 {
-	if (preg_match('/\s/', $modulename))
+	if (preg_match('/[^a-z0-9_]/i', $modulename))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -174,7 +174,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
-	if (preg_match('/\s/', $objectname))
+	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -182,6 +182,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
+
+	// The dir was not created by init
+	dol_mkdir($destdir.'/class');
+	dol_mkdir($destdir.'/img');
+	dol_mkdir($destdir.'/lib');
+	dol_mkdir($destdir.'/scripts');
+	dol_mkdir($destdir.'/sql');
+	dol_mkdir($destdir.'/test/phpunit');
 
 	// Scan dir class to find if an object with same name already exists.
 	if (! $error)
@@ -443,7 +451,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
 if ($dirins && $action == 'confirm_delete')
 {
-	if (preg_match('/\s/', $module))
+	if (preg_match('/[^a-z0-9_]/i', $module))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -476,7 +484,7 @@ if ($dirins && $action == 'confirm_delete')
 
 if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 {
-	if (preg_match('/[^a-z0-9]/i', $objectname))
+	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
@@ -1521,7 +1529,7 @@ elseif (! empty($module))
 						{
 							$reflector = new ReflectionClass($tabobj);
 							$properties = $reflector->getProperties();          // Can also use get_object_vars
-							$propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+							//$propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
 							//$propstat = $reflector->getStaticProperties();
 
 							print load_fiche_titre($langs->trans("Properties"), '', '');
@@ -1545,8 +1553,8 @@ elseif (! empty($module))
 							print '</td>';
 							print '<td>'.$langs->trans("Type").'</td>';
 							print '<td>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</td>';
-							print '<td class="center">'.$langs->trans("NotNull").'</td>';
-							//print '<td>'.$langs->trans("DefaultValue").'</td>';
+							print '<td class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</td>';
+							print '<td class="center">'.$langs->trans("DefaultValue").'</td>';
 							print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
 							print '<td class="right">'.$langs->trans("Position").'</td>';
 							print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
@@ -1568,7 +1576,7 @@ elseif (! empty($module))
 								print '<td><input class="text" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype','alpha')).'"></td>';
 								print '<td><input class="text" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval','none')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull','alpha')).'"></td>';
-								//print '<td><input class="text" name="propdefault" value=""></td>';
+								print '<td><input class="text" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex','alpha')).'"></td>';
 								print '<td class="right"><input class="text right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled','alpha')).'"></td>';
@@ -1590,7 +1598,7 @@ elseif (! empty($module))
 		                                $type=gettype($tmpobjet->$propname);
 		                                $default=$propdefault[$propname];
 		                                // Discard generic properties
-		                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
+		                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'ismultientitymanaged'))) continue;
 
 		                                // Keep or not lines
 		                                if (in_array($propname, array('fk_element', 'lines'))) continue;
@@ -1602,7 +1610,7 @@ elseif (! empty($module))
 									$proparrayofkeyval=$propval['arrayofkeyval'];
 									$propnotnull=$propval['notnull'];
 									$propsearchall=$propval['searchall'];
-									//$propdefault=$propval['default'];
+									$propdefault=$propval['default'];
 									$propindex=$propval['index'];
 									$propposition=$propval['position'];
 									$propenabled=$propval['enabled'];
@@ -1630,11 +1638,11 @@ elseif (! empty($module))
 									print '<td class="center">';
 									print $propnotnull;
 									print '</td>';
-									/*print '<td>';
+									print '<td>';
 		                            print $propdefault;
-		                            print '</td>';*/
+		                            print '</td>';
 									print '<td class="center">';
-									print $propindex?'X':'';
+									print $propindex?'1':'';
 									print '</td>';
 									print '<td align="right">';
 									print $propposition;
@@ -1649,7 +1657,7 @@ elseif (! empty($module))
 									print $propisameasure?$propisameasure:'';
 									print '</td>';
 									print '<td class="center">';
-									print $propsearchall?'X':'';
+									print $propsearchall?'1':'';
 									print '</td>';
 									print '<td>';
 									print $propcomment;

@@ -46,7 +46,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -369,9 +368,6 @@ if (empty($reshook)) {
 				$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 				$object->dateemployment = $dateemployment;
-
-				$object->default_range = GETPOST('default_range');
-				$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -1126,20 +1122,6 @@ if ($action == 'create' || $action == 'adduserldap')
 	 }
 	 */
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-	{
-		print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
-		print '<td>';
-		print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
-		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-		print '<td>';
-		$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
-		print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
-		print '</td></tr>';
-	}
-
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1447,9 +1429,13 @@ else
 			print '</td>';
 			print "</tr>\n";
 
+			//$childids = $user->getAllChildIds(1);
+
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 			{
+            	// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
+            	// However, he can see the valuation of timesheet of its subordinates even without these permissions.
 				$langs->load("salaries");
 
 				// THM
@@ -1535,19 +1521,6 @@ else
 			print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
 			print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
-
-			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-			{
-				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td class="fk_c_exp_tax_cat">';
-				print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				print $object->default_range;
-				print '</td></tr>';
-			}
 
 			// Multicompany
 			// This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
@@ -1733,81 +1706,6 @@ else
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
-			/*
-			if ($action == 'presend')
-			{
-				// Show email form
-
-				// By default if $action=='presend'
-				$titreform='SendMail';
-				$topicmail=1;
-				$action='send';
-				$modelmail='user';
-
-				print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-				print '<div id="presend"></div>';
-				print load_fiche_titre($langs->trans($titreform));
-
-				dol_fiche_head();
-
-				// Define output language
-				$outputlangs = $langs;
-				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-					$newlang = $_REQUEST['lang_id'];
-				//if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				//    $newlang = $object->thirdparty->default_lang;
-
-				// Cree l'objet formulaire mail
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-				$formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-				if($formmail->fromtype === 'user'){
-					$formmail->fromid = $user->id;
-
-				}
-				$formmail->trackid='thi'.$object->id;
-				if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-				{
-					include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-					$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
-				}
-				$formmail->withfrom=1;
-				$formmail->withtopic=$topicmail;
-				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$object->email;
-				$formmail->withtofree=1;
-				$formmail->withtocc=1;
-				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withfile=2;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->setSubstitFromObject($object, $outputlangs);
-				$formmail->substit['__LASTNAME__']=$object->lastname;
-				$formmail->substit['__FIRSTNAME__']=$object->firstname;
-
-				// Tableau des parametres complementaires du post
-				$formmail->param['action']=$action;
-				$formmail->param['models']=$modelmail;
-				$formmail->param['models_id']=GETPOST('modelmailselected','int');
-				$formmail->param['socid']=$object->id;
-				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-				// Init list of files
-				if (GETPOST("mode")=='init')
-				{
-					$formmail->clear_attached_files();
-					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-				}
-				print $formmail->get_form();
-
-				dol_fiche_end();
-			}
-			*/
-
 			if (GETPOST('action','aZ09') != 'presend' && GETPOST('action','aZ09') != 'send')
 			{
 				/*
@@ -1843,12 +1741,12 @@ else
 					}
 
 					print '<table class="noborder" width="100%">'."\n";
-					print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
+					print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
 					if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 					{
-						print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
+						print '<th class="liste_titre">'.$langs->trans("Entity").'</td>';
 					}
-					print '<th align="right">';
+					print '<th class="liste_titre" align="right">';
 					if ($caneditgroup)
 					{
 						// Users/Groups management only in master entity if transverse mode
@@ -2477,20 +2375,6 @@ else
 				print "</tr>\n";
 			}
 
-			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-			{
-				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td>';
-				print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
-				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
-				print '</td></tr>';
-			}
-
 			// Multicompany
 			// This is now done with hook formObjectOptions
 			/*
@@ -2556,8 +2440,8 @@ else
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->user->user->creer;
-			$delallowed = $user->rights->user->user->supprimer;
+			$genallowed = $user->rights->user->user->lire;
+			$delallowed = $user->rights->user->user->creer;
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;

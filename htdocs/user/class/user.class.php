@@ -201,7 +201,7 @@ class User extends CommonObject
 		$sql.= " u.color,";
 		$sql.= " u.dateemployment,";
 		$sql.= " u.ref_int, u.ref_ext,";
-		$sql.= " u.default_range, u.default_c_exp_tax_cat,";
+		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
 		$sql.= " d.code_departement as state_code, d.nom as state";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -425,12 +425,13 @@ class User extends CommonObject
 	/**
 	 *  Add a right to the user
 	 *
-	 * 	@param	int		$rid			id du droit a ajouter
-	 *  @param  string	$allmodule		Ajouter tous les droits du module allmodule
-	 *  @param  string	$allperms		Ajouter tous les droits du module allmodule, perms allperms
+	 * 	@param	int		$rid			id of permission to add
+	 *  @param  string	$allmodule		Add all permissions of module $allmodule
+	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
+	 *  @see	clearrights, delrights, getrights
 	 */
 	function addrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
 	{
@@ -475,8 +476,11 @@ class User extends CommonObject
 			// On a pas demande un droit en particulier mais une liste de droits
 			// sur la base d'un nom de module de de perms
 			// Where pour la liste des droits a ajouter
-			if (! empty($allmodule)) $whereforadd="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $whereforadd=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				$whereforadd="module='".$this->db->escape($allmodule)."'";
+				if (! empty($allperms)) $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+			}
 		}
 
 		// Ajout des droits trouves grace au critere whereforadd
@@ -544,6 +548,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
+	 *  @see	clearrights, addrights, getrights
 	 */
 	function delrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
 	{
@@ -665,7 +670,7 @@ class User extends CommonObject
 	 *
 	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 *	@return	void
-	 *  @see	clearrights
+	 *  @see	clearrights, delrights, addrights
 	 */
 	function getrights($moduletag='')
 	{

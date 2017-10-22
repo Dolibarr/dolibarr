@@ -48,9 +48,12 @@ TypeContact_fichinter_external_CUSTOMER=Contacto cliente seguimiento intervenci�
 PrintProductsOnFichinter=Imprimir también líneas de tipo "producto" (no solamente servicios) en las fichas de intervención
 PrintProductsOnFichinterDetails=Intervenciones generadas desde pedidos
 UseServicesDurationOnFichinter=Usar la duración de los servicios para las intervenciones generadas de de los pedidos
+UseDurationOnFichinter=Oculta el campo de duración para los registros de intervención
+UseDateWithoutHourOnFichinter=Oculta horas y minutos fuera del campo de fecha para los registros de intervención
 InterventionStatistics=Estadísticas de intervenciones
 NbOfinterventions=Nº de fichas de intervención
 NumberOfInterventionsByMonth=Nº de fichas de intervención por mes (fecha de validación)
+AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=Id. intervención
 InterRef=Ref. intervención

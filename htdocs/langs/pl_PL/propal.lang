@@ -64,6 +64,7 @@ ProposalLine=Wniosek linii
 AvailabilityPeriod=Opóźnienie w dostępności
 SetAvailability=Ustaw opóźnienie w dostępności
 AfterOrder=od zamówienia
+OtherProposals=Inne oferty
 ##### Availability #####
 AvailabilityTypeAV_NOW=Natychmiastowo
 AvailabilityTypeAV_1W=1 tydzień

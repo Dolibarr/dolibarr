@@ -91,7 +91,7 @@ if ($action == 'builddoc' && $permissioncreate)
         }
         else
         {
-        	if (empty($donotredirect))	// This is se when include is done by bulk action "Bill Orders"
+        	if (empty($donotredirect))	// This is use when include is done by bulk action "Bill Orders"
         	{
 	            setEventMessages($langs->trans("FileGenerated"), null);
 

@@ -56,6 +56,11 @@ class pdf_einstein extends ModelePDFCommandes
      */
     public $description;
 
+    /**
+     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+
 	/**
      * @var string document type
      */
@@ -100,8 +105,9 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->db = $db;
 		$this->name = "einstein";
 		$this->description = $langs->trans('PDFEinsteinDescription');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Dimension page pour format A4
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -599,7 +605,7 @@ class pdf_einstein extends ModelePDFCommandes
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else

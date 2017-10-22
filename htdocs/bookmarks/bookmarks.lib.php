@@ -115,6 +115,7 @@ function printBookmarksList($aDb, $aLangs)
         	$(document).ready(function () {';
 	$ret.='    jQuery("#boxbookmark").change(function() {
 	            var urlselected = jQuery("#boxbookmark option:selected").attr("rel");
+				if (! urlselected) console.log("Error, failed to get the URL to jump to from the rel attribute");
 	            var urltarget = jQuery("#boxbookmark option:selected").attr("target");
 	            if (! urltarget) { urltarget=""; }
                 jQuery("form#actionbookmark").attr("target",urltarget);
@@ -126,11 +127,16 @@ function printBookmarksList($aDb, $aLangs)
 	            if (urlselected.startsWith(\'http\'))
 	            {
 	                var newmethod=\'GET\';
-	                jQuery("form#actionbookmark").attr("method",newmethod);
+	                jQuery("form#actionbookmark").attr("method", newmethod);
 	                console.log("We change method to newmethod="+newmethod);
-	            }
-
-	            jQuery("#actionbookmark").submit();
+		            jQuery("#actionbookmark").submit();
+	                console.log("We restore method to POST");
+					jQuery("form#actionbookmark").attr("method", \'POST\');
+				}
+				else
+				{
+	            	jQuery("#actionbookmark").submit();
+				}
 	       });';
 	$ret.='})</script>';
 	$ret .= '<div class="menu_end"></div>';

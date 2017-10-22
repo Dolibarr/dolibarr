@@ -39,18 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("main");
-$langs->load("mails");
-$langs->load("languages");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("errors","admin","mails","languages"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
-$confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
-$rowid=GETPOST('rowid','alpha');
+$action     = GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$confirm    = GETPOST('confirm','alpha');												// Result of a confirmation
+
+$id			= GETPOST('id','int');
+$rowid		= GETPOST('rowid','alpha');
 $search_label=GETPOST('search_label','alpha');
 $search_type_template=GETPOST('search_type_template','alpha');
 $search_lang=GETPOST('search_lang','alpha');
@@ -66,7 +64,7 @@ $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
 $listoffset=GETPOST('listoffset','alpha');
-$listlimit=GETPOST('listlimit','alpha')>0?GETPOST('listlimit','alpha'):1000;
+$listlimit =GETPOST('listlimit','alpha')>0?GETPOST('listlimit','alpha'):1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -403,30 +401,7 @@ $titlepicto='title_setup';
 
 print load_fiche_titre($titre,$linkback,$titlepicto);
 
-$h = 0;
-
-
-if ($user->admin && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
-	$head[$h][1] = $langs->trans("OutGoingEmailSetup");
-	$head[$h][2] = 'common';
-	$h++;
-
-	if (! empty($conf->mailing->enabled))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
-		$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
-		$head[$h][2] = 'common_emailing';
-		$h++;
-	}
-}
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
-$head[$h][2] = 'templates';
-$h++;
-
+$head = email_admin_prepare_head();
 
 dol_fiche_head($head, 'templates', '', -1);
 
@@ -582,9 +557,9 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 		print '<strong>' . $form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '</strong> ';
 	}
 	if ($tmpfieldlist == 'content')
-		print '<strong>' . $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '</strong> ';
+		print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist);
 	if ($tmpfieldlist == 'content_lines')
-		print '<strong>' . $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '</strong><br>';
+		print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '<br>';
 	// Input field
 	if ($tmpfieldlist == 'topic') {
 		print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
@@ -1044,9 +1019,9 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			print '</td>';
 		}
-		elseif ($context == 'add' & in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
-		elseif ($context == 'edit' & in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
-		elseif ($context == 'hide' & in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'add' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'edit' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'hide' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		else
 		{
 			$size=''; $class=''; $classtd='';

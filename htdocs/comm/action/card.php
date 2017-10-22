@@ -199,8 +199,8 @@ if ($action == 'add')
     $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
 
     // Clean parameters
-	$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
-	$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+	$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour",'int'), $fulldayevent?'00':GETPOST("apmin",'int'), $fulldayevent?'00':GETPOST("apsec",'int'), GETPOST("apmonth",'int'), GETPOST("apday",'int'), GETPOST("apyear",'int'));
+	$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour",'int'), $fulldayevent?'59':GETPOST("p2min",'int'), $fulldayevent?'59':GETPOST("apsec",'int'), GETPOST("p2month",'int'), GETPOST("p2day",'int'), GETPOST("p2year",'int'));
 
 	// Check parameters
 	if (! $datef && $percentage == 100)
@@ -577,7 +577,7 @@ if ($action == 'mupdate')
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissioncreate = ($user->rights->agenda->allactions->delete ||	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete));
+$permissioncreate = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -1478,8 +1478,8 @@ if ($id > 0)
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
             $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed=$user->rights->agenda->myactions->create;
-	        $delallowed=$user->rights->agenda->myactions->delete;
+            $genallowed=$user->rights->agenda->myactions->read;
+	        $delallowed=$user->rights->agenda->myactions->create;
 
             $var=true;
 

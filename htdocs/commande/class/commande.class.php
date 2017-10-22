@@ -172,6 +172,8 @@ class Commande extends CommonOrder
 	 * Shipment on process
 	 */
 	const STATUS_SHIPMENTONPROCESS = 2;
+	const STATUS_ACCEPTED = 2;				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+
 	/**
 	 * Closed (Sent, billed or not)
 	 */
@@ -555,9 +557,10 @@ class Commande extends CommonOrder
      *  Close order
      *
      * 	@param      User	$user       Objet user that close
+     *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
      *	@return		int					<0 if KO, >0 if OK
      */
-    function cloture($user)
+    function cloture($user, $notrigger=0)
     {
         global $conf;
 
@@ -578,10 +581,13 @@ class Commande extends CommonOrder
 
             if ($this->db->query($sql))
             {
-	            // Call trigger
-	            $result=$this->call_trigger('ORDER_CLOSE',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+            	if (! $notrigger)
+            	{
+		            // Call trigger
+	            	$result=$this->call_trigger('ORDER_CLOSE',$user);
+	            	if ($result < 0) $error++;
+		            // End call triggers
+            	}
 
                 if (! $error)
                 {
@@ -871,6 +877,11 @@ class Commande extends CommonOrder
                     {
                     	$this->ref = $initialref;
 
+                    	if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+                    	{
+                    		$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+                    	}
+
                         // Add object linked
                         if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
                         {
@@ -883,7 +894,7 @@ class Commande extends CommonOrder
                         	            $ret = $this->add_object_linked($origin, $origin_id);
                         	            if (! $ret)
                         	            {
-                        	                dol_print_error($this->db);
+                        	                $this->error=$this->db->lasterror();
                         	                $error++;
                         	            }
                         	        }
@@ -894,7 +905,7 @@ class Commande extends CommonOrder
                         	        $ret = $this->add_object_linked($origin, $origin_id);
                         	        if (! $ret)
                         	        {
-                        	            dol_print_error($this->db);
+                        	            $this->error=$this->db->lasterror();
                         	            $error++;
                         	        }
                           	    }
@@ -1075,11 +1086,12 @@ class Commande extends CommonOrder
      *  Load an object from a proposal and create a new order into database
      *
      *  @param      Object			$object 	        Object source
+     *  @param		User			$user				User making creation
      *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
      */
-    function createFromProposal($object)
+    function createFromProposal($object, User $user)
     {
-        global $conf,$user,$hookmanager;
+        global $conf, $hookmanager;
 
 		dol_include_once('/core/class/extrafields.class.php');
 
@@ -1238,7 +1250,7 @@ class Commande extends CommonOrder
     {
     	global $mysoc, $conf, $langs, $user;
 
-        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit", LOG_DEBUG);
+        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit, origin=$origin, origin_id=$origin_id, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1427,10 +1439,10 @@ class Commande extends CommonOrder
                 return -2;
             }
         }
-        else
-        {
+		else
+		{
             dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
-            return -3;
+			return -3;
         }
     }
 
@@ -1546,7 +1558,7 @@ class Commande extends CommonOrder
         $sql.= ', c.fk_shipping_method';
         $sql.= ', c.fk_warehouse';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
-        $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
+        $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
         $sql.= ', c.fk_incoterms, c.location_incoterms';
 		$sql.= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
         $sql.= ", i.libelle as libelle_incoterms";
@@ -1601,6 +1613,7 @@ class Commande extends CommonOrder
                 $this->note_public			= $obj->note_public;
                 $this->fk_project			= $obj->fk_projet;
                 $this->modelpdf				= $obj->model_pdf;
+                $this->last_main_doc		= $obj->last_main_doc;
                 $this->mode_reglement_id	= $obj->fk_mode_reglement;
                 $this->mode_reglement_code	= $obj->mode_reglement_code;
                 $this->mode_reglement		= $obj->mode_reglement_libelle;
@@ -3045,48 +3058,6 @@ class Commande extends CommonOrder
 			return 1;
 		}
 	}
-
-    /**
-     *	Update value of extrafields on order
-     *
-     *	@param      User	$user       Object user that modify
-     *	@return     int         		<0 if ko, >0 if ok
-     */
-    function update_extrafields($user)
-    {
-        global $hookmanager, $conf;
-
-    	$action='create';
-        $error = 0;
-
-    	// Actions on extra fields (by external module or standard code)
-    	// TODO le hook fait double emploi avec le trigger !!
-    	$hookmanager->initHooks(array('orderdao'));
-    	$parameters=array('id'=>$this->id);
-    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-    	if (empty($reshook))
-    	{
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    		{
-    			$result=$this->insertExtraFields();
-    			if ($result < 0)
-    			{
-    				$error++;
-    			}
-    		}
-    	}
-    	else if ($reshook < 0) $error++;
-
-    	if (!$error)
-    	{
-    		return 1;
-    	}
-    	else
-    	{
-    		return -1;
-    	}
-
-    }
 
     /**
      *	Delete the customer order

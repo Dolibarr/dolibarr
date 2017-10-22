@@ -48,7 +48,7 @@ class EcmFiles //extends CommonObject
 	 */
 	public $ref;					// hash of file path
 	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
-	public $share;					// hash for file sharing. empty by default
+	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
 	public $filename;
 	public $filepath;
@@ -141,6 +141,7 @@ class EcmFiles //extends CommonObject
 			 $this->acl = trim($this->acl);
 		}
 		if (empty($this->date_c)) $this->date_c = dol_now();
+		if (empty($this->date_m)) $this->date_m = dol_now();
 
 		// If ref not defined
 		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);

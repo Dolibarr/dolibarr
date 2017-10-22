@@ -67,3 +67,4 @@ ExpenseReportsToApprove=Rapports de dépenses à approuver
 ExpenseReportsToPay=Rapports de dépenses à payer
 CloneExpenseReport=Rapport de dépenses de clones
 ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner ce rapport de dépenses?
+ExpenseReportDateEnd=Date de fin

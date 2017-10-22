@@ -185,6 +185,34 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
+    if (! empty($conf->website->enabled) && (!empty($user->rights->societe->lire) ))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("WebSites");
+    	$nbNote = 0;
+    	$sql = "SELECT COUNT(n.rowid) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as n";
+    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$resql=$db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			$nbNote=$obj->nb;
+    			$i++;
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+    	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+    	$head[$h][2] = 'website';
+    	$h++;
+    }
+
 	// Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

@@ -76,6 +76,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
     }
 
@@ -336,6 +337,10 @@ class SupplierInvoices extends DolibarrApi
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);
 
         return $object;
     }

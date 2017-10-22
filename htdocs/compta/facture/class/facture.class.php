@@ -448,6 +448,11 @@ class Facture extends CommonInvoice
 			$resql=$this->db->query($sql);
 			if (! $resql) $error++;
 
+			if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+			{
+				$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+			}
+
 			// Add object linked
 			if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
 			{
@@ -460,7 +465,7 @@ class Facture extends CommonInvoice
 				            $ret = $this->add_object_linked($origin, $origin_id);
 				            if (! $ret)
 				            {
-				                dol_print_error($this->db);
+				                $this->error=$this->db->lasterror();
 				                $error++;
 				            }
 				        }
@@ -471,7 +476,7 @@ class Facture extends CommonInvoice
     					$ret = $this->add_object_linked($origin, $origin_id);
     					if (! $ret)
     					{
-    						dol_print_error($this->db);
+    						$this->error=$this->db->lasterror();
     						$error++;
     					}
 				    }
@@ -747,7 +752,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$invertdetail	Reverse sign of amounts for lines
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function createFromCurrent($user,$invertdetail=0)
+	function createFromCurrent(User $user, $invertdetail=0)
 	{
 		global $conf;
 
@@ -948,11 +953,12 @@ class Facture extends CommonInvoice
 	 *  Load an object from an order and create a new invoice into database
 	 *
 	 *  @param      Object			$object         	Object source
+	 *  @param		User			$user				Object user
 	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
 	 */
-	function createFromOrder($object)
+	function createFromOrder($object, User $user)
 	{
-		global $user,$hookmanager;
+		global $hookmanager;
 
 		$error=0;
 
@@ -1192,7 +1198,7 @@ class Facture extends CommonInvoice
 		$sql.= ', f.datec as datec';
 		$sql.= ', f.date_valid as datev';
 		$sql.= ', f.tms as datem';
-		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
+		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
@@ -1261,6 +1267,7 @@ class Facture extends CommonInvoice
 				$this->user_author			= $obj->fk_user_author;
 				$this->user_valid			= $obj->fk_user_valid;
 				$this->modelpdf				= $obj->model_pdf;
+				$this->last_main_doc		= $obj->last_main_doc;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
 				$this->situation_final      = $obj->situation_final;
@@ -2686,6 +2693,11 @@ class Facture extends CommonInvoice
 				return -2;
 			}
 		}
+		else
+		{
+			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
 	}
 
 	/**
@@ -2698,7 +2710,7 @@ class Facture extends CommonInvoice
 	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
 	 *  @param     	int		$date_start      	Date de debut de validite du service
 	 *  @param     	int		$date_end        	Date de fin de validite du service
-	 *  @param     	double		$txtva          	VAT Rate
+	 *  @param     	double		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
 	 * 	@param     	string		$price_base_type 	HT or TTC

@@ -387,8 +387,12 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		$nocheck = array('barcode','stock','fournisseur');	// No test
 		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
-		// If dbtable not defined, we use same name for table than module name
-		if (empty($dbtablename)) $dbtablename = $feature;
+		// If dbtablename not defined, we use same name for table than module name
+		if (empty($dbtablename))
+		{
+			$dbtablename = $feature;
+			$sharedelement = (! empty($params[1]) ? $params[1] : $dbtablename);		// We change dbtablename, so we set sharedelement too.
+		}
 
 		// Check permission for object with entity
 		if (in_array($feature,$check))

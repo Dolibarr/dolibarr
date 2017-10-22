@@ -42,3 +42,7 @@ CannotRemoveDirectoryContainsFiles=No se puede eliminar porque contiene archivos
 ECMFileManager=Explorador de archivos
 ECMSelectASection=Seleccione un directorio en el árbol de la izquierda
 DirNotSynchronizedSyncFirst=Este directorio fue creado o modificado fuera del módulo GED. Haga clic en el botón "Actualizar" para resincronizar la información del disco y la base  de datos para ver el contenido de ese directorio.
+ReSyncListOfDir=Resincronizar la lista de directorios
+HashOfFileContent=Hash de contenido de archivo
+FileNotYetIndexedInDatabase=Archivo aún no indexado en la base de datos (intente volver a cargarlo)
+FileSharedViaALink=Archivo compartido a través de un enlace

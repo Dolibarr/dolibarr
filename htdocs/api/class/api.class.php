@@ -134,7 +134,10 @@ class DolibarrApi
         unset($object->fk_element);
         unset($object->table_element);
         unset($object->table_element_line);
+        unset($object->class_element_line);
         unset($object->picto);
+
+        unset($object->facturee);		// Replace with billed
 
         unset($object->skip_update_total);
         unset($object->context);

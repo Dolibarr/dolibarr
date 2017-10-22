@@ -1,12 +1,9 @@
 # Dolibarr language file - Source file is en_US - projects
-MyProjectsDesc=Diese Ansicht ist auf Projekte beschränkt, zu denen Sie als Kontakt definiert sind (unabhängig vom Typ).
 ProjectsPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Projekte.
 ProjectsPublicTaskDesc=Diese Ansicht zeigt alle für Sie sichtbaren Aufgaben.
 ProjectsDesc=Diese Ansicht zeigt alle Projekte (Ihre Benutzerberechtigung erlaubt Ihnen eine volle Einsicht aller Projekte).
-MyTasksDesc=Diese Ansicht ist auf Aufgaben beschränkt, zu denen Sie als Kontakt definiert sind (unabhängig vom Typ).
 TasksPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Aufgaben.
 TasksDesc=Diese Ansicht zeigt alle Aufgaben (Ihre Benutzerberechtigung erlaubt Ihnen eine volle Einsicht aller Aufgaben).
-AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task assigned to you. Assign task to yourself if you need to enter time on it.
 NoProject=Kein Projekt definiert
 RefTask=Aufgaben Nr.
 MyActivities=Meine Tätigkeiten

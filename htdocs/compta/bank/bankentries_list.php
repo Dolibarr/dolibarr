@@ -100,10 +100,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder='ASC';
-if (! $sortfield) $sortfield='b.datev, b.dateo, b.rowid';
+if (! $sortfield) $sortfield='b.datev,b.dateo,b.rowid';
 
 $mode_balance_ok=false;
-//if (($sortfield == 'b.datev' || $sortfield == 'b.datev, b.dateo, b.rowid'))    // TODO Manage balance when account not selected
+//if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
 if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
 {
     $sortfield = 'b.datev,b.dateo,b.rowid';
@@ -367,7 +367,7 @@ if (!empty($debit)) $param.='&debit='.$debit;
 if (!empty($credit)) $param.='&credit='.$credit;
 if (!empty($account)) $param.='&account='.$account;
 if (!empty($search_num_releve)) $param.='&search_num_releve='.urlencode($search_num_releve);
-if ($search_conciliated != '')  $param.='&search_conciliated='.urlencode($search_conciliated);
+if ($search_conciliated != '' && $search_conciliated != '-1')  $param.='&search_conciliated='.urlencode($search_conciliated);
 if (!empty($bid))  $param.='&bid='.$bid;
 if (dol_strlen($search_dt_start) > 0) $param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
 if (dol_strlen($search_dt_end) > 0)   $param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
@@ -963,6 +963,55 @@ if ($resql)
             else dol_print_error($db);
 
             $balancecalculated=true;
+
+            // Output a line with start balance
+            if ($user->rights->banque->consolidate && $action == 'reconcile')
+            {
+            	$tmpnbfieldbeforebalance=0;
+            	$tmpnbfieldafterbalance=0;
+            	$balancefieldfound=false;
+            	foreach($arrayfields as $key => $val)
+            	{
+            		if ($key == 'balance')
+            		{
+            			$balancefieldfound=true;
+            			continue;
+            		}
+           			if (! empty($arrayfields[$key]['checked']))
+           			{
+           				if (! $balancefieldfound) $tmpnbfieldbeforebalance++;
+           				else $tmpnbfieldafterbalance++;
+           			}
+            	}
+            	// Extra fields
+            	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            	{
+            		foreach($extrafields->attribute_label as $key => $val)
+            		{
+            			if (! empty($arrayfields["ef.".$key]['checked']))
+            			{
+		           			if (! empty($arrayfields[$key]['checked']))
+		           			{
+		           				if (! $balancefieldfound) $tmpnbfieldbeforebalance++;
+		           				else $tmpnbfieldafterbalance++;
+		           			}
+            			}
+            		}
+            	}
+
+            	print '<tr class="oddeven trforbreak">';
+            	if ($tmpnbfieldbeforebalance)
+            	{
+            		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
+            		print '</td>';
+            	}
+				print '<td align="right">';
+            	print price(price2num($balance, 'MT'), 1, $langs);
+				print '</td>';
+				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '</td>';
+            	print '</tr>';
+            }
         }
 
         $balance = price2num($balance + ($sign * $objp->amount),'MT');
@@ -1065,7 +1114,7 @@ if ($resql)
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
-    	                print $bankstatic->getNomUrl(1);
+    	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ' '.$langs->trans("toward").' ';
     	                $bankstatic->id=$objp->bankid;
     	                $bankstatic->label=$objp->bankref;
@@ -1082,7 +1131,7 @@ if ($resql)
     	                $banklinestatic->fetch($links[$key]['url_id']);
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
-    	                print $bankstatic->getNomUrl(1);
+    	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ')';
     	            }
     	            //var_dump($links);

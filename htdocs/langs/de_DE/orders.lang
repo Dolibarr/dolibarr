@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=2. Bestätigung bereits erledigt
 SupplierOrderReceivedInDolibarr=Lieferantenbestellung %s erhalten %s
 SupplierOrderSubmitedInDolibarr=Lieferantenbestellung %s versendet
 SupplierOrderClassifiedBilled=Bestellung %s als verrechnet markieren
+OtherOrders=Bestellungen Anderer
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Kundenauftrag-Nachbetreuung durch Vertreter
 TypeContact_commande_internal_SHIPPING=Versand-Nachbetreuung durch Vertreter

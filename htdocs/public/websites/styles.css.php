@@ -16,7 +16,7 @@
  */
 
 /**
- *     	\file       htdocs/public/websites/styles.css.php
+ *     	\file       htdocs/public/website/styles.css.php
  *		\ingroup    website
  *		\brief      Page to output style page. Called with <link rel="stylesheet" href="styles.css.php?websiteid=123" type="text/css" />
  */
@@ -65,8 +65,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_AP
 
 if (empty($pageid))
 {
-    require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
     $object=new Website($db);
     if ($websiteid)
@@ -97,7 +97,7 @@ if (empty($pageid))
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
 
-$original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css.php';
+$original_file=$dolibarr_main_data_root.'/website/'.$website.'/styles.css.php';
 
 // Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");

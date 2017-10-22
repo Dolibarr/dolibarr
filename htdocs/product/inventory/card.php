@@ -442,8 +442,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $relativepath = $comref . '/' . $comref . '.pdf';
 	    $filedir = $conf->product->dir_output . '/inventory/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->inventory->creer;
-	    $delallowed = $user->rights->inventory->supprimer;
+	    $genallowed = $user->rights->inventory->read;
+	    $delallowed = $user->rights->inventory->create;
 	    print $formfile->showdocuments('inventory', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 

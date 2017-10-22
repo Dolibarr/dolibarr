@@ -607,8 +607,9 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '<td class="liste_titre nowrap" align="right">';
 	$arrayofstatus = array();
 	foreach($object->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
-	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 selectarrowonleft');
+	print ajax_combobox('search_status');
 	print '</td>';
 }
 // Action column
@@ -846,7 +847,7 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.datec']['checked']))
 		{
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -854,7 +855,7 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.tms']['checked']))
 		{
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

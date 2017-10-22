@@ -259,6 +259,8 @@ if ($id > 0)
 	$fuser->fetch($id, '', '', 1);
 	$fuser->getrights();
 	$user_id = $fuser->id;
+
+	$search_employee = $user_id;
 }
 
 // Récupération des congés payés de l'utilisateur ou de tous les users
