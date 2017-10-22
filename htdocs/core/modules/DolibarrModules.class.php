@@ -1843,7 +1843,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			$menu->langs=$this->menu[$key]['langs'];
 			$menu->position=$this->menu[$key]['position'];
 			$menu->perms=$this->menu[$key]['perms'];
-			$menu->target=$this->menu[$key]['target'];
+			$menu->target=isset($this->menu[$key]['target'])?$this->menu[$key]['target']:'';
 			$menu->user=$this->menu[$key]['user'];
 			$menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
 			$menu->position=$this->menu[$key]['position'];
