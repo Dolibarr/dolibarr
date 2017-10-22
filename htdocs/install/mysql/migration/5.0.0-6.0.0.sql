@@ -433,6 +433,7 @@ rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 entity integer DEFAULT 0, 
 ref varchar(48),
 datec datetime DEFAULT NULL,
+datev datetime DEFAULT NULL,
 tms timestamp, 
 fk_user_author	integer,
 fk_user_modif     integer,
@@ -462,9 +463,11 @@ new_pmp double DEFAULT 0
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_inventory ADD COLUMN datec datetime DEFAULT NULL;
+ALTER TABLE llx_inventory ADD COLUMN datev datetime DEFAULT NULL;
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_datev (datev);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_tms (tms);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_fk_inventory (fk_inventory);

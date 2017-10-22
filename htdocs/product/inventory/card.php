@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,46 +17,18 @@
  */
 
 /**
- *   	\file       product/inventory/card.php
- *		\ingroup    inventory
- *		\brief      This file is an example of a php page
- *					Put here some comments
+ * \file       product/inventory/card.php
+ * \ingroup    inventory
+ * \brief      This file is an example of a php page
+ * Put here some comments
  */
 
-//if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))            define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
-//if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))          define('NOREQUIREAJAX','1');         // Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
-
-// Load Dolibarr environment
-$res=0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
-$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
-// Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
-if (! $res) die("Include of main fails");
-
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-dol_include_once('/inventory/class/inventory.class.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("inventory","other"));
+$langs->loadLangs(array("products","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -116,7 +88,7 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/inventory/inventory_list.php',1);
+			$urltogo = $backtopage?$backtopage:DOL_URL_ROOT .'/product/inventory/list.php';
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -129,7 +101,7 @@ if (empty($reshook))
 	{
         foreach ($object->fields as $key => $val)
         {
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
+            if (in_array($key, array('rowid', 'entity', 'datec', 'tms', 'import_key'))) continue;	// Ignore special fields
 
             $object->$key=GETPOST($key,'alpha');
             if ($val['notnull'] && $object->$key == '')
@@ -145,9 +117,11 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				// Creation OK
-				$urltogo=$backtopage?$backtopage:dol_buildpath('/inventory/inventory_list.php',1);
-				header("Location: ".$urltogo);
-				exit;
+				$urltogo=$backtopage?$backtopage:DOL_URL_ROOT .'/product/inventory/list.php';
+				//header("Location: ".$urltogo);
+                //exit;
+                setEventMessages('RecordSaevd', null);
+				$action='';
 			}
 			else
 			{
@@ -161,7 +135,7 @@ if (empty($reshook))
 		{
 			$action='create';
 		}
-	}
+    }
 
 	// Action to update record
 	if ($action == 'update' && ! empty($user->rights->inventory->create))
@@ -169,7 +143,7 @@ if (empty($reshook))
 	    foreach ($object->fields as $key => $val)
         {
             $object->$key=GETPOST($key,'alpha');
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;
+            if (in_array($key, array('rowid', 'entity', 'datec', 'tms', 'import_key'))) continue;
             if ($val['notnull'] && $object->$key == '')
             {
                 $error++;
@@ -206,7 +180,7 @@ if (empty($reshook))
 		{
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/inventory/inventory_list.php',1));
+			header("Location: ".DOL_URL_ROOT .'/product/inventory/list.php');
 			exit;
 		}
 		else
@@ -261,7 +235,7 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;
+	    if (in_array($key, array('rowid', 'entity', 'datec', 'tms', 'import_key'))) continue;
     	print '<tr><td';
     	print ' class="titlefieldcreate';
     	if ($val['notnull']) print ' fieldrequired';

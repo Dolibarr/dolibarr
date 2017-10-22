@@ -23,6 +23,7 @@ CREATE TABLE llx_inventory
   entity integer DEFAULT 0, 
   ref varchar(48),
   datec datetime DEFAULT NULL,
+  datev datetime DEFAULT NULL,
   tms timestamp, 
   fk_user_author	integer,					-- user making creation
   fk_user_modif     integer,                   -- user making last change

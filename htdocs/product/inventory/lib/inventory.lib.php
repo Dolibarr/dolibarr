@@ -1,6 +1,7 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+/*
+ * Copyright (C) 2015       ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ function inventoryPrepareHead(&$inventory, $title='Inventory', $get='')
 	global $langs;
 	
 	return array(
-		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans($title),'inventory')
+		array(DOL_URL_ROOT.'/product/inventory/card.php?id='.$inventory->id.$get, $langs->trans($title),'inventory')
 	);
 }
 

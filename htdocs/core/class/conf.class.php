@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@capnetworks.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -371,6 +372,9 @@ class Conf
 		$this->product->dir_temp  =$rootfordata."/produit/temp";
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
+        // Inventory
+        $this->inventory->dir_output = $rootfordata."/inventory";
+        $this->inventory->dir_temp = $rootfordata."/inventory/temp";
 
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
