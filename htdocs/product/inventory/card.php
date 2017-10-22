@@ -70,8 +70,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 /*
  * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters=array();
@@ -86,7 +84,7 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/inventory/inventory_list.php',1);
+			$urltogo=$backtopage?$backtopage:(DOL_URL_ROOT.'/product/inventory/list.php');
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -192,8 +190,6 @@ if (empty($reshook))
 
 /*
  * VIEW
- *
- * Put here all code to build page
  */
 
 $form=new Form($db);

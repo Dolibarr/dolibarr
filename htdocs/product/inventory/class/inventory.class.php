@@ -73,16 +73,16 @@ class Inventory extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'ref' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'fk_warehouse' => array('type'=>'integer', 'label'=>'', 'visible'=>1, 'enabled'=>1, 'index'=>1,),
-		'date_inventory' => array('type'=>'date', 'label'=>'', 'visible'=>1, 'enabled'=>1,),
-		'title' => array('type'=>'varchar(255)', 'label'=>'', 'visible'=>1, 'enabled'=>1,),
+		'fk_warehouse' => array('type'=>'integer', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'index'=>1,),
+		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1,),
+		'title' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
-		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
-		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
-		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValid', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1,),
+		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-1, 'enabled'=>1, 'position'=>502,),
+		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>510,),
+		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>511,),
+		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'visible'=>-1, 'enabled'=>1, 'position'=>512,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'index'=>1,),
 	);
 
@@ -136,7 +136,12 @@ class Inventory extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $conf;
+
 		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
 	}
 
 

@@ -380,7 +380,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+	if (in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -417,7 +417,7 @@ print $hookmanager->resPrint;
 // Rest of fields search
 foreach($object->fields as $key => $val)
 {
-	if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+	if (! in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -437,7 +437,7 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+	if (in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -465,7 +465,7 @@ print $hookmanager->resPrint;
 // Rest of fields title
 foreach($object->fields as $key => $val)
 {
-	if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
+	if (! in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -504,7 +504,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-			if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;	// Discard some field output at end
+			if (in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;	// Discard some field output at end
 			$align='';
 			if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 			if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -556,7 +556,7 @@ while ($i < min($num, $limit))
 	// Rest of fields
 	foreach($object->fields as $key => $val)
 	{
-		if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;	// Keep only field not yet already output
+		if (! in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;	// Keep only field not yet already output
 		$align='';
 		if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
 		if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
