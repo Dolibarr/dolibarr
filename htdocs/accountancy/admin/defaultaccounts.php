@@ -77,7 +77,7 @@ $list_account = array (
  * Actions
  */
 
-$accounting_mode = $conf->global->ACCOUNTING_MODE;
+$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 
 if (GETPOST('change_chart'))
