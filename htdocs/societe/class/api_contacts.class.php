@@ -19,6 +19,7 @@ use Luracast\Restler\RestException;
 
 //require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
+
 /**
  * API class for contacts
  *
@@ -48,7 +49,8 @@ class Contacts extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
 
-		include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$this->contact = new Contact($this->db);
 	}

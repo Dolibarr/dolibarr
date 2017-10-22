@@ -47,6 +47,10 @@ class Thirdparties extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
         $this->company = new Societe($this->db);
 
         if (! empty($conf->global->SOCIETE_MAIL_REQUIRED)) {
