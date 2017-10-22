@@ -95,7 +95,9 @@ if ($action == 'builddoc' && $permissioncreate)
         	{
 	            setEventMessages($langs->trans("FileGenerated"), null);
 
-	            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
+	            $redirecturl = $_SERVER['REQUEST_URI'];
+	            $redirecturl = preg_replace('/&?action=builddoc/', '', $redirecturl);		// Remove action=builddoc parameter to avoid infinite loop
+	            header('Location: '.$redirecturl.'#builddoc');
 	            exit;
         	}
         }
