@@ -16,7 +16,7 @@
 -- ========================================================================
 
 CREATE TABLE llx_supplier_proposal (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   ref varchar(30) NOT NULL,
   entity integer NOT NULL DEFAULT 1,
   ref_ext varchar(255) DEFAULT NULL,
