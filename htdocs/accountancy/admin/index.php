@@ -61,7 +61,7 @@ $list = array (
  * Actions
  */
 
-$accounting_mode = $conf->global->ACCOUNTING_MODE;
+$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 if ($action == 'update') {
 	$error = 0;
