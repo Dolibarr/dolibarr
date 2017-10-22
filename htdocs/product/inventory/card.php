@@ -325,7 +325,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Object card
 	// ------------------------------------------------------------
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/inventory/inventory_list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/inventory/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 	$morehtmlref='<div class="refidno">';

@@ -76,8 +76,8 @@ class Inventory extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'ref' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'fk_warehouse' => array('type'=>'integer', 'label'=>'w', 'visible'=>1, 'enabled'=>1, 'index'=>1,),
-		'date_inventory' => array('type'=>'date', 'label'=>'i', 'visible'=>1, 'enabled'=>1,),
+		'fk_warehouse' => array('type'=>'integer', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'index'=>1,),
+		'date_inventory' => array('type'=>'date', 'label'=>'DateInventory', 'visible'=>1, 'enabled'=>1,),
 		'title' => array('type'=>'varchar(255)', 'label'=>'t', 'visible'=>1, 'enabled'=>1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'index'=>1,),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500,),
@@ -103,7 +103,6 @@ class Inventory extends CommonObject
 	public $fk_user_modif;
 	public $fk_user_valid;
 	public $import_key;
-	// END MODULEBUILDER PROPERTIES
 
 
 
@@ -167,7 +166,7 @@ class Inventory extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = $url = dol_buildpath('/inventory/m_card.php',1).'?id='.$this->id;
+        $url = DOL_URL_ROOT . '/product/inventory/card.php?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
