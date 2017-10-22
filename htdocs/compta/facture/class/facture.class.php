@@ -2710,7 +2710,7 @@ class Facture extends CommonInvoice
 	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
 	 *  @param     	int		$date_start      	Date de debut de validite du service
 	 *  @param     	int		$date_end        	Date de fin de validite du service
-	 *  @param     	double		$txtva          	VAT Rate
+	 *  @param     	double		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
 	 * 	@param     	string		$price_base_type 	HT or TTC
