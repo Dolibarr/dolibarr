@@ -551,16 +551,24 @@ print '</form>'."\n\n";
 
 $modeinput='hours';
 
-print '<script type="text/javascript">';
+print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+print '<script type="text/javascript">'."\n";
 print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\'});';
+print '		jQuery(".timesheetalreadyrecorded").tooltip({
+				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
+				hide: { effect:\'toggle\', delay: 50 },
+				tooltipClass: "mytooltip",
+				content: function () {
+					return \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\';
+				}
+			});'."\n";
 $i=0;
 while ($i < 7)
 {
 	print '    updateTotal('.$i.',\''.$modeinput.'\');';
 	$i++;
 }
-print "});";
+print "\n});\n";
 print '</script>';
 
 

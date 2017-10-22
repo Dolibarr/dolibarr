@@ -2075,7 +2075,7 @@ class User extends CommonObject
 		if (! empty($this->photo))
 		{
 			$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
+			$label.= Form::showphoto('userphoto', $this, 0, 60, 0, 'photowithmargin photologintooltip', 'small', 0, 1);	// Force height to 60 so we total height of tooltip can be calculated and collision can be managed
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 

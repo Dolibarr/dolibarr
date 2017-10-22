@@ -3287,30 +3287,21 @@ table.valid {
     z-index: 3000;
 }
 
-/* For tooltip using tipTip */
-#tooltip {
-	position: absolute;
+.mytooltip {
 	width: <?php print dol_size(450,'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
 	border-<?php print $left; ?>: solid 1px #BBBBBB;
 	border-<?php print $right; ?>: solid 1px #444444;
 	border-bottom: solid 1px #444444;
-	padding: 2px;
-	z-index: 3000;
-	background-color: #FFF;
-	opacity: 1;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	border-radius: 4px;
+	padding: 5px 20px;
+	border-radius: 0;
+	box-shadow: 0 0 4px grey;
+	margin: 2px;
+	font-stretch: condensed;
 }
-#tiptip_content {
-    -moz-border-radius:0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    background-color: rgb(255,255,255);
-	line-height: 1.4em;
-	min-width: 200px;
-}
+
+
+
 
 /* ============================================================================== */
 /* Calendar                                                                       */

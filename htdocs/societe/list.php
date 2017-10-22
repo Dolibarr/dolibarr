@@ -1029,6 +1029,7 @@ while ($i < min($num, $limit))
 	$companystatic->canvas=$obj->canvas;
 	$companystatic->client=$obj->client;
 	$companystatic->status=$obj->status;
+	$companystatic->email=$obj->email;
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
@@ -1200,21 +1201,21 @@ while ($i < min($num, $limit))
 		{
 	  		$companystatic->name=$langs->trans("Customer");
 	  		$companystatic->name_alias='';
-			$s.=$companystatic->getNomUrl(0,'customer');
+			$s.=$companystatic->getNomUrl(0,'customer',0,1);
 		}
 		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
 			if ($s) $s.=" / ";
 			$companystatic->name=$langs->trans("Prospect");
 	  		$companystatic->name_alias='';
-			$s.=$companystatic->getNomUrl(0,'prospect');
+			$s.=$companystatic->getNomUrl(0,'prospect',0,1);
 		}
 		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
 			$companystatic->name=$langs->trans("Supplier");
 	  		$companystatic->name_alias='';
-			$s.=$companystatic->getNomUrl(0,'supplier');
+			$s.=$companystatic->getNomUrl(0,'supplier',0,1);
 		}
 		print $s;
 		print '</td>';
