@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/PropalTest.php
+ *      \file       test/phpunit/SupplierProposalTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,12 +27,15 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
 
 if (empty($user->id))
 {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
+
+	//$user->addrights(0, 'supplier_proposal');
+
 	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
@@ -45,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PropalTest extends PHPUnit_Framework_TestCase
+class SupplierProposalTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -117,11 +120,11 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPropalCreate
+     * testSupplierProposalCreate
      *
      * @return	void
      */
-    public function testPropalCreate()
+    public function testSupplierProposalCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -129,7 +132,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new SupplierProposal($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -139,15 +142,15 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPropalFetch
+     * testSupplierProposalFetch
      *
      * @param	int		$id		Id of object
      * @return	void
      *
-     * @depends	testPropalCreate
+     * @depends	testSupplierProposalCreate
      * The depends says test is run only if previous is ok
      */
-    public function testPropalFetch($id)
+    public function testSupplierProposalFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -155,7 +158,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new SupplierProposal($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -164,15 +167,15 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPropalAddLine
+     * testSupplierProposalAddLine
      *
      * @param	int		$localobject	Proposal
      * @return	void
      *
-     * @depends	testPropalFetch
+     * @depends	testSupplierProposalFetch
      * The depends says test is run only if previous is ok
      */
-    public function testPropalAddLine($localobject)
+    public function testSupplierProposalAddLine($localobject)
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -180,7 +183,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
 
-        $localobject->fetch_thirdparty();
+    	$localobject->fetch_thirdparty();
     	$result=$localobject->addline('Added line', 10, 2, 19.6);
 
     	$this->assertLessThan($result, 0);
@@ -189,15 +192,15 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPropalValid
+     * testSupplierProposalValid
      *
      * @param	Proposal	$localobject	Proposal
      * @return	Proposal
      *
-     * @depends	testPropalAddLine
+     * @depends	testSupplierProposalAddLine
      * The depends says test is run only if previous is ok
      */
-    public function testPropalValid($localobject)
+    public function testSupplierProposalValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -213,15 +216,15 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
    /**
-     * testPropalOther
+     * testSupplierProposalOther
      *
      * @param	Proposal	$localobject	Proposal
      * @return	int
      *
-     * @depends testPropalValid
+     * @depends testSupplierProposalValid
      * The depends says test is run only if previous is ok
      */
-    public function testPropalOther($localobject)
+    public function testSupplierProposalOther($localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -242,15 +245,15 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPropalDelete
+     * testSupplierProposalDelete
      *
      * @param	int		$id		Id of proposal
      * @return	void
      *
-     * @depends	testPropalOther
+     * @depends	testSupplierProposalOther
      * The depends says test is run only if previous is ok
      */
-    public function testPropalDelete($id)
+    public function testSupplierProposalDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -258,7 +261,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new SupplierProposal($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

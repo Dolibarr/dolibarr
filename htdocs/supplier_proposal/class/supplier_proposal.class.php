@@ -1222,9 +1222,7 @@ class SupplierProposal extends CommonObject
 
                 $this->lines = array();
 
-                /*
-                 * Lignes askprice liees a un produit ou non
-                 */
+                // Lines of supplier proposals
                 $sql = "SELECT d.rowid, d.fk_supplier_proposal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
@@ -1435,6 +1433,11 @@ class SupplierProposal extends CommonObject
             	$this->db->rollback();
             	return -1;
             }
+        }
+        else
+        {
+        	dol_syslog("You don't have permission to validate supplier proposal", LOG_WARNING);
+        	return -1;
         }
     }
 
