@@ -4,7 +4,7 @@
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
 
@@ -689,17 +689,22 @@ class FormFile
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
      *	@param	string	$filedir		Directory to scan
-     *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
+     *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$').
      *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
      */
-    function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter='')
+    function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = null)
     {
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
+    	if (!$filter) {
+		    // Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
+    		$filter = preg_quote(basename($modulesubdir),'/').'[^\-]+(odt|pdf)$';
+	    }
+
+		$file_list=dol_dir_list($filedir, 'files', 0, $filter, '\.meta$');
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -709,8 +714,6 @@ class FormFile
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
-    			if ($filter && ! preg_match('/'.$filter.'/i', $file["name"])) continue;	// Discard this. It does not match provided filter.
-
     			// Define relative path for download link (depends on module)
     			$relativepath=$file["name"];								// Cas general
     			if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
