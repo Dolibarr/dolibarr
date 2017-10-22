@@ -169,8 +169,8 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 
 
-// Security check
-if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
+// Security check (old method, when directory is renamed /install.lock)
+if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
     print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
     if (! empty($dolibarr_main_url_root))
