@@ -1114,6 +1114,14 @@ else
         {
             // We do no show price array on create when multiprices enabled.
             // We must set them on prices tab.
+            print '<table class="border" width="100%">';
+            // VAT
+            print '<tr><td class="titlefieldcreate">' . $langs->trans("VATRate") . '</td><td>';
+            $defaultva = get_default_tva($mysoc, $mysoc);
+            print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+            print '</td></tr>';
+            print '</table>';
+            print '<br>';
         }
         else
 		{
