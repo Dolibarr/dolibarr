@@ -511,8 +511,8 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 
 		    // Units
-		    'line_unit'=>$line->getLabelOfUnit('long'),
-		    'line_unit_short'=>$line->getLabelOfUnit('short'),
+		    'line_unit'=>$outputlangs->trans($line->getLabelOfUnit('long')),
+		    'line_unit_short'=>$outputlangs->trans($line->getLabelOfUnit('short')),
 		);
 
 		// Retrieve extrafields
