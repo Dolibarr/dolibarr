@@ -738,38 +738,6 @@ if (empty($reshook))
 					{
 						$error++;
 					}
-
-					if (! $error)
-					{
-						// If some invoice's lines already known
-						for ($i = 1 ; $i < 9 ; $i++)
-						{
-							$label = $_POST['label'.$i];
-							$amountht  = price2num($_POST['amount'.$i]);
-							$amountttc = price2num($_POST['amountttc'.$i]);
-							$tauxtva   = price2num($_POST['tauxtva'.$i]);
-							$qty = $_POST['qty'.$i];
-							$fk_product = $_POST['fk_product'.$i];
-							if ($label)
-							{
-								if ($amountht)
-								{
-									$price_base='HT'; $amount=$amountht;
-								}
-								else
-								{
-									$price_base='TTC'; $amount=$amountttc;
-								}
-								$atleastoneline=1;
-
-								$product=new Product($db);
-								$product->fetch($_POST['idprod'.$i]);
-
-								$ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base, $_POST['rang'.$i], 1);
-								if ($ret < 0) $error++;
-							}
-						}
-					}
 				}
 			}
 		}
