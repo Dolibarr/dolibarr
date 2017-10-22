@@ -1502,7 +1502,7 @@ function dol_print_reduction($reduction,$langs)
     }
     else
     {
-        $string = price($reduction).'%';
+        $string = $reduction.'%';
     }
 
     return $string;
