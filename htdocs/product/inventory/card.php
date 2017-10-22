@@ -97,7 +97,7 @@ if (empty($reshook))
 	{
         foreach ($object->fields as $key => $val)
         {
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
+            if (in_array($key, array('rowid', 'entity', 'date_creation', 'date_validation', 'tms', 'fk_user_creat', 'fk_user_modif', 'fk_user_validation', 'import_key'))) continue;	// Ignore special fields
 
             $object->$key=GETPOST($key,'alpha');
             if ($val['notnull'] && $object->$key == '')
@@ -215,7 +215,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Inventory")));
+	print load_fiche_titre($langs->trans("NewInventory", $langs->transnoentitiesnoconv("MyInventory")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -227,18 +227,49 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;
-    	print '<tr><td';
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'date_validation', 'tms', 'fk_user_creat', 'fk_user_modif', 'fk_user_valid', 'import_key'))) continue;
+    	print '<tr id="field_'.$key.'">';
+    	print '<td';
     	print ' class="titlefieldcreate';
-    	if ($val['notnull']) print ' fieldrequired';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td><td><input class="flat" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'"></td></tr>';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
+		if ($val['type'] == 'text') print ' tdtop';
+		print '"';
+    	print '>';
+    	print $langs->trans($val['label']);
+    	print '</td>';
+    	print '<td>';
+    	$defaultcss='minwidth100';
+    	if ($val['type'] == 'text')
+    	{
+    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+    		print GETPOST($key,'none');
+    		print '</textarea>';
+    	}
+	    elseif (is_array($val['arrayofkeyval']))
+   		{
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
+    	}
+    	else
+    	{
+    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
+    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
+    	}
+    	print '</td>';
+    	print '</tr>';
 	}
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+
 	print '</table>'."\n";
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+	print '&nbsp; ';
+	print '<input type="button" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onclick="javascript:history.go(-1)">';	// Cancel for create doe not post form
+	print '</div>';
 
 	print '</form>';
 }
@@ -258,8 +289,40 @@ if (($id || $ref) && $action == 'edit')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_EDIT
+	foreach($object->fields as $key => $val)
+	{
+		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+
+		print '<tr><td';
+		print ' class="titlefieldcreate';
+		if ($val['notnull'] > 0) print ' fieldrequired';
+		if ($val['type'] == 'text') print ' tdtop';
+		print '"';
+		print '>'.$langs->trans($val['label']).'</td>';
+		print '<td>';
+		$defaultcss='minwidth100';
+		if ($val['type'] == 'text')
+		{
+			print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+			print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
+			print '</textarea>';
+		}
+		elseif (is_array($val['arrayofkeyval']))
+		{
+			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
+		}
+		else
+		{
+			$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
+			print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
+		}
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+
 	print '</table>';
 
 	dol_fiche_end();
@@ -270,6 +333,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</form>';
 }
+
 
 
 

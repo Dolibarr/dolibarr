@@ -234,7 +234,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
-    header("Location: ".DOL_URL_ROOT.'/inventory/inventory_card.php?id='.$id);
+    header("Location: ".DOL_URL_ROOT.'/inventory/card.php?id='.$id);
     exit;
 }
 
@@ -333,7 +333,6 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    if (in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -366,15 +365,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields search
-foreach($object->fields as $key => $val)
-{
-    if (! in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
-    $align='';
-    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-    if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
-}
 // Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
@@ -388,7 +378,6 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    if (in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -412,15 +401,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields title
-foreach($object->fields as $key => $val)
-{
-    if (! in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
-    $align='';
-    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-    if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
-}
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
@@ -453,7 +433,6 @@ while ($i < min($num, $limit))
         print '<tr class="oddeven">';
         foreach($object->fields as $key => $val)
         {
-            if (in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
             if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -501,29 +480,6 @@ while ($i < min($num, $limit))
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        // Rest of fields
-        foreach($object->fields as $key => $val)
-        {
-            if (! in_array($key, array('fk_user_creat', 'fk_user_valid', 'fk_user_modif', 'date_creation', 'date_validation', 'tms', 'import_key', 'status'))) continue;
-            $align='';
-            if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-            if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-            if ($key == 'status') $align.=($align?' ':'').'center';
-            if (! empty($arrayfields['t.'.$key]['checked']))
-            {
-                print '<td'.($align?' class="'.$align.'"':'').'>';
-                if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'status') print $object->getLibStatut(3);
-                else print $obj->$key;
-                print '</td>';
-                if (! $i) $totalarray['nbfield']++;
-                if (! empty($val['isameasure']))
-                {
-	                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
-	               	$totalarray['val']['t.'.$key] += $obj->$key;
-                }
-            }
-        }
         // Action column
         print '<td class="nowrap" align="center">';
 	    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

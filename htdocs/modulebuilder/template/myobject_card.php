@@ -270,7 +270,7 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'date_validation', 'tms', 'fk_user_creat', 'fk_user_modif', 'fk_user_valid', 'import_key'))) continue;
     	print '<tr id="field_'.$key.'">';
     	print '<td';
     	print ' class="titlefieldcreate';
