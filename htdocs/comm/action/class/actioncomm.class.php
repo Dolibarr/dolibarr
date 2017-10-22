@@ -1375,7 +1375,7 @@ class ActionComm extends CommonObject
 
                     if ($qualified && $datestart)
                     {
-                        $eventarray[$datestart]=$event;
+                        $eventarray[]=$event;
                     }
                 }
             }
