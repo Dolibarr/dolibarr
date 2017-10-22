@@ -107,7 +107,7 @@ class CommandeApi extends DolibarrApi
      * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $societe = 0) {
+    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $societe = 0) {
         global $db, $conf;
 
         $obj_ret = array();

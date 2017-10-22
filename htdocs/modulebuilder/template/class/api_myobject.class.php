@@ -102,7 +102,7 @@ class MyObjectApi extends DolibarrApi
      *
      * @url	GET /myobjects/
      */
-    function index($mode, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
+    function index($mode, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
