@@ -1764,7 +1764,7 @@ else
 			}
 
         	// Custom code
-        	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        	if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
 
