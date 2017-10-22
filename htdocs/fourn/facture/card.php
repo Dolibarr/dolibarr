@@ -810,7 +810,7 @@ if (empty($reshook))
 			$object->fetch($id);
 	        $object->fetch_thirdparty();
 
-	        $tva_tx = GETPOST('tva_tx');
+	        $tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
 			if (GETPOST('price_ht') != '')
 	    	{
@@ -841,8 +841,16 @@ if (empty($reshook))
 		    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
-	        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-	        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+		    // Define info_bits
+		    $info_bits = 0;
+		    if (preg_match('/\*/', $tva_tx))
+		    	$info_bits |= 0x01;
+
+		    // Define vat_rate
+		    $tva_tx = str_replace('*', '', $tva_tx);
+	        $localtax1_tx= get_localtax($tva_tx, 1, $mysoc,$object->thirdparty);
+	        $localtax2_tx= get_localtax($tva_tx, 2, $mysoc,$object->thirdparty);
+
 	        $remise_percent=GETPOST('remise_percent');
 			$pu_ht_devise = GETPOST('multicurrency_subprice');
 
@@ -857,7 +865,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
