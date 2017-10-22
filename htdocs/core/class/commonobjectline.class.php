@@ -78,7 +78,7 @@ abstract class CommonObjectLine extends CommonObject
 		if($resql && $this->db->num_rows($resql) > 0)
 		{
 			$res = $this->db->fetch_array($resql);
-			$label = $res[$label_type];
+			$label = $langs->trans($res[$label_type]);
 			$this->db->free($resql);
 			return $label;
 		}
