@@ -436,3 +436,6 @@ ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(
 
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
+
+ALTER TABLE llx_inventory ADD COLUMN datev datetime DEFAULT NULL;
+ALTER TABLE llx_inventory ADD INDEX idx_inventory_datev (datev);
