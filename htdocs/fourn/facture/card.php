@@ -746,38 +746,6 @@ if (empty($reshook))
 					{
 						$error++;
 					}
-
-					if (! $error)
-					{
-						// If some invoice's lines already known
-						for ($i = 1 ; $i < 9 ; $i++)
-						{
-							$label = $_POST['label'.$i];
-							$amountht  = price2num($_POST['amount'.$i]);
-							$amountttc = price2num($_POST['amountttc'.$i]);
-							$tauxtva   = price2num($_POST['tauxtva'.$i]);
-							$qty = $_POST['qty'.$i];
-							$fk_product = $_POST['fk_product'.$i];
-							if ($label)
-							{
-								if ($amountht)
-								{
-									$price_base='HT'; $amount=$amountht;
-								}
-								else
-								{
-									$price_base='TTC'; $amount=$amountttc;
-								}
-								$atleastoneline=1;
-
-								$product=new Product($db);
-								$product->fetch($_POST['idprod'.$i]);
-
-								$ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base, $_POST['rang'.$i], 1);
-								if ($ret < 0) $error++;
-							}
-						}
-					}
 				}
 			}
 		}
@@ -818,7 +786,7 @@ if (empty($reshook))
 			$object->fetch($id);
 			$object->fetch_thirdparty();
 
-			$tva_tx = GETPOST('tva_tx');
+	        $tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
 			if (GETPOST('price_ht') != '')
 			{
@@ -849,9 +817,17 @@ if (empty($reshook))
 			$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 			$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
-			$localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-			$localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
-			$remise_percent=GETPOST('remise_percent');
+		    // Define info_bits
+		    $info_bits = 0;
+		    if (preg_match('/\*/', $tva_tx))
+		    	$info_bits |= 0x01;
+
+		    // Define vat_rate
+		    $tva_tx = str_replace('*', '', $tva_tx);
+	        $localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
+	        $localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
+
+	        $remise_percent=GETPOST('remise_percent');
 			$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 			// Extrafields Lines
@@ -865,10 +841,10 @@ if (empty($reshook))
 				}
 			}
 
-			$result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
-			if ($result >= 0)
-			{
-				unset($_POST['label']);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
+	        if ($result >= 0)
+	        {
+	            unset($_POST['label']);
 				unset($_POST['date_starthour']);
 				unset($_POST['date_startmin']);
 				unset($_POST['date_startsec']);

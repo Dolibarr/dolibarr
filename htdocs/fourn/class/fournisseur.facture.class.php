@@ -1508,7 +1508,7 @@ class FactureFournisseur extends CommonInvoice
      * @param     	int			$id            		Id of line invoice
      * @param     	string		$desc         		Description of line
      * @param     	double		$pu          		Prix unitaire (HT ou TTC selon price_base_type)
-     * @param     	double		$vatrate       		VAT Rate
+     * @param     	double		$vatrate       		VAT Rate (Can be '8.5', '8.5 (ABC)')
      * @param		double		$txlocaltax1		LocalTax1 Rate
      * @param		double		$txlocaltax2		LocalTax2 Rate
      * @param     	double		$qty           		Quantity
