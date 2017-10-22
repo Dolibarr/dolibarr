@@ -1162,7 +1162,7 @@ if (empty($reshook))
 
 
 	// Set invoice to draft status
-	elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_edit' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->fetch($id);
 
@@ -1172,10 +1172,36 @@ if (empty($reshook))
 		// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 		//$ventilExportCompta = $object->getVentilExportCompta();
 
-		// On verifie si aucun paiement n'a ete effectue
-		if ($resteapayer == $object->total_ttc	&& $object->paye == 0 && $ventilExportCompta == 0)
-		{
-			$object->set_draft($user);
+	    // On verifie si aucun paiement n'a ete effectue
+	    if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0)
+	    {
+            $idwarehouse = GETPOST('idwarehouse');
+
+            $object->fetch_thirdparty();
+
+            $qualified_for_stock_change=0;
+            if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+            {
+                $qualified_for_stock_change=$object->hasProductsOrServices(2);
+            }
+            else
+            {
+                $qualified_for_stock_change=$object->hasProductsOrServices(1);
+            }
+
+            // Check parameters
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+            {
+                $langs->load("stocks");
+                if (! $idwarehouse || $idwarehouse == -1)
+                {
+                    $error++;
+                    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+                    $action='';
+                }
+            }
+
+            $object->set_draft($user, $idwarehouse);
 
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1978,19 +2004,62 @@ else
 				$qualified_for_stock_change=$object->hasProductsOrServices(1);
 			}
 
-			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
-			{
-				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-				$formproduct=new FormProduct($db);
-				$formquestion=array(
-				//'text' => $langs->trans("ConfirmClone"),
-				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
-				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
-			}
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+            {
+                $langs->load("stocks");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+                $formproduct=new FormProduct($db);
+                $warehouse = new Entrepot($db);
+                $warehouse_array = $warehouse->list_array();
+                if (count($warehouse_array) == 1) {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+                    $value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+                } else {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+                    $value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+                }
+                $formquestion = array(
+                    array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value)
+                );
+            }
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1);
+
+        }
+
+        // Confirmation edit (back to draft)
+        if ($action == 'edit')
+        {
+            $formquestion = array();
+
+            $qualified_for_stock_change = 0;
+            if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+            {
+                $qualified_for_stock_change = $object->hasProductsOrServices(2);
+            }
+            else
+            {
+                $qualified_for_stock_change = $object->hasProductsOrServices(1);
+            }
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+            {
+                $langs->load("stocks");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+                $formproduct = new FormProduct($db);
+                $warehouse = new Entrepot($db);
+                $warehouse_array = $warehouse->list_array();
+                if (count($warehouse_array) == 1) {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+                    $value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+                } else {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+                    $value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+                }
+                $formquestion = array(
+                    array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value)
+                );
+            }
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateBill'), $langs->trans('ConfirmUnvalidateBill', $object->ref), 'confirm_edit', $formquestion, 1, 1);
 
 		}
 
@@ -2674,8 +2743,8 @@ else
 			if (empty($reshook))
 			{
 
-				// Modify a validated invoice with no payments
-				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			    // Modify a validated invoice with no payments
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a></div>';
 				}
@@ -2707,17 +2776,17 @@ else
 					else print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('SendByMail').'</a></div>';
 				}
 
-				// Make payments
-				if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
-				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account>0?'&amp;accountid='.$object->fk_account:'').'">'.$langs->trans('DoPayment').'</a></div>';	// must use facid because id is for payment id not invoice
-				}
+	            // Make payments
+	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account>0?'&amp;accountid='.$object->fk_account:'').'">'.$langs->trans('DoPayment').'</a></div>';	// must use facid because id is for payment id not invoice
+	            }
 
-				// Classify paid
-				if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
-				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
-					print '>'.$langs->trans('ClassifyPaid').'</a></div>';
+	            // Classify paid
+	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
+	                print '>'.$langs->trans('ClassifyPaid').'</a></div>';
 
 					//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 				}
@@ -2748,24 +2817,24 @@ else
 					}
 				}
 
-				// Validate
-				if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
-				{
-					if (count($object->lines))
-					{
-						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-					   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
-						{
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
-							print '>'.$langs->trans('Validate').'</a></div>';
-						}
-						else
-						{
-							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
-							print '>'.$langs->trans('Validate').'</a></div>';
-						}
-					}
-				}
+	            // Validate
+	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
+	            {
+	                if (count($object->lines))
+	                {
+				        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+				       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+	                    {
+	                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
+	                        print '>'.$langs->trans('Validate').'</a></div>';
+	                    }
+	                    else
+	                    {
+	                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+	                        print '>'.$langs->trans('Validate').'</a></div>';
+	                    }
+	                }
+	            }
 
 				// Create event
 				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
@@ -2788,19 +2857,19 @@ else
 					}
 				}
 
-				// Delete
-				if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
-				{
-					if ($object->getSommePaiement()) {
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
-					} else {
-						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
-					}
-				}
-				print '</div>';
+	            // Delete
+	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->supprimer)
+	            {
+                    if ($object->getSommePaiement()) {
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+                    } else {
+    	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
+                    }
+	            }
+	            print '</div>';
 
-				if ($action != 'edit')
-				{
+	            if ($action != 'confirm_edit')
+	            {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 
 					/*

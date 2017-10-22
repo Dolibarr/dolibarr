@@ -1311,8 +1311,9 @@ class FactureFournisseur extends CommonInvoice
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
-                        // We increase stock for product
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        $mouvP->origin = &$this;
+						// We increase stock for product
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));
                     }
                 }
             }
