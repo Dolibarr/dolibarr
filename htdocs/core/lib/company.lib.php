@@ -145,22 +145,25 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	// Tab to accountancy
-	if (! empty($conf->accounting->enabled) && $object->client>0)
+	if (! empty($conf->global->ACCOUNTING_ENABLE_LETTERING))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("TabAccountingCustomer");
-		$head[$h][2] = 'accounting';
-		$h++;
-	}
+		// Tab to accountancy
+		if (! empty($conf->accounting->enabled) && $object->client>0)
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabAccountingCustomer");
+			$head[$h][2] = 'accounting';
+			$h++;
+		}
 
-	// Tab to accountancy
-	if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("TabAccountingSupplier");
-		$head[$h][2] = 'accounting_supplier';
-		$h++;
+		// Tab to accountancy
+		if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabAccountingSupplier");
+			$head[$h][2] = 'accounting_supplier';
+			$h++;
+		}
 	}
 
 	// Related items
