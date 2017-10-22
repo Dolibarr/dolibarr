@@ -157,6 +157,7 @@ ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
 ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
