@@ -387,7 +387,7 @@ if ($resql)
 }
 else dol_print_error($db);
 
-$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
+$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.email, s.phone, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
@@ -1024,6 +1024,7 @@ while ($i < min($num, $limit))
 
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
+	$companystatic->logo=$obj->logo;
 	$companystatic->name_alias=$obj->name_alias;
 	$companystatic->canvas=$obj->canvas;
 	$companystatic->client=$obj->client;
