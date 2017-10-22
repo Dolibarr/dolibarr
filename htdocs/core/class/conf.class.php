@@ -101,6 +101,7 @@ class Conf
 		$this->livraison_bon		= new stdClass();
 		$this->fournisseur		= new stdClass();
 		$this->product			= new stdClass();
+		$this->inventory		= new stdClass();
 		$this->service			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->actions			= new stdClass();
