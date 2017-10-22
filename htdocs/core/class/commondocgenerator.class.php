@@ -514,8 +514,8 @@ abstract class CommonDocGenerator
 		    // Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
-		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long')),
-		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'))
+		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
+		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'));
 		}
 
 		// Retrieve extrafields
