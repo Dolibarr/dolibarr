@@ -1574,7 +1574,7 @@ else
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->accountancy_code_sell);
+				$accountingaccount->fetch('',$object->accountancy_code_sell,1);
 
 				print $accountingaccount->getNomUrl(0,1,1,'',1);
             } else {
@@ -1589,7 +1589,7 @@ else
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount2 = new AccountingAccount($db);
-				$accountingaccount2->fetch('',$object->accountancy_code_buy);
+				$accountingaccount2->fetch('',$object->accountancy_code_buy,1);
 
 				print $accountingaccount2->getNomUrl(0,1,1,'',1);
             } else {
