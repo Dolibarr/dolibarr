@@ -245,11 +245,11 @@ if ($id > 0)
 			// Display array
 			foreach($TData as $data) {
 				
-				$html_id = '';
-				if (!empty($data['fk_facture'])) $html_id = 'facid-'.$data['fk_facture'];
-				elseif (!empty($data['fk_paiement'])) $html_id = 'payid-'.$data['fk_paiement'];
+				$html_class = '';
+				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
 				
-				print '<tr id="'.$html_id.'" class="oddeven">';
+				print '<tr class="oddeven '.$html_class.'">';
 	
 				print "<td align=\"center\">".dol_print_date($data['date'],'day')."</td>\n";
 				print '<td>'.$data['link']."</td>\n";
