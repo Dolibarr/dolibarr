@@ -19,6 +19,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
+
 /**
  * API class for invoices
  *
@@ -70,6 +71,25 @@ class Invoices extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'Invoice not found');
         }
+
+	// Get payment details
+	$this->invoice->totalpaye = $this->invoice->getSommePaiement();
+        $this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
+	$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
+        $this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
+
+	// get available discounts
+	$soc = new Societe($this->db);
+	if ($this->invoice->socid > 0)
+	    $res = $soc->fetch($this->invoice->socid);
+	if($res) {
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
+		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
+		$this->invoice->absolute_discount = price2num($absolute_discount, 'MT');
+		$this->invoice->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+	}
 
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -421,7 +441,7 @@ class Invoices extends DolibarrApi
      * @param int   $id             Id of invoice
      * @param array $request_data   InvoiceLine data
      *
-     * @url     POST {id}/lines
+     * @url     POST {id}/addline
      *
      * @return int
      */
