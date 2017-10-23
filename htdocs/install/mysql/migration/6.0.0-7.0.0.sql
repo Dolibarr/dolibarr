@@ -436,5 +436,16 @@ create table llx_c_email_senderprofile
 ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(entity, label, email);
 
 
+-- Description of chart of account CL CL-PYME
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (67, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
+
+UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-ABREGE';
+UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-BASE';
+UPDATE llx_accounting_system SET fk_country =  2 WHERE pcg_version = 'PCMN-BASE';
+UPDATE llx_accounting_system SET fk_country =  4 WHERE pcg_version = 'PCG08-PYME';
+UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
+UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME';
+
+
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
