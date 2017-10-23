@@ -322,7 +322,6 @@ if ($resql) {
 		}
 		else print $row[1];
 		print '</td>';
-		print '<td align="left">' . $row[1] . '</td>';
 		for($i = 2; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
 		}
