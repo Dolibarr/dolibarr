@@ -67,8 +67,8 @@ $arrayfields=array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
     'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>0),
-    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
+    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
+    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
