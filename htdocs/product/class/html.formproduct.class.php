@@ -34,6 +34,7 @@ class FormProduct
 
 	// Cache arrays
 	var $cache_warehouses=array();
+	var $cache_lot=array();
 
 
 	/**
@@ -329,5 +330,126 @@ class FormProduct
 		return $return;
 	}
 
-}
+	/**
+	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
+	 *
+	 *  @param	int		$selected		Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param  string	$htmlname		Name of html select html
+	 *  @param  string	$filterstatus	lot status filter, following comma separated filter options can be used
+	 *  @param  int		$empty			1=Can be empty, 0 if not
+	 * 	@param	int		$disabled		1=Select is disabled
+	 * 	@param	int		$fk_product		show lot numbers of product with id fk_product. All if 0.
+	 * 	@param	int		$fk_entrepot	show lot numbers in warehouse with id fk_entrepot. All if 0.
+	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
+	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
+	 *  @param	array	$events			Events to add to select2
+	 *  @param  string  $morecss		Add more css classes to HTML select
+	 *
+	 * 	@return	string					HTML select
+	 */
+	function selectLotStock($selected='',$htmlname='batch_id',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$fk_entrepot=0,$empty_label='', $forcecombo=0, $events=array(), $morecss='minwidth200')
+	{
+		global $langs;
 
+		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+
+		$out='';
+
+		$nboflot = $this->loadLotStock($fk_product, $fk_entrepot);
+
+		if ($conf->use_javascript_ajax && ! $forcecombo)
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox($htmlname, $events);
+			$out.= $comboenhancement;
+		}
+
+		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
+		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
+		foreach($this->cache_lot as $id => $arraytypes)
+		{
+			$out.='<option value="'.$id.'"';
+			if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out.=' selected';
+			$out.='>';
+			$out.=$arraytypes['entrepot_label'].' - ';
+			$out.=$arraytypes['batch'];
+			$out.=' ('.$langs->trans("Stock").':'.$arraytypes['qty'].')';
+			$out.='</option>';
+		}
+		$out.='</select>';
+		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.(($selected>0)?$selected:'').'">';
+
+		return $out;
+	}
+
+	/**
+	 * Load in cache array list of lot available in stock
+	 * If fk_product is not 0, we do not use cache
+	 *
+	 * @param	int		$fk_product		    load lot of id fk_product, all if 0. 
+	 * @param	string	$fk_entrepot	    load lot in fk_entrepot all if 0.
+	 *
+	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
+	 */
+	function loadLotStock($fk_product = 0, $fk_entrepot = 0)
+	{
+		global $conf, $langs;
+
+		if (empty($fk_product) && empty($fk_product) && count($this->cache_lot))
+		{
+			return count($this->cache_lot); // Cache already loaded and we do not want a list with information specific to a product or warehouse
+		}
+		else 
+		{
+			// clear cache;
+			$this->cache_lot = array();
+		}
+
+		$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+		if (!empty($fk_product) || !empty($fk_entrepot))
+		{
+			$sql.= " WHERE";
+			if (!empty($fk_product))
+			{
+				$sql.= " ps.fk_product = '".$fk_product."'";
+				if (!empty($fk_entrepot))
+				{
+					$sql.= " AND";
+				}
+			}
+			if (!empty($fk_entrepot))
+			{
+				$sql.= " ps.fk_entrepot = '".$fk_entrepot."'";
+			}
+		}
+		$sql.= " ORDER BY e.label, pb.batch";
+
+		dol_syslog(get_class($this).'::loadLotStock', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$this->cache_lot[$obj->rowid]['id'] =$obj->rowid;
+				$this->cache_lot[$obj->rowid]['batch']=$obj->batch;
+				$this->cache_lot[$obj->rowid]['entrepot_id']=$obj->fk_entrepot;
+				$this->cache_lot[$obj->rowid]['entrepot_label']=$obj->label;
+				$this->cache_lot[$obj->rowid]['qty'] = $obj->qty;
+				$i++;
+			}
+
+			return $num;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+}
