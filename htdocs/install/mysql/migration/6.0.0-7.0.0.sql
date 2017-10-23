@@ -365,6 +365,8 @@ UPDATE llx_const set name = 'ONLINE_PAYMENT_CSS_URL'     where name = 'PAYPAL_CS
 UPDATE llx_const set name = 'ONLINE_PAYMENT_NEWFORMTEXT' where name = 'PAYPAL_NEWFORMTEXT';
 UPDATE llx_const set name = 'ONLINE_PAYMENT_LOGO'        where name = 'PAYPAL_LOGO';
 
+ALTER TABLE llx_accounting_system ADD COLUMN fk_country integer;
+
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'PROD';
 UPDATE llx_accounting_account SET pcg_type = 'EXPENSE' where pcg_type = 'CHARGE';
 UPDATE llx_accounting_account SET pcg_type = 'INCOME'  where pcg_type = 'VENTAS_E_INGRESOS';
