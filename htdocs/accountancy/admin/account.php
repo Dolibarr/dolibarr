@@ -105,14 +105,32 @@ if (empty($reshook))
 		$search_array_options=array();
     }
 
-    if (GETPOST('change_chart'))
+    if (GETPOST('change_chart','alpha'))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-        if (! empty($chartofaccounts)) {
+        if ($chartofaccounts > 0)
+        {
+			// Get language code for this $chartofaccounts
+			$sql ='SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
+			$sql.=' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				$country_code = $obj->code;
+			}
+			else dol_print_error($db);
+
+			// Try to load sql file
+			if ($country_code)
+			{
+				$sqlfile = DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_accounting_account_'.strtolower($country_code).'.sql';
+				$result = run_sql($sqlfile, 1, 0, 1);
+			}
 
             if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-                $error ++;
+                $error++;
             }
         } else {
             $error ++;
