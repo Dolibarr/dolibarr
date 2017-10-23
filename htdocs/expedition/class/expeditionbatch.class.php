@@ -177,15 +177,18 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	static function fetchAll($db,$id_line_expdet)
 	{
-		$sql="SELECT rowid,";
-		$sql.= "fk_expeditiondet";
-		$sql.= ", sellby";
-		$sql.= ", eatby";
-		$sql.= ", batch";
-		$sql.= ", qty";
-		$sql.= ", fk_origin_stock";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element;
-		$sql.= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
+		$sql="SELECT t.rowid";
+		$sql.= ", t.fk_expeditiondet";
+		$sql.= ", t.sellby";
+		$sql.= ", t.eatby";
+		$sql.= ", t.batch";
+		$sql.= ", t.qty";
+		$sql.= ", t.fk_origin_stock";
+		$sql.= ", ps.fk_entrepot";
+		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch pb ON t.fk_origin_stock = pb.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock ps ON pb.fk_product_stock = ps.rowid";
+		$sql.= " WHERE t.fk_expeditiondet=".(int) $id_line_expdet;
 
 		dol_syslog(__METHOD__ ."", LOG_DEBUG);
 		$resql=$db->query($sql);
@@ -207,6 +210,7 @@ class ExpeditionLineBatch extends CommonObject
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;
 				$tmp->fk_expeditiondet = $obj->fk_expeditiondet;
 				$tmp->dluo_qty = $obj->qty;
+				$tmp->entrepot_id = $obj->fk_entrepot;
 
 				$ret[]=$tmp;
 				$i++;
