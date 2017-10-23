@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,25 +216,29 @@ if ($resql)
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts") . " : ";
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
-    $sql = "SELECT rowid, pcg_version, label, active";
-    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
-    $sql .= " WHERE active = 1";
-    dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
+    $sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
+    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
+    $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country = c.rowid";
+    $sql .= " WHERE a.active = 1";
+    dol_syslog('accountancy/admin/account.php $sql='.$sql);
+    print $sql;
     $resqlchart = $db->query($sql);
     if ($resqlchart) {
         $numbis = $db->num_rows($resqlchart);
         $i = 0;
-        while ( $i < $numbis ) {
-            $row = $db->fetch_row($resqlchart);
+        while ($i < $numbis) {
+            $obj = $db->fetch_object($resqlchart);
 
-            print '<option value="' . $row[0] . '"';
-            print $pcgver == $row[0] ? ' selected' : '';
-            print '>' . $row[1] . ' - ' . $row[2] . '</option>';
+            print '<option value="' . $obj->rowid . '"';
+            print ($pcgver == $obj->rowid) ? ' selected' : '';
+            print '>' . $obj->pcg_version . ' - ' . $obj->label . ' - (' . $obj->country_code . ')</option>';
 
-            $i ++;
+            $i++;
         }
     }
+    else dol_print_error($db);
     print "</select>";
+    print ajax_combobox("chartofaccounts");
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
     print '<br>';
 	print '<br>';
