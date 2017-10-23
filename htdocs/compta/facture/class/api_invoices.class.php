@@ -19,7 +19,6 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-
 /**
  * API class for invoices
  *
