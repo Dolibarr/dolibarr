@@ -1336,6 +1336,7 @@ class Expedition extends CommonObject
 				$detail_entrepot              = new stdClass;
 				$detail_entrepot->entrepot_id = $obj->fk_entrepot;
 				$detail_entrepot->qty_shipped = $obj->qty_shipped;
+				$detail_entrepot->line_id     = $obj->line_id;
 				$line->details_entrepot[]     = $detail_entrepot;
 
 				$line->line_id          = $obj->line_id;
@@ -2462,6 +2463,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$remainingQty = 0;
 		$batch = null;
 		$batch_id = null;
+		$expedition_batch_id = null;
 		if (is_array($this->detail_batch)) 
 		{
 			if (count($this->detail_batch) > 1) 
@@ -2474,19 +2476,23 @@ class ExpeditionLigne extends CommonObjectLine
 			{
 				$batch = $this->detail_batch[0]->batch;
 				$batch_id = $this->detail_batch[0]->fk_origin_stock;
+				$expedition_batch_id = $this->detail_batch[0]->id;
 			}
 		}
 		else
 		{
 			$batch = $this->detail_batch->batch;
 			$batch_id = $this->detail_batch->fk_origin_stock;
+			$expedition_batch_id = $this->detail_batch->id;
 		}
 
 		// update lot
 
 		if (! empty($batch) && $conf->productbatch->enabled)
 		{
-			if (empty($batch_id) || empty($this->fk_product)) {
+			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");			
+			
+			if (empty($batch_id) || empty($expedition_batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
 				$this->errors[]='ErrorMandatoryParametersNotProvided';
 				$error++;
@@ -2503,7 +2509,7 @@ class ExpeditionLigne extends CommonObjectLine
 			{
 				foreach ($lotArray as $lot) 
 				{
-					if ($batch != $lot->batch) 
+					if ($expedition_batch_id != $lot->id) 
 					{
 						$remainingQty += $lot->dluo_qty;
 					}
@@ -2524,7 +2530,7 @@ class ExpeditionLigne extends CommonObjectLine
 					// delete lot expedition line
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
 					$sql.= " WHERE fk_expeditiondet = ".$this->id;
-					$sql.= " AND batch = '".$this->db->escape($batch)."'";
+					$sql.= " AND rowid = ".$expedition_batch_id;
 		
 					if (!$this->db->query($sql))
 					{
