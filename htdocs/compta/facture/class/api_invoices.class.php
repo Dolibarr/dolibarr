@@ -442,7 +442,7 @@ class Invoices extends DolibarrApi
      * @param int   $id             Id of invoice
      * @param array $request_data   InvoiceLine data
      *
-     * @url     POST {id}/addline
+     * @url     POST {id}/lines
      *
      * @return int
      */
