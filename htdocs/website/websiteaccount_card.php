@@ -65,6 +65,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$thirdpartyid = GETPOST('thirdpartyid', 'int');
 
 // Initialize technical objects
 $object=new WebsiteAccount($db);
@@ -166,6 +167,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="thirdpartyid" value="'.$thirdpartyid.'">';
 
 	dol_fiche_head(array(), '');
 
