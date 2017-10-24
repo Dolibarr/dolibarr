@@ -54,4 +54,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account CL CL-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (67, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
 
+-- Description of chart of account LU PCN-LUXEMBURG
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (140,'PCN-LUXEMBURG', 'Plan comptable normalisé Luxembourgeois', 1);
 
