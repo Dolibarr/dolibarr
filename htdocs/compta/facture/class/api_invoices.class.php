@@ -680,7 +680,7 @@ class Invoices extends DolibarrApi
      */
     function getPayments($id) {
 
-        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+        if(! DolibarrApiAccess::$user->rights->facture->lire) {
                 throw new RestException(401);
         }
         if(empty($id)) {
