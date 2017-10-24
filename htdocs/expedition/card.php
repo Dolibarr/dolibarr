@@ -1220,7 +1220,7 @@ if ($action == 'create')
 									}
 									else
 									{
-										print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+										print $dbatch->batch.' ('.$dbatch->qty.')';
 									}
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
