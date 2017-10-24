@@ -77,7 +77,8 @@ class Invoices extends DolibarrApi
 	$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
         $this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
-	// get available discounts
+	// get available discounts of customer
+	/* TODO Move this into thirdparty API
 	$soc = new Societe($this->db);
 	if ($this->invoice->socid > 0)
 	    $res = $soc->fetch($this->invoice->socid);
@@ -89,6 +90,7 @@ class Invoices extends DolibarrApi
 		$this->invoice->absolute_discount = price2num($absolute_discount, 'MT');
 		$this->invoice->absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	}
+	*/
 
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
