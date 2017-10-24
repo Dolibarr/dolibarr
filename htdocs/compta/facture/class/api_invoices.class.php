@@ -680,7 +680,7 @@ class Invoices extends DolibarrApi
      */
     function getPayments($id) {
 
-        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+        if(! DolibarrApiAccess::$user->rights->facture->lire) {
                 throw new RestException(401);
         }
         if(empty($id)) {
@@ -704,7 +704,71 @@ class Invoices extends DolibarrApi
         return $result;
     }
 
+    /**
+     * Get a list of available assets (down-payments, assets)
+     *
+     * @param int   $id             Id of the invoice
+     *
+     * @url     GET {id}/getavailableassets
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getavailableassets($id) {
 
+        if(! DolibarrApiAccess::$user->rights->facture->lire) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Invoice ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        $result = $this->invoice->list_qualified_avoir_invoices($this->invoice->socid);
+        if( $result < 0) {
+                throw new RestException(405, $this->invoice->error);
+        }
+
+        $return = array();
+        foreach ($result as $invoiceID=>$line) {
+
+		if($invoiceID == $id) {  	// ignore current invoice
+			continue;
+		}
+
+		$result = $this->invoice->fetch($invoiceID);
+        	if( ! $result ) {
+                	throw new RestException(404, 'Invoice '.$invoiceID.' not found');
+        	}
+
+                $result = $this->invoice->getListOfPayments();
+                if( $result < 0) {
+                	throw new RestException(405, $this->invoice->error);
+        	}
+
+		if(count($result) == 0) {	// ignore unpaid invoices
+			continue;
+		}
+
+		// format results
+                $line["id"] = $invoiceID;
+		$line["payments"] = $result;
+                $return[] = $line; 
+        }
+            
+        return $return;
+    }
 
     /**
      * Clean sensible object datas
