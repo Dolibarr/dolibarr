@@ -48,10 +48,11 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account ES PCG08-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 4, 'PCG08-PYME', 'The PYME accountancy spanish plan', 1);
 
+-- Description of chart of account TN PCT
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (10,'PCT', 'The Tunisia plan', 1);
+
 -- Description of chart of account DK DK-STD
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (80, 'DK-STD', 'Standardkontoplan fra SKAT', 1);
 
 -- Description of chart of account CL CL-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (67, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
-
-
