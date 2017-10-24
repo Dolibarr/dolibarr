@@ -705,7 +705,7 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Get a list of available assets (down-payments, assets)
+     * Get a list of available assets (down-payments, avoirs)
      *
      * @param int   $id             Id of the invoice
      *
