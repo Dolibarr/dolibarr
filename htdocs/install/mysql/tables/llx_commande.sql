@@ -42,15 +42,15 @@ create table llx_commande
   fk_user_cloture		integer,						-- user closing
   source				smallint,						-- not used, except by setting this to 42 for orders coming for replenishment and 0 in other case ?
   fk_statut				smallint  default 0,
-  amount_ht				real      default 0,
+  amount_ht				numeric(24,8) default 0,
   remise_percent		real      default 0,
   remise_absolue		real      default 0,
   remise				real      default 0,
-  tva					double(24,8)      default 0,
-  localtax1				double(24,8)      default 0,	-- total localtax1 
-  localtax2				double(24,8)      default 0,	-- total localtax2
-  total_ht				double(24,8)      default 0,
-  total_ttc				double(24,8)      default 0,
+  tva					numeric(24,8)     default 0,
+  localtax1				numeric(24,8)     default 0,	-- total localtax1 
+  localtax2				numeric(24,8)     default 0,	-- total localtax2
+  total_ht				numeric(24,8)     default 0,
+  total_ttc				numeric(24,8)     default 0,
   note_private			text,
   note_public			text,
   model_pdf				varchar(255),
@@ -74,9 +74,9 @@ create table llx_commande
   extraparams			varchar(255),					-- for stock other parameters with json format
   
   fk_multicurrency		integer,
-  multicurrency_code			varchar(255),
-  multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_total_ht		double(24,8) DEFAULT 0,
-  multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_code		varchar(255),
+  multicurrency_tx			numeric(24,8) DEFAULT 1,
+  multicurrency_total_ht	numeric(24,8) DEFAULT 0,
+  multicurrency_total_tva	numeric(24,8) DEFAULT 0,
+  multicurrency_total_ttc	numeric(24,8) DEFAULT 0
 )ENGINE=innodb;

@@ -24,7 +24,7 @@ create table llx_bank
   tms             timestamp,
   datev           date,                      -- date de valeur
   dateo           date,                      -- date operation
-  amount          double(24,8) NOT NULL default 0,
+  amount          numeric(24,8) NOT NULL default 0,
   label           varchar(255),
   fk_account      integer,
   fk_user_author  integer,

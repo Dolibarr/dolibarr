@@ -39,18 +39,18 @@ create table llx_commandedet
   remise						real         DEFAULT 0,          -- montant de la remise
   fk_remise_except				integer      NULL,               -- Lien vers table des remises fixes
   price							real,                            -- prix final
-  subprice						double(24,8) DEFAULT 0,          -- P.U. HT (exemple 100)
-  total_ht						double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite et incluant remise ligne et globale
-  total_tva						double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
-  total_localtax1				double(24,8) DEFAULT 0,          -- Total LocalTax1 
-  total_localtax2				double(24,8) DEFAULT 0,          -- Total LocalTax2
-  total_ttc						double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
+  subprice						numeric(24,8) DEFAULT 0,         -- P.U. HT (exemple 100)
+  total_ht						numeric(24,8) DEFAULT 0,         -- Total HT de la ligne toute quantite et incluant remise ligne et globale
+  total_tva						numeric(24,8) DEFAULT 0,         -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
+  total_localtax1				numeric(24,8) DEFAULT 0,         -- Total LocalTax1 
+  total_localtax2				numeric(24,8) DEFAULT 0,         -- Total LocalTax2
+  total_ttc						numeric(24,8) DEFAULT 0,         -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type					integer      DEFAULT 0,
   date_start					datetime     DEFAULT NULL,       -- date debut si service
   date_end						datetime     DEFAULT NULL,       -- date fin si service
   info_bits						integer      DEFAULT 0,          -- TVA NPR ou non
 
-  buy_price_ht					double(24,8) DEFAULT 0,          -- buying price
+  buy_price_ht					numeric(24,8) DEFAULT 0,         -- buying price
   fk_product_fournisseur_price	integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
   special_code					integer      DEFAULT 0,      -- code pour les lignes speciales
@@ -60,12 +60,12 @@ create table llx_commandedet
   
   fk_commandefourndet			integer DEFAULT NULL,       -- link to detail line of commande fourn (resplenish)
   
-  fk_multicurrency		integer,
+  fk_multicurrency				integer,
   multicurrency_code			varchar(255),
-  multicurrency_subprice		double(24,8) DEFAULT 0,
-  multicurrency_total_ht		double(24,8) DEFAULT 0,
-  multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_subprice		numeric(24,8) DEFAULT 0,
+  multicurrency_total_ht		numeric(24,8) DEFAULT 0,
+  multicurrency_total_tva		numeric(24,8) DEFAULT 0,
+  multicurrency_total_ttc		numeric(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 
