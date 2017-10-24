@@ -169,6 +169,10 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime DE
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
 
 
+ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
+ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
+
+
 CREATE TABLE llx_websiteaccount(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	login             varchar(64) NOT NULL, 
