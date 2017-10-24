@@ -230,7 +230,7 @@ dol_fiche_end();
 $morehtmlcenter = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create' . $param . '">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&userid='.$object->id.'">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
 		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
@@ -378,7 +378,6 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($objectwebsiteaccount->fields as $key => $val)
 {
-	if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -412,16 +411,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields search
-foreach($objectwebsiteaccount->fields as $key => $val)
-{
-	if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
-}
 // Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();

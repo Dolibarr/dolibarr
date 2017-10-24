@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/modulebuilder/template/myobject_card.php
- *		\ingroup    mymodule
- *		\brief      Page to create/edit/view myobject
+ *   	\file       htdocs/Website/websiteaccount_card.php
+ *		\ingroup    website
+ *		\brief      Page to create/edit/view websiteaccount
  */
 
 //if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
@@ -53,11 +53,11 @@ if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/myobject.lib.php');
+dol_include_once('/website/class/websiteaccount.class.php');
+//dol_include_once('/website/lib/websiteaccount.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule@mymodule","other"));
+$langs->loadLangs(array("website","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -67,12 +67,12 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object=new MyObject($db);
+$object=new WebsiteAccount($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectcard'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Initialize array of search criterias
@@ -88,7 +88,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 // Security check - Protection if external user
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'mymodule', $id);
+//$result = restrictedArea($user, 'website', $id);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -112,9 +112,9 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->mymodule->create;
-	$permissiontodelete = $user->rights->mymodule->delete;
-	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
+	$permissiontoadd = $user->rights->website->write;
+	$permissiontodelete = $user->rights->website->delete;
+	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php',1);
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -125,11 +125,9 @@ if (empty($reshook))
 	// Actions to send emails
 	$trigger_name='MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
+	$trackid='websiteaccount'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
-
-
 
 
 /*
@@ -141,7 +139,7 @@ if (empty($reshook))
 $form=new Form($db);
 $formfile=new FormFile($db);
 
-llxHeader('','MyObject','');
+llxHeader('','WebsiteAccount','');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -162,7 +160,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("MyObject")));
+	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("WebsiteAccount")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -172,6 +170,7 @@ if ($action == 'create')
 	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
+
 	foreach($object->fields as $key => $val)
 	{
 	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
@@ -226,7 +225,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("MyObject"));
+	print load_fiche_titre($langs->trans("WebsiteAccount"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -287,14 +286,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = myobjectPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	$head = websiteaccountPrepareHead($object);
+	dol_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, 'websiteaccount@website');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirmation of action xxxx
@@ -324,13 +323,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/website/websiteaccount_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
@@ -338,7 +337,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->mymodule->creer)
+	    if ($user->rights->website->creer)
 	    {
 	        if ($action != 'classify')
 	        {
@@ -451,7 +450,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>'."\n";
 
-    		if ($user->rights->mymodule->write)
+    		if ($user->rights->website->write)
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
     		}
@@ -470,7 +469,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
     		*/
 
-    		if ($user->rights->mymodule->delete)
+    		if ($user->rights->website->delete)
     		{
     			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
     		}
@@ -491,15 +490,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // Documents
 	    $comref = dol_sanitizeFileName($object->ref);
 	    $relativepath = $comref . '/' . $comref . '.pdf';
-	    $filedir = $conf->mymodule->dir_output . '/' . $comref;
+	    $filedir = $conf->website->dir_output . '/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->mymodule->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('mymodule', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	    $genallowed = $user->rights->website->read;	// If you can read, you can build the PDF to read content
+	    $delallowed = $user->rights->website->create;	// If you can create/edit, you can remove a file on card
+	    print $formfile->showdocuments('website', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -510,16 +509,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1, '', $MAXEVENT);
+	    $somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);
 
 	    print '</div></div></div>';
 	}
 
 	// Presend form
-	$modelmail='myobject';
+	$modelmail='websiteaccount';
 	$defaulttopic='Information';
-	$diroutput = $conf->mymodule->dir_output;
-	$trackid = 'myobject'.$object->id;
+	$diroutput = $conf->website->dir_output;
+	$trackid = 'websiteaccount'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
