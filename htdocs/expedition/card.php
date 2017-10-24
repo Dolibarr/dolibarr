@@ -612,28 +612,30 @@ if (empty($reshook))
 		$num_prod = count($lines);
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
-			if (count($lines[$i]->details_entrepot) > 1) 
+			if ($lines[$i]->id == $line_id) 
 			{
-				// delete multi warehouse lines
-				foreach ($lines[$i]->details_entrepot as $details_entrepot) {
-					$line->id = GETPOST("lineid".$details_entrepot->line_id);
-					if (!error && $line->delete($user) < 0)
+				if (count($lines[$i]->details_entrepot) > 1) 
+				{
+					// delete multi warehouse lines
+					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
+						$line->id = $details_entrepot->line_id;
+						if (! $error && $line->delete($user) < 0)
+						{
+							$error++;
+						}
+					}
+				}
+				else 
+				{
+					// delete single warehouse line
+					$line->id = $line_id;
+					if (! $error && $line->delete($user) < 0)
 					{
 						$error++;
 					}
-					unset($_POST["lineid".$details_entrepot->line_id]);
 				}
 			}
-			else if ($lines[$i] == $line_id) 
-			{
-				// delete single warehouse line
-				$line->id = $line_id;
-				if (!error && $line->delete($user) < 0)
-				{
-					$error++;
-				}
-				unset($_POST["lineid"]);
-			}
+			unset($_POST["lineid"]);
 		}
 		
 		if(! $error) {
@@ -2223,7 +2225,6 @@ else if ($id || $ref)
 								$entrepot = new Entrepot($db);
 								$entrepot->fetch($detail_entrepot->entrepot_id);
 								$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
-								print '<input name="lineid'.$detail_entrepot->line_id.'" id="lineid'.$detail_entrepot->line_id.'" type="hidden" value="'.$detail_entrepot->line_id.'">';
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"),$detail);
