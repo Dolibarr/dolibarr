@@ -445,7 +445,7 @@ UPDATE llx_accounting_system SET fk_country =  2 WHERE pcg_version = 'PCMN-BASE'
 UPDATE llx_accounting_system SET fk_country =  4 WHERE pcg_version = 'PCG08-PYME';
 UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
 UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME';
-
+UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
 
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
