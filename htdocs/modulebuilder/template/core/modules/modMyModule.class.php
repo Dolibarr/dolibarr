@@ -253,7 +253,7 @@ class modMyModule extends DolibarrModules
 								'type'=>'left',			                // This is a Left menu entry
 								'titre'=>'List MyObject',
 								'mainmenu'=>'mymodule',
-								'leftmenu'=>'mymodule',
+								'leftmenu'=>'mymodule_myobject_list',
 								'url'=>'/mymodule/myobject_list.php',
 								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
@@ -265,7 +265,7 @@ class modMyModule extends DolibarrModules
 								'type'=>'left',			                // This is a Left menu entry
 								'titre'=>'New MyObject',
 								'mainmenu'=>'mymodule',
-								'leftmenu'=>'mymodule',
+								'leftmenu'=>'mymodule_myobject_new',
 								'url'=>'/mymodule/myobject_page.php?action=create',
 								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
