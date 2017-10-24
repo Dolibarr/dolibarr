@@ -2438,7 +2438,9 @@ class ExpeditionLigne extends CommonObjectLine
 	
 	/**
 	 *  Update a line in database
-	 *
+	 * 
+	 *	@param		User	$user			User that modify
+	 *	@param		int		$notrigger		1 = disable triggers
 	 *  @return		int					< 0 if KO, > 0 if OK
 	 */
 	function update($user = null, $notrigger = 0)
