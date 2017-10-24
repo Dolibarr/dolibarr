@@ -621,6 +621,7 @@ if (empty($reshook))
 					{
 						$error++;
 					}
+					unset($_POST["lineid".$details_entrepot->line_id]);
 				}
 			}
 			else if ($lines[$i] == $line_id) 
@@ -631,6 +632,7 @@ if (empty($reshook))
 				{
 					$error++;
 				}
+				unset($_POST["lineid"]);
 			}
 		}
 		
@@ -663,7 +665,16 @@ if (empty($reshook))
 			{
 				// line to update
 				$line = new ExpeditionLigne($db);
-
+				// Extrafields Lines
+				$extrafieldsline = new ExtraFields($db);
+				$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+				$line->array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+				// Unset extrafield POST Data
+				if (is_array($extralabelsline)) {
+					foreach ($extralabelsline as $key => $value) {
+						unset($_POST["options_" . $key]);
+					}
+				}
 				$line->fk_product = $lines[$i]->fk_product;
 				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
 				{
@@ -695,6 +706,8 @@ if (empty($reshook))
 								$error++;
 							}
 						}
+						unset($_POST[$batch]);
+						unset($_POST[$qty]);
 					}
 				}
 				else 
@@ -712,6 +725,8 @@ if (empty($reshook))
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
 						}
+						unset($_POST[$stockLocation]);
+						unset($_POST[$qty]);
 					}
 					else if (count($lines[$i]->details_entrepot) > 1)
 					{
@@ -732,6 +747,8 @@ if (empty($reshook))
 										$error++;
 									}
 								}
+								unset($_POST[$stockLocation]);
+								unset($_POST[$qty]);
 							}
 						}
 					}
@@ -739,16 +756,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Extrafields Lines
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-		// Unset extrafield POST Data
-		if (is_array($extralabelsline)) {
-			foreach ($extralabelsline as $key => $value) {
-				unset($_POST["options_" . $key]);
-			}
-		}
+		unset($_POST["lineid"]);
 
 		if (! $error) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -2296,7 +2304,7 @@ else if ($id || $ref)
 				$line = new ExpeditionLigne($db);
 				$line->fetch_optionals($lines[$i]->id,$extralabelslines);
 				print '<tr class="oddeven">';
-				if ($lines[$i]->id == $line_id)
+				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 				}
