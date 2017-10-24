@@ -48,6 +48,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	{
         if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
+		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
 		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW') {
 			$amounts=  (double) $object->total_ttc;
@@ -72,7 +74,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$b=new BlockedLog($this->db);
 		$b->action = $action;
 		$b->amounts= $amounts;
-		$b->setObjectData($object);
+		$b->setObjectData($object);		// Set field ref_object, fk_object, element, object_data
 
 		$res = $b->create($user);
 
