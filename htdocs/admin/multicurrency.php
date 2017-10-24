@@ -331,7 +331,7 @@ print '<input type="hidden" name="action" value="add_currency">';
 print '<td>'.$form->selectCurrency('', 'code').'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
-print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->trans('Rate').'" />&nbsp;';
+print '<input type="text" name="rate" value="" size="13" placeholder="'.$langs->trans('Rate').'" pattern="[0-9]+\.[0-9]+" title="float number"/>&nbsp;';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td></form></tr>';
 
@@ -355,7 +355,7 @@ foreach ($TCurrency as &$currency)
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
-	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;'.$currency->code.'&nbsp;';
+	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" pattern="[0-9]+\.[0-9]+" title="float number" />&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Delete").'">';
 	print '</form>';
