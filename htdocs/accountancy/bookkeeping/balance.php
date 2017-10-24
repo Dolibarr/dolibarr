@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016		Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2016		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016		Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,9 +125,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == AccountancyExport::$EXPORT_TYPE_CEGID) $sep = ";";     // For CEGID, we force separator.
 
-	$journal = 'bookkepping';
+	$journal = 'balance';
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
@@ -138,10 +137,11 @@ if ($action == 'export_csv') {
 
 	foreach ($object->lines as $line) {
 		print length_accountg($line->numero_compte) . $sep;
-		print $line->debit . $sep;
-		print $line->credit . $sep;
-		print $line->debit . $sep;
-		print $line->credit - $line->debit . $sep;
+		print $object->get_compte_desc($line->numero_compte) . $sep;
+		print price($line->debit) . $sep;
+		print price($line->credit) . $sep;
+		print price($line->debit) . $sep;
+		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
 }
