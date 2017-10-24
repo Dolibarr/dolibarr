@@ -83,6 +83,13 @@ class Thirdparties extends DolibarrApi
         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
+      $filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))";
+      $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+      $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+      $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+      $this->company->absolute_discount = price2num($absolute_discount, 'MT');
+      $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
 		  return $this->_cleanObjectDatas($this->company);
     }
 
