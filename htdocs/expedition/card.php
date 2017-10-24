@@ -173,9 +173,11 @@ if (empty($reshook))
 	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	        if (empty($reshook)) {
 	            $result = $object->insertExtraFields();
-	            if ($result < 0) {
-	                $error++;
-	            }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
 	        } else if ($reshook < 0)
 	            $error++;
 	    }
