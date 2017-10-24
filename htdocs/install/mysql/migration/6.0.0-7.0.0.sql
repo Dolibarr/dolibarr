@@ -444,6 +444,7 @@ UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-BASE
 UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG14-DEV';
 UPDATE llx_accounting_system SET fk_country =  2 WHERE pcg_version = 'PCMN-BASE';
 UPDATE llx_accounting_system SET fk_country =  4 WHERE pcg_version = 'PCG08-PYME';
+UPDATE llx_accounting_system SET fk_country = 10 WHERE pcg_version = 'PCT';
 UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
 UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME';
 UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
