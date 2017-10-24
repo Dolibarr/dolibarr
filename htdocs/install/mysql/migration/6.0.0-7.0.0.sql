@@ -441,6 +441,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-ABREGE';
 UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-BASE';
+UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG14-DEV';
 UPDATE llx_accounting_system SET fk_country =  2 WHERE pcg_version = 'PCMN-BASE';
 UPDATE llx_accounting_system SET fk_country =  4 WHERE pcg_version = 'PCG08-PYME';
 UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
