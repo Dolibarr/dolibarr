@@ -2654,7 +2654,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$titlealt         	Text on title and alt. If text is "TextA:TextB", use Text A on alt and Text B on title. Alt only if param notitle is set to 1.
+ *	@param      string		$titlealt         	Text on title tag for tooltip. Not used if param notitle is set to 1.
  *	@param      string		$picto       		Name of image file to show ('filenew', ...)
  *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
@@ -2664,12 +2664,13 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param		string		$alt				Force alt for bind peoplae
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='')
 {
-	global $conf;
+	global $conf, $langs;
 
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath)
@@ -2680,6 +2681,23 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	}
 	else
 	{
+		if ($picto == 'switch_off')
+		{
+			$enabledisablehtml='';
+			$enabledisablehtml.='<span class="fa fa-toggle-off valignmiddle" style="font-size: 2em; color: #999;" alt="'.dol_escape_htmltag($titlealt).'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
+			$enabledisablehtml.='</span>';
+			return $enabledisablehtml;
+		}
+		if ($picto == 'switch_on')
+		{
+			$enabledisablehtml='';
+			$enabledisablehtml.='<span class="fa fa-toggle-on valignmiddle" style="font-size: 2em; color: #227722;" alt="'.dol_escape_htmltag($titlealt).'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
+			$enabledisablehtml.='</span>';
+			return $enabledisablehtml;
+		}
+
 		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 		$url = DOL_URL_ROOT;
 		$theme = $conf->theme;
@@ -2716,11 +2734,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) return $fullpathpicto;
 	else
 	{
-		$tmparray=array(0=>$titlealt);
-		if (preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
-		$title=$tmparray[0];
-		$alt=empty($tmparray[1])?'':$tmparray[1];
-		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block valigntextbottom"').'>';	// Alt is used for accessibility, title for popup
+		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
+		//$tmparray=array(0=>$titlealt);
+		//if (empty($notitle) && preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
+		//$title=$tmparray[0];
+		//$alt=empty($tmparray[1])?'':$tmparray[1];
+		$title=$titlealt;
+		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
 
@@ -6790,4 +6810,38 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 		if ($id > 0) return $id;
 		return '';
 	}
+}
+
+/**
+ *	Return true if the color is light
+ *
+ *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @return	int							-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ */
+function colorIsLight($stringcolor)
+{
+	$res = -1;
+	if (!empty($stringcolor))
+	{
+		$res = 0;
+		$tmp=explode(',', $stringcolor);
+		if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
+		{
+			$r = $tmp[0];
+			$g = $tmp[1];
+			$b = $tmp[2];
+		}
+		else
+		{
+			$hexr=$stringcolor[0].$stringcolor[1];
+			$hexg=$stringcolor[2].$stringcolor[3];
+			$hexb=$stringcolor[4].$stringcolor[5];
+			$r = hexdec($hexr);
+			$g = hexdec($hexg);
+			$b = hexdec($hexb);
+		}
+		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+		if ($bright > 0.6) $res = 1;
+	}
+	return $res;
 }

@@ -51,3 +51,5 @@ NoTripsToExportCSV=Nenhum relatório de despesas para exportar para este períod
 ExpenseReportPayment=Despesa de pagamento de relatório
 ExpenseReportsToApprove=Relatórios de despesas a confirmar
 ExpenseReportsToPay=Relatórios de despesas a pagar
+expenseReportOffset=Compensar
+ExpenseReportDateStart=Data Inicio

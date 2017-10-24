@@ -387,6 +387,7 @@ function ajax_autoselect($htmlname, $addlink='')
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
+ * @see selectArrayAjax of html.form.class
  */
 function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
@@ -404,10 +405,23 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
     $msg="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
+    			var query = {};
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'
+					minimumInputLength: '.$minLengthToAutocomplete.',
+					language: select2arrayoflanguage,
+					templateResult: function (data, container) {	/* Format visible output into combo list */
+	 					/* Code to add class of origin option propagated to the new select2 li tag */
+						if (data.element) {
+							$(container).addClass($(data.element).attr("class"));
+						}
+
+					    return data.text;
+					},
+					templateSelection: function (selection) {		/* Format visible output of selected value */
+						return selection.text;
+					},
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

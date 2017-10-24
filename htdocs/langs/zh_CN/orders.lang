@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=供应商订单 %s 接收 %s
 SupplierOrderSubmitedInDolibarr=供应商订单 %s 提交
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=其他订单
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=代表跟进客户订单
 TypeContact_commande_internal_SHIPPING=送货跟进

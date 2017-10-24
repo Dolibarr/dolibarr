@@ -340,6 +340,15 @@ abstract class CommonObject
 
 	// No constructor as it is an abstract class
 
+	/**
+	 * Return if an object manage the multicompany field and how.
+	 *
+	 * @return	int				0=No entity field managed, 1=Test with field entity, 2=Test with link to thirdparty (and sales representative)
+	 */
+	function getIsmultientitymanaged()
+	{
+		return $this->ismultientitymanaged;
+	}
 
 	/**
 	 * Check an object id/ref exists
@@ -1338,16 +1347,16 @@ abstract class CommonObject
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
-		if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (! empty($filter))
 		{
 			if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
 			$sql.=$filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
 		//print $filter.' '.$sql."<br>";
@@ -1363,16 +1372,16 @@ abstract class CommonObject
 
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
-		if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (! empty($filter))
 		{
 			if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
 			$sql.=$filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
@@ -3648,11 +3657,12 @@ abstract class CommonObject
 	 * 	Return HTML table table of source object lines
 	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
 	 *  If lines are into a template, title must also be into a template
-	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
 	 *
+	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
 	 *  @return	void
 	 */
-	function printOriginLinesList()
+	function printOriginLinesList($restrictlist='')
 	{
 		global $langs, $hookmanager, $conf;
 
@@ -3674,8 +3684,6 @@ abstract class CommonObject
 
 		foreach ($this->lines as $line)
 		{
-
-
 			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 			{
 				if (empty($line->fk_parent_line))
@@ -3687,7 +3695,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printOriginLine($line,$var);
+				$this->printOriginLine($line, $var, $restrictlist);
 			}
 
 			$i++;
@@ -3700,11 +3708,12 @@ abstract class CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line		Line
-	 * 	@param	string				$var		Var
+	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	string				$var				Var
+	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 * 	@return	void
 	 */
-	function printOriginLine($line,$var)
+	function printOriginLine($line, $var, $restrictlist='')
 	{
 		global $langs, $conf;
 
@@ -3803,8 +3812,12 @@ abstract class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->getLabelOfUnit('long');
+		if ($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
+
+		// Is the line strike or not
+		$this->tpl['strike']=0;
+		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) $this->tpl['strike']=1;
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
@@ -4043,13 +4056,14 @@ abstract class CommonObject
 
 			if (in_array(get_class($this), array('Adherent')))
 			{
-				$arrayofrecords = array();   // The write_file of templates of adherent class need this
+				$arrayofrecords = array();   // The write_file of templates of adherent class need this var
 				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			}
 			else
 			{
 				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 			}
+			// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
 			if ($resultwritefile > 0)
 			{
@@ -4076,9 +4090,19 @@ abstract class CommonObject
 						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 						$ecmfile=new EcmFiles($this->db);
 						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
+
+						if (! empty($conf->global->PROPOSAL_USE_ONLINE_SIGN))
+						{
+							if (empty($ecmfile->share))	// Because object not found or share not set yet
+							{
+								require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+								$ecmfile->share = getRandomPassword(true);
+							}
+						}
+
 						if ($result > 0)
 						{
-							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
 							$ecmfile->fullpath_orig = '';
 							$ecmfile->gen_or_uploaded = 'generated';
 							$ecmfile->description = '';    // indexed content
@@ -4093,7 +4117,7 @@ abstract class CommonObject
 						{
 							$ecmfile->filepath = $rel_dir;
 							$ecmfile->filename = $filename;
-							$ecmfile->label = md5_file(dol_osencode($destfull));
+							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
 							$ecmfile->fullpath_orig = '';
 							$ecmfile->gen_or_uploaded = 'generated';
 							$ecmfile->description = '';    // indexed content
@@ -4103,6 +4127,21 @@ abstract class CommonObject
 							{
 								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 							}
+						}
+
+						/*$this->result['fullname']=$destfull;
+						$this->result['filepath']=$ecmfile->filepath;
+						$this->result['filename']=$ecmfile->filename;*/
+
+						// Update the last_main_doc field into main object
+						$update_main_doc_field=0;
+						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
+						if ($update_main_doc_field && ! empty($this->table_element))
+						{
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+							$sql.= ' WHERE rowid = '.$this->id;
+							$resql = $this->db->query($sql);
+							if (! $resql) dol_print_error($this->db);
 						}
 					}
 				}
@@ -4592,17 +4631,18 @@ abstract class CommonObject
 		else return 0;
 	}
 
-   /**
-    * Function to show lines of extrafields with output datas
-    *
-    * @param Extrafields   $extrafields    Extrafield Object
-    * @param string        $mode           Show output (view) or input (edit) for extrafield
-    * @param array         $params         Optional parameters
-    * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-    *
-    * @return string
-    */
-	function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
+	/**
+	 * Function to show lines of extrafields with output datas
+	 *
+	 * @param Extrafields   $extrafields    Extrafield Object
+	 * @param string        $mode           Show output (view) or input (edit) for extrafield
+	 * @param array         $params         Optional parameters
+	 * @param string        $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string        $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 *
+	 * @return string
+	 */
+	function showOptionals($extrafields, $mode='view', $params=null, $keysuffix='', $keyprefix='')
 	{
 		global $_POST, $conf, $langs, $action;
 
@@ -4630,12 +4670,12 @@ abstract class CommonObject
 
 				switch($mode) {
 					case "view":
-						$value=$this->array_options["options_".$key];
+						$value=$this->array_options["options_".$key.$keysuffix];
 						break;
 					case "edit":
-						$getposttemp = GETPOST('options_'.$key, 'none');				// GETPOST can get value from GET, POST or setup of default values.
+						$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none');				// GETPOST can get value from GET, POST or setup of default values.
 						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
-						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET('options_'.$key))
+						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 						{
 							if (is_array($getposttemp)) {
 								// $getposttemp is an array but following code expects a comma separated string
@@ -4675,12 +4715,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
-						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attribute_type[$key],array('price','double')))
 					{
-						$value = isset($_POST["options_".$key])?price2num($_POST["options_".$key]):$this->array_options['options_'.$key];
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix,'int',3)):$this->array_options['options_'.$key];
 					}
 
 					$labeltoshow = $langs->trans($label);
@@ -4699,7 +4739,7 @@ abstract class CommonObject
 							$out .= $extrafields->showOutputField($key, $value);
 							break;
 						case "edit":
-							$out .= $extrafields->showInputField($key, $value, '', $keyprefix, '', 0, $this->id);
+							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id);
 							break;
 					}
 
@@ -4712,8 +4752,8 @@ abstract class CommonObject
 			}
 			$out .= "\n";
 			// Add code to manage list depending on others
-			if (! empty($conf->use_javascript_ajax))
-			$out .= '
+			if (! empty($conf->use_javascript_ajax)) {
+				$out .= '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
@@ -4742,10 +4782,12 @@ abstract class CommonObject
 						setListDependencies();
 				    });
 				</script>'."\n";
-			$out .= '<!-- /showOptionalsInput --> '."\n";
+				$out .= '<!-- /showOptionalsInput --> '."\n";
+			}
 		}
 		return $out;
 	}
+
 
 	/**
 	 * Returns the rights used for this class

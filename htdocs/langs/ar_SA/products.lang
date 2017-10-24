@@ -20,8 +20,8 @@ ProductVatMassChange=تغيير VAT الشامل
 ProductVatMassChangeDesc=هذه الصفحة يمكن استخدامها لتعديل نسبة الضريبة على القيمة المضافة المحددة على المنتجات أو الخدمات من قيمة إلى أخرى. تحذير، ويتم هذا التغيير على كل قاعدة البيانات.
 MassBarcodeInit=الحرف الأول الباركود الشامل
 MassBarcodeInitDesc=هذه الصفحة يمكن استخدامها لتهيئة الباركود على الكائنات التي لا يكون الباركود تعريف. تحقق قبل أن الإعداد وحدة الباركود كاملة.
-ProductAccountancyBuyCode=Accountancy code (purchase)
-ProductAccountancySellCode=Accountancy code (sale)
+ProductAccountancyBuyCode=Accounting code (purchase)
+ProductAccountancySellCode=Accounting code (sale)
 ProductOrService=المنتج أو الخدمة
 ProductsAndServices=المنتجات والخدمات
 ProductsOrServices=منتجات أو خدمات
@@ -100,7 +100,6 @@ ParentProductsNumber=عدد الوالد منتجات التعبئة والتغ�
 ParentProducts=Parent products
 IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
 IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
-Translation=الترجمة
 KeywordFilter=الكلمة الرئيسية فلتر
 CategoryFilter=فئة فلتر
 ProductToAddSearch=إضافة إلى البحث عن المنتج
@@ -152,7 +151,7 @@ BuyingPrices=شراء أسعار
 CustomerPrices=أسعار العملاء
 SuppliersPrices=أسعار المورد
 SuppliersPricesOfProductsOrServices=أسعار المورد (منتجات أو خدمات)
-CustomCode=قانون الجمارك
+CustomCode=Customs/Commodity/HS code
 CountryOrigin=بلد المنشأ
 Nature=طبيعة
 ShortLabel=التسمية قصيرة

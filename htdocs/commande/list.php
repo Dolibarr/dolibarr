@@ -1397,7 +1397,7 @@ if ($resql)
 
 		$filedir=$diroutputmassaction;
 		$genallowed=$user->rights->commande->lire;
-		$delallowed=$user->rights->commande->supprimer;
+		$delallowed=$user->rights->commande->creer;
 
 		print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

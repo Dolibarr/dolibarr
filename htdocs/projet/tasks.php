@@ -393,7 +393,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'datee',1,1,0,'',1,1,1);
+	print $form->select_date(($date_end?$date_end:-1),'datee',-1,1,0,'',1,1,1);
 	print '</td></tr>';
 
 	// Planned workload

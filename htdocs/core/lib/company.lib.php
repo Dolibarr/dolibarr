@@ -145,6 +145,27 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	if (! empty($conf->global->ACCOUNTING_ENABLE_LETTERING))
+	{
+		// Tab to accountancy
+		if (! empty($conf->accounting->enabled) && $object->client>0)
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabAccountingCustomer");
+			$head[$h][2] = 'accounting';
+			$h++;
+		}
+
+		// Tab to accountancy
+		if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabAccountingSupplier");
+			$head[$h][2] = 'accounting_supplier';
+			$h++;
+		}
+	}
+
 	// Related items
     if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
     {
@@ -183,6 +204,34 @@ function societe_prepare_head(Societe $object)
 		if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
+    }
+
+    if (! empty($conf->website->enabled) && (!empty($user->rights->societe->lire) ))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("WebSites");
+    	$nbNote = 0;
+    	$sql = "SELECT COUNT(n.rowid) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as n";
+    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$resql=$db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			$nbNote=$obj->nb;
+    			$i++;
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+    	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+    	$head[$h][2] = 'website';
+    	$h++;
     }
 
 	// Show more tabs from modules

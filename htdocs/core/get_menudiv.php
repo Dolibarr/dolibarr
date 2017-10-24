@@ -34,7 +34,6 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 if (! defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND',1);
-if (! defined('DISABLE_JQUERY_TIPTIP'))     define('DISABLE_JQUERY_TIPTIP',1);
 if (! defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY',1);
 if (! defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT',1);
 if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);

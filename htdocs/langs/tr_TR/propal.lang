@@ -64,6 +64,7 @@ ProposalLine=Teklif satırı
 AvailabilityPeriod=Teslim süresi
 SetAvailability=Teslim süresi ayarla
 AfterOrder=siparişten sonra
+OtherProposals=Diğer teklifler
 ##### Availability #####
 AvailabilityTypeAV_NOW=İvedi
 AvailabilityTypeAV_1W=1 hafta

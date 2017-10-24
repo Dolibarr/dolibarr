@@ -893,7 +893,7 @@ else
 					print '</td>';
 					if (! $i) $totalarray['nbfield']++;
 				}
-				// Stock
+				// Stock real
 				if (! empty($arrayfields['p.stock']['checked']))
 				{
    					print '<td align="right">';
@@ -905,7 +905,7 @@ else
 					print '</td>';
 					if (! $i) $totalarray['nbfield']++;
 				}
-				// Stock
+				// Stock virtual
 				if (! empty($arrayfields['stock_virtual']['checked']))
 				{
    					print '<td align="right">';

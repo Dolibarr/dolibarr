@@ -569,28 +569,33 @@ class Propal extends CommonObject
 				// Reorder if child line
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
-				// Mise a jour informations denormalisees au niveau de la propale meme
-				$result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
-				if ($result > 0)
-				{
-					$this->db->commit();
-					return $this->line->rowid;
-				}
-				else
-				{
-					$this->error=$this->db->error();
-					$this->db->rollback();
-					return -1;
-				}
-			}
-			else
-			{
-				$this->error=$this->line->error;
-				$this->db->rollback();
-				return -2;
-			}
+                // Mise a jour informations denormalisees au niveau de la propale meme
+                $result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                if ($result > 0)
+                {
+                    $this->db->commit();
+                    return $this->line->rowid;
+                }
+                else
+                {
+                    $this->error=$this->db->error();
+                    $this->db->rollback();
+                    return -1;
+                }
+            }
+            else
+            {
+                $this->error=$this->line->error;
+                $this->db->rollback();
+                return -2;
+            }
+        }
+		else
+		{
+			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
 		}
-	}
+    }
 
 
 	/**
@@ -955,13 +960,55 @@ class Propal extends CommonObject
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 
-				/*
+                if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+                {
+                	$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+                }
+
+                // Add object linked
+                if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+                {
+                	foreach($this->linked_objects as $origin => $tmp_origin_id)
+                	{
+                		if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+                		{
+                			foreach($tmp_origin_id as $origin_id)
+                			{
+                				$ret = $this->add_object_linked($origin, $origin_id);
+                				if (! $ret)
+                				{
+                					$this->error=$this->db->lasterror();
+                					$error++;
+                				}
+                			}
+                		}
+                		else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+                		{
+                			$origin_id = $tmp_origin_id;
+                			$ret = $this->add_object_linked($origin, $origin_id);
+                			if (! $ret)
+                			{
+                				$this->error=$this->db->lasterror();
+                				$error++;
+                			}
+                		}
+                	}
+                }
+
+                // Add linked object (deprecated, use ->linkedObjectsIds instead)
+                if (! $error && $this->origin && $this->origin_id)
+                {
+                	$ret = $this->add_object_linked();
+                	if (! $ret)	dol_print_error($this->db);
+                }
+
+                /*
                  *  Insertion du detail des produits dans la base
-                */
-				if (! $error)
-				{
-					$fk_parent_line=0;
-					$num=count($this->lines);
+                 */
+                if (! $error)
+                {
+                    $fk_parent_line=0;
+                    $num=count($this->lines);
 
 					for ($i=0;$i<$num;$i++)
 					{
@@ -1252,7 +1299,7 @@ class Propal extends CommonObject
 		$sql.= ", p.datep as dp";
 		$sql.= ", p.fin_validite as dfv";
 		$sql.= ", p.date_livraison as date_livraison";
-		$sql.= ", p.model_pdf, p.ref_client, p.extraparams";
+		$sql.= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
 		$sql.= ", p.note_private, p.note_public";
 		$sql.= ", p.fk_projet, p.fk_statut";
 		$sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
@@ -1306,6 +1353,7 @@ class Propal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_projet;
 				$this->modelpdf             = $obj->model_pdf;
+				$this->last_main_doc		= $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
@@ -1503,48 +1551,6 @@ class Propal extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -3;
 		}
-	}
-
-	/**
-	 *	Update value of extrafields on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@return     int         		<0 if ko, >0 if ok
-	 */
-	function update_extrafields($user)
-	{
-		global $conf, $hookmanager;
-
-		$action='update';
-		$error = 0;
-
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('propaldao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-		}
-		else if ($reshook < 0) $error++;
-
-		if (!$error)
-		{
-			return 1;
-		}
-		else
-		{
-			return -1;
-		}
-
 	}
 
 	/**
@@ -2257,8 +2263,8 @@ class Propal extends CommonObject
 	 *
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$statut		Statut
-	 *	@param      string	$note		Comment
-	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@param      string	$note		Complete private note with this note
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
 	function cloture($user, $statut, $note, $notrigger=0)
@@ -2270,8 +2276,10 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		$resql=$this->db->query($sql);
@@ -2297,7 +2305,7 @@ class Propal extends CommonObject
 					return -2;
 				}
 			}
-			if ($statut == self::STATUS_BILLED)
+			if ($statut == self::STATUS_BILLED)	// Why this ?
 			{
 				$trigger_name='PROPAL_CLASSIFY_BILLED';
 			}

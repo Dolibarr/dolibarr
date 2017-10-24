@@ -31,6 +31,9 @@ ConfirmDeleteCptCategory=Soll dieses Buchhaltungskonto wirklich aus der Gruppe e
 JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
+GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
+DetailByAccount=Show detail by account
+AccountWithNonZeroValues=Accounts with non zero values
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -54,7 +57,7 @@ AccountancyAreaDescContrib=SCHRITT %s: Definition der Buchhaltungskonten für be
 AccountancyAreaDescDonation=SCHRITT %s: Definition der Buchhaltungskonten für Spenden. Kann im Menü %s geändert werden.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=SCHRITT %s: Definitiond der Buchhaltungskonten für Darlehenszahlungen. Kann im Menü %s geändert werden.
-AccountancyAreaDescBank=SCHRITT %s: Definition der Buchhaltungskonten für jede Bank und Finanzkonten. Gehen Sie zum jeweiligen Finanzkonto. Kann im Menü %s geändert werden.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=SCHRITT %s: Definition der Buchhaltungskonten für Ihre Produkte/Dienstleistungen. Kann im Menü %s geändert werden.
 
 AccountancyAreaDescBind=SCHRITT %s: Kontrolle der Zuweisung zwischen bestehenden %s Buchungszeilen und Konten ist erledigt damit die Anwendung die übernahme der Buchungen ins Hauptbuch mit einem klick erfolgen kann. Wir im Menü %s eingestellt.
@@ -63,6 +66,7 @@ AccountancyAreaDescAnalyze=SCHRITT %s: Vorhandene Transaktionen hinzufügen oder
 
 AccountancyAreaDescClosePeriod=SCHRITT %s: Schließen Sie die Periode, damit wir in Zukunft keine Veränderungen vornehmen können.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
 MenuAccountancy=Buchführung
 Selectchartofaccounts=Kontenplan wählen
 ChangeAndLoad=Ändere und Lade
@@ -74,6 +78,7 @@ ShowAccountingAccount=Buchhaltungskonten anzeigen
 ShowAccountingJournal=Buchhaltungsjournal anzeigen
 AccountAccountingSuggest=Buchhaltungskonto Vorschlag
 MenuDefaultAccounts=Standardkonten
+MenuBankAccounts=Bank Konten
 MenuVatAccounts=Mwst. Konten
 MenuTaxAccounts=Steuer Konten
 MenuExpenseReportAccounts=Spesenabrechnung Konten
@@ -143,14 +148,19 @@ Doctype=Dokumententyp
 Docdate=Datum
 Docref=Referenz
 Code_tiers=Partner
-Labelcompte=Konto-Beschriftung
+LabelAccount=Konto-Beschriftung
+LabelOperation=Label operation
 Sens=Zweck
 Codejournal=Journal
 NumPiece=Teilenummer
 TransactionNumShort=Anz. Buchungen
-AccountingCategory=Gruppen Buchungskonten
+AccountingCategory=Personalized groups
 GroupByAccountAccounting=Gruppieren nach Buchhaltungskonto
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
 ByAccounts=By accounts
+ByPredefinedAccountGroups=By predefined groups
+ByPersonalizedAccountGroups=By personalized groups
+ByYear=Bis zum Jahresende
 NotMatch=undefiniert
 DeleteMvt=Zeilen im Hauptbuch löschen
 DelYear=Jahr zu entfernen
@@ -161,7 +171,7 @@ DelBookKeeping=Eintrag im Hauptbuch löschen
 FinanceJournal=Finanzjournal
 ExpenseReportsJournal=Spesenabrechnungsjournal
 DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Steuerkonto nicht definiert
 ThirdpartyAccountNotDefined=Konto für Adresse nicht definiert
 ProductAccountNotDefined=Konto für Produkt nicht definiert
@@ -180,8 +190,9 @@ ListAccounts=Liste der Abrechnungskonten
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
-Pcgtype=Kontenklasse
-Pcgsubtype=Unterkontenklasse
+Pcgtype=Group of account
+Pcgsubtype=Subgroup of account
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Verkaufssumme ohne Steuer
 TotalMarge=Gesamt-Spanne
@@ -213,14 +224,14 @@ ChangeBinding=Ändern der Zuordnung
 
 ## Admin
 ApplyMassCategories=Massenaktualisierung der Kategorien
-AddAccountFromBookKeepingWithNoCategories=Anfügen bereits genutzter Konten ohne Gruppen
+AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
 CategoryDeleted=Die Gruppe für das Buchhaltungskonto wurde entfernt
 AccountingJournals=Buchhaltungsjournale
 AccountingJournal=Buchhaltungsjournal
 NewAccountingJournal=Neues Buchhaltungsjournal
 ShowAccoutingJournal=Buchhaltungsjournal anzeigen
 Nature=Art
-AccountingJournalType1=Verschiedene Aktionen
+AccountingJournalType1=Miscellaneous operation
 AccountingJournalType2=Verkauf
 AccountingJournalType3=Einkauf
 AccountingJournalType4=Bank
@@ -246,16 +257,16 @@ ChartofaccountsId=Kontenplan ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren
-InitAccountancyDesc=Auf dieser Seite kann ein Sachkonto für Artikel und Dienstleistungen vorgegeben werden, wenn noch kein Buchhaltungs-Konto für Ein- und Verkäufe definiert ist.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=Diese Seite kann verwendet werden, um ein Standardkonto festzulegen, das für die Verknüpfung von Transaktionsdatensätzen zu Lohnzahlungen, Spenden, Steuern und Mwst. verwendet werden soll, wenn kein bestimmtes Konto angegeben wurde.
 Options=Optionen
 OptionModeProductSell=Modus Verkauf
 OptionModeProductBuy=Modus Einkäufe
 OptionModeProductSellDesc=Alle Artikel mit Sachkonten für Vertrieb anzeigen
 OptionModeProductBuyDesc=Alle Artikel mit Sachkonten für Einkauf anzeigen
-CleanFixHistory=Bereinige Buchhaltungs-Konten von Positionen, die nicht in Kontenplänen existieren.
+CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Aller Zuordungen für das selektierte Jahr zurücksetzen
-
+PredefinedGroups=Predefined groups
 WithoutValidAccount=Mit keinem gültigen dedizierten Konto
 WithValidAccount=Mit gültigen dedizierten Konto
 ValueNotIntoChartOfAccount=Dieser Wert für das Buchhaltungs-Konto existiert nicht im Kontenplan
@@ -273,5 +284,6 @@ BookeppingLineAlreayExists=Datensätze existieren bereits in der Buchhaltung
 NoJournalDefined=Kein Journal definiert
 Binded=Zeilen verbunden
 ToBind=Zeilen für Zuordnung
+UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
-WarningReportNotReliable=Warnung: Dieser Bericht basiert nicht auf dem Hauptbuch, wodurch keine im Hauptbuch veränderten Buchungen berücksichtigt werden. In einer neuer Version wird das behoben werden.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.

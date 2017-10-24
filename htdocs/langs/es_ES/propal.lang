@@ -64,6 +64,7 @@ ProposalLine=Línea de presupuesto
 AvailabilityPeriod=Tiempo de entrega
 SetAvailability=Definir el tiempo de entrega
 AfterOrder=desde la firma
+OtherProposals=Otros presupuestos
 ##### Availability #####
 AvailabilityTypeAV_NOW=Inmediata
 AvailabilityTypeAV_1W=1 semana

@@ -90,11 +90,11 @@ class Proposals extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposal of. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposal of. Example: '1' or '1,2,3'          {@pattern /^2|3$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @return  array                       Array of order objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -257,39 +257,39 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-	  	$updateRes = $this->propal->addline(
-						$request_data->desc,
-						$request_data->subprice,
-						$request_data->qty,
-						$request_data->tva_tx,
-						$request_data->localtax1_tx,
-						$request_data->localtax2_tx,
-						$request_data->fk_product,
-						$request_data->remise_percent,
-						'HT',
-						0,
-						$request_data->info_bits,
-						$request_data->product_type,
-						$request_data->rang,
-						$request_data->special_code,
-						$fk_parent_line,
-						$request_data->fk_fournprice,
-						$request_data->pa_ht,
-						$request_data->label,
-						$request_data->date_start,
-						$request_data->date_end,
-						$request_data->array_options,
-						$request_data->fk_unit,
-						$this->element,
-						$request_data->id,
-						$request_data->multicurrency_subprice,
-						$request_data->fk_remise_except
-	  );
+      	$updateRes = $this->propal->addline(
+                        $request_data->desc,
+                        $request_data->subprice,
+                        $request_data->qty,
+                        $request_data->tva_tx,
+                        $request_data->localtax1_tx,
+                        $request_data->localtax2_tx,
+                        $request_data->fk_product,
+                        $request_data->remise_percent,
+                        'HT',
+                        0,
+                        $request_data->info_bits,
+                        $request_data->product_type,
+                        $request_data->rang,
+                        $request_data->special_code,
+                        $fk_parent_line,
+                        $request_data->fk_fournprice,
+                        $request_data->pa_ht,
+                        $request_data->label,
+                        $request_data->date_start,
+                        $request_data->date_end,
+                        $request_data->array_options,
+                        $request_data->fk_unit,
+                        $request_data->origin,
+                        $request_data->origin_id,
+                        $request_data->multicurrency_subprice,
+                        $request_data->fk_remise_except
+      );
 
-	  if ($updateRes > 0) {
-		return $this->get($id)->line->rowid;
-
+      if ($updateRes > 0) {
+        return $updateRes;
 	  }
+
 	  return false;
 	}
 
@@ -508,6 +508,49 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
+	 * Close (Accept or refuse) a quote / commercial proposal
+	 *
+	 * @param   int     $id             Commercial proposal ID
+	 * @param   int	    $status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
+	 * @param   string  $note_private   Add this mention at end of private note
+	 * @param   int     $notrigger      Disabled triggers
+	 *
+	 * @url POST    {id}/close
+	 *
+	 * @return  array
+	 */
+	function close($id, $status, $note_private='', $notrigger=0)
+	{
+		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+			throw new RestException(401);
+		}
+		$result = $this->propal->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Commercial Proposal not found');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->propal->cloture(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
+		if ($result == 0) {
+			throw new RestException(500, 'Error nothing done. May be object is already closed');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->error);
+		}
+
+		return array(
+		'success' => array(
+		'code' => 200,
+		'message' => 'Commercial Proposal closed (Ref='.$this->propal->ref.')'
+		)
+		);
+	}
+
+
+	/**
 	 * Validate fields before create or update object
 	 *
 	 * @param   array           $data   Array with data to verify
@@ -525,6 +568,7 @@ class Proposals extends DolibarrApi
 		}
 		return $propal;
 	}
+
 
 	/**
 	 * Clean sensible object datas

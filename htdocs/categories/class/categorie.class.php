@@ -163,7 +163,7 @@ class Categorie extends CommonObject
 	 */
 	public $socid;
 	/**
-	 * @var int Category type
+	 * @var string	Category type
 	 *
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
@@ -1327,6 +1327,7 @@ class Categorie extends CommonObject
 		{
 			$w = array();
 			$i = 0;
+			$forced_color='';
 			foreach ($way as $cat)
 			{
 			    $i++;
@@ -1340,12 +1341,7 @@ class Categorie extends CommonObject
     			        $forced_color='categtextwhite';
     			        if ($cat->color)
     			        {
-    			            $hex=$cat->color;
-    			            $r = hexdec($hex[0].$hex[1]);
-    			            $g = hexdec($hex[2].$hex[3]);
-    			            $b = hexdec($hex[4].$hex[5]);
-    			            $bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-    			            if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+    			            if (colorIsLight($cat->color)) $forced_color='categtextblack';
     			        }
     			    }
 			    }
@@ -1602,12 +1598,7 @@ class Categorie extends CommonObject
 		$forced_color='categtextwhite';
 		if ($this->color)
 		{
-    		$hex=$this->color;
-    		$r = hexdec($hex[0].$hex[1]);
-    		$g = hexdec($hex[2].$hex[3]);
-    		$b = hexdec($hex[4].$hex[5]);
-    		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-    		if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+			if (colorIsLight($this->color)) $forced_color='categtextblack';
 		}
 
         $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';

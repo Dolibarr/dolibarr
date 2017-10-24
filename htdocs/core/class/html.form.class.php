@@ -438,8 +438,11 @@ class Form
 
 		$s='';$textfordialog='';
 
-		$htmltext=str_replace('"',"&quot;",$htmltext);
-		if ($tooltiptrigger != '')
+		if ($tooltiptrigger == '')
+		{
+			$htmltext=str_replace('"',"&quot;",$htmltext);
+		}
+		else
 		{
 			$classfortooltip='classfortooltiponclick';
 			$textfordialog.='<div style="display: none;" id="idfortooltiponclick_'.$tooltiptrigger.'" class="classfortooltiponclicktext">'.$htmltext.'</div>';
@@ -4519,6 +4522,8 @@ class Form
 	{
 		global $langs,$conf,$mysoc;
 
+		$langs->load('errors');
+
 		$return='';
 
 		// Define defaultnpr, defaultttx and defaultcode
@@ -4687,7 +4692,7 @@ class Form
 	 *
 	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
 	 *	@param	string		$prefix			Prefix for fields name
-	 *	@param	int			$h				1=Show also hours
+	 *	@param	int			$h				1=Show also hours (-1 has same effect, but hour and minutes are prefilled with 23:59 if $set_time = -1)
 	 *	@param	int			$m				1=Show also minutes
 	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 *	@param	string		$form_name 		Not used
@@ -4742,6 +4747,7 @@ class Form
 			{
 				$shour = dol_print_date($set_time, "%H");
 				$smin = dol_print_date($set_time, "%M");
+				$ssec = dol_print_date($set_time, "%S");
 			}
 		}
 		else
@@ -4750,8 +4756,9 @@ class Form
 			$syear = '';
 			$smonth = '';
 			$sday = '';
-			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? '' : $conf->global->MAIN_DEFAULT_DATE_HOUR;
-			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? '' : $conf->global->MAIN_DEFAULT_DATE_MIN;
+			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? ($h == -1 ? '23' : '') : $conf->global->MAIN_DEFAULT_DATE_HOUR;
+			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
+			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
@@ -4932,6 +4939,8 @@ class Form
 				$retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
 			}
 			$retstring.='</select>';
+
+			$retstring.='<input type="hidden" name="'.$prefix.'sec" value="'.$ssec.'">';
 		}
 
 		// Add a "Now" link
@@ -5243,6 +5252,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
+	 *  @see ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5252,7 +5262,7 @@ class Form
 		// TODO Use an internal dolibarr component instead of select2
 		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
 
-		$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+		$out='<select type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'"></select>';
 
 		$tmpplugin='select2';
 		$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
@@ -5267,44 +5277,40 @@ class Form
 				    	url: "'.$url.'",
 				    	dataType: \'json\',
 				    	delay: 250,
-				    	data: function (searchTerm, pageNumber, context) {
+				    	data: function (params) {
 				    		return {
-						    	q: searchTerm, // search term
-				    			page: pageNumber
+						    	q: params.term, 	// search term
+				    			page: params.page
 				    		};
 			    		},
-			    		results: function (remoteData, pageNumber, query) {
-			    			console.log(remoteData);
-				    	    saveRemoteData = remoteData;
+			    		processResults: function (data) {
+			    			// parse the results into the format expected by Select2.
+			    			// since we are using custom formatting functions we do not need to alter the remote JSON data
+			    			//console.log(data);
+							saveRemoteData = data;
 				    	    /* format json result for select2 */
 				    	    result = []
-				    	    $.each( remoteData, function( key, value ) {
+				    	    $.each( data, function( key, value ) {
 				    	       result.push({id: key, text: value.text});
                             });
 			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			return {results: result, more:false}
-    					},
-			    		/*processResults: function (data, page) {
-			    			// parse the results into the format expected by Select2.
-			    			// since we are using custom formatting functions we do not need to
-			    			// alter the remote JSON data
-			    			console.log(data);
-			    			return {
-			    				results: data.items
-			    			};
-			    		},*/
+			    			//console.log(result);
+			    			return {results: result, more: false}
+			    		},
 			    		cache: true
 			    	},
-			        dropdownCssClass: "css-'.$htmlname.'",
+	 				language: select2arrayoflanguage,
+			        /* dropdownCssClass: "css-'.$htmlname.'", */
 				    placeholder: "'.dol_escape_js($placeholder).'",
-			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
 			        formatResult: function(result, container, query, escapeMarkup) {
                         return escapeMarkup(result.text);
-                    }
+                    },
 			    });
 
                 '.($callurlonselect ? '
+                /* Code to execute a GET when we select a value */
                 $(".'.$htmlname.'").change(function() {
 			    	var selected = $(".'.$htmlname.'").select2("val");
 			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
@@ -6442,7 +6448,7 @@ class Form
 	 */
 	function selectExpenseCategories($selected='', $htmlname='fk_c_exp_tax_cat', $useempty=0, $excludeid=array(), $target='', $default_selected=0, $params=array())
 	{
-		global $db,$conf,$langs;
+		global $db, $conf, $langs, $user;
 
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql.= ' AND entity IN (0,'.getEntity('').')';
@@ -6453,13 +6459,14 @@ class Form
 		if ($resql)
 		{
 			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
-			if ($useempty) $out.= '<option value="0"></option>';
+			if ($useempty) $out.= '<option value="0">&nbsp;</option>';
 
 			while ($obj = $db->fetch_object($resql))
 			{
 				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
 			}
 			$out.= '</select>';
+			if (! empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
 			if (!empty($target))
 			{

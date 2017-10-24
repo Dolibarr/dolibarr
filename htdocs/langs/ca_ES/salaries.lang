@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable utilitzat per usuaris tercers
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=S'utilitzarà un compte comptable dedicat definit en la fitxa d'usuari per a omplir el Llibre Major, o com valor predeterminar de la comptabilitat del Llibre Major si no es defineix un compte comptable en la fitxa d'usuari.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per a despeses de personal
 Salary=Sou
 Salaries=Sous

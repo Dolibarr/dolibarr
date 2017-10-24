@@ -282,578 +282,578 @@ class FormMail extends Form
 				$outputlangs->load('other');
 			}
 
-        	// Get message template for $this->param["models"] into c_email_templates
+			// Get message template for $this->param["models"] into c_email_templates
 			$arraydefaultmessage=array();
 			if ($this->param['models'] != 'none')
 			{
 				$model_id=0;
-        		if (array_key_exists('models_id',$this->param))
-        		{
-	        		$model_id=$this->param["models_id"];
-        		}
-        		$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));		// we set -1 if model_id empty
-			}
-        	//var_dump($this->param["models"]);
-        	//var_dump($model_id);
-        	//var_dump($arraydefaultmessage);
-
-
-        	// Define list of attached files
-        	$listofpaths=array();
-        	$listofnames=array();
-        	$listofmimes=array();
-            $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-
-            if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
-            {
-	            $this->clear_attached_files();
-            	if (! empty($arraydefaultmessage['joinfiles']) && is_array($this->param['fileinit']))
-	            {
-	            	foreach($this->param['fileinit'] as $file)
-	            	{
-						$this->add_attached_files($file, basename($file), dol_mimetype($file));
-	            	}
-	            }
-            }
-
-       		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-       		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-       		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
-
-
-        	$out.= "\n".'<!-- Begin form mail type='.$this->param["models"].' --><div id="mailformdiv"></div>'."\n";
-        	if ($this->withform == 1)
-        	{
-        		$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
-        		$out.= '<a id="formmail" name="formmail"></a>';
-        		$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
-        		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-        		$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
-        	}
-        	if (! empty($this->withfrom))
-        	{
-        		if (! empty($this->withfromreadonly))
-        		{
-        			$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
-        			$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
-        		}
-        	}
-        	foreach ($this->param as $key=>$value)
-        	{
-        		$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
-        	}
-
-	        $modelmail_array=array();
-        	if ($this->param['models'] != 'none')
-        	{
-	        	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
-	        	if ($result < 0)
-	        	{
-	        		setEventMessages($this->error, $this->errors, 'errors');
-	        	}
-	        	foreach($this->lines_model as $line)
-	        	{
-	        		$langs->trans("members");
-	        		if (preg_match('/\((.*)\)/', $line->label, $reg))
-	        		{
-	        			$modelmail_array[$line->id]=$langs->trans($reg[1]);		// langs->trans when label is __(xxx)__
-	        		}
-	        		else
-	        		{
-	        			$modelmail_array[$line->id]=$line->label;
-	        		}
-	        		if ($line->lang) $modelmail_array[$line->id].=' ('.$line->lang.')';
-	        		if ($line->private) $modelmail_array[$line->id].=' - '.$langs->trans("Private");
-	        		//if ($line->fk_user != $user->id) $modelmail_array[$line->id].=' - '.$langs->trans("By").' ';
-	        	}
-        	}
-
-        	// Zone to select email template
-        	if (count($modelmail_array)>0)
-        	{
-        		// If list of template is filled
-	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-        	    $out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
-	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
-	        	$out.= ' &nbsp; ';
-	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
-	        	$out.= ' &nbsp; ';
-	        	$out.= '</div>';
-        	}
-        	elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
-        	        'propal_send','order_send','facture_send',
-        	        'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
-        	        'invoice_supplier_send','thirdparty','contract','user','all'
-           	    )))
-        	{
-        		// If list of template is empty
-	        	$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
-        	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
-        	    $out.= ' &nbsp; ';
-        	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
-        	    $out.= ' &nbsp; ';
-        	    $out.= '</div>';
-        	}
-
-
-
-        	$out.= '<table class="border" width="100%">'."\n";
-
-        	// Substitution array
-        	if (! empty($this->withsubstit))		// Unset of set ->withsubstit=0 to disable this.
-        	{
-        		$out.= '<tr><td colspan="2" align="right">';
-        		//$out.='<div class="floatright">';
-        		$help="";
-        		foreach($this->substit as $key => $val)
-        		{
-        			$help.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
-        		}
-        		if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
-        		else $out.= $form->textwithpicto($langs->trans('AvailableVariables'), $help, 1, 'help', '', 0, 2, 'substittooltip');															// New usage
-        		$out.= "</td></tr>\n";
-        		//$out.='</div>';
-        	}
-
-        	// From
-        	if (! empty($this->withfrom))
-        	{
-        		if (! empty($this->withfromreadonly))
-        		{
-        			$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
-
-                    if (! ($this->fromtype === 'user' && $this->fromid > 0)
-                        && ! ($this->fromtype === 'company')
-                        && ! preg_match('/user_aliases/', $this->fromtype)
-                        && ! preg_match('/global_aliases/', $this->fromtype)
-                    	&& ! preg_match('/senderprofile/', $this->fromtype))
-                    {
-                        // Use this->fromname and this->frommail or error if not defined
-                        $out.= $this->fromname;
-                        if ($this->frommail)
-                        {
-                            $out.= ' &lt;'.$this->frommail.'&gt;';
-                        }
-                        else
-                        {
-                            if ($this->fromtype)
-                            {
-                                $langs->load('errors');
-                                $out.= '<span class="warning"> &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt; </span>';
-                            }
-                        }
-                    } else {
-                        $liste = array();
-
-                        // Add user email
-                        if (empty($user->email))
-                        {
-                            $langs->load('errors');
-                            $liste['user'] = $user->getFullName($langs) . ' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
-                        }
-                        else
-                        {
-                            $liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
-                        }
-
-                        // Add also company main email
-                        $liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
-
-                        // Add also email aliases if there is some
-                        $listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
-
-                        // Add also email aliases from the c_email_senderprofile table
-                        $sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
-                        $resql = $this->db->query($sql);
-                        if ($resql)
-                        {
-                        	$num = $this->db->num_rows($resql);
-                        	$i=0;
-                        	while($i < $num)
-                        	{
-                        		$obj = $this->db->fetch_object($resql);
-                        		if ($obj)
-                        		{
-                        			$listaliases['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
-                        		}
-                        		$i++;
-                        	}
-                        }
-                        else dol_print_error($this->db);
-
-                        foreach($listaliases as $typealias => $listalias)
-                        {
-                            $posalias=0;
-                            $listaliasarray=explode(',', $listalias);
-                            foreach ($listaliasarray as $listaliasval)
-                            {
-                                $posalias++;
-                                $listaliasval=trim($listaliasval);
-                                if ($listaliasval)
-                                {
-                                    $listaliasval=preg_replace('/</', '&lt;', $listaliasval);
-                                    $listaliasval=preg_replace('/>/', '&gt;', $listaliasval);
-                                    if (! preg_match('/&lt;/', $listaliasval)) $listaliasval='&lt;'.$listaliasval.'&gt;';
-                                    $liste[$typealias.'_'.$posalias]=$listaliasval;
-                                }
-                            }
-                        }
-                        $out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
-                        //$out.= ajax_combobox('fromtype');
-                    }
-
-        			$out.= "</td></tr>\n";
-        		}
-        		else
-        		{
-        			$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom")."</td><td>";
-        			$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
-        			$out.= '&nbsp; &nbsp; ';
-        			$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
-        			$out.= "</td></tr>\n";
-        		}
-        	}
-
-        	// To
-        	if (! empty($this->withto) || is_array($this->withto))
-        	{
-        		$out.= '<tr><td class="fieldrequired" width="180">';
-        		if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-        		else $out.= $langs->trans("MailTo");
-        		$out.= '</td><td>';
-        		if ($this->withtoreadonly)
-        		{
-        			if (! empty($this->toname) && ! empty($this->tomail))
-        			{
-        				$out.= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
-        				$out.= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
-        				if ($this->totype == 'thirdparty')
-        				{
-        					$soc=new Societe($this->db);
-        					$soc->fetch($this->toid);
-        					$out.= $soc->getNomUrl(1);
-        				}
-        				else if ($this->totype == 'contact')
-        				{
-        					$contact=new Contact($this->db);
-        					$contact->fetch($this->toid);
-        					$out.= $contact->getNomUrl(1);
-        				}
-        				else
-        				{
-        					$out.= $this->toname;
-        				}
-        				$out.= ' &lt;'.$this->tomail.'&gt;';
-        				if ($this->withtofree)
-        				{
-        					$out.= '<br>'.$langs->trans("and").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
-        				}
-        			}
-        			else
-        			{
-        				// Note withto may be a text like 'AllRecipientSelected'
-        				$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
-        			}
-        		}
-        		else
-        		{
-        			if (! empty($this->withtofree))
-        			{
-        				$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
-        			}
-        			if (! empty($this->withto) && is_array($this->withto))
-        			{
-        				if (! empty($this->withtofree)) $out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-        			    // multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-        				$tmparray = $this->withto;
-        				foreach($tmparray as $key => $val)
-        				{
-        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-        				}
-        				$withtoselected=GETPOST("receiver",'none');     // Array of selected value
-        				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
-        				{
-        				    $withtoselected = array_keys($tmparray);
-        				}
-        				$out.= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
-        			}
-        		}
-        		$out.= "</td></tr>\n";
-        	}
-
-        	// withoptiononeemailperrecipient
-        	if (! empty($this->withoptiononeemailperrecipient))
-        	{
-        		$out.= '<tr><td>';
-        		$out.= $langs->trans("GroupEmails");
-        		$out.= '</td><td>';
-        		$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
-        		$out.= $langs->trans("OneEmailPerRecipient").' - ';
-        		$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-        		$out.= '</td></tr>';
-        	}
-
-        	// CC
-        	if (! empty($this->withtocc) || is_array($this->withtocc))
-        	{
-        		$out.= '<tr><td>';
-        		$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-        		$out.= '</td><td>';
-        		if ($this->withtoccreadonly)
-        		{
-        			$out.= (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
-        		}
-        		else
-        		{
-        			$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
-        			if (! empty($this->withtocc) && is_array($this->withtocc))
-        			{
-        				$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-        				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-        				$tmparray = $this->withtocc;
-        				foreach($tmparray as $key => $val)
-        				{
-        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-        				}
-        				$withtoccselected=GETPOST("receivercc");     // Array of selected value
-        				$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
-        			}
-        		}
-        		$out.= "</td></tr>\n";
-        	}
-
-        	// CCC
-        	if (! empty($this->withtoccc) || is_array($this->withtoccc))
-        	{
-        		$out.= '<tr><td>';
-        		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-        		$out.= '</td><td>';
-        		if (! empty($this->withtocccreadonly))
-        		{
-        			$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
-        		}
-        		else
-        		{
-        			$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
-        			if (! empty($this->withtoccc) && is_array($this->withtoccc))
-        			{
-        				$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-        				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-        				$tmparray = $this->withtoccc;
-        				foreach($tmparray as $key => $val)
-        				{
-        				    $tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-        				}
-        				$withtocccselected=GETPOST("receiverccc");     // Array of selected value
-        				$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
-        			}
-        		}
-
-        		$showinfobcc='';
-        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
-        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
-        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
-        		if ($showinfobcc) $out.=' + '.$showinfobcc;
-        		$out.= "</td></tr>\n";
-        	}
-
-        	// Replyto
-        	if (! empty($this->withreplyto))
-        	{
-        		if ($this->withreplytoreadonly)
-        		{
-        			$out.= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
-        			$out.= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
-        			$out.= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
-        			$out.= "</td></tr>\n";
-        		}
-        	}
-
-        	// Errorsto
-        	if (! empty($this->witherrorsto))
-        	{
-        		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
-        		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
-        		if ($this->witherrorstoreadonly)
-        		{
-        			$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
-        			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-        			$out.= $errorstomail;
-        			$out.= "</td></tr>\n";
-        		}
-        		else
-        		{
-        			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-        			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
-        			$out.= "</td></tr>\n";
-        		}
-        	}
-
-        	// Ask delivery receipt
-        	if (! empty($this->withdeliveryreceipt))
-        	{
-        		$out.= '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
-
-        		if (! empty($this->withdeliveryreceiptreadonly))
-        		{
-        			$out.= yn($this->withdeliveryreceipt);
-        		}
-        		else
-        		{
-        			$defaultvaluefordeliveryreceipt=0;
-        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
-					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt=1;
-        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
-        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
-        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
-        		}
-
-        		$out.= "</td></tr>\n";
-        	}
-
-        	// Topic
-        	if (! empty($this->withtopic))
-        	{
-        		$defaulttopic=GETPOST('subject','none');
-				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				if (array_key_exists('models_id',$this->param))
 				{
-        			if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
-        			elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+					$model_id=$this->param["models_id"];
+				}
+				$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));		// we set -1 if model_id empty
+			}
+			//var_dump($this->param["models"]);
+			//var_dump($model_id);
+			//var_dump($arraydefaultmessage);
+
+
+			// Define list of attached files
+			$listofpaths=array();
+			$listofnames=array();
+			$listofmimes=array();
+			$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+
+			if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
+			{
+				$this->clear_attached_files();
+				if (! empty($arraydefaultmessage['joinfiles']) && is_array($this->param['fileinit']))
+				{
+					foreach($this->param['fileinit'] as $file)
+					{
+						$this->add_attached_files($file, basename($file), dol_mimetype($file));
+					}
+				}
+			}
+
+	   		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+	   		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+	   		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+
+
+			$out.= "\n".'<!-- Begin form mail type='.$this->param["models"].' --><div id="mailformdiv"></div>'."\n";
+			if ($this->withform == 1)
+			{
+				$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
+				$out.= '<a id="formmail" name="formmail"></a>';
+				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
+				$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+				$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
+			}
+			if (! empty($this->withfrom))
+			{
+				if (! empty($this->withfromreadonly))
+				{
+					$out.= '<input type="hidden" id="fromname" name="fromname" value="'.$this->fromname.'" />';
+					$out.= '<input type="hidden" id="frommail" name="frommail" value="'.$this->frommail.'" />';
+				}
+			}
+			foreach ($this->param as $key=>$value)
+			{
+				$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
+			}
+
+			$modelmail_array=array();
+			if ($this->param['models'] != 'none')
+			{
+				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+				if ($result < 0)
+				{
+					setEventMessages($this->error, $this->errors, 'errors');
+				}
+				foreach($this->lines_model as $line)
+				{
+					$langs->trans("members");
+					if (preg_match('/\((.*)\)/', $line->label, $reg))
+					{
+						$modelmail_array[$line->id]=$langs->trans($reg[1]);		// langs->trans when label is __(xxx)__
+					}
+					else
+					{
+						$modelmail_array[$line->id]=$line->label;
+					}
+					if ($line->lang) $modelmail_array[$line->id].=' ('.$line->lang.')';
+					if ($line->private) $modelmail_array[$line->id].=' - '.$langs->trans("Private");
+					//if ($line->fk_user != $user->id) $modelmail_array[$line->id].=' - '.$langs->trans("By").' ';
+				}
+			}
+
+			// Zone to select email template
+			if (count($modelmail_array)>0)
+			{
+				// If list of template is filled
+				$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
+				$out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
+				$out.= ' &nbsp; ';
+				$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out.= ' &nbsp; ';
+				$out.= '</div>';
+			}
+			elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
+					'propal_send','order_send','facture_send',
+					'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
+					'invoice_supplier_send','thirdparty','contract','user','all'
+		   		)))
+			{
+				// If list of template is empty
+				$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
+				$out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
+				if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
+				$out.= ' &nbsp; ';
+				$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
+				$out.= ' &nbsp; ';
+				$out.= '</div>';
+			}
+
+
+
+			$out.= '<table class="border" width="100%">'."\n";
+
+			// Substitution array
+			if (! empty($this->withsubstit))		// Unset of set ->withsubstit=0 to disable this.
+			{
+				$out.= '<tr><td colspan="2" align="right">';
+				//$out.='<div class="floatright">';
+				$help="";
+				foreach($this->substit as $key => $val)
+				{
+					$help.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
+				}
+				if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
+				else $out.= $form->textwithpicto($langs->trans('AvailableVariables'), $help, 1, 'help', '', 0, 2, 'substittooltip');															// New usage
+				$out.= "</td></tr>\n";
+				//$out.='</div>';
+			}
+
+			// From
+			if (! empty($this->withfrom))
+			{
+				if (! empty($this->withfromreadonly))
+				{
+					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
+
+					if (! ($this->fromtype === 'user' && $this->fromid > 0)
+						&& ! ($this->fromtype === 'company')
+						&& ! preg_match('/user_aliases/', $this->fromtype)
+						&& ! preg_match('/global_aliases/', $this->fromtype)
+						&& ! preg_match('/senderprofile/', $this->fromtype))
+					{
+						// Use this->fromname and this->frommail or error if not defined
+						$out.= $this->fromname;
+						if ($this->frommail)
+						{
+							$out.= ' &lt;'.$this->frommail.'&gt;';
+						}
+						else
+						{
+							if ($this->fromtype)
+							{
+								$langs->load('errors');
+								$out.= '<span class="warning"> &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt; </span>';
+							}
+						}
+					} else {
+						$liste = array();
+
+						// Add user email
+						if (empty($user->email))
+						{
+							$langs->load('errors');
+							$liste['user'] = $user->getFullName($langs) . ' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
+						}
+						else
+						{
+							$liste['user'] = $user->getFullName($langs) .' &lt;'.$user->email.'&gt;';
+						}
+
+						// Add also company main email
+						$liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM .' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+
+						// Add also email aliases if there is some
+						$listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+
+						// Add also email aliases from the c_email_senderprofile table
+						$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
+						$resql = $this->db->query($sql);
+						if ($resql)
+						{
+							$num = $this->db->num_rows($resql);
+							$i=0;
+							while($i < $num)
+							{
+								$obj = $this->db->fetch_object($resql);
+								if ($obj)
+								{
+									$listaliases['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+								}
+								$i++;
+							}
+						}
+						else dol_print_error($this->db);
+
+						foreach($listaliases as $typealias => $listalias)
+						{
+							$posalias=0;
+							$listaliasarray=explode(',', $listalias);
+							foreach ($listaliasarray as $listaliasval)
+							{
+								$posalias++;
+								$listaliasval=trim($listaliasval);
+								if ($listaliasval)
+								{
+									$listaliasval=preg_replace('/</', '&lt;', $listaliasval);
+									$listaliasval=preg_replace('/>/', '&gt;', $listaliasval);
+									if (! preg_match('/&lt;/', $listaliasval)) $listaliasval='&lt;'.$listaliasval.'&gt;';
+									$liste[$typealias.'_'.$posalias]=$listaliasval;
+								}
+							}
+						}
+						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+						//$out.= ajax_combobox('fromtype');
+					}
+
+					$out.= "</td></tr>\n";
+				}
+				else
+				{
+					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom")."</td><td>";
+					$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
+					$out.= '&nbsp; &nbsp; ';
+					$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
+					$out.= "</td></tr>\n";
+				}
+			}
+
+			// To
+			if (! empty($this->withto) || is_array($this->withto))
+			{
+				$out.= '<tr><td class="fieldrequired" width="180">';
+				if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				else $out.= $langs->trans("MailTo");
+				$out.= '</td><td>';
+				if ($this->withtoreadonly)
+				{
+					if (! empty($this->toname) && ! empty($this->tomail))
+					{
+						$out.= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
+						$out.= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
+						if ($this->totype == 'thirdparty')
+						{
+							$soc=new Societe($this->db);
+							$soc->fetch($this->toid);
+							$out.= $soc->getNomUrl(1);
+						}
+						else if ($this->totype == 'contact')
+						{
+							$contact=new Contact($this->db);
+							$contact->fetch($this->toid);
+							$out.= $contact->getNomUrl(1);
+						}
+						else
+						{
+							$out.= $this->toname;
+						}
+						$out.= ' &lt;'.$this->tomail.'&gt;';
+						if ($this->withtofree)
+						{
+							$out.= '<br>'.$langs->trans("and").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+						}
+					}
+					else
+					{
+						// Note withto may be a text like 'AllRecipientSelected'
+						$out.= (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
+					}
+				}
+				else
+				{
+					if (! empty($this->withtofree))
+					{
+						$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+					}
+					if (! empty($this->withto) && is_array($this->withto))
+					{
+						if (! empty($this->withtofree)) $out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+						$tmparray = $this->withto;
+						foreach($tmparray as $key => $val)
+						{
+							$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+						}
+						$withtoselected=GETPOST("receiver",'none');     // Array of selected value
+						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+						{
+							$withtoselected = array_keys($tmparray);
+						}
+						$out.= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+					}
+				}
+				$out.= "</td></tr>\n";
+			}
+
+			// withoptiononeemailperrecipient
+			if (! empty($this->withoptiononeemailperrecipient))
+			{
+				$out.= '<tr><td>';
+				$out.= $langs->trans("GroupEmails");
+				$out.= '</td><td>';
+				$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
+				$out.= $langs->trans("OneEmailPerRecipient").' - ';
+				$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+				$out.= '</td></tr>';
+			}
+
+			// CC
+			if (! empty($this->withtocc) || is_array($this->withtocc))
+			{
+				$out.= '<tr><td>';
+				$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				$out.= '</td><td>';
+				if ($this->withtoccreadonly)
+				{
+					$out.= (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
+				}
+				else
+				{
+					$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
+					if (! empty($this->withtocc) && is_array($this->withtocc))
+					{
+						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+						$tmparray = $this->withtocc;
+						foreach($tmparray as $key => $val)
+						{
+							$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+						}
+						$withtoccselected=GETPOST("receivercc");     // Array of selected value
+						$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
+					}
+				}
+				$out.= "</td></tr>\n";
+			}
+
+			// CCC
+			if (! empty($this->withtoccc) || is_array($this->withtoccc))
+			{
+				$out.= '<tr><td>';
+				$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				$out.= '</td><td>';
+				if (! empty($this->withtocccreadonly))
+				{
+					$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
+				}
+				else
+				{
+					$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+					if (! empty($this->withtoccc) && is_array($this->withtoccc))
+					{
+						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+						$tmparray = $this->withtoccc;
+						foreach($tmparray as $key => $val)
+						{
+							$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+						}
+						$withtocccselected=GETPOST("receiverccc");     // Array of selected value
+						$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
+					}
 				}
 
-        		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
+				$showinfobcc='';
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+				if ($showinfobcc) $out.=' + '.$showinfobcc;
+				$out.= "</td></tr>\n";
+			}
 
-        		$out.= '<tr>';
-        		$out.= '<td class="fieldrequired">'.$langs->trans("MailTopic").'</td>';
-        		$out.= '<td>';
-        		if ($this->withtopicreadonly)
-        		{
-        			$out.= $defaulttopic;
-        			$out.= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
-        		}
-        		else
-        		{
-        			$out.= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
-        		}
-        		$out.= "</td></tr>\n";
-        	}
+			// Replyto
+			if (! empty($this->withreplyto))
+			{
+				if ($this->withreplytoreadonly)
+				{
+					$out.= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
+					$out.= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
+					$out.= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail?(" &lt;".$this->replytomail."&gt;"):"");
+					$out.= "</td></tr>\n";
+				}
+			}
 
-        	// Attached files
-        	if (! empty($this->withfile))
-        	{
-        		$out.= '<tr>';
-        		$out.= '<td>'.$langs->trans("MailFile").'</td>';
+			// Errorsto
+			if (! empty($this->witherrorsto))
+			{
+				//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
+				$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
+				if ($this->witherrorstoreadonly)
+				{
+					$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+					$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+					$out.= $errorstomail;
+					$out.= "</td></tr>\n";
+				}
+				else
+				{
+					$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+					$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+					$out.= "</td></tr>\n";
+				}
+			}
 
-        		$out.= '<td>';
-        		if (! empty($this->withmaindocfile))
-        		{
-        			if ($this->withmaindocfile == 1)
-        			{
-        				$out.='<input type="checkbox" name="addmaindocfile" value="1" />';
-        			}
-        			if ($this->withmaindocfile == -1)
-        			{
-        				$out.='<input type="checkbox" name="addmaindocfile" checked="checked" />';
-        			}
-        			$out.=' '.$langs->trans("JoinMainDoc").'.<br>';
-        		}
+			// Ask delivery receipt
+			if (! empty($this->withdeliveryreceipt))
+			{
+				$out.= '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
 
-        		if (is_numeric($this->withfile))
-        		{
+				if (! empty($this->withdeliveryreceiptreadonly))
+				{
+					$out.= yn($this->withdeliveryreceipt);
+				}
+				else
+				{
+					$defaultvaluefordeliveryreceipt=0;
+					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
+					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt=1;
+					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
+					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
+					$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
+				}
+
+				$out.= "</td></tr>\n";
+			}
+
+			// Topic
+			if (! empty($this->withtopic))
+			{
+				$defaulttopic=GETPOST('subject','none');
+				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				{
+					if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
+					elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+				}
+
+				$defaulttopic=make_substitutions($defaulttopic,$this->substit);
+
+				$out.= '<tr>';
+				$out.= '<td class="fieldrequired">'.$langs->trans("MailTopic").'</td>';
+				$out.= '<td>';
+				if ($this->withtopicreadonly)
+				{
+					$out.= $defaulttopic;
+					$out.= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
+				}
+				else
+				{
+					$out.= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
+				}
+				$out.= "</td></tr>\n";
+			}
+
+			// Attached files
+			if (! empty($this->withfile))
+			{
+				$out.= '<tr>';
+				$out.= '<td>'.$langs->trans("MailFile").'</td>';
+
+				$out.= '<td>';
+				if (! empty($this->withmaindocfile))
+				{
+					if ($this->withmaindocfile == 1)
+					{
+						$out.='<input type="checkbox" name="addmaindocfile" value="1" />';
+					}
+					if ($this->withmaindocfile == -1)
+					{
+						$out.='<input type="checkbox" name="addmaindocfile" checked="checked" />';
+					}
+					$out.=' '.$langs->trans("JoinMainDoc").'.<br>';
+				}
+
+				if (is_numeric($this->withfile))
+				{
 					// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
-	        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-	        		$out.= '<script type="text/javascript" language="javascript">';
-	        		$out.= 'jQuery(document).ready(function () {';
-	        		$out.= '    jQuery(".removedfile").click(function() {';
-	        		$out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
-	        		$out.= '    });';
-	        		$out.= '})';
-	        		$out.= '</script>'."\n";
-	        		if (count($listofpaths))
-	        		{
-	        			foreach($listofpaths as $key => $val)
-	        			{
-	        				$out.= '<div id="attachfile_'.$key.'">';
-	        				$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-	        				if (! $this->withfilereadonly)
-	        				{
-	        					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
-	        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
-	        				}
-	        				$out.= '<br></div>';
-	        			}
-	        		}
-	        		else if (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
-	        		{
-	        			$out.= $langs->trans("NoAttachedFiles").'<br>';
-	        		}
-	        		if ($this->withfile == 2)	// Can add other files
-	        		{
-	        			if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) $out.= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
+					$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
+					$out.= '<script type="text/javascript" language="javascript">';
+					$out.= 'jQuery(document).ready(function () {';
+					$out.= '    jQuery(".removedfile").click(function() {';
+					$out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
+					$out.= '    });';
+					$out.= '})';
+					$out.= '</script>'."\n";
+					if (count($listofpaths))
+					{
+						foreach($listofpaths as $key => $val)
+						{
+							$out.= '<div id="attachfile_'.$key.'">';
+							$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
+							if (! $this->withfilereadonly)
+							{
+								$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+								//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
+							}
+							$out.= '<br></div>';
+						}
+					}
+					else if (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
+					{
+						$out.= $langs->trans("NoAttachedFiles").'<br>';
+					}
+					if ($this->withfile == 2)	// Can add other files
+					{
+						if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) $out.= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
 						else $out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
-	        			$out.= ' ';
-	        			$out.= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
-	        		}
-        		}
-        		else
-        		{
-        			$out.=$this->withfile;
-        		}
+						$out.= ' ';
+						$out.= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+					}
+				}
+				else
+				{
+					$out.=$this->withfile;
+				}
 
-        		$out.= "</td></tr>\n";
-        	}
+				$out.= "</td></tr>\n";
+			}
 
-        	// Message
-        	if (! empty($this->withbody))
-        	{
-        		$defaultmessage=GETPOST('message','none');
+			// Message
+			if (! empty($this->withbody))
+			{
+				$defaultmessage=GETPOST('message','none');
 				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
 				{
 					if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
-       				elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+	   				elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
 				}
 
-        		// Complete substitution array
-        		$paymenturl='';
-        		if (! empty($conf->global->PAYMENT_ADD_PAYMENT_URL)		// Option to enable to add online link into __PERSONALIZED__
-        			|| (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
-        		)
-        		{
-        			if (empty($this->substit['__REF__']))
-        			{
-        				//$paymenturl='LinkToPayOnlineNotAvailableInThisContext';
-        				$paymenturl='';
-        			}
-        			else
-        			{
-	        			// Set the online payment message and url link into __PERSONALIZED__ key
-	        			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-	        			$langs->load('paypal');
-	        			$typeforonlinepayment='free';
-	        			if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
-	        			if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
-	        			if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
-	        			$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
-	       				//$paymenturl=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
-	       				$paymenturl=$url;
-        			}
-        		}
-        		$this->substit['__PERSONALIZED__']=$paymenturl;			// deprecated
-        		$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
+				// Complete substitution array
+				$paymenturl='';
+				if (! empty($conf->global->PAYMENT_ADD_PAYMENT_URL)		// Option to enable to add online link into __PERSONALIZED__
+					|| (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
+				)
+				{
+					if (empty($this->substit['__REF__']))
+					{
+						//$paymenturl='LinkToPayOnlineNotAvailableInThisContext';
+						$paymenturl='';
+					}
+					else
+					{
+						// Set the online payment message and url link into __PERSONALIZED__ key
+						require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+						$langs->load('paypal');
+						$typeforonlinepayment='free';
+						if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
+						if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
+						if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
+						$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
+		   				//$paymenturl=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
+		   				$paymenturl=$url;
+					}
+				}
+				$this->substit['__PERSONALIZED__']=$paymenturl;			// deprecated
+				$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 
-                //Add lines substitution key from each line
-                $lines = '';
-                $defaultlines = $arraydefaultmessage['content_lines'];
-                if (isset($defaultlines))
-                {
-                    foreach ($this->substit_lines as $substit_line)
-                    {
-                        $lines .= make_substitutions($defaultlines,$substit_line)."\n";
-                    }
-                }
-                $this->substit['__LINES__']=$lines;
+				//Add lines substitution key from each line
+				$lines = '';
+				$defaultlines = $arraydefaultmessage['content_lines'];
+				if (isset($defaultlines))
+				{
+					foreach ($this->substit_lines as $substit_line)
+					{
+						$lines .= make_substitutions($defaultlines,$substit_line)."\n";
+					}
+				}
+				$this->substit['__LINES__']=$lines;
 
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 

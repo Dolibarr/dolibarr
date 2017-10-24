@@ -48,9 +48,12 @@ TypeContact_fichinter_external_CUSTOMER=Ansvarlig for kundeoppfølging
 PrintProductsOnFichinter=Skriv også ut linjer med type "produkt" (ikke bare tjenester) på intervensjonskort
 PrintProductsOnFichinterDetails=intervensjoner generert fra ordre
 UseServicesDurationOnFichinter=Bruk tjenestevarighet for intervensjoner som genereres fra bestillinger
+UseDurationOnFichinter=Skjuler varighet-feltet for intervensjonsposter
+UseDateWithoutHourOnFichinter=Skjuler timer- og minutt-feltene for intervensjonsposter
 InterventionStatistics=Statistikk over intervensjoner
 NbOfinterventions=Antall intervensjonskort
 NumberOfInterventionsByMonth=Antall intervensjonskort etter måned (validasjonsdato)
+AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=Intervensjons-ID
 InterRef=Intervensjonsref.

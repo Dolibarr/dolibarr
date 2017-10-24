@@ -737,7 +737,9 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\./","",$this->fax);
 		$this->email		= trim($this->email);
 		$this->skype		= trim($this->skype);
-		$this->url			= $this->url?clean_url($this->url,0):'';
+		$this->url		= $this->url?clean_url($this->url,0):'';
+		$this->note_private 	= trim($this->note_private);
+        	$this->note_public  	= trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
@@ -851,6 +853,9 @@ class Societe extends CommonObject
 			$sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
+
+			$sql .= ",note_private = ".(! empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
+            		$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 
 			$sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
 			$sql .= ",siret   = '". $this->db->escape($this->idprof2) ."'";
@@ -1862,7 +1867,7 @@ class Societe extends CommonObject
 		if (! empty($this->logo) && class_exists('Form'))
 		{
 			$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
+			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 

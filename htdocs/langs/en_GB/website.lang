@@ -1,14 +1,5 @@
 # Dolibarr language file - Source file is en_US - website
 WebsiteSetupDesc=Create here as many entries for websites as you need. Then go into menu Websites to edit them.
 PageNameAliasHelp=Name or alias of the page.<br>This alias is also used to forge an SEO URL when the website is run from a Virtual host of a Web server (like Apache, Nginx, ...). Use the button "<strong>%s</strong>" to edit this alias.
-EditCss=Edit Style/CSS or HTML header
-EditPageContent=Edit Content
 Website=Website
-Webpage=Web page/container
-AddPage=Add page/container
 PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> is not yet available. You must first add a page.
-PageContent=Page/Contenair
-PageDeleted=Page/Contenair '%s' of website %s deleted
-PageAdded=Page/Contenair '%s' added
-SyntaxHelp=Help on syntax code
-YouCanEditHtmlSource=You can edit HTML source code using the "Source" button in editor. You can also include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $langs, $db, $mysoc, $user, $website.<br><br>You can also include content of another Page/Container with the following syntax: <strong>&lt;?php dolIncludeHtmlContent($websitekey.'/contentaliastoinclude.php'); ?&gt;</strong><br><br>To include a link to download a file stored into the documents/medias directory, use syntax:<br><strong>&lt;a href="/document.php?modulepart=medias&file=filename.ext"&gt;</strong>.

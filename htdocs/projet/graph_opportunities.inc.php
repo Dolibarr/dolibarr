@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
@@ -48,7 +48,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $db->free($resql);
 
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
-	    
+
+		print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
 	    $var=true;
@@ -67,7 +68,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-	            
+
 	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
@@ -88,7 +89,10 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
 	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
 	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print "</table><br>";
+	    print "</table>";
+	    print "</div>";
+
+	    print "<br>";
 	}
 	else
 	{

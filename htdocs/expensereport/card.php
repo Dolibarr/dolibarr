@@ -2396,8 +2396,8 @@ if ($action != 'presend')
 		$filename	=	dol_sanitizeFileName($object->ref);
 		$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed	=	1;
-		$delallowed	=	1;
+		$genallowed	=	$user->rights->expensereport->export;
+		$delallowed	=	$user->rights->expensereport->export;
 		$var 		= 	true;
 		print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
 		$somethingshown = $formfile->numoffiles;

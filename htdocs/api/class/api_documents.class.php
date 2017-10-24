@@ -130,18 +130,20 @@ class Documents extends DolibarrApi
 	}
 
 	/**
-	 * Return the list of documents of an element
+	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
-	 * @param   string 	$modulepart	Name of module or area concerned ('facture', 'project', 'member', ...)
-	 * @param	int		$id			ID of element
+	 * @param   string 	$modulepart		Name of module or area concerned ('facture', 'project', 'member', ...)
+	 * @param	int		$id				ID of element
 	 * @param	string	$ref			Ref of element
-	 * @return	array				Array of documents with path
+	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
+	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @return	array					Array of documents with path
 	 *
 	 * @throws RestException
 	 *
 	 * @url GET list
 	 */
-	function getDocumentsListByElement($modulepart, $id=0, $ref='')
+	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
 	{
 		global $conf;
 
@@ -254,9 +256,11 @@ class Documents extends DolibarrApi
 
 		// Define $uploadir
 		$object = null;
-		$entity = $user->entity;
+		$entity = DolibarrApiAccess::$user->entity;
 		if ($ref)
 		{
+			$tmpreldir='';
+
 			if ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';

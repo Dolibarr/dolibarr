@@ -47,6 +47,7 @@ SpecificationFile=File with business rules
 LanguageFile=File for language
 ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong> ? This will change code in PHP class but also remove column from table definition of object.
 NotNull=Not NULL
+NotNullDesc=1=Set database to NOT NULL. -1=Allow null values and force value to NULL if empty ('' or 0). 
 SearchAll=Used for 'search all'
 DatabaseIndex=Database index
 FileAlreadyExists=File %s already exists
