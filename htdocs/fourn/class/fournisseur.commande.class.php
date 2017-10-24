@@ -1467,7 +1467,7 @@ class CommandeFournisseur extends CommonOrder
 
                         // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->socid);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
                         if ($result > 0)
                         {
 			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
