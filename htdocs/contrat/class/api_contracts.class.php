@@ -207,7 +207,7 @@ class Contracts extends DolibarrApi
     }
 
     /**
-     * Get lines of an contract
+     * Get lines of a contract
      *
      * @param int   $id             Id of contract
      *

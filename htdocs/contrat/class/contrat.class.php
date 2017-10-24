@@ -691,8 +691,8 @@ class Contrat extends CommonObject
 		$sql.= " d.fk_user_ouverture,";
 		$sql.= " d.fk_user_cloture,";
 		$sql.= " d.fk_unit";
-		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
-		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
+		$sql.= " WHERE d.fk_contrat = ".$this->id;
 		$sql.= " ORDER by d.rowid ASC";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
@@ -728,7 +728,7 @@ class Contrat extends CommonObject
 				$line->total_localtax1	= $objp->total_localtax1;
 				$line->total_localtax2	= $objp->total_localtax2;
 				$line->total_ttc		= $objp->total_ttc;
-				$line->fk_product		= $objp->fk_product;
+				$line->fk_product		= (($objp->fk_product > 0)?$objp->fk_product:0);
 				$line->info_bits		= $objp->info_bits;
 
 				$line->fk_fournprice 	= $objp->fk_fournprice;
@@ -740,9 +740,17 @@ class Contrat extends CommonObject
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
 				$line->fk_unit           = $objp->fk_unit;
 
-				$line->ref				= $objp->product_ref;			// deprecated
-				$line->label			= $objp->product_label;         // deprecated
-				$line->libelle			= $objp->product_label;         // deprecated
+				$line->ref				= $objp->product_ref;						// deprecated
+				if (empty($objp->fk_product)) 
+				{
+					$line->label			= '';         			// deprecated
+					$line->libelle 			= $objp->description;	// deprecated
+				}
+				else 
+				{
+					$line->label			= $objp->product_label;         			// deprecated
+					$line->libelle			= $objp->product_label;         		// deprecated
+				}
 				$line->product_ref		= $objp->product_ref;   // Ref product
 				$line->product_desc		= $objp->product_desc;  // Description product
 				$line->product_label	= $objp->product_label; // Label product
@@ -759,7 +767,7 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retreive all extrafield for propal
+				// Retreive all extrafield for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
 
@@ -787,108 +795,6 @@ class Contrat extends CommonObject
 		{
 			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrats liees aux produits");
 			return -3;
-		}
-
-		// Selectionne les lignes contrat liees a aucun produit
-		$sql = "SELECT d.rowid, d.fk_contrat, d.statut, d.qty, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.rowid, d.remise_percent, d.subprice,";
-		$sql.= " d.total_ht,";
-		$sql.= " d.total_tva,";
-		$sql.= " d.total_localtax1,";
-		$sql.= " d.total_localtax2,";
-		$sql.= " d.total_ttc,";
-		$sql.= " d.info_bits, d.fk_product,";
-		$sql.= " d.date_ouverture_prevue, d.date_ouverture,";
-		$sql.= " d.date_fin_validite, d.date_cloture,";
-		$sql.= " d.fk_user_author,";
-		$sql.= " d.fk_user_ouverture,";
-		$sql.= " d.fk_user_cloture,";
-		$sql.= " d.fk_unit";
-		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
-		$sql.= " WHERE d.fk_contrat = ".$this->id;
-		$sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gardee pour compatibilitee
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			$i = 0;
-
-			while ($i < $num)
-			{
-				$objp                  = $this->db->fetch_object($result);
-
-				$line                 = new ContratLigne($this->db);
-				$line->id 			  = $objp->rowid;
-				$line->fk_contrat     = $objp->fk_contrat;
-				$line->libelle        = $objp->description;
-				$line->desc           = $objp->description;
-				$line->qty            = $objp->qty;
-				$line->statut 		  = $objp->statut;
-				$line->ref            = '';
-				$line->tva_tx         = $objp->tva_tx;
-				$line->localtax1_tx   = $objp->localtax1_tx;
-				$line->localtax2_tx   = $objp->localtax2_tx;
-				$line->localtax1_type = $objp->localtax1_type;
-				$line->localtax2_type = $objp->localtax2_type;
-				$line->subprice       = $objp->subprice;
-				$line->remise_percent = $objp->remise_percent;
-				$line->price_ht       = $objp->price_ht;
-				$line->price          = (isset($objp->price)?$objp->price:null);	// For backward compatibility
-				$line->total_ht       = $objp->total_ht;
-				$line->total_tva      = $objp->total_tva;
-				$line->total_localtax1= $objp->total_localtax1;
-				$line->total_localtax2= $objp->total_localtax2;
-				$line->total_ttc      = $objp->total_ttc;
-				$line->fk_product     = 0;
-				$line->info_bits      = $objp->info_bits;
-
-				$line->fk_user_author   = $objp->fk_user_author;
-				$line->fk_user_ouverture= $objp->fk_user_ouverture;
-				$line->fk_user_cloture  = $objp->fk_user_cloture;
-
-				$line->description    = $objp->description;
-
-				$line->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
-				$line->date_ouverture        = $this->db->jdate($objp->date_ouverture);
-				$line->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
-				$line->date_cloture          = $this->db->jdate($objp->date_cloture);
-				// For backward compatibility
-				$line->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
-				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
-				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
-				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
-				$line->fk_unit        = $objp->fk_unit;
-
-				if ($line->statut == 0) $this->nbofserviceswait++;
-				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
-				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
-				if ($line->statut == 5) $this->nbofservicesclosed++;
-
-
-				// Retreive all extrafield for propal
-				// fetch optionals attributes and labels
-
-				$line->fetch_optionals($line->id,$extralabelsline);
-
-
-				$this->lines[$pos]			= $line;
-				$this->lines_id_index_mapper[$line->id] = $pos;
-
-				$total_ttc+=$objp->total_ttc;
-                $total_vat+=$objp->total_tva;
-                $total_ht+=$objp->total_ht;
-
-                $i++;
-                $pos++;
-			}
-
-			$this->db->free($result);
-		}
-		else
-		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrat non liees aux produits");
-			$this->error=$this->db->error();
-			return -2;
 		}
 
 		$this->nbofservices=count($this->lines);

@@ -37,21 +37,21 @@ INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('ER', '
 
 
 -- Description of chart of account FR PCG99-ABREGE
-INSERT INTO llx_accounting_system (pcg_version, label, active) VALUES ('PCG99-ABREGE', 'The simple accountancy french plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 1, 'PCG99-ABREGE', 'The simple accountancy french plan', 1);
 
 -- Description of chart of account FR PCG99-BASE
-INSERT INTO llx_accounting_system (pcg_version, label, active) VALUES ('PCG99-BASE', 'The base accountancy french plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 1, 'PCG99-BASE', 'The base accountancy french plan', 1);
 
 -- Description of chart of account BE PCMN-BASE
-INSERT INTO llx_accounting_system (pcg_version, label, active) VALUES ('PCMN-BASE', 'The base accountancy belgium plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 2, 'PCMN-BASE', 'The base accountancy belgium plan', 1);
 
 -- Description of chart of account ES PCG08-PYME
-INSERT INTO llx_accounting_system (pcg_version, label, active) VALUES ('PCG08-PYME', 'The PYME accountancy spanish plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 4, 'PCG08-PYME', 'The PYME accountancy spanish plan', 1);
 
 -- Description of chart of account DK DK-STD
-INSERT INTO llx_accounting_system (pcg_version, label, active) VALUES ('DK-STD', 'Standardkontoplan fra SKAT', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (80, 'DK-STD', 'Standardkontoplan fra SKAT', 1);
 
 -- Description of chart of account CL CL-PYME
-INSERT INTO llx_accounting_system (pcg_version, label, active) VALUES ('PC-MIPYME', 'The PYME accountancy Chile plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (67, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
 
 
