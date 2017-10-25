@@ -39,7 +39,7 @@ $langs->loadLangs(array("companies","website"));
 $search_status=GETPOST('search_status');
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
@@ -91,6 +91,7 @@ foreach($objectwebsiteaccount->fields as $key => $val)
 	// If $val['visible']==0, then we never show the field
 	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled']);
 }
+
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -230,7 +231,7 @@ dol_fiche_end();
 $morehtmlcenter = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&thirdpartyid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&thirdpartyid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
 		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
