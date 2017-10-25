@@ -421,7 +421,7 @@ class Loan extends CommonObject
 
         if ($withpicto) $result.=($link.$linkclose.img_object($langs->trans("ShowLoan").': '.$this->label,'bill', 'class="classfortooltip"').$linkend.' ');
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$linkclose.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
+        if ($withpicto != 2) $result.=$link.$linkclose.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
         return $result;
     }
 

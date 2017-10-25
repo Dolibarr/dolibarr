@@ -17,10 +17,11 @@
 CREATE TABLE llx_websiteaccount(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login varchar(64) NOT NULL, 
-	label varchar(255), 
-	note_public text, 
-	note_private text, 
+	login             varchar(64) NOT NULL, 
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    date_last_login     datetime,
+    date_previous_login datetime,
 	date_creation datetime NOT NULL, 
 	tms timestamp NOT NULL, 
 	fk_user_creat integer NOT NULL, 

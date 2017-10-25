@@ -251,7 +251,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
         foreach($object->fields as $key => $val)
         {
             $i++;
-            $texttoinsert.= "\t".$key." ".$val['type'];
+
+            $type = $val['type'];
+            $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
+
+            $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
             else

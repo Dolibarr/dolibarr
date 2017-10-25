@@ -58,8 +58,8 @@ class WebsiteAccount extends CommonObject
 	/**
 	 *             'type' if the field format.
 	 *             'label' the translation key.
-	 *             'enabled' is a condition when the filed must be managed.
-	 *             'visible' says if field is visible in list (-1 means not shown by default but can be added into list to be viewed).
+	 *             'enabled' is a condition when the field must be managed.
+	 *             'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *             'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *             'index' if we want an index in database.
 	 *             'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
@@ -75,24 +75,27 @@ class WebsiteAccount extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
-		'login' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Login',),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1,),
-		'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
-		'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Active')),
-		'fk_soc' => array('type'=>'integer', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1,),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
+		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Login',),
+		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1,),
+		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>30, 'notnull'=>-1,),
+		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
+		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
+		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
+		//'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1,),
 	);
 	public $rowid;
 	public $login;
-	public $label;
-	public $note_public;
-	public $note_private;
+	public $pass_crypted;
+	public $date_last_login;
+	public $date_previous_login;
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;

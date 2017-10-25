@@ -930,11 +930,17 @@ if (empty($reshook))
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
 		if ($ret < 0) $error++;
+
 		if (! $error)
 		{
 			$result = $object->insertExtraFields();
-			if ($result < 0) $error++;
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
+
 		if ($error) $action = 'edit_extras';
 	}
 }

@@ -169,12 +169,17 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime DE
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
 
 
+ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
+ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
+
+
 CREATE TABLE llx_websiteaccount(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login varchar(64) NOT NULL, 
-	label varchar(255), 
-	note_public text, 
-	note_private text, 
+	login             varchar(64) NOT NULL, 
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    date_last_login     datetime,
+    date_previous_login datetime,
 	date_creation datetime NOT NULL, 
 	tms timestamp NOT NULL, 
 	fk_user_creat integer NOT NULL, 
@@ -183,6 +188,7 @@ CREATE TABLE llx_websiteaccount(
 	status integer, 
 	fk_soc integer
 ) ENGINE=innodb;
+
 
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
@@ -441,11 +447,14 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-ABREGE';
 UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG99-BASE';
+UPDATE llx_accounting_system SET fk_country =  1 WHERE pcg_version = 'PCG14-DEV';
 UPDATE llx_accounting_system SET fk_country =  2 WHERE pcg_version = 'PCMN-BASE';
 UPDATE llx_accounting_system SET fk_country =  4 WHERE pcg_version = 'PCG08-PYME';
+UPDATE llx_accounting_system SET fk_country = 10 WHERE pcg_version = 'PCT';
 UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
 UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME';
-
+UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
+UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMBURG';
 
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);

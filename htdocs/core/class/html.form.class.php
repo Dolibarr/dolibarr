@@ -504,7 +504,7 @@ class Form
 		global $conf, $langs;
 
 		$alt = '';
-		if ($tooltiptrigger) $alt=$langs->trans("ClickToShowHelp");
+		if ($tooltiptrigger) $alt=$langs->transnoentitiesnoconv("ClickToShowHelp");
 
 		//For backwards compatibility
 		if ($type == '0') $type = 'info';

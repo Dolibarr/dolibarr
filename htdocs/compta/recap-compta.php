@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,9 @@ $result = restrictedArea($user, 'societe', $id, '&societe');
 $object = new Societe($db);
 if ($id > 0) $object->fetch($id);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('recapcomptacard','globalcard'));
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -60,6 +64,9 @@ $arrayfields=array(
 /*
  * Actions
  */
+$parameters = array('socid' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // None
 
@@ -139,13 +146,20 @@ if ($id > 0)
 				$userstatic->id=$objf->userid;
 				$userstatic->login=$objf->login;
 				
-				$TData[] = array(
+				$values = array(
+					'fk_facture' => $objf->facid,
 					'date' => $fac->date,
 					'link' => $fac->getNomUrl(1),
 					'status' => $fac->getLibStatut(2,$totalpaye),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
+				
+				$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic);
+				$reshook = $hookmanager->executeHooks('facdao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				
+				$TData[] = $values;
 				$TDataSort[] = $fac->date;
 
 				// Paiements
@@ -175,13 +189,20 @@ if ($id > 0)
 						$userstatic->id=$objp->userid;
 						$userstatic->login=$objp->login;
 						
-						$TData[] = array(
+						$values = array(
+							'fk_paiement' => $objp->rowid,
 							'date' => $db->jdate($objp->dp),
 							'link' => $langs->trans("Payment") .' '. $paymentstatic->getNomUrl(1),
 							'status' => '',
 							'amount' => -$objp->amount,
 							'author' => $userstatic->getLoginUrl(1)
 						);
+						
+						$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic, 'paymentstatic' => $paymentstatic);
+						$reshook = $hookmanager->executeHooks('paydao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
+						if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						
+						$TData[] = $values;
 						$TDataSort[] = $db->jdate($objp->dp);
 
 						$j++;
@@ -224,7 +245,11 @@ if ($id > 0)
 			// Display array
 			foreach($TData as $data) {
 				
-				print '<tr class="oddeven">';
+				$html_class = '';
+				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+				
+				print '<tr class="oddeven '.$html_class.'">';
 	
 				print "<td align=\"center\">".dol_print_date($data['date'],'day')."</td>\n";
 				print '<td>'.$data['link']."</td>\n";

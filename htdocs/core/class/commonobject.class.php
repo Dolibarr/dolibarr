@@ -4246,7 +4246,7 @@ abstract class CommonObject
 	/**
 	 * Call trigger based on this instance.
 	 * Some context information may also be provided into array property this->context.
-	 * NB: Error from trigger are stacked in interface->errors
+	 * NB:  Error from trigger are stacked in interface->errors
 	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
 	 *
 	 * @param   string    $trigger_name   trigger's name to execute
@@ -4399,11 +4399,15 @@ abstract class CommonObject
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
 	 *
-	 *  @return int -1=error, O=did nothing, 1=OK
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	User		$userused		Object user
+	 *  @return int 						-1=error, O=did nothing, 1=OK
 	 */
-	function insertExtraFields()
+	function insertExtraFields($trigger='',$userused=null)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
+
+		if (empty($userused)) $userused=$user;
 
 		$error=0;
 
@@ -4529,6 +4533,22 @@ abstract class CommonObject
 			if (! $resql)
 			{
 				$this->error=$this->db->lasterror();
+				$error++;
+			}
+			else
+			{
+				if ($trigger)
+				{
+					// Call trigger
+					$this->context=array('extrafieldaddupdate'=>1);
+					$result=$this->call_trigger($trigger, $userused);
+					if ($result < 0) $error++;
+					// End call trigger
+				}
+			}
+
+			if ($error)
+			{
 				$this->db->rollback();
 				return -1;
 			}
