@@ -65,7 +65,6 @@ $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$thirdpartyid = GETPOST('thirdpartyid', 'int');
 
 // Initialize technical objects
 $object=new WebsiteAccount($db);
@@ -163,34 +162,13 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="thirdpartyid" value="'.$thirdpartyid.'">';
 
-	dol_fiche_head(array(), '');
+	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
 
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-
-    	print '<tr id="field_'.$key.'">';
-    	print '<td';
-    	print ' class="titlefieldcreate';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-		if ($val['type'] == 'text') print ' tdtop';
-		print '"';
-    	print '>';
-    	print $langs->trans($val['label']);
-    	print '</td>';
-    	print '<td>';
-    	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
-    	elseif ($val['type'] == 'text') $value = GETPOST($key, 'none');
-    	else $value = GETPOST($key, 'alpha');
-    	print $object->showInputField($val, $key, $value, '', '', '', 0, 0);
-    	print '</td>';
-    	print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
@@ -202,7 +180,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="button" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onclick="javascript:history.go(-1)">';	// Cancel for create doe not post form
+	print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -221,37 +199,9 @@ if (($id || $ref) && $action == 'edit')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
-    	print '<tr><td';
-    	print ' class="titlefieldcreate';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-		if ($val['type'] == 'text') print ' tdtop';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td>';
-    	$defaultcss='minwidth100';
-	    if ($val['type'] == 'text')
-    	{
-    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-    		print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
-    		print '</textarea>';
-    	}
-	    elseif (is_array($val['arrayofkeyval']))
-   		{
-   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
-    	}
-    	else
-    	{
-    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
-    	}
-    	print '</td>';
-    	print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';

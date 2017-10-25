@@ -5159,7 +5159,8 @@ abstract class CommonObject
 		elseif ($type == 'link')
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, (($val['notnull'] == 1)?0:1));
+			$showempty=(($val['notnull'] == 1 && $val['default'] != '')?0:1);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
 		}
 		elseif ($type == 'password')
 		{
@@ -5706,6 +5707,8 @@ abstract class CommonObject
 	 */
 	public function createCommon(User $user, $notrigger = false)
 	{
+		global $langs;
+
 		$error = 0;
 
 		$now=dol_now();
@@ -5718,9 +5721,26 @@ abstract class CommonObject
 		$keys=array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
-			$keys[] = $k;
-			$values[] = $this->quote($v, $this->fields[$k]);
+			$keys[$k] = $k;
+			$value = $this->fields[$k];
+			$values[$k] = $this->quote($v, $value);
 		}
+
+		// Clean and check mandatory
+		foreach($keys as $key)
+		{
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
+			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
+
+			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
+			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
+			{
+				$error++;
+				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+			}
+		}
+
+		if ($error) return -1;
 
 		$this->db->begin();
 
@@ -5815,6 +5835,8 @@ abstract class CommonObject
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
+		global $langs;
+
 		$error = 0;
 
 		$fieldvalues = $this->set_save_query();
@@ -5835,6 +5857,21 @@ abstract class CommonObject
 			}
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
+
+		// Clean and check mandatory
+		foreach($keys as $key)
+		{
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
+			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
+
+			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
+			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
+			{
+				$error++;
+				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+			}
+		}
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
 
 		$this->db->begin();

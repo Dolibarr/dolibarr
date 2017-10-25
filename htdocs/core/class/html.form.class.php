@@ -5153,7 +5153,7 @@ class Form
 			dol_include_once($classpath);
 			if ($classname && class_exists($classname))
 			{
-				$objecttmp = new $classname($db);
+				$objecttmp = new $classname($this->db);
 			}
 		}
 		if (! is_object($objecttmp))

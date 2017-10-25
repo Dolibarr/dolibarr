@@ -231,7 +231,7 @@ dol_fiche_end();
 $morehtmlcenter = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&thirdpartyid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
 		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
@@ -259,6 +259,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."websiteaccount_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($objectwebsiteaccount->getIsmultientitymanaged() == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
 else $sql.=" WHERE 1 = 1";
+$sql.=" AND fk_soc = ".$object->id;
 foreach($search as $key => $val)
 {
 	$mode_search=(($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key]))?1:0);

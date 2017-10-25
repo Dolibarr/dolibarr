@@ -17,10 +17,12 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_import_key (import_key);
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_status (status);
+ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_website (fk_website);
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
 -- END MODULEBUILDER INDEXES
+
+ALTER TABLE llx_websiteaccount ADD UNIQUE INDEX uk_websiteaccount_login_website_soc(login, fk_website, fk_soc);
 
 --ALTER TABLE llx_websiteaccount ADD CONSTRAINT llx_websiteaccount_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
 
