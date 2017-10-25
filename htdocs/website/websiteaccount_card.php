@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +17,63 @@
  */
 
 /**
- *   	\file       htdocs/product/inventory/card.php
- *		\ingroup    inventory
- *		\brief      Inventory card
+ *   	\file       htdocs/Website/websiteaccount_card.php
+ *		\ingroup    website
+ *		\brief      Page to create/edit/view websiteaccount
  */
 
-require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+//if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))            define('NOREQUIREDB','1');
+//if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
+//if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
+//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
+//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
+//if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
+//if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
+//if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))          define('NOREQUIREAJAX','1');         // Do not load ajax.lib.php library
+//if (! defined("NOLOGIN"))                define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+
+// Load Dolibarr environment
+$res=0;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
+// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
+$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
+while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
+// Try main.inc.php using relative path
+if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
+if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
+if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
+if (! $res) die("Include of main fails");
+
+include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+dol_include_once('/website/class/websiteaccount.class.php');
+//dol_include_once('/website/lib/websiteaccount.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("inventory","other"));
+$langs->loadLangs(array("website","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
+$ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$thirdpartyid = GETPOST('thirdpartyid', 'int');
 
 // Initialize technical objects
-$object=new Inventory($db);
+$object=new WebsiteAccount($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->inventory->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('inventory');
+$extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Initialize array of search criterias
@@ -53,12 +86,10 @@ foreach($object->fields as $key => $val)
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
-}
-//$result = restrictedArea($user, 'inventory', $id);
+// Security check - Protection if external user
+//if ($user->societe_id > 0) access_forbidden();
+//if ($user->societe_id > 0) $socid = $user->societe_id;
+//$result = restrictedArea($user, 'website', $id);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -69,7 +100,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 
 /*
- * ACTIONS
+ * Actions
  */
 
 $parameters=array();
@@ -80,24 +111,32 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->inventory->create;
-	$permissiontodelete = $user->rights->inventory->delete;
-	$backurlforlist = dol_buildpath('/inventory/inventory_list.php',1);
+	$permissiontoadd = $user->rights->website->write;
+	$permissiontodelete = $user->rights->website->delete;
+	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php',1);
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+	// Actions to send emails
+	$trigger_name='MYOBJECT_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
+	$trackid='websiteaccount'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
-
-
 /*
- * VIEW
+ * View
  */
 
 $form=new Form($db);
+$formfile=new FormFile($db);
 
-llxHeader('','Inventory','');
+llxHeader('','WebsiteAccount','');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -118,19 +157,23 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewInventory", $langs->transnoentitiesnoconv("MyInventory")));
+	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("WebsiteAccount")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="thirdpartyid" value="'.$thirdpartyid.'">';
 
 	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
+
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'date_validation', 'tms', 'fk_user_creat', 'fk_user_modif', 'fk_user_valid', 'import_key'))) continue;
+	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+
     	print '<tr id="field_'.$key.'">';
     	print '<td';
     	print ' class="titlefieldcreate';
@@ -141,22 +184,10 @@ if ($action == 'create')
     	print $langs->trans($val['label']);
     	print '</td>';
     	print '<td>';
-    	$defaultcss='minwidth100';
-    	if ($val['type'] == 'text')
-    	{
-    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-    		print GETPOST($key,'none');
-    		print '</textarea>';
-    	}
-	    elseif (is_array($val['arrayofkeyval']))
-   		{
-   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
-    	}
-    	else
-    	{
-    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
-    	}
+    	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
+    	elseif ($val['type'] == 'text') $value = GETPOST($key, 'none');
+    	else $value = GETPOST($key, 'alpha');
+    	print $object->showInputField($val, $key, $value, '', '', '', 0, 0);
     	print '</td>';
     	print '</tr>';
 	}
@@ -177,12 +208,10 @@ if ($action == 'create')
 	print '</form>';
 }
 
-
-
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("Inventory"));
+	print load_fiche_titre($langs->trans("WebsiteAccount"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -194,33 +223,34 @@ if (($id || $ref) && $action == 'edit')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
-		print '<tr><td';
-		print ' class="titlefieldcreate';
-		if ($val['notnull'] > 0) print ' fieldrequired';
+    	print '<tr><td';
+    	print ' class="titlefieldcreate';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
 		if ($val['type'] == 'text') print ' tdtop';
-		print '"';
-		print '>'.$langs->trans($val['label']).'</td>';
-		print '<td>';
-		$defaultcss='minwidth100';
-		if ($val['type'] == 'text')
-		{
-			print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-			print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
-			print '</textarea>';
-		}
-		elseif (is_array($val['arrayofkeyval']))
-		{
-			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
-		}
-		else
-		{
-			$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-			print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
-		}
-		print '</td>';
-		print '</tr>';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td>';
+    	$defaultcss='minwidth100';
+	    if ($val['type'] == 'text')
+    	{
+    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
+    		print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
+    		print '</textarea>';
+    	}
+	    elseif (is_array($val['arrayofkeyval']))
+   		{
+   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
+    	}
+    	else
+    	{
+    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
+    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
+    	}
+    	print '</td>';
+    	print '</tr>';
 	}
 
 	// Other attributes
@@ -237,22 +267,19 @@ if (($id || $ref) && $action == 'edit')
 	print '</form>';
 }
 
-
-
-
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = inventory_prepare_head($object);
-	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+	$head = websiteaccountPrepareHead($object);
+	dol_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, 'websiteaccount@website');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirmation of action xxxx
@@ -280,18 +307,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 
-
 	// Object card
 	// ------------------------------------------------------------
-
-	$linkback = '<a href="' . DOL_URL_ROOT . '/inventory/inventory_list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
+	$linkback = '<a href="' .dol_buildpath('/website/websiteaccount_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->inventory->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->inventory->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
@@ -299,7 +323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->inventory->creer)
+	    if ($user->rights->website->creer)
 	    {
 	        if ($action != 'classify')
 	        {
@@ -339,12 +363,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-	// LIST_OF_TD_LABEL_FIELDS_VIEW
 
+	foreach($object->fields as $key => $val)
+	{
+	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    	print '<tr><td';
+    	print ' class="titlefield';
+    	if ($val['notnull'] > 0) print ' fieldrequired';
+    	print '"';
+    	print '>'.$langs->trans($val['label']).'</td>';
+    	print '<td>';
+    	print dol_escape_htmltag($object->$key, 1, 1);
+		print '</td>';
+    	print '</tr>';
+
+    	//if ($key == 'targetsrcfile3') break;						// key used for break on second column
+	}
 
 	print '</table>';
 	print '</div>';
@@ -353,7 +389,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
+	$alreadyoutput = 1;
+	foreach($object->fields as $key => $val)
+	{
+		if ($alreadyoutput)
+		{
+			//if ($key == 'targetsrcfile3') $alreadyoutput = 0;		// key used for break on second column
+			continue;
+		}
 
+		if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
+
+		print '<tr><td';
+		print ' class="titlefield';
+		if ($val['notnull'] > 0) print ' fieldrequired';
+		print '"';
+		print '>'.$langs->trans($val['label']).'</td>';
+		print '<td>';
+		print dol_escape_htmltag($object->$key, 1, 1);
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 	print '</div>';
@@ -377,12 +436,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>'."\n";
 
-    		if ($user->rights->inventory->write)
+    		if ($user->rights->website->write)
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
     		}
 
-    		if ($user->rights->inventory->delete)
+    		/*
+    		if ($user->rights->sellyoursaas->create)
+    		{
+    			if ($object->status == 1)
+    		 	{
+    		 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=disable">'.$langs->trans("Disable").'</a></div>'."\n";
+    		 	}
+    		 	else
+    		 	{
+    		 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Enable").'</a></div>'."\n";
+    		 	}
+    		}
+    		*/
+
+    		if ($user->rights->website->delete)
     		{
     			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
     		}
@@ -403,41 +476,37 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // Documents
 	    $comref = dol_sanitizeFileName($object->ref);
 	    $relativepath = $comref . '/' . $comref . '.pdf';
-	    $filedir = $conf->product->dir_output . '/inventory/' . $comref;
+	    $filedir = $conf->website->dir_output . '/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->inventory->read;
-	    $delallowed = $user->rights->inventory->create;
-	    print $formfile->showdocuments('inventory', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	    $genallowed = $user->rights->website->read;	// If you can read, you can build the PDF to read content
+	    $delallowed = $user->rights->website->create;	// If you can create/edit, you can remove a file on card
+	    print $formfile->showdocuments('website', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+	    $MAXEVENT = 10;
+
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'order', $socid, 1);
+	    $somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);
 
 	    print '</div></div></div>';
 	}
 
-
-	//Select mail models is same action as presend
-	/*
-	if (GETPOST('modelselected')) $action = 'presend';
-
 	// Presend form
-	$modelmail='inventory';
-	$defaulttopic='InformationMessage';
-	$diroutput = $conf->product->dir_output.'/inventory';
-	$trackid = 'stockinv'.$object->id;
+	$modelmail='websiteaccount';
+	$defaulttopic='Information';
+	$diroutput = $conf->website->dir_output;
+	$trackid = 'websiteaccount'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	*/
 }
 
 

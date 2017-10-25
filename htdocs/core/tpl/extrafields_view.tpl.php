@@ -59,8 +59,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		else
 		{
-			if (! empty($extrafields->attributes[$object->table_element]['ishidden'][$key])) print '<tr class="hideobject"><td>';
-			else print '<tr><td>';
+			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';

@@ -169,12 +169,17 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime DE
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
 
 
+ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
+ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
+
+
 CREATE TABLE llx_websiteaccount(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login varchar(64) NOT NULL, 
-	label varchar(255), 
-	note_public text, 
-	note_private text, 
+	login             varchar(64) NOT NULL, 
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    date_last_login     datetime,
+    date_previous_login datetime,
 	date_creation datetime NOT NULL, 
 	tms timestamp NOT NULL, 
 	fk_user_creat integer NOT NULL, 
@@ -183,6 +188,7 @@ CREATE TABLE llx_websiteaccount(
 	status integer, 
 	fk_soc integer
 ) ENGINE=innodb;
+
 
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
@@ -343,7 +349,7 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
--- We fix value of 'list' fro m0 to 1 for all extrafields created before this migration
+-- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;

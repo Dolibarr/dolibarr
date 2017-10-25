@@ -155,10 +155,16 @@ class BlockedLog
 	 */
 	public function setObjectData(&$object) {
 
-		if($object->element=='payment') {
+		// Set date
+		if ($object->element=='payment')
+		{
 			$this->date_object = $object->datepaye;
 		}
-		else{
+		if ($object->element=='payment_salary')
+		{
+			$this->date_object = $object->datev;
+		}
+		else {
 			$this->date_object = $object->date;
 		}
 
@@ -168,7 +174,8 @@ class BlockedLog
 
 		$this->object_data=new stdClass();
 
-		if($this->element === 'facture') {
+		if ($this->element === 'facture')
+		{
 			if(empty($object->thirdparty))$object->fetch_thirdparty();
 			$this->object_data->thirdparty = new stdClass();
 
@@ -182,14 +189,16 @@ class BlockedLog
 			$this->object_data->total_localtax1= (double) $object->total_localtax1;
 			$this->object_data->total_localtax2= (double) $object->total_localtax2;
 			$this->object_data->note_public	= (double) $object->note_public;
-			$this->object_data->note_private= (double) $object->note_private;
-
 		}
-		elseif($this->element==='payment'){
-
+		elseif($this->element === 'payment')
+		{
 			$this->object_data->amounts = $object->amounts;
-
 		}
+		elseif($this->element === 'payment_salary')
+		{
+			$this->object_data->amounts = array($object->amount);
+		}
+
 	}
 
 	/**

@@ -140,8 +140,8 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	int				$list				Into list view by default (-1, 0 or 1)
-	 *  @param	int				$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param	int				$list				Visibilty
+	 *  @param	int				$ishidden			Deprecated. Us visibility instead.
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields
 	 *  @param  string  		$langfile  		 	Language file
@@ -279,8 +279,8 @@ class ExtraFields
 	 *  @param  array|string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
-	 *  @param	int				$list			Into list view by default (-1, 0 or 1)
-	 *  @param	int				$ishidden		Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param	int				$list			Visibily
+	 *  @param	int				$ishidden		Deprecated. Use visibility instead.
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
 	 *  @param  string          $entity     	Entity of extrafields
@@ -328,7 +328,6 @@ class ExtraFields
 			$sql.= " perms,";
 			$sql.= " langs,";
 			$sql.= " list,";
-			$sql.= " ishidden,";
 			$sql.= " fielddefault,";
 			$sql.= " fieldcomputed,";
 			$sql.= " fk_user_author,";
@@ -349,7 +348,6 @@ class ExtraFields
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " ".($langfile?"'".$this->db->escape($langfile)."'":"null").",";
 			$sql.= " ".$list.",";
-			$sql.= " ".$ishidden.",";
 			$sql.= " ".($default?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
@@ -483,8 +481,8 @@ class ExtraFields
 	 *  @param  array	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
-	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param	int		$list				Visibility
+	 *  @param	int		$ishidden			Deprecated. Use  visiblity instead.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity	            Entity of extrafields
@@ -589,8 +587,8 @@ class ExtraFields
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
-	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
+	 *  @param	int		$list				Visiblity
+	 *  @param	int		$ishidden			Deprecated. Use visility instead.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity     		Entity of extrafields
@@ -639,7 +637,6 @@ class ExtraFields
 			$sql.= " alwayseditable,";
 			$sql.= " param,";
 			$sql.= " list,";
-			$sql.= " ishidden,";
 			$sql.= " fielddefault,";
 			$sql.= " fieldcomputed,";
 			$sql.= " fk_user_author,";
@@ -660,7 +657,6 @@ class ExtraFields
 			$sql.= " '".$alwayseditable."',";
 			$sql.= " '".$param."',";
 			$sql.= " ".$list.", ";
-			$sql.= " ".$ishidden.", ";
 			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
@@ -714,7 +710,7 @@ class ExtraFields
 		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,ishidden,fielddefault,fieldcomputed";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed";
 		$sql .= ",entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
@@ -749,7 +745,6 @@ class ExtraFields
 					$this->attribute_perms[$tab->name]=$tab->perms;
 					$this->attribute_langfile[$tab->name]=$tab->langs;
 					$this->attribute_list[$tab->name]=$tab->list;
-					$this->attribute_hidden[$tab->name]=$tab->ishidden;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
 
 					// New usage
@@ -767,7 +762,6 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name]=$tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
-					$this->attributes[$tab->elementtype]['ishidden'][$tab->name]=$tab->ishidden;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
 
 					if (!empty($conf->multicompany->enabled))
@@ -802,12 +796,13 @@ class ExtraFields
 
 	/**
 	 * Return HTML string to put an input field into a page
+	 * Code very similar with showInputField of common object
 	 *
 	 * @param  string  $key            Key of attribute
 	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parametes on html input tag
-	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $keysuffix      Prefix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $keyprefix      Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
 	 * @param  int     $objectid       Current object id
 	 * @return string
@@ -816,10 +811,12 @@ class ExtraFields
 	{
 		global $conf,$langs;
 
+		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
+
 		$label=$this->attribute_label[$key];
 		$type =$this->attribute_type[$key];
 		$size =$this->attribute_size[$key];
-		$elementtype=$this->attribute_elementtype[$key];
+		$elementtype=$this->attribute_elementtype[$key];	// Seems not used
 		$default=$this->attribute_default[$key];
 		$computed=$this->attribute_computed[$key];
 		$unique=$this->attribute_unique[$key];
@@ -831,7 +828,7 @@ class ExtraFields
 
 		if ($computed)
 		{
-			if ($keyprefix != 'search_') return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+			if (! preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
 			else return '';
 		}
 
@@ -847,7 +844,7 @@ class ExtraFields
 				//$showsize=19;
 				$showsize = 'minwidth200imp';
 			}
-			elseif (in_array($type,array('int','double','price')))
+			elseif (in_array($type,array('int','integer','double','price')))
 			{
 				//$showsize=10;
 				$showsize = 'maxwidth75';
@@ -893,26 +890,26 @@ class ExtraFields
 			if (! is_object($form)) $form=new Form($this->db);
 
 			// TODO Must also support $moreparam
-			$out = $form->select_date($value, $keyprefix.'options_'.$key.$keysuffix, $showtime, $showtime, $required, '', 1, ($keyprefix != 'search_' ? 1 : 0), 1, 0, 1);
+			$out = $form->select_date($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, ($keyprefix != 'search_' ? 1 : 0), 1, 0, 1);
 		}
-		elseif (in_array($type,array('int')))
+		elseif (in_array($type,array('int','integer')))
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
-		elseif ($type == 'varchar')
+		elseif (preg_match('/varchar/', $type))
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor($keyprefix.'options_'.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
+			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
 			$out=$doleditor->Create(1);
 		}
 		elseif ($type == 'boolean')
@@ -923,21 +920,21 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
 		}
 		elseif ($type == 'select')
 		{
@@ -945,10 +942,10 @@ class ExtraFields
 			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keyprefix.'options_'.$key.$keysuffix, array(), 0);
+				$out.= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
 
-			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
@@ -967,10 +964,10 @@ class ExtraFields
 			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out.= ajax_combobox($keyprefix.'options_'.$key.$keysuffix, array(), 0);
+				$out.= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
 
-			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
 			if (is_array($param['options']))
 			{
 				$param_list=array_keys($param['options']);
@@ -1132,7 +1129,7 @@ class ExtraFields
 			$form = new Form($db);
 
 			$value_arr=explode(',',$value);
-			$out=$form->multiselectarray($keyprefix.'options_'.$key.$keysuffix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
+			$out=$form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 
 		}
 		elseif ($type == 'radio')
@@ -1140,11 +1137,11 @@ class ExtraFields
 			$out='';
 			foreach ($param['options'] as $keyopt => $val)
 			{
-				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" '.($moreparam?$moreparam:'');
+				$out.='<input class="flat '.$showsize.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
-				$out.=' id="'.$keyprefix.'options_'.$key.$keysuffix.'_'.$keyopt.'"';
+				$out.=' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked':'');
-				$out.='/><label for="'.$keyprefix.'options_'.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out.='/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
 			}
 		}
 		elseif ($type == 'chkbxlst')
@@ -1286,7 +1283,7 @@ class ExtraFields
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 					$form = new Form($db);
 
-					$out=$form->multiselectarray($keyprefix.'options_'.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
+					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
 
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
@@ -1316,7 +1313,7 @@ class ExtraFields
 						if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
 					}
 				}
-				$out.='<input type="text" class="flat '.$showsize.'" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$valuetoshow.'" >';
+				$out.='<input type="text" class="flat '.$showsize.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$valuetoshow.'" >';
 			}
 			else
 			{
@@ -1327,10 +1324,10 @@ class ExtraFields
 		elseif ($type == 'password')
 		{
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
-			$out='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
-			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.'options_'.$key.$keysuffix.'" id="'.$keyprefix.'options_'.$key.$keysuffix.'"/>';
+			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -1352,7 +1349,7 @@ class ExtraFields
 	{
 		global $conf,$langs;
 
-		$elementtype=$this->attribute_elementtype[$key];
+		$elementtype=$this->attribute_elementtype[$key];	// seems not used
 		$label=$this->attribute_label[$key];
 		$type=$this->attribute_type[$key];
 		$size=$this->attribute_size[$key];

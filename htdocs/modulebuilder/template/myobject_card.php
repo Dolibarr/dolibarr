@@ -99,7 +99,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 
 /*
- * ACTIONS
+ * Actions
  *
  * Put here all code to do according to value of "action" parameter
  */
@@ -112,108 +112,12 @@ if (empty($reshook))
 {
 	$error=0;
 
-	if ($cancel)
-	{
-		if (! empty($backtopage))
-		{
-			header("Location: ".$backtopage);
-			exit;
-		}
-		$action='';
-	}
+	$permissiontoadd = $user->rights->mymodule->create;
+	$permissiontodelete = $user->rights->mymodule->delete;
+	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
 
-	// Action to add record
-	if ($action == 'add' && ! empty($user->rights->mymodule->create))
-	{
-        foreach ($object->fields as $key => $val)
-        {
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
-
-            $object->$key=GETPOST($key,'alpha');
-            if ($val['notnull'] > 0 && $object->$key == '')
-            {
-                $error++;
-                setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
-            }
-        }
-
-		if (! $error)
-		{
-			$result=$object->createCommon($user);
-			if ($result > 0)
-			{
-				// Creation OK
-				$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/myobject_list.php',1);
-				header("Location: ".$urltogo);
-				exit;
-			}
-			else
-			{
-				// Creation KO
-				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else  setEventMessages($object->error, null, 'errors');
-				$action='create';
-			}
-		}
-		else
-		{
-			$action='create';
-		}
-	}
-
-	// Action to update record
-	if ($action == 'update' && ! empty($user->rights->mymodule->create))
-	{
-	    foreach ($object->fields as $key => $val)
-        {
-            if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
-
-            $object->$key=GETPOST($key,'alpha');
-            if ($val['notnull'] > 0 && $object->$key == '')
-            {
-                $error++;
-                setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
-            }
-        }
-
-		if (! $error)
-		{
-			$result=$object->updateCommon($user);
-			if ($result > 0)
-			{
-				$action='view';
-			}
-			else
-			{
-				// Creation KO
-				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else setEventMessages($object->error, null, 'errors');
-				$action='edit';
-			}
-		}
-		else
-		{
-			$action='edit';
-		}
-	}
-
-	// Action to delete
-	if ($action == 'confirm_delete' && ! empty($user->rights->mymodule->delete))
-	{
-		$result=$object->deleteCommon($user);
-		if ($result > 0)
-		{
-			// Delete OK
-			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/mymodule/myobject_list.php',1));
-			exit;
-		}
-		else
-		{
-			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
-		}
-	}
+	// Actions cancel, add, update or delete
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -229,7 +133,7 @@ if (empty($reshook))
 
 
 /*
- * VIEW
+ * View
  *
  * Put here all code to build page
  */
@@ -270,7 +174,9 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'date_validation', 'tms', 'fk_user_creat', 'fk_user_modif', 'fk_user_valid', 'import_key'))) continue;
+	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+
     	print '<tr id="field_'.$key.'">';
     	print '<td';
     	print ' class="titlefieldcreate';
@@ -332,7 +238,8 @@ if (($id || $ref) && $action == 'edit')
 	print '<table class="border centpercent">'."\n";
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
     	print '<tr><td';
     	print ' class="titlefieldcreate';
@@ -474,7 +381,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	foreach($object->fields as $key => $val)
 	{
-	    if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
+	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
     	print '<tr><td';
     	print ' class="titlefield';
