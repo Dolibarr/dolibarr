@@ -652,6 +652,49 @@ class Invoices extends DolibarrApi
     }
 
 
+     /**
+     * Insert a discount in a specific invoice
+     *
+     * @param int   $id             Id of invoice
+     * @param int   $discountId     Id of discount
+     *
+     * @url     POST {id}/adddiscount/{discountId}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function addDiscount($id, $discountId) {
+
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Invoice ID is mandatory');
+        }
+        if(empty($discountId)) {
+                throw new RestException(400, 'Discount ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        $result = $this->invoice->insert_discount($discountId);
+        if( $result < 0) {
+                throw new RestException(405, $this->invoice->error);
+        }
+
+        return $result;
+    }
+
     /**
      * Get a payment list of a given invoice
      *
@@ -690,7 +733,6 @@ class Invoices extends DolibarrApi
         
         return $result;
     }
-
 
     /**
      * Get a list of available assets (down-payments, avoirs)
@@ -731,30 +773,30 @@ class Invoices extends DolibarrApi
         $return = array();
         foreach ($result as $invoiceID=>$line) {
 
-                if($invoiceID == $id) {         // ignore current invoice
-                        continue;
-                }
+		if($invoiceID == $id) {  	// ignore current invoice
+			continue;
+		}
 
-                $result = $this->invoice->fetch($invoiceID);
-                if( ! $result ) {
-                        throw new RestException(404, 'Invoice '.$invoiceID.' not found');
-                }
+		$result = $this->invoice->fetch($invoiceID);
+        	if( ! $result ) {
+                	throw new RestException(404, 'Invoice '.$invoiceID.' not found');
+        	}
 
                 $result = $this->invoice->getListOfPayments();
                 if( $result < 0) {
-                        throw new RestException(405, $this->invoice->error);
-                }
+                	throw new RestException(405, $this->invoice->error);
+        	}
 
-                if(count($result) == 0) {       // ignore unpaid invoices
-                        continue;
-                }
+		if(count($result) == 0) {	// ignore unpaid invoices
+			continue;
+		}
 
-                // format results
+		// format results
                 $line["id"] = $invoiceID;
-                $line["payments"] = $result;
-                $return[] = $line;
+		$line["payments"] = $result;
+                $return[] = $line; 
         }
-
+            
         return $return;
     }
 
