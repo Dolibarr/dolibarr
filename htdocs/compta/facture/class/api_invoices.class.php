@@ -695,6 +695,51 @@ class Invoices extends DolibarrApi
         return $result;
     }
 
+     /**
+     * Deduct an available credit to an existing invoice
+     *
+     * @param int   $id            Id of invoice
+     * @param int   $creditId     Id of the credit to deduct
+     *
+     * @url     POST {id}/deductcredit/{creditId}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function deductCredit($id, $creditId) {
+    
+        require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+        
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Invoice ID is mandatory');
+        }
+        if(empty($creditId)) {
+                throw new RestException(400, 'Credit ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $discount = new DiscountAbsolute($this->db);
+        $result = $discount->fetch($creditId);
+        if( ! $result ) {
+                throw new RestException(404, 'Credit not found');
+        }
+
+        $result = $discount->link_to_invoice(0, $id);
+        if( $result < 0) {
+                throw new RestException(405, $discount->error);
+        }
+
+        return $result;
+    }
+
     /**
      * Get a payment list of a given invoice
      *
