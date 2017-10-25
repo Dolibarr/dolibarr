@@ -349,7 +349,7 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
--- We fix value of 'list' fro m0 to 1 for all extrafields created before this migration
+-- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;

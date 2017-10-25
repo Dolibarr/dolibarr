@@ -99,7 +99,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 
 /*
- * ACTIONS
+ * Actions
  *
  * Put here all code to do according to value of "action" parameter
  */
@@ -133,7 +133,7 @@ if (empty($reshook))
 
 
 /*
- * VIEW
+ * View
  *
  * Put here all code to build page
  */

@@ -100,9 +100,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 
 /*
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
+ * Actions
  */
 
 $parameters=array();
@@ -132,9 +130,7 @@ if (empty($reshook))
 
 
 /*
- * VIEW
- *
- * Put here all code to build page
+ * View
  */
 
 $form=new Form($db);
@@ -188,22 +184,10 @@ if ($action == 'create')
     	print $langs->trans($val['label']);
     	print '</td>';
     	print '<td>';
-    	$defaultcss='minwidth100';
-    	if ($val['type'] == 'text')
-    	{
-    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-    		print GETPOST($key,'none');
-    		print '</textarea>';
-    	}
-	    elseif (is_array($val['arrayofkeyval']))
-   		{
-   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
-    	}
-    	else
-    	{
-    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
-    	}
+    	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
+    	elseif ($val['type'] == 'text') $value = GETPOST($key, 'none');
+    	else $value = GETPOST($key, 'alpha');
+    	print $object->showInputField($val, $key, $value, '', '', '', 0, 0);
     	print '</td>';
     	print '</tr>';
 	}

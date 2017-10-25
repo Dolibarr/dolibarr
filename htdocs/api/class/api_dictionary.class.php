@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 class Dictionary extends DolibarrApi
 {
     private $translations = null;
-    
+
     /**
      * Constructor
      */
@@ -52,11 +52,11 @@ class Dictionary extends DolibarrApi
      * @param int       $page       Page number {@min 0}
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
-     * 
+     *
      * @url     GET payment/types
      *
      * @return array [List of payment types]
-     *     
+     *
      * @throws 400 RestException
      * @throws 200 OK
      */
@@ -104,7 +104,7 @@ class Dictionary extends DolibarrApi
 
         return $list;
     }
-    
+
     /**
      * Get the list of countries.
      *
@@ -121,9 +121,9 @@ class Dictionary extends DolibarrApi
      * @param string    $lang       Code of the language the label of the countries must be translated to
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of countries
-     * 
+     *
      * @url     GET countries
-     * 
+     *
      * @throws RestException
      */
     function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
@@ -135,7 +135,7 @@ class Dictionary extends DolibarrApi
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country as t";
         $sql.=" WHERE 1 = 1";
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -144,7 +144,7 @@ class Dictionary extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
@@ -152,7 +152,7 @@ class Dictionary extends DolibarrApi
                 $page = 0;
             }
             $offset = $limit * $page;
-            
+
             $sql .= $this->db->plimit($limit, $offset);
         }
 
@@ -177,7 +177,7 @@ class Dictionary extends DolibarrApi
         } else {
             throw new RestException(503, 'Error when retrieving list of countries : '.$country->error);
         }
-        
+
         return $list;
     }
 
@@ -187,9 +187,9 @@ class Dictionary extends DolibarrApi
      * @param int       $id        ID of country
      * @param string    $lang      Code of the language the name of the
      *                             country must be translated to
-     * 
+     *
      * @url     GET countries/{id}
-     *            
+     *
      * @throws RestException
      */
     function getCountryByID($id, $lang = '')
@@ -217,16 +217,16 @@ class Dictionary extends DolibarrApi
     function _cleanObjectDatas($object)
     {
         $object = parent::_cleanObjectDatas($object);
-        
+
         unset($object->error);
         unset($object->errors);
-        
+
         return $object;
     }
 
     /**
      * Translate the name of the country to the given language.
-     * 
+     *
      * @param Ccountry $country   Country
      * @param string   $lang      Code of the language the name of the
      *                            country must be translated to
@@ -249,8 +249,8 @@ class Dictionary extends DolibarrApi
                 }
             }
         }
-    } 
-    
+    }
+
     /**
      * Get the list of events types.
      *
@@ -262,7 +262,7 @@ class Dictionary extends DolibarrApi
      * @param string    $module     To filter on module events
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
-     * 
+     *
      * @url     GET events
      *
      * @throws RestException
@@ -312,9 +312,9 @@ class Dictionary extends DolibarrApi
         }
 
         return $list;
-    }     
-    
-    
+    }
+
+
     /**
      * Get the list of extra fields.
      *
@@ -323,7 +323,7 @@ class Dictionary extends DolibarrApi
      * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
      * @return List of events types
-     * 
+     *
      * @url     GET extrafields
      *
      * @throws RestException
@@ -335,7 +335,7 @@ class Dictionary extends DolibarrApi
         if ($type == 'thirdparty') $type='societe';
         if ($type == 'contact') $type='socpeople';
 
-        $sql = "SELECT t.rowid, t.name, t.label, t.type, t.size, t.elementtype, t.fieldunique, t.fieldrequired, t.param, t.pos, t.alwayseditable, t.perms, t.list, t.ishidden, t.fielddefault, t.fieldcomputed";
+        $sql = "SELECT t.rowid, t.name, t.label, t.type, t.size, t.elementtype, t.fieldunique, t.fieldrequired, t.param, t.pos, t.alwayseditable, t.perms, t.list, t.fielddefault, t.fieldcomputed";
         $sql.= " FROM ".MAIN_DB_PREFIX."extrafields as t";
         $sql.= " WHERE t.entity IN (".getEntity('extrafields').")";
         if (! empty($type)) $sql.= " AND t.elementtype = '".$this->db->escape($type)."'";
@@ -373,7 +373,6 @@ class Dictionary extends DolibarrApi
         			$list[$tab->elementtype][$tab->name]['alwayseditable']=$tab->alwayseditable;
         			$list[$tab->elementtype][$tab->name]['perms']=$tab->perms;
         			$list[$tab->elementtype][$tab->name]['list']=$tab->list;
-        			$list[$tab->elementtype][$tab->name]['ishidden']=$tab->ishidden;
         		}
         	}
         }
@@ -388,9 +387,9 @@ class Dictionary extends DolibarrApi
         }
 
         return $list;
-    }   
-    
-    
+    }
+
+
     /**
      * Get the list of towns.
      *
@@ -402,9 +401,9 @@ class Dictionary extends DolibarrApi
      * @param string    $town       To filter on city name
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of towns
-     * 
+     *
      * @url     GET towns
-     *            
+     *
      * @throws RestException
      */
     function getListOfTowns($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '', $sqlfilters = '')
@@ -426,8 +425,8 @@ class Dictionary extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
-        
+
+
         $sql.= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
@@ -435,10 +434,10 @@ class Dictionary extends DolibarrApi
                 $page = 0;
             }
             $offset = $limit * $page;
-        
+
             $sql .= $this->db->plimit($limit, $offset);
         }
-        
+
         $result = $this->db->query($sql);
 
         if ($result) {
@@ -450,9 +449,9 @@ class Dictionary extends DolibarrApi
         } else {
             throw new RestException(503, 'Error when retrieving list of towns : '.$this->db->lasterror());
         }
-        
+
         return $list;
-    } 
+    }
 
     /**
      * Get the list of payments terms.

@@ -65,15 +65,15 @@ $langs->load("modulebuilder");
     		{
         		console.log("We enter a computed formula");
         		jQuery("#default_value").val('');
-        		/* jQuery("#unique, #required, #alwayseditable, #ishidden, #list").removeAttr('checked'); */
-        		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', true);
-        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").hide();
+        		/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
+        		jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
+        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
     		}
     		else
     		{
         		console.log("No computed formula");
-        		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', false);
-        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").show();
+        		jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
+        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
     		}
 
 			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
@@ -143,7 +143,6 @@ $param=$extrafields->attributes[$elementtype]['param'][$attrname];
 $perms=$extrafields->attributes[$elementtype]['perms'][$attrname];
 $langfile=$extrafields->attributes[$elementtype]['langfile'][$attrname];
 $list=$extrafields->attributes[$elementtype]['list'][$attrname];
-$ishidden=$extrafields->attributes[$elementtype]['hidden'][$attrname];
 $entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
@@ -232,15 +231,11 @@ else
 <tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
-<!-- Is visible or not -->
-<?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
-    <tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo ($ishidden ?' checked':''); ?>></td></tr>
-<?php } ?>
 <?php if ($conf->multicompany->enabled) { ?>
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
-<!-- By default visible into list -->
-<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("ByDefaultInList"), $langs->trans("VisibleDesc")); ?>
+<!-- Visibility -->
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
 </td><td class="valeur"><input id="list" size="1" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
 </table>
 
