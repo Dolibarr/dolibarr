@@ -331,6 +331,68 @@ class Thirdparties extends DolibarrApi
       return $this->company;
     }
 
+
+     /**
+     * Get exceptional discount of a thirdparty
+     *
+     * @param 	int 	$id             ID of the thirdparty
+     * @param 	string 	$filter    	Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
+     * @param   string  $sortfield  	Sort field
+     * @param   string  $sortorder  	Sort order
+     * 
+     * @url     GET {id}/exceptionaldiscounts
+     * 
+     * @return array  List of deposit and credit notes
+     * 
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 503
+     */
+    function getExceptionalDiscount($id,$filter="none",$sortfield = "f.type", $sortorder = 'ASC')
+    {
+      if(! DolibarrApiAccess::$user->rights->societe->lire) {
+        throw new RestException(401);
+      }
+
+      if(empty($id)) {
+        throw new RestException(400, 'Thirdparty ID is mandatory');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      $result = $this->company->fetch($id);
+      if( ! $result ) {
+          throw new RestException(404, 'Thirdparty not found');
+      }
+
+
+      $sql = "SELECT f.facnumber, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture";
+      $sql .= " FROM llx_societe_remise_except as re, llx_facture as f";
+      $sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".$id;
+      if ($filter == "available")  $sql .= " AND re.fk_facture IS NULL";
+      if ($filter == "used")  $sql .= " AND re.fk_facture IS NOT NULL";
+
+      $sql.= $this->db->order($sortfield, $sortorder);
+
+      $result = $this->db->query($sql);
+      if( ! $result ) {
+          throw new RestException(503, $this->db->lasterror());
+      } else {
+          $num = $this->db->num_rows($result);
+          while ( $obj = $this->db->fetch_object($result) ) {
+              $obj_ret[] = $obj;
+          }
+
+      }
+
+      return $obj_ret;
+    }
+
+
+
 	/**
 	 * Clean sensible object datas
 	 *
