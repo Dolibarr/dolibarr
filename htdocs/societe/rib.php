@@ -440,7 +440,8 @@ if ($socid && $action != 'edit' && $action != "create")
     $var = false;
     if (is_array($rib_list))
     {
-        print '<table class="liste" width="100%">';
+		print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+    	print '<table class="liste" width="100%">';
 
         print '<tr class="liste_titre">';
         print_liste_field_titre("LabelRIB");
@@ -617,6 +618,7 @@ if ($socid && $action != 'edit' && $action != "create")
         }
 
         print '</table>';
+        print '</div>';
     } else {
         dol_print_error($db);
     }
@@ -653,8 +655,8 @@ if ($socid && $action != 'edit' && $action != "create")
          */
         $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
         $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-        $genallowed=$user->rights->societe->creer;
-        $delallowed=$user->rights->societe->supprimer;
+        $genallowed=$user->rights->societe->lire;
+        $delallowed=$user->rights->societe->creer;
 
         $var=true;
 

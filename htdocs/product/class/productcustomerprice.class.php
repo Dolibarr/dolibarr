@@ -329,6 +329,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
 		$sql .= " t.localtax2_tx,";
+		$sql .= " t.localtax1_type,";
+		$sql .= " t.localtax2_type,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
@@ -386,6 +388,8 @@ class Productcustomerprice extends CommonObject
 				$line->recuperableonly = $obj->recuperableonly;
 				$line->localtax1_tx = $obj->localtax1_tx;
 				$line->localtax2_tx = $obj->localtax2_tx;
+				$line->localtax1_type = $obj->localtax1_type;
+				$line->localtax2_type = $obj->localtax2_type;
 				$line->fk_user = $obj->fk_user;
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;

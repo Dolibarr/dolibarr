@@ -1532,6 +1532,7 @@ class Product extends CommonObject
                     	$obj->price = $price_result;
                     }
                 }
+                $this->product_fourn_price_id = $obj->rowid;
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
@@ -1577,6 +1578,7 @@ class Product extends CommonObject
 		                    	$obj->price = $price_result;
 		                    }
 		                }
+		                $this->product_fourn_price_id = $obj->rowid;
 						$this->buyprice = $obj->price;                      // deprecated
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
@@ -3750,7 +3752,7 @@ class Product extends CommonObject
 		$sql.= " WHERE w.entity IN (".getEntity('stock').")";
 		$sql.= " AND w.rowid = ps.fk_entrepot";
 		$sql.= " AND ps.fk_product = ".$this->id;
-		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) $sql.= " AND w.statut IN (".implode(',',$warehouseStatus).")";
+		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) $sql.= " AND w.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
 		$result = $this->db->query($sql);

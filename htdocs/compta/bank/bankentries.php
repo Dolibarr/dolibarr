@@ -376,6 +376,8 @@ if (dol_strlen($search_dv_end) > 0)   $param .= '&search_end_dvmonth=' . GETPOST
 if ($search_req_nb) $param.='&amp;req_nb='.urlencode($search_req_nb);
 if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+if(!empty($search_conciliated) || $search_conciliated === 0) $param.='&search_conciliated='.$search_conciliated;
+
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -508,8 +510,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }

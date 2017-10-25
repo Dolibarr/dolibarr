@@ -84,7 +84,7 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
     $usertoprocess=$user;
 	$search_usertoprocessid=$usertoprocess->id;
 }
-elseif (search_usertoprocessid > 0)
+elseif ($search_usertoprocessid > 0)
 {
     $usertoprocess=new User($db);
     $usertoprocess->fetch($search_usertoprocessid);
@@ -107,7 +107,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $action = '';
     $search_categ='';
-    $search_usertoprocessid = '';
+    $search_usertoprocessid = $user->id;
     $search_task_ref = '';
     $search_task_label = '';
     $search_project_ref = '';
@@ -241,13 +241,14 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	        $object->timespent_note = GETPOST($key.'note');
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {
-	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
+	        	$object->timespent_datehour = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
 	        	$object->timespent_withhour = 1;
 	        }
 	        else
 			{
-	        	$object->timespent_date = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
+	        	$object->timespent_datehour = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
 			}
+			$object->timespent_date = $object->timespent_datehour;
 
 			if ($object->timespent_date > 0)
 			{
@@ -341,6 +342,9 @@ $param='';
 $param.=($mode?'&mode='.$mode:'');
 $param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
 $param.=($search_userassignedid > 0?'&search_userassignedid='.$search_usertoprocessid:'');
+$param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
+$param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
+$param.=($search_task_label?'&search_task_label='.$search_task_label:'');
 
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
@@ -489,7 +493,7 @@ if (count($tasksarray) > 0)
 }
 else
 {
-	print '<tr><td colspan="13">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="14">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
 print '</div>';
@@ -503,7 +507,7 @@ print '</form>';
 
 print '<script type="text/javascript">';
 print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\'});';
 print "});";
 print '</script>';
 

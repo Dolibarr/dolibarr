@@ -67,7 +67,7 @@ if ($action == 'create')
     {
     	setEventMessages($bprev->error, $bprev->errors, 'errors');
     }
-    if ($result == 0)
+    elseif ($result == 0)
     {
     	$mesg='';
         $mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
@@ -77,6 +77,10 @@ if ($action == 'create')
         {
         	$mesg.=$val."<br>\n";
         }
+    }
+    else
+    {
+    	setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
     }
 }
 

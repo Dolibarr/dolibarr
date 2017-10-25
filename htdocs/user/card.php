@@ -1412,9 +1412,13 @@ else
             print '</td>';
             print "</tr>\n";
 
+			//$childids = $user->getAllChildIds(1);
+
             if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
                 || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
             {
+            	// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
+            	// However, he can see the valuation of timesheet of its subordinates even without these permissions.
             	$langs->load("salaries");
 
 	            // THM
@@ -2478,8 +2482,8 @@ else
             $filename = dol_sanitizeFileName($object->ref);
             $filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
             $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-            $genallowed = $user->rights->user->user->creer;
-            $delallowed = $user->rights->user->user->supprimer;
+            $genallowed = $user->rights->user->user->lire;
+            $delallowed = $user->rights->user->user->creer;
 
             print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
             $somethingshown = $formfile->numoffiles;

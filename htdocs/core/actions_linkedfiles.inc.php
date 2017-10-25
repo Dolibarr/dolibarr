@@ -30,9 +30,9 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
     if ($object->id)
     {
     	if (! empty($upload_dirold) && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
-            $result = dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask'));
+            $result = dol_add_file_process($upload_dirold, 0, 1, 'userfile', GETPOST('savingdocmask', 'alpha'));
         else
-            $result = dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask'));
+            $result = dol_add_file_process($upload_dir, 0, 1, 'userfile', GETPOST('savingdocmask', 'alpha'));
     }
 }
 elseif (GETPOST('linkit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -57,7 +57,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
     if ($object->id)
     {
         $urlfile = GETPOST('urlfile', 'alpha');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-        if (GETPOST('section')) $file = $upload_dir . "/" . $urlfile;	// For a delete of GED module urlfile contains full path from upload_dir
+        if (GETPOST('section', 'alpha')) $file = $upload_dir . "/" . $urlfile;	// For a delete of GED module urlfile contains full path from upload_dir
         else															// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 		{
        		$urlfile=basename($urlfile);
@@ -116,7 +116,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         exit;
     }
 }
-elseif ($action == 'confirm_updateline' && GETPOST('save') && GETPOST('link', 'alpha'))
+elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('link', 'alpha'))
 {
     require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
     $langs->load('link');
@@ -150,8 +150,8 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave'))
         //var_dump($upload_dir);exit;
         if (! empty($upload_dir))
         {
-            $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom'));
-            $filenameto=dol_sanitizeFileName(GETPOST('renamefileto'));
+            $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'));
+            $filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'));
 
             // Security:
             // Disallow file with some extensions. We rename them.

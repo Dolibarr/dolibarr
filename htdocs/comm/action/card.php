@@ -579,7 +579,7 @@ if ($action == 'mupdate')
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissioncreate = ($user->rights->agenda->allactions->delete ||	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete));
+$permissioncreate = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -670,7 +670,7 @@ if ($action == 'create')
 	}
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
@@ -1483,8 +1483,8 @@ if ($id > 0)
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
             $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed=$user->rights->agenda->myactions->create;
-	        $delallowed=$user->rights->agenda->myactions->delete;
+            $genallowed=$user->rights->agenda->myactions->read;
+	        $delallowed=$user->rights->agenda->myactions->create;
 
             $var=true;
 

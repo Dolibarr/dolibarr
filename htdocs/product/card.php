@@ -1114,6 +1114,14 @@ else
         {
             // We do no show price array on create when multiprices enabled.
             // We must set them on prices tab.
+            print '<table class="border" width="100%">';
+            // VAT
+            print '<tr><td class="titlefieldcreate">' . $langs->trans("VATRate") . '</td><td>';
+            $defaultva = get_default_tva($mysoc, $mysoc);
+            print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+            print '</td></tr>';
+            print '</table>';
+            print '<br>';
         }
         else
 		{
@@ -1574,7 +1582,7 @@ else
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->accountancy_code_sell);
+				$accountingaccount->fetch('',$object->accountancy_code_sell,1);
 
 				print $accountingaccount->getNomUrl(0,1,1,'',1);
             } else {
@@ -1589,7 +1597,7 @@ else
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount2 = new AccountingAccount($db);
-				$accountingaccount2->fetch('',$object->accountancy_code_buy);
+				$accountingaccount2->fetch('',$object->accountancy_code_buy,1);
 
 				print $accountingaccount2->getNomUrl(0,1,1,'',1);
             } else {
@@ -2030,8 +2038,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $relativepath = $comref . '/' . $objectref . '.pdf';
     $filedir = $conf->produit->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$user->rights->produit->creer;
-    $delallowed=$user->rights->produit->supprimer;
+    $genallowed=$user->rights->produit->lire;
+    $delallowed=$user->rights->produit->creer;
 
     $var=true;
 

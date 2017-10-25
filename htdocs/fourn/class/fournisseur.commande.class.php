@@ -279,11 +279,12 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->fetchObjectLinked();
 
+			//$result=$this->fetch_lines();
             $this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
             $sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
-            $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
+            $sql.= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
             $sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
             $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
 	        $sql.= " l.fk_unit,";
@@ -315,6 +316,8 @@ class CommandeFournisseur extends CommonOrder
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
+                    $line->localtax1_type	   = $objp->localtax1_type;
+                    $line->localtax2_type	   = $objp->localtax2_type;
                     $line->subprice            = $objp->subprice;
                     $line->pu_ht	           = $objp->subprice;
                     $line->remise_percent      = $objp->remise_percent;
@@ -1194,23 +1197,44 @@ class CommandeFournisseur extends CommonOrder
 	            {
 					// Add link with price request and supplier order
 					if ($this->id)
-                    {
-                        $this->ref="(PROV".$this->id.")";
+					{
+						$this->ref="(PROV".$this->id.")";
 
-                        // Add object linked
-                        if (is_array($this->linked_objects) && ! empty($this->linked_objects))
-                        {
-                        	foreach($this->linked_objects as $origin => $origin_id)
-                        	{
-                        		$ret = $this->add_object_linked($origin, $origin_id);
-                        		if (! $ret)
-                        		{
-                        			dol_print_error($this->db);
-                        			$error++;
-                        		}
-                        	}
-                        }
-                    }
+						if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+						{
+							$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+						}
+
+						// Add object linked
+						if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+						{
+							foreach($this->linked_objects as $origin => $tmp_origin_id)
+							{
+							    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+							    {
+							        foreach($tmp_origin_id as $origin_id)
+							        {
+							            $ret = $this->add_object_linked($origin, $origin_id);
+							            if (! $ret)
+							            {
+							                dol_print_error($this->db);
+							                $error++;
+							            }
+							        }
+							    }
+							    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+							    {
+							        $origin_id = $tmp_origin_id;
+									$ret = $this->add_object_linked($origin, $origin_id);
+									if (! $ret)
+									{
+										dol_print_error($this->db);
+										$error++;
+									}
+							    }
+							}
+						}
+					}
 
 	                if (! $error)
                     {
@@ -1405,16 +1429,16 @@ class CommandeFournisseur extends CommonOrder
 
                         // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
                         if ($result > 0)
                         {
-                            $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
                             $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
 			    // is remise percent not keyed but present for the product we add it
                             if ($remise_percent == 0 && $prod->remise_percent !=0)
                             	$remise_percent =$prod->remise_percent;
 
-				
+
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -2678,14 +2702,14 @@ class CommandeFournisseur extends CommonOrder
                 if ($db->num_rows($query))
                 {
                     $obj = $db->fetch_object($query);
-    
+
                     $string = $langs->trans($obj->code);
                     if ($string == $obj->code)
                     {
                         $string = $obj->label != '-' ? $obj->label : '';
                     }
                     return $string;
-                }    
+                }
             }
             else dol_print_error($db);
         }
@@ -2977,7 +3001,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public function fetch($rowid)
     {
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
-        $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.ref,';
+        $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref,';
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
@@ -3003,6 +3027,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->tva_tx           = $objp->tva_tx;
             $this->localtax1_tx		= $objp->localtax1_tx;
             $this->localtax2_tx		= $objp->localtax2_tx;
+            $this->localtax1_type	= $objp->localtax1_type;
+            $this->localtax2_type	= $objp->localtax2_type;
             $this->remise           = $objp->remise;
             $this->remise_percent   = $objp->remise_percent;
             $this->fk_product       = $objp->fk_product;

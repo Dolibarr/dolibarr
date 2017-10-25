@@ -590,6 +590,11 @@ class Propal extends CommonObject
                 return -2;
             }
         }
+		else
+		{
+			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
     }
 
 
@@ -639,6 +644,7 @@ class Propal extends CommonObject
     	$pa_ht=price2num($pa_ht);
         if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
         if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
+        if (empty($type)) $type=0;
 
         if ($this->statut == self::STATUS_DRAFT)
         {
@@ -954,9 +960,51 @@ class Propal extends CommonObject
                 $resql=$this->db->query($sql);
                 if (! $resql) $error++;
 
+                if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+                {
+                	$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+                }
+
+                // Add object linked
+                if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+                {
+                	foreach($this->linked_objects as $origin => $tmp_origin_id)
+                	{
+                		if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+                		{
+                			foreach($tmp_origin_id as $origin_id)
+                			{
+                				$ret = $this->add_object_linked($origin, $origin_id);
+                				if (! $ret)
+                				{
+                					$this->error=$this->db->lasterror();
+                					$error++;
+                				}
+                			}
+                		}
+                		else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+                		{
+                			$origin_id = $tmp_origin_id;
+                			$ret = $this->add_object_linked($origin, $origin_id);
+                			if (! $ret)
+                			{
+                				$this->error=$this->db->lasterror();
+                				$error++;
+                			}
+                		}
+                	}
+                }
+
+                // Add linked object (deprecated, use ->linkedObjectsIds instead)
+                if (! $error && $this->origin && $this->origin_id)
+                {
+                	$ret = $this->add_object_linked();
+                	if (! $ret)	dol_print_error($this->db);
+                }
+
                 /*
                  *  Insertion du detail des produits dans la base
-                */
+                 */
                 if (! $error)
                 {
                     $fk_parent_line=0;
@@ -1008,13 +1056,6 @@ class Propal extends CommonObject
                             $fk_parent_line = $result;
                         }
                     }
-                }
-
-                // Add linked object
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    $ret = $this->add_object_linked();
-                    if (! $ret)	dol_print_error($this->db);
                 }
 
                 // Set delivery address
@@ -1404,7 +1445,7 @@ class Propal extends CommonObject
 	{
 		$this->lines=array();
 
-		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
+		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
 		$sql.= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql.= ' d.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
@@ -1443,6 +1484,8 @@ class Propal extends CommonObject
 				$line->tva_tx           = $objp->tva_tx;
 				$line->localtax1_tx		= $objp->localtax1_tx;
 				$line->localtax2_tx		= $objp->localtax2_tx;
+				$line->localtax1_type	= $objp->localtax1_type;
+				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice         = $objp->subprice;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
@@ -3366,8 +3409,8 @@ class Propal extends CommonObject
         $this->lines = array();
 
         $sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
-        $sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-        $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
+        $sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.localtax1_tx, pt.localtax2_tx, pt.localtax1_type, pt.localtax2_type, pt.remise_percent, pt.subprice, pt.info_bits,';
+        $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.total_localtax1, pt.total_localtax2, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
 	    $sql.= ' pt.fk_unit,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.description as product_desc, p.tobatch as product_tobatch,';
@@ -3411,11 +3454,17 @@ class Propal extends CommonObject
 
                 $this->lines[$i]->vat_src_code      = $obj->vat_src_code;
                 $this->lines[$i]->tva_tx			= $obj->tva_tx;
+                $this->lines[$i]->localtax1_tx		= $obj->localtax1_tx;
+                $this->lines[$i]->localtax2_tx		= $obj->localtax2_tx;
+                $this->lines[$i]->localtax1_type	= $obj->localtax1_type;
+                $this->lines[$i]->localtax2_type	= $obj->localtax2_type;
                 $this->lines[$i]->info_bits			= $obj->info_bits;
                 $this->lines[$i]->total_ht			= $obj->total_ht;
                 $this->lines[$i]->total_tva			= $obj->total_tva;
                 $this->lines[$i]->total_ttc			= $obj->total_ttc;
-				$this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
+                $this->lines[$i]->total_localtax1	= $obj->total_localtax1;
+                $this->lines[$i]->total_localtax2	= $obj->total_localtax2;
+                $this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
 				$marginInfos						= getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
 				$this->lines[$i]->pa_ht				= $marginInfos[0];
 				$this->lines[$i]->marge_tx			= $marginInfos[1];
@@ -3645,59 +3694,66 @@ class PropaleLigne extends CommonObjectLine
 		{
 			$objp = $this->db->fetch_object($result);
 
-			$this->id               = $objp->rowid;
-			$this->rowid			= $objp->rowid;     // deprecated
-			$this->fk_propal		= $objp->fk_propal;
-			$this->fk_parent_line	= $objp->fk_parent_line;
-			$this->label			= $objp->custom_label;
-			$this->desc				= $objp->description;
-			$this->qty				= $objp->qty;
-			$this->price			= $objp->price;		// deprecated
-			$this->subprice			= $objp->subprice;
-			$this->vat_src_code		= $objp->vat_src_code;
-			$this->tva_tx			= $objp->tva_tx;
-			$this->remise			= $objp->remise;    // deprecated
-			$this->remise_percent	= $objp->remise_percent;
-			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->fk_product		= $objp->fk_product;
-			$this->info_bits		= $objp->info_bits;
+			if ($objp)
+			{
+				$this->id               = $objp->rowid;
+				$this->rowid			= $objp->rowid;     // deprecated
+				$this->fk_propal		= $objp->fk_propal;
+				$this->fk_parent_line	= $objp->fk_parent_line;
+				$this->label			= $objp->custom_label;
+				$this->desc				= $objp->description;
+				$this->qty				= $objp->qty;
+				$this->price			= $objp->price;		// deprecated
+				$this->subprice			= $objp->subprice;
+				$this->vat_src_code		= $objp->vat_src_code;
+				$this->tva_tx			= $objp->tva_tx;
+				$this->remise			= $objp->remise;    // deprecated
+				$this->remise_percent	= $objp->remise_percent;
+				$this->fk_remise_except = $objp->fk_remise_except;
+				$this->fk_product		= $objp->fk_product;
+				$this->info_bits		= $objp->info_bits;
 
-			$this->total_ht			= $objp->total_ht;
-			$this->total_tva		= $objp->total_tva;
-			$this->total_ttc		= $objp->total_ttc;
+				$this->total_ht			= $objp->total_ht;
+				$this->total_tva		= $objp->total_tva;
+				$this->total_ttc		= $objp->total_ttc;
 
-			$this->fk_fournprice	= $objp->fk_fournprice;
+				$this->fk_fournprice	= $objp->fk_fournprice;
 
-			$marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
-			$this->pa_ht			= $marginInfos[0];
-			$this->marge_tx			= $marginInfos[1];
-			$this->marque_tx		= $marginInfos[2];
+				$marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
+				$this->pa_ht			= $marginInfos[0];
+				$this->marge_tx			= $marginInfos[1];
+				$this->marque_tx		= $marginInfos[2];
 
-			$this->special_code		= $objp->special_code;
-			$this->product_type		= $objp->product_type;
-			$this->rang				= $objp->rang;
+				$this->special_code		= $objp->special_code;
+				$this->product_type		= $objp->product_type;
+				$this->rang				= $objp->rang;
 
-			$this->ref				= $objp->product_ref;      // deprecated
-			$this->product_ref		= $objp->product_ref;
-			$this->libelle			= $objp->product_label;  // deprecated
-			$this->product_label	= $objp->product_label;
-			$this->product_desc		= $objp->product_desc;
-			$this->fk_unit          = $objp->fk_unit;
+				$this->ref				= $objp->product_ref;      // deprecated
+				$this->product_ref		= $objp->product_ref;
+				$this->libelle			= $objp->product_label;  // deprecated
+				$this->product_label	= $objp->product_label;
+				$this->product_desc		= $objp->product_desc;
+				$this->fk_unit          = $objp->fk_unit;
 
-			$this->date_start       = $this->db->jdate($objp->date_start);
-            $this->date_end         = $this->db->jdate($objp->date_end);
+				$this->date_start       = $this->db->jdate($objp->date_start);
+	            $this->date_end         = $this->db->jdate($objp->date_end);
 
-			// Multicurrency
-			$this->fk_multicurrency 		= $objp->fk_multicurrency;
-			$this->multicurrency_code 		= $objp->multicurrency_code;
-			$this->multicurrency_subprice 	= $objp->multicurrency_subprice;
-			$this->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-			$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-			$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+				// Multicurrency
+				$this->fk_multicurrency 		= $objp->fk_multicurrency;
+				$this->multicurrency_code 		= $objp->multicurrency_code;
+				$this->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$this->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+				$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+				$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-			$this->db->free($result);
+				$this->db->free($result);
 
-            return 1;
+	            return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{

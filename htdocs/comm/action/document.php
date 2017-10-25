@@ -75,7 +75,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart='contract';
+$modulepart='actions';
 
 
 /*

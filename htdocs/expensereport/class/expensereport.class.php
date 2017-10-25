@@ -187,20 +187,22 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
-            foreach ($this->lines as $i => $val)
-            {
-                $newndfline=new ExpenseReportLine($this->db);
-                $newndfline=$this->lines[$i];
-                $newndfline->fk_expensereport=$this->id;
-                if ($result >= 0)
-                {
-                    $result=$newndfline->insert();
-                }
-                if ($result < 0)
-                {
-                    $error++;
-                    break;
-                }
+            if (is_array($this->lines) && count($this->lines)>0) {
+	            foreach ($this->lines as $i => $val)
+	            {
+	                $newndfline=new ExpenseReportLine($this->db);
+	                $newndfline=$this->lines[$i];
+	                $newndfline->fk_expensereport=$this->id;
+	                if ($result >= 0)
+	                {
+	                    $result=$newndfline->insert();
+	                }
+	                if ($result < 0)
+	                {
+	                    $error++;
+	                    break;
+	                }
+	            }
             }
 
             if (! $error)

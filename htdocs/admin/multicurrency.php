@@ -78,34 +78,54 @@ if (preg_match('/del_(.*)/',$action,$reg))
 
 if ($action == 'add_currency')
 {
+	$error=0;
+
 	$langs->loadCacheCurrencies('');
 
 	$code = GETPOST('code', 'alpha');
-	$rate = GETPOST('rate', 'alpha');
+	$rate = price2num(GETPOST('rate', 'alpha'));
 	$currency = new MultiCurrency($db);
 	$currency->code = $code;
 	$currency->name = !empty($langs->cache_currencies[$code]['label']) ? $langs->cache_currencies[$code]['label'].' ('.$langs->getCurrencySymbol($code).')' : $code;
 
-	if ($currency->create($user) > 0)
+	if (empty($rate))
 	{
-		if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
-		else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
+		$error++;
 	}
-	else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+	if (! $error)
+	{
+		if ($currency->create($user) > 0)
+		{
+			if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
+			else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
+		}
+		else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+	}
 }
 elseif ($action == 'update_currency')
 {
+	$error = 0;
+
 	$submit = GETPOST('submit', 'alpha');
 
 	if ($submit == $langs->trans('Modify'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
-		$rate = GETPOST('rate', 'float');
+		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
-		if ($currency->fetch($fk_multicurrency) > 0)
+		if (empty($rate))
 		{
-			$currency->updateRate($rate);
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
+			$error++;
+		}
+		if (! $error)
+		{
+			if ($currency->fetch($fk_multicurrency) > 0)
+			{
+				$currency->updateRate($rate);
+			}
 		}
 	}
 	elseif ($submit == $langs->trans('Delete'))
@@ -235,7 +255,7 @@ print '</td></tr>';
 */
 
 print '</table>';
-print '<br />';
+print '<br>';
 
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
@@ -278,7 +298,6 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
@@ -325,8 +344,7 @@ print '</td></form></tr>';
 
 foreach ($TCurrency as &$currency)
 {
-	if($currency->code == $conf->currency) continue;
-
+	if ($currency->code == $conf->currency) continue;
 
 	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';

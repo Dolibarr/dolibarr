@@ -2112,17 +2112,17 @@ else
     		$filename = dol_sanitizeFileName($object->ref);
     		$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
     		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-    		$genallowed = $user->rights->contrat->creer;
-    		$delallowed = $user->rights->contrat->supprimer;
+    		$genallowed = $user->rights->contrat->lire;
+    		$delallowed = $user->rights->contrat->creer;
 
     		$var = true;
 
     		print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
-    			// Show links to link elements
-    			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
-    			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    		// Show links to link elements
+    		$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+    		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
     		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

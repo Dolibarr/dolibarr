@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
  * API class for invoices
@@ -75,6 +75,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
     }
 
@@ -211,6 +212,190 @@ class Invoices extends DolibarrApi
     }
 
     /**
+     * Get lines of an invoice
+     *
+     * @param int   $id             Id of invoice
+     *
+     * @url	GET {id}/lines
+     *
+     * @return int
+     */
+    function getLines($id) {
+    	if(! DolibarrApiAccess::$user->rights->facture->lire) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->invoice->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Invoice not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	$this->invoice->getLinesArray();
+    	$result = array();
+    	foreach ($this->invoice->lines as $line) {
+    		array_push($result,$this->_cleanObjectDatas($line));
+    	}
+    	return $result;
+    }
+
+    /**
+     * Add a line to a given invoice
+     *
+     * @param int   $id             Id of invoice to update
+     * @param array $request_data   InvoiceLine data
+     *
+     * @url	POST {id}/lines
+     *
+     * @return int
+     */
+    function postLine($id, $request_data = NULL) {
+    	if(! DolibarrApiAccess::$user->rights->facture->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->invoice->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Invoice not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	$request_data = (object) $request_data;
+    	$updateRes = $this->invoice->addline(
+    		$request_data->desc,
+    		$request_data->subprice,
+    		$request_data->qty,
+    		$request_data->tva_tx,
+    		$request_data->localtax1_tx,
+    		$request_data->localtax2_tx,
+    		$request_data->fk_product,
+    		$request_data->remise_percent,
+    		$request_data->date_start,
+    		$request_data->date_end,
+    		0,
+    		$request_data->info_bits,
+    		$request_data->fk_remise_except,
+    		'HT',
+    		0,
+    		$request_data->product_type,
+    		$request_data->rang,
+    		$request_data->special_code,
+    		$request_data->origin,
+    		$request_data->origin_id,
+    		$fk_parent_line,
+    		$request_data->fk_fournprice,
+    		$request_data->pa_ht,
+    		$request_data->label,
+    		$request_data->array_options,
+    		$request_data->situation_percent,
+    		$request_data->prev_id,
+    		$request_data->fk_unit,
+    		$request_data->multicurrency_subprice
+    		);
+
+    	if ($updateRes > 0) {
+    		return $updateRes;
+
+    	}
+    	return false;
+    }
+
+    /**
+     * Update a line to a given invoice
+     *
+     * @param int   $id             Id of invoice to update
+     * @param int   $lineid         Id of line to update
+     * @param array $request_data   InvoiceLine data
+     *
+     * @url	PUT {id}/lines/{lineid}
+     *
+     * @return object
+     */
+    function putLine($id, $lineid, $request_data = NULL) {
+    	if(! DolibarrApiAccess::$user->rights->facture->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->invoice->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Invoice not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	$request_data = (object) $request_data;
+    	$updateRes = $this->invoice->updateline(
+    		$lineid,
+    		$request_data->desc,
+    		$request_data->subprice,
+    		$request_data->qty,
+    		$request_data->remise_percent,
+    		$request_data->date_start,
+    		$request_data->date_end,
+    		$request_data->tva_tx,
+    		$request_data->localtax1_tx,
+    		$request_data->localtax2_tx,
+    		'HT',
+    		$request_data->info_bits,
+    		$request_data->product_type,
+    		$request_data->fk_parent_line,
+    		0,
+    		$request_data->fk_fournprice,
+    		$request_data->pa_ht,
+    		$request_data->label,
+    		$request_data->special_code,
+    		$request_data->array_options,
+    		$request_data->situation_percent,
+    		$request_data->fk_unit,
+    		$request_data->multicurrency_subprice
+    		);
+
+    	if ($updateRes > 0) {
+    		$result = $this->get($id);
+    		unset($result->line);
+    		return $this->_cleanObjectDatas($result);
+    	}
+    	return false;
+    }
+
+    /**
+     * Delete a line to a given invoice
+     *
+     *
+     * @param int   $id             Id of invoice to update
+     * @param int   $lineid         Id of line to delete
+     *
+     * @url	DELETE {id}/lines/{lineid}
+     *
+     * @return int
+     */
+    function delLine($id, $lineid) {
+    	if(! DolibarrApiAccess::$user->rights->facture->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->invoice->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Invoice not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	$request_data = (object) $request_data;
+    	$updateRes = $this->invoice->deleteline($lineid);
+    	if ($updateRes > 0) {
+    		return $this->get($id);
+    	}
+    	return false;
+    }
+
+    /**
      * Update invoice
      *
      * @param int   $id             Id of invoice to update
@@ -277,9 +462,9 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Validate an order
+     * Validate an invoice
      *
-     * @param   int $id             Order ID
+     * @param   int $id             Invoice ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *

@@ -19,6 +19,7 @@ use Luracast\Restler\RestException;
 
 //require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
+
 /**
  * API class for contacts
  *
@@ -48,7 +49,8 @@ class Contacts extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
 
-		include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$this->contact = new Contact($this->db);
 	}
@@ -334,7 +336,8 @@ class Contacts extends DolibarrApi
      * @url GET {id}/categories
      */
     function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        $categories = new Categories();
+    	require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
+    	$categories = new Categories();	// TODO Use Categories object not API object
         return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'contact', $id);
     }
 

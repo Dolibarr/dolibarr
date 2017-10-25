@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
@@ -130,7 +130,7 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ttc;
     //! id of source invoice if replacement invoice or credit note
     public $fk_facture_source;
-    
+
     /**
      * Standard invoice
      */
@@ -306,7 +306,42 @@ class FactureFournisseur extends CommonInvoice
             $resql=$this->db->query($sql);
             if (! $resql) $error++;
 
-            // Add object linked
+        	if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+			{
+				$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+			}
+
+			// Add object linked
+			if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+			{
+				foreach($this->linked_objects as $origin => $tmp_origin_id)
+				{
+				    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+				    {
+				        foreach($tmp_origin_id as $origin_id)
+				        {
+				            $ret = $this->add_object_linked($origin, $origin_id);
+				            if (! $ret)
+				            {
+				                dol_print_error($this->db);
+				                $error++;
+				            }
+				        }
+				    }
+				    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+				    {
+				        $origin_id = $tmp_origin_id;
+    					$ret = $this->add_object_linked($origin, $origin_id);
+    					if (! $ret)
+    					{
+    						dol_print_error($this->db);
+    						$error++;
+    					}
+				    }
+				}
+			}
+
+			// Add linked object (deprecated, use ->linkedObjectsIds instead)
             if (! $error && $this->id && ! empty($this->origin) && ! empty($this->origin_id))
             {
                 $ret = $this->add_object_linked();
@@ -640,7 +675,7 @@ class FactureFournisseur extends CommonInvoice
     function fetch_lines()
     {
         $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
-        $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
+        $sql.= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
 		$sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
@@ -681,6 +716,8 @@ class FactureFournisseur extends CommonInvoice
                     $line->tva_tx			= $obj->tva_tx;
                     $line->localtax1_tx		= $obj->localtax1_tx;
                     $line->localtax2_tx		= $obj->localtax2_tx;
+                    $line->localtax1_type	= $obj->localtax1_type;
+                    $line->localtax2_type	= $obj->localtax2_type;
                     $line->qty				= $obj->qty;
                     $line->remise_percent   = $obj->remise_percent;
                     $line->tva				= $obj->total_tva;
@@ -883,7 +920,7 @@ class FactureFournisseur extends CommonInvoice
             }
             // Fin appel triggers
         }
-        
+
         if (! $error)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
@@ -902,7 +939,7 @@ class FactureFournisseur extends CommonInvoice
             	$error++;
             }
         }
-        
+
 		if (! $error)
 		{
 			// Delete linked object
@@ -1084,7 +1121,11 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
 
-        // Protection
+        // Force to have object complete for checks
+        $this->fetch_thirdparty();
+        $this->fetch_lines();
+
+        // Check parameters
         if ($this->statut > self::STATUS_DRAFT)	// This is to avoid to validate twice (avoid errors on logs and stock management)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
@@ -1261,8 +1302,9 @@ class FactureFournisseur extends CommonInvoice
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
-                        // We increase stock for product
-                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        $mouvP->origin = &$this;
+						// We increase stock for product
+                        $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));
                     }
                 }
             }
@@ -1457,7 +1499,7 @@ class FactureFournisseur extends CommonInvoice
      * @param     	int			$id            		Id of line invoice
      * @param     	string		$desc         		Description of line
      * @param     	double		$pu          		Prix unitaire (HT ou TTC selon price_base_type)
-     * @param     	double		$vatrate       		VAT Rate
+     * @param     	double		$vatrate       		VAT Rate (Can be '8.5', '8.5 (ABC)')
      * @param		double		$txlocaltax1		LocalTax1 Rate
      * @param		double		$txlocaltax2		LocalTax2 Rate
      * @param     	double		$qty           		Quantity
@@ -1796,8 +1838,9 @@ class FactureFournisseur extends CommonInvoice
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
-	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0&mainmenu=accountancy&leftmenu=suppliers_bills';
-	        $response->img=img_object('',"bill");
+
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=accountancy&leftmenu=suppliers_bills';
+	        $response->img=img_object($langs->trans("Bills"),"bill");
 
             $facturestatic = new FactureFournisseur($this->db);
 
@@ -2524,15 +2567,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->tva_tx)) {
-			$this->tva_tx = 0;
-		}
-		if (empty($this->localtax1_tx)) {
-			$this->localtax1_tx = 0;
-		}
-		if (empty($this->localtax2_tx)) {
-			$this->localtax2_tx = 0;
-		}
+		if (empty($this->remise_percent)) $this->remise_percent = 0;
+		if (empty($this->tva_tx))  		  $this->tva_tx = 0;
+		if (empty($this->localtax1_tx))   $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx))   $this->localtax2_tx = 0;
 
 		$this->db->begin();
 

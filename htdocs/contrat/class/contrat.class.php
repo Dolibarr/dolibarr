@@ -728,7 +728,7 @@ class Contrat extends CommonObject
 		}
 
 		// Selectionne les lignes contrat liees a aucun produit
-		$sql = "SELECT d.rowid, d.fk_contrat, d.statut, d.qty, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.rowid, d.remise_percent, d.subprice,";
+		$sql = "SELECT d.rowid, d.fk_contrat, d.statut, d.qty, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.rowid, d.remise_percent, d.subprice,";
 		$sql.= " d.total_ht,";
 		$sql.= " d.total_tva,";
 		$sql.= " d.total_localtax1,";
@@ -766,6 +766,8 @@ class Contrat extends CommonObject
 				$line->tva_tx         = $objp->tva_tx;
 				$line->localtax1_tx   = $objp->localtax1_tx;
 				$line->localtax2_tx   = $objp->localtax2_tx;
+				$line->localtax1_type = $objp->localtax1_type;
+				$line->localtax2_type = $objp->localtax2_type;
 				$line->subprice       = $objp->subprice;
 				$line->remise_percent = $objp->remise_percent;
 				$line->price_ht       = $objp->price_ht;
@@ -872,7 +874,7 @@ class Contrat extends CommonObject
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
 		$sql.= " ref, entity, note_private, note_public, ref_customer, ref_supplier, ref_ext)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',".$this->socid.",".$user->id;
-		$sql.= ", '".$this->db->idate($this->date_contrat)."'";
+		$sql.= ", ".(dol_strlen($this->date_contrat)!=0 ? "'".$this->db->idate($this->date_contrat)."'" : "NULL");
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
 		$sql.= ",".($this->fk_project>0?$this->fk_project:"NULL");
@@ -944,7 +946,12 @@ class Contrat extends CommonObject
 
 			if (! $error)
 			{
-    			// Add object linked
+				if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+				{
+					$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+				}
+
+				// Add object linked
     			if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
     			{
     			    foreach($this->linked_objects as $origin => $tmp_origin_id)
@@ -956,7 +963,7 @@ class Contrat extends CommonObject
     			                $ret = $this->add_object_linked($origin, $origin_id);
     			                if (! $ret)
     			                {
-    			                    dol_print_error($this->db);
+    			                    $this->error=$this->db->lasterror();
     			                    $error++;
     			                }
     			            }
@@ -967,7 +974,7 @@ class Contrat extends CommonObject
     			            $ret = $this->add_object_linked($origin, $origin_id);
     			            if (! $ret)
     			            {
-    			                dol_print_error($this->db);
+    			                $this->error=$this->db->lasterror();
     			                $error++;
     			            }
     			        }
@@ -2249,6 +2256,16 @@ class Contrat extends CommonObject
 	}
 
 	/**
+	 * 	Create an array of order lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+	 */
+	function getLinesArray()
+	{
+		return $this->fetch_lines();
+	}
+
+	/**
 	 *  Create a document onto disk according to template module.
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
@@ -2628,6 +2645,8 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " t.vat_src_code,";
 		$sql.= " t.localtax1_tx,";
 		$sql.= " t.localtax2_tx,";
+		$sql.= " t.localtax1_type,";
+		$sql.= " t.localtax2_type,";
 		$sql.= " t.qty,";
 		$sql.= " t.remise_percent,";
 		$sql.= " t.remise,";
@@ -2681,6 +2700,8 @@ class ContratLigne extends CommonObjectLine
 				$this->vat_src_code = $obj->vat_src_code;
 				$this->localtax1_tx = $obj->localtax1_tx;
 				$this->localtax2_tx = $obj->localtax2_tx;
+				$this->localtax1_type = $obj->localtax1_type;
+				$this->localtax2_type = $obj->localtax2_type;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
 				$this->remise = $obj->remise;
