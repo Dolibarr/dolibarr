@@ -369,11 +369,11 @@ class Thirdparties extends DolibarrApi
       }
 
 
-      $sql = "SELECT f.facnumber, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture";
+      $sql = "SELECT f.facnumber, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
       $sql .= " FROM llx_societe_remise_except as re, llx_facture as f";
       $sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".$id;
-      if ($filter == "available")  $sql .= " AND re.fk_facture IS NULL";
-      if ($filter == "used")  $sql .= " AND re.fk_facture IS NOT NULL";
+      if ($filter == "available")  $sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
+      if ($filter == "used")  $sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
 
       $sql.= $this->db->order($sortfield, $sortorder);
 
