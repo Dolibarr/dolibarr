@@ -52,7 +52,7 @@ class Facture extends CommonInvoice
 	public $table_element='facture';
 	public $table_element_line = 'facturedet';
 	public $fk_element = 'fk_facture';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto='bill';
 
 	/**

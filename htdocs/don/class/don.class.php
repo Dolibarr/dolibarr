@@ -37,7 +37,7 @@ class Don extends CommonObject
     public $element='don'; 					// Id that identify managed objects
     public $table_element='don';			// Name of table without prefix where object is stored
 	public $fk_element = 'fk_donation';
-	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     var $picto = 'generic';
 
     var $date;

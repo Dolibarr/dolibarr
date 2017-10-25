@@ -4198,6 +4198,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: unset;
+}
 .select2-container .select2-choice {
 	border-bottom: 1px solid #ccc;
 }

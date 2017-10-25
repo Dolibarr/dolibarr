@@ -4668,7 +4668,13 @@ abstract class CommonObject
 	 */
 	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $showsize=0, $objectid=0)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$form;
+
+		if (! is_object($form))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form=new Form($this->db);
+		}
 
 		$label=$val['label'];
 		$type =$val['type'];
@@ -4695,7 +4701,6 @@ abstract class CommonObject
 		$list=$val['list'];
 		$hidden=(abs($val['visible'])!=1 ? 1 : 0);
 		$help=$val['help'];
-
 
 		if ($computed)
 		{
@@ -4756,10 +4761,6 @@ abstract class CommonObject
 			// Do not show current date when field not required (see select_date() method)
 			if (!$required && $value == '') $value = '-1';
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			global $form;
-			if (! is_object($form)) $form=new Form($this->db);
-
 			// TODO Must also support $moreparam
 			$out = $form->select_date($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, ($keyprefix != 'search_' ? 1 : 0), 1, 0, 1);
 		}
@@ -4817,7 +4818,7 @@ abstract class CommonObject
 			}
 
 			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
-			$out.='<option value="0">&nbsp;</option>';
+			if ((! isset($val['default'])) || ($val['notnull'] != 1)) $out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
 				if ((string) $key == '') continue;
@@ -4996,12 +4997,8 @@ abstract class CommonObject
 		}
 		elseif ($type == 'checkbox')
 		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			$form = new Form($db);
-
 			$value_arr=explode(',',$value);
 			$out=$form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
-
 		}
 		elseif ($type == 'radio')
 		{
@@ -5151,9 +5148,6 @@ abstract class CommonObject
 					}
 					$this->db->free($resql);
 
-					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-					$form = new Form($db);
-
 					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
 
 				} else {
@@ -5164,33 +5158,8 @@ abstract class CommonObject
 		}
 		elseif ($type == 'link')
 		{
-			$out='';
-
-			$param_list=array_keys($param['options']);
-			// 0 : ObjectName
-			// 1 : classPath
-			$InfoFieldList = explode(":", $param_list[0]);
-			dol_include_once($InfoFieldList[1]);
-			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
-			{
-				$valuetoshow=$value;
-				if (!empty($value))
-				{
-					$object = new $InfoFieldList[0]($this->db);
-					$resfetch=$object->fetch($value);
-					if ($resfetch > 0)
-					{
-						$valuetoshow=$object->ref;
-						if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
-					}
-				}
-				$out.='<input type="text" class="flat '.$showsize.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$valuetoshow.'" >';
-			}
-			else
-			{
-				dol_syslog('Error bad setup of type for field '.$InfoFieldList, LOG_WARNING);
-				$out.='Error bad setup of type for field '.join(',', $InfoFieldList);
-			}
+			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, (($val['notnull'] == 1)?0:1));
 		}
 		elseif ($type == 'password')
 		{

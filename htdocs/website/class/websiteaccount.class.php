@@ -47,7 +47,7 @@ class WebsiteAccount extends CommonObject
 	/**
 	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	protected $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 0;
 
 	/**
 	 * @var string String with name of icon for websiteaccount
@@ -88,7 +88,7 @@ class WebsiteAccount extends CommonObject
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1,),
 	);
 	public $rowid;

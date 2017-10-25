@@ -43,11 +43,10 @@ class MyObject extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'myobject';
-
 	/**
 	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	protected $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 0;
 	/**
 	 * @var string String with name of icon for myobject
 	 */
@@ -55,18 +54,20 @@ class MyObject extends CommonObject
 
 
 	/**
-	 *             'type' if the field format.
-	 *             'label' the translation key.
-	 *             'enabled' is a condition when the field must be managed.
-	 *             'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
-	 *             'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *             'index' if we want an index in database.
-	 *             'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
-	 *             'position' is the sort order of field.
-	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *             'help' is a string visible as a tooltip on field
-	 *             'comment' is not used. You can store here any text of your choice.
+	 *  'type' if the field format.
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'position' is the sort order of field.
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'help' is a string visible as a tooltip on field
+	 *  'comment' is not used. You can store here any text of your choice
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'showoncombobox' if field must be shown into the label of combobox
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -75,7 +76,7 @@ class MyObject extends CommonObject
      */
 	public $fields=array(
 	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
 	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
@@ -89,7 +90,7 @@ class MyObject extends CommonObject
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>1,    'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'index'=>1,    'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 	);
 
 	public $rowid;
