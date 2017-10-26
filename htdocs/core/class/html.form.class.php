@@ -4751,6 +4751,12 @@ class Form
 				$smin = dol_print_date($set_time, "%M");
 				$ssec = dol_print_date($set_time, "%S");
 			}
+			else
+			{
+				$shour = '';
+				$smin = '';
+				$ssec = '';
+			}
 		}
 		else
 		{

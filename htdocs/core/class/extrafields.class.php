@@ -974,6 +974,7 @@ class ExtraFields
 			{
 				$param_list=array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
+				$parentName='';
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -1058,8 +1059,9 @@ class ExtraFields
 						$obj = $this->db->fetch_object($resql);
 
 						// Several field into label (eq table:code|libelle:rowid)
+						$notrans = false;
 						$fields_label = explode('|',$InfoFieldList[1]);
-						if(is_array($fields_label))
+						if (is_array($fields_label))
 						{
 							$notrans = true;
 							foreach ($fields_label as $field_toshow)
@@ -1073,7 +1075,7 @@ class ExtraFields
 						}
 						$labeltoshow=dol_trunc($labeltoshow,45);
 
-						if ($value==$obj->rowid)
+						if ($value == $obj->rowid)
 						{
 							foreach ($fields_label as $field_toshow)
 							{
@@ -1088,7 +1090,7 @@ class ExtraFields
 						}
 						else
 						{
-							if(!$notrans)
+							if (! $notrans)
 							{
 								$translabel=$langs->trans($obj->{$InfoFieldList[1]});
 								if ($translabel!=$obj->{$InfoFieldList[1]}) {

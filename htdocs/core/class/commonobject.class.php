@@ -101,7 +101,7 @@ abstract class CommonObject
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
 	/**
-	 * @var string[]	Can be used to pass information when only object is provided to method
+	 * @var array<string,mixed>		Can be used to pass information when only object is provided to method
 	 */
 	public $context=array();
 
