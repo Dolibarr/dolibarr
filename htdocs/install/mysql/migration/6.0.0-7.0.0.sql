@@ -457,6 +457,7 @@ UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
 UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME';
 UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
 UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMBURG';
+UPDATE llx_accounting_system SET fk_country = 12 WHERE pcg_version = 'PCG';
 
 
 -- VPGSQL8.2 CREATE SEQUENCE llx_supplier_proposal_rowid_seq;
