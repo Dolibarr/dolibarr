@@ -299,19 +299,19 @@ else
 		else $sql.= " AND p.fk_product_type <> 1";
 	}
 	if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
-	if ($search_label)     $sql .= natural_search('p.label', $search_label);
+	if ($search_label)   $sql .= natural_search('p.label', $search_label);
 	if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
 	if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($search_tosell);
 	if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($search_tobuy);
 	if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
-	if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
-	if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
+	if ($catid > 0)     $sql.= " AND cp.fk_categorie = ".$catid;
+	if ($catid == -2)   $sql.= " AND cp.fk_categorie IS NULL";
 	if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
 	if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
-	if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
+	if ($fourn_id > 0)  $sql.= " AND pfp.fk_soc = ".$fourn_id;
 	if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
-	if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
-	if ($search_accountancy_code_buy)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
+	if ($search_accountancy_code_sell) $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
+	if ($search_accountancy_code_buy)  $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
 	// Add where from extra fields
 
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
