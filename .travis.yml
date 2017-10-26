@@ -79,7 +79,7 @@ matrix:
 notifications:
   email:
     on_success: never # [always|never|change] default: change
-    on_failure: change # [always|never|change] default: always
+    on_failure: never # [always|never|change] default: always
   irc:
     channels:
     - "chat.freenode.net#dolibarr"
