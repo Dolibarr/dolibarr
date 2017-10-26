@@ -3505,11 +3505,12 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *	Renvoi liste des factures remplacables
-	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
+	 *	Return list of invoices qualified to be replaced by another invoice.
+	 *	Invoices matching the following rules are returned:
+	 *	(Status validated or abandonned for a reason 'other') + not payed + no payment at all + not already replaced
 	 *
-	 *	@param		int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param		int		$socid		Id thirdparty
+	 *	@return    	array				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	function list_replacable_invoices($socid=0)
 	{
@@ -3553,7 +3554,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 *	Return list of invoices qualified to be corrected by a credit note.
-	 *	Invoices matching the following rules are returned
+	 *	Invoices matching the following rules are returned:
 	 *	(validated + payment on process) or classified (payed completely or payed partiely) + not already replaced + not already a credit note
 	 *
 	 *	@param		int		$socid		Id thirdparty
