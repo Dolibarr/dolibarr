@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- *
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -53,8 +52,8 @@ if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-dol_include_once('/website/class/websiteaccount.class.php');
-//dol_include_once('/website/lib/websiteaccount.lib.php');
+include_once(DOL_DOCUMENT_ROOT.'/website/class/websiteaccount.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php');
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("website","other"));
@@ -259,7 +258,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/website/websiteaccount_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback='';
+	if ($socid) $linkback = '<a href="' .DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	if ($fk_website) $linkback = '<a href="' .DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -314,52 +315,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
 
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-
-    	print '<tr><td';
-    	print ' class="titlefield';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td>';
-    	print dol_escape_htmltag($object->$key, 1, 1);
-		print '</td>';
-    	print '</tr>';
-
-    	//if ($key == 'targetsrcfile3') break;						// key used for break on second column
-	}
-
-	print '</table>';
-	print '</div>';
-	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-	$alreadyoutput = 1;
-	foreach($object->fields as $key => $val)
-	{
-		if ($alreadyoutput)
-		{
-			//if ($key == 'targetsrcfile3') $alreadyoutput = 0;		// key used for break on second column
-			continue;
-		}
-
-		if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
-
-		print '<tr><td';
-		print ' class="titlefield';
-		if ($val['notnull'] > 0) print ' fieldrequired';
-		print '"';
-		print '>'.$langs->trans($val['label']).'</td>';
-		print '<td>';
-		print dol_escape_htmltag($object->$key, 1, 1);
-		print '</td>';
-		print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -384,7 +341,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>'."\n";
+            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>'."\n";
 
     		if ($user->rights->website->write)
     		{
@@ -423,29 +380,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
+
 	    // Documents
-	    $comref = dol_sanitizeFileName($object->ref);
+	    /*$comref = dol_sanitizeFileName($object->ref);
 	    $relativepath = $comref . '/' . $comref . '.pdf';
 	    $filedir = $conf->website->dir_output . '/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->website->read;	// If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->website->create;	// If you can create/edit, you can remove a file on card
 	    print $formfile->showdocuments('website', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-
+		*/
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
+	    /*$linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
+		*/
 
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	    $MAXEVENT = 10;
 
 	    // List of actions on element
+	    /*
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
 	    $somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);
+	    */
 
 	    print '</div></div></div>';
 	}

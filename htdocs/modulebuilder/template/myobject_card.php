@@ -320,52 +320,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
 
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-
-    	print '<tr><td';
-    	print ' class="titlefield';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td>';
-    	print dol_escape_htmltag($object->$key, 1, 1);
-		print '</td>';
-    	print '</tr>';
-
-    	//if ($key == 'targetsrcfile3') break;						// key used for break on second column
-	}
-
-	print '</table>';
-	print '</div>';
-	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-	$alreadyoutput = 1;
-	foreach($object->fields as $key => $val)
-	{
-		if ($alreadyoutput)
-		{
-			//if ($key == 'targetsrcfile3') $alreadyoutput = 0;		// key used for break on second column
-			continue;
-		}
-
-		if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
-
-		print '<tr><td';
-		print ' class="titlefield';
-		if ($val['notnull'] > 0) print ' fieldrequired';
-		print '"';
-		print '>'.$langs->trans($val['label']).'</td>';
-		print '<td>';
-		print dol_escape_htmltag($object->$key, 1, 1);
-		print '</td>';
-		print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -390,7 +346,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>'."\n";
+            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>'."\n";
 
     		if ($user->rights->mymodule->write)
     		{
@@ -429,15 +385,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
+
 	    // Documents
-	    $comref = dol_sanitizeFileName($object->ref);
+	    /*$comref = dol_sanitizeFileName($object->ref);
 	    $relativepath = $comref . '/' . $comref . '.pdf';
 	    $filedir = $conf->mymodule->dir_output . '/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->mymodule->create;	// If you can create/edit, you can remove a file on card
 	    print $formfile->showdocuments('mymodule', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-
+		*/
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));

@@ -111,7 +111,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
 
-				print $extrafields->showInputField($key, $value,'','','',0,$object->id);
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
 				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 

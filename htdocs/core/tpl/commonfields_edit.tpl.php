@@ -36,22 +36,10 @@ foreach($object->fields as $key => $val)
 	print '"';
 	print '>'.$langs->trans($val['label']).'</td>';
 	print '<td>';
-	$defaultcss='minwidth100';
-	if ($val['type'] == 'text')
-	{
-		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-		print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
-		print '</textarea>';
-	}
-	elseif (is_array($val['arrayofkeyval']))
-	{
-		print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
-	}
-	else
-	{
-		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
-	}
+	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key)?GETPOST($key, 'int'):$object->$key;
+	elseif ($val['type'] == 'text') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;
+	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
+	print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';
 	print '</tr>';
 }

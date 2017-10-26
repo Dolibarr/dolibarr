@@ -809,7 +809,13 @@ class ExtraFields
 	 */
 	function showInputField($key, $value, $moreparam='', $keysuffix='', $keyprefix='', $showsize=0, $objectid=0)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$form;
+
+		if (! is_object($form))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form=new Form($this->db);
+		}
 
 		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
 
@@ -884,10 +890,6 @@ class ExtraFields
 
 			// Do not show current date when field not required (see select_date() method)
 			if (!$required && $value == '') $value = '-1';
-
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			global $form;
-			if (! is_object($form)) $form=new Form($this->db);
 
 			// TODO Must also support $moreparam
 			$out = $form->select_date($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, ($keyprefix != 'search_' ? 1 : 0), 1, 0, 1);
@@ -1125,12 +1127,8 @@ class ExtraFields
 		}
 		elseif ($type == 'checkbox')
 		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			$form = new Form($db);
-
 			$value_arr=explode(',',$value);
 			$out=$form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options'])?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
-
 		}
 		elseif ($type == 'radio')
 		{
@@ -1280,9 +1278,6 @@ class ExtraFields
 					}
 					$this->db->free($resql);
 
-					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-					$form = new Form($db);
-
 					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
 
 				} else {
@@ -1293,33 +1288,9 @@ class ExtraFields
 		}
 		elseif ($type == 'link')
 		{
-			$out='';
-
-			$param_list=array_keys($param['options']);
-			// 0 : ObjectName
-			// 1 : classPath
-			$InfoFieldList = explode(":", $param_list[0]);
-			dol_include_once($InfoFieldList[1]);
-			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
-			{
-				$valuetoshow=$value;
-				if (!empty($value))
-				{
-					$object = new $InfoFieldList[0]($this->db);
-					$resfetch=$object->fetch($value);
-					if ($resfetch > 0)
-					{
-						$valuetoshow=$object->ref;
-						if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ->ref is not name but id (because name is not unique)
-					}
-				}
-				$out.='<input type="text" class="flat '.$showsize.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$valuetoshow.'" >';
-			}
-			else
-			{
-				dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-				$out.='Error bad setup of extrafield';
-			}
+			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
+			$showempty=(($val['notnull'] == 1 && $val['default'] != '')?0:1);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
 		}
 		elseif ($type == 'password')
 		{
@@ -1357,11 +1328,13 @@ class ExtraFields
 		$computed=$this->attribute_computed[$key];
 		$unique=$this->attribute_unique[$key];
 		$required=$this->attribute_required[$key];
-		$params=$this->attribute_param[$key];
+		$param=$this->attribute_param[$key];
 		$perms=$this->attribute_perms[$key];
 		$langfile=$this->attribute_langfile[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=$this->attribute_hidden[$key];	// warning, do not rely on this. If your module need a hidden data, it must use its own table.
+		$hidden=(abs($list)!=1 ? 1 : 0);
+
+		if ($hidden) return '';
 
 		// If field is a computed field, value must become result of compute
 		if ($computed)
@@ -1418,11 +1391,11 @@ class ExtraFields
 		}
 		elseif ($type == 'select')
 		{
-			$value=$params['options'][$value];
+			$value=$param['options'][$value];
 		}
 		elseif ($type == 'sellist')
 		{
-			$param_list=array_keys($params['options']);
+			$param_list=array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 
 			$selectkey="rowid";
@@ -1499,7 +1472,7 @@ class ExtraFields
 		}
 		elseif ($type == 'radio')
 		{
-			$value=$params['options'][$value];
+			$value=$param['options'][$value];
 		}
 		elseif ($type == 'checkbox')
 		{
@@ -1508,7 +1481,7 @@ class ExtraFields
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
-					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$params['options'][$valueval].'</li>';
+					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
 				}
 			}
 			$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -1517,7 +1490,7 @@ class ExtraFields
 		{
 			$value_arr = explode(',', $value);
 
-			$param_list = array_keys($params['options']);
+			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 
 			$selectkey = "rowid";
@@ -1589,22 +1562,26 @@ class ExtraFields
 			// only if something to display (perf)
 			if ($value)
 			{
-				$param_list=array_keys($params['options']);
-				// 0 : ObjectName
-				// 1 : classPath
+				$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
+
 				$InfoFieldList = explode(":", $param_list[0]);
-				dol_include_once($InfoFieldList[1]);
-				if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
-    			{
-    				$object = new $InfoFieldList[0]($this->db);
-    				$object->fetch($value);
-    				$value=$object->getNomUrl(3);
-    			}
-	       		else
-			    {
-                    dol_syslog('Error bad setup of extrafield', LOG_WARNING);
-                    $out.='Error bad setup of extrafield';
-                }
+				$classname=$InfoFieldList[0];
+				$classpath=$InfoFieldList[1];
+				if (! empty($classpath))
+				{
+					dol_include_once($InfoFieldList[1]);
+					if ($classname && class_exists($classname))
+					{
+						$object = new $classname($this->db);
+						$object->fetch($value);
+						$value=$object->getNomUrl(3);
+					}
+				}
+				else
+				{
+					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+					return 'Error bad setup of extrafield';
+				}
 			}
 		}
 		elseif ($type == 'text')
@@ -1623,10 +1600,6 @@ class ExtraFields
 
 		//print $type.'-'.$size;
 		$out=$value;
-
-		if (!empty($hidden)) {
-			$out='';
-		}
 
 		return $out;
 	}

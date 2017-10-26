@@ -48,7 +48,7 @@ class MyObject extends CommonObject
 	 */
 	public $ismultientitymanaged = 0;
 	/**
-	 * @var string String with name of icon for myobject
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'myobject@mymodule';
 
@@ -57,7 +57,7 @@ class MyObject extends CommonObject
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
@@ -315,7 +315,7 @@ class MyObject extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $linkstart . $this->ref . $linkend;

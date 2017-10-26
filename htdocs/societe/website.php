@@ -491,7 +491,7 @@ while ($i < min($num, $limit))
 			print '<td'.($align?' class="'.$align.'"':'').'>';
 			if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
 			elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
-			elseif ($key == 'ref') print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
+			elseif ($key == 'ref' || $key == 'login') print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
 			elseif ($key == 'status') print $objectwebsiteaccount->getLibStatut(3);
 			else print $obj->$key;
 			print '</td>';

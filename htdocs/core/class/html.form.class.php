@@ -5172,11 +5172,13 @@ class Form
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->$confkeyforautocompletemode) && ! $forcecombo)
 		{
 			$objectdesc=$classname.':'.$classpath;
+			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
+			//if ($objecttmp->element == 'societe') $urlforajaxcall = DOL_URL_ROOT.'/societe/ajax/company.php';
 
 			// No immediate load of all database
 			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.($moreparams?$moreparams:'');
 			// Activate the auto complete using ajax call.
-			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, DOL_URL_ROOT.'/core/ajax/selectobject.php', $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
+			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out.= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if ($placeholder) $placeholder=' placeholder="'.$placeholder.'"';
 			$out.= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$preselectedvalue.'"'.$placeholder.' />';
