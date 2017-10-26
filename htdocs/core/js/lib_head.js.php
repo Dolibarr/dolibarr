@@ -427,6 +427,28 @@ function urlencode(s) {
 	return news;
 }
 
+/*
+ * =================================================================
+ * Purpose: Clean string to have it url encoded
+ * Input:   s
+ * Author:  Laurent Destailleur
+ * Licence: GPL
+ * ==================================================================
+ */
+function htmlEntityDecodeJs(inp){
+	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
+	if (inp)
+	{
+	  for(var r in replacements){
+	    inp = inp.replace(new RegExp(r,'g'),replacements[r]);
+	  }
+	  return inp.replace(/&#(\d+);/g, function(match, dec) {
+	    return String.fromCharCode(dec);
+	  });
+	}
+	else { return ''; }
+}
+
 
 /*
  * =================================================================

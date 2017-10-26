@@ -418,11 +418,16 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 							$(container).addClass($(data.element).attr("class"));
 						}
 
+					    //console.log(data.html);
+						if ($(data.element).attr("html") != undefined) return htmlEntityDecodeJs($(data.element).attr("html"));		// If property html set, we decode html entities and use this
 					    return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */
 						return selection.text;
 					},
+					escapeMarkup: function(markup) {
+						return markup;
+					}
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";
