@@ -2261,17 +2261,18 @@ class Contrat extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 * 	Create an array of order lines
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
-     */
-    function getLinesArray()
-    {
-        return $this->fetch_lines();
-    }
+	 */
+	function getLinesArray()
+	{
+		return $this->fetch_lines();
+	}
 
-    /**
+
+	/**
 	 *  Create a document onto disk according to template module.
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)

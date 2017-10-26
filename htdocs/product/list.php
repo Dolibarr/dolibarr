@@ -495,15 +495,17 @@ else
 				$moreforfilter.='</div>';
 			}
 
-		 	if ($moreforfilter)
+    		$parameters=array();
+    		$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    		if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
+    		else $moreforfilter=$hookmanager->resPrint;
+
+    	 	if ($moreforfilter)
 			{
-				print '<div class="liste_titre liste_titre_bydiv centpercent">';
-				print $moreforfilter;
-				$parameters=array();
-				$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-				print $hookmanager->resPrint;
-				print '</div>';
-			}
+        		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+    		    print $moreforfilter;
+    		    print '</div>';
+    		}
 
 			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 			$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
