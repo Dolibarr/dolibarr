@@ -426,13 +426,14 @@ else
     			$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
     		 	$moreforfilter.='</div>';
     		}
-    	 	if ($moreforfilter)
+    		$parameters=array();
+    		$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    		if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
+    		else $moreforfilter=$hookmanager->resPrint;
+    		if ($moreforfilter)
     		{
         		print '<div class="liste_titre liste_titre_bydiv centpercent">';
     		    print $moreforfilter;
-            	$parameters=array();
-            	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-        	    print $hookmanager->resPrint;
     		    print '</div>';
     		}
 
@@ -788,7 +789,7 @@ else
 				   }
 				}
 		        // Fields from hook
-			    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$objp);
 				$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 		        print $hookmanager->resPrint;
 		        // Date creation
