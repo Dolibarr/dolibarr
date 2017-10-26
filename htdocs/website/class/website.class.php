@@ -139,7 +139,7 @@ class Website extends CommonObject
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
+		$sql .= ' '.((empty($this->entity) && $this->entity != '0')?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';

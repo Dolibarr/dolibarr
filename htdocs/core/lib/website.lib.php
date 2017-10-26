@@ -188,7 +188,7 @@ function dolIncludeHtmlContent($contentfile)
  * Generate a zip with all data of web site.
  *
  * @param 	Website		$website		Object website
- * @return  void
+ * @return  string						Path to file with zip
  */
 function exportWebSite($website)
 {
@@ -275,6 +275,24 @@ function exportWebSite($website)
 	dol_compress_file($filedir, $filename, 'zip');
 
 	return $filename;
+}
+
+
+/**
+ * Open a zip with all data of web site and load it into database.
+ *
+ * @param 	string		$filename		Path of zip file
+ * @return  int							<0 if KO, >0 if OK
+ */
+function importWebSite($website)
+{
+	$result = 0;
+
+
+	//$sql = array("INSERT INTO ".MAIN_DB_PREFIX."website(ref, entity, description, status) values('sellyoursaas', '.$conf->entity.', Portal to sell your SaaS', 1)");
+
+
+	return $result;
 }
 
 
