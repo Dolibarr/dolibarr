@@ -1,0 +1,29 @@
+{
+    "name": "mikehaertl/phpwkhtmltopdf",
+    "description": "A slim PHP wrapper around wkhtmltopdf with an easy to use and clean OOP interface",
+    "keywords": ["pdf", "wkhtmltopdf", "wkhtmltoimage" ],
+    "homepage": "http://mikehaertl.github.com/phpwkhtmltopdf/",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Haertl",
+            "email": "haertl.mike@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0",
+        "mikehaertl/php-tmpfile": "^1.0.0",
+        "mikehaertl/php-shellcommand": "^1.0.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "mikehaertl\\wkhtmlto\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}
