@@ -194,13 +194,11 @@ class BlockedLog
 			$this->object_data->note_private= (double) $object->note_private;
 
 		}
-		elseif($this->element==='payment'){
+		elseif($this->element==='payment'|| $object->element=='payment_supplier'){
 
 			$this->object_data->amounts = $object->amounts;
 
 		}
-
-
 	}
 
 	/**
