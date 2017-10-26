@@ -321,56 +321,27 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			}
 		}
 		// Else, retreive default values if we are not doing a sort
-		elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+		elseif (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 		{
 			if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 			{
-				if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
+				// Search default value from $object->field
+				global $object;
+				if (is_object($object) && isset($object->fields[$paramname]['default']))
 				{
-					if (isset($user->default_values[$relativepathstring]['createform']))
-					{
-						foreach($user->default_values[$relativepathstring]['createform'] as $defkey => $defval)
-						{
-							$qualified = 0;
-							if ($defkey != '_noquery_')
-							{
-								$tmpqueryarraytohave=explode('&', $defkey);
-								$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-								$foundintru=0;
-								foreach($tmpqueryarraytohave as $tmpquerytohave)
-								{
-									if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
-								}
-								if (! $foundintru) $qualified=1;
-								//var_dump($defkey.'-'.$qualified);
-							}
-							else $qualified = 1;
-
-							if ($qualified)
-							{
-								//var_dump($user->default_values[$relativepathstring][$defkey]['createform']);
-								if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname]))
-								{
-									$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
-									break;
-								}
-							}
-						}
-					}
+					$out = $object->fields[$paramname]['default'];
 				}
 			}
-			// Management of default search_filters and sort order
-			//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-			elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			if (! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-				if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
+				if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				{
-					//var_dump($user->default_values[$relativepathstring]);
-					if ($paramname == 'sortfield' || $paramname == 'sortorder')			// Sorted on which fields ? ASC or DESC ?
+					// Now search in setup to overwrite default values
+					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
 					{
-						if (isset($user->default_values[$relativepathstring]['sortorder']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+						if (isset($user->default_values[$relativepathstring]['createform']))
 						{
-							foreach($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval)
+							foreach($user->default_values[$relativepathstring]['createform'] as $defkey => $defval)
 							{
 								$qualified = 0;
 								if ($defkey != '_noquery_')
@@ -389,67 +360,108 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 
 								if ($qualified)
 								{
-									$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-									foreach($user->default_values[$relativepathstring]['sortorder'][$defkey] as $key => $val)
+									//var_dump($user->default_values[$relativepathstring][$defkey]['createform']);
+									if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname]))
 									{
-										if ($out) $out.=', ';
-										if ($paramname == 'sortfield')
-										{
-											$out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
-										}
-										if ($paramname == 'sortorder')
-										{
-											$out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
-										}
+										$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
+										break;
 									}
-									//break;	// No break for sortfield and sortorder so we can cumulate fields (is it realy usefull ?)
 								}
 							}
 						}
 					}
-					elseif (isset($user->default_values[$relativepathstring]['filters']))
+				}
+				// Management of default search_filters and sort order
+				//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+				elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+				{
+					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
 					{
-						foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
+						//var_dump($user->default_values[$relativepathstring]);
+						if ($paramname == 'sortfield' || $paramname == 'sortorder')			// Sorted on which fields ? ASC or DESC ?
 						{
-							$qualified = 0;
-							if ($defkey != '_noquery_')
+							if (isset($user->default_values[$relativepathstring]['sortorder']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
 							{
-								$tmpqueryarraytohave=explode('&', $defkey);
-								$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-								$foundintru=0;
-								foreach($tmpqueryarraytohave as $tmpquerytohave)
+								foreach($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval)
 								{
-									if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
-								}
-								if (! $foundintru) $qualified=1;
-								//var_dump($defkey.'-'.$qualified);
-							}
-							else $qualified = 1;
+									$qualified = 0;
+									if ($defkey != '_noquery_')
+									{
+										$tmpqueryarraytohave=explode('&', $defkey);
+										$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+										$foundintru=0;
+										foreach($tmpqueryarraytohave as $tmpquerytohave)
+										{
+											if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+										}
+										if (! $foundintru) $qualified=1;
+										//var_dump($defkey.'-'.$qualified);
+									}
+									else $qualified = 1;
 
-							if ($qualified)
+									if ($qualified)
+									{
+										$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+										foreach($user->default_values[$relativepathstring]['sortorder'][$defkey] as $key => $val)
+										{
+											if ($out) $out.=', ';
+											if ($paramname == 'sortfield')
+											{
+												$out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
+											}
+											if ($paramname == 'sortorder')
+											{
+												$out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
+											}
+										}
+										//break;	// No break for sortfield and sortorder so we can cumulate fields (is it realy usefull ?)
+									}
+								}
+							}
+						}
+						elseif (isset($user->default_values[$relativepathstring]['filters']))
+						{
+							foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
 							{
-								if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+								$qualified = 0;
+								if ($defkey != '_noquery_')
 								{
-									// We made a search from quick search menu, do we still use default filter ?
-									if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+									$tmpqueryarraytohave=explode('&', $defkey);
+									$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+									$foundintru=0;
+									foreach($tmpqueryarraytohave as $tmpquerytohave)
+									{
+										if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+									}
+									if (! $foundintru) $qualified=1;
+									//var_dump($defkey.'-'.$qualified);
+								}
+								else $qualified = 1;
+
+								if ($qualified)
+								{
+									if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+									{
+										// We made a search from quick search menu, do we still use default filter ?
+										if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+										{
+											$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+											$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
+										}
+									}
+									else
 									{
 										$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
 										$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 									}
+									break;
 								}
-								else
-								{
-									$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-									$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
-								}
-								break;
 							}
 						}
 					}
 				}
 			}
 		}
-
 	}
 
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)

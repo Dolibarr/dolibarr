@@ -421,9 +421,13 @@ if ($mode == 'feature')
         $i=0;
         foreach($objMod->tabs as $val)
         {
-            $tmp=explode(':',$val,3);
-            $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
-            $i++;
+        	if (is_array($val)) $val=$val['data'];
+        	if (is_string($val))
+        	{
+            	$tmp=explode(':',$val,3);
+            	$text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+           		$i++;
+        	}
         }
     }
     else $text.=$langs->trans("No");

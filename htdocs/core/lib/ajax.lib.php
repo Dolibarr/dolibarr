@@ -27,9 +27,9 @@
 /**
  *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
  *  The HTML field must be an input text with id=search_$htmlname.
- *  This use the jQuery "autocomplete" function.
+ *  This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
  *
- *  @param	string	$selected           Preselecte value
+ *  @param	string	$selected           Preselected value
  *	@param	string	$htmlname           HTML name of input field
  *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request

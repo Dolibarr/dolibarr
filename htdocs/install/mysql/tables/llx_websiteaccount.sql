@@ -20,6 +20,8 @@ CREATE TABLE llx_websiteaccount(
 	login             varchar(64) NOT NULL, 
     pass_crypted      varchar(128),
     pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    fk_soc integer,
+	fk_website integer,
     date_last_login     datetime,
     date_previous_login datetime,
 	date_creation datetime NOT NULL, 
@@ -27,7 +29,6 @@ CREATE TABLE llx_websiteaccount(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	status integer, 
-	fk_soc integer
+	status integer 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

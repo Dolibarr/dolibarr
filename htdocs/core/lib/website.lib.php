@@ -194,23 +194,23 @@ function exportWebSite($website)
 {
 	global $db, $conf;
 
-	dol_mkdir($conf->websites->dir_temp);
-	$srcdir = $conf->websites->dir_output.'/'.$website->ref;
-	$destdir = $conf->websites->dir_temp.'/'.$website->ref;
+	dol_mkdir($conf->website->dir_temp);
+	$srcdir = $conf->website->dir_output.'/'.$website->ref;
+	$destdir = $conf->website->dir_temp.'/'.$website->ref;
 
 	$arrayreplacement=array();
 
 	dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
 	$srcdir = DOL_DATA_ROOT.'/medias/images/'.$website->ref;
-	$destdir = $conf->websites->dir_temp.'/'.$website->ref.'/medias/images/'.$website->ref;
+	$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/images/'.$website->ref;
 
 	dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
 	// Build sql file
-	dol_mkdir($conf->websites->dir_temp.'/'.$website->ref.'/export');
+	dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/export');
 
-	$filesql = $conf->websites->dir_temp.'/'.$website->ref.'/export/pages.sql';
+	$filesql = $conf->website->dir_temp.'/'.$website->ref.'/export/pages.sql';
 	$fp = fopen($filesql,"w");
 
 	$objectpages = new WebsitePage($db);
@@ -267,9 +267,9 @@ function exportWebSite($website)
 		@chmod($filesql, octdec($conf->global->MAIN_UMASK));
 
 	// Build zip file
-	$filedir = $conf->websites->dir_temp.'/'.$website->ref;
-	$fileglob = $conf->websites->dir_temp.'/'.$website->ref.'/export/'.$website->ref.'_export_*.zip';
-	$filename = $conf->websites->dir_temp.'/'.$website->ref.'/export/'.$website->ref.'_export_'.dol_print_date(dol_now(),'dayhourlog').'.zip';
+	$filedir  = $conf->website->dir_temp.'/'.$website->ref;
+	$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-*.zip';
+	$filename = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
 
 	dol_delete_file($fileglob, 0);
 	dol_compress_file($filedir, $filename, 'zip');

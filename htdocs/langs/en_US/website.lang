@@ -51,5 +51,6 @@ OrEnterPageInfoManually=Or create empty page from scratch...
 FetchAndCreate=Fetch and Create
 ExportSite=Export site
 IDOfPage=Id of page
+WebsiteAccount=Web site account
 WebsiteAccounts=Web site accounts
 AddWebsiteAccount=Create web site account
