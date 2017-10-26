@@ -6162,22 +6162,16 @@ abstract class CommonObject
 
 		$error = 0;
 
-		$fieldvalues = $this->set_save_query();
-		unset($fieldvalues['rowid']);	// We don't update this field, it is the key to define which record to update.
+		$now=dol_now();
 
+		$fieldvalues = $this->set_save_query();
+		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) $fieldvalues['date_modification']=$this->db->idate($now);
+		if (array_key_exists('fk_user_modif', $fieldvalues) && ! ($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif']=$user->id;
+		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
+
+		$keys=array();
 		foreach ($fieldvalues as $k => $v) {
-			if (is_array($key)){
-				$i=array_search($k, $key);
-				if ( $i !== false) {
-					$where[] = $key[$i].'=' . $this->quote($v, $this->fields[$k]);
-					continue;
-				}
-			} else {
-				if ( $k == $key) {
-					$where[] = $k.'=' .$this->quote($v, $this->fields[$k]);
-					continue;
-				}
-			}
+			$keys[$k] = $k;
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
@@ -6188,11 +6182,12 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
+			/*
 			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
-			}
+			}*/
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
