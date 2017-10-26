@@ -284,7 +284,7 @@ function exportWebSite($website)
  * @param 	string		$filename		Path of zip file
  * @return  int							<0 if KO, >0 if OK
  */
-function importWebSite($website)
+function importWebSite($filename)
 {
 	$result = 0;
 
