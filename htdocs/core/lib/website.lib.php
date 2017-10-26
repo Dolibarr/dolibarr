@@ -155,7 +155,7 @@ function dolIncludeHtmlContent($contentfile)
 
 	$MAXLEVEL=20;
 
-	$fullpathfile=DOL_DATA_ROOT.'/websites/'.$contentfile;
+	$fullpathfile=DOL_DATA_ROOT.'/website/'.$contentfile;
 
 	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
 	$includehtmlcontentopened++;
