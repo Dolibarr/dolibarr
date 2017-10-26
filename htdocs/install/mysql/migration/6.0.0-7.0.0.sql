@@ -457,5 +457,12 @@ UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME'
 UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
 UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMBURG';
 
+
+-- VPGSQL8.2 CREATE SEQUENCE llx_supplier_proposal_rowid_seq;
+-- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET DEFAULT nextval('llx_supplier_proposal_rowid_seq');
+-- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET NOT NULL;
+-- VPGSQL8.2 SELECT setval('llx_supplier_proposal_rowid_seq', (SELECT MAX(rowid) FROM llx_supplier_proposal));
+
+
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
