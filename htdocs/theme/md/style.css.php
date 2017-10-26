@@ -3381,6 +3381,10 @@ table.valid {
     z-index: 3000;
 }
 
+div.ui-tooltip {
+	max-width: <?php print dol_size(600,'width'); ?>px !important;
+}
+
 .mytooltip {
 	width: <?php print dol_size(450,'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
@@ -4198,6 +4202,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: unset;
+}
 .select2-container .select2-choice {
 	border-bottom: 1px solid #ccc;
 }
@@ -4330,9 +4337,6 @@ a span.select2-chosen
 }
 .select2-results {
 	max-height:	400px;
-}
-.css-searchselectcombo ul.select2-results {
-	max-height:	none;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;

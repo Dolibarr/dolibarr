@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -375,7 +375,7 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	$board=new ActionComm($db);
-	
+
 	$dashboardlines[] = $board->load_board($user);
 }
 
@@ -688,13 +688,13 @@ $db->close();
 function showWeather($totallate,$text,$options)
 {
     global $conf;
-    
+
     $out='';
     $offset=0;
     $factor=10; // By default
 
     $used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
-    
+
     $level0=$offset;           if (! empty($conf->global->{$used_conf.'0'})) $level0=$conf->global->{$used_conf.'0'};
     $level1=$offset+1*$factor; if (! empty($conf->global->{$used_conf.'1'})) $level1=$conf->global->{$used_conf.'1'};
     $level2=$offset+2*$factor; if (! empty($conf->global->{$used_conf.'2'})) $level2=$conf->global->{$used_conf.'2'};

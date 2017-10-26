@@ -23,7 +23,7 @@ CREATE TABLE llx_website
 	entity        integer DEFAULT 1,
 	ref	          varchar(128) NOT NULL,
 	description   varchar(255),
-	status		  integer,
+	status		  integer DEFAULT 1,
 	fk_default_home integer, 
 	virtualhost   varchar(255), 
     fk_user_create integer,

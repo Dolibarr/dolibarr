@@ -173,9 +173,11 @@ if (empty($reshook))
 	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	        if (empty($reshook)) {
 	            $result = $object->insertExtraFields();
-	            if ($result < 0) {
-	                $error++;
-	            }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
 	        } else if ($reshook < 0)
 	            $error++;
 	    }
@@ -212,8 +214,8 @@ if (empty($reshook))
 	    $objectsrc->fetch($object->origin_id);
 
 	    $object->socid					= $objectsrc->socid;
-	    $object->ref_customer			= '';                   // We don't use $objectsrc->ref_client, this is ref or order not shipment
-	    $object->model_pdf				= GETPOST('model','alpha');
+	    $object->ref_customer			= GETPOST('ref_customer','alpha');
+	    $object->model_pdf				= GETPOST('model');
 	    $object->date_delivery			= $date_delivery;	    // Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
@@ -691,7 +693,7 @@ if ($action == 'create')
             else if ($origin == 'propal') print $langs->trans('RefCustomerOrder');
             else print $langs->trans('RefCustomer');
             print '</td><td colspan="3">';
-            print $object->ref_client;
+            print '<input type="text" name="ref_customer" value="'.$object->ref_client.'" />';
             print '</td>';
             print '</tr>';
 

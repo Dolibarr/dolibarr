@@ -15,8 +15,10 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_myobject ADD UNIQUE INDEX idx_fieldobject (fieldobject);
+ALTER TABLE llx_myobject ADD INDEX idx_fieldobject (fieldobject);
 -- END MODULEBUILDER INDEXES
+
+--ALTER TABLE llx_myobject ADD UNIQUE INDEX uk_myobject_fieldxyz(fieldx, fieldy);
 
 --ALTER TABLE llx_myobject ADD CONSTRAINT llx_myobject_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
 

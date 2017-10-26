@@ -27,9 +27,9 @@
 /**
  *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
  *  The HTML field must be an input text with id=search_$htmlname.
- *  This use the jQuery "autocomplete" function.
+ *  This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
  *
- *  @param	string	$selected           Preselecte value
+ *  @param	string	$selected           Preselected value
  *	@param	string	$htmlname           HTML name of input field
  *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
@@ -411,17 +411,23 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
 					language: select2arrayoflanguage,
+    				containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
 					templateResult: function (data, container) {	/* Format visible output into combo list */
-	 					/* Code to add class of origin option propagated to the new select2 li tag */
+	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) {
 							$(container).addClass($(data.element).attr("class"));
 						}
 
+					    //console.log(data.html);
+						if ($(data.element).attr("html") != undefined) return htmlEntityDecodeJs($(data.element).attr("html"));		// If property html set, we decode html entities and use this
 					    return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */
 						return selection.text;
 					},
+					escapeMarkup: function(markup) {
+						return markup;
+					}
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

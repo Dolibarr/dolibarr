@@ -269,7 +269,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
                     $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
-                    if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    if (! empty($head['graph'])) $label.=' <span class="fa fa-bar-chart"></span>';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
