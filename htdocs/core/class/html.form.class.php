@@ -5498,7 +5498,7 @@ class Form
 			    		cache: true
 			    	},
 	 				language: select2arrayoflanguage,
-			        /* dropdownCssClass: "css-'.$htmlname.'", */
+					containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
 				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',

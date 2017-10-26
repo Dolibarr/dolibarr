@@ -411,8 +411,9 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
 					language: select2arrayoflanguage,
+    				containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
 					templateResult: function (data, container) {	/* Format visible output into combo list */
-	 					/* Code to add class of origin option propagated to the new select2 li tag */
+	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) {
 							$(container).addClass($(data.element).attr("class"));
 						}
