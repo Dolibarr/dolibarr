@@ -319,7 +319,7 @@ class modWkHtmlToPdf extends DolibarrModules
 
         //wkhtmltopdf templates
         $src = DOL_DOCUMENT_ROOT . '/install/doctemplates/invoices/generic.html';
-        $dirwkhtmltopdf = DOL_DATA_ROOT.'/wkhtmltopdf/templates/invoices';
+        $dirwkhtmltopdf = DOL_DATA_ROOT.'/doctemplates/invoices';
         $dest = $dirwkhtmltopdf . '/template_generic.html';
 
         if (file_exists($src) && ! file_exists($dest)) {
