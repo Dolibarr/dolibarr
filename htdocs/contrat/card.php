@@ -333,6 +333,15 @@ if (empty($reshook))
 								    $desc = dol_htmlentitiesbr($lines[$i]->desc);
 						        }
 
+								// Extrafields
+								$array_options = array();
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
+								// trigger used
+								{
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_options = $lines[$i]->array_options;
+								}
+								
 								$txtva = $lines[$i]->vat_src_code ? $lines[$i]->tva_tx . ' (' .  $lines[$i]->vat_src_code . ')' : $lines[$i]->tva_tx;
 
 								// View third's localtaxes for now
@@ -355,7 +364,7 @@ if (empty($reshook))
 					                $lines[$i]->info_bits,
 				                    $lines[$i]->fk_fournprice,
 				                    $lines[$i]->pa_ht,
-			                        array(),
+			                        $array_options,
 				                    $lines[$i]->fk_unit
 			                    );
 
