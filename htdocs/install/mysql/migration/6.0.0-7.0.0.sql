@@ -218,7 +218,8 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
     fk_range        integer DEFAULT 0 NOT NULL,
     coef            double DEFAULT 0 NOT NULL,
-    offset          double DEFAULT 0 NOT NULL
+    ikoffset          double DEFAULT 0 NOT NULL,
+    active          integer DEFAULT 1
 )ENGINE=innodb;
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
@@ -260,21 +261,21 @@ INSERT INTO llx_c_type_fees (code, label, active, accountancy_code) VALUES
 ('EX_PAR_VP', 'ExpLabelParkingPV', 0, '625160'),
 ('EX_CAM_VP', 'ExpLabelMaintenanceRepairPV', 0, '615300');
 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (1,4, 1, 0.41, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (2,4, 2, 0.244, 824);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (3,4, 3, 0.286, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (4,5, 4, 0.493, 0);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (5,5, 5, 0.277, 1082);
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (6,5, 6, 0.332, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (7,6, 7, 0.543, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (8,6, 8, 0.305, 1180); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (9,6, 9, 0.364, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (10,7, 10, 0.568, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (11,7, 11, 0.32, 1244); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (12,7, 12, 0.382, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (13,8, 13, 0.595, 0); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (14,8, 14, 0.337, 1288); 
-INSERT INTO llx_expensereport_ik (rowid,fk_c_exp_tax_cat, fk_range, coef, offset) values (15,8, 15, 0.401, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (1,4, 1, 0.41, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (2,4, 2, 0.244, 824);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (3,4, 3, 0.286, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (4,5, 4, 0.493, 0);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (5,5, 5, 0.277, 1082);
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (6,5, 6, 0.332, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (7,6, 7, 0.543, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (8,6, 8, 0.305, 1180); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (9,6, 9, 0.364, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (10,7, 10, 0.568, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (11,7, 11, 0.32, 1244); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (12,7, 12, 0.382, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (13,8, 13, 0.595, 0); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (14,8, 14, 0.337, 1288); 
+INSERT INTO llx_expensereport_ik (rowid, fk_c_exp_tax_cat, fk_range, coef, ikoffset) values (15,8, 15, 0.401, 0); 
 
 
 INSERT INTO llx_c_exp_tax_cat (rowid, label, entity, active) values (1,'ExpAutoCat', 1, 1);
@@ -415,12 +416,12 @@ DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_DEVISE')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_PIECE')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPENSEREPORT_JOURNAL')__;
 
-ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
+-- VMYSQL4.1 ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
 
-ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
+-- VMYSQL4.1 ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
 
