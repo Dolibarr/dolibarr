@@ -3381,6 +3381,10 @@ table.valid {
     z-index: 3000;
 }
 
+div.ui-tooltip {
+	max-width: <?php print dol_size(600,'width'); ?>px !important;
+}
+
 .mytooltip {
 	width: <?php print dol_size(450,'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
