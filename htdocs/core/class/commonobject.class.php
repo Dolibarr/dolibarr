@@ -13,6 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4049,6 +4050,59 @@ abstract class CommonObject
 					return -1;
 				}
 			}
+
+            // If generator is HTML, we must have srctemplatepath defined, if not we set it.
+            if ($obj->type == 'html' && empty($srctemplatepath))
+            {
+                $varfortemplatedir = $obj->scandir;
+                if ($varfortemplatedir && ! empty($conf->global->$varfortemplatedir))
+                {
+                    $dirtoscan = $conf->global->$varfortemplatedir;
+
+                    $listoffiles = array();
+
+                    // Now we add first model found in directories scanned
+                    $listofdir = explode(',',$dirtoscan);
+                    foreach($listofdir as $key => $tmpdir)
+                    {
+                        $tmpdir = trim($tmpdir);
+                        $tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+                        if (! $tmpdir) {
+                            unset($listofdir[$key]);
+                            continue;
+                        }
+                        if (is_dir($tmpdir))
+                        {
+                            $tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.html$', '', 'name', SORT_ASC, 0);
+                            if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
+                        }
+                    }
+
+                    if (count($listoffiles))
+                    {
+                        foreach($listoffiles as $record)
+                        {
+                            $srctemplatepath = $record['fullname'];
+                            break;
+                        }
+                    }
+                }
+
+                if (empty($srctemplatepath))
+                {
+                    $this->error = 'ErrorGenerationAskedForHtmlTemplateWithSrcFileNotDefined';
+                    return -1;
+                }
+            }
+
+            if ($obj->type == 'html' && ! empty($srctemplatepath))
+            {
+                if (! dol_is_file($srctemplatepath))
+                {
+                    $this->error='ErrorGenerationAskedForHtmlTemplateWithSrcFileNotFound';
+                    return -1;
+                }
+            }
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
