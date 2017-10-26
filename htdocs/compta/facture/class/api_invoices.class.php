@@ -77,21 +77,6 @@ class Invoices extends DolibarrApi
 	$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
         $this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
-	// get available discounts of customer
-	/* TODO Move this into thirdparty API
-	$soc = new Societe($this->db);
-	if ($this->invoice->socid > 0)
-	    $res = $soc->fetch($this->invoice->socid);
-	if($res) {
-		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))";
-		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
-		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
-		$this->invoice->absolute_discount = price2num($absolute_discount, 'MT');
-		$this->invoice->absolute_creditnote = price2num($absolute_creditnote, 'MT');
-	}
-	*/
-
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -667,8 +652,96 @@ class Invoices extends DolibarrApi
     }
 
 
+     /**
+     * Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
+     *
+     * @param int   $id             Id of invoice
+     * @param int   $discountid     Id of discount
+     *
+     * @url     POST {id}/usediscount/{discountid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function useDiscount($id, $discountid) {
+
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Invoice ID is mandatory');
+        }
+        if(empty($discountid)) {
+                throw new RestException(400, 'Discount ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        $result = $this->invoice->insert_discount($discountid);
+        if( $result < 0) {
+                throw new RestException(405, $this->invoice->error);
+        }
+
+        return $result;
+    }
+
+     /**
+     * Add an available credit note discount to payments of an existing invoice (Consume the credit note)
+     *
+     * @param int   $id            Id of invoice
+     * @param int   $discountid    Id of a discount coming from a credit note
+     *
+     * @url     POST {id}/usecreditnote/{creditnoteid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function useCreditNote($id, $discountid) {
+    
+        require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+        
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Invoice ID is mandatory');
+        }
+        if(empty($creditId)) {
+                throw new RestException(400, 'Credit ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $discount = new DiscountAbsolute($this->db);
+        $result = $discount->fetch($discountid);
+        if( ! $result ) {
+                throw new RestException(404, 'Credit not found');
+        }
+
+        $result = $discount->link_to_invoice(0, $id);
+        if( $result < 0) {
+                throw new RestException(405, $discount->error);
+        }
+
+        return $result;
+    }
+
     /**
-     * Get a payment list of a given invoice
+     * Get list of payments of a given invoice
      *
      * @param int   $id             Id of invoice
      *
@@ -705,8 +778,6 @@ class Invoices extends DolibarrApi
         
         return $result;
     }
-
-
 
     /**
      * Clean sensible object datas
