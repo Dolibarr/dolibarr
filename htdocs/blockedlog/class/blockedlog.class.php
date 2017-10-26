@@ -153,7 +153,7 @@ class BlockedLog
 	 */
 	public function setObjectData(&$object) {
 
-		if($object->element=='payment') {
+		if($object->element=='payment' || $object->element=='payment_supplier') {
 			$this->date_object = $object->datepaye;
 		}
 		else{
