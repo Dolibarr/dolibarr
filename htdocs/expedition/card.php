@@ -1212,11 +1212,16 @@ if ($action == 'create')
 
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-									//print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									$productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
-									print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
-									print ' ('.$dbatch->qty.')';
-									//print $langs->trans("DetailBatchFormat", 'ee'.$dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+									if (!empty($productlotObject->batch)) 
+									{
+										print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
+										print ' ('.$dbatch->qty.')';
+									}
+									else 	// When lot not found in lot table (this can happen with old record)
+									{
+										print $langs->trans("Batch").': '.$dbatch->batch.' ('.$dbatch->qty.')';
+									}
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
 									{
