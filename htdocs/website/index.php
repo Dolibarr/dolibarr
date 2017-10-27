@@ -1978,6 +1978,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<body id="bodywebsite" class="bodywebsite">'."\n";
 	$tplcontent.= $objectpage->content."\n";
 	$tplcontent.= '</body>'."\n";
+	$tplcontent.= '</html>'."\n";
 
 	$tplcontent.= '<?php // BEGIN PHP'."\n";
 	$tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";

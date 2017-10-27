@@ -22,8 +22,40 @@
  */
 
 
+
+/**
+ * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content.
+ * Used to ouput the page on the Preview.
+ *
+ * @param	Website		$website			Web site object
+ * @param	string		$content			Content to replace
+ * @return	boolean							True if OK
+ */
+function dolWebsiteReplacementOfLinks($website, $content)
+{
+	// Replace php code. Note $content may come from database and does not contains body tags.
+	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
+
+	// Replace relative link / with dolibarr URL
+	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+	// Replace relative link /xxx.php with dolibarr URL
+	$content = preg_replace('/(href=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
+	$content = preg_replace('/(<img[^>]*src=")(?!(http|'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
+	$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+	return $content;
+}
+
+
 /**
  * Render a string of an HTML content and output it.
+ * Used to ouput the page when viewed from server (Dolibarr or Apache).
  *
  * @param   string  $content    Content string
  * @return  void
@@ -43,7 +75,27 @@ function dolWebsiteOutput($content)
 
 	// Note: This seems never called when page is output inside the website editor (search 'REPLACEMENT OF LINKS When page called by website editor')
 
-	if (! defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from virtual host
+	if (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
+	{
+		global $website;
+
+		// Replace relative link / with dolibarr URL:  ...href="/"...
+		$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+		// Replace relative link /xxx.php with dolibarr URL:  ...href="....php"
+		$content=preg_replace('/(href=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+		// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
+		$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3"', $content, -1, $nbrep);
+		// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
+		$content=preg_replace('/(href=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3"', $content, -1, $nbrep);
+
+		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
+		$content=preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+		// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
+		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+	}
+	else								// REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists=1;
 
@@ -63,54 +115,10 @@ function dolWebsiteOutput($content)
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1medias/\4\5', $content, -1, $nbrep);
 		}
 	}
-	else								// REPLACEMENT OF LINKS When page called from dolibarr server
-	{
-		global $website;
-
-		// Replace relative link / with dolibarr URL:  ...href="/"...
-		$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
-		// Replace relative link /xxx.php with dolibarr URL:  ...href="....php"
-		$content=preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
-
-		// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
-		$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3"', $content, -1, $nbrep);
-		// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
-		$content=preg_replace('/(href=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3"', $content, -1, $nbrep);
-
-		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
-		$content=preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-	}
 
 	dol_syslog("dolWebsiteOutput end");
 
 	print $content;
-}
-
-
-/**
- * Convert a page content to have correct links into a new html content.
- * Used to ouput the page on the Preview.
- *
- * @param	Website		$website			Web site object
- * @param	string		$content			Content to replace
- * @return	boolean							True if OK
- */
-function dolWebsiteReplacementOfLinks($website, $content)
-{
-	// Replace php code. Note $content may come from database and does not contains body tags.
-	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
-
-	// Replace relative link / with dolibarr URL
-	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
-	// Replace relative link /xxx.php with dolibarr URL
-	$content = preg_replace('/(href=")\/?([^\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
-
-	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-
-	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-	$content = preg_replace('/(<img[^>]*src=")(?!(http|'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-
-	return $content;
 }
 
 
