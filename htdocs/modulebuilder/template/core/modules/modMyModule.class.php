@@ -95,7 +95,7 @@ class modMyModule extends DolibarrModules
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 									'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
 	 								'js' => array('/mymodule/js/mymodule.js.php'),          // Set this to relative path of js file if module must load a js on all pages
-									'hooks' => array('hookcontext1','hookcontext2') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 		                        );
 
 		// Data directories to create when module is enabled.
