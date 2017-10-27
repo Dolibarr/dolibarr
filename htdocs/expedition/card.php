@@ -1218,9 +1218,9 @@ if ($action == 'create')
 										print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
 										print ' ('.$dbatch->qty.')';
 									}
-									else
+									else 	// When lot not found in lot table (this can happen with old record)
 									{
-										print $dbatch->batch.' ('.$dbatch->qty.')';
+										print $langs->trans("Batch").': '.$dbatch->batch.' ('.$dbatch->qty.')';
 									}
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
