@@ -672,7 +672,7 @@ class Task extends CommonObject
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
                 $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
             }
-            else 
+            else
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             }
@@ -929,7 +929,7 @@ class Task extends CommonObject
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
             $ret = $tasktime_id;
 			$this->timespent_id = $ret;
-			
+
             if (! $notrigger)
             {
                 // Call trigger
@@ -993,10 +993,10 @@ class Task extends CommonObject
         global $langs;
 
         $id=$this->id;
-        if (empty($id)) 
+        if (empty($id))
         {
             dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
-            return -1; 
+            return -1;
         }
 
         $result=array();
@@ -1011,7 +1011,7 @@ class Task extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
         if ($userid > 0) $sql.=" AND t.fk_user = ".$userid;
-        
+
         dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1323,7 +1323,7 @@ class Task extends CommonObject
 		$clone_task->fetch($fromid);
 		$clone_task->fetch_optionals();
 		//var_dump($clone_task->array_options);exit;
-		
+
 		$origin_task->fetch($fromid);
 
 		$defaultref='';
@@ -1637,7 +1637,7 @@ class Task extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
-	
+
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1647,12 +1647,12 @@ class Task extends CommonObject
 	function load_board($user)
 	{
 	    global $conf, $langs;
-	
+
 	    $mine=0; $socid=$user->societe_id;
-	    
+
 	    $projectstatic = new Project($this->db);
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
-	    
+
 	    // List of tasks (does not care about permissions. Filtering will be done later)
 	    $sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 	    $sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
@@ -1675,29 +1675,29 @@ class Task extends CommonObject
 	    if ($resql)
 	    {
 	        $task_static = new Task($this->db);
-	
+
 	        $response = new WorkboardResponse();
 	        $response->warning_delay = $conf->projet->task->warning_delay/60/60/24;
 	        $response->label = $langs->trans("OpenedTasks");
 	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
 	        $response->img = img_object($langs->trans("Tasks"),"task");
-	
+
 	        // This assignment in condition is not a bug. It allows walking the results.
 	        while ($obj=$this->db->fetch_object($resql))
 	        {
 	            $response->nbtodo++;
-	
+
 	            $task_static->projectstatus = $obj->projectstatus;
 	            $task_static->progress = $obj->progress;
 	            $task_static->fk_statut = $obj->status;
 	            $task_static->date_end = $this->db->jdate($obj->datee);
-	
+
 	            if ($task_static->hasDelay()) {
 	                $response->nbtodolate++;
 	            }
 	        }
-	
+
 	        return $response;
 	    }
 	    else
@@ -1706,7 +1706,7 @@ class Task extends CommonObject
 	        return -1;
 	    }
 	}
-	
+
 	/**
 	 * Is the task delayed?
 	 *
@@ -1715,7 +1715,7 @@ class Task extends CommonObject
 	public function hasDelay()
 	{
 	    global $conf;
-	
+
         if (! ($this->progress >= 0 && $this->progress < 100)) {
             return false;
         }
@@ -1725,5 +1725,5 @@ class Task extends CommonObject
         $datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
 
         return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
-	}	
+	}
 }
