@@ -98,7 +98,7 @@ function dolWebsiteOutput($content)
 function dolWebsiteReplacementOfLinks($website, $content)
 {
 	// Replace php code. Note $content may come from database and does not contains body tags.
-	$content = preg_replace('/<\?php[^\?]+\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
+	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
 
 	// Replace relative link / with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
