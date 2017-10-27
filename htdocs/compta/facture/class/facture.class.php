@@ -1582,7 +1582,7 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *    Add a discount line into invoice using an existing absolute discount
+	 *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
 	 *
 	 *    @param     int	$idremise	Id of absolute discount
 	 *    @return    int          		>0 if OK, <0 if KO
@@ -1648,7 +1648,7 @@ class Facture extends CommonInvoice
 				$result=$this->update_price(1);
 				if ($result > 0)
 				{
-					// Create linke between discount and invoice line
+					// Create link between discount and invoice line
 					$result=$remise->link_to_invoice($lineid,0);
 					if ($result < 0)
 					{
@@ -3505,11 +3505,12 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *	Renvoi liste des factures remplacables
-	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
+	 *	Return list of invoices qualified to be replaced by another invoice.
+	 *	Invoices matching the following rules are returned:
+	 *	(Status validated or abandonned for a reason 'other') + not payed + no payment at all + not already replaced
 	 *
-	 *	@param		int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param		int		$socid		Id thirdparty
+	 *	@return    	array				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	function list_replacable_invoices($socid=0)
 	{
@@ -3552,12 +3553,12 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *	Renvoi liste des factures qualifiables pour correction par avoir
-	 *	Les factures qui respectent les regles suivantes sont retournees:
-	 *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
+	 *	Return list of invoices qualified to be corrected by a credit note.
+	 *	Invoices matching the following rules are returned:
+	 *	(validated + payment on process) or classified (payed completely or payed partiely) + not already replaced + not already a credit note
 	 *
-	 *	@param		int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@param		int		$socid		Id thirdparty
+	 *	@return    	array				Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
 	function list_qualified_avoir_invoices($socid=0)
 	{

@@ -653,12 +653,12 @@ class Invoices extends DolibarrApi
 
 
      /**
-     * Insert a discount in a specific invoice
+     * Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
      *
      * @param int   $id             Id of invoice
-     * @param int   $discountId     Id of discount
+     * @param int   $discountid     Id of discount
      *
-     * @url     POST {id}/adddiscount/{discountId}
+     * @url     POST {id}/usediscount/{discountid}
      *
      * @return int
      * @throws 400
@@ -666,7 +666,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function addDiscount($id, $discountId) {
+    function useDiscount($id, $discountid) {
 
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
@@ -674,7 +674,7 @@ class Invoices extends DolibarrApi
         if(empty($id)) {
                 throw new RestException(400, 'Invoice ID is mandatory');
         }
-        if(empty($discountId)) {
+        if(empty($discountid)) {
                 throw new RestException(400, 'Discount ID is mandatory');
         }
 
@@ -687,7 +687,7 @@ class Invoices extends DolibarrApi
                 throw new RestException(404, 'Invoice not found');
         }
 
-        $result = $this->invoice->insert_discount($discountId);
+        $result = $this->invoice->insert_discount($discountid);
         if( $result < 0) {
                 throw new RestException(405, $this->invoice->error);
         }
@@ -696,12 +696,12 @@ class Invoices extends DolibarrApi
     }
 
      /**
-     * Deduct an available credit to an existing invoice
+     * Add an available credit note discount to payments of an existing invoice (Consume the credit note)
      *
      * @param int   $id            Id of invoice
-     * @param int   $creditId     Id of the credit to deduct
+     * @param int   $discountid    Id of a discount coming from a credit note
      *
-     * @url     POST {id}/deductcredit/{creditId}
+     * @url     POST {id}/usecreditnote/{creditnoteid}
      *
      * @return int
      * @throws 400
@@ -709,7 +709,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function deductCredit($id, $creditId) {
+    function useCreditNote($id, $discountid) {
     
         require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
         
@@ -727,7 +727,7 @@ class Invoices extends DolibarrApi
                 throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $discount = new DiscountAbsolute($this->db);
-        $result = $discount->fetch($creditId);
+        $result = $discount->fetch($discountid);
         if( ! $result ) {
                 throw new RestException(404, 'Credit not found');
         }
@@ -741,7 +741,7 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Get a payment list of a given invoice
+     * Get list of payments of a given invoice
      *
      * @param int   $id             Id of invoice
      *
@@ -777,72 +777,6 @@ class Invoices extends DolibarrApi
         }
         
         return $result;
-    }
-
-    /**
-     * Get a list of available assets (down-payments, avoirs)
-     *
-     * @param int   $id             Id of the invoice
-     *
-     * @url     GET {id}/getavailableassets
-     *
-     * @return array
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     */
-    function getavailableassets($id) {
-
-        if(! DolibarrApiAccess::$user->rights->facture->lire) {
-                throw new RestException(401);
-        }
-        if(empty($id)) {
-                throw new RestException(400, 'Invoice ID is mandatory');
-        }
-
-        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
-                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        $result = $this->invoice->fetch($id);
-        if( ! $result ) {
-                throw new RestException(404, 'Invoice not found');
-        }
-
-        $result = $this->invoice->list_qualified_avoir_invoices($this->invoice->socid);
-        if( $result < 0) {
-                throw new RestException(405, $this->invoice->error);
-        }
-
-        $return = array();
-        foreach ($result as $invoiceID=>$line) {
-
-		if($invoiceID == $id) {  	// ignore current invoice
-			continue;
-		}
-
-		$result = $this->invoice->fetch($invoiceID);
-        	if( ! $result ) {
-                	throw new RestException(404, 'Invoice '.$invoiceID.' not found');
-        	}
-
-                $result = $this->invoice->getListOfPayments();
-                if( $result < 0) {
-                	throw new RestException(405, $this->invoice->error);
-        	}
-
-		if(count($result) == 0) {	// ignore unpaid invoices
-			continue;
-		}
-
-		// format results
-                $line["id"] = $invoiceID;
-		$line["payments"] = $result;
-                $return[] = $line; 
-        }
-            
-        return $return;
     }
 
     /**

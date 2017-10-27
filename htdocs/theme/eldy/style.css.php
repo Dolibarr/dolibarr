@@ -3287,8 +3287,10 @@ table.valid {
     z-index: 3000;
 }
 
+div.ui-tooltip {
+	max-width: <?php print dol_size(600,'width'); ?>px !important;
+}
 .mytooltip {
-	width: <?php print dol_size(450,'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
 	border-<?php print $left; ?>: solid 1px #BBBBBB;
 	border-<?php print $right; ?>: solid 1px #444444;
@@ -4316,9 +4318,6 @@ a span.select2-chosen
 }
 .select2-results {
 	max-height:	400px;
-}
-.css-searchselectcombo ul.select2-results {
-	max-height:	none;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;

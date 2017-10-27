@@ -50,19 +50,27 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
-				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW') {
+
+		// Test if event/record is qualified
+		$listofqualifiedelement = array('payment', 'facture');
+		if (! in_array($object->element, $listofqualifiedelement)) return 1;
+
+
+		// Event/record is qualified
+		if ($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
+			|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW'
+			|| $action === 'BILL_SUPPLIER_PAYED')
+		{
 			$amounts=  (double) $object->total_ttc;
 		}
-		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK') {
+		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK' || $action === 'PAYMENT_SUPPLIER_CREATE')
+		{
 			$amounts = 0;
 			if(!empty($object->amounts)) {
 				foreach($object->amounts as $amount) {
 					$amounts+= price2num($amount);
 				}
 			}
-
-
 		}
 		else if(strpos($action,'PAYMENT')!==false) {
 			$amounts= (double) $object->amount;
@@ -71,6 +79,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
+
 		$b=new BlockedLog($this->db);
 		$b->action = $action;
 		$b->amounts= $amounts;
@@ -78,17 +87,15 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		$res = $b->create($user);
 
-		if($res<0) {
+		if ($res<0)
+		{
 			setEventMessage($b->error,'errors');
-
 			return -1;
 		}
-		else {
-
+		else
+		{
 			return 1;
 		}
-
-
     }
 
 }

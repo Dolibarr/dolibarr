@@ -1995,9 +1995,12 @@ else
     	print '</td></tr>';
 
     	// Supplier
-    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-    	print yn($object->fournisseur);
-    	print '</td></tr>';
+    	if (! empty($conf->fournisseur->enabled))
+    	{
+    		print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    		print yn($object->fournisseur);
+    		print '</td></tr>';
+    	}
 
     	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field

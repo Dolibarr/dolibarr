@@ -4751,6 +4751,12 @@ class Form
 				$smin = dol_print_date($set_time, "%M");
 				$ssec = dol_print_date($set_time, "%S");
 			}
+			else
+			{
+				$shour = '';
+				$smin = '';
+				$ssec = '';
+			}
 		}
 		else
 		{
@@ -5370,7 +5376,9 @@ class Form
 			}
 		}
 
-		$out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';
+		$out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'"';
+		$out.=' name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'');
+		$out.='>';
 
 		if ($show_empty)
 		{
@@ -5407,10 +5415,6 @@ class Form
 						$style=' class="warning"';
 					}
 				}
-				$out.='<option value="'.$key.'"';
-				$out.=$style.$disabled;
-				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
-				$out.='>';
 
 				if ($key_in_label)
 				{
@@ -5423,6 +5427,12 @@ class Form
 					else $selectOptionValue = $maxlen?dol_trunc($value,$maxlen):$value;
 					if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
 				}
+
+				$out.='<option value="'.$key.'"';
+				$out.=$style.$disabled;
+				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
+				if ($nohtmlescape) $out.=' html="'.dol_escape_htmltag($selectOptionValue).'"';
+				$out.='>';
 				//var_dump($selectOptionValue);
 				$out.=$selectOptionValue;
 				$out.="</option>\n";
@@ -5498,7 +5508,7 @@ class Form
 			    		cache: true
 			    	},
 	 				language: select2arrayoflanguage,
-			        /* dropdownCssClass: "css-'.$htmlname.'", */
+					containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
 				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',

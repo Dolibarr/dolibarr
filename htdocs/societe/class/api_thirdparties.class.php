@@ -340,24 +340,26 @@ class Thirdparties extends DolibarrApi
 
 
      /**
-     * Get exceptional discount of a thirdparty
+     * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
      *
      * @param 	int 	$id             ID of the thirdparty
      * @param 	string 	$filter    	Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
      * @param   string  $sortfield  	Sort field
      * @param   string  $sortorder  	Sort order
-     * 
-     * @url     GET {id}/exceptionaldiscounts
-     * 
-     * @return array  List of deposit and credit notes
-     * 
+     *
+     * @url     GET {id}/fixedamountdiscounts
+     *
+     * @return array  List of fixed discount of thirdparty
+     *
      * @throws 400
      * @throws 401
      * @throws 404
      * @throws 503
      */
-    function getExceptionalDiscount($id,$filter="none",$sortfield = "f.type", $sortorder = 'ASC')
+    function getFixedAmountDiscounts($id, $filter="none", $sortfield = "f.type", $sortorder = 'ASC')
     {
+    	$obj_ret = array();
+
       if(! DolibarrApiAccess::$user->rights->societe->lire) {
         throw new RestException(401);
       }
@@ -366,7 +368,7 @@ class Thirdparties extends DolibarrApi
         throw new RestException(400, 'Thirdparty ID is mandatory');
       }
 
-      if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+      if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
@@ -392,12 +394,94 @@ class Thirdparties extends DolibarrApi
           while ( $obj = $this->db->fetch_object($result) ) {
               $obj_ret[] = $obj;
           }
-
       }
 
       return $obj_ret;
     }
 
+
+
+    /**
+     * Return list of invoices qualified to be replaced by another invoice.
+     *
+     * @param int   $id             Id of thirdparty
+     *
+     * @url     GET {id}/getinvoicesqualifiedforreplacement
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getInvoicesQualifiedForReplacement($id) {
+
+    	if(! DolibarrApiAccess::$user->rights->facture->lire) {
+    		throw new RestException(401);
+    	}
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	/*$result = $this->thirdparty->fetch($id);
+    	 if( ! $result ) {
+    	 throw new RestException(404, 'Thirdparty not found');
+    	 }*/
+
+    	$invoice = new Facture($this->db);
+    	$result = $invoice->list_replacable_invoices($id);
+    	if( $result < 0) {
+    		throw new RestException(405, $this->thirdparty->error);
+    	}
+
+    	return $result;
+    }
+
+    /**
+     * Return list of invoices qualified to be corrected by a credit note.
+     * Invoices matching the following rules are returned
+     * (validated + payment on process) or classified (payed completely or payed partialy) + not already replaced + not already a credit note
+     *
+     * @param int   $id             Id of thirdparty
+     *
+     * @url     GET {id}/getinvoicesqualifiedforcreditnote
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getInvoicesQualifiedForCreditNote($id) {
+
+        if(! DolibarrApiAccess::$user->rights->facture->lire) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Thirdparty ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        /*$result = $this->thirdparty->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Thirdparty not found');
+        }*/
+
+    	$invoice = new Facture($this->db);
+        $result = $invoice->list_qualified_avoir_invoices($id);
+        if( $result < 0) {
+                throw new RestException(405, $this->thirdparty->error);
+        }
+
+        return $result;
+    }
 
 
 	/**

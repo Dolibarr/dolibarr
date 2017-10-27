@@ -923,6 +923,10 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action='createpagefromclone';
 			}
+			else
+			{
+				// TODO Switch on the new page ?
+			}
 		}
 	}
 
@@ -1321,11 +1325,11 @@ if (count($object->records) > 0)
 					$formquestion = array(
 						array('type' => 'text', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
 						array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
-						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, 1, 0, 0, 'minwidth200')),
+						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
 					);
 
-				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 250);
+				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?website='.$object->ref.'&pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
 
 					print $formconfirm;
 				}
@@ -1738,7 +1742,7 @@ if ($action == 'editmeta' || $action == 'create')
 	print '<tr><td>';
 	print $langs->trans('Language');
 	print '</td><td>';
-	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG');
+	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
 	print '</td></tr>';
 
 	print '<tr><td>';

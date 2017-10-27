@@ -610,6 +610,7 @@ class Commande extends CommonOrder
                 return -1;
             }
         }
+        return 0;
     }
 
     /**
