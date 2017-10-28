@@ -289,15 +289,24 @@ function exportWebSite($website)
 /**
  * Open a zip with all data of web site and load it into database.
  *
- * @param 	string		$filename		Path of zip file
+ * @param 	string		$pathtofile		Path of zip file
  * @return  int							<0 if KO, >0 if OK
  */
-function importWebSite($filename)
+function importWebSite($pathtofile)
 {
 	$result = 0;
 
+	$filename = basename($pathtofile);
+	if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
+	{
+		$this->errors[]='Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
+		return -1;
+	}
 
-	//$sql = array("INSERT INTO ".MAIN_DB_PREFIX."website(ref, entity, description, status) values('sellyoursaas', '.$conf->entity.', Portal to sell your SaaS', 1)");
+	$websitecode = $reg[1];
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."website(ref, entity, description, status) values('".$websitecode."', ".$conf->entity.", 'Portal to sell your SaaS. Do not remove this entry.', 1)";
+	$resql = $db->query($sql);
 
 
 	return $result;

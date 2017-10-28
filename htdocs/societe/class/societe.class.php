@@ -3691,8 +3691,9 @@ class Societe extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @param string $type Category type (customer or supplier)
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @param 	string 		$type 			Category type ('customer' or 'supplier')
+	 * @return	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories, $type)
 	{
@@ -3707,7 +3708,7 @@ class Societe extends CommonObject
 			$type_text = 'supplier';
 		} else {
 			dol_syslog(__METHOD__ . ': Type ' . $type .  'is an unknown company category type. Done nothing.', LOG_ERR);
-			return;
+			return -1;
 		}
 
 		// Handle single category
@@ -3740,7 +3741,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		return;
+		return 1;
 	}
 
 
