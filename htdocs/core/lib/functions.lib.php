@@ -2241,17 +2241,9 @@ function dol_print_ip($ip,$mode=0)
 
 	if (empty($mode)) $ret.=$ip;
 
-	if (! empty($conf->geoipmaxmind->enabled) && $mode != 2)
+	if ($mode != 2)
 	{
-		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
-		//$ip='24.24.24.24';
-		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
-		$geoip=new DolGeoIP('country',$datafile);
-		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
-		$countrycode=$geoip->getCountryCodeFromIP($ip);
+		$countrycode=dolGetCountryCodeFromIp($ip);
 		if ($countrycode)	// If success, countrycode is us, fr, ...
 		{
 			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png'))
@@ -2264,6 +2256,35 @@ function dol_print_ip($ip,$mode=0)
 
 	return $ret;
 }
+
+/**
+ * 	Return a country code from IP. Empty string if not found.
+ *
+ * 	@param	string	$ip			IP
+ * 	@return string 				Country code ('us', 'fr', ...)
+ */
+function dolGetCountryCodeFromIp($ip)
+{
+	global $conf;
+
+	$countrycode='';
+
+	if (! empty($conf->geoipmaxmind->enabled))
+	{
+		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+		//$ip='24.24.24.24';
+		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
+		$geoip=new DolGeoIP('country',$datafile);
+		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
+		$countrycode=$geoip->getCountryCodeFromIP($ip);
+	}
+
+	return $countrycode;
+}
+
 
 /**
  *  Return country code for current user.
@@ -5746,26 +5767,27 @@ function setEventMessages($mesg, $mesgs, $style='mesgs')
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function, so there is
  *  no need to call it explicitely.
  *
+ *  @param	int		$disabledoutputofmessages	Clear all messages stored into session without diplaying them
  *  @return	void
- *  @see    dol_htmloutput_mesg
+ *  @see    									dol_htmloutput_mesg
  */
-function dol_htmloutput_events()
+function dol_htmloutput_events($disabledoutputofmessages=0)
 {
 	// Show mesgs
 	if (isset($_SESSION['dol_events']['mesgs'])) {
-		dol_htmloutput_mesg('', $_SESSION['dol_events']['mesgs']);
+		if (empty($disabledoutputofmessages)) dol_htmloutput_mesg('', $_SESSION['dol_events']['mesgs']);
 		unset($_SESSION['dol_events']['mesgs']);
 	}
 
 	// Show errors
 	if (isset($_SESSION['dol_events']['errors'])) {
-		dol_htmloutput_mesg('', $_SESSION['dol_events']['errors'], 'error');
+		if (empty($disabledoutputofmessages)) dol_htmloutput_mesg('', $_SESSION['dol_events']['errors'], 'error');
 		unset($_SESSION['dol_events']['errors']);
 	}
 
 	// Show warnings
 	if (isset($_SESSION['dol_events']['warnings'])) {
-		dol_htmloutput_mesg('', $_SESSION['dol_events']['warnings'], 'warning');
+		if (empty($disabledoutputofmessages)) dol_htmloutput_mesg('', $_SESSION['dol_events']['warnings'], 'warning');
 		unset($_SESSION['dol_events']['warnings']);
 	}
 }
