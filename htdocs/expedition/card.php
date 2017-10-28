@@ -1240,6 +1240,7 @@ if ($action == 'create')
 
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+
 									//print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									//print $line->fk_product.' - '.$dbatch->batch;
 									print $langs->trans("Batch").': ';
