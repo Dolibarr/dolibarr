@@ -667,6 +667,10 @@ div.myavailability {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+.paddingtopbottom {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 .checkallactions {
 	/*vertical-align: text-bottom;
     margin-top: 6px;*/
@@ -1113,6 +1117,10 @@ div.login_block {
 	position: auto;
 	top: auto;
 	z-index: 90;
+}
+
+div.backgroundsemitransparent {
+	background:rgba(255,255,255,0.6);
 }
 div.login_block {
 	/* position: initial !important;*/

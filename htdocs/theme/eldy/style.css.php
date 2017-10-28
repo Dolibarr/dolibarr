@@ -661,6 +661,10 @@ div.myavailability {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+.paddingtopbottom {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 .checkallactions {
 	/* vertical-align: text-bottom;
     margin-top: 6px; */
@@ -1749,6 +1753,9 @@ table.login_table_securitycode tr td {
 	max-height: 90px;
 }
 
+div.backgroundsemitransparent {
+	background:rgba(255,255,255,0.6);
+}
 div.login_block {
 	position: absolute;
 	text-align: <?php print $right; ?>;
