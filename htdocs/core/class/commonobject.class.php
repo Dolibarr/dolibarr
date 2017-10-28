@@ -4424,7 +4424,7 @@ abstract class CommonObject
 			//Eliminate copied source object extra_fields that do not exist in target object
 			$new_array_options=array();
 			foreach ($this->array_options as $key => $value) {
-				if (in_array(substr($key,8), array_keys($target_extrafields)))
+				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key
 					$new_array_options[$key] = $value;
 			}
 
@@ -4510,6 +4510,7 @@ abstract class CommonObject
 					$sql.=",".$attributeKey;
 			}
 			$sql .= ") VALUES (".$this->id;
+
 			foreach($new_array_options as $key => $value)
 			{
 				$attributeKey = substr($key,8);   // Remove 'options_' prefix

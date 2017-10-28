@@ -163,7 +163,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	Load a user from database with its id or ref (login)
+	 *	Load a user from database with its id or ref (login).
+	 *  This function does not load permissions, only user properties. Use getrights() for this just after the fetch.
 	 *
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search

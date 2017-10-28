@@ -1336,7 +1336,7 @@ class ExtraFields
 		$list=$this->attribute_list[$key];
 		$hidden=(abs($list)!=1 ? 1 : 0);
 
-		if ($hidden) return '';
+		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
 		// If field is a computed field, value must become result of compute
 		if ($computed)
