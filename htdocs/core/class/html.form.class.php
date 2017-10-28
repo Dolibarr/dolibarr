@@ -5520,12 +5520,13 @@ class Form
                 '.($callurlonselect ? '
                 /* Code to execute a GET when we select a value */
                 $(".'.$htmlname.'").change(function() {
-			    	var selected = $(".'.$htmlname.'").select2("val");
-			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
+			    	var selected = $(".'.$htmlname.'").val();
+                	console.log("We select "+selected)
+			        $(".'.$htmlname.'").val("");  /* reset visible combo value */
     			    $.each( saveRemoteData, function( key, value ) {
     				        if (key == selected)
     			            {
-    			                 console.log("Do a redirect into selectArrayAjax to "+value.url)
+    			                 console.log("selectArrayAjax - Do a redirect to "+value.url)
     			                 location.assign(value.url);
     			            }
                     });
