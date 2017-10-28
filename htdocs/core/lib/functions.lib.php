@@ -920,7 +920,7 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
- *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
+ *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value)
  *  @return     string     				 		Escaped string
  *  @see		dol_string_nohtmltag
  */
@@ -6375,21 +6375,18 @@ function printCommonFooter($zone='private')
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
-		if (($conf->dol_use_jmobile != 4))
-		{
-			print "\n";
-			print '<script type="text/javascript">'."\n";
-			print '  var _gaq = _gaq || [];'."\n";
-			print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-			print '  _gaq.push([\'_trackPageview\']);'."\n";
-			print ''."\n";
-			print '  (function() {'."\n";
-			print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-			print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-			print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-			print '  })();'."\n";
-			print '</script>'."\n";
-		}
+		print "\n";
+		print '<script type="text/javascript">'."\n";
+		print '  var _gaq = _gaq || [];'."\n";
+		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+		print '  _gaq.push([\'_trackPageview\']);'."\n";
+		print ''."\n";
+		print '  (function() {'."\n";
+		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+		print '  })();'."\n";
+		print '</script>'."\n";
 	}
 
 	// End of tuning
