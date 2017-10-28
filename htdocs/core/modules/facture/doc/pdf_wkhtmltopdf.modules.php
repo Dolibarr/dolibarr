@@ -351,6 +351,7 @@ class pdf_wkhtmltopdf extends ModelePDFFactures
                 );
                 // load template
                 // send to screen for test
+                // to test @media print in firefox, Launch the Developer Toolbar with Shift+F2, then type: media emulate print
                 //$template = $smarty->display($srctemplatepath);
                 try {
                     $template = $smarty->fetch($srctemplatepath);
