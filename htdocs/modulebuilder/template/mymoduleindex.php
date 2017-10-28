@@ -107,7 +107,6 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-		$var = true;
 		if ($num > 0)
 		{
 			$i = 0;
