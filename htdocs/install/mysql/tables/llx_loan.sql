@@ -27,16 +27,16 @@ create table llx_loan
   label							varchar(80) NOT NULL,
   fk_bank						integer,
 
-  capital						numeric(24,8) default 0 NOT NULL,
+  capital						double(24,8) default 0 NOT NULL,
   datestart						date,
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
 
-  note_private                  text,
-  note_public                   text,
+  note_private					text,
+  note_public					text,
 
-  capital_position				numeric(24,8) default 0,		-- If not a new loan, just have the position of capital
+  capital_position				double(24,8) default 0,		-- If not a new loan, just have the position of capital
   date_position					date,
 
   paid							smallint default 0 NOT NULL,

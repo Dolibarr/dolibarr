@@ -34,7 +34,7 @@ create table llx_chargesociales
   fk_type			integer NOT NULL,
   fk_account		integer,                       -- bank account
   fk_mode_reglement	integer,                -- mode de reglement
-  amount			numeric(24,8) default 0 NOT NULL,
+  amount			double(24,8) default 0 NOT NULL,
   paye				smallint default 0 NOT NULL,
   periode			date,
   fk_projet			integer DEFAULT NULL,

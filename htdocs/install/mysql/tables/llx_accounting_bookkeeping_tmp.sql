@@ -32,15 +32,15 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   numero_compte         varchar(32),		        -- FEC:CompteNum	| account number
   label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
-  debit                 numeric(24,8) NOT NULL,		-- FEC:Debit
-  credit                numeric(24,8) NOT NULL,		-- FEC:Credit
-  montant               numeric(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
+  debit                 double(24,8) NOT NULL,		-- FEC:Debit
+  credit                double(24,8) NOT NULL,		-- FEC:Credit
+  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
-  multicurrency_amount  numeric(24,8),				-- FEC:Montantdevise
+  multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  date_lim_reglement	datetime,					-- 					| date limite de reglement
+  date_lim_reglement    datetime,					-- 					| date limite de reglement
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date

@@ -30,19 +30,19 @@ create table llx_commande_fournisseurdet
   description                text,
   vat_src_code				 varchar(10)  DEFAULT '',	-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx                     double(6,3)  DEFAULT 0,    -- taux tva
-  localtax1_tx               numeric(24,8) DEFAULT 0,    -- localtax1 rate
+  localtax1_tx               double(24,8) DEFAULT 0,    -- localtax1 rate
   localtax1_type			 varchar(10)	  NULL, 		-- localtax1 type
-  localtax2_tx               numeric(24,8) DEFAULT 0,    -- localtax2 rate
+  localtax2_tx               double(24,8) DEFAULT 0,    -- localtax2 rate
   localtax2_type			 varchar(10)	  NULL, 		-- localtax2 type
   qty                        real,                      -- quantity
   remise_percent             real         DEFAULT 0,    -- pourcentage de remise
   remise                     real         DEFAULT 0,    -- montant de la remise
-  subprice                   numeric(24,8) DEFAULT 0,    -- prix unitaire
-  total_ht                   numeric(24,8) DEFAULT 0,    -- Total HT de la ligne toute quantite et incluant remise ligne et globale
-  total_tva                  numeric(24,8) DEFAULT 0,	  -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
-  total_localtax1            numeric(24,8) DEFAULT 0,    -- Total Local Tax 1
-  total_localtax2            numeric(24,8) DEFAULT 0,    -- Total Local Tax 2
-  total_ttc                  numeric(24,8) DEFAULT 0,	  -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
+  subprice                   double(24,8) DEFAULT 0,    -- prix unitaire
+  total_ht                   double(24,8) DEFAULT 0,    -- Total HT de la ligne toute quantite et incluant remise ligne et globale
+  total_tva                  double(24,8) DEFAULT 0,	  -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
+  total_localtax1            double(24,8) DEFAULT 0,    -- Total Local Tax 1
+  total_localtax2            double(24,8) DEFAULT 0,    -- Total Local Tax 2
+  total_ttc                  double(24,8) DEFAULT 0,	  -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type		         integer      DEFAULT 0,
   date_start                 datetime     DEFAULT NULL,       -- date debut si service
   date_end                   datetime     DEFAULT NULL,       -- date fin si service
@@ -54,8 +54,8 @@ create table llx_commande_fournisseurdet
   
   fk_multicurrency			integer,
   multicurrency_code		varchar(255),
-  multicurrency_subprice	numeric(24,8) DEFAULT 0,
-  multicurrency_total_ht	numeric(24,8) DEFAULT 0,
-  multicurrency_total_tva	numeric(24,8) DEFAULT 0,
-  multicurrency_total_ttc	numeric(24,8) DEFAULT 0
+  multicurrency_subprice	double(24,8) DEFAULT 0,
+  multicurrency_total_ht	double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

@@ -28,7 +28,7 @@ create table llx_bordereau_cheque
   ref_ext           varchar(255),							-- ref_ext
   datec             datetime NOT NULL,
   date_bordereau    date,
-  amount            numeric(24,8) NOT NULL,
+  amount            double(24,8) NOT NULL,
   nbcheque          smallint NOT NULL,
   fk_bank_account   integer,
   fk_user_author    integer,
