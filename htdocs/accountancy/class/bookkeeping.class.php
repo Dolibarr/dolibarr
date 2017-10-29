@@ -564,7 +564,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.import_key,";
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
-		$sql .= " t.piece_num";
+		$sql .= " t.piece_num,";
+		$sql .= " t.date_creation";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element.$mode. ' as t';
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
@@ -603,6 +604,7 @@ class BookKeeping extends CommonObject
 				$this->code_journal = $obj->code_journal;
 				$this->journal_label = $obj->journal_label;
 				$this->piece_num = $obj->piece_num;
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 			}
 			$this->db->free($resql);
 
@@ -658,7 +660,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.import_key,";
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
-		$sql .= " t.piece_num";
+		$sql .= " t.piece_num,";
+		$sql .= " t.date_creation";
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
@@ -725,6 +728,7 @@ class BookKeeping extends CommonObject
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
+				$line->date_creation = $obj->date_creation;
 
 				$this->lines[] = $line;
 			}
@@ -777,7 +781,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.import_key,";
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
-		$sql .= " t.piece_num";
+		$sql .= " t.piece_num,";
+		$sql .= " t.date_creation";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
 		$sqlwhere = array ();
@@ -841,6 +846,7 @@ class BookKeeping extends CommonObject
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
+				$line->date_creation = $obj->date_creation;
 
 				$this->lines[] = $line;
 			}
@@ -1336,6 +1342,7 @@ class BookKeeping extends CommonObject
 		$this->code_journal = 'VT';
 		$this->journal_label = 'Journal de vente';
 		$this->piece_num = '';
+		$this->date_creation = $now;
 	}
 
 	/**
@@ -1348,7 +1355,7 @@ class BookKeeping extends CommonObject
 	public function fetchPerMvt($piecenum, $mode='') {
 		global $conf;
 
-		$sql = "SELECT piece_num,doc_date,code_journal,journal_label,doc_ref,doc_type";
+		$sql = "SELECT piece_num,doc_date,code_journal,journal_label,doc_ref,doc_type,date_creation";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element.$mode;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
@@ -1364,6 +1371,7 @@ class BookKeeping extends CommonObject
 			$this->doc_date = $this->db->jdate($obj->doc_date);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
+			$this->date_creation = $obj->date_creation;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
@@ -1414,7 +1422,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num";
+		$sql .= " montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element.$mode;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
@@ -1447,6 +1455,7 @@ class BookKeeping extends CommonObject
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
+				$line->date_creation = $obj->date_creation;
 
 				$this->linesmvt[] = $line;
 			}
@@ -1785,4 +1794,5 @@ class BookKeepingLine
 	public $code_journal;
 	public $journal_label;
 	public $piece_num;
+	public $date_creation;
 }

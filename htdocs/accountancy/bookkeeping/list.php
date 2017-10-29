@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,8 @@ $search_doc_ref = GETPOST("search_doc_ref");
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+$search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
+$search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
@@ -102,14 +104,27 @@ if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin
 	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
 
-
+$arrayfields=array(
+	't.piece_num'=>array('label'=>$langs->trans("TransactionNumShort"), 'checked'=>1),
+	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
+	't.doc_ref'=>array('label'=>$langs->trans("Docref"), 'checked'=>1),
+	't.numero_compte'=>array('label'=>$langs->trans("AccountAccountingShort"), 'checked'=>1),
+	't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
+	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
+	't.crebit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
+	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
+);
 
 /*
- * Action
+ * Actions
  */
 
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
@@ -128,6 +143,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_ledger_code = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_date_creation_start = '';
+	$search_date_creation_end = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -195,6 +212,16 @@ if (! empty($search_ledger_code)) {
 if (! empty($search_mvt_num)) {
 	$filter['t.piece_num'] = $search_mvt_num;
 	$param .= '&search_mvt_num=' . $search_mvt_num;
+}
+if (! empty($search_date_creation_start)) {
+	$filter['t.date_creation>='] = $search_date_creation_start;
+	$tmp=dol_getdate($search_date_creation_start);
+	$param .= '&date_creation_startmonth=' . $tmp['mon'] . '&date_creation_startday=' . $tmp['mday'] . '&date_creation_startyear=' . $tmp['year'];
+}
+if (! empty($search_date_creation_end)) {
+	$filter['t.date_creation<='] = $search_date_creation_end;
+	$tmp=dol_getdate($search_date_end);
+	$param .= '&date_creation_endmonth=' . $tmp['mon'] . '&date_creation_endday=' . $tmp['mday'] . '&date_creation_endyear=' . $tmp['year'];
 }
 
 if ($action == 'delbookkeeping') {
@@ -370,85 +397,138 @@ print '<div class="inline-block divButAction"><a class="butActionDelete" name="b
 
 print '</div>';
 
-print '<div class="div-table-responsive">';
-print '<table class="noborder" width="100%">';
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste" width="100%">';
+
+// Filters lines
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
-print '<td class="liste_titre center">';
-print '<div class="nowrap">';
-print $langs->trans('From') . ' ';
-print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
-print '</div>';
-print '<div class="nowrap">';
-print $langs->trans('to') . ' ';
-print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
-print '</div>';
-print '</td>';
-print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
-print '<td class="liste_titre">';
-print '<div class="nowrap">';
-print $langs->trans('From').' ';
-print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
-print '</div>';
-print '<div class="nowrap">';
-print $langs->trans('to').' ';
-print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
-print '</div>';
-print '</td>';
-print '<td class="liste_titre">';
-print '<div class="nowrap">';
-print $langs->trans('From').' ';
-// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-// use setup of keypress to select thirdparty and this hang browser on large database.
-if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+// Movement number
+if (! empty($arrayfields['t.piece_num']['checked']))
 {
-	print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
+	print '<td class="liste_titre center">';
 }
-else
+// Date document
+if (! empty($arrayfields['t.doc_date']['checked']))
 {
-	print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
+	print '</div>';
+	print '</td>';
 }
-print '</div>';
-print '<div class="nowrap">';
-print $langs->trans('to').' ';
-// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-// use setup of keypress to select thirdparty and this hang browser on large database.
-if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+// Ref document
+if (! empty($arrayfields['t.doc_ref']['checked']))
 {
-	print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+	print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="' . dol_escape_htmltag($search_doc_ref) . '"></td>';
 }
-else
+// Accountancy account
+if (! empty($arrayfields['t.numero_compte']['checked']))
 {
-	print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+	print '<td class="liste_titre">';
+	print '<div class="nowrap">';
+	print $langs->trans('From').' ';
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to').' ';
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
+	print '</div>';
+	print '</td>';
 }
-print '</div>';
-print '</td>';
-print '<td class="liste_titre">';
-print '<input type="text" size="7" class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/>';
-print '</td>';
-print '<td class="liste_titre center">&nbsp;</td>';
-print '<td class="liste_titre center">&nbsp;</td>';
-print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+// Subledger account
+if (! empty($arrayfields['t.subledger_account']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<div class="nowrap">';
+	print $langs->trans('From').' ';
+	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
+	// use setup of keypress to select thirdparty and this hang browser on large database.
+	if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+	{
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+	}
+	else
+	{
+		print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+	}
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to').' ';
+	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
+	// use setup of keypress to select thirdparty and this hang browser on large database.
+	if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+	{
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
+	}
+	else
+	{
+		print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+	}
+	print '</div>';
+	print '</td>';
+}
+// Label operation
+if (! empty($arrayfields['t.label_operation']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" size="7" class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/>';
+	print '</td>';
+}
+// Debit
+if (! empty($arrayfields['t.debit']['checked']))
+{
+	print '<td class="liste_titre center">&nbsp;</td>';
+}
+// Credit
+if (! empty($arrayfields['t.credit']['checked']))
+{
+	print '<td class="liste_titre center">&nbsp;</td>';
+}
+// Code journal
+if (! empty($arrayfields['t.code_journal']['checked']))
+{
+	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+}
+// Date creation
+if (! empty($arrayfields['t.date_creation']['checked']))
+{
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->select_date($search_date_creation_start, 'date_creation_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->select_date($search_date_creation_end, 'date_creation_end', 0, 0, 1);
+	print '</div>';
+	print '</td>';
+}
 print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
-print '</tr>';
+print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Docdate", $_SERVER['PHP_SELF'], "t.doc_date", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Docref", $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("SubledgerAccount", $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
-$checkpicto='';
-if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
-print_liste_field_titre($checkpicto, $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.piece_num']['checked']))			print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['t.doc_date']['checked']))				print_liste_field_titre("Docdate", $_SERVER['PHP_SELF'], "t.doc_date", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre("Docref", $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['t.numero_compte']['checked']))		print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['t.subledger_account']['checked']))	print_liste_field_titre("SubledgerAccount", $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre("DateCreation", $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -478,6 +558,10 @@ while ($i < min($num, $limit))
 	$result = $accountingjournal->fetch('',$line->code_journal);
 	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $line->code_journal);
 	print '<td align="center">' . $journaltoshow . '</td>';
+	if (! empty($arrayfields['t.date_creation']['checked']))
+	{
+		print '<td align="center">' . dol_print_date($line->date_creation, 'day') . '</td>';
+	}
 
 	print '<td align="center">';
 	print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
