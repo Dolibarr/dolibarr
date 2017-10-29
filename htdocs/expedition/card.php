@@ -684,7 +684,7 @@ if (empty($reshook))
 						$batch="batchl".$detail_batch->fk_expeditiondet."_".$detail_batch->fk_origin_stock;
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOST($batch,'int');
-						if (! empty($batch_id))
+						if (! empty($batch_id) && $batch_id != $detail_batch->fk_origin_stock)
 						{
 							if ($lotStock->fetch($batch_id) > 0) 
 							{
@@ -2163,10 +2163,10 @@ else if ($id || $ref)
 						// Qty to ship or shipped
 						print '<td>' . '<input name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->dluo_qty.'">' . '</td>';
 						// Batch number managment
-						print '<td>' . $formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, 0, '', 0). '</td>';
+						print '<td>' . $formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product). '</td>';
 						print '</tr>';
 					}
-				} 
+				}
 				else if (! empty($conf->stock->enabled))
 				{
 					if ($lines[$i]->entrepot_id > 0)
