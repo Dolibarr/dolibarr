@@ -4091,7 +4091,12 @@ abstract class CommonObject
 						$ecmfile=new EcmFiles($this->db);
 						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
 
-						if (! empty($conf->global->PROPOSAL_USE_ONLINE_SIGN))
+						// Set the public "share" key
+						$setsharekey = false;
+						if ($this->element == 'propal'   && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))    $setsharekey=true;
+						if ($this->element == 'facture'  && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))  $setsharekey=true;
+						if ($setsharekey)
 						{
 							if (empty($ecmfile->share))	// Because object not found or share not set yet
 							{
