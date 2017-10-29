@@ -78,15 +78,17 @@ $sqls=array(
         'DELETE FROM '.MAIN_DB_PREFIX.'propaldet',
         'DELETE FROM '.MAIN_DB_PREFIX.'propal',
     ),
-    'supplier_order'=>array(
+    'supplier_proposal'=>array(
+        'DELETE FROM '.MAIN_DB_PREFIX.'supplier_proposaldet',
+        'DELETE FROM '.MAIN_DB_PREFIX.'supplier_proposal',
+    ),
+	'supplier_order'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet',
         'DELETE FROM '.MAIN_DB_PREFIX.'commande_fournisseur',
     ),
-    'supplier_invoice'=>array(
+	'supplier_invoice'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det',
         'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn',
-        'DELETE FROM '.MAIN_DB_PREFIX.'supplier_proposaldet',
-        'DELETE FROM '.MAIN_DB_PREFIX.'supplier_proposal',
     ),
     'delivery'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'livraisondet',
@@ -128,12 +130,13 @@ $sqls=array(
     ),
     'thirdparty'=>array(
         '@contact',
-        'DELETE FROM '.MAIN_DB_PREFIX.'cabinetmed_cons', 
+        'DELETE FROM '.MAIN_DB_PREFIX.'cabinetmed_cons',
         'UPDATE '.MAIN_DB_PREFIX.'adherent SET fk_soc = NULL',
         'DELETE FROM '.MAIN_DB_PREFIX.'categorie_fournisseur',
         'DELETE FROM '.MAIN_DB_PREFIX.'categorie_societe',
         'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except',
-        'DELETE FROM '.MAIN_DB_PREFIX.'societe',
+        'DELETE FROM '.MAIN_DB_PREFIX.'societe_rib',
+    	'DELETE FROM '.MAIN_DB_PREFIX.'societe',
     )
 );
 
@@ -152,27 +155,37 @@ $mode = $argv[1];
 $option = $argv[2];
 
 if (empty($mode) || ! in_array($mode,array('test','confirm'))) {
-    print "Usage:  $script_file (test|confirm) (all|option)\n";
+    print "Usage:  $script_file (test|confirm) (all|option) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
     print "\n";
     print "option can be ".implode(',',array_keys($sqls))."\n";
     exit(-1);
 }
 
 if (empty($option) || ! in_array($option, array_merge(array('all'),array_keys($sqls))) ) {
-    print "Usage:  $script_file (test|confirm) (all|option)\n";
+    print "Usage:  $script_file (test|confirm) (all|option) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
     print "\n";
     print "option can be ".implode(',',array_keys($sqls))."\n";
     exit(-1);
 }
 
+// Replace database handler
+if (! empty($argv[3]))
+{
+	$db->close();
+	unset($db);
+	$db=getDoliDBInstance($argv[3], $argv[4], $argv[5], $argv[6], $argv[7], $argv[8]);
+	$user=new User($db);
+}
 
+//var_dump($user->db->database_name);
 $ret=$user->fetch('','admin');
 if (! $ret > 0)
 {
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+	print 'An admin user with login "admin" must exists to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+//$user->getrights();
+
 
 print "Purge all data for this database:\n";
 print "Server = ".$db->database_host."\n";
@@ -190,14 +203,14 @@ if (! $confirmed)
 
 /**
  * Process sql requests of a family
- * 
+ *
  * @param   string  $family     Name of family key of array $sqls
  * @return  int                 -1 if KO, 1 if OK
  */
 function processfamily($family)
 {
     global $db, $sqls;
-    
+
     $error=0;
     foreach($sqls[$family] as $sql)
     {
@@ -207,7 +220,7 @@ function processfamily($family)
             processfamily($newfamily);
             continue;
         }
-        
+
         print "Run sql: ".$sql."\n";
         $resql=$db->query($sql);
         if (! $resql)
@@ -217,7 +230,7 @@ function processfamily($family)
                 $error++;
             }
         }
-    
+
         if ($error)
         {
             print $db->lasterror();
@@ -225,7 +238,7 @@ function processfamily($family)
             break;
         }
     }
-    
+
     if ($error) return -1;
     else return 1;
 }
@@ -242,7 +255,7 @@ foreach($sqls as $family => $familysql)
     $oldfamily = $family;
 
     $result=processfamily($family);
-    if ($result < 0) 
+    if ($result < 0)
     {
         $error++;
         break;
