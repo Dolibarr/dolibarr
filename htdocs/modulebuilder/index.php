@@ -126,9 +126,9 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
-		dol_delete_file($destdir.'/sql/llx_myobject.sql');
-		dol_delete_file($destdir.'/sql/llx_myobject_extrafields.sql');
-		dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject_extrafields.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.key.sql');
 		dol_delete_file($destdir.'/scripts/myobject.php');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
@@ -220,9 +220,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
 			'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-			'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-			'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
@@ -507,9 +507,9 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
 			'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-			'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-			'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
@@ -1421,9 +1421,9 @@ elseif (! empty($module))
 						$pathtolist     = strtolower($module).'/'.strtolower($tabobj).'_list.php';
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
 						$pathtophpunit  = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
-						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
-						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
-						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
+						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
+						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
+						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 
