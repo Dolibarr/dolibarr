@@ -5642,9 +5642,9 @@ class Form
 
 
 	/**
-	 *	Show a multiselect form from an array.
+	 *	Show a multiselect dropbox from an array.
 	 *
-	 *	@param	string	$htmlname		Name of select
+	 *	@param	string	$htmlname		Name of HTML field
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
 	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 *	@return	string					HTML multiselect string
