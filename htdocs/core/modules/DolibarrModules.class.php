@@ -575,7 +575,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				return $langs->trans("Module".$this->name."Name");
 			}
 
-			// Last change with simple product label
+			// Last chance with simple label
 			return $langs->trans($this->name);
 		}
 	}
@@ -606,6 +606,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					if ($val) $langs->load($val);
 				}
 			}
+
+			if ($langs->trans("Module".$this->name."Desc") != ("Module".$this->name."Desc"))
+			{
+				// If module name translation exists
+				return $langs->trans("Module".$this->name."Desc");
+			}
+
+			// Last chance with simple label
 			return $langs->trans($this->description);
 		}
 	}
@@ -671,14 +679,25 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function getDescLongReadmeFound()
 	{
+		global $langs;
+
 		$filefound= false;
 
 		// Define path to file README.md.
-		// First check README-la_LA.md then README.md
+		// First check README-la_LA.md then README-la.md then README.md
 		$pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$langs->defaultlang.'.md', 0);
 		if (dol_is_file($pathoffile))
 		{
 			$filefound = true;
+		}
+		if (! $filefound)
+		{
+			$tmp=explode('_', $langs->defaultlang);
+			$pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$tmp[0].'.md', 0);
+			if (dol_is_file($pathoffile))
+			{
+				$filefound = true;
+			}
 		}
 		if (! $filefound)
 		{

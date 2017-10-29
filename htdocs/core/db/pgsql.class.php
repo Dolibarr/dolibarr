@@ -274,7 +274,15 @@ class DoliDBPgsql extends DoliDB
     				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
     			}
 
-                // Translate order to drop foreign keys
+                // Translate order to drop primary keys
+                // ALTER TABLE llx_dolibarr_modules DROP PRIMARY KEY pk_xxx
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+PRIMARY\s+KEY\s*([^;]+)$/i',$line,$reg))
+                {
+                    $line = "-- ".$line." replaced by --\n";
+                    $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
+                }
+
+		        // Translate order to drop foreign keys
                 // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx
                 if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
                 {

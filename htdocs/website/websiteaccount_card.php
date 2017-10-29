@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- *
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -53,8 +52,8 @@ if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-dol_include_once('/website/class/websiteaccount.class.php');
-//dol_include_once('/website/lib/websiteaccount.lib.php');
+include_once(DOL_DOCUMENT_ROOT.'/website/class/websiteaccount.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php');
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("website","other"));
@@ -65,7 +64,6 @@ $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$thirdpartyid = GETPOST('thirdpartyid', 'int');
 
 // Initialize technical objects
 $object=new WebsiteAccount($db);
@@ -100,9 +98,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 
 /*
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
+ * Actions
  */
 
 $parameters=array();
@@ -132,9 +128,7 @@ if (empty($reshook))
 
 
 /*
- * VIEW
- *
- * Put here all code to build page
+ * View
  */
 
 $form=new Form($db);
@@ -167,46 +161,13 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="thirdpartyid" value="'.$thirdpartyid.'">';
 
-	dol_fiche_head(array(), '');
+	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
 
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-
-    	print '<tr id="field_'.$key.'">';
-    	print '<td';
-    	print ' class="titlefieldcreate';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-		if ($val['type'] == 'text') print ' tdtop';
-		print '"';
-    	print '>';
-    	print $langs->trans($val['label']);
-    	print '</td>';
-    	print '<td>';
-    	$defaultcss='minwidth100';
-    	if ($val['type'] == 'text')
-    	{
-    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-    		print GETPOST($key,'none');
-    		print '</textarea>';
-    	}
-	    elseif (is_array($val['arrayofkeyval']))
-   		{
-   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int'));
-    	}
-    	else
-    	{
-    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" class="'.$cssforinput.'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):'').'">';
-    	}
-    	print '</td>';
-    	print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
@@ -218,7 +179,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="button" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onclick="javascript:history.go(-1)">';	// Cancel for create doe not post form
+	print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -237,37 +198,9 @@ if (($id || $ref) && $action == 'edit')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
-    	print '<tr><td';
-    	print ' class="titlefieldcreate';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-		if ($val['type'] == 'text') print ' tdtop';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td>';
-    	$defaultcss='minwidth100';
-	    if ($val['type'] == 'text')
-    	{
-    		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_4.'" name="'.$key.'">';
-    		print GETPOST($key,'none')?GETPOST($key,'none'):$object->$key;
-    		print '</textarea>';
-    	}
-	    elseif (is_array($val['arrayofkeyval']))
-   		{
-   			print $form->selectarray($key, $val['arrayofkeyval'], GETPOST($key, 'int')!=''?GETPOST($key, 'int'):$object->$key);
-    	}
-    	else
-    	{
-    		$cssforinput = empty($val['css'])?$defaultcss:$val['css'];
-    		print '<input class="flat'.($cssforinput?' '.$cssforinput:'').'" type="text" name="'.$key.'" value="'.(GETPOST($key,'alpha')?GETPOST($key,'alpha'):$object->$key).'">';
-    	}
-    	print '</td>';
-    	print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
@@ -325,7 +258,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/website/websiteaccount_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback='';
+	if ($socid) $linkback = '<a href="' .DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	if ($fk_website) $linkback = '<a href="' .DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -380,52 +315,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">'."\n";
 
-	foreach($object->fields as $key => $val)
-	{
-	    if (abs($val['visible']) != 1) continue;	// Discard such field from form
-	    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-
-    	print '<tr><td';
-    	print ' class="titlefield';
-    	if ($val['notnull'] > 0) print ' fieldrequired';
-    	print '"';
-    	print '>'.$langs->trans($val['label']).'</td>';
-    	print '<td>';
-    	print dol_escape_htmltag($object->$key, 1, 1);
-		print '</td>';
-    	print '</tr>';
-
-    	//if ($key == 'targetsrcfile3') break;						// key used for break on second column
-	}
-
-	print '</table>';
-	print '</div>';
-	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-
-	$alreadyoutput = 1;
-	foreach($object->fields as $key => $val)
-	{
-		if ($alreadyoutput)
-		{
-			//if ($key == 'targetsrcfile3') $alreadyoutput = 0;		// key used for break on second column
-			continue;
-		}
-
-		if (in_array($key, array('rowid', 'ref', 'entity', 'note_public', 'note_private', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key', 'status'))) continue;
-
-		print '<tr><td';
-		print ' class="titlefield';
-		if ($val['notnull'] > 0) print ' fieldrequired';
-		print '"';
-		print '>'.$langs->trans($val['label']).'</td>';
-		print '<td>';
-		print dol_escape_htmltag($object->$key, 1, 1);
-		print '</td>';
-		print '</tr>';
-	}
+	// Common attributes
+	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -450,7 +341,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>'."\n";
+            print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>'."\n";
 
     		if ($user->rights->website->write)
     		{
@@ -489,29 +380,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
+
 	    // Documents
-	    $comref = dol_sanitizeFileName($object->ref);
+	    /*$comref = dol_sanitizeFileName($object->ref);
 	    $relativepath = $comref . '/' . $comref . '.pdf';
 	    $filedir = $conf->website->dir_output . '/' . $comref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->website->read;	// If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->website->create;	// If you can create/edit, you can remove a file on card
 	    print $formfile->showdocuments('website', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-
+		*/
 
 	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
+	    /*$linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
+		*/
 
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	    $MAXEVENT = 10;
 
 	    // List of actions on element
+	    /*
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
 	    $somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);
+	    */
 
 	    print '</div></div></div>';
 	}
