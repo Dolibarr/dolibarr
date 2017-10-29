@@ -348,12 +348,14 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 280px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
+	padding-left: 30px;
+	text-align: <?php echo $left; ?>;
 	border: 2px solid #666666;
 }
 input.buttonpaymentcb {

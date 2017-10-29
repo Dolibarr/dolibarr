@@ -554,6 +554,90 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Return the link of last main doc file for direct public download.
+	 *
+	 * @param	string	$modulepart			Module related to document
+	 * @param	int		$initsharekey		Init the share key if it was not yet defined
+	 * @return	string						Link or empty string if there is no download link
+	 */
+	function getLastMainDocLink($modulepart, $initsharekey=0)
+	{
+		global $user, $dolibarr_main_url_root;
+
+		if (empty($this->last_main_doc))
+		{
+			return '';		// No known last doc
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($this->db);
+		$result = $ecmfile->fetch(0, '', $this->last_main_doc);
+		if ($result < 0)
+		{
+			$this->error = $ecmfile->error;
+			$this->errors = $ecmfile->errors;
+			return -1;
+		}
+
+		if (empty($ecmfile->id))
+		{
+			// Add entry into index
+			if ($initsharekey)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				// TODO We can't, we dont' have full path of file, only last_main_doc adn ->element, so we must rebuild full path first
+				/*
+				$ecmfile->filepath = $rel_dir;
+				$ecmfile->filename = $filename;
+				$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
+				$ecmfile->fullpath_orig = '';
+				$ecmfile->gen_or_uploaded = 'generated';
+				$ecmfile->description = '';    // indexed content
+				$ecmfile->keyword = '';        // keyword content
+				$ecmfile->share = getRandomPassword(true);
+				$result = $ecmfile->create($user);
+				if ($result < 0)
+				{
+					$this->error = $ecmfile->error;
+					$this->errors = $ecmfile->errors;
+				}
+				*/
+			}
+			else return '';
+		}
+		elseif (empty($ecmfile->share))
+		{
+			// Add entry into index
+			if ($initsharekey)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				$ecmfile->share = getRandomPassword(true);
+				$ecmfile->update($user);
+			}
+			else return '';
+		}
+
+		// Define $urlwithroot
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		$forcedownload=1;
+		$rellink='/document.php?modulepart='.$modulepart;
+		if ($forcedownload) $rellink.='&attachment=1';
+		if (! empty($ecmfile->entity)) $rellink.='&entity='.$ecmfile->entity;
+		//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
+		$fulllink=$urlwithroot.$rellink;
+		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;			// Hash of file path
+		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
+		if (! empty($ecmfile->share))  $fulllink.='&hashp='.$ecmfile->share;			// Hash for public share
+
+		// Here $ecmfile->share is defined
+		return $fulllink;
+	}
+
+
+	/**
 	 *  Add a link between element $this->element and a contact
 	 *
 	 *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
@@ -4120,6 +4204,7 @@ abstract class CommonObject
 						}
 						else
 						{
+							$ecmfile->entity = $conf->entity;
 							$ecmfile->filepath = $rel_dir;
 							$ecmfile->filename = $filename;
 							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
