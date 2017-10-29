@@ -1610,7 +1610,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
- * 										'tzuser' => output string is for user TZ (current browser TZ with current dst)
+ * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position) (TODO not implemented yet)
  *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
@@ -1641,8 +1641,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 			{
 				$to_gmt=true;
 				$offsettzstring=(empty($_SESSION['dol_tz_string'])?'UTC':$_SESSION['dol_tz_string']);	// Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
-				$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
+				$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;		// Will not be used anymore
+				$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;	// Will not be used anymore
 			}
 		}
 	}
@@ -1699,8 +1699,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// This part of code should not be used. TODO Remove this.
-		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		// TODO Remove this.
+		// This part of code should not be used.
+		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
 		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
@@ -1710,22 +1711,26 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
 		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
-		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);			// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
 	{
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
-			$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);		// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+			$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+
+			$ret=adodb_strftime($format, $timetouse, $to_gmt);
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
 
 	if (preg_match('/__b__/i',$format))
 	{
+		$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m', $time+$offsettz+$offsetdst);					// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$month=adodb_strftime('%m', $timetouse);
 		$month=sprintf("%02d", $month);	// $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput)
 		{
@@ -1745,7 +1750,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (preg_match('/__a__/i',$format))
 	{
-		$w=adodb_strftime('%w', $time+$offsettz+$offsetdst);						// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+
+		$w=adodb_strftime('%w', $timetouse);						// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret=str_replace('__A__',$dayweek,$ret);
 		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);

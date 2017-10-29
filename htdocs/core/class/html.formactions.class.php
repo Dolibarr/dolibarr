@@ -258,7 +258,7 @@ class FormActions
 		        		{
 		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef,'hour');
 		        		}
-		        		else print '-'.dol_print_date($action->datef,'dayhour');
+		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
 	        		print '<td align="right">';
