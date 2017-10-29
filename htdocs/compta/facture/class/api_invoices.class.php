@@ -701,7 +701,7 @@ class Invoices extends DolibarrApi
      * @param int   $id            Id of invoice
      * @param int   $discountid    Id of a discount coming from a credit note
      *
-     * @url     POST {id}/usecreditnote/{creditnoteid}
+     * @url     POST {id}/usecreditnote/{discountid}
      *
      * @return int
      * @throws 400
@@ -719,7 +719,7 @@ class Invoices extends DolibarrApi
         if(empty($id)) {
                 throw new RestException(400, 'Invoice ID is mandatory');
         }
-        if(empty($creditId)) {
+        if(empty($discountid)) {
                 throw new RestException(400, 'Credit ID is mandatory');
         }
 
