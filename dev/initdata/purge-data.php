@@ -116,8 +116,10 @@ $sqls=array(
         'DELETE FROM '.MAIN_DB_PREFIX.'product_lang',
         'DELETE FROM '.MAIN_DB_PREFIX.'product_price',
         'DELETE FROM '.MAIN_DB_PREFIX.'product_fournisseur_price',
-        'DELETE FROM '.MAIN_DB_PREFIX.'product_stock',
-        'DELETE FROM '.MAIN_DB_PREFIX.'product',
+        'DELETE FROM '.MAIN_DB_PREFIX.'product_batch',
+    	'DELETE FROM '.MAIN_DB_PREFIX.'product_stock',
+        'DELETE FROM '.MAIN_DB_PREFIX.'product_lot',
+    	'DELETE FROM '.MAIN_DB_PREFIX.'product',
     ),
     'project'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'projet_task_time',
