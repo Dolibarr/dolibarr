@@ -18,8 +18,7 @@ FIX: API to get object does not return data of linked objects
 FIX: Bad localtax apply
 FIX: Bad ressource list in popup in gantt view
 FIX: bankentries search conciliated if val 0
-FIX: hook formObjectOptions() must use $expe and not $object which i…
-FIX: hook formObjectOptions() must use $expe and not $object which is an order here
+FIX: hook formObjectOptions() must use $expe and not $object
 FIX: make of link to other object during creation
 FIX: Missing function getLinesArray
 FIX: old batch not shown in multi shipping
