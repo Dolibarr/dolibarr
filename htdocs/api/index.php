@@ -139,14 +139,14 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                 {
                     $module = strtolower($regmod[1]);
                     $moduledirforclass = getModuleDirForApiClass($module);
-                    $moduleforperm = $module;
-                    if ($module == 'propale') { $moduleforperm='propal'; }
+                    $modulenameforenabled = $module;
+                    if ($module == 'propale') { $moduleforenabled='propal'; }
 
                     //dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
 
                     // Defined if module is enabled
                     $enabled=true;
-                    if (empty($conf->$moduleforperm->enabled)) $enabled=false;
+                    if (empty($conf->$moduleforenabled->enabled)) $enabled=false;
 
                     if ($enabled)
                     {
