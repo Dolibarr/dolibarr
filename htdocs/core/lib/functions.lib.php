@@ -517,6 +517,8 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			if (preg_match('/[^0-9,]+/i',$out)) $out='';
 			break;
 		case 'alpha':
+			if (!is_string($out))
+			return $out;
 			$out=trim($out);
 			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 			// '../' is dangerous because it allows dir transversals
