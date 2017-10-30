@@ -403,7 +403,6 @@ if ($action == 'charge')
 		'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 		));
 		// Return $customer = array('id'=>'cus_XXXX', ...)
-		// TODO Add 'business_vat_id' ?
 
 		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
 		$charge = \Stripe\Charge::create(array(
@@ -414,6 +413,7 @@ if ($action == 'charge')
 		'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name),
 		'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
 		));
+		// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 	} catch(\Stripe\Error\Card $e) {
 		// Since it's a decline, \Stripe\Error\Card will be caught
 		$body = $e->getJsonBody();

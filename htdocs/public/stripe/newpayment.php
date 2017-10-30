@@ -239,7 +239,7 @@ if ($action == 'charge')
 
         dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
         $charge = \Stripe\Charge::create(array(
-            'customer' => $customer->id,
+            'customer' => $customer->id,				// Will reuse default source of this customer card profile
             'amount'   => price2num($amount, 'MU'),
             'currency' => $currency,
             'description' => 'Stripe payment: '.$FULLTAG,
