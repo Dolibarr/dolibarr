@@ -372,6 +372,7 @@ if ($action == 'dopayment')
 }
 
 
+// Called when choosing Stripe mode, after the 'dopayment'
 if ($action == 'charge')
 {
 	// Correct the amount according to unit of currency
@@ -384,20 +385,24 @@ if ($action == 'charge')
 
 	$stripeToken = GETPOST("stripeToken",'alpha');
 	$email = GETPOST("stripeEmail",'alpha');
+	$vatnumber = GETPOST('vatnumber','alpha');
 
 	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("stripeEmail = ".$stripeEmail, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
 
 	try {
-		dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
+		dol_syslog("Create customer card profile", LOG_DEBUG, 0, '_stripe');
 		$customer = \Stripe\Customer::create(array(
 		'email' => $email,
-		'description' => ($email?'Customer for '.$email:null),
+		'description' => ($email?'Customer card profile for '.$email:null),
 		'metadata' => array('ipaddress'=>$_SERVER['REMOTE_ADDR']),
+		'business_vat_id' => ($vatnumber?$vatnumber:null),
 		'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 		));
+		// Return $customer = array('id'=>'cus_XXXX', ...)
 		// TODO Add 'business_vat_id' ?
 
 		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
@@ -773,6 +778,7 @@ if ($source == 'order')
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$order->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Order").' '.$order->ref;
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
@@ -899,6 +905,7 @@ if ($source == 'invoice')
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$invoice->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Invoice").' '.$invoice->ref;
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
@@ -1105,6 +1112,7 @@ if ($source == 'contractline')
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$contract->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Contract").' '.$contract->ref;
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
