@@ -684,16 +684,21 @@ if (empty($reshook))
 						$batch="batchl".$detail_batch->fk_expeditiondet."_".$detail_batch->fk_origin_stock;
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOST($batch,'int');
-						if (! empty($batch_id) && $batch_id != $detail_batch->fk_origin_stock)
+						$batch_qty = GETPOST($qty, 'int');
+						if (! empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->dluo_qty))
 						{
-							if ($lotStock->fetch($batch_id) > 0) 
+							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0) 
 							{
-								$line->id = $detail_batch->fk_expeditiondet;
+								if ($lines[$i]->entrepot_id != 0)
+								{
+									// allow update line entrepot_id if not multi warehouse shipping
+									$line->entrepot_id = $lotStock->warehouseid;
+								}
 								$line->detail_batch->fk_origin_stock = $batch_id;
 								$line->detail_batch->batch = $lotStock->batch;
 								$line->detail_batch->id = $detail_batch->id;
-								$line->entrepot_id = $lotStock->warehouseid;
-								$line->qty = GETPOST($qty, 'int');
+								$line->detail_batch->entrepot_id = $lotStock->warehouseid;
+								$line->detail_batch->dluo_qty = $batch_qty;
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
@@ -2157,13 +2162,19 @@ else if ($id || $ref)
 				print '<td colspan="'.$editColspan.'"><table>';
 				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
 				{
+					$line = new ExpeditionLigne($db);
 					foreach ($lines[$i]->detail_batch as $detail_batch) 
 					{
 						print '<tr>';
 						// Qty to ship or shipped
 						print '<td>' . '<input name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->dluo_qty.'">' . '</td>';
 						// Batch number managment
-						print '<td>' . $formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product). '</td>';
+						if ($lines[$i]->entrepot_id == 0)
+						{
+							// only show lot numbers from src warehouse when shipping from multiple warehouses
+							$line->fetch($detail_batch->fk_expeditiondet);
+						}
+						print '<td>' . $formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $line->entrepot_id). '</td>';
 						print '</tr>';
 					}
 				}

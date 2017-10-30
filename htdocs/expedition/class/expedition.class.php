@@ -2279,6 +2279,40 @@ class ExpeditionLigne extends CommonObjectLine
 	}
 
 	/**
+	 *  Load line expedition
+	 *
+	 *  @param  int		$rowid          Id line order
+	 *  @return	int						<0 if KO, >0 if OK
+	 */
+	function fetch($rowid)
+	{
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_origin_line, ed.qty, ed.rang';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
+		$sql.= ' WHERE ed.rowid = '.$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+			$this->id				= $objp->rowid;
+			$this->fk_expedition	= $objp->fk_expedition;
+			$this->entrepot_id		= $objp->fk_entrepot;
+			$this->fk_origin_line	= $objp->fk_origin_line;
+			$this->qty				= $objp->qty;
+			$this->rang				= $objp->rang;
+
+			$this->db->free($result);
+
+			return 1;
+		}
+		else
+		{
+			$this->errors[] = $this->db->lasterror();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
 	 *	Insert line into database
 	 *
 	 *	@param      User	$user			User that modify
@@ -2451,14 +2485,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
 
-		// check parameters
-		if (! isset($this->id) || ! isset($this->entrepot_id))
-		{
-			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
-			$this->errors[]='ErrorMandatoryParametersNotProvided';
-			$error++;
-			return -1;
-		}
+		
 
 		$this->db->begin();
 
@@ -2482,13 +2509,36 @@ class ExpeditionLigne extends CommonObjectLine
 				$batch = $this->detail_batch[0]->batch;
 				$batch_id = $this->detail_batch[0]->fk_origin_stock;
 				$expedition_batch_id = $this->detail_batch[0]->id;
+				if ($this->entrepot_id != $this->detail_batch[0]->entrepot_id)
+				{
+					dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
+					$this->errors[]='ErrorBadParameters';
+					$error++;
+				}
+				$qty = price2num($this->detail_batch[0]->dluo_qty);
 			}
 		}
-		else
+		else if (! empty($this->detail_batch))
 		{
 			$batch = $this->detail_batch->batch;
 			$batch_id = $this->detail_batch->fk_origin_stock;
 			$expedition_batch_id = $this->detail_batch->id;
+			if ($this->entrepot_id != $this->detail_batch->entrepot_id)
+			{
+				dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
+				$this->errors[]='ErrorBadParameters';
+				$error++;
+			}
+			$qty = price2num($this->detail_batch->dluo_qty);
+		}
+
+		// check parameters
+		if (! isset($this->id) || ! isset($this->entrepot_id))
+		{
+			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
+			$this->errors[]='ErrorMandatoryParametersNotProvided';
+			$error++;
+			return -1;
 		}
 
 		// update lot
@@ -2512,6 +2562,7 @@ class ExpeditionLigne extends CommonObjectLine
 			}
 			else 
 			{
+				// caculate new total line qty
 				foreach ($lotArray as $lot) 
 				{
 					if ($expedition_batch_id != $lot->id) 
@@ -2519,6 +2570,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$remainingQty += $lot->dluo_qty;
 					}
 				}
+				$qty += $remainingQty;
 				
 				//fetch lot details
 				
@@ -2550,8 +2602,8 @@ class ExpeditionLigne extends CommonObjectLine
 							$shipmentLot->batch = $lot->batch;
 							$shipmentLot->eatby = $lot->eatby;
 							$shipmentLot->sellby = $lot->sellby;
-							$shipmentLot->entrepot_id = $this->entrepot_id;
-							$shipmentLot->dluo_qty = $qty;
+							$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
+							$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
 							$shipmentLot->fk_origin_stock = $batch_id;
 							if ($shipmentLot->create($this->id) < 0) 
 							{
@@ -2568,7 +2620,7 @@ class ExpeditionLigne extends CommonObjectLine
 			// update line
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 			$sql.= " fk_entrepot = ".$this->entrepot_id;
-			$sql.= " , qty = ".($qty + $remainingQty);
+			$sql.= " , qty = ".$qty;
 			$sql.= " WHERE rowid = ".$this->id;
 			
 			if (!$this->db->query($sql)) 
