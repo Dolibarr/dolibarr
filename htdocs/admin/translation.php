@@ -372,8 +372,8 @@ if ($mode == 'searchkey')
         // Now search into translation array
         foreach($newlang->tab_translate as $key => $val)
         {
-            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/', $key)) continue;
-            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/', $val)) continue;
+            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/i', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/i', $val)) continue;
             $recordtoshow[$key]=$val;
         }
     }
