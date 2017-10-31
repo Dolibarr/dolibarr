@@ -464,6 +464,7 @@ FreeLegalTextOnExpenseReports=Free legal text on expense reports
 WatermarkOnDraftExpenseReports=Watermark on draft expense reports
 AttachMainDocByDefault=Set this to 1 if you want to attach main document to email by default (if applicable)
 FilesAttachedToEmail=Attach file
+SendEmailsReminders=Send agenda reminders by emails
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
@@ -1556,8 +1557,8 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of e
 AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
-AGENDA_REMINDER_EMAIL=Enable event reminder by emails (defined on each event). Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent at the correct frequency.
-AGENDA_REMINDER_BROWSER=Enable event reminder on users browser (when event date is reached, each user is able to refuse this from the browser confirmation question)
+AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (defined on each event). Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent at the correct frequency.
+AGENDA_REMINDER_BROWSER=Enable event reminder <b>on users browser</b> (when event date is reached, each user is able to refuse this from the browser confirmation question)
 AGENDA_REMINDER_BROWSER_SOUND=Enable sound notification
 AGENDA_SHOW_LINKED_OBJECT=Show linked object into agenda view
 ##### Clicktodial #####
