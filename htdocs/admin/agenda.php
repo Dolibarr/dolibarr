@@ -38,6 +38,7 @@ $langs->load("agenda");
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
 
+$search_event = GETPOST('search_event', 'alpha');
 
 // Get list of triggers available
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
@@ -70,6 +71,12 @@ else
  *	Actions
  */
 
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+{
+	$search_event = '';
+}
+
 if ($action == "save" && empty($cancel))
 {
     $i=0;
@@ -78,10 +85,13 @@ if ($action == "save" && empty($cancel))
 
 	foreach ($triggers as $trigger)
 	{
-		$param='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+		$keyparam='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
-		$res = dolibarr_set_const($db,$param,(GETPOST($param,'alpha')?GETPOST($param,'alpha'):''),'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
+		if ($search_event === '' || preg_match('/'.preg_quote($search_event,'/').'/i', $keyparam))
+		{
+			$res = dolibarr_set_const($db,$keyparam,(GETPOST($keyparam,'alpha')?GETPOST($keyparam,'alpha'):''),'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+		}
 	}
 
  	if (! $error)
@@ -140,6 +150,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="save">';
 
+$param = '';
+$param.= '&search_event='.urlencode($search_event);
 
 $head=agenda_prepare_head();
 
@@ -151,8 +163,19 @@ print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
-print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=selectall">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone">'.$langs->trans("None").'</a>';
+print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
+print '<td class="liste_titre"></td>';
+// Action column
+print '<td class="liste_titre" align="right">';
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
+print '</td>';
+print '</tr>';
+print '</tr>'."\n";
+print '<tr class="liste_titre">';
+print '<th class="liste_titre">'.$langs->trans("ActionsEvents").'</th>';
+print '<th class="liste_titre"></th>';
+print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall'.($param?$param:'').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param?$param:'').'">'.$langs->trans("None").'</a></th>';
 print '</tr>'."\n";
 // Show each trigger (list is in c_action_trigger)
 if (! empty($triggers))
@@ -173,15 +196,17 @@ if (! empty($triggers))
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-
-			print '<tr class="oddeven">';
-			print '<td>'.$trigger['code'].'</td>';
-			print '<td>'.$trigger['label'].'</td>';
-			print '<td align="right" width="40">';
-			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-			$value=$conf->global->$key;
-			print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
-			print '</td></tr>'."\n";
+			if ($search_event === '' || preg_match('/'.preg_quote($search_event,'/').'/i', $trigger['code']))
+			{
+				print '<tr class="oddeven">';
+				print '<td>'.$trigger['code'].'</td>';
+				print '<td>'.$trigger['label'].'</td>';
+				print '<td align="right" width="40">';
+				$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+				$value=$conf->global->$key;
+				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
+				print '</td></tr>'."\n";
+			}
 		}
 	}
 }
