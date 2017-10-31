@@ -1530,9 +1530,17 @@ class ActionComm extends CommonObject
     		return 0;
     	}
 
+    	$now = dol_now();
+
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
+		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
+
+
+    	// Delete also very old past events (we do not keep more than 1 month record in past)
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->jdate($now - (3600 * 24 * 32))."'";
+		$this->db->query($sql);
 
     	return 0;
     }

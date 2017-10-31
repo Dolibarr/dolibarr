@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2007-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -228,14 +225,14 @@ class MyObject extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines()
+	/*public function fetchLines()
 	{
 		$this->lines=array();
 
 		// Load lines with object MyObjectLine
 
 		return count($this->lines)?1:0;
-	}
+	}*/
 
 	/**
 	 * Update object into database
@@ -320,17 +317,6 @@ class MyObject extends CommonObject
 		}
 		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
-	}
-
-	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto=0)
-	{
-		return 'todo';
 	}
 
 	/**

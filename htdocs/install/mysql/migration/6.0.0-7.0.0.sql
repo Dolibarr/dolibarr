@@ -461,6 +461,26 @@ UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMB
 UPDATE llx_accounting_system SET fk_country = 12 WHERE pcg_version = 'PCG';
 
 
+
+CREATE TABLE llx_actioncomm_reminder(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	dateremind datetime NOT NULL, 
+	typeremind varchar(32) NOT NULL, 
+	fk_user integer NOT NULL, 
+	offsetvalue integer NOT NULL, 
+	offsetunit varchar(1) NOT NULL,
+	status integer NOT NULL DEFAULT 0
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_rowid (rowid);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_dateremind (dateremind);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_user (fk_user);
+
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_user, typeremind, offsetvalue, offsetunit);
+
+
 -- VPGSQL8.2 CREATE SEQUENCE llx_supplier_proposal_rowid_seq;
 -- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET DEFAULT nextval('llx_supplier_proposal_rowid_seq');
 -- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET NOT NULL;
