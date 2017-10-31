@@ -194,7 +194,6 @@ if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
     // Button off, click to enable
     $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
     $enabledisablehtml.= img_picto($langs->trans("Disabled"),'switch_off');
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableDefaultValues");
     $enabledisablehtml.= '</a>';
 }
 else
@@ -202,7 +201,6 @@ else
     // Button on, click to disable
     $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
     $enabledisablehtml.= img_picto($langs->trans("Activated"),'switch_on');
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableDefaultValues");
     $enabledisablehtml.= '</a>';
 }
 

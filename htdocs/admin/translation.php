@@ -210,13 +210,12 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $param='&mode='.$mode;
 
 $enabledisablehtml='';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
     $enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
     $enabledisablehtml.='</a>';
 }
 else
@@ -224,7 +223,6 @@ else
     // Button on, click to disable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
     $enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
     $enabledisablehtml.='</a>';
 }
 

@@ -2721,19 +2721,16 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	}
 	else
 	{
-		if ($picto == 'switch_off')
+		if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		{
+			$fakey = $picto; $facolor=''; $fasize='';
+			if ($picto == 'switch_off') { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
+			if ($picto == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
+			if ($picto == 'off') { $fakey = 'fa-square-o'; $fasize='1.3em'; }
+			if ($picto == 'on')  { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
 			$enabledisablehtml='';
-			$enabledisablehtml.='<span class="fa fa-toggle-off valignmiddle" style="font-size: 2em; color: #999;" alt="'.dol_escape_htmltag($titlealt).'">';
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
-			$enabledisablehtml.='</span>';
-			return $enabledisablehtml;
-		}
-		if ($picto == 'switch_on')
-		{
-			$enabledisablehtml='';
-			$enabledisablehtml.='<span class="fa fa-toggle-on valignmiddle" style="font-size: 2em; color: #227722;" alt="'.dol_escape_htmltag($titlealt).'">';
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
+			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
 			$enabledisablehtml.='</span>';
 			return $enabledisablehtml;
 		}
