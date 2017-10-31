@@ -413,13 +413,11 @@ class FormProduct
 	}
 
 	/**
-	 * Load in cache array list of lot available in stock
-	 * If fk_product is not 0, we do not use cache
+	 * Load in cache array list of lot available in stock from a given list of products
 	 *
 	 * @param	array	$productIdArray		array of product id's from who to get lot numbers. A
-	 * @param	string	$fk_entrepot	    load lot in fk_entrepot all if 0.
 	 *
-	 * @return  int  		    		    Nb of loaded lines, 0 if nothing loaded, <0 if KO
+	 * @return	int							Nb of loaded lines, 0 if nothing loaded, <0 if KO
 	 */
 	private function loadLotStock($productIdArray = array())
 	{
