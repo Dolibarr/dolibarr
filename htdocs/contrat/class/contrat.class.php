@@ -2089,10 +2089,10 @@ class Contrat extends CommonObject
 			if ($mode == 'inactives') {
 				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
-				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
 			} else {
 				$warning_delay = $conf->contrat->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
 				$label = $langs->trans("BoardRunningServices");
 			}
 

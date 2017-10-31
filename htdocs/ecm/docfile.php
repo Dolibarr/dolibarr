@@ -64,7 +64,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
-$section=GETPOST("section");
+$section=GETPOST("section",'alpha');
 if (! $section)
 {
     dol_print_error('','Error, section parameter missing');
@@ -101,12 +101,11 @@ $filepathtodocument=$relativetodocument.$file->label;
 // Try to load object from index
 $object = new ECMFiles($db);
 $result=$object->fetch(0, '', $filepathtodocument);
-if (! ($result >= 0))
+if ($result < 0)
 {
 	dol_print_error($db, $object->error, $object->errors);
 	exit;
 }
-
 
 
 
@@ -124,7 +123,7 @@ if ($cancel)
     }
     else
     {
-        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.$urlfile.'&section='.$section);
+        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
     }
 }
@@ -140,12 +139,17 @@ if ($action == 'update')
 
     //$db->begin();
 
-    $olddir=$ecmdir->getRelativePath(0);
+    $olddir=$ecmdir->getRelativePath(0);			// Relative to ecm
+    $olddirrelativetodocument = 'ecm/'.$olddir;		// Relative to document
+    $newdirrelativetodocument = 'ecm/'.$olddir;
     $olddir=$conf->ecm->dir_output.'/'.$olddir;
     $newdir=$olddir;
 
     $oldfile=$olddir.$oldlabel;
     $newfile=$newdir.$newlabel;
+
+    // Now we update index of file
+    $db->begin();
 
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
@@ -157,29 +161,52 @@ if ($action == 'update')
             setEventMessages($langs->trans('ErrorFailToRenameFile',$oldfile,$newfile), null, 'errors');
             $error++;
         }
-    }
 
-    // Now we update index of file
-    $db->begin();
+        // Reload object after the move
+        $result=$object->fetch(0, '', $newdirrelativetodocument.$newlabel);
+        if ($result < 0)
+        {
+        	dol_print_error($db, $object->error, $object->errors);
+        	exit;
+        }
+    }
 
     if (! $error)
     {
-		if (is_object($object))
+		if ($shareenabled)
 		{
-			if ($shareenabled)
-			{
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-				$object->share = getRandomPassword(true);
-			}
-			else
-			{
-				$object->share = '';
-			}
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$object->share = getRandomPassword(true);
+		}
+		else
+		{
+			$object->share = '';
+		}
+
+		if ($object->id > 0)
+		{
+			// Call update to set the share key
 			$result = $object->update($user);
 			if ($result < 0)
 			{
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+		}
+		else
+		{
+			// Call create to insert record
+			$object->entity = $conf->entity;
+			$object->filepath = preg_replace('/[\\/]+$/', '', $newdirrelativetodocument);
+			$object->filename = $newlabel;
+			$object->label = md5_file(dol_osencode($newfile));	// hash of file content
+			$object->fullpath_orig = '';
+			$object->gen_or_uploaded = 'unknown';
+			$object->description = '';    // indexed content
+			$object->keyword = '';        // keyword content
+			$result = $object->create($user);
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'warnings');
 			}
 		}
     }
@@ -187,7 +214,10 @@ if ($action == 'update')
     if (!$error)
     {
         $db->commit();
+
         $urlfile=$newlabel;
+        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+        exit;
     }
     else
     {
@@ -297,6 +327,7 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
+// Link for internal download
 print '<tr><td>'.$langs->trans("DirectDownloadInternalLink").'</td><td>';
 $modulepart='ecm';
 $forcedownload=1;
@@ -308,9 +339,10 @@ $fulllink=$urlwithroot.$rellink;
 print img_picto('','object_globe.png').' ';
 if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 else print $fulllink;
-if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';		// No target here.
 print '</td></tr>';
 
+// Link for direct external download
 print '<tr><td>';
 if ($action != 'edit') print $langs->trans("DirectDownloadLink");
 else print $langs->trans("FileSharedViaALink");
@@ -332,7 +364,7 @@ if (! empty($object->share))
 		print img_picto('','object_globe.png').' ';
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
-		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';
+		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';	// No target here
 	}
 	else
 	{
@@ -374,7 +406,7 @@ if ($action == 'edit')
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_file')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
 
 }
 
@@ -385,7 +417,7 @@ if ($action != 'edit')
 
     if ($user->rights->ecm->setup)
     {
-        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 
         //print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtopage='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
     }

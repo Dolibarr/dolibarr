@@ -611,7 +611,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 		}
 	}
 
-	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_BREAK_ON_PROJECT)?0:-1);	// 0 to start break , -1 no break
+	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:-1);	// 0 to start break , -1 no break
 
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 	for ($i = 0 ; $i < $numlines ; $i++)
@@ -871,7 +871,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	//dol_syslog('projectLinesPerWeek inc='.$inc.' firstdaytoshow='.$firstdaytoshow.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 
-	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_BREAK_ON_PROJECT)?0:-1);	// 0 = start break, -1 = never break
+	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:-1);	// 0 = start break, -1 = never break
 
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
