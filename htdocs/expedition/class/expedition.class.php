@@ -378,7 +378,7 @@ class Expedition extends CommonObject
 		$expeditionline->entrepot_id = $entrepot_id;
 		$expeditionline->fk_origin_line = $origin_line_id;
 		$expeditionline->qty = $qty;
-		$expeditionline->$array_options = $array_options;
+		$expeditionline->array_options = $array_options;
 
 		if (($lineId = $expeditionline->insert()) < 0)
 		{
