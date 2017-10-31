@@ -3323,6 +3323,8 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .bodyline {
@@ -3474,6 +3476,10 @@ a.websitebuttonsitepreviewdisabled img {
 /* ============================================================================== */
 /*  Module agenda                                                                 */
 /* ============================================================================== */
+
+.dayevent .tagtr:first-of-type {
+    height: 24px;
+}
 
 .agendacell { height: 60px; }
 table.cal_month    { border-spacing: 0px;  }
