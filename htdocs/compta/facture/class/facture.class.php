@@ -79,6 +79,8 @@ class Facture extends CommonInvoice
 	public $remise_percent;
 	public $total_ht=0;
 	public $total_tva=0;
+	public $total_localtax1=0;
+	public $total_localtax2=0;
 	public $total_ttc=0;
 	public $revenuestamp;
 
@@ -977,6 +979,8 @@ class Facture extends CommonInvoice
 			$line->subprice			= $object->lines[$i]->subprice;
 			$line->total_ht			= $object->lines[$i]->total_ht;
 			$line->total_tva		= $object->lines[$i]->total_tva;
+			$line->total_localtax1	= $object->lines[$i]->total_localtax1;
+			$line->total_localtax2	= $object->lines[$i]->total_localtax2;
 			$line->total_ttc		= $object->lines[$i]->total_ttc;
 			$line->vat_src_code  	= $object->lines[$i]->vat_src_code;
 			$line->tva_tx			= $object->lines[$i]->tva_tx;
@@ -1128,6 +1132,10 @@ class Facture extends CommonInvoice
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
                 $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_tva))
+                $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_tva))
+                $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
     		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
