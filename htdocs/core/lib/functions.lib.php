@@ -2721,6 +2721,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	}
 	else
 	{
+		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		{
 			$fakey = $picto; $facolor=''; $fasize='';
