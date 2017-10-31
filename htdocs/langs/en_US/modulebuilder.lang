@@ -71,7 +71,7 @@ NoWidget=No widget
 GoToApiExplorer=Go to API explorer
 ListOfPermissionsDefined=List of defined permissions
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible into list ? (Examples: 0=not visible, 1=visible by default on list, -1=not shown by default on list but can be added into list to be viewed)
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list ? (Examples: 1 or 0)
 SearchAllDesc=Is the field used to make a search from the quick search tool ? (Examples: 1 or 0)
 SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.

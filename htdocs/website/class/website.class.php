@@ -43,6 +43,10 @@ class Website extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website';
+	/**
+	 * @var string String with name of icon for websiteaccount. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'globe';
 
 	/**
 	 * @var int
@@ -135,7 +139,7 @@ class Website extends CommonObject
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
+		$sql .= ' '.((empty($this->entity) && $this->entity != '0')?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
@@ -648,21 +652,23 @@ class Website extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("WebSite") . '</u>';
         $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label.= '<b>' . $langs->trans('Nom') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
+        $linkstart.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
+        $linkstart.= '>';
 		$linkend='</a>';
+
+		$linkstart = $linkend = '';
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $link . $this->ref . $linkend;
+		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
 	}
 

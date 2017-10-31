@@ -94,6 +94,7 @@ else
 $listofoppstatus=array(); $listofopplabel=array(); $listofoppcode=array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+$sql.= " WHERE active=1";
 $resql = $db->query($sql);
 if ( $resql )
 {

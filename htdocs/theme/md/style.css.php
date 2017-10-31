@@ -345,12 +345,14 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 280px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
+	padding-left: 30px;
+	text-align: <?php echo $left; ?>;
 	border: 2px solid #666666;
 }
 input.buttonpaymentcb {
@@ -666,6 +668,10 @@ div.myavailability {
 .googlerefreshcal {
 	padding-top: 4px;
 	padding-bottom: 4px;
+}
+.paddingtopbottom {
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 .checkallactions {
 	/*vertical-align: text-bottom;
@@ -1113,6 +1119,10 @@ div.login_block {
 	position: auto;
 	top: auto;
 	z-index: 90;
+}
+
+div.backgroundsemitransparent {
+	background:rgba(255,255,255,0.6);
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -1626,7 +1636,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','websites');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
 $divnotrequired=array('multicurrency','salaries','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
@@ -3381,6 +3391,10 @@ table.valid {
     z-index: 3000;
 }
 
+div.ui-tooltip {
+	max-width: <?php print dol_size(600,'width'); ?>px !important;
+}
+
 .mytooltip {
 	width: <?php print dol_size(450,'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
@@ -4198,6 +4212,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: unset;
+}
 .select2-container .select2-choice {
 	border-bottom: 1px solid #ccc;
 }
@@ -4330,9 +4347,6 @@ a span.select2-chosen
 }
 .select2-results {
 	max-height:	400px;
-}
-.css-searchselectcombo ul.select2-results {
-	max-height:	none;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;

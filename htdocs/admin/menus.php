@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 $action=GETPOST('action','aZ09');
+$cancel=GETPOST('cancel','alpha');
 
 $langs->load("companies");
 $langs->load("products");
@@ -62,22 +63,22 @@ error_reporting($err);
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"]))
+if ($action == 'update' && ! $cancel)
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
-	dolibarr_set_const($db, "MAIN_MENU_STANDARD",      $_POST["MAIN_MENU_STANDARD"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",     $_POST["MAIN_MENU_SMARTPHONE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_STANDARD",        GETPOST('MAIN_MENU_STANDARD','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",      GETPOST('MAIN_MENU_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", $_POST["MAIN_MENUFRONT_STANDARD"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE",$_POST["MAIN_MENUFRONT_SMARTPHONE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD",   GETPOST('MAIN_MENUFRONT_STANDARD','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler=array();
-	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',$_POST["MAIN_MENU_STANDARD"])]=1;
-	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',$_POST["MAIN_MENUFRONT_STANDARD"])]=1;
-	if (isset($_POST["MAIN_MENU_SMARTPHONE"]))      $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',$_POST["MAIN_MENU_SMARTPHONE"])]=1;
-	if (isset($_POST["MAIN_MENUFRONT_SMARTPHONE"])) $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',$_POST["MAIN_MENUFRONT_SMARTPHONE"])]=1;
+	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENU_STANDARD','alpha'))]=1;
+	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENUFRONT_STANDARD','alpha'))]=1;
+	if (GETPOST('MAIN_MENU_SMARTPHONE','alpha'))      $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENU_SMARTPHONE','alpha'))]=1;
+	if (GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha')) $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha'))]=1;
 
 	// Initialize menu handlers
 	foreach ($listofmenuhandler as $key => $val)
@@ -179,7 +180,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Menu top
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled');
@@ -190,7 +191,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Menu smartphone
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
@@ -217,7 +218,7 @@ else
 	print '</td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
@@ -229,7 +230,7 @@ else
 	print '</td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';

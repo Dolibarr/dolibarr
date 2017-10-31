@@ -326,11 +326,19 @@ if (empty($reshook))
 									{
 										$label = $lines[$i]->product_label;
 									}
-
 									$desc = ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
 								}
 								else {
 									$desc = dol_htmlentitiesbr($lines[$i]->desc);
+								}
+
+								// Extrafields
+								$array_options = array();
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
+								// trigger used
+								{
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_options = $lines[$i]->array_options;
 								}
 
 								$txtva = $lines[$i]->vat_src_code ? $lines[$i]->tva_tx . ' (' .  $lines[$i]->vat_src_code . ')' : $lines[$i]->tva_tx;
@@ -355,7 +363,7 @@ if (empty($reshook))
 									$lines[$i]->info_bits,
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,
-									array(),
+									$array_options,
 									$lines[$i]->fk_unit
 								);
 
@@ -821,21 +829,19 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
-
-				$result = $object->insertExtraFields();
-				if ($result < 0) {
-					$error ++;
-				}
-			} else if ($reshook < 0)
-				$error ++;
+			$result = $object->insertExtraFields();
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
 
 		if ($error) {
 			$action = 'edit_extras';
-			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	elseif ($action=='setref_supplier')

@@ -81,6 +81,8 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
+		if (empty($conf->global->MAIN_MODULE_SUPPLIERPROPOSAL)) { print "\n".__METHOD__." module Supplier proposal must be enabled.\n"; die(); }
+
     	print __METHOD__."\n";
     }
 

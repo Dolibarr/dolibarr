@@ -89,9 +89,7 @@ else    // For no ajax call
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;

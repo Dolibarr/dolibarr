@@ -136,7 +136,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     $sql = "SELECT f.facnumber";
-    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc";
+    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
     $sql.= ", f.type";
     $sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
@@ -178,6 +178,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $facturestatic->total_ht=$obj->total_ht;
                 $facturestatic->total_tva=$obj->total_tva;
                 $facturestatic->total_ttc=$obj->total_ttc;
+                $facturestatic->ref_client=$obj->ref_client;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
@@ -218,7 +219,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
-	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type";
+	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_fournisseur";
@@ -253,6 +254,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
                 $facturesupplierstatic->total_ht=$obj->total_ht;
                 $facturesupplierstatic->total_tva=$obj->total_tva;
                 $facturesupplierstatic->total_ttc=$obj->total_ttc;
+                $facturesupplierstatic->ref_supplier=$obj->ref_supplier;
 				$facturesupplierstatic->type=$obj->type;
 				print $facturesupplierstatic->getNomUrl(1,'',16);
 				print '</td>';
