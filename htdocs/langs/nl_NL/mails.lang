@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Unieke contacten van bedrijven
 MailNoChangePossible=Ontvangers voor gevalideerde EMailings kunnen niet worden gewijzigd
 SearchAMailing=Zoek een EMailing
 SendMailing=Verzend EMailing
-SendMail=Verzend e-mail
 SentBy=Verzonden door
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=U kunt ze echter online verzenden door toevoeging van de parameter MAILING_LIMIT_SENDBYWEB met een waarde van het maximaal aantal e-mails dat u wilt verzenden per sessie.

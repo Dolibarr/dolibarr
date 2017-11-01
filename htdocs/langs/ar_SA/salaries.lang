@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=الراتب الحالي
 THMDescription=يمكن استخدام هذه القيمة لحساب تكلفة الوقت المستهلك في المشروع المدخل من قبل المستخدمين إذا تم استخدام وحدة مشروع 
 TJMDescription=هذه القيمة هي حاليا فقط كمعلومات وليس لاستخدامها في أي حساب
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

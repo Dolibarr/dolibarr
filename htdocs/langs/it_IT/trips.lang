@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Nota spese
-ExpenseReports=Note spese
 ShowExpenseReport=Mostra note spese
 Trips=Note spese
 TripsAndExpenses=Note spese
@@ -12,6 +10,8 @@ ListOfFees=Elenco delle tariffe
 TypeFees=Tipi di imposte
 ShowTrip=Mostra note spese
 NewTrip=Nuova nota spese
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Tariffa kilometrica o importo
 DeleteTrip=Elimina nota spese
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Hai già inviata una nota spese per il periodo selezionato
 AucuneLigne=Non ci sono ancora note spese

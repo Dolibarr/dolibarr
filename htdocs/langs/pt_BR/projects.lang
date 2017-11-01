@@ -25,6 +25,7 @@ OpenedTasks=Tarefas em andamento
 OpportunitiesStatusForOpenedProjects=Montante de oportunidades de projetos abertos de acordo com a situação
 OpportunitiesStatusForProjects=Montante de oportunidades dos projetos pela situação
 ShowProject=Mostrar projeto
+ShowTask=Mostrar tarefa
 NoProject=Nenhum Projeto Definido
 NbOfProjects=Nº de projetos
 TimeSpent=Dispêndio de tempo

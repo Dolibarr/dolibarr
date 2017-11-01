@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignore errors of duplicate record (INSERT IGNORE)
 AutoDetectLang=Automatski detektiraj (jezik web preglednika)
 FeatureDisabledInDemo=Mogučnost onemogućena u demo verziji
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=Prava pristupa
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Prikazani su samo elementi sa  <a href="%s">omogučenih modula</a>
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
@@ -593,7 +592,7 @@ Module5000Desc=Dozvoljava upravljanje multi tvrtkama
 Module6000Name=Tijek rada
 Module6000Desc=Upravljanje tijekom rada
 Module10000Name=Web lokacije
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Upravljanje zahtjevima odlazaka
 Module20000Desc=Objavi i prati zahtjeve odsutnosti zaposlenika
 Module39000Name=Lot proizvoda
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail dire
 TranslationSetup=Postavke prijevoda
 TranslationKeySearch=Pretraži prijevod po ključi ili tekstu
 TranslationOverwriteKey=Prepiši prevedeni tekst
-TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: <strong>User display setup</strong> tab of user card (click on username at the top of the screen).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=Prevedeni tekst
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Rule to generate suggested passwords or validate passw
 DisableForgetPasswordLinkOnLogonPage=Ne prikazuj poveznicu "Zaboravili ste lozinku" na stranici prijave
 UsersSetup=Podešavanje modula korisnka
 UserMailRequired=E-pošta je obavezna za kreiranje novog korisnika
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=Podešavanje modula HRM
 ##### Company setup #####

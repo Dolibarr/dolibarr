@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignorovat chyby duplicitních záznamů (INSERT IGNORE)
 AutoDetectLang=Autodetekce (jazyku prohlížeče)
 FeatureDisabledInDemo=Funkce zakázána v demu
 FeatureAvailableOnlyOnStable=Funkce je k dispozici pouze v oficiálních stabilních verzích
-Rights=Oprávnění
 BoxesDesc=Widgety jsou oblasti obrazovky, které ukazují krátké informace na některých stránkách. Můžete si vybrat mezi zobrazením/schováním boxu zvolením cílové stránky a kliknutím na 'Aktivovat' nebo kliknutím na popelnici ji zakázat.
 OnlyActiveElementsAreShown=Pouze prvky z <a href="%s">povolených modulů</a> jsou uvedeny.
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
@@ -593,7 +592,7 @@ Module5000Desc=Umožňuje spravovat více společností
 Module6000Name=Workflow
 Module6000Desc=Workflow management
 Module10000Name=Webové stránky
-Module10000Desc=Vytvoření veřejné internetové stránky s editorem WYSIWG. Jen nastavit web serveru, aby odkazovaly na specializované adresáře, aby si to on-line na internetu.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Nechte řízení požadavků
 Module20000Desc=Deklarovat a dodržovat zaměstnanci opustí požadavky
 Module39000Name=Množství produktu
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Funkce se odesílat e-maily pomocí metody "PHP m
 TranslationSetup=Nastavení překladu
 TranslationKeySearch=Hledat klíč překlad nebo řetězec
 TranslationOverwriteKey=Přepsat překlad řetězec
-TranslationDesc=Jak nastavit zobrazený jazyk aplikace: <br> * systémovou: nabídku <strong> Domů - Nastavení - zobrazení </ strong> <br> * Per uživatele: Nastavení zobrazení <strong> uživatelů </ strong> na kartě uživatele (klikněte na uživatelské jméno v horní části obrazovky).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=Můžete také přepsat řetězce čerpacích následující tabulky. Vyberte si svůj jazyk „%s“ rozbalené, vložte klíč řetězec překlad do „%s“ a svým novým překladem do „%s“
 TranslationOverwriteDesc2=Můžete použít kartu další, které vám pomohou vědět, klíč překlad používat
 TranslationString=překlad string
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Pravidlo pro generování hesel navrhovaná nebo ově�
 DisableForgetPasswordLinkOnLogonPage=Nezobrazovat na odkaz &quot;Zapomněli jste heslo&quot; na přihlašovací stránce
 UsersSetup=Uživatelé modul nastavení
 UserMailRequired=EMail nutné vytvořit nového uživatele
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=setup HRM Modul
 ##### Company setup #####

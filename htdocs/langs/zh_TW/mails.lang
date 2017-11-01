@@ -99,7 +99,6 @@ NbOfCompaniesContacts=公司獨特的接觸
 MailNoChangePossible=為驗證電子郵件收件人無法改變
 SearchAMailing=搜尋郵件
 SendMailing=發送電子郵件
-SendMail=發送電子郵件
 SentBy=發送
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=但是您可以發送到網上，加入與最大的電子郵件數量值參數MAILING_LIMIT_SENDBYWEB你要發送的會議。

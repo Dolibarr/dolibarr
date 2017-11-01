@@ -109,7 +109,6 @@ MultipriceRules=Regras de preços por segmento
 UseMultipriceRules=Usar regras de preços do segmento (definido na configuração do módulos produto) para calcular automaticamente o preço de todos os segmentos de acordo com o primeiro segmento
 PercentVariationOver=%% variação sobre %s
 PercentDiscountOver=%% disconto sobre %s
-Build=Produzir
 ProductsMultiPrice=Produtos e preços de cada segmento
 ProductsOrServiceMultiPrice=Preços de Clientes (de produtos ou serviços, multi-preços)
 ProductSellByQuarterHT=Volume de negócios trimestral antes de impostos os produtos

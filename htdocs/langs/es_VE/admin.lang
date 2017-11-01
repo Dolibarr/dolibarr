@@ -13,3 +13,5 @@ SupplierProposalNumberingModules=Modelos de numeración de solicitud de precios 
 SupplierProposalPDFModules=Modelos de documentos de solicitud de precios a proveedores
 FreeLegalTextOnSupplierProposal=Texto libre en solicitudes de precios a proveedores
 WatermarkOnDraftSupplierProposal=Marca de agua en solicitudes de precios a proveedor (en caso de estar vacío)
+AGENDA_REMINDER_EMAIL=Enable event reminder by emails (defined on each event). Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent at the correct frequency.
+AGENDA_REMINDER_BROWSER=Enable event reminder on users browser (when event date is reached, each user is able to refuse this from the browser confirmation question)

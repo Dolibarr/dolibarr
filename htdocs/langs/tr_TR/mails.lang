@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Benzersiz kişiler/adresler
 MailNoChangePossible=Doğrulanmış epostaların alıcıları değiştirilemez
 SearchAMailing=Eposta ara
 SendMailing=E-posta gönder
-SendMail=E-posta gönder
 SentBy=Gönderen
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Bunula birlikte, oturum tarafından gönderilecek ençok Eposta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.

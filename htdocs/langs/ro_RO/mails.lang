@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Unic de contact din companii
 MailNoChangePossible=Destinatari validate de email-uri nu poate fi schimbat
 SearchAMailing=Căutare de e-mail
 SendMailing=Trimite email-uri
-SendMail=Trimite un email
 SentBy=Trimis de
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Puteţi, totuşi, trimite-le on-line, prin adăugarea parametrului MAILING_LIMIT_SENDBYWEB cu valoare de numărul maxim de mesaje de poştă electronică pe care doriţi să o trimiteţi prin sesiuni.

@@ -27,7 +27,6 @@ Notify_WITHDRAW_TRANSMIT=Retrait de la transmission
 Notify_WITHDRAW_CREDIT=Retrait de crédit
 Notify_WITHDRAW_EMIT=Effectuer le retrait
 Notify_COMPANY_SENTBYMAIL=Les envois envoyés par une carte tierce
-Notify_BILL_VALIDATE=Facture client validée
 Notify_BILL_UNVALIDATE=Facture du client non valide
 Notify_BILL_PAYED=Facture du client payée
 Notify_BILL_CANCEL=Facture du client annulée
