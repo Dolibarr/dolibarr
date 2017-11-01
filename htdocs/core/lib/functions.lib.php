@@ -927,10 +927,10 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
 function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html form content
+	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html tags
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
 	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html form content
+	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html tags
 }
 
 
@@ -4952,7 +4952,7 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
 {
-	// TODO Try to replace with strip_tags($stringtoclean)
+	// TODO Try to replace with  strip_tags($stringtoclean)
 	$pattern = "/<[^<>]+>/";
 	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
 	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);

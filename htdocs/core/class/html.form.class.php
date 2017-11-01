@@ -1010,8 +1010,7 @@ class Form
 			$out.='<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			else if ($hidelabel > 1) {
-				if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
-				else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					$out.=  img_picto($langs->trans("Search"), 'search');
 				}
@@ -1818,8 +1817,7 @@ class Form
 			}
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			else if ($hidelabel > 1) {
-				if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
-				else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					print img_picto($langs->trans("Search"), 'search');
 				}

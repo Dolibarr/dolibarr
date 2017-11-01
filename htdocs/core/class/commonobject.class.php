@@ -3702,8 +3702,7 @@ abstract class CommonObject
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
 			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
-			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
-			else $placeholder=' title="'.$langs->trans("Label").'"';
+			$placeholder=' placeholder="'.$langs->trans("Label").'"';
 
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
