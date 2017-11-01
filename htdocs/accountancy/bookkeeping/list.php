@@ -112,7 +112,7 @@ $arrayfields=array(
 	't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
-	't.crebit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 );
@@ -410,11 +410,11 @@ print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['t.piece_num']['checked']))
 {
 	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="' . dol_escape_htmltag($search_mvt_num) . '"></td>';
-	print '<td class="liste_titre center">';
 }
 // Date document
 if (! empty($arrayfields['t.doc_date']['checked']))
 {
+	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
 	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
@@ -501,6 +501,7 @@ if (! empty($arrayfields['t.code_journal']['checked']))
 // Date creation
 if (! empty($arrayfields['t.date_creation']['checked']))
 {
+	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
 	print $form->select_date($search_date_creation_start, 'date_creation_start', 0, 0, 1);
@@ -511,6 +512,7 @@ if (! empty($arrayfields['t.date_creation']['checked']))
 	print '</div>';
 	print '</td>';
 }
+// Action column
 print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
@@ -532,58 +534,128 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="c
 print "</tr>\n";
 
 
-$total_debit = 0;
-$total_credit = 0;
-
-$i=0;
-while ($i < min($num, $limit))
+if ($num > 0)
 {
-	$line = $object->lines[$i];
-
-	$total_debit += $line->debit;
-	$total_credit += $line->credit;
-
-	print '<tr class="oddeven">';
-
-	print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
-	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-	print '<td class="nowrap">' . $line->doc_ref . '</td>';
-	print '<td>' . length_accountg($line->numero_compte) . '</td>';
-	print '<td>' . length_accounta($line->subledger_account) . '</td>';
-	print '<td>' . $line->label_operation . '</td>';
-	print '<td align="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
-	print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
-
-	$accountingjournal = new AccountingJournal($db);
-	$result = $accountingjournal->fetch('',$line->code_journal);
-	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $line->code_journal);
-	print '<td align="center">' . $journaltoshow . '</td>';
-	if (! empty($arrayfields['t.date_creation']['checked']))
+	$i=0;
+	$totalarray=array();
+	while ($i < min($num, $limit))
 	{
-		print '<td align="center">' . dol_print_date($line->date_creation, 'day') . '</td>';
+		$line = $object->lines[$i];
+
+		$total_debit += $line->debit;
+		$total_credit += $line->credit;
+
+		print '<tr class="oddeven">';
+
+		// Piece number
+		if (! empty($arrayfields['t.piece_num']['checked']))
+		{
+			print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Document date
+		if (! empty($arrayfields['t.doc_date']['checked']))
+		{
+			print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Document ref
+		if (! empty($arrayfields['t.doc_ref']['checked']))
+		{
+			print '<td class="nowrap">' . $line->doc_ref . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Account number
+		if (! empty($arrayfields['t.numero_compte']['checked']))
+		{
+			print '<td>' . length_accountg($line->numero_compte) . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Subledger account
+		if (! empty($arrayfields['t.subledger_account']['checked']))
+		{
+			print '<td>' . length_accounta($line->subledger_account) . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Label operation
+		if (! empty($arrayfields['t.label_operation']['checked']))
+		{
+			print '<td>' . $line->label_operation . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Amount debit
+		if (! empty($arrayfields['t.debit']['checked']))
+		{
+			print '<td align="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
+			if (! $i) $totalarray['nbfield']++;
+			if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
+			$totalarray['totaldebit'] += $line->debit;
+		}
+
+		// Amount credit
+		if (! empty($arrayfields['t.credit']['checked']))
+		{
+			print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+			if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
+			$totalarray['totalcredit'] += $line->credit;
+		}
+
+		// Journal code
+		if (! empty($arrayfields['t.code_journal']['checked']))
+		{
+			$accountingjournal = new AccountingJournal($db);
+			$result = $accountingjournal->fetch('',$line->code_journal);
+			$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $line->code_journal);
+			print '<td align="center">' . $journaltoshow . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Creation operation date
+		if (! empty($arrayfields['t.date_creation']['checked']))
+		{
+			print '<td align="center">' . dol_print_date($line->date_creation, 'day') . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Action column
+		print '<td align="center">';
+		print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+
+		print "</tr>\n";
+
+		$i++;
 	}
 
-	print '<td align="center">';
-	print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
-	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
-	print '</td>';
-	print "</tr>\n";
+	// Show total line
+	if (isset($totalarray['totaldebitfield']) || isset($totalarray['totalcreditfield']))
+	{
+		$i=0;
+		while ($i < $totalarray['nbfield'])
+		{
+			$i++;
+				if ($i == 1)
+				{
+					if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
+					else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+				}
+				elseif ($totalarray['totaldebitfield'] == $i)  print '<td align="right">'.price($totalarray['totaldebit']).'</td>';
+				elseif ($totalarray['totalcreditfield'] == $i) print '<td align="right">'.price($totalarray['totalcredit']).'</td>';
+				else print '<td></td>';
+		}
+		print '</tr>';
 
-	$i++;
+	}
 }
-
-print '<tr class="liste_total">';
-if ($num < $limit) print '<td align="left" colspan="7">'.$langs->trans("Total").'</td>';
-else print '<td align="left" colspan="7">'.$langs->trans("Totalforthispage").'</td>';
-print '</td>';
-print '<td  align="right">';
-print price($total_debit);
-print '</td>';
-print '<td align="right">';
-print price($total_credit);
-print '</td>';
-print '<td colspan="2"></td>';
-print '</tr>';
 
 print "</table>";
 print '</div>';

@@ -678,6 +678,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				} elseif ($key == 't.label_operation') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
@@ -798,6 +800,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
