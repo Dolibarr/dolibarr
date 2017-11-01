@@ -67,7 +67,6 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Accountancy
 Selectchartofaccounts=Select active chart of accounts
 ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
