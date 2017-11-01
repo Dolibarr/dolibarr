@@ -40,7 +40,7 @@ class User extends CommonObject
 {
 	public $element='user';
 	public $table_element='user';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
 	public $ldap_sid;
@@ -163,7 +163,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	Load a user from database with its id or ref (login)
+	 *	Load a user from database with its id or ref (login).
+	 *  This function does not load permissions, only user properties. Use getrights() for this just after the fetch.
 	 *
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search

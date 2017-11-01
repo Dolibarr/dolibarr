@@ -210,7 +210,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $param='&mode='.$mode;
 
 $enabledisablehtml='';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
@@ -437,8 +437,8 @@ if ($mode == 'searchkey')
         // Now search into translation array
         foreach($newlang->tab_translate as $key => $val)
         {
-            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/', $key)) continue;
-            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/', $val)) continue;
+            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/i', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/i', $val)) continue;
             $recordtoshow[$key]=$val;
         }
     }

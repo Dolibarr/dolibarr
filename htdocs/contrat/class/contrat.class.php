@@ -44,7 +44,7 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='contract';
 
 	/**
@@ -298,12 +298,13 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Close all lines of a contract
+	 * Close all lines of a contract
 	 *
-	 *  @param	User		$user      		Object User making action
-	 *	@return	int							<0 if KO, >0 if OK
+	 * @param	User		$user      		Object User making action
+     * @param	int			$notrigger		1=Does not execute triggers, 0= execute triggers
+	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function closeAll($user)
+	function closeAll(User $user, $notrigger=0)
 	{
 		$this->db->begin();
 
@@ -330,7 +331,7 @@ class Contrat extends CommonObject
 
 		if ($this->statut == 0)
 		{
-			$result=$this->validate($user);
+			$result=$this->validate($user, '', $notrigger);
 			if ($result < 0) $ok=false;
 		}
 
@@ -355,7 +356,7 @@ class Contrat extends CommonObject
      * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	function validate($user, $force_number='', $notrigger=0)
+	function validate(User $user, $force_number='', $notrigger=0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		global $langs, $conf;
@@ -741,12 +742,12 @@ class Contrat extends CommonObject
 				$line->fk_unit           = $objp->fk_unit;
 
 				$line->ref				= $objp->product_ref;						// deprecated
-				if (empty($objp->fk_product)) 
+				if (empty($objp->fk_product))
 				{
 					$line->label			= '';         			// deprecated
 					$line->libelle 			= $objp->description;	// deprecated
 				}
-				else 
+				else
 				{
 					$line->label			= $objp->product_label;         			// deprecated
 					$line->libelle			= $objp->product_label;         		// deprecated
@@ -757,11 +758,15 @@ class Contrat extends CommonObject
 
 				$line->description		= $objp->description;
 
+				$line->date_start            = $this->db->jdate($objp->date_ouverture_prevue);
+				$line->date_start_real       = $this->db->jdate($objp->date_ouverture);
+				$line->date_end              = $this->db->jdate($objp->date_fin_validite);
+				$line->date_end_real         = $this->db->jdate($objp->date_cloture);
+				// For backward compatibility
 				$line->date_ouverture_prevue = $this->db->jdate($objp->date_ouverture_prevue);
 				$line->date_ouverture        = $this->db->jdate($objp->date_ouverture);
 				$line->date_fin_validite     = $this->db->jdate($objp->date_fin_validite);
 				$line->date_cloture          = $this->db->jdate($objp->date_cloture);
-				// For backward compatibility
 				$line->date_debut_prevue = $this->db->jdate($objp->date_ouverture_prevue);
 				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
@@ -2084,10 +2089,10 @@ class Contrat extends CommonObject
 			if ($mode == 'inactives') {
 				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
-				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
 			} else {
 				$warning_delay = $conf->contrat->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
 				$label = $langs->trans("BoardRunningServices");
 			}
 
@@ -2242,10 +2247,10 @@ class Contrat extends CommonObject
 			$line->total_ht=90;
 			$line->total_ttc=107.64;	// 90 * 1.196
 			$line->total_tva=17.64;
-			$line->date_ouverture = dol_now() - 200000;
-			$line->date_ouverture_prevue = dol_now() - 500000;
-			$line->date_fin_validite = dol_now() + 500000;
-			$line->date_cloture = dol_now() - 100000;
+			$line->date_start = dol_now() - 500000;
+			$line->date_start_real = dol_now() - 200000;
+			$line->date_end = dol_now() + 500000;
+			$line->date_end_real = dol_now() - 100000;
 			if ($num_prods > 0)
             {
 				$prodid = mt_rand(1, $num_prods);
@@ -2256,17 +2261,18 @@ class Contrat extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 * 	Create an array of order lines
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
-     */
-    function getLinesArray()
-    {
-        return $this->fetch_lines();
-    }
+	 */
+	function getLinesArray()
+	{
+		return $this->fetch_lines();
+	}
 
-    /**
+
+	/**
 	 *  Create a document onto disk according to template module.
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
@@ -2458,6 +2464,12 @@ class ContratLigne extends CommonObjectLine
 	var $product_label;
 
 	var $date_commande;
+
+	var $date_start;				// date start planned
+	var $date_start_real;			// date start real
+	var $date_end;					// date end planned
+	var $date_end_real;				// date end real
+	// For backward compatibility
 	var $date_ouverture_prevue;		// date start planned
 	var $date_ouverture;			// date start real
 	var $date_fin_validite;			// date end planned
@@ -2693,10 +2705,17 @@ class ContratLigne extends CommonObjectLine
 				$this->label = $obj->label;					// deprecated. We do not use this field. Only ref and label of product, and description of contract line
 				$this->description = $obj->description;
 				$this->date_commande = $this->db->jdate($obj->date_commande);
+
+				$this->date_start = $this->db->jdate($obj->date_ouverture_prevue);
+				$this->date_start_real = $this->db->jdate($obj->date_ouverture);
+				$this->date_end = $this->db->jdate($obj->date_fin_validite);
+				$this->date_end_real = $this->db->jdate($obj->date_cloture);
+				// For backward compatibility
 				$this->date_ouverture_prevue = $this->db->jdate($obj->date_ouverture_prevue);
 				$this->date_ouverture = $this->db->jdate($obj->date_ouverture);
 				$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
 				$this->date_cloture = $this->db->jdate($obj->date_cloture);
+
 				$this->tva_tx = $obj->tva_tx;
 				$this->vat_src_code = $obj->vat_src_code;
 				$this->localtax1_tx = $obj->localtax1_tx;
@@ -2784,6 +2803,12 @@ class ContratLigne extends CommonObjectLine
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
 		if (empty($this->remise_percent)) $this->remise_percent = 0;
+		// For backward compatibility
+		if (empty($this->date_start))      $this->date_start=$this->date_ouverture_prevue;
+		if (empty($this->date_start_real)) $this->date_start=$this->date_ouverture;
+		if (empty($this->date_end))        $this->date_start=$this->date_fin_validite;
+		if (empty($this->date_end_real))   $this->date_start=$this->date_cloture;
+
 
 		// Check parameters
 		// Put here code to add control on parameters values

@@ -51,7 +51,7 @@ class FormAdmin
 	 *    	@param      string		$htmlname       Name of HTML select
 	 *    	@param      int			$showauto       Show 'auto' choice
 	 * 		@param		array		$filter			Array of keys to exclude in list
-	 * 		@param		string		$showempty		1=Add empty value or string to show
+	 * 		@param		string		$showempty		'1'=Add empty value or string to show
 	 *      @param      int			$showwarning    Show a warning if language is not complete
 	 *      @param		int			$disabled		Disable edit of select
 	 *      @param		string		$morecss		Add more css styles

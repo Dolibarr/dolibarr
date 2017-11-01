@@ -160,8 +160,8 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		console.log(input);
-		console.log(input.minimum);
+		/*console.log(input);
+		console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -425,6 +425,28 @@ function urlencode(s) {
 	news=news.replace(/\+/gi,'%2B');
 	news=news.replace(/&/gi,'%26');
 	return news;
+}
+
+/*
+ * =================================================================
+ * Purpose: Clean string to have it url encoded
+ * Input:   s
+ * Author:  Laurent Destailleur
+ * Licence: GPL
+ * ==================================================================
+ */
+function htmlEntityDecodeJs(inp){
+	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
+	if (inp)
+	{
+	  for(var r in replacements){
+	    inp = inp.replace(new RegExp(r,'g'),replacements[r]);
+	  }
+	  return inp.replace(/&#(\d+);/g, function(match, dec) {
+	    return String.fromCharCode(dec);
+	  });
+	}
+	else { return ''; }
 }
 
 

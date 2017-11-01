@@ -61,7 +61,7 @@ error_reporting(0);
 @set_time_limit(300);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'alpha',3)?GETPOST("selectlang",'alpha',3):'auto';
+$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);

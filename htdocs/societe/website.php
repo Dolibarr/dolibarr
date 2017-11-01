@@ -39,7 +39,7 @@ $langs->loadLangs(array("companies","website"));
 $search_status=GETPOST('search_status');
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
@@ -91,12 +91,13 @@ foreach($objectwebsiteaccount->fields as $key => $val)
 	// If $val['visible']==0, then we never show the field
 	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled']);
 }
+
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -230,7 +231,7 @@ dol_fiche_end();
 $morehtmlcenter = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&thirdpartyid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
 		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
@@ -256,8 +257,9 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."websiteaccount_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($objectwebsiteaccount->getIsmultientitymanaged() == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
+if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
 else $sql.=" WHERE 1 = 1";
+$sql.=" AND fk_soc = ".$object->id;
 foreach($search as $key => $val)
 {
 	$mode_search=(($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key]))?1:0);
@@ -489,7 +491,7 @@ while ($i < min($num, $limit))
 			print '<td'.($align?' class="'.$align.'"':'').'>';
 			if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
 			elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
-			elseif ($key == 'ref') print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
+			elseif ($key == 'ref' || $key == 'login') print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
 			elseif ($key == 'status') print $objectwebsiteaccount->getLibStatut(3);
 			else print $obj->$key;
 			print '</td>';

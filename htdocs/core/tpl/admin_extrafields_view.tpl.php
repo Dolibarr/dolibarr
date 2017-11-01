@@ -81,7 +81,6 @@ if (count($extrafields->attributes[$elementtype]['type']))
 		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
 		print '<td align="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
-		if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attributes[$elementtype]['ishidden'][$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
 		if (! empty($conf->multicompany->enabled))  {
 			print '<td align="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
 		}

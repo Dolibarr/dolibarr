@@ -132,9 +132,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
                 $texttoinsert.= " 'notnull'=>".($val['notnull']!=''?$val['notnull']:-1).",";
                 if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
                 if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
-                if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
+                if ($val['comment']) $texttoinsert.= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\",";	// addslashes is escape for PHP
                 if ($val['isameasure']) $texttoinsert.= " 'isameasure'=>'".$val['isameasure']."',";
-                if ($val['help']) $texttoinsert.= " 'help'=>'".$val['help']."',";
+                if ($val['help']) $texttoinsert.= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";			// addslashes is escape for PHP
                 if ($val['arrayofkeyval'])
                 {
                 	$texttoinsert.= " 'arrayofkeyval'=>array(";
@@ -215,8 +215,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
     $pathoffiletoclasssrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
 
     // Edit .sql file
-    $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($objectname).'.sql';
-    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+    $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
 	if (! dol_is_file($pathoffiletoeditsrc))
     {
     	$langs->load("errors");
@@ -251,7 +251,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
         foreach($object->fields as $key => $val)
         {
             $i++;
-            $texttoinsert.= "\t".$key." ".$val['type'];
+
+            $type = $val['type'];
+            $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
+
+            $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
             else
@@ -283,8 +287,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
     }
 
     // Edit .key.sql file
-    $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql';
-    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+    $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
 
     $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
@@ -297,7 +301,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             $i++;
             if ($val['index'])
             {
-                $texttoinsert.= "ALTER TABLE llx_".strtolower($objectname)." ADD INDEX idx_".strtolower($objectname)."_".$key." (".$key.");";
+                $texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
                 $texttoinsert.= "\n";
             }
         }

@@ -2,8 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class ActionComm extends CommonObject
     public $element='action';
     public $table_element = 'actioncomm';
     public $table_rowid = 'id';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='action';
 
     /**
@@ -928,7 +928,7 @@ class ActionComm extends CommonObject
     	$sql.= ")";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-    	$sql.= " WHERE 1";
+    	$sql.= " WHERE 1 = 1";
     	if(empty($load_state_board)) $sql.= " AND a.percent >= 0 AND a.percent < 100";
     	$sql.= " AND a.entity IN (".getEntity('agenda').")";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
@@ -1341,6 +1341,7 @@ class ActionComm extends CommonObject
             {
                 // Note: Output of sql request is encoded in $conf->file->character_set_client
                 // This assignment in condition is not a bug. It allows walking the results.
+				$diff = 0;
                 while ($obj=$this->db->fetch_object($resql))
                 {
                     $qualified=true;
@@ -1377,6 +1378,7 @@ class ActionComm extends CommonObject
                     {
                         $eventarray[]=$event;
                     }
+                    $diff++;
                 }
             }
             else
@@ -1528,9 +1530,17 @@ class ActionComm extends CommonObject
     		return 0;
     	}
 
+    	$now = dol_now();
+
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
+		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
+
+
+    	// Delete also very old past events (we do not keep more than 1 month record in past)
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->jdate($now - (3600 * 24 * 32))."'";
+		$this->db->query($sql);
 
     	return 0;
     }
