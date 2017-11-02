@@ -1533,9 +1533,9 @@ if ($action == 'create')
             print '<br>';
 
             print '<div class="center">';
-            print '<input type="submit" class="button" name="save" value="'.$langs->trans("Create").'">';
-            print ' &nbsp; &nbsp; ';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+            print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+            print '&nbsp; ';
+            print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
             print '</div>';
 
             print '</form>';

@@ -151,6 +151,15 @@ if (empty($reshook))
     		setEventMessages($object->error, $object->errors, 'errors');
     }
 
+    // Set incoterm
+    elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+    {
+    	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+    	if ($result < 0) {
+    		setEventMessages($object->error, $object->errors, 'errors');
+    	}
+    }
+
     // shipping method
     if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
         $object = new Commande($db);
