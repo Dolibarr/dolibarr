@@ -635,6 +635,7 @@ class ActionComm extends CommonObject
 		$sql ='SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
 		$sql.=' WHERE fk_actioncomm = '.$this->id;
+		$sql.=" AND element_type IN ('user', 'socpeople')";
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
