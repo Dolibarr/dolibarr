@@ -719,6 +719,80 @@ if (empty($reshook))
 						unset($_POST[$batch]);
 						unset($_POST[$qty]);
 					}
+					// add new batch
+					$lotStock = new Productbatch($db);
+					$batch="batchl".$line_id."_0";
+					$qty = "qtyl".$line_id."_0";
+					$batch_id = GETPOST($batch,'int');
+					$batch_qty = GETPOST($qty, 'int');
+					$lineIdToAddLot = 0;
+					if ($batch_qty > 0 && ! empty($batch_id))
+					{
+						if ($lotStock->fetch($batch_id) > 0)
+						{
+							// check if lotStock warehouse id is same as line warehouse id
+							if ($lines[$i]->entrepot_id > 0)
+							{
+								// single warehouse shipment line
+								if ($lines[i]->entrepot_id == $lotStock->warehouseid)
+								{
+									$lineIdToAddLot = $line_id;
+								}
+							}
+							else if (count($lines[$i]->details_entrepot) > 1)
+							{
+								// multi warehouse shipment lines
+								foreach ($lines[$i]->details_entrepot as $detail_entrepot)
+								{
+									if ($detail_entrepot->entrepot_id == $lotStock->warehouseid)
+									{
+										$lineIdToAddLot = $detail_entrepot->line_id;
+									}
+								}
+							}
+							if ($lineIdToAddLot) 
+							{
+								// add lot to existing line
+								if ($line->fetch($lineIdToAddLot) > 0)
+								{
+									$line->detail_batch->fk_origin_stock = $batch_id;
+									$line->detail_batch->batch = $lotStock->batch;
+									$line->detail_batch->entrepot_id = $lotStock->warehouseid;
+									$line->detail_batch->dluo_qty = $batch_qty;
+									if ($line->update($user) < 0) {
+										setEventMessages($line->error, $line->errors, 'errors');
+										$error++;
+									}
+								}
+								else
+								{
+									setEventMessages($line->error, $line->errors, 'errors');
+									$error++;
+								}
+							}
+							else
+							{
+								// create new line with new lot
+								$line->origin_line_id = $lines[$i]->origin_line_id;
+								$line->entrepot_id = $lotStock->warehouseid;
+								$line->detail_batch[0] = new ExpeditionLineBatch($db);
+								$line->detail_batch[0]->fk_origin_stock = $batch_id;
+								$line->detail_batch[0]->batch = $lotStock->batch;
+								$line->detail_batch[0]->entrepot_id = $lotStock->warehouseid;
+								$line->detail_batch[0]->dluo_qty = $batch_qty;
+								if ($object->create_line_batch($line, $line->array_options) < 0)
+								{
+									setEventMessages($object->error, $object->errors, 'errors');
+									$error++;
+								}
+							}
+						}
+						else 
+						{
+							setEventMessages($lotStock->error, $lotStock->errors, 'errors');
+							$error++;
+						}
+					}
 				}
 				else
 				{
@@ -2190,6 +2264,13 @@ else if ($id || $ref)
 						print '<td>' . $formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $line->entrepot_id). '</td>';
 						print '</tr>';
 					}
+					// add a 0 qty lot row to be able to add a lot
+					print '<tr>';
+					// Qty to ship or shipped
+					print '<td>' . '<input name="qtyl'.$line_id.'_0" id="qtyl'.$line_id.'_0" type="text" size="4" value="0">' . '</td>';
+					// Batch number managment
+					print '<td>' . $formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product). '</td>';
+					print '</tr>';
 				}
 				else if (! empty($conf->stock->enabled))
 				{
